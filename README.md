@@ -1,0 +1,2 @@
+# L5Spex
+A Windows application runs configurable specifications against a source L5X file to validate the project setup.
