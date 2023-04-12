@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "L5Spex (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "L5Spex (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
