@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "L5Spex", "L5Spex\L5Spex.csproj", "{EE35F2C1-CC78-4FE5-9194-8AE741D1516D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EE35F2C1-CC78-4FE5-9194-8AE741D1516D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE35F2C1-CC78-4FE5-9194-8AE741D1516D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE35F2C1-CC78-4FE5-9194-8AE741D1516D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE35F2C1-CC78-4FE5-9194-8AE741D1516D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
