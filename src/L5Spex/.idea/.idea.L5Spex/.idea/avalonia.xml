@@ -5,6 +5,15 @@
       <map>
         <entry key="L5Spex/App.axaml" value="L5Spex/L5Spex.csproj" />
         <entry key="L5Spex/MainWindow.axaml" value="L5Spex/L5Spex.csproj" />
+        <entry key="L5Spex/Shell.axaml" value="L5Spex/L5Spex.csproj" />
+        <entry key="L5Spex/ViewModels/AppTreeView.axaml" value="L5Spex/L5Spex.csproj" />
+        <entry key="L5Spex/Views/AppBarView.axaml" value="L5Spex/L5Spex.csproj" />
+        <entry key="L5Spex/Views/AppTreeView.axaml" value="L5Spex/L5Spex.csproj" />
+        <entry key="L5Spex/Views/SpecTreeView.axaml" value="L5Spex/L5Spex.csproj" />
+        <entry key="L5Spex/Views/Styles1.axaml" value="L5Spex/L5Spex.csproj" />
+        <entry key="L5Spex/Views/TemplatedControl1.axaml" value="L5Spex/L5Spex.csproj" />
+        <entry key="L5Spex/Views/UserControl1.axaml" value="L5Spex/L5Spex.csproj" />
+        <entry key="L5Spex/Views/UserControl2.axaml" value="L5Spex/L5Spex.csproj" />
       </map>
     </option>
   </component>

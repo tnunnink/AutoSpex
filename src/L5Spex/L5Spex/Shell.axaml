@@ -4,7 +4,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         Width="800" Height="500" WindowStartupLocation="CenterScreen"
         mc:Ignorable="d"
-        x:Class="L5Spex.MainWindow"
+        x:Class="L5Spex.Shell"
         Title="L5Spex">
-    Welcome to Avalonia!
+  <Grid RowDefinitions="Auto, *, Auto">
+    <Border Grid.Row="0" Background="LightGray">
+      <Button Content="Menu" Margin="5" />
+    </Border>
+  </Grid>
 </Window>

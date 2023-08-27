@@ -16,10 +16,10 @@ public partial class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            desktop.MainWindow = new MainWindow();
-            /*desktop.MainWindow.Width = 800;
-            desktop.MainWindow.Height = 600;
-            desktop.MainWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;*/
+            desktop.MainWindow = new Shell();
+            /*desktop.Shell.Width = 800;
+            desktop.Shell.Height = 600;
+            desktop.Shell.WindowStartupLocation = WindowStartupLocation.CenterScreen;*/
         }
 
         base.OnFrameworkInitializationCompleted();
