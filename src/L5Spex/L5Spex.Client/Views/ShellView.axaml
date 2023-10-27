@@ -1,0 +1,97 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:L5Spex.ViewModels"
+        xmlns:views="clr-namespace:L5Spex.Views"
+        Width="1200" Height="800" 
+        WindowStartupLocation="CenterScreen"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        mc:Ignorable="d"
+        x:Class="L5Spex.Views.ShellView"
+        Title="L5Spex"
+       
+        x:DataType="vm:ShellViewModel">
+    <NativeMenu.Menu>
+        <NativeMenu>
+            <NativeMenuItem Header="File">
+                <NativeMenuItem.Menu>
+                    <NativeMenu>
+                        <NativeMenuItem Header="Open"/>
+                        <NativeMenuItem Header="Recent">
+                            <NativeMenuItem.Menu>
+                                <NativeMenu/>
+                            </NativeMenuItem.Menu>
+                        </NativeMenuItem>
+                        <NativeMenuItem Header="Quit Avalonia"
+                                        Gesture="CTRL+Q"/>
+                    </NativeMenu>
+                </NativeMenuItem.Menu>
+            </NativeMenuItem>
+            <NativeMenuItem Header="Edit">
+                <NativeMenuItem.Menu>
+                    <NativeMenu>
+                        <NativeMenuItem Header="Copy"/>
+                        <NativeMenuItem Header="Paste"/>
+                    </NativeMenu>
+                </NativeMenuItem.Menu>
+            </NativeMenuItem>
+        </NativeMenu>
+    </NativeMenu.Menu>
+    
+    <DockPanel HorizontalAlignment="Stretch"
+               VerticalAlignment="Stretch"
+               Name="ContentWrapper">
+        <views:HeaderView />
+        <DockPanel Background="Transparent">
+            <StackPanel HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Spacing="10">
+                <ToggleButton Name="DarkThemeToggleButton"
+                              HorizontalAlignment="Center"
+                              Content="Dark Theme"></ToggleButton>
+                <ToggleButton Name="DefaultStyleToggleButton"
+                              HorizontalAlignment="Center"
+                              Content="Default Style"></ToggleButton>
+            </StackPanel>
+      
+        </DockPanel>
+    </DockPanel>
+    <!--<Panel>
+        ~1~<ExperimentalAcrylicBorder IsHitTestVisible="False">
+            <ExperimentalAcrylicBorder.Material>
+                <ExperimentalAcrylicMaterial BackgroundSource="Digger"
+                                             TintColor="White"
+                                             TintOpacity="1"
+                                             MaterialOpacity="0.95"/>
+            </ExperimentalAcrylicBorder.Material>
+        </ExperimentalAcrylicBorder>@1@
+        
+        <DockPanel>
+            <Border DockPanel.Dock="Top" Height="50">
+               <ContentControl></ContentControl>
+            </Border>
+
+            <Border DockPanel.Dock="Bottom" Height="30">
+                <Grid ColumnDefinitions="Auto, *, Auto"
+                      Margin="10 0">
+                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                        <TextBlock Text="State" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <Grid ColumnDefinitions="Auto, 4, *">
+                <Rectangle Grid.Column="0" />
+                <GridSplitter Grid.Column="1" Background="Transparent" ResizeDirection="Columns" />
+                <Rectangle Grid.Column="2"/>
+            </Grid>
+        </DockPanel>
+        
+        <Border IsVisible="{Binding IsPopupVisible}" Background="#40000000">
+            <ContentControl Content="{Binding }"></ContentControl>
+        </Border>
+    </Panel>-->
+</Window>

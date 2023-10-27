@@ -26,4 +26,9 @@
       </None>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\L5Spex\L5Spex.Engine\L5Spex.Engine.csproj" />
+    </ItemGroup>
+
+
 </Project>

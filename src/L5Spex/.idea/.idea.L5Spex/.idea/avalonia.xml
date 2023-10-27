@@ -3,17 +3,43 @@
   <component name="AvaloniaProject">
     <option name="projectPerEditor">
       <map>
+        <entry key="AvaloniaApplication1/App.axaml" value="AvaloniaApplication1/AvaloniaApplication1.csproj" />
+        <entry key="AvaloniaApplication1/Views/MainWindow.axaml" value="AvaloniaApplication1/AvaloniaApplication1.csproj" />
         <entry key="L5Spex/App.axaml" value="L5Spex/L5Spex.csproj" />
+        <entry key="L5Spex/Assets/Icons.axaml" value="L5Spex/L5Spex.csproj" />
+        <entry key="L5Spex/Assets/Resources1.axaml" value="L5Spex/L5Spex.csproj" />
+        <entry key="L5Spex/Features/Sets/Views/AddSetDialog.axaml" value="L5Spex/L5Spex.csproj" />
+        <entry key="L5Spex/Features/SourceFile/SourceFileItemView.axaml" value="L5Spex/L5Spex.csproj" />
+        <entry key="L5Spex/Features/SourceFile/SourceFileListView.axaml" value="L5Spex/L5Spex.csproj" />
+        <entry key="L5Spex/Features/SourceFile/SourceFileView.axaml" value="L5Spex/L5Spex.csproj" />
+        <entry key="L5Spex/Features/SourceFile/SourceListView.axaml" value="L5Spex/L5Spex.csproj" />
+        <entry key="L5Spex/Features/SourceFile/SourceMenuView.axaml" value="L5Spex/L5Spex.csproj" />
+        <entry key="L5Spex/Features/SourceFileWidget/RunMenuView.axaml" value="L5Spex/L5Spex.csproj" />
+        <entry key="L5Spex/Features/SourceFileWidget/SourceFileView.axaml" value="L5Spex/L5Spex.csproj" />
+        <entry key="L5Spex/Features/SourceFileWidget/SourceFileWidgetView.axaml" value="L5Spex/L5Spex.csproj" />
+        <entry key="L5Spex/Features/Sources/SourceListView.axaml" value="L5Spex/L5Spex.csproj" />
+        <entry key="L5Spex/Features/Sources/SourceMenuView.axaml" value="L5Spex/L5Spex.csproj" />
+        <entry key="L5Spex/Features/Sources/Views/AddSourceView.axaml" value="L5Spex/L5Spex.csproj" />
+        <entry key="L5Spex/Features/Sources/Views/SourceFileItemView.axaml" value="L5Spex/L5Spex.csproj" />
+        <entry key="L5Spex/Features/Sources/Views/SourceListView.axaml" value="L5Spex/L5Spex.csproj" />
         <entry key="L5Spex/MainWindow.axaml" value="L5Spex/L5Spex.csproj" />
+        <entry key="L5Spex/Resources/Brushes.axaml" value="L5Spex/L5Spex.csproj" />
         <entry key="L5Spex/Shell.axaml" value="L5Spex/L5Spex.csproj" />
         <entry key="L5Spex/ViewModels/AppTreeView.axaml" value="L5Spex/L5Spex.csproj" />
+        <entry key="L5Spex/Views/AddSetDialog.axaml" value="L5Spex/L5Spex.csproj" />
         <entry key="L5Spex/Views/AppBarView.axaml" value="L5Spex/L5Spex.csproj" />
         <entry key="L5Spex/Views/AppTreeView.axaml" value="L5Spex/L5Spex.csproj" />
+        <entry key="L5Spex/Views/CreateSpecificationDialog.axaml" value="L5Spex/L5Spex.csproj" />
+        <entry key="L5Spex/Views/HeaderView.axaml" value="L5Spex/L5Spex.csproj" />
+        <entry key="L5Spex/Views/RunMenuView.axaml" value="L5Spex/L5Spex.csproj" />
+        <entry key="L5Spex/Views/ShellView.axaml" value="L5Spex/L5Spex.csproj" />
         <entry key="L5Spex/Views/SpecTreeView.axaml" value="L5Spex/L5Spex.csproj" />
         <entry key="L5Spex/Views/Styles1.axaml" value="L5Spex/L5Spex.csproj" />
         <entry key="L5Spex/Views/TemplatedControl1.axaml" value="L5Spex/L5Spex.csproj" />
         <entry key="L5Spex/Views/UserControl1.axaml" value="L5Spex/L5Spex.csproj" />
         <entry key="L5Spex/Views/UserControl2.axaml" value="L5Spex/L5Spex.csproj" />
+        <entry key="L5Spex/Views/Window1.axaml" value="L5Spex/L5Spex.csproj" />
+        <entry key="L5Spex/Views/WindowsTitleBar.axaml" value="L5Spex/L5Spex.csproj" />
       </map>
     </option>
   </component>

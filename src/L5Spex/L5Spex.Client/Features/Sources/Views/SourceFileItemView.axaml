@@ -1,0 +1,42 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:model="clr-namespace:L5Spex.Model"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="40"
+             x:Class="L5Spex.Features.Sources.Views.SourceFileItemView"
+             x:DataType="model:Source"
+             Height="40">
+
+    <Design.DataContext>
+        <model:Source />
+    </Design.DataContext>
+    
+    <Grid ColumnDefinitions="Auto,*,Auto">
+        <i:Icon Grid.Column="0"
+                Value="mdi-xml"
+                FontSize="18"
+                Foreground="#507c91"
+                Margin="10 0" />
+        <StackPanel Grid.Column="1"
+                    VerticalAlignment="Center">
+            <TextBlock Text="{Binding FileName}"
+                       FontWeight="SemiBold"/>
+            <TextBlock Text="{Binding DirectoryName}"
+                       ToolTip.Tip="{Binding DirectoryName}"
+                       Foreground="LightGray"
+                       FontSize="11"
+                       TextTrimming="CharacterEllipsis">
+            </TextBlock>
+        </StackPanel>
+        <Button Grid.Column="2"
+                Margin="10 0"
+                Padding="2"
+                Background="Transparent">
+            <i:Icon Value="mdi-dots-horizontal"
+                    FontSize="24"
+                    Foreground="#507c91" />
+        </Button>
+    </Grid>
+</UserControl>

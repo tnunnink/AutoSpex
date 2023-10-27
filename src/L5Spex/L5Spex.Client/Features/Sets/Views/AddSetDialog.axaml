@@ -1,0 +1,29 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:L5Spex.ViewModels"
+        xmlns:addSet1="clr-namespace:L5Spex.Features.Sets.AddSet"
+        xmlns:viewModels="clr-namespace:L5Spex.Features.Sets.ViewModels"
+        x:Class="L5Spex.Features.Sets.Views.AddSetDialog"
+        x:DataType="viewModels:AddSetViewModel"
+        mc:Ignorable="d" d:DesignHeight="200" d:DesignWidth="400"
+        WindowStartupLocation="CenterScreen"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaTitleBarHeightHint="-1">
+    <StackPanel VerticalAlignment="Center">
+        <TextBox Text="{Binding Name}"
+                 VerticalAlignment="Center"
+                 Width="200" />
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Content="Create"
+                    Margin="10 " 
+                    Width="100"/>
+            <Button Content="Close"
+                    Margin="10 "
+                    Command="{Binding CloseCommand}"/>
+        </StackPanel>
+
+    </StackPanel>
+</Window>
