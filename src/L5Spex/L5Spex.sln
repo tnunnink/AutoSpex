@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "L5Spex.Engine", "L5Spex.Eng
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "L5Spex.Persistence", "L5Spex.Persistence\L5Spex.Persistence.csproj", "{19256F96-3E8E-44A6-8AD7-22BA39E4FF22}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "L5Spex.Persistence.Tests", "..\..\tests\L5Spex.Persistence.Tests\L5Spex.Persistence.Tests.csproj", "{9CC1DBDB-1AF3-4A88-BCC4-8BAF7F098C43}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,8 +34,13 @@ Global
 		{19256F96-3E8E-44A6-8AD7-22BA39E4FF22}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{19256F96-3E8E-44A6-8AD7-22BA39E4FF22}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{19256F96-3E8E-44A6-8AD7-22BA39E4FF22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CC1DBDB-1AF3-4A88-BCC4-8BAF7F098C43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CC1DBDB-1AF3-4A88-BCC4-8BAF7F098C43}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CC1DBDB-1AF3-4A88-BCC4-8BAF7F098C43}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CC1DBDB-1AF3-4A88-BCC4-8BAF7F098C43}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{CC6C0D1D-7EC9-425D-8503-2580A5AFC602} = {E5B152FB-F149-4076-86EE-7923618DE6B8}
+		{9CC1DBDB-1AF3-4A88-BCC4-8BAF7F098C43} = {E5B152FB-F149-4076-86EE-7923618DE6B8}
 	EndGlobalSection
 EndGlobal

@@ -1,4 +1,4 @@
-﻿namespace L5Spex.Model;
+﻿namespace L5Spex.Client.Model;
 
 public enum SpecType
 {

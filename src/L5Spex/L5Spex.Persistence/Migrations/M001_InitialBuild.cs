@@ -4,14 +4,18 @@ using FluentMigrator;
 namespace L5Spex.Migrations;
 
 [Migration(1)]
-public class M001_InitialBuild : Migration
+public class M001_InitialBuild : AutoReversingMigration
 {
     public override void Up()
     {
         Create.Table("Source")
-            .WithColumn("SourceId").AsInt32().PrimaryKey().Identity()
-            .WithColumn("SourcePath").AsString().NotNullable().Unique();
+            .WithColumn("SourceId").AsString().PrimaryKey()
+            .WithColumn("Path").AsString().NotNullable().Unique()
+            .WithColumn("Selected").AsBoolean()
+            .WithColumn("Pinned").AsBoolean()
+            .WithColumn("Modified").AsDateTime().WithDefaultValue(SystemMethods.CurrentUTCDateTime);
 
+        /*
         Create.Table("Set")
             .WithColumn("SetId").AsString().PrimaryKey()
             .WithColumn("Name").AsString().NotNullable().Unique()
@@ -29,14 +33,6 @@ public class M001_InitialBuild : Migration
             .WithColumn("Name").AsString().NotNullable().Unique()
             .WithColumn("Description").AsString().Nullable()
             .WithColumn("Modified").AsDateTime().NotNullable().WithDefaultValue(SystemMethods.CurrentUTCDateTime)
-            .WithColumn("Created").AsDateTime().NotNullable().WithDefaultValue(SystemMethods.CurrentUTCDateTime);
-    }
-
-    public override void Down()
-    {
-        Delete.Table("Source");
-        Delete.Table("Set");
-        Delete.Table("SpecType");
-        Delete.Table("Spec");
+            .WithColumn("Created").AsDateTime().NotNullable().WithDefaultValue(SystemMethods.CurrentUTCDateTime);*/
     }
 }

@@ -5,6 +5,13 @@
       <map>
         <entry key="AvaloniaApplication1/App.axaml" value="AvaloniaApplication1/AvaloniaApplication1.csproj" />
         <entry key="AvaloniaApplication1/Views/MainWindow.axaml" value="AvaloniaApplication1/AvaloniaApplication1.csproj" />
+        <entry key="L5Spex.Client/App.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
+        <entry key="L5Spex.Client/Features/Sets/Views/AddSetDialog.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
+        <entry key="L5Spex.Client/Features/Sources/SourceMenuView.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
+        <entry key="L5Spex.Client/Features/Sources/Views/SourceFileItemView.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
+        <entry key="L5Spex.Client/Features/Sources/Views/SourceListView.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
+        <entry key="L5Spex.Client/Views/HeaderView.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
+        <entry key="L5Spex.Client/Views/ShellView.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
         <entry key="L5Spex/App.axaml" value="L5Spex/L5Spex.csproj" />
         <entry key="L5Spex/Assets/Icons.axaml" value="L5Spex/L5Spex.csproj" />
         <entry key="L5Spex/Assets/Resources1.axaml" value="L5Spex/L5Spex.csproj" />

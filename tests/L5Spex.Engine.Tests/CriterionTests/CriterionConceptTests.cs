@@ -29,12 +29,14 @@ public class CriterionConceptTests
     }
 
     [Test]
-    public void Evaluate_InvalidOperationForPropertyType_ShouldThrowArgumentException()
+    public void Evaluate_InvalidOperationForPropertyType_ShouldHaveErrorEvaluation()
     {
         var criterion = new Criterion(typeof(Tag), "Name", Operation.Between, 1, 10);
         var tag = new Tag {Name = "Test"};
 
-        FluentActions.Invoking(() => criterion.Evaluate(tag)).Should().Throw<ArgumentException>();
+        var evaluation = criterion.Evaluate(tag);
+        
+        evaluation.Result.Should().Be(ResultType.Error);
     }
 
     [Test]

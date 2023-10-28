@@ -4,11 +4,12 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using CommunityToolkit.Mvvm.Messaging;
 using FluentMigrator.Runner;
-using L5Spex.Services;
-using L5Spex.ViewModels;
+using L5Spex.Client.Services;
+using L5Spex.Client.ViewModels;
+using L5Spex.Client.Views;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace L5Spex;
+namespace L5Spex.Client;
 
 public class App : Application
 {
@@ -45,7 +46,7 @@ public class App : Application
             var migrator = Services.GetRequiredService<IMigrationRunner>();
             migrator.MigrateUp();
             
-            desktop.MainWindow = new Views.ShellView
+            desktop.MainWindow = new ShellView
             {
                 DataContext = new ShellViewModel()
             };

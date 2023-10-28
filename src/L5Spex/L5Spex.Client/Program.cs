@@ -1,9 +1,9 @@
-﻿using Avalonia;
-using System;
+﻿using System;
+using Avalonia;
 using Projektanker.Icons.Avalonia;
 using Projektanker.Icons.Avalonia.MaterialDesign;
 
-namespace L5Spex;
+namespace L5Spex.Client;
 
 internal static class Program
 {

@@ -1,10 +1,8 @@
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.Messaging;
-using L5Spex.Features.Sets.AddSet;
-using L5Spex.Messages;
-using L5Spex.Model;
+using L5Spex.Client.Features.Sets.AddSet;
 
-namespace L5Spex.Views;
+namespace L5Spex.Client.Views;
 
 public partial class ShellView : Window , IRecipient<AddSetMessage>
 {

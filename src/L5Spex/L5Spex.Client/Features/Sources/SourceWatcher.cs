@@ -2,7 +2,7 @@
 using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace L5Spex.Features.Sources;
+namespace L5Spex.Client.Features.Sources;
 
 public class SourceWater : ObservableObject
 {

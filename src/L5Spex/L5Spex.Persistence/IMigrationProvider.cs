@@ -1,6 +1,6 @@
 ﻿namespace L5Spex.Persistence;
 
-public interface IDatabaseMigrator
+public interface IMigrationProvider
 {
     public void Migrate();
 }

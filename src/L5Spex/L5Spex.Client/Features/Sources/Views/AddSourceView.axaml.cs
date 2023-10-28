@@ -1,8 +1,6 @@
-﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+﻿using Avalonia.Controls;
 
-namespace L5Spex.Features.Sources.Views;
+namespace L5Spex.Client.Features.Sources.Views;
 
 public partial class AddSourceView : UserControl
 {

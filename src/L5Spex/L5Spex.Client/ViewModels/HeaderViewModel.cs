@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using MediatR;
 
-namespace L5Spex.ViewModels;
+namespace L5Spex.Client.ViewModels;
 
 public partial class HeaderViewModel : ObservableObject
 {

@@ -2,11 +2,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:i="https://github.com/projektanker/icons.avalonia"
-             xmlns:model="clr-namespace:L5Spex.Model"
-             xmlns:sources="clr-namespace:L5Spex.Features.Sources"
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="40"
-             x:Class="L5Spex.Features.Sources.SourceMenuView"
+             x:Class="L5Spex.Client.Features.Sources.SourceMenuView"
              Background="#263b45"
              Foreground="WhiteSmoke">
     <UserControl.Styles>

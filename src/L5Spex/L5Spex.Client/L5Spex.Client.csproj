@@ -20,18 +20,11 @@
         <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.4" />
         <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.4" />
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
-        <PackageReference Include="Dapper" Version="2.0.151" />
-        <PackageReference Include="Dapper.Contrib" Version="2.0.78" />
-        <PackageReference Include="FluentMigrator" Version="3.3.2" />
-        <PackageReference Include="FluentMigrator.Console" Version="3.3.2" />
-        <PackageReference Include="FluentMigrator.Runner" Version="3.3.2" />
-        <PackageReference Include="FluentMigrator.Runner.SQLite" Version="3.3.2" />
         <PackageReference Include="L5Sharp.Extensions" Version="0.2.0" />
         <PackageReference Include="MediatR" Version="12.1.1" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
         <PackageReference Include="Projektanker.Icons.Avalonia.MaterialDesign" Version="8.2.0" />
         <PackageReference Include="SukiUI" Version="5.0.4" />
-        <PackageReference Include="System.Data.SQLite.Core" Version="1.0.118" />
     </ItemGroup>
 
     <ItemGroup>
@@ -74,5 +67,10 @@
       <AvaloniaResource Include="Assets\Images\Icon.ico" />
       <None Remove="Assets\Images\logo.png" />
       <AvaloniaResource Include="Assets\Images\logo.png" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\L5Spex.Engine\L5Spex.Engine.csproj" />
+      <ProjectReference Include="..\L5Spex.Persistence\L5Spex.Persistence.csproj" />
     </ItemGroup>
 </Project>

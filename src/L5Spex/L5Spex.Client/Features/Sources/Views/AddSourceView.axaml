@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:i="https://github.com/projektanker/icons.avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="L5Spex.Features.Sources.Views.AddSourceView">
+             x:Class="L5Spex.Client.Features.Sources.Views.AddSourceView">
     <Button 
             Background="Transparent"
             Width="30" Height="30"

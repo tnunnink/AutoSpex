@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace L5Spex.Model;
+namespace L5Spex.Client.Model;
 
 public partial class Set : ObservableValidator
 {

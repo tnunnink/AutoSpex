@@ -2,15 +2,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:model="clr-namespace:L5Spex.Model"
              xmlns:i="https://github.com/projektanker/icons.avalonia"
+             xmlns:model1="clr-namespace:L5Spex.Client.Model"
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="40"
-             x:Class="L5Spex.Features.Sources.Views.SourceFileItemView"
-             x:DataType="model:Source"
+             x:Class="L5Spex.Client.Features.Sources.Views.SourceFileItemView"
+             x:DataType="model1:Source"
              Height="40">
 
     <Design.DataContext>
-        <model:Source />
+        <model1:Source />
     </Design.DataContext>
     
     <Grid ColumnDefinitions="Auto,*,Auto">

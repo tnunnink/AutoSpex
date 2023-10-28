@@ -1,7 +1,7 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              RequestedThemeVariant="Light"
-             x:Class="L5Spex.App">
+             x:Class="L5Spex.Client.App">
     
     <!--<Application.DataTemplates>
         <local:ViewLocator />
@@ -16,7 +16,7 @@
                                        ChromeMediumLow="#282e33" />
             </FluentTheme.Palettes>-->
         </FluentTheme>
-        <StyleInclude Source="avares://L5Spex/Resources/Icons.axaml" />
+        <StyleInclude Source="avares://L5Spex.Client/Resources/Icons.axaml" />
     </Application.Styles>
     
     <Application.Resources>

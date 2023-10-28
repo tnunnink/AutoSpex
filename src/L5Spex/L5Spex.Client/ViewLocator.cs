@@ -3,7 +3,7 @@ using System.ComponentModel;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 
-namespace L5Spex;
+namespace L5Spex.Client;
 
 public class ViewLocator : IDataTemplate
 {

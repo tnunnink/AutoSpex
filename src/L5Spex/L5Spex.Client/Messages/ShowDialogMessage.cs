@@ -1,7 +1,7 @@
 ﻿using Avalonia.Controls;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 
-namespace L5Spex.Messages;
+namespace L5Spex.Client.Messages;
 
 public class ShowDialogMessage<TResult> : AsyncRequestMessage<TResult>
 {

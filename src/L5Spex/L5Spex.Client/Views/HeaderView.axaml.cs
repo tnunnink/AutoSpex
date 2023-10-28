@@ -1,7 +1,7 @@
 ﻿using Avalonia.Controls;
 using CommunityToolkit.Mvvm.Input;
 
-namespace L5Spex.Views;
+namespace L5Spex.Client.Views;
 
 public partial class HeaderView : UserControl
 {

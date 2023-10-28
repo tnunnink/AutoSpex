@@ -7,7 +7,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MediatR;
 
-namespace L5Spex.Features.Sets.ViewModels;
+namespace L5Spex.Client.Features.Sets.ViewModels;
 
 public partial class AddSetViewModel : ObservableValidator
 {

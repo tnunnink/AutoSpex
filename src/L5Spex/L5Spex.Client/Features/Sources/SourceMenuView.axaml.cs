@@ -1,7 +1,6 @@
 ﻿using Avalonia.Controls;
-using Microsoft.Extensions.DependencyInjection;
 
-namespace L5Spex.Features.Sources;
+namespace L5Spex.Client.Features.Sources;
 
 public partial class SourceMenuView : UserControl
 {

@@ -2,7 +2,7 @@
 using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace L5Spex.Model;
+namespace L5Spex.Client.Model;
 
 public class Source : ObservableObject
 {

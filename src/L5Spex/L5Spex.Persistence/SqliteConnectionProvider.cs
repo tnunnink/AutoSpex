@@ -1,18 +1,13 @@
 ﻿using System.Data;
 using System.Data.SQLite;
 
-namespace L5Spex.Client.Services;
+namespace L5Spex.Persistence;
 
-public interface IConnectionProvider
-{
-    IDbConnection Connect();
-}
-
-public class ConnectionProvider : IConnectionProvider
+public class SqliteConnectionProvider : IConnectionProvider
 {
     private readonly string _connectionString;
 
-    public ConnectionProvider(string connectionString)
+    public SqliteConnectionProvider(string connectionString)
     {
         _connectionString = connectionString;
     }

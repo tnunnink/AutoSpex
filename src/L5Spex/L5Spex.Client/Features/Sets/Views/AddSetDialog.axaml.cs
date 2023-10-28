@@ -1,6 +1,6 @@
 ﻿using Avalonia.Controls;
 
-namespace L5Spex.Features.Sets.Views;
+namespace L5Spex.Client.Features.Sets.Views;
 
 public partial class AddSetDialog : Window
 {

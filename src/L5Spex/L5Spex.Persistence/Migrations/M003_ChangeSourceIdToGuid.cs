@@ -2,7 +2,6 @@
 
 namespace L5Spex.Migrations;
 
-[Migration(3)]
 public class M003_ChangeSourceIdToGuid : Migration
 {
     public override void Up()

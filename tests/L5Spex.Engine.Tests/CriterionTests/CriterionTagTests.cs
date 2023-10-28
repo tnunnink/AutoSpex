@@ -29,19 +29,6 @@ public class CriterionTagTests
         evaluation.Result.Should().Be(ResultType.Passed);
     }
     
-    /*[Test]
-    public void Evaluate_TagNameAndValueEqualTo_IsEqualTo_ShouldBeTrue()
-    {
-        var hasName = new Criterion(typeof(Tag), "Name", Operation.EqualTo, "Test");
-        var hasValue = new Criterion(typeof(Tag), "Value", Operation.EqualTo, 1000);
-        var tag = new Tag {Name = "Test", Value = 1000};
-        var criterion = hasName & hasValue;
-        
-        var result = criterion.Compile().Invoke(tag);
-
-        evaluation.Result.Should().Be(ResultType.Passed);
-    }*/
-    
     [Test]
     public void Evaluate_TagRadixEqualTo_IsEqualTo_ShouldBeTrue()
     {

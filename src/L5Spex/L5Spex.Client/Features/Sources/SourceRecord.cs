@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace L5Spex.Features.Sources;
+namespace L5Spex.Client.Features.Sources;
 
 public record SourceRecord(Guid Id, string Path, bool Selected, bool Pinned)
 {

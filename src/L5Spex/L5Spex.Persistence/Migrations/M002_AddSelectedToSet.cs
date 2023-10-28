@@ -3,7 +3,6 @@ using FluentMigrator;
 
 namespace L5Spex.Migrations;
 
-[Migration(2)]
 public class M002_AddSelectedToSource : Migration
 {
     public override void Up()

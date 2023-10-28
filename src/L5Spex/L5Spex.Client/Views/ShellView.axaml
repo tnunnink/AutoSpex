@@ -2,18 +2,18 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:vm="clr-namespace:L5Spex.ViewModels"
-        xmlns:views="clr-namespace:L5Spex.Views"
+        xmlns:viewModels="clr-namespace:L5Spex.Client.ViewModels"
+        xmlns:views1="clr-namespace:L5Spex.Client.Views"
         Width="1200" Height="800" 
         WindowStartupLocation="CenterScreen"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaChromeHints="NoChrome"
         ExtendClientAreaTitleBarHeightHint="-1"
         mc:Ignorable="d"
-        x:Class="L5Spex.Views.ShellView"
+        x:Class="L5Spex.Client.Views.ShellView"
         Title="L5Spex"
        
-        x:DataType="vm:ShellViewModel">
+        x:DataType="viewModels:ShellViewModel">
     <NativeMenu.Menu>
         <NativeMenu>
             <NativeMenuItem Header="File">
@@ -44,7 +44,7 @@
     <DockPanel HorizontalAlignment="Stretch"
                VerticalAlignment="Stretch"
                Name="ContentWrapper">
-        <views:HeaderView />
+        <views1:HeaderView />
         <DockPanel Background="Transparent">
             <StackPanel HorizontalAlignment="Center"
                         VerticalAlignment="Center"

@@ -1,4 +1,4 @@
-﻿namespace L5Spex.ViewModels;
+﻿namespace L5Spex.Client.ViewModels;
 
 public static class DesignViewModels
 {

@@ -1,3 +1,3 @@
 ﻿namespace L5Spex.Persistence.Records;
 
-public record SourceRecord(Guid Id, string Path, bool Selected, bool Pinned);
+public record SourceRecord(Guid SourceId, string Path, bool Selected, bool Pinned, DateTime Modified);
