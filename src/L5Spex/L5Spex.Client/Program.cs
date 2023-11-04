@@ -1,27 +1,31 @@
-﻿using System;
-using Avalonia;
+﻿using Avalonia;
+using System;
+using JetBrains.Annotations;
 using Projektanker.Icons.Avalonia;
+using Projektanker.Icons.Avalonia.FontAwesome;
 using Projektanker.Icons.Avalonia.MaterialDesign;
 
 namespace L5Spex.Client;
 
-internal static class Program
+[UsedImplicitly]
+public static class Program
 {
-    // Initialization code. Don't use any Avalonia, third-party APIs or any
-    // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
-    // yet and stuff might break.
+    /// <summary>
+    /// Provides the main entry point of the application.
+    /// </summary>
+    /// <param name="args">The string arguments.</param>
     [STAThread]
     public static void Main(string[] args)
-    {
-        var builder = BuildAvaloniaApp();
-            
-        builder.StartWithClassicDesktopLifetime(args);
-    }
+        => BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
 
-    // Avalonia configuration, don't remove; also used by visual designer.
-    private static AppBuilder BuildAvaloniaApp()
+    /// <summary>
+    /// Creates an Avalonia application builder.
+    /// </summary>
+    /// <returns>The <see cref="AppBuilder"/> object that was created.</returns>
+    public static AppBuilder BuildAvaloniaApp()
     {
         IconProvider.Current
+            .Register<FontAwesomeIconProvider>()
             .Register<MaterialDesignIconProvider>();
         
         return AppBuilder.Configure<App>()

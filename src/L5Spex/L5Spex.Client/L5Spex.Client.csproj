@@ -1,76 +1,75 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net7.0</TargetFramework>
-        <Nullable>disable</Nullable>
+        <TargetFramework>net6.0</TargetFramework>
+        <Nullable>enable</Nullable>
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
         <LangVersion>11</LangVersion>
     </PropertyGroup>
 
+    <!--<Choose>
+        <When Condition="'$(Configuration)' == 'Debug'">
+            <ItemGroup>
+                <None Include="appsettings.dev.json" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
+                <None Include="appsettings.prod.json" CopyToOutputDirectory="Never" CopyToPublishDirectory="Never" />
+            </ItemGroup>
+        </When>
+        <When Condition="'$(Configuration)' == 'Release'">
+            <ItemGroup>
+                <None Include="appsettings.dev.json" CopyToOutputDirectory="Never" CopyToPublishDirectory="Never" />
+                <None Include="appsettings.prod.json" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
+            </ItemGroup>
+        </When>
+    </Choose>-->
+
     <ItemGroup>
-        <TrimmerRootAssembly Include="Avalonia.Themes.Fluent" />
+        <TrimmerRootAssembly Include="Avalonia.Themes.Fluent"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="11.0.4" />
-        <PackageReference Include="Avalonia.Desktop" Version="11.0.4" />
+        <PackageReference Include="ActiproSoftware.Controls.Avalonia" Version="23.1.0" />
+        <PackageReference Include="ActiproSoftware.Controls.Avalonia.Themes.ColorPicker" Version="23.1.0" />
+        <PackageReference Include="ActiproSoftware.Controls.Avalonia.Themes.DataGrid" Version="23.1.0" />
+        <PackageReference Include="Avalonia" Version="11.0.5" />
+        <PackageReference Include="Avalonia.Desktop" Version="11.0.5" />
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.4" />
-        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.4" />
-        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
-        <PackageReference Include="L5Sharp.Extensions" Version="0.2.0" />
+        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.5" />
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+        <PackageReference Include="Dapper" Version="2.1.15" />
+        <PackageReference Include="FluentMigrator" Version="3.3.2" />
+        <PackageReference Include="FluentMigrator.Runner" Version="3.3.2" />
+        <PackageReference Include="FluentMigrator.Runner.SQLite" Version="3.3.2" />
+        <PackageReference Include="FluentValidation" Version="11.8.0" />
+        <PackageReference Include="JetBrains.Annotations" Version="2023.2.0" />
+        <PackageReference Include="Lamar" Version="12.0.2" />
+        <PackageReference Include="LanguageExt.Core" Version="4.4.7" />
         <PackageReference Include="MediatR" Version="12.1.1" />
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
-        <PackageReference Include="Projektanker.Icons.Avalonia.MaterialDesign" Version="8.2.0" />
-        <PackageReference Include="SukiUI" Version="5.0.4" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Remove="Spex.db-journal" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Compile Update="Views\SpecTreeView.axaml.cs">
-        <DependentUpon>AppTreeView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Features\SourceFiles\RunMenuView.axaml.cs">
-        <DependentUpon>RunMenuView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\ShellView.axaml.cs">
-        <DependentUpon>Shell.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Dialogs\AddSet\AddSetDialog.axaml.cs">
-        <DependentUpon>AddSetDialog.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Features\Sets\Views\AddSetDialog.axaml.cs">
-        <DependentUpon>AddSetDialog.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Features\Sources\Views\SourceFileItemView.axaml.cs">
-        <DependentUpon>SourceFileItemView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Features\Sources\Views\SourceListView.axaml.cs">
-        <DependentUpon>SourceListView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Remove="Assets\Images\Icon.ico" />
-      <AvaloniaResource Include="Assets\Images\Icon.ico" />
-      <None Remove="Assets\Images\logo.png" />
-      <AvaloniaResource Include="Assets\Images\logo.png" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
+        <PackageReference Include="Projektanker.Icons.Avalonia.FontAwesome" Version="8.3.0" />
+        <PackageReference Include="Projektanker.Icons.Avalonia.MaterialDesign" Version="8.3.0" />
+        <PackageReference Include="System.Data.SQLite.Core" Version="1.0.118" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\L5Spex.Engine\L5Spex.Engine.csproj" />
-      <ProjectReference Include="..\L5Spex.Persistence\L5Spex.Persistence.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Shell.axaml.cs">
+        <DependentUpon>Shell.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\SpecTreeView.axaml.cs">
+        <DependentUpon>SpecTreeView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="appsettings.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 </Project>

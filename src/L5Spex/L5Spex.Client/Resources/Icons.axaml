@@ -1,22 +1,46 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:a="http://schemas.actiprosoftware.com/avaloniaui">
     <Design.PreviewWith>
-       <WrapPanel Orientation="Horizontal" ItemWidth="36" ItemHeight="36" Width="800">
+       <WrapPanel Orientation="Horizontal" Width="800" Margin="5">
 			<WrapPanel.Styles>
 				<Styles>
 					<Style Selector="PathIcon">
-						<Setter Property="Width" Value="26"/>
-						<Setter Property="Height" Value="26"/>
+						<Setter Property="Margin" Value="3"/>
+						<Setter Property="Width" Value="10"/>
+						<Setter Property="Height" Value="10"/>
 					</Style>
 				</Styles>
 			</WrapPanel.Styles>
+			<PathIcon Data="{DynamicResource Icon.Add}" />
+			<PathIcon Data="{DynamicResource Icon.Cog}" />
 			<PathIcon Data="{DynamicResource Icon.Download}" />
+			<PathIcon Data="{DynamicResource Icon.Dots}" />
+			<PathIcon Data="{DynamicResource Icon.Environment}" />
+			<PathIcon Data="{DynamicResource Icon.History}" />
+			<PathIcon Data="{DynamicResource Icon.Cube}" />
+			<PathIcon Data="{DynamicResource Icon.Folder}" Foreground="{a:ThemeResource ButtonForegroundBrushSolidDisabled}"/>
+			<PathIcon Data="{DynamicResource Icon.Clipboard}" Height="10" Width="10" Foreground="SteelBlue"/>
+			<PathIcon Data="{DynamicResource Icon.Clipboard.Check}" Height="10" Width="10" Foreground="SeaGreen" />
+			<PathIcon Data="{DynamicResource Icon.Clipboard.Alert}" Height="10" Width="10" Foreground="IndianRed"/>
+			<PathIcon Data="{DynamicResource Icon.Xml}" Height="10" Width="10" />
 		</WrapPanel>
     </Design.PreviewWith>
 	
     <Style>
         <Style.Resources>
-            <StreamGeometry x:Key="Icon.Download">M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z</StreamGeometry>
+	        <StreamGeometry x:Key="Icon.Add">M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z</StreamGeometry>
+	        <StreamGeometry x:Key="Icon.Cog">M19.59,15.5L17.77,14.2C18.07,13.12 18.09,11.95 17.77,10.78L19.59,9.5L18.14,7L16.11,7.92C15.32,7.12 14.32,6.5 13.15,6.21L12.95,4H10.05L9.85,6.21C8.68,6.5 7.68,7.12 6.89,7.92L4.86,7L3.41,9.5L5.23,10.78C4.91,11.95 4.93,13.12 5.23,14.2L3.41,15.5L4.86,18L6.89,17.07C7.68,17.86 8.68,18.46 9.85,18.77L10.05,21H12.95L13.15,18.77C14.32,18.46 15.32,17.86 16.11,17.07L18.14,18L19.59,15.5M13.5,3C13.77,3 14,3.2 14,3.46L14.18,5.5C14.94,5.78 15.62,6.19 16.23,6.68L18.08,5.81C18.31,5.69 18.6,5.77 18.74,6L20.74,9.5C20.88,9.71 20.8,10 20.58,10.15L18.91,11.32C19.04,12.12 19.03,12.91 18.91,13.68L20.58,14.85C20.8,15 20.88,15.29 20.74,15.5L18.74,19C18.6,19.21 18.31,19.29 18.08,19.17L16.23,18.31C15.62,18.8 14.94,19.2 14.18,19.5L14,21.5C14,21.79 13.77,22 13.5,22H9.5C9.22,22 9,21.78 9,21.5L8.82,19.5C8.06,19.2 7.38,18.8 6.77,18.31L4.92,19.17C4.69,19.29 4.4,19.21 4.26,19L2.26,15.5C2.12,15.29 2.2,15 2.42,14.85L4.09,13.68C3.97,12.91 3.96,12.12 4.09,11.32L2.42,10.15C2.2,10 2.12,9.71 2.26,9.5L4.26,6C4.4,5.77 4.69,5.69 4.92,5.81L6.77,6.68C7.38,6.19 8.06,5.78 8.82,5.5L9,3.46C9,3.2 9.23,3 9.5,3H13.5M11.5,9C13.43,9 15,10.57 15,12.5C15,14.43 13.43,16 11.5,16C9.57,16 8,14.43 8,12.5C8,10.57 9.57,9 11.5,9M11.5,10C10.12,10 9,11.12 9,12.5C9,13.88 10.12,15 11.5,15C12.88,15 14,13.88 14,12.5C14,11.12 12.88,10 11.5,10Z</StreamGeometry>
+	        <StreamGeometry x:Key="Icon.Cube">M21,16.5C21,16.88 20.79,17.21 20.47,17.38L12.57,21.82C12.41,21.94 12.21,22 12,22C11.79,22 11.59,21.94 11.43,21.82L3.53,17.38C3.21,17.21 3,16.88 3,16.5V7.5C3,7.12 3.21,6.79 3.53,6.62L11.43,2.18C11.59,2.06 11.79,2 12,2C12.21,2 12.41,2.06 12.57,2.18L20.47,6.62C20.79,6.79 21,7.12 21,7.5V16.5M12,4.15L6.04,7.5L12,10.85L17.96,7.5L12,4.15M5,15.91L11,19.29V12.58L5,9.21V15.91M19,15.91V9.21L13,12.58V19.29L19,15.91Z</StreamGeometry>
+	        <StreamGeometry x:Key="Icon.Download">M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z</StreamGeometry>
+	        <StreamGeometry x:Key="Icon.Dots">M16,12A2,2 0 0,1 18,10A2,2 0 0,1 20,12A2,2 0 0,1 18,14A2,2 0 0,1 16,12M10,12A2,2 0 0,1 12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12M4,12A2,2 0 0,1 6,10A2,2 0 0,1 8,12A2,2 0 0,1 6,14A2,2 0 0,1 4,12Z</StreamGeometry>
+	        <StreamGeometry x:Key="Icon.Environment">M21 2H3C1.9 2 1 2.9 1 4V20C1 21.1 1.9 22 3 22H21C22.1 22 23 21.1 23 20V4C23 2.9 22.1 2 21 2M21 20H3V6H21V20M16.6 8C18.1 9.3 19 11.1 19 13C19 14.9 18.1 16.7 16.6 18L15 17.4C16.3 16.4 17 14.7 17 13S16.3 9.6 15 8.6L16.6 8M7.4 8L9 8.6C7.7 9.6 7 11.3 7 13S7.7 16.4 9 17.4L7.4 18C5.9 16.7 5 14.9 5 13S5.9 9.3 7.4 8M12.1 12L13.5 10H15L12.8 13L14.1 16H12.8L12 14L10.6 16H9L11.3 12.9L10 10H11.3L12.1 12Z</StreamGeometry>
+	        <StreamGeometry x:Key="Icon.Folder">M20,18H4V8H20M20,6H12L10,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V8C22,6.89 21.1,6 20,6Z</StreamGeometry>
+	        <StreamGeometry x:Key="Icon.History">M13.5,8H12V13L16.28,15.54L17,14.33L13.5,12.25V8M13,3A9,9 0 0,0 4,12H1L4.96,16.03L9,12H6A7,7 0 0,1 13,5A7,7 0 0,1 20,12A7,7 0 0,1 13,19C11.07,19 9.32,18.21 8.06,16.94L6.64,18.36C8.27,20 10.5,21 13,21A9,9 0 0,0 22,12A9,9 0 0,0 13,3</StreamGeometry>
+	        <StreamGeometry x:Key="Icon.Clipboard">M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M7,7H17V5H19V19H5V5H7V7Z</StreamGeometry>
+	        <StreamGeometry x:Key="Icon.Clipboard.Check">M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M7,7H17V5H19V19H5V5H7V7M7.5,13.5L9,12L11,14L15.5,9.5L17,11L11,17L7.5,13.5Z</StreamGeometry>
+	        <StreamGeometry x:Key="Icon.Clipboard.Alert">M19,3A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2 0 0,1 3,19V5A2,2 0 0,1 5,3H9.18C9.6,1.84 10.7,1 12,1C13.3,1 14.4,1.84 14.82,3H19M12,3A1,1 0 0,0 11,4A1,1 0 0,0 12,5A1,1 0 0,0 13,4A1,1 0 0,0 12,3M7,7V5H5V19H19V5H17V7H7M11,9H13V13.5H11V9M11,15H13V17H11V15Z</StreamGeometry>
+	        <StreamGeometry x:Key="Icon.Xml">M12.89,3L14.85,3.4L11.11,21L9.15,20.6L12.89,3M19.59,12L16,8.41V5.58L22.42,12L16,18.41V15.58L19.59,12M1.58,12L8,5.58V8.41L4.41,12L8,15.58V18.41L1.58,12Z</StreamGeometry>
         </Style.Resources>
     </Style>
 </Styles>

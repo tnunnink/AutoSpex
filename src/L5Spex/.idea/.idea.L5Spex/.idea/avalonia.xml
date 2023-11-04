@@ -3,15 +3,47 @@
   <component name="AvaloniaProject">
     <option name="projectPerEditor">
       <map>
+        <entry key="Avalonia.Test/App.axaml" value="Avalonia.Test/Avalonia.Test.csproj" />
+        <entry key="Avalonia.Test/MainWindow.axaml" value="Avalonia.Test/Avalonia.Test.csproj" />
+        <entry key="Avalonia.Test/Test.axaml" value="Avalonia.Test/Avalonia.Test.csproj" />
         <entry key="AvaloniaApplication1/App.axaml" value="AvaloniaApplication1/AvaloniaApplication1.csproj" />
         <entry key="AvaloniaApplication1/Views/MainWindow.axaml" value="AvaloniaApplication1/AvaloniaApplication1.csproj" />
         <entry key="L5Spex.Client/App.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
+        <entry key="L5Spex.Client/Components/Sets/AddSetDialog.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
+        <entry key="L5Spex.Client/Components/Sources/Views/SourceFileItemView.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
+        <entry key="L5Spex.Client/Components/Sources/Views/SourceListView.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
+        <entry key="L5Spex.Client/Features/AddSet/AddSetDialog.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
+        <entry key="L5Spex.Client/Features/AddSetFeature/AddSetDialog.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
+        <entry key="L5Spex.Client/Features/Sets/AddSetDialog.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
         <entry key="L5Spex.Client/Features/Sets/Views/AddSetDialog.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
+        <entry key="L5Spex.Client/Features/SourceMenu/SourceFileItemView.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
+        <entry key="L5Spex.Client/Features/SourceMenu/SourceListView.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
+        <entry key="L5Spex.Client/Features/SourceMenu/Test.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
         <entry key="L5Spex.Client/Features/Sources/SourceMenuView.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
         <entry key="L5Spex.Client/Features/Sources/Views/SourceFileItemView.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
         <entry key="L5Spex.Client/Features/Sources/Views/SourceListView.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
+        <entry key="L5Spex.Client/Features/SpecificationTree/SpecTreeView.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
+        <entry key="L5Spex.Client/Features/SpecificationTree/SpecificationTree.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
+        <entry key="L5Spex.Client/Features/SpecificationTree/Test.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
+        <entry key="L5Spex.Client/MainWindow.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
+        <entry key="L5Spex.Client/Resources/Brushes.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
+        <entry key="L5Spex.Client/Resources/Icons.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
+        <entry key="L5Spex.Client/Resources/Styles.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
+        <entry key="L5Spex.Client/Shell.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
+        <entry key="L5Spex.Client/Views/AppDrawerView.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
+        <entry key="L5Spex.Client/Views/AppView.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
+        <entry key="L5Spex.Client/Views/AppWindow.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
+        <entry key="L5Spex.Client/Views/ApplicationView.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
         <entry key="L5Spex.Client/Views/HeaderView.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
+        <entry key="L5Spex.Client/Views/MainView.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
+        <entry key="L5Spex.Client/Views/NodeDetailView.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
+        <entry key="L5Spex.Client/Views/RootView.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
+        <entry key="L5Spex.Client/Views/RootWindow.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
+        <entry key="L5Spex.Client/Views/Shell.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
         <entry key="L5Spex.Client/Views/ShellView.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
+        <entry key="L5Spex.Client/Views/SpecTreeView.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
+        <entry key="L5Spex.Client/Views/Test.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
+        <entry key="L5Spex.Client/Views/Window1.axaml" value="L5Spex.Client/L5Spex.Client.csproj" />
         <entry key="L5Spex/App.axaml" value="L5Spex/L5Spex.csproj" />
         <entry key="L5Spex/Assets/Icons.axaml" value="L5Spex/L5Spex.csproj" />
         <entry key="L5Spex/Assets/Resources1.axaml" value="L5Spex/L5Spex.csproj" />
