@@ -1,0 +1,52 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:a="http://schemas.actiprosoftware.com/avaloniaui">
+    <Design.PreviewWith>
+        <Border Padding="20">
+           <TabControl Classes="details">
+               <TabControl.Styles>
+                   <Style Selector="TabItem">
+                       <Style Selector="^:selected">
+                           <Setter Property="Background" Value="WhiteSmoke" />
+                           <Setter Property="Foreground" Value="Black" />
+                       </Style>
+                       <Style Selector="^:selected /template/ Border#PART_LayoutRoot">
+                           <Setter Property="BorderThickness" Value="1 0 1 0" />
+                           <Setter Property="BorderBrush" Value="Gray" />
+                       </Style>
+                       <Style Selector="^:selected /template/ Border#PART_SelectedPipe">
+                           <Setter Property="IsVisible" Value="True" />
+                           <Setter Property="BorderThickness" Value="0 2 0 0" />
+                           <Setter Property="BorderBrush" Value="BlueViolet"></Setter>
+                       </Style>
+                   </Style>
+               </TabControl.Styles>
+               <TabItem>
+                   <TabItem.Header>Item 1</TabItem.Header>
+                   <TabItem.Content>
+                       <StackPanel Margin="20">
+                           <PathIcon Data="{StaticResource Icon.Xml}" />
+                           <TextBlock Text="This is the content for the item" />
+                           
+                           <Panel>
+                               <TextBlock Text="Test" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10"/>
+                               <Border BorderThickness="3"
+                                       BorderBrush="Blue"
+                                       CornerRadius="5"
+                                       IsVisible="True"/>
+                           </Panel>
+                       </StackPanel>
+                   </TabItem.Content>
+               </TabItem>
+               <TabItem Header="Item 2"/>
+               <TabItem Header="Item 3"/>
+               
+           </TabControl>
+        </Border>
+    </Design.PreviewWith>
+
+    <Style Selector="TabControl.details">
+        <Setter Property="Padding" Value="0" />
+        <!--<Setter Property="BorderThickness" Value="0"></Setter>-->
+    </Style>
+</Styles>

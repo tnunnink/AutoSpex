@@ -1,0 +1,129 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net6.0</TargetFramework>
+        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+        <Nullable>enable</Nullable>
+        <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+        <ApplicationManifest>app.manifest</ApplicationManifest>
+        <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+        <LangVersion>11</LangVersion>
+    </PropertyGroup>
+
+    <!--<Choose>
+        <When Condition="'$(Configuration)' == 'Debug'">
+            <ItemGroup>
+                <None Include="appsettings.dev.json" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
+                <None Include="appsettings.prod.json" CopyToOutputDirectory="Never" CopyToPublishDirectory="Never" />
+            </ItemGroup>
+        </When>
+        <When Condition="'$(Configuration)' == 'Release'">
+            <ItemGroup>
+                <None Include="appsettings.dev.json" CopyToOutputDirectory="Never" CopyToPublishDirectory="Never" />
+                <None Include="appsettings.prod.json" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
+            </ItemGroup>
+        </When>
+    </Choose>-->
+
+    <ItemGroup>
+        <TrimmerRootAssembly Include="Avalonia.Themes.Fluent"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="ActiproSoftware.Controls.Avalonia" Version="23.1.2" />
+        <PackageReference Include="ActiproSoftware.Controls.Avalonia.Pro" Version="23.1.2" />
+        <PackageReference Include="ActiproSoftware.Controls.Avalonia.Themes.ColorPicker" Version="23.1.2" />
+        <PackageReference Include="ActiproSoftware.Controls.Avalonia.Themes.DataGrid" Version="23.1.2" />
+        <PackageReference Include="Avalonia" Version="11.0.6" />
+        <PackageReference Include="Avalonia.Controls.ColorPicker" Version="11.0.6" />
+        <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.0.6" />
+        <PackageReference Include="Avalonia.Controls.TreeDataGrid" Version="11.0.1" />
+        <PackageReference Include="Avalonia.Desktop" Version="11.0.6" />
+        <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.6" />
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.6" />
+        <PackageReference Include="Avalonia.Xaml.Behaviors" Version="11.0.5" />
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+        <PackageReference Include="Dapper" Version="2.1.24" />
+        <PackageReference Include="DynamicData" Version="8.1.1" />
+        <PackageReference Include="FluentMigrator" Version="3.3.2" />
+        <PackageReference Include="FluentMigrator.Runner" Version="3.3.2" />
+        <PackageReference Include="FluentMigrator.Runner.SQLite" Version="3.3.2" />
+        <PackageReference Include="FluentResults" Version="3.15.2" />
+        <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
+        <PackageReference Include="Lamar" Version="12.0.2" />
+        <PackageReference Include="MediatR" Version="12.1.1" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
+        <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
+        <PackageReference Include="Serilog.Sinks.SQLite" Version="6.0.0" />
+        <PackageReference Include="System.Data.SQLite.Core" Version="1.0.118" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\AutoSpex.Engine\AutoSpex.Engine.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Shell.axaml.cs">
+        <DependentUpon>Shell.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Features\Shared\DetailsView.axaml.cs">
+        <DependentUpon>DetailsView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Parts\NavigationView.axaml.cs">
+        <DependentUpon>NavigationView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Parts\DetailsView.axaml.cs">
+        <DependentUpon>DetailsView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Parts\AppView.axaml.cs">
+        <DependentUpon>AppView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Pages\ProjectPage.axaml.cs">
+        <DependentUpon>ProjectView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Features\StatusBar\StatusBarView.axaml.cs">
+        <DependentUpon>StatusBarView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Features\Projects\Views\LauncherView.axaml.cs">
+        <DependentUpon>LauncherView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Features\Projects\Views\NewProjectView.axaml.cs">
+        <DependentUpon>NewProjectView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Features\Specifications\Views\SpecificationView.axaml.cs">
+        <DependentUpon>SpecificationView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Features\Specifications\Views\SpecTreeView.axaml.cs">
+        <DependentUpon>SpecTreeView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="appsettings.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Remove="AutoSpex.Client.csproj.DotSettings" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Shared\Assets\Images\logo.png" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <AvaloniaResource Include="Resources\Images\logo.png" />
+      <None Remove="Resources\Images\box-arrow-up-right.svg" />
+      <AvaloniaResource Include="Resources\Images\box-arrow-up-right.svg" />
+    </ItemGroup>
+</Project>

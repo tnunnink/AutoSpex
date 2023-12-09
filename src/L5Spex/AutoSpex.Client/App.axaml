@@ -1,0 +1,12 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             x:Class="AutoSpex.Client.App">
+    <Application.Styles>
+        <a:ModernTheme Includes="All" />
+        <StyleInclude Source="Resources/Styles.axaml" />
+        <StyleInclude Source="Resources/Icons/OutlinedIcons.axaml" />
+        <StyleInclude Source="Resources/Icons/FilledIcons.axaml" />
+        <StyleInclude Source="Resources/Icons/RegularIcons.axaml" />
+    </Application.Styles>
+</Application>

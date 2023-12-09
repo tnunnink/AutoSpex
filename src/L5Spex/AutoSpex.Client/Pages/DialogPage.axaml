@@ -1,0 +1,30 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+        x:Class="AutoSpex.Client.Pages.DialogPage"
+        WindowStartupLocation="CenterOwner"
+        SizeToContent="WidthAndHeight"
+        ExtendClientAreaChromeHints="SystemChrome"
+        ExtendClientAreaToDecorationsHint="True"
+        CanResize="False">
+    <DockPanel>
+        <!--<a:ChromedTitleBar DockPanel.Dock="Top" Height="40"
+                           IsMaximizeButtonAllowed="False"
+                           IsMinimizeButtonAllowed="False">
+            <a:ChromedTitleBar.LeftContent>
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="../Resources/Images/logo.png"
+                           Height="20" Width="20" Margin="10 0" />
+                    <TextBlock Text="{Binding $parent[Window].Title}"
+                               VerticalAlignment="Center" />
+                </StackPanel>
+            </a:ChromedTitleBar.LeftContent>
+        </a:ChromedTitleBar>-->
+
+        <Border Background="Transparent"
+                BorderBrush="{a:ThemeResource Container2BorderBrush}"
+                BorderThickness="0 1 0 0">
+            <ContentControl x:Name="Content" />
+        </Border>
+    </DockPanel>
+</Window>

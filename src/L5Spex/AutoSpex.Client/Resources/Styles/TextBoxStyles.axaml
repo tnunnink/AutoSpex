@@ -1,0 +1,28 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:a="http://schemas.actiprosoftware.com/avaloniaui">
+    <Design.PreviewWith>
+        <Border Padding="30">
+            <TextBox Classes="folder"
+                     Watermark="Enter Value Here" Width="200" />
+        </Border>
+    </Design.PreviewWith>
+
+    <Style Selector="TextBox.folder">
+        <Setter Property="InnerRightContent">
+            <Template>
+                <Button DockPanel.Dock="Right"
+                        Classes="icon"
+                        Theme="{a:ControlTheme ButtonInvisible}">
+                    <PathIcon Data="{StaticResource Icon.Outlined.Folder}"
+                              Height="16" Width="16"
+                              Foreground="{a:ThemeResource ControlBorderBrushOutline}" />
+                </Button>
+            </Template>
+        </Setter>
+        
+        <Style Selector="^.pointerover">
+            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+        </Style>
+    </Style>
+</Styles>

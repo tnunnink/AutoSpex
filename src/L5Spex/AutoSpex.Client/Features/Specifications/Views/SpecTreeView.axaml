@@ -1,0 +1,148 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:f="clr-namespace:AutoSpex.Client.Features.Specifications"
+             xmlns:nodes="clr-namespace:AutoSpex.Client.Features.Nodes"
+             d:DesignHeight="800" d:DesignWidth="400"
+             x:Class="AutoSpex.Client.Features.Specifications.SpecTreeView"
+             x:DataType="f:SpecTreeViewModel"
+             Background="{a:ThemeResource Container2BackgroundBrush}"
+             BorderBrush="{a:ThemeResource Container2BorderBrush}"
+             BorderThickness="1 0 0 0">
+
+    <Grid RowDefinitions="Auto, *">
+        <!--Header Area-->
+        <Border Grid.Row="0" Height="40"
+                BorderBrush="{a:ThemeResource Container2BorderBrush}"
+                BorderThickness="0 0 0 1">
+            <DockPanel Margin="5" LastChildFill="True">
+
+                <Button DockPanel.Dock="Left"
+                        Command="{Binding AddCollectionCommand}"
+                        Classes="icon"
+                        ToolTip.Tip="New Project">
+                </Button>
+
+                <Button DockPanel.Dock="Right"
+                        Classes="icon"
+                        ToolTip.Tip="Options">
+                </Button>
+
+                <TextBox Theme="{a:ControlTheme TextBoxSoft}"
+                         Text="{Binding FilterText}"
+                         VerticalAlignment="Center"
+                         Margin="5 0" Padding="10 3"
+                         TextWrapping="NoWrap" />
+
+            </DockPanel>
+        </Border>
+
+        <!--Tree Area-->
+        <Border Grid.Row="1">
+            <TreeView x:Name="SpecTree"
+                      ItemsSource="{Binding Collections}"
+                      SelectedItems="{Binding SelectedNodes}"
+                      SelectedItem="{Binding SelectedNode, Mode=TwoWay}"
+                      SelectionMode="Multiple"
+                      VerticalAlignment="Stretch"
+                      HorizontalAlignment="Stretch"
+                      BorderThickness="0"
+                      Background="Transparent">
+                <TreeView.Styles>
+                    <!--<Style Selector="i|Icon">
+                        <Setter Property="Margin" Value="0 0 5 0"></Setter>
+                        <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+
+                        <Style Selector="^.project">
+                            <Setter Property="FontSize" Value="16" />
+                            <Setter Property="Foreground" Value="DodgerBlue" />
+                            <Setter Property="Value" Value="fa-solid fa-cube" />
+                        </Style>
+                        <Style Selector="^.folder">
+                            <Setter Property="FontSize" Value="16" />
+                            ~1~<Setter Property="Foreground" Value="DarkGoldenrod" />@1@
+                            <Setter Property="Value" Value="fa-solid fa-folder-closed" />
+                        </Style>
+                        <Style Selector="^.specification">
+                            <Setter Property="FontSize" Value="20" />
+                            ~1~<Setter Property="Foreground" Value="DarkSlateGray" />@1@
+                            <Setter Property="Value" Value="mdi-clipboard-minus-outline" />
+                        </Style>
+                    </Style>-->
+                </TreeView.Styles>
+
+                <TreeView.ItemTemplate>
+                    <TreeDataTemplate ItemsSource="{Binding Nodes}">
+                        <DockPanel LastChildFill="True" Height="20">
+                            <!--Tree item right-->
+                            <StackPanel DockPanel.Dock="Right"
+                                        Orientation="Horizontal">
+                                <Ellipse Width="10" Height="10"
+                                         VerticalAlignment="Center"
+                                         HorizontalAlignment="Center"
+                                         Margin="5 0"
+                                         Fill="LightSeaGreen" />
+                            </StackPanel>
+                            <!--Tree item right-->
+                            <Grid ColumnDefinitions="Auto, *"
+                                  DockPanel.Dock="Left">
+                                <!--<i:Icon Grid.Column="0"
+                                        Classes.project="{Binding IsProjectNode}"
+                                        Classes.folder="{Binding IsFolderNode}"
+                                        Classes.specification="{Binding IsSpecificationNode}" />-->
+                                <TextBlock Grid.Column="1"
+                                           IsVisible="{Binding !IsEditing}"
+                                           Text="{Binding Name}"
+                                           FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                                           VerticalAlignment="Center"
+                                           TextTrimming="CharacterEllipsis"
+                                           TextWrapping="NoWrap" />
+                                <TextBox Grid.Column="1"
+                                         IsVisible="{Binding IsEditing}"
+                                         Text="{Binding Name, Mode=OneWay}"
+                                         FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                                         VerticalAlignment="Center"
+                                         CornerRadius="0" BorderThickness="0" 
+                                         Padding="2" Margin="0 2 5 2"
+                                         LostFocus="OnTextBoxLostFocus"
+                                         KeyDown="OnTextBoxKeyDown" />
+                            </Grid>
+                        </DockPanel>
+                    </TreeDataTemplate>
+                </TreeView.ItemTemplate>
+
+                <TreeView.ItemContainerTheme>
+                    <ControlTheme TargetType="TreeViewItem"
+                                  BasedOn="{a:ControlTheme TreeViewItem}"
+                                  x:DataType="nodes:Node">
+                        <Setter Property="IsVisible" Value="{Binding IsVisible}" />
+                        <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
+                        <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+                        <Setter Property="ContextMenu">
+                            <ContextMenu>
+                                <MenuItem Header="Add Specification"
+                                          Command="{Binding $parent[TreeView].((f:SpecTreeViewModel)DataContext).AddSpecificationCommand, FallbackValue={x:Null}}"
+                                          CommandParameter="{Binding}" />
+                                <MenuItem Header="Add Folder"
+                                          Command="{Binding $parent[TreeView].((f:SpecTreeViewModel)DataContext).AddFolderCommand, FallbackValue={x:Null}}"
+                                          CommandParameter="{Binding}" />
+                                <Separator />
+                                <MenuItem Header="Run" />
+                                <Separator />
+                                <MenuItem Header="Edit" />
+                                <MenuItem Header="Rename"
+                                          Command="{Binding $parent[TreeView].((f:SpecTreeViewModel)DataContext).RenameNodeCommand, FallbackValue={x:Null}}"
+                                          CommandParameter="{Binding}" />
+                                <MenuItem Header="Duplicate" />
+                                <MenuItem Header="Delete" 
+                                          Command="{Binding $parent[TreeView].((f:SpecTreeViewModel)DataContext).DeleteNodeCommand, FallbackValue={x:Null}}"
+                                          CommandParameter="{Binding}"/>
+                            </ContextMenu>
+                        </Setter>
+                    </ControlTheme>
+                </TreeView.ItemContainerTheme>
+            </TreeView>
+        </Border>
+    </Grid>
+</UserControl>

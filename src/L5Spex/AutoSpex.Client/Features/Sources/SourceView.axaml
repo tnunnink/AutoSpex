@@ -1,0 +1,49 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:f="clr-namespace:AutoSpex.Client.Features.Sources"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="AutoSpex.Client.Features.Sources.SourceView"
+             x:DataType="f:SourceViewModel">
+
+    <DockPanel LastChildFill="True">
+        <!--Header-->
+        <Border DockPanel.Dock="Top" BorderThickness="0 0 0 1"
+                BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                Padding="10 5">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <TextBlock Grid.Column="0"
+                           Text="{Binding Node.Name}" />
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10">
+                    <Button Content="Save" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!--Header-->
+        <Border DockPanel.Dock="Top" BorderThickness="0 0 0 1"
+                BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                Padding="10 5">
+            <TextBox Watermark="Search for Components"
+                     BorderThickness="0" />
+        </Border>
+
+        <Border>
+            <!--<TreeDataGrid Source="{Binding DataTypeSource}"
+                          Background="LightGray"
+                          Margin="20"
+                          CanUserSortColumns="True"
+                          CanUserResizeColumns="True">
+            </TreeDataGrid>-->
+            <DataGrid ItemsSource="{Binding Tags}"
+                      
+                      CanUserResizeColumns="True" 
+                      CanUserSortColumns="True" 
+                      Margin="20">
+            </DataGrid>
+        </Border>
+    </DockPanel>
+</UserControl>
