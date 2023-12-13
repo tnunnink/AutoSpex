@@ -7,6 +7,11 @@ namespace AutoSpex.Engine;
 /// </summary>
 public static class PredicateBuilder
 {
+    public static Expression<Func<T, bool>> True<T>() => o => true;
+    
+    public static Expression<Func<T, bool>> False<T>() => o => false;
+    
+    
     /// <summary>
     /// Combines the first predicate with the second using the logical "and".
     /// </summary>
@@ -38,14 +43,6 @@ public static class PredicateBuilder
     {
         return chain == ChainType.And ? left.And(right) : left.Or(right);
     }
-
-    /*public static Expression<Func<TTo, bool>> Cast<TFrom, TTo>(this Expression<Func<TFrom, bool>> expression)
-    {
-        var map = expression.Parameters.ToDictionary(x => x, x => Expression.Parameter(typeof(TTo), x.Name));
-        var body = ParameterRebinder.Rebind(expression.Body, map);
-        var converted = Expression.TypeAs()
-        return Expression.Lambda<Func<TTo, bool>>(body, map.Values);
-    }*/
 
     /// <summary>
     /// Combines the first expression with the second using the specified merge function.

@@ -53,15 +53,15 @@ public class GetNodeTreeHandler : IRequestHandler<GetNodesRequest, Result<IEnume
         {
             lookup.Add(node.NodeId, node);
 
-            if (!node.ParentId.HasValue || !lookup.ContainsKey(node.ParentId.Value))
+            if (!lookup.ContainsKey(node.ParentId))
                 continue;
 
-            var parent = lookup[node.ParentId.Value];
+            var parent = lookup[node.ParentId];
             parent.Nodes.Add(node);
             node.AssignParent(parent);
         }
 
-        var results = lookup.Values.Where(x => !x.ParentId.HasValue).AsEnumerable();
+        var results = lookup.Values.Where(x => x.ParentId == Guid.Empty).AsEnumerable();
         return Result.Ok(results);
     }
 }

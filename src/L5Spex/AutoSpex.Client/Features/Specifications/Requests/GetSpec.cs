@@ -8,12 +8,13 @@ using MediatR;
 namespace AutoSpex.Client.Features.Specifications;
 
 [PublicAPI]
-public record GetSpecRequest(Guid NodeId) : IRequest<Result<Spec>>;
+public record LoadSpecRequest(SpecificationViewModel Spec) : IRequest<Result>;
 
-public class GetSpecHandler : IRequestHandler<GetSpecRequest, Result<Spec>>
+public class GetSpecHandler : IRequestHandler<LoadSpecRequest, Result>
 {
-    public Task<Result<Spec>> Handle(GetSpecRequest request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(LoadSpecRequest request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        await Task.Delay(100, cancellationToken);
+        return Result.Ok();
     }
 }

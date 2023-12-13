@@ -18,7 +18,7 @@ public class MP10000 : AutoReversingMigration
             .WithColumn("Description").AsString().Nullable();
 
         Create.Table("Source")
-            .WithColumn("NodeId").AsGuid().PrimaryKey()
+            .WithColumn("SourceId").AsGuid().PrimaryKey()
             .WithColumn("Controller").AsString().Nullable()
             .WithColumn("Processor").AsString().Nullable()
             .WithColumn("Revision").AsString().Nullable()
@@ -30,7 +30,8 @@ public class MP10000 : AutoReversingMigration
             .WithColumn("Content").AsString().NotNullable();
         
         Create.Table("Spec")
-            .WithColumn("NodeId").AsGuid().PrimaryKey();
+            .WithColumn("SpecId").AsGuid().PrimaryKey()
+            .WithColumn("Element").AsString().NotNullable();
         
         Create.Table("ChangeLog")
             .WithColumn("NodeId").AsGuid().PrimaryKey()
@@ -44,12 +45,12 @@ public class MP10000 : AutoReversingMigration
             .OnDeleteOrUpdate(System.Data.Rule.Cascade);
         
         Create.ForeignKey()
-            .FromTable("Source").ForeignColumn("NodeId")
+            .FromTable("Source").ForeignColumn("SourceId")
             .ToTable("Node").PrimaryColumn("NodeId")
             .OnDeleteOrUpdate(System.Data.Rule.Cascade);
         
         Create.ForeignKey()
-            .FromTable("Spec").ForeignColumn("NodeId")
+            .FromTable("Spec").ForeignColumn("SpecId")
             .ToTable("Node").PrimaryColumn("NodeId")
             .OnDeleteOrUpdate(System.Data.Rule.Cascade);
         

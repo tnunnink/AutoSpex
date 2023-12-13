@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Reflection;
+﻿using System.Reflection;
 using L5Sharp.Core;
 
 namespace AutoSpex.Engine;
@@ -8,50 +7,45 @@ public class Property
 {
     public Property(string name, Type type)
     {
+        if (string.IsNullOrEmpty(name))
+            throw new ArgumentException("Name can not be null or empty to initialize a property.");
+
         Name = name;
-        Type = type;
-        Group = TypeGroup.FromType(Type);
+        Type = type ?? throw new ArgumentNullException(nameof(type));
     }
-    
+
     public Property(PropertyInfo info)
     {
+        if (info is null) throw new ArgumentNullException(nameof(info));
         Name = info.Name;
         Type = info.PropertyType;
-        Group = TypeGroup.FromType(Type);
     }
 
     public string Name { get; }
 
     public Type Type { get; }
 
-    public TypeGroup Group { get; }
+    public IEnumerable<Property> Properties => GetProperties(Type);
 
-    public Property? Nested(string name)
+    public override bool Equals(object? obj) => obj is Property other && other.Name == Name;
+
+    public override int GetHashCode() => Name.GetHashCode();
+
+    public override string ToString() => Name;
+
+    private IEnumerable<Property> GetProperties(Type type)
     {
-        var index = name.IndexOf('.');
-        var member = index >= 0 ? name[..index] : name;
-        var info = Type.GetProperties().FirstOrDefault(p => p.Name == member);
-        var property = info is not null ? new Property(info) : default;
-        return index < 0 ? property : property?.Nested(name[(index + 1)..]);
-    }
+        if (typeof(LogixElement).IsAssignableFrom(type))
+        {
+            var element = Element.FromName(Type.Name);
+            return element.Properties;
+        }
 
-    public bool IsCollection => typeof(IEnumerable).IsAssignableFrom(Type) && Type != typeof(string);
+        if (type.Assembly.Equals(typeof(LogixElement).Assembly))
+        {
+            return type.GetProperties(BindingFlags.Public | BindingFlags.Instance).Select(p => new Property(p));
+        }
 
-    public bool IsLogixElement => typeof(LogixElement).IsAssignableFrom(Type);
-    
-    public bool IsLogixType => typeof(LogixType).IsAssignableFrom(Type);
-
-    public override bool Equals(object? obj)
-    {
-        if (ReferenceEquals(this, obj)) return true;
-
-        return obj is Property other &&
-               StringComparer.OrdinalIgnoreCase.Equals(other.Name, Name) 
-               && Type == other.Type;
-    }
-
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(Name, Type);
+        return Enumerable.Empty<Property>();
     }
 }

@@ -9,22 +9,20 @@ public partial class Project : ObservableObject
 {
     public Project(Uri path)
     {
-        Path = path ?? throw new ArgumentNullException(nameof(path));
-        File = new FileInfo(Path.AbsolutePath);
+        Uri = path ?? throw new ArgumentNullException(nameof(path));
+        File = new FileInfo(Uri.LocalPath);
     }
 
-    public Project(dynamic record)
+    public Project(string path, DateTime openedOn, long pinned)
     {
-        Path = new Uri(record.Path);
-        OpenedOn = record.OpenedOn;
-        Pinned = record.Pinned == 1;
-        File = new FileInfo(Path.AbsolutePath);
+        Uri = new Uri(path);
+        OpenedOn = openedOn;
+        Pinned = pinned == 1;
+        File = new FileInfo(Uri.LocalPath);
     }
-
-    /*public static implicit operator Project(object record) => new(record);*/
 
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(Name))]
-    private Uri _path;
+    private Uri _uri;
 
     [ObservableProperty] private bool _pinned;
 
@@ -42,14 +40,14 @@ public partial class Project : ObservableObject
         watcher.EnableRaisingEvents = true;
         watcher.IncludeSubdirectories = false;
         watcher.Filter = File.Name;
-        watcher.Renamed += (_, args) => { Path = new Uri(args.FullPath); };
+        watcher.Renamed += (_, args) => { Uri = new Uri(args.FullPath); };
         return watcher;
     }
 
-    public string ConnectionString => new SQLiteConnectionStringBuilder {DataSource = Path.LocalPath}.ConnectionString;
+    public string ConnectionString => new SQLiteConnectionStringBuilder {DataSource = Uri.LocalPath}.ConnectionString;
 
-    partial void OnPathChanged(Uri value)
+    partial void OnUriChanged(Uri value)
     {
-        Name = System.IO.Path.GetFileNameWithoutExtension(value.AbsolutePath);
+        Name = Path.GetFileNameWithoutExtension(value.LocalPath);
     }
 }

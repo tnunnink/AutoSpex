@@ -1,40 +1,35 @@
 ﻿using System.Linq.Expressions;
-using AutoSpex.Engine.Contracts;
 using AutoSpex.Engine.Operations;
 using L5Sharp.Core;
 using Task = System.Threading.Tasks.Task;
 
 namespace AutoSpex.Engine;
 
-public class Specification : ISpecification
+public class Specification
 {
-    private readonly Type _type;
+    private readonly Element _element;
 
-    public Specification(Type type)
+    public Specification(Element element)
     {
-        _type = type;
-        _query = c => c.Query(_type).ToList();
+        _element = element;
     }
 
-    private readonly Func<L5X, IEnumerable<object>> _query;
-
     /// <summary>
-    /// The <see cref="Func{T, TResult}"/> used to filter the results of the <see cref="_query"/>. This represents
+    /// The <see cref="Func{T, TResult}"/> used to filter the results of the element query. This represents
     /// the second step of a common <c>Specification</c>. Once results are returns then we check the range and run
     /// the verification criterion.
     /// </summary>
     private Func<object, bool> _filter = _ => true;
 
     /// <summary>
-    /// The <see cref="Criterion"/> used to check the range of the results of the filtered <see cref="_query"/>.
+    /// The <see cref="Criterion"/> used to check the range of the results of the filtered element query.
     /// </summary>
-    private Criterion _range = Criterion.For<List<object>>("Count", Operation.GreaterThan, 0);
+    private Func<int, bool> _range => i => i > 0;
 
     /// <summary>
-    /// 
+    /// Holds a list of verifications.
     /// </summary>
     private readonly List<Criterion> _verifications = new();
-
 
     public Task<RunResult> Run(L5X file, RunConfig? config = default, CancellationToken token = default)
     {
@@ -44,61 +39,35 @@ public class Specification : ISpecification
             config ??= RunConfig.Default;
 
             //Query content
-            var elements = _query(file).ToList();
-            var total = elements.Count;
+            var elements = _element.Query(file).ToList();
+            var found = elements.Count;
 
             //Filter content
             var candidates = elements.Where(_filter).ToList();
             var targets = candidates.Count;
 
             //Evaluate range
-            var range = _range.Evaluate(candidates);
+            var range = _range(candidates.Count);
 
             //Generate verification results
             var results = _verifications.Select(v => new Verification(candidates.Select(v.Evaluate).ToList())).ToList();
 
-            return RunResult.Process(range, results, config, total, targets);
+            return RunResult.Process(found, targets, range, results, config);
         }, token);
     }
 
-    public void ApplyFilter(Criterion criterion)
+    public void UseFilter(Filter filter)
     {
-        if (criterion is null)
-            throw new ArgumentNullException(nameof(criterion));
-
-        _filter = criterion.Compile();
+        _filter = ((Expression<Func<object, bool>>) filter).Compile();
     }
 
-    public void ApplyFilter(IEnumerable<Criterion> filters, ChainType chainType)
+    public void UseRange(Operation operation, params object[] values)
     {
-        if (filters is null)
-            throw new ArgumentNullException(nameof(filters));
-
-        _filter = filters.Aggregate(Criterion.All(), (current, filter) => current.Chain(filter, chainType)).Compile();
+        throw new NotImplementedException();
     }
 
-    public void ApplyFilter(Expression<Func<object, bool>> expression)
-    {
-        if (expression is null)
-            throw new ArgumentNullException(nameof(expression));
-
-        _filter = expression.Compile();
-    }
-
-    public void ApplyRange(Operation operation, params object[] arguments)
-    {
-        if (operation is null) throw new ArgumentNullException(nameof(operation));
-        if (arguments is null) throw new ArgumentNullException(nameof(arguments));
-        _range = Criterion.For<List<object>>("Count", operation, arguments);
-    }
-
-    public void AddVerification(Criterion criterion)
+    public void Verify(Criterion criterion)
     {
         _verifications.Add(criterion);
-    }
-
-    public void AddVerifications(IEnumerable<Criterion> filters)
-    {
-        _verifications.AddRange(filters);
     }
 }

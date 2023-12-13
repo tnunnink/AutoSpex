@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoSpex.Client.Shared;
 using Dapper;
@@ -14,6 +16,7 @@ public sealed class SettingsManager : ISettingsManager
     private const string Upsert =
         "INSERT INTO Setting (Key, Value) VALUES (@Key, @Value) ON CONFLICT DO UPDATE SET Value = @Value";
 
+    private readonly Dictionary<Setting, string> _settings = new();
     private readonly IDbConnection _connection;
 
     private SettingsManager(IDbConnection connection)
@@ -30,21 +33,69 @@ public sealed class SettingsManager : ISettingsManager
 
     public string Get(Setting setting)
     {
-        return _connection.QuerySingle<string>("SELECT Value FROM Setting WHERE Key = @Key",
-            new {Key = setting.ToString()});
+        return _settings[setting];
     }
 
     public T Get<T>(Setting setting, Func<string, T> convert)
     {
-        var value = _connection.QuerySingle<string>("SELECT Value FROM Setting WHERE Key = @Key",
-            new {Key = setting.ToString()});
-
-        return convert(value);
+        return convert(_settings[setting]);
     }
 
-    public async void Save(Setting setting, string value)
+    public string? Find(Setting setting)
     {
-        await _connection.ExecuteAsync(Upsert, new {Key = setting.ToString(), Value = value});
+        return _settings.GetValueOrDefault(setting);
+    }
+
+    public T? Find<T>(Setting setting, Func<string, T> convert)
+    {
+        return _settings.TryGetValue(setting, out var value) ? convert(value) : default;
+    }
+
+    public void Set(Setting setting, string? value)
+    {
+        if (value is null)
+        {
+            _settings.Remove(setting);
+            return;
+        }
+        
+        if (!_settings.TryAdd(setting, value))
+            _settings[setting] = value;
+    }
+
+    public void Set<T>(Setting setting, T? value)
+    {
+        var text = value?.ToString();
+        if (text is null)
+        {
+            _settings.Remove(setting);
+            return;
+        }
+        
+        if (!_settings.TryAdd(setting, text))
+            _settings[setting] = text;
+    }
+
+    public async Task Load()
+    {
+        var settings = (await _connection.QueryAsync("SELECT * FROM Setting")).ToList();
+        
+        foreach (var setting in settings)
+        {
+            _settings.TryAdd(setting.Key, setting.Value);
+        }
+    }
+
+    public async Task Save()
+    {
+        using var transaction = _connection.BeginTransaction();
+        
+        foreach (var setting in _settings)
+        {
+            await _connection.ExecuteAsync(Upsert, new { Key = setting.Key.ToString(), setting.Value }, transaction);
+        }
+        
+        transaction.Commit();
     }
 
     public void Dispose()
@@ -52,11 +103,12 @@ public sealed class SettingsManager : ISettingsManager
         _connection.Dispose();
     }
 
-    public async ValueTask DisposeAsync()
+    public ValueTask DisposeAsync()
     {
         if (_connection is IAsyncDisposable connectionAsyncDisposable)
-            await connectionAsyncDisposable.DisposeAsync();
-        else
-            _connection.Dispose();
+            return connectionAsyncDisposable.DisposeAsync();
+
+        _connection.Dispose();
+        return ValueTask.CompletedTask;
     }
 }

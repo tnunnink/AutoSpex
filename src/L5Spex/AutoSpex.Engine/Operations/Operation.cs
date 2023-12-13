@@ -1,101 +1,130 @@
-﻿using System.Reflection;
-using AutoSpex.Engine.Contracts;
+﻿using Ardalis.SmartEnum;
 
 namespace AutoSpex.Engine.Operations;
 
-public abstract class Operation : IEquatable<Operation>, IOperation
+/// <summary>
+/// Represents an operation that can be performed on input values. Operations are 
+/// important components of filtering and querying data because they define the criteria 
+/// for what data should be fetched.
+/// </summary>
+public abstract class Operation : SmartEnum<Operation, string>
 {
-    protected Operation(string name)
+    protected Operation(string name) : base(name, name)
     {
-        Name = name ?? throw new ArgumentNullException(nameof(name));
     }
 
-    public string Name { get; }
-    
-    public static Operation EqualTo => new EqualToOperation();
-    
-    public static Operation GreaterThan => new GreaterThanOperation();
-    
-    public static Operation GreaterThanOrEqualTo => new GreaterThanOrEqualToOperation();
-    
-    public static Operation LessThan => new LessThanOperation();
-    
-    public static Operation LessThanOrEqualTo => new LessThanOrEqualToOperation();
-    
-    public static Operation IsNull => new IsNullOperation();
-    
-    public static Operation IsEmpty => new IsEmptyOperation();
-    
-    public static Operation IsNullOrEmpty => new IsNullOrEmptyOperation();
-    
-    public static Operation IsNullOrWhiteSpace => new IsNullOrWhiteSpaceOperation();
-    
-    public static Operation IsMatch => new IsMatchOperation();
-    
-    public static Operation Contains => new ContainsOperation();
-    
-    public static Operation StartsWith => new StartsWithOperation();
-    
-    public static Operation EndsWith => new StartsWithOperation();
-    
-    public static Operation In => new InOperation();
-    
-    public static Operation Between => new BetweenOperation();
-    
+    /// <summary>
+    /// Represents an equality operation. The operation checks if the input value 
+    /// is equal to the comparison value. Comparison is done based on the underlying
+    /// type of the input value.
+    /// </summary>
+    public static readonly Operation EqualTo = new EqualToOperation();
+
+    /// <summary>
+    /// Represents a greater than operation. The operation checks if the input value 
+    /// is greater than the comparison value. This operation is only valid for 
+    /// input types that implement IComparable interface.
+    /// </summary>
+    public static readonly Operation GreaterThan = new GreaterThanOperation();
+
+    /// <summary>
+    /// Represents an operation that checks whether a value is greater than or equal to another value.
+    /// This operation is only valid for input types that implement IComparable interface.
+    /// </summary>
+    public static readonly Operation GreaterThanOrEqualTo = new GreaterThanOrEqualToOperation();
+
+    /// <summary>
+    /// Represents the less than comparison operation. The operation checks if the input value 
+    /// is less than the comparison value. This operation is only valid for 
+    /// input types that implement IComparable interface.
+    /// </summary>
+    public static readonly Operation LessThan = new LessThanOperation();
+
+    /// <summary>
+    /// Represents the less than or equal to operation. The operation checks if the input value 
+    /// is less than or equal to the comparison value. This operation is only valid for 
+    /// input types that implement IComparable interface.
+    /// </summary>
+    public static readonly Operation LessThanOrEqualTo = new LessThanOrEqualToOperation();
+
+    /// <summary>
+    /// Represents an operation that checks for null values. It returns true 
+    /// if the input value is null and false otherwise.
+    /// </summary>
+    public static readonly Operation IsNull = new IsNullOperation();
+
+    /// <summary>
+    /// The IsEmpty operation represents a condition that checks if a value or a collection of values is empty.
+    /// </summary>
+    public static readonly Operation IsEmpty = new IsEmptyOperation();
+
+    /// <summary>
+    /// Represents an operation that checks if a string is null or empty.
+    /// </summary>
+    public static readonly Operation IsNullOrEmpty = new IsNullOrEmptyOperation();
+
+    /// <summary>
+    /// Represents an operation that determines whether a string is null, empty, or consists only of white-space characters.
+    /// This operation is typically used for input validation or cleansing.
+    /// </summary>
+    public static readonly Operation IsNullOrWhiteSpace = new IsNullOrWhiteSpaceOperation();
+
+    /// <summary>
+    /// Represents an operation that checks for a match between the input value and a pattern or set of values.
+    /// </summary>
+    public static readonly Operation IsMatch = new IsMatchOperation();
+
+    /// <summary>
+    /// Represents an operation that checks whether the input string contains a specific substring.
+    /// </summary>
+    public static readonly Operation Contains = new ContainsOperation();
+
+    /// <summary>
+    /// The StartsWith operation is used to check if a string starts with a specified value.
+    /// </summary>
+    public static readonly Operation StartsWith = new StartsWithOperation();
+
+    /// <summary>
+    /// Represents an operation that checks if a string ends with a specific value.
+    /// </summary>
+    public static readonly Operation EndsWith = new EndsWithOperation();
+
+    /// <summary>
+    /// Represents an "in" operation. The operation checks whether the input value 
+    /// matches any value within a supplied list of values.
+    /// </summary>
+    public static readonly Operation In = new InOperation();
+
+    /// <summary>
+    /// Represents a "between" operation. This operation checks if the input value falls between 
+    /// two specified bounds (inclusive or exclusive based on the operation's implementation).
+    /// </summary>
+    public static readonly Operation Between = new BetweenOperation();
+
+
+    public static readonly Operation All = new AllOperation();
+
+    public static readonly Operation Any = new AnyOperation();
+
+    public static readonly Operation Count = new CountOperation();
+
     /// <summary>
     /// Performs the operation on the input and provided values and returns the result.
+    /// The actual implementation of the operation (how it's evaluated) is defined
+    /// in derived operation classes.
     /// </summary>
-    /// <param name="input"></param>
-    /// <param name="values"></param>
-    /// <returns>The result of the predicate operation.</returns>
-    public abstract bool Evaluate(object? input, params object[] values);
+    /// <param name="input">The value that will be compared/evaluated by the operation.</param>
+    /// <param name="values">Additional parameters needed for some operations.</param>
+    /// <returns>The result of the predicate operation. This is typically a boolean
+    /// value indicating whether the input value meets the criteria defined by the operation.</returns>
+    /// <remarks>
+    /// As an abstract method, this must be implemented by each specific Operation subclass.
+    /// Be aware that this function may throw exceptions if input data is not of the expected 
+    /// type or proper format for the executing operation.
+    /// </remarks>
+    public abstract bool Execute(object? input, params object[] values);
 
-    public bool Equals(Operation? other)
-    {
-        if (ReferenceEquals(null, other)) return false;
-        if (ReferenceEquals(this, other)) return true;
-        return Name == other.Name;
-    }
-
-    public override bool Equals(object? obj)
-    {
-        if (ReferenceEquals(null, obj)) return false;
-        if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((Operation) obj);
-    }
-
-    public override int GetHashCode() => Name.GetHashCode();
-
-    public override string ToString() => Name;
+    public static IEnumerable<Operation> Supporting(Type type) => List.Where(x => x.Supports(type));
     
-    public static IEnumerable<Operation> All() => Operations.Value.Select(o => o.Value);
-    
-    public static Operation Named(string name)
-    {
-        if (Operations.Value.TryGetValue(name, out var operation)) 
-            return operation;
-            
-        throw new KeyNotFoundException($"Operation with name '{name}' was not found.");
-    }
-    
-    private static readonly Lazy<Dictionary<string, Operation>> Operations = new(() =>
-        Introspect().ToDictionary(o => o.Name));
-    
-    private static IEnumerable<Operation> Introspect()
-    {
-        var types = typeof(Operation).Assembly.GetTypes().Where(IsOperationDerivative);
-
-        foreach (var type in types)
-        {
-            yield return Activator.CreateInstance(type) as Operation ??
-                         throw new InvalidOperationException("Unable to create operation instance.");
-        }
-    }
-
-    private static bool IsOperationDerivative(Type type)
-    {
-        return typeof(Operation).IsAssignableFrom(type) &&
-               type is {IsAbstract: false, IsPublic: true} &&
-               type.GetConstructor(BindingFlags.Public | BindingFlags.Instance, Type.EmptyTypes) is not null;
-    }
+    public virtual bool Supports(Type type) => true;
 }

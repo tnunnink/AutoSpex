@@ -9,7 +9,7 @@
     <ItemGroup>
       <PackageReference Include="AgileObjects.ReadableExpressions" Version="4.1.1" />
       <PackageReference Include="Ardalis.SmartEnum" Version="2.1.0" />
-      <PackageReference Include="L5Sharp" Version="0.17.0" />
+      <PackageReference Include="L5Sharp" Version="0.18.0" />
     </ItemGroup>
 
 </Project>

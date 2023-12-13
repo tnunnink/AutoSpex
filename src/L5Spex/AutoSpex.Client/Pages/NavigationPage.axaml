@@ -1,7 +1,6 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
-             xmlns:sources="clr-namespace:AutoSpex.Client.Features.Sources"
              xmlns:specifications="clr-namespace:AutoSpex.Client.Features.Specifications"
              x:Class="AutoSpex.Client.Pages.NavigationPage"
              Background="{a:ThemeResource Container2BackgroundBrush}"
@@ -16,61 +15,33 @@
                     BorderThickness="0"
                     Padding="0">
 
-            <TabControl.Resources>
-                <ControlTheme x:Key="TabTheme" TargetType="TabItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Center" />
-                    <Setter Property="VerticalContentAlignment" Value="Center" />
-                    <Setter Property="BorderThickness" Value="0" />
-                    <Setter Property="CornerRadius" Value="5" />
-                    <Setter Property="Padding" Value="10" />
-                    <Setter Property="Margin" Value="5" />
-                    <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeExtraSmall}"></Setter>
-                    <Setter Property="Background" Value="Transparent" />
-                    <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
-                    <Setter Property="Template">
-                        <ControlTemplate>
-                            <Border
-                                Name="PART_LayoutRoot"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="{TemplateBinding CornerRadius}"
-                                Padding="{TemplateBinding Padding}">
-                                <Panel>
-                                    <ContentPresenter
-                                        Name="PART_ContentPresenter"
-                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                        Content="{TemplateBinding Header}"
-                                        ContentTemplate="{TemplateBinding HeaderTemplate}"
-                                        FontFamily="{TemplateBinding FontFamily}"
-                                        FontSize="{TemplateBinding FontSize}"
-                                        FontWeight="{TemplateBinding FontWeight}" />
-                                    <!--<Border Name="PART_SelectedPipe"
-                                                Background="{DynamicResource TabItemHeaderSelectedPipeFill}"
-                                                CornerRadius="{DynamicResource ControlCornerRadius}"
-                                                IsVisible="False"/>-->
-                                </Panel>
-                            </Border>
-                        </ControlTemplate>
-                    </Setter>
-
-                    <Style Selector="^:selected">
-                        <Setter Property="Background" Value="{a:ThemeResource Container4BackgroundBrush}" />
-                        <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
-                    </Style>
-                </ControlTheme>
-            </TabControl.Resources>
-
             <TabControl.Styles>
                 <Style Selector="PathIcon.tab">
-                    <Setter Property="Height" Value="18" />
-                    <Setter Property="Width" Value="18" />
-                    <Setter Property="Margin" Value="0 0 0 10" />
+                    <Setter Property="Height" Value="24" />
+                    <Setter Property="Width" Value="24" />
+                    <Setter Property="Margin" Value="0 0 0 5" />
                 </Style>
             </TabControl.Styles>
 
-            <!--Source Tab-->
+            <!--Specifications Tab-->
+            <TabItem Theme="{StaticResource NavigationTabItem}">
+                <TabItem.Header>
+                    <StackPanel>
+                        <PathIcon Data="{DynamicResource Icon.Filled.Clipboard}"
+                                  Classes="tab" />
+                        <TextBlock Text="Specs" />
+                    </StackPanel>
+                </TabItem.Header>
+                <TabItem.Content>
+                    <Border BorderThickness="1 0 0 0"
+                            BorderBrush="{a:ThemeResource Container2BorderBrush}"
+                            Background="{a:ThemeResource Container2BackgroundBrush}">
+                        <specifications:SpecTreeView />    
+                    </Border>
+                </TabItem.Content>
+            </TabItem>
+            
+            <!--~1~Source Tab@1@
             <TabItem Theme="{StaticResource TabTheme}">
                 <TabItem.Header>
                     <StackPanel>
@@ -88,25 +59,7 @@
                 </TabItem.Content>
             </TabItem>
 
-            <!--Specifications Tab-->
-            <TabItem Theme="{StaticResource TabTheme}">
-                <TabItem.Header>
-                    <StackPanel>
-                        <PathIcon Data="{StaticResource Icon.Outlined.Clipboard}"
-                                  Classes="tab" />
-                        <TextBlock Text="Specs" />
-                    </StackPanel>
-                </TabItem.Header>
-                <TabItem.Content>
-                    <Border BorderThickness="1 0 0 0"
-                            BorderBrush="{a:ThemeResource Container2BorderBrush}"
-                            Background="{a:ThemeResource Container2BackgroundBrush}">
-                        <!--<specifications:SpecTreeView />-->    
-                    </Border>
-                </TabItem.Content>
-            </TabItem>
-
-            <!--History Tab-->
+            ~1~History Tab@1@
             <TabItem Theme="{StaticResource TabTheme}">
                 <TabItem.Header>
                     <StackPanel>
@@ -122,7 +75,7 @@
                             
                     </Border>
                 </TabItem.Content>
-            </TabItem>
+            </TabItem>-->
         </TabControl>
     </Border>
 </UserControl>

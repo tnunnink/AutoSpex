@@ -1,0 +1,74 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:f="clr-namespace:AutoSpex.Client.Features.Specifications"
+             MinWidth="500" MinHeight="300"
+             x:Class="AutoSpex.Client.Features.Specifications.AddFilterView"
+             x:DataType="f:AddFilterViewModel">
+
+    <DockPanel Margin="20" LastChildFill="True">
+        
+        <DockPanel DockPanel.Dock="Bottom">
+            <!--buttons-->
+            <StackPanel DockPanel.Dock="Right"
+                        Orientation="Horizontal">
+                <Button Content="Add"
+                        Command="{Binding AddCommand}"
+                        CommandParameter="{Binding $parent[Window]}"
+                        Height="30" Width="80" Padding="0"
+                        Theme="{a:ControlTheme ButtonSolid}"
+                        Classes="accent"
+                        Margin="0 0 20 0" />
+                <Button Content="Cancel"
+                        Command="{Binding CancelCommand}"
+                        CommandParameter="{Binding $parent[Window]}"
+                        Height="30" Width="80" Padding="0"
+                        Theme="{a:ControlTheme ButtonSoft}" />
+            </StackPanel>
+            
+            <Grid></Grid>
+        </DockPanel>
+        
+        <TextBlock DockPanel.Dock="Top" Text="Add Tag Filter"
+                   VerticalAlignment="Center">
+        </TextBlock>
+
+        <StackPanel Spacing="20" Margin="0 20">
+            <Grid ColumnDefinitions="*, 2*">
+                <TextBlock Text="Property Name" 
+                           DockPanel.Dock="Left"
+                           VerticalAlignment="Center" />
+                <AutoCompleteBox Grid.Column="1"
+                                 Text="{Binding PropertyName}"/>
+            </Grid>
+            
+            <Grid ColumnDefinitions="*, 2*">
+                <TextBlock Text="Property Type" 
+                           DockPanel.Dock="Left"
+                           VerticalAlignment="Center" />
+                <TextBlock Grid.Column="1" 
+                           VerticalAlignment="Center" 
+                           Text="Property Type" />
+            </Grid>
+            
+            <Grid ColumnDefinitions="*, 2*">
+                <TextBlock Text="Operation" 
+                           DockPanel.Dock="Left"
+                           VerticalAlignment="Center" />
+                <ComboBox Grid.Column="1" 
+                           VerticalAlignment="Center"/>
+            </Grid>
+            
+            <Grid ColumnDefinitions="*, 2*">
+                <TextBlock Text="Value" 
+                           DockPanel.Dock="Left"
+                           VerticalAlignment="Center" />
+                <TextBox Grid.Column="1" 
+                          VerticalAlignment="Center"/>
+            </Grid>
+            
+        </StackPanel>
+    </DockPanel>
+</UserControl>

@@ -1,7 +1,9 @@
 ﻿using AutoSpex.Engine.Operations;
+using JetBrains.Annotations;
 
 namespace AutoSpex.Engine;
 
+[PublicAPI]
 public record Evaluation
 {
     private readonly string? _message;
@@ -9,7 +11,7 @@ public record Evaluation
     private Evaluation(ResultType result, Criterion criterion, object? actual = null, string? message = null)
     {
         Result = result;
-        Type = criterion.Type;
+        Element = criterion.Element;
         Property = criterion.Property;
         Operation = criterion.Operation;
         Expected = string.Join(",", criterion.Arguments);
@@ -18,7 +20,7 @@ public record Evaluation
     }
 
     public ResultType Result { get; }
-    public Type Type { get; }
+    public Element Element { get; }
     public string Property { get; }
     public Operation Operation { get; }
     public string Expected { get; }
@@ -45,7 +47,9 @@ public record Evaluation
         new(ResultType.None, criterion);
 
     private string GenerateMessage() =>
-        $"Evaluation of {Operation} for {Type.Name}.{Property} {Result}. Expected: '{Expected}' Found: '{Actual}'";
+        $"Evaluation of {Operation} for {Element.Name}.{Property} {Result}. Expected: '{Expected}' Found: '{Actual}'";
 
     public override string ToString() => Message;
+
+    public static implicit operator bool(Evaluation evaluation) => evaluation.Result == ResultType.Passed;
 }

@@ -14,23 +14,29 @@ public class ExceptionBehavior<TRequest, TResponse, TException> :
     where TResponse : class, IResultBase, new()
     where TException : Exception
 {
-    public async Task Handle(TRequest request, TException exception, RequestExceptionHandlerState<TResponse> state,
+    public ExceptionBehavior()
+    {
+        //notification manager to send notification to UI for failure.
+    }
+    
+    public Task Handle(TRequest request, TException exception, RequestExceptionHandlerState<TResponse> state,
         CancellationToken cancellationToken)
     {
         var error = new Error("This request encountered an unexpected error. If this issue persists, please report it.")
             .CausedBy(exception);
 
-        await UserPromptBuilder.Configure()
+        /*await UserPromptBuilder.Configure()
             .WithHeaderContent("This is embarrassing...")
             .WithContent(error.Message)
             .WithExpandedInformation("Error Message", "Error Message",
                 error.Reasons.First(r => r is ExceptionalError).Message)
             .WithStandardButtons(MessageBoxButtons.OK)
             .WithStatusImage(MessageBoxImage.Error)
-            .Show();
+            .Show();*/
 
         var response = new TResponse();
         response.Reasons.Add(error);
         state.SetHandled(response);
+        return Task.CompletedTask;
     }
 }

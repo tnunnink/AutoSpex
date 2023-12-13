@@ -6,5 +6,10 @@ public enum Setting
     OpenProjectPath,
     OpenProjectConnection,
     OpenProjectVersion,
-    Theme
+    Theme,
+    WindowHeight,
+    WindowWidth,
+    WindowState,
+    WindowX,
+    WindowY,
 }

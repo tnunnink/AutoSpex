@@ -6,7 +6,7 @@ public class InOperation : Operation
     {
     }
 
-    public override bool Evaluate(object? input, params object[] values)
+    public override bool Execute(object? input, params object[] values)
     {
         return input is not null && values.Length != 0 && values.Contains(input);
     }

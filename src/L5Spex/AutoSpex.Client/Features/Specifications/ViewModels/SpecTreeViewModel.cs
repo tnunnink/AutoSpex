@@ -1,10 +1,14 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using AutoSpex.Client.Features.Nodes;
+using AutoSpex.Client.Features.Projects;
 using AutoSpex.Client.Shared;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using DynamicData;
+using DynamicData.Binding;
 using JetBrains.Annotations;
 using MediatR;
 using Node = AutoSpex.Client.Features.Nodes.Node;
@@ -16,12 +20,21 @@ public partial class SpecTreeViewModel : ViewModelBase
 {
     private readonly IMediator _mediator;
     private readonly IMessenger _messenger;
+    
+    private readonly SourceCache<Node, Guid> _nodeCache;
+    private readonly ReadOnlyObservableCollection<Node> _nodes;
 
     public SpecTreeViewModel(IMediator mediator, IMessenger messenger)
     {
         _mediator = mediator;
         _messenger = messenger;
         Run = Initialize();
+        
+
+        /*
+        _nodeCache = new SourceCache<Node, Guid>(x => x.NodeId)
+            .Connect()
+            .TransformToTree(n => n.ParentId);*/
     }
 
     [ObservableProperty] private ObservableCollection<Node> _collections = new();
@@ -38,21 +51,6 @@ public partial class SpecTreeViewModel : ViewModelBase
     {
         var request = new AddCollectionRequest("New Collection");
         var result = await _mediator.Send(request);
-
-        /*result.IfSucc(n =>
-        {
-            Projects.Add(n);
-            n.IsSelected = true;
-            var message = $"Created Collection {n.Name}";
-            var notification = new Notification("Spec Collection", message);
-            _mediator.Publish(message);
-        });
-
-        result.IfFail(e =>
-        {
-            var message = new TestRequest.Message("Failed to Create Project", e.Message);
-            _mediator.Publish(message);
-        });*/
     }
 
     [RelayCommand]

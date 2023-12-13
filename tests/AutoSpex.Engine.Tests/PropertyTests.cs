@@ -18,33 +18,16 @@ public class PropertyTests
 
         property.Name.Should().Be("Test");
         property.Type.Should().Be(typeof(string));
-        property.Group.Should().Be(TypeGroup.Text);
-        property.IsCollection.Should().BeFalse();
-        property.IsLogixElement.Should().BeFalse();
-        property.IsLogixType.Should().BeFalse();
+        property.Properties.Should().BeEmpty();
     }
 
     [Test]
-    public void SubProperty_ValidProperty_ShouldReturnExpectedProperty()
+    public void Properties_ForTagProperty_ShouldBeExpectedCount()
     {
-        var property = new Property("Test", typeof(string));
+        var property = new Property("Test", typeof(Tag));
 
-        var result = property.Nested("Length");
+        var properties = property.Properties;
 
-        result.Should().NotBeNull();
-        result!.Name.Should().Be("Length");
-        result.Type.Should().Be(typeof(int));
-    }
-
-    [Test]
-    public void Nested_ControllerType_ShouldBeExpected()
-    {
-        var property = new Property("Test", typeof(Controller));
-
-        var result = property.Nested("Revision.Major");
-
-        result.Should().NotBeNull();
-        result!.Name.Should().Be("Major");
-        result.Type.Should().Be(typeof(string));
+        properties.Should().HaveCount(20);
     }
 }

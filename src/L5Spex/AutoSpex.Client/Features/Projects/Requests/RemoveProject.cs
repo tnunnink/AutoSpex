@@ -27,7 +27,7 @@ public class RemoveProjectHandler : IRequestHandler<RemoveProjectRequest, Result
     public async Task<Result> Handle(RemoveProjectRequest request, CancellationToken cancellationToken)
     {
         var connection = await _dataStore.ConnectTo(StoreType.Application, cancellationToken);
-        var affected = await connection.ExecuteAsync(Command, new {Path = request.Path.AbsolutePath});
-        return Result.OkIf(affected == 1, "The command did not remove a single record from the database.");
+        var affected = await connection.ExecuteAsync(Command, new {Path = request.Path.LocalPath});
+        return Result.Ok().WithSuccess($"Removed {affected} project(s) from application store.");
     }
 }

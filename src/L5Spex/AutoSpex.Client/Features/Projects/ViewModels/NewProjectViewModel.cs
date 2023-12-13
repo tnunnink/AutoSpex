@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
-using System.Threading.Tasks;
 using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
 using Avalonia.Controls;
@@ -43,7 +42,7 @@ public partial class NewProjectViewModel : ViewModelBase
     {
         var folder = await _picker.PickFolder("Select Project Location");
         if (folder is null) return;
-        Location = folder.Path.AbsolutePath;
+        Location = folder.Path.LocalPath;
     }
 
     [RelayCommand(CanExecute = nameof(CanCreate))]
@@ -51,7 +50,7 @@ public partial class NewProjectViewModel : ViewModelBase
     {
         if (_uri is null) return;
 
-        if (File.Exists(_uri.AbsolutePath))
+        if (File.Exists(_uri.LocalPath))
         {
             //todo throw error
         }
@@ -76,7 +75,7 @@ public partial class NewProjectViewModel : ViewModelBase
 
         _uri = Uri.TryCreate(path, UriKind.Absolute, out var uri) ? uri : default;
 
-        Exists = _uri is not null && File.Exists(_uri.AbsolutePath);
+        Exists = _uri is not null && File.Exists(_uri.LocalPath);
     }
     
     partial void OnLocationChanged(string value)
@@ -88,7 +87,7 @@ public partial class NewProjectViewModel : ViewModelBase
 
         _uri = Uri.TryCreate(path, UriKind.Absolute, out var uri) ? uri : default;
         
-        Exists = _uri is not null && File.Exists(_uri.AbsolutePath);
+        Exists = _uri is not null && File.Exists(_uri.LocalPath);
     }
     
     public static ValidationResult? ValidateFileName(string value, ValidationContext context)

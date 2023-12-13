@@ -6,7 +6,7 @@ public abstract class BinaryOperation : Operation
     {
     }
 
-    public override bool Evaluate(object? input, params object[] values)
+    public override bool Execute(object? input, params object[] values)
     {
         if (values is null) throw new ArgumentNullException(nameof(values));
         if (values.Length != 1)

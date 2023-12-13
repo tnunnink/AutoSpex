@@ -6,7 +6,7 @@ public abstract class UnaryOperation : Operation
     {
     }
     
-    public override bool Evaluate(object? input, params object[] values) => Evaluate(input);
+    public override bool Execute(object? input, params object[] values) => Evaluate(input);
 
     protected abstract bool Evaluate(object? input);
 }

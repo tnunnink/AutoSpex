@@ -9,5 +9,15 @@ public interface ISettingsManager : IDisposable, IAsyncDisposable
     
     T Get<T>(Setting setting, Func<string, T> convert);
     
-    void Save(Setting setting, string value);
+    string? Find(Setting setting);
+    
+    T? Find<T>(Setting setting, Func<string, T> convert);
+
+    void Set(Setting setting, string value);
+    
+    void Set<T>(Setting setting, T value);
+
+    Task Load();
+
+    Task Save();
 }

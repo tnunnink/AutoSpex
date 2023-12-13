@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using AutoSpex.Client.Features.Projects;
 using AutoSpex.Client.Migrations;
 using AutoSpex.Client.Shared;
 using Dapper;
@@ -33,7 +32,7 @@ public class ProjectMigrator : IProjectMigrator
             if (backup is not null && backup.IsFailed)
             {
                 return Result
-                    .Fail("Failed to backup existing project. Please ensure all connections to te project are closed.")
+                    .Fail("Project backup failed. Please ensure all connections to te project are closed.")
                     .WithErrors(backup.Errors);
             }
 
@@ -48,12 +47,12 @@ public class ProjectMigrator : IProjectMigrator
                     if (restore is not null && restore.IsFailed)
                     {
                         return new Error(
-                                "Failed perform project migration and restoration of original project. The backup created will be maintained.")
+                                $"Project restoration failed. Backup file preserved at '{backup?.Value.FullName}'.")
                             .CausedBy(e);
                     }
                     
                     backup?.Value.Delete();
-                    return new Error("Failed perform project migration.").CausedBy(e);
+                    return new Error("Project migration failed.").CausedBy(e);
                 });
 
             container.Dispose();
@@ -65,7 +64,6 @@ public class ProjectMigrator : IProjectMigrator
     {
         return Result.Try(() => backup.CopyTo(path));
     }
-
 
     /// <summary>
     /// Evaluates the necessary action to align the currently running application to the version of the database at the given URI.

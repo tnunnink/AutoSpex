@@ -38,7 +38,7 @@ public class EqualToOperationTests
     {
         var operation = Operation.EqualTo;
         
-        var result = operation.Evaluate(1, 1);
+        var result = operation.Execute(1, 1);
         
         result.Should().BeTrue();
     }
@@ -48,7 +48,7 @@ public class EqualToOperationTests
     {
         var operation = Operation.EqualTo;
         
-        var result = operation.Evaluate(1, 2);
+        var result = operation.Execute(1, 2);
         
         result.Should().BeFalse();
     }

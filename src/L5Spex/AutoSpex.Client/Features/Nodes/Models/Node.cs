@@ -10,7 +10,7 @@ public partial class Node : ObservableObject
     public Node(string name, NodeType nodeType, Node? parent = null)
     {
         NodeId = Guid.NewGuid();
-        ParentId = parent?.NodeId ?? default;
+        ParentId = parent?.NodeId ?? Guid.Empty;
         Parent = parent;
         Name = name;
         NodeType = nodeType;
@@ -32,7 +32,7 @@ public partial class Node : ObservableObject
     }
 
     public Guid NodeId { get; }
-    public Guid? ParentId { get; private set; }
+    public Guid ParentId { get; private set; }
     public Node? Parent { get; private set; }
 
     [ObservableProperty] private NodeType _nodeType;

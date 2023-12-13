@@ -28,12 +28,14 @@ public class CreateProjectHandler : IRequestHandler<CreateProjectRequest, Result
                                   "ON CONFLICT DO UPDATE SET OpenedOn = @OpenedOn";
     
     private readonly IProjectMigrator _migrator;
+    private readonly ISettingsManager _settings;
     private readonly IDataStoreProvider _dataStore;
 
-    public CreateProjectHandler(IDataStoreProvider dataStore, IProjectMigrator migrator)
+    public CreateProjectHandler(IDataStoreProvider dataStore, IProjectMigrator migrator, ISettingsManager settings)
     {
         _dataStore = dataStore;
         _migrator = migrator;
+        _settings = settings;
     }
 
     public async Task<Result<Project>> Handle(CreateProjectRequest request, CancellationToken cancellationToken)
@@ -42,7 +44,8 @@ public class CreateProjectHandler : IRequestHandler<CreateProjectRequest, Result
         var migration = await _migrator.Migrate(request.Path);
         if (migration.IsFailed)
         {
-            return migration.ToResult<Project>();
+            return migration.ToResult<Project>()
+                .WithError("Failed to create project due to migration result.");
         }
 
         var project = new Project(request.Path)
@@ -51,10 +54,11 @@ public class CreateProjectHandler : IRequestHandler<CreateProjectRequest, Result
         };
         
         using var connection = await _dataStore.ConnectTo(StoreType.Application, cancellationToken);
-        await connection.ExecuteAsync(Upsert, new { Path = project.Path.AbsolutePath, project.OpenedOn });
+        await connection.ExecuteAsync(Upsert, new { Path = project.Uri.LocalPath, project.OpenedOn });
         
-        App.Settings.Save(Setting.OpenProjectConnection, project.ConnectionString);
-        App.Settings.Save(Setting.OpenProjectPath, project.Path.AbsolutePath);
+        _settings.Set(Setting.OpenProjectConnection, project.ConnectionString);
+        _settings.Set(Setting.OpenProjectPath, project.Uri.LocalPath);
+        await _settings.Save();
         
         return Result.Ok(project);
     }

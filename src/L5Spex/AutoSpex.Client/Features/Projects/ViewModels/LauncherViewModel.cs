@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
 using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -12,7 +11,6 @@ using DynamicData;
 using DynamicData.Binding;
 using JetBrains.Annotations;
 using MediatR;
-using Project = AutoSpex.Client.Features.Projects.Project;
 
 namespace AutoSpex.Client.Features.Projects;
 
@@ -25,7 +23,7 @@ public partial class LauncherViewModel : ViewModelBase
     private readonly IDialogService _dialog;
     
     private readonly List<Project> _allProjects = new();
-    private readonly SourceCache<Project, Uri> _projectCache = new(x => x.Path);
+    private readonly SourceCache<Project, Uri> _projectCache = new(x => x.Uri);
     private readonly ReadOnlyObservableCollection<Project> _projects;
 
     public LauncherViewModel(IMediator mediator, IMessenger messenger, IStoragePicker picker,
@@ -79,9 +77,11 @@ public partial class LauncherViewModel : ViewModelBase
     }
 
     [RelayCommand(CanExecute = nameof(CanLaunch))]
-    private async Task LaunchProject(Project project)
+    private async Task LaunchProject(Project? project)
     {
-        var result = await _mediator.Send(new LaunchProjectRequest(project.Path));
+        if (project is null) return;
+        
+        var result = await _mediator.Send(new LaunchProjectRequest(project.Uri));
 
         if (result.IsSuccess)
         {
@@ -92,9 +92,17 @@ public partial class LauncherViewModel : ViewModelBase
     private static bool CanLaunch(Project? project) => project is not null && project.File.Exists;
 
     [RelayCommand(CanExecute = nameof(CanRemove))]
-    private async Task RemoveProject(Project project)
+    private async Task RemoveProject(Project? project)
     {
-        await _mediator.Send(new RemoveProjectRequest(project.Path));
+        if (project is null) return;
+        
+        var result = await _mediator.Send(new RemoveProjectRequest(project.Uri));
+
+        if (result.IsSuccess)
+        {
+            _allProjects.Remove(project);
+            _projectCache.Edit(l => l.Remove(project));
+        }
     }
     
     private static bool CanRemove(Project? project) => project is not null;
@@ -121,7 +129,7 @@ public partial class LauncherViewModel : ViewModelBase
 
             var filteredProjects = string.IsNullOrEmpty(value)
                 ? _allProjects
-                : _allProjects.Where(p => p.Name.Contains(value) || p.Path.AbsolutePath.Contains(value));
+                : _allProjects.Where(p => p.Name.Contains(value) || p.Uri.AbsolutePath.Contains(value));
 
             innerList.AddOrUpdate(filteredProjects);
         });

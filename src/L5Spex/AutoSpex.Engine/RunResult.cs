@@ -2,45 +2,40 @@
 
 public class RunResult
 {
-    private RunResult(Evaluation range, IEnumerable<Verification> verifications, RunConfig config, int total,
-        int filtered, ResultType result)
+    private RunResult(ResultType result, int found, int filtered, bool inRange, IEnumerable<Verification> verifications)
     {
-        Verifications = verifications;
-        Config = config;
-        Total = total;
-        Candidates = filtered;
         Result = result;
-        Range = range;
+        Found = found;
+        Candidates = filtered;
+        InRange = inRange;
+        Verifications = verifications;
     }
 
-    public Guid Id { get; } = Guid.NewGuid();
-
-    public DateTime RanAt { get; } = DateTime.Now;
     public ResultType Result { get; }
-    public RunConfig Config { get; }
-    public int Total { get; }
+    public int Found { get; }
     public int Candidates { get; }
-    public Evaluation Range { get; }
+    public bool InRange { get; }
     public IEnumerable<Verification> Verifications { get; }
 
-    public static RunResult Process(Evaluation range, List<Verification> verifications, RunConfig config, int total, int filtered)
+    public static RunResult Process(int found, int candidates, bool inRange, List<Verification> verifications,
+        RunConfig config)
     {
-        var result = range.Result;
+        var result = inRange ? ResultType.Passed : ResultType.Failed;
 
-        if (verifications.Count <= 0) return new RunResult(range, verifications, config, total, filtered, result);
-        
-        if (config is {VerificationInclusion: InclusionType.All, ResultInclusion: InclusionType.All})
+        if (verifications.Count <= 0) return new RunResult(result, found, candidates, inRange, verifications);
+
+        if (config is {VerificationInclusion: InclusionType.All, CandidateInclusion: InclusionType.All})
             result |= verifications.Max(v => v.Count > 0 ? v.Max(e => e.Result) : ResultType.None);
-        
-        if (config is {VerificationInclusion: InclusionType.All, ResultInclusion: InclusionType.Any})
+
+        if (config is {VerificationInclusion: InclusionType.All, CandidateInclusion: InclusionType.Any})
             result |= verifications.Max(v => v.Count > 0 ? v.Min(e => e.Result) : ResultType.None);
-        
-        if (config is {VerificationInclusion: InclusionType.Any, ResultInclusion: InclusionType.All})
+
+        if (config is {VerificationInclusion: InclusionType.Any, CandidateInclusion: InclusionType.All})
             result |= verifications.Min(v => v.Count > 0 ? v.Max(e => e.Result) : ResultType.None);
-        
-        if (config is {VerificationInclusion: InclusionType.Any, ResultInclusion: InclusionType.Any})
+
+        if (config is {VerificationInclusion: InclusionType.Any, CandidateInclusion: InclusionType.Any})
             result |= verifications.Min(v => v.Count > 0 ? v.Min(e => e.Result) : ResultType.None);
-        
-        return new RunResult(range, verifications, config, total, filtered, result);
+
+        return new RunResult(result, found, candidates, inRange, verifications);
     }
 }

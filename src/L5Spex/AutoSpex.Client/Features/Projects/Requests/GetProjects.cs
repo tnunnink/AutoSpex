@@ -17,6 +17,8 @@ public record GetProjectsRequest : IRequest<Result<IEnumerable<Project>>>;
 [UsedImplicitly]
 public class GetProjectsHandler : IRequestHandler<GetProjectsRequest, Result<IEnumerable<Project>>>
 {
+    private const string Query = "SELECT * FROM Project ORDER BY OpenedOn DESC";
+    
     private readonly IDataStoreProvider _dataStore;
 
     public GetProjectsHandler(IDataStoreProvider dataStore)
@@ -27,7 +29,7 @@ public class GetProjectsHandler : IRequestHandler<GetProjectsRequest, Result<IEn
     public async Task<Result<IEnumerable<Project>>> Handle(GetProjectsRequest request, CancellationToken cancellationToken)
     {
         using var connection = await _dataStore.ConnectTo(StoreType.Application, cancellationToken);
-        var records = await connection.QueryAsync("SELECT * FROM Project ORDER BY OpenedOn DESC");
-        return Result.Ok(records.Select(record => new Project(record)));
+        var projects = await connection.QueryAsync<Project>(Query);
+        return Result.Ok(projects);
     }
 }

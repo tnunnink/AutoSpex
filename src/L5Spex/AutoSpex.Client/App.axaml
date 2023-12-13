@@ -2,6 +2,16 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
              x:Class="AutoSpex.Client.App">
+    
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="Resources/Themes/NavigationTabItem.axaml" />
+                <ResourceInclude Source="Resources/Themes/DetailsTabItem.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+    
     <Application.Styles>
         <a:ModernTheme Includes="All" />
         <StyleInclude Source="Resources/Styles.axaml" />
@@ -9,4 +19,6 @@
         <StyleInclude Source="Resources/Icons/FilledIcons.axaml" />
         <StyleInclude Source="Resources/Icons/RegularIcons.axaml" />
     </Application.Styles>
+    
+   
 </Application>

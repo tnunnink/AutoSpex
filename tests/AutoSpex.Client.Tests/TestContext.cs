@@ -29,8 +29,9 @@ public sealed class TestContext : IDisposable
         ProjectConnection = new SQLiteConnectionStringBuilder {DataSource = ProjectPath.AbsolutePath}.ConnectionString;
         
         var settings = _container.GetInstance<ISettingsManager>();
-        settings.Save(Setting.OpenProjectConnection, ProjectConnection);
-        settings.Save(Setting.OpenProjectPath, ProjectPath.AbsolutePath);
+        settings.Set(Setting.OpenProjectConnection, ProjectConnection);
+        settings.Set(Setting.OpenProjectPath, ProjectPath.AbsolutePath);
+        settings.Save();
     }
 
     public readonly Uri ProjectPath;

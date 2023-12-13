@@ -15,6 +15,8 @@ public partial class AppPageModel : ViewModelBase, IRecipient<LaunchProjectMessa
     public AppPageModel(IMessenger messenger, IMediator mediator)
     {
         messenger.RegisterAll(this);
+        /*WindowHeight = 800;
+        WindowWidth = 800;*/
         CurrentPage = new LauncherView();
     }
 

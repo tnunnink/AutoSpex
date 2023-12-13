@@ -117,11 +117,12 @@ public class LaunchProjectHandler : IRequestHandler<LaunchProjectRequest, Result
             OpenedOn = DateTime.UtcNow
         };
 
-        _settings.Save(Setting.OpenProjectConnection, project.ConnectionString);
-        _settings.Save(Setting.OpenProjectPath, project.Path.AbsolutePath);
+        _settings.Set(Setting.OpenProjectConnection, project.ConnectionString);
+        _settings.Set(Setting.OpenProjectPath, project.Uri.LocalPath);
+        await _settings.Save();
 
         using var connection = await _dataStore.ConnectTo(StoreType.Application, cancellationToken);
-        await connection.ExecuteAsync(Upsert, new {Path = project.Path.AbsolutePath, project.OpenedOn});
+        await connection.ExecuteAsync(Upsert, new {Path = project.Uri.LocalPath, project.OpenedOn});
         return Result.Ok(project);
     }
 }

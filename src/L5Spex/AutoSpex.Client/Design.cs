@@ -1,6 +1,11 @@
-﻿namespace AutoSpex.Client;
+﻿using AutoSpex.Client.Features.Specifications;
 
-/*public static class Design
+namespace AutoSpex.Client;
+
+public static class Design
 {
-    public static SpecTreeViewModel SpecTreeViewModel => new SpecTreeViewModelDesign();
-}*/
+    public static SpecTreeViewModel SpecTreeViewModel => new(null!, null!)
+    {
+        
+    };
+}

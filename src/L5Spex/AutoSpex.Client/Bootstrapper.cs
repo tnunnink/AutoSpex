@@ -63,6 +63,7 @@ public class Bootstrapper
         migrator.MigrateUp();
         
         var settings = container.GetInstance<ISettingsManager>();
-        settings.Save(Setting.AppConnection, connectionString);
+        settings.Set(Setting.AppConnection, connectionString);
+        settings.Save();
     }
 }
