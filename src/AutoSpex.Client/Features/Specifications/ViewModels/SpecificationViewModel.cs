@@ -9,7 +9,7 @@ using MediatR;
 
 namespace AutoSpex.Client.Features.Specifications;
 
-public partial class SpecificationViewModel : NodeViewModel
+public partial class SpecificationViewModel : NodeDetailViewModel
 {
     private readonly IMediator _mediator;
     

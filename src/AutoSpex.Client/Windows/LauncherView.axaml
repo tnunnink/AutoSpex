@@ -1,0 +1,66 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:windows="clr-namespace:AutoSpex.Client.Windows"
+             x:DataType="windows:LauncherViewModel"
+             x:Class="AutoSpex.Client.Windows.LauncherView"
+             x:Name="Root"
+             Width="700" Height="600"
+             WindowState="Normal"
+             SizeToContent="Manual"
+             WindowStartupLocation="CenterScreen"
+             CanResize="False">
+  
+  <DockPanel Margin="{Binding #Root.OffScreenMargin}">
+    <!-- Title Bar -->
+    <a:ChromedTitleBar DockPanel.Dock="Top" Height="40">
+      <a:ChromedTitleBar.Resources>
+        <a:ComparisonConverter x:Key="RightContentMarginConverter">
+          <a:ComparisonConverter.TrueResult>
+            <Thickness>0,0,10,0</Thickness>
+          </a:ComparisonConverter.TrueResult>
+          <a:ComparisonConverter.FalseResult>
+            <Thickness>0,0,0,0</Thickness>
+          </a:ComparisonConverter.FalseResult>
+        </a:ComparisonConverter>
+      </a:ChromedTitleBar.Resources>
+
+      <a:ChromedTitleBar.LeftContent>
+        <StackPanel Orientation="Horizontal"
+                    Margin="5,0">
+          <a:DynamicImage Source="../Resources/Images/icons8-clipboard-64.png"
+                          Height="24" Width="24" Margin="5 0 10 0" />
+          
+          <TextBlock Text="AutoSpex Project Launcher" 
+                     VerticalAlignment="Center"/>
+        </StackPanel>
+      </a:ChromedTitleBar.LeftContent>
+
+      <a:ChromedTitleBar.RightContent>
+        <StackPanel
+          Margin="{Binding $parent[a:ChromedTitleBar].HasCaptionButtons, Converter={StaticResource RightContentMarginConverter}}"
+          Orientation="Horizontal">
+          <a:ToggleThemeButton Theme="{a:ControlTheme TitleBarToggleThemeButton}" ToolTip.Tip="Toggle Theme" />
+        </StackPanel>
+      </a:ChromedTitleBar.RightContent>
+    </a:ChromedTitleBar>
+
+    <!-- Status Bar -->
+    <Border DockPanel.Dock="Bottom" Background="{a:ThemeResource StatusBarBackgroundBrush}"
+            BorderBrush="{a:ThemeResource StatusBarBorderBrush}"
+            BorderThickness="{a:ThemeResource StatusBarBorderThickness}"
+            TextElement.Foreground="{a:ThemeResource StatusBarForegroundBrush}">
+      <Grid Margin="0,0,0,1" ColumnDefinitions="*,Auto,Auto">
+        <TextBlock Margin="20,4" Text="StatusMessage" />
+        <TextBlock Grid.Column="1" Margin="0,4" Text="ProductVersionAndDateSummaryText" />
+        <a:WindowResizeGrip Grid.Column="2" />
+      </Grid>
+    </Border>
+
+    <!-- Client Area -->
+    <Border Background="Transparent" BorderBrush="{a:ThemeResource Container2BorderBrush}"
+            BorderThickness="0,1,0,0">
+      <ContentControl Content="{Binding View^, FallbackValue='Loading...'}" />
+    </Border>
+  </DockPanel>
+</Window>

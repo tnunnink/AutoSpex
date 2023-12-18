@@ -7,27 +7,45 @@ namespace AutoSpex.Client.Tests.Nodes;
 public class NodeTests
 {
     [Test]
-    public void New_ValidParameters_ShouldNotBeNull()
+    public void New_Default_ShouldNotBeNull()
     {
-        var node = new Node("Test", NodeType.Source);
+        var node = new Node();
 
         node.Should().NotBeNull();
     }
-    
-    [Test]
-    public void New_ValidRecord_ShouldNotBeNull()
-    {
-        var node = new Node((dynamic)new
-        {
-            NodeId = Guid.NewGuid(),
-            ParentId = (Guid) default,
-            NodeType = NodeType.Source,
-            Name = "MySource",
-            Depth = 0,
-            Ordinal = 0,
-            Description = "this is a test of course."
-        });
 
-        node.Should().NotBeNull();
+    [Test]
+    public void SpecCollection_ValidParameter_ShouldHaveExpectedValues()
+    {
+        var node = Node.SpecCollection("Test");
+
+        node.NodeId.Should().NotBeEmpty();
+        node.ParentId.Should().BeEmpty();
+        node.Parent.Should().BeNull();
+        node.Feature.Should().Be(Feature.Specifications);
+        node.NodeType.Should().Be(NodeType.Collection);
+        node.Name.Should().Be("Test");
+        node.Depth.Should().Be(0);
+        node.Ordinal.Should().Be(0);
+        node.Description.Should().BeEmpty();
+    }
+
+    [Test]
+    public void Folder_ValidParameters_ShouldHaveExpectedValues()
+    {
+        var parent = Node.SpecCollection("Test");
+        
+        var node = parent.AddFolder("Test");
+        
+        node.NodeId.Should().NotBeEmpty();
+        node.ParentId.Should().NotBeEmpty();
+        node.Parent.Should().NotBeNull();
+        node.Parent?.Name.Should().Be("Test");
+        node.Feature.Should().Be(Feature.Specifications);
+        node.NodeType.Should().Be(NodeType.Folder);
+        node.Name.Should().Be("Test");
+        node.Depth.Should().Be(1);
+        node.Ordinal.Should().Be(0);
+        node.Description.Should().BeEmpty();
     }
 }

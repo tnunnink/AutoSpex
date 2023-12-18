@@ -33,7 +33,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\L5Spex\AutoSpex.Engine\AutoSpex.Engine.csproj" />
+      <ProjectReference Include="..\..\src\AutoSpex.Engine\AutoSpex.Engine.csproj" />
     </ItemGroup>
 
 

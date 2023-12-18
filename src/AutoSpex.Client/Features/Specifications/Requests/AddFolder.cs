@@ -2,6 +2,9 @@
 using System.Threading.Tasks;
 using AutoSpex.Client.Features.Nodes;
 using AutoSpex.Client.Services;
+using AutoSpex.Client.Shared;
+using Dapper;
+using Dapper.Contrib.Extensions;
 using FluentResults;
 using JetBrains.Annotations;
 using MediatR;
@@ -10,19 +13,35 @@ using Node = AutoSpex.Client.Features.Nodes.Node;
 namespace AutoSpex.Client.Features.Specifications;
 
 [PublicAPI]
-public record AddFolderRequest(string Name) : AddNodeRequest(Name, NodeType.Folder);
+public record AddFolderRequest(string Name, Node Parent) : IRequest<Result<Node>>;
 
 [UsedImplicitly]
-public class AddFolderHandler : AddNodeHandler, IRequestHandler<AddFolderRequest, Result<Node>>
+public class AddFolderHandler : IRequestHandler<AddFolderRequest, Result<Node>>
 {
-    public AddFolderHandler(IDataStoreProvider store) : base(store)
+    private const string GetNextOrdinal =
+        "SELECT coalesce(MAX(Ordinal) + 1, 0) FROM [Node] WHERE ParentId = @ParentId AND NodeType = @NodeType";
+    
+    private const string InsertNode =
+        "INSERT INTO Node (NodeId, ParentId, Feature, NodeType, Name, Depth, Ordinal, Description) " +
+        "VALUES (@NodeId, @ParentId, @Feature, @NodeType, @Name, @Depth, @Ordinal, @Description)";
+
+    private readonly IDataStoreProvider _store;
+
+    public AddFolderHandler(IDataStoreProvider store)
     {
+        _store = store;
     }
 
-    public Task<Result<Node>> Handle(AddFolderRequest request, CancellationToken cancellationToken)
+    public async Task<Result<Node>> Handle(AddFolderRequest request, CancellationToken cancellationToken)
     {
-        //for right now this just adds the node but later we can do other things if needed.
-        //Not sure what other information a collection may contain.
-        return base.Handle(request, cancellationToken);
+        using var connection = await _store.ConnectTo(StoreType.Project, cancellationToken);
+
+        var node = request.Parent.AddFolder(request.Name);
+        
+        node.Ordinal = await connection.QuerySingleAsync<int>(GetNextOrdinal, new { node.ParentId, node.NodeType });
+        
+        var result = await connection.ExecuteAsync(InsertNode, node);
+
+        return result == 1 ? Result.Ok(node) : Result.Fail("...");
     }
 }

@@ -1,7 +1,4 @@
-﻿using System.Reflection;
-using ActiproSoftware.Extensions;
-using AutoSpex.Client.Features.Nodes;
-using AutoSpex.Client.Features.Sources;
+﻿using ActiproSoftware.Extensions;
 using FluentAssertions;
 using L5Sharp.Core;
 
@@ -13,19 +10,6 @@ public class Scratch
     [Test]
     public void ScratchTest()
     {
-        var test = new SourceViewModel(new Node(new
-        {
-            NodeId = Guid.NewGuid(),
-            ParentId = (Guid) default,
-            NodeType = NodeType.Source,
-            Name = "MySource",
-            Depth = 0, 
-            Ordinal = 0,
-            Description = "this is a test of course."
-        }));
-
-
-        test.Should().NotBeNull();
     }
 
     [Test]

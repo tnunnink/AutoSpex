@@ -13,18 +13,15 @@ public partial class Project : ObservableObject
         File = new FileInfo(Uri.LocalPath);
     }
 
-    public Project(string path, DateTime openedOn, long pinned)
+    public Project(string path, DateTime openedOn)
     {
         Uri = new Uri(path);
         OpenedOn = openedOn;
-        Pinned = pinned == 1;
         File = new FileInfo(Uri.LocalPath);
     }
 
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(Name))]
     private Uri _uri;
-
-    [ObservableProperty] private bool _pinned;
 
     [ObservableProperty] private DateTime _openedOn = DateTime.UtcNow;
 

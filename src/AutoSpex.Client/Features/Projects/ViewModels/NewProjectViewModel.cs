@@ -1,33 +1,31 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
-using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
-using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using HanumanInstitute.MvvmDialogs;
 using JetBrains.Annotations;
 
 namespace AutoSpex.Client.Features.Projects;
 
 [UsedImplicitly]
-public partial class NewProjectViewModel : ViewModelBase
+public partial class NewProjectViewModel : ViewModelBase, IModalDialogViewModel, ICloseable
 {
-    private Uri? _uri;
-    private readonly IStoragePicker _picker;
+    private readonly IDialogService _dialog;
 
-    public NewProjectViewModel(IStoragePicker picker)
+    public NewProjectViewModel(IDialogService dialog)
     {
-        _picker = picker;
+        _dialog = dialog;
     }
-    
+
     [ObservableProperty]
     [NotifyDataErrorInfo]
     [NotifyCanExecuteChangedFor(nameof(CreateCommand))]
     [Required]
     [CustomValidation(typeof(NewProjectViewModel), nameof(ValidateFileName))]
     private string _name = string.Empty;
-    
+
     [ObservableProperty]
     [NotifyDataErrorInfo]
     [NotifyCanExecuteChangedFor(nameof(CreateCommand))]
@@ -36,60 +34,47 @@ public partial class NewProjectViewModel : ViewModelBase
     private string _location = string.Empty;
 
     [ObservableProperty] private bool _exists;
+
+    public Uri? Uri { get; private set; }
     
+    public bool? DialogResult { get; private set; }
+    public event EventHandler? RequestClose;
+    
+
     [RelayCommand]
     private async Task SelectLocation()
     {
-        var folder = await _picker.PickFolder("Select Project Location");
-        if (folder is null) return;
-        Location = folder.Path.LocalPath;
+        var path = await _dialog.ShowSelectFolderDialog("Select Project Location");
+        if (path is null) return;
+        Location = path.LocalPath;
     }
 
     [RelayCommand(CanExecute = nameof(CanCreate))]
-    private void Create(Window window)
+    private void Create()
     {
-        if (_uri is null) return;
+        if (string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(Location))
+            return;
 
-        if (File.Exists(_uri.LocalPath))
-        {
-            //todo throw error
-        }
-        
-        window.Close(_uri);
+        var path = Path.Combine(Location, $"{Name}{Constant.SpexExtension}");
+
+        Uri = Uri.TryCreate(path, UriKind.Absolute, out var uri) ? uri : default;
+
+        Exists = Uri is not null && File.Exists(Uri.LocalPath);
+        if (Exists) return;
+
+        DialogResult = true;
+        RequestClose?.Invoke(this, EventArgs.Empty);
     }
 
-    private bool CanCreate() => !HasErrors && _uri is not null && !Exists;
+    private bool CanCreate() => !HasErrors && !string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(Location);
 
     [RelayCommand]
-    private static void Cancel(Window window)
+    private void Cancel()
     {
-        window.Close();
+        DialogResult = false;
+        RequestClose?.Invoke(this, EventArgs.Empty);
     }
 
-    partial void OnNameChanged(string value)
-    {
-        if (string.IsNullOrEmpty(value) || string.IsNullOrEmpty(Location))
-            return;
-
-        var path = Path.Combine(Location, $"{Name}{Constant.SpexExtension}");
-
-        _uri = Uri.TryCreate(path, UriKind.Absolute, out var uri) ? uri : default;
-
-        Exists = _uri is not null && File.Exists(_uri.LocalPath);
-    }
-    
-    partial void OnLocationChanged(string value)
-    {
-        if (string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(value))
-            return;
-
-        var path = Path.Combine(Location, $"{Name}{Constant.SpexExtension}");
-
-        _uri = Uri.TryCreate(path, UriKind.Absolute, out var uri) ? uri : default;
-        
-        Exists = _uri is not null && File.Exists(_uri.LocalPath);
-    }
-    
     public static ValidationResult? ValidateFileName(string value, ValidationContext context)
     {
         return value.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0

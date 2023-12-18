@@ -1,4 +1,5 @@
 ﻿using AutoSpex.Client.Features.Nodes;
+using AutoSpex.Client.Features.Specifications;
 using FluentAssertions;
 using MediatR;
 
@@ -8,12 +9,12 @@ namespace AutoSpex.Client.Tests.Nodes;
 public class GetNodesTests
 {
     [Test]
-    public async Task Send_SpecTypeNoData_ShouldReturnSuccessAndEmpty()
+    public async Task Send_SpecsFeature_ShouldReturnSuccessAndEmpty()
     {
         using var context = new TestContext();
         context.BuildProject();
         var mediator = context.Resolve<IMediator>();
-        var request = new GetNodesRequest(NodeType.Spec);
+        var request = new GetNodesRequest(Feature.Specifications);
 
         var result = await mediator.Send(request);
 
@@ -21,57 +22,49 @@ public class GetNodesTests
     }
     
     [Test]
-    public async Task Send_CollectionTypeNoData_ShouldReturnSuccessAndEmpty()
+    public async Task Send_SourcesFeature_ShouldReturnSuccessAndEmpty()
     {
         using var context = new TestContext();
         context.BuildProject();
         var mediator = context.Resolve<IMediator>();
-        var request = new GetNodesRequest(NodeType.Collection);
+        var request = new GetNodesRequest(Feature.Sources);
 
         var result = await mediator.Send(request);
 
         result.IsSuccess.Should().BeTrue();
     }
-    
+   
     [Test]
-    public async Task Send_FolderTypeNoData_ShouldReturnSuccessAndEmpty()
+    public async Task Send_CollectionSeeds_ShouldReturnExpectedCount()
     {
         using var context = new TestContext();
         context.BuildProject();
+        context.RunMigration("SeedCollectionNodesMigration");
         var mediator = context.Resolve<IMediator>();
-        var request = new GetNodesRequest(NodeType.Folder);
-
-        var result = await mediator.Send(request);
-
-        result.IsSuccess.Should().BeTrue();
-    }
-    
-    [Test]
-    public async Task Send_SourceTypeNoData_ShouldReturnSuccessAndEmpty()
-    {
-        using var context = new TestContext();
-        context.BuildProject();
-        var mediator = context.Resolve<IMediator>();
-        var request = new GetNodesRequest(NodeType.Source);
-
-        var result = await mediator.Send(request);
-
-        result.IsSuccess.Should().BeTrue();
-    }
-
-    [Test]
-    public async Task Send_SourceWithSeededNodes_ShouldReturnExpectedCount()
-    {
-        using var context = new TestContext();
-        context.BuildProject();
-        context.RunMigration("SeedSourceNodesMigration");
-        var mediator = context.Resolve<IMediator>();
-        
-        var request = new GetNodesRequest(NodeType.Source);
+        var request = new GetNodesRequest(Feature.Specifications);
         
         var result = await mediator.Send(request);
 
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().HaveCount(3);
+    }
+    
+    [Test]
+    public async Task Send_CollectionAddedFirst_ShouldReturnExpectedCount()
+    {
+        using var context = new TestContext();
+        context.BuildProject();
+        var mediator = context.Resolve<IMediator>();
+
+        var add = new AddCollectionRequest("MyCollection");
+        var addResult = await mediator.Send(add);
+        addResult.IsSuccess.Should().BeTrue();
+        
+        var get = new GetNodesRequest(Feature.Specifications);
+        var result = await mediator.Send(get);
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().HaveCount(1);
+        result.Value.First().Should().Be(addResult.Value);
     }
 }

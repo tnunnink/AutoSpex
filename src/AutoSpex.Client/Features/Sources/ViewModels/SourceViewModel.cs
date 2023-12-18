@@ -14,7 +14,7 @@ using MediatR;
 namespace AutoSpex.Client.Features.Sources;
 
 [UsedImplicitly]
-public partial class SourceViewModel : Nodes.NodeViewModel
+public partial class SourceViewModel : Nodes.NodeDetailViewModel
 {
     private readonly IMediator _mediator;
     

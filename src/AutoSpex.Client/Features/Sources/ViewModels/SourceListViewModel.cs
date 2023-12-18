@@ -11,6 +11,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using DynamicData;
 using DynamicData.Binding;
+using HanumanInstitute.MvvmDialogs;
 using JetBrains.Annotations;
 using MediatR;
 using Node = AutoSpex.Client.Features.Nodes.Node;
@@ -53,7 +54,7 @@ public partial class SourceListViewModel : ViewModelBase
     [RelayCommand]
     private async Task AddSource()
     {
-        var info = await _dialog.Show<dynamic?>(new AddSourceView(), "Add Source");
+        /*var info = await _dialog.Show<dynamic?>(new AddSourceView(), "Add Source");
         if (info is null) return;
         
         var result = await _mediator.Send(new AddSourceRequest(info.Path, info.Name));
@@ -63,7 +64,8 @@ public partial class SourceListViewModel : ViewModelBase
             _allNodes.Add(result.Value);
             _cache.AddOrUpdate(_allNodes.ToArray());
             //todo send message to open the source into the details page.
-        }
+        }*/
+        throw new NotImplementedException();
     }
 
     [RelayCommand]
@@ -88,7 +90,7 @@ public partial class SourceListViewModel : ViewModelBase
 
     private async Task LoadSources()
     {
-        var result = await _mediator.Send(new GetNodesRequest(NodeType.Source));
+        var result = await _mediator.Send(new GetNodesRequest(Feature.Sources));
 
         if (result.IsSuccess)
         {

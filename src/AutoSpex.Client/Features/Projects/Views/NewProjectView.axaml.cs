@@ -7,6 +7,5 @@ public partial class NewProjectView : UserControl
     public NewProjectView()
     {
         InitializeComponent();
-        DataContext = App.Container.GetInstance<NewProjectViewModel>();
     }
 }

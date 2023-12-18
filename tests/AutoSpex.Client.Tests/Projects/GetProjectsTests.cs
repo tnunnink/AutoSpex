@@ -26,7 +26,8 @@ public class GetProjectsTests
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
 
-        var createRequest = new CreateProjectRequest(context.ProjectPath);
+        var project = new Project(context.ProjectPath);
+        var createRequest = new CreateProjectRequest(project);
         var createResult = await mediator.Send(createRequest);
         createResult.IsSuccess.Should().BeTrue();
         

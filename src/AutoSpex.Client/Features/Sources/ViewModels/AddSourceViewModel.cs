@@ -1,11 +1,13 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using HanumanInstitute.MvvmDialogs;
 using JetBrains.Annotations;
 
 namespace AutoSpex.Client.Features.Sources;
@@ -13,11 +15,11 @@ namespace AutoSpex.Client.Features.Sources;
 [UsedImplicitly]
 public partial class AddSourceViewModel : ViewModelBase
 {
-    private readonly IStoragePicker _picker;
+    private readonly IDialogService _dialog;
 
-    public AddSourceViewModel(IStoragePicker picker)
+    public AddSourceViewModel(IDialogService dialog)
     {
-        _picker = picker;
+        _dialog = dialog;
     }
     
     [ObservableProperty]
@@ -30,25 +32,25 @@ public partial class AddSourceViewModel : ViewModelBase
     [NotifyDataErrorInfo]
     [NotifyCanExecuteChangedFor(nameof(AddCommand))]
     [Required]
-    private Uri? _path;
+    private Uri? _uri;
     
     [RelayCommand]
     private async Task SelectSource()
     {
-        var file = await _picker.PickSource();
-        if (file is null) return;
-        
-        Path = file.Path;
+        var uri = await _dialog.ShowSelectSourceDialog();
+        if (uri is null) return;
+
+        Uri = uri;
         
         if (string.IsNullOrEmpty(Name))
-            Name = file.Name;
+            Name = System.IO.Path.GetFileNameWithoutExtension(uri.Segments.Last());
     }
 
     [RelayCommand(CanExecute = nameof(CanAdd))]
     private void Add(Window window)
     {
-        if (Path is null) return;
-        window.Close(new {Path, Name});
+        if (Uri is null) return;
+        window.Close(new {Uri, Name});
     }
 
     private bool CanAdd() => !HasErrors;

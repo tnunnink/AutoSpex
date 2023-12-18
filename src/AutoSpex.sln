@@ -1,14 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoSpex.Engine.Tests", "..\..\tests\AutoSpex.Engine.Tests\AutoSpex.Engine.Tests.csproj", "{CC6C0D1D-7EC9-425D-8503-2580A5AFC602}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{E5B152FB-F149-4076-86EE-7923618DE6B8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoSpex.Engine", "AutoSpex.Engine\AutoSpex.Engine.csproj", "{6FA70F7B-DD15-4CF9-9A6E-99FB346C2DC5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoSpex.Client", "AutoSpex.Client\AutoSpex.Client.csproj", "{C7E31BE2-6FF4-4520-9DF7-351BD1FB95D4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoSpex.Client.Tests", "..\..\tests\AutoSpex.Client.Tests\AutoSpex.Client.Tests.csproj", "{28389E06-A35D-4ED1-A014-76B95DE002F0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoSpex.Client.Tests", "..\tests\AutoSpex.Client.Tests\AutoSpex.Client.Tests.csproj", "{FFCD4B15-C761-41AE-A4D1-3E3CB43A21AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoSpex.Engine.Tests", "..\tests\AutoSpex.Engine.Tests\AutoSpex.Engine.Tests.csproj", "{49DEBC94-F539-4F0C-82C8-4EA84BF1E50D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -16,10 +16,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{CC6C0D1D-7EC9-425D-8503-2580A5AFC602}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CC6C0D1D-7EC9-425D-8503-2580A5AFC602}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CC6C0D1D-7EC9-425D-8503-2580A5AFC602}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CC6C0D1D-7EC9-425D-8503-2580A5AFC602}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6FA70F7B-DD15-4CF9-9A6E-99FB346C2DC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6FA70F7B-DD15-4CF9-9A6E-99FB346C2DC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6FA70F7B-DD15-4CF9-9A6E-99FB346C2DC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -28,13 +24,17 @@ Global
 		{C7E31BE2-6FF4-4520-9DF7-351BD1FB95D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C7E31BE2-6FF4-4520-9DF7-351BD1FB95D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C7E31BE2-6FF4-4520-9DF7-351BD1FB95D4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{28389E06-A35D-4ED1-A014-76B95DE002F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{28389E06-A35D-4ED1-A014-76B95DE002F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{28389E06-A35D-4ED1-A014-76B95DE002F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{28389E06-A35D-4ED1-A014-76B95DE002F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFCD4B15-C761-41AE-A4D1-3E3CB43A21AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFCD4B15-C761-41AE-A4D1-3E3CB43A21AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFCD4B15-C761-41AE-A4D1-3E3CB43A21AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFCD4B15-C761-41AE-A4D1-3E3CB43A21AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49DEBC94-F539-4F0C-82C8-4EA84BF1E50D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49DEBC94-F539-4F0C-82C8-4EA84BF1E50D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49DEBC94-F539-4F0C-82C8-4EA84BF1E50D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49DEBC94-F539-4F0C-82C8-4EA84BF1E50D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{CC6C0D1D-7EC9-425D-8503-2580A5AFC602} = {E5B152FB-F149-4076-86EE-7923618DE6B8}
-		{28389E06-A35D-4ED1-A014-76B95DE002F0} = {E5B152FB-F149-4076-86EE-7923618DE6B8}
+		{FFCD4B15-C761-41AE-A4D1-3E3CB43A21AD} = {E5B152FB-F149-4076-86EE-7923618DE6B8}
+		{49DEBC94-F539-4F0C-82C8-4EA84BF1E50D} = {E5B152FB-F149-4076-86EE-7923618DE6B8}
 	EndGlobalSection
 EndGlobal

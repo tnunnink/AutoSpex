@@ -9,8 +9,9 @@ public class MP10000 : AutoReversingMigration
     public override void Up()
     {
         Create.Table("Node")
-            .WithColumn("NodeId").AsGuid().PrimaryKey()
-            .WithColumn("ParentId").AsGuid().Nullable()
+            .WithColumn("NodeId").AsString().PrimaryKey()
+            .WithColumn("ParentId").AsString().Nullable()
+            .WithColumn("Feature").AsString().NotNullable()
             .WithColumn("NodeType").AsString().NotNullable()
             .WithColumn("Name").AsString().NotNullable()
             .WithColumn("Depth").AsInt32().NotNullable().WithDefaultValue(0)
@@ -18,7 +19,7 @@ public class MP10000 : AutoReversingMigration
             .WithColumn("Description").AsString().Nullable();
 
         Create.Table("Source")
-            .WithColumn("SourceId").AsGuid().PrimaryKey()
+            .WithColumn("SourceId").AsString().PrimaryKey()
             .WithColumn("Controller").AsString().Nullable()
             .WithColumn("Processor").AsString().Nullable()
             .WithColumn("Revision").AsString().Nullable()
@@ -30,11 +31,11 @@ public class MP10000 : AutoReversingMigration
             .WithColumn("Content").AsString().NotNullable();
         
         Create.Table("Spec")
-            .WithColumn("SpecId").AsGuid().PrimaryKey()
+            .WithColumn("SpecId").AsString().PrimaryKey()
             .WithColumn("Element").AsString().NotNullable();
         
         Create.Table("ChangeLog")
-            .WithColumn("NodeId").AsGuid().PrimaryKey()
+            .WithColumn("NodeId").AsString().PrimaryKey()
             .WithColumn("ChangeType").AsInt16().NotNullable()
             .WithColumn("ChangedOn").AsDateTime().NotNullable().WithDefault(SystemMethods.CurrentUTCDateTime)
             .WithColumn("Message").AsString().Nullable();

@@ -2,13 +2,11 @@
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using AutoSpex.Client.Features.Nodes;
-using AutoSpex.Client.Features.Projects;
 using AutoSpex.Client.Shared;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using DynamicData;
-using DynamicData.Binding;
+using HanumanInstitute.MvvmDialogs;
 using JetBrains.Annotations;
 using MediatR;
 using Node = AutoSpex.Client.Features.Nodes.Node;
@@ -20,51 +18,55 @@ public partial class SpecTreeViewModel : ViewModelBase
 {
     private readonly IMediator _mediator;
     private readonly IMessenger _messenger;
-    
-    private readonly SourceCache<Node, Guid> _nodeCache;
-    private readonly ReadOnlyObservableCollection<Node> _nodes;
+    private readonly IDialogService _dialog;
 
-    public SpecTreeViewModel(IMediator mediator, IMessenger messenger)
+    public SpecTreeViewModel(IMediator mediator, IMessenger messenger, IDialogService dialog)
     {
         _mediator = mediator;
         _messenger = messenger;
-        Run = Initialize();
-        
-
-        /*
-        _nodeCache = new SourceCache<Node, Guid>(x => x.NodeId)
-            .Connect()
-            .TransformToTree(n => n.ParentId);*/
+        _dialog = dialog;
     }
 
-    [ObservableProperty] private ObservableCollection<Node> _collections = new();
+    public Task<ObservableCollection<Node>> Nodes => GetNodes();
 
     [ObservableProperty] private ObservableCollection<Node> _selectedNodes = new();
 
-    [ObservableProperty] private Node? _selectedNode;
-    
     [ObservableProperty] private string _filterText = string.Empty;
-    
+
 
     [RelayCommand]
     private async Task AddCollection()
     {
-        var request = new AddCollectionRequest("New Collection");
-        var result = await _mediator.Send(request);
+        var name = await _dialog.ShowNodeNameDialog("New Collection", NodeType.Collection);
+        if (string.IsNullOrEmpty(name)) return;
+        
+        var result = await _mediator.Send(new AddCollectionRequest(name));
+
+        if (result.IsSuccess)
+        {
+            OnPropertyChanged(nameof(Nodes));    
+        }
     }
 
     [RelayCommand]
     private async Task AddFolder(Node parent)
     {
-        var request = new AddNodeRequest("New Folder", NodeType.Folder, parent.NodeId);
-        var result = await _mediator.Send(request);
+        var name = await _dialog.ShowNodeNameDialog("MyFolder", NodeType.Folder);
+        if (string.IsNullOrEmpty(name)) return;
+        
+        var result = await _mediator.Send(new AddFolderRequest(name, parent));
+        
+        if (result.IsSuccess)
+        {
+            parent.Nodes.Add(result.Value);
+            OnPropertyChanged(nameof(Nodes));
+        }
     }
 
     [RelayCommand]
-    private async Task AddSpecification(Node parent)
+    private Task AddSpecification(Node parent)
     {
-        var request = new AddNodeRequest("New Specification", NodeType.Spec, parent.NodeId);
-        var result = await _mediator.Send(request);
+        throw new NotImplementedException();
     }
 
     [RelayCommand]
@@ -78,13 +80,25 @@ public partial class SpecTreeViewModel : ViewModelBase
     private async Task DeleteNode(Node? node)
     {
         if (node is null) return;
-        //todo we need to issue a confirmation dialog first.
         
-        var request = new DeleteNodeRequest(node.NodeId);
-        var result = await _mediator.Send(request);
+        //todo we need to issue a confirmation dialog first. should we do that in the request?
+        
+        var result = await _mediator.Send(new DeleteNodeRequest(node.NodeId));
 
-        /*await _mediator.Publish(notification);*/
-        
+        if (result.IsSuccess && node.Parent is not null)
+        {
+            node.Parent.Nodes.Remove(node);
+            OnPropertyChanged(nameof(Nodes));
+        }
+    }
+
+    [RelayCommand]
+    private void OpenNode(Node? node)
+    {
+        if (node is not null && node.NodeType == NodeType.Spec)
+        {
+            _messenger.Send(new OpenNode(node));
+        }
     }
 
     public void Rename(Node node)
@@ -96,34 +110,18 @@ public partial class SpecTreeViewModel : ViewModelBase
             //todo probably send notification or something so others can update or refresh bindings
         });
     }
-    
-    partial void OnSelectedNodeChanged(Node? value)
-    {
-        if (value is not null && value.NodeType == NodeType.Spec)
-        {
-            _messenger.Send(new OpenNode(value));
-        }
-    }
 
-    partial void OnFilterTextChanged(string value)
+    /*partial void OnFilterTextChanged(string value)
     {
         foreach (var node in Collections)
         {
             node.FilterPath(value);
         }
-    }
+    }*/
 
-    private async Task Initialize()
+    private async Task<ObservableCollection<Node>> GetNodes()
     {
-        var request = new GetNodesRequest(NodeType.Spec);
-        var result = await _mediator.Send(request);
-
-        if (result.IsSuccess)
-        {
-            foreach (var node in result.Value)
-            {
-                Collections.Add(node);
-            }
-        }
+        var result = await _mediator.Send(new GetNodesRequest(Feature.Specifications));
+        return new ObservableCollection<Node>(result.Value);
     }
 }

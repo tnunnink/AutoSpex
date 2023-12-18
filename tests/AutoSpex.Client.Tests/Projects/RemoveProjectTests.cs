@@ -12,8 +12,9 @@ public class RemoveProjectTests
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-        
-        var request = new RemoveProjectRequest(context.ProjectPath);
+
+        var project = new Project(context.ProjectPath);
+        var request = new RemoveProjectRequest(project);
         var result = await mediator.Send(request);
 
         result.IsSuccess.Should().BeTrue();
@@ -25,12 +26,13 @@ public class RemoveProjectTests
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-        
-        var createRequest = new CreateProjectRequest(context.ProjectPath);
+
+        var project = new Project(context.ProjectPath);
+        var createRequest = new CreateProjectRequest(project);
         var createResult = await mediator.Send(createRequest);
         createResult.IsSuccess.Should().BeTrue();
         
-        var removeRequest = new RemoveProjectRequest(context.ProjectPath);
+        var removeRequest = new RemoveProjectRequest(project);
         var removeResult = await mediator.Send(removeRequest);
 
         removeResult.IsSuccess.Should().BeTrue();

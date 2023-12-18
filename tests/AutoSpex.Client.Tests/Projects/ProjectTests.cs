@@ -27,11 +27,10 @@ public class ProjectTests
     [Test]
     public void New_ValidRecord_ShouldHaveExpectedValues()
     {
-        var project = new Project(@"C:\Users\admin\Documents\Spex\MyProject.db", DateTime.Now, 1);
+        var project = new Project(@"C:\Users\admin\Documents\Spex\MyProject.db", DateTime.Now);
 
         project.Should().NotBeNull();
         project.Uri.LocalPath.Should().Be(@"C:\Users\admin\Documents\Spex\MyProject.db");
         project.OpenedOn.Should().BeWithin(TimeSpan.FromSeconds(1));
-        project.Pinned.Should().BeTrue();
     }
 }

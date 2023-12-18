@@ -16,19 +16,41 @@ public sealed class SettingsManager : ISettingsManager
     private const string Upsert =
         "INSERT INTO Setting (Key, Value) VALUES (@Key, @Value) ON CONFLICT DO UPDATE SET Value = @Value";
 
-    private readonly Dictionary<Setting, string> _settings = new();
+    private readonly Dictionary<Setting, string> _settings;
     private readonly IDbConnection _connection;
 
-    private SettingsManager(IDbConnection connection)
+    private SettingsManager(IDbConnection connection, Dictionary<Setting, string> settings)
     {
-        _connection = connection ?? throw new ArgumentNullException(nameof(connection));
+        _connection = connection;
+        _settings = settings;
     }
 
-    public static SettingsManager Load(string connectionString)
+    public static ISettingsManager Load(string connectionString)
     {
         var connection = new SQLiteConnection(connectionString);
         connection.Open();
-        return new SettingsManager(connection);
+        
+        var results = connection.Query("SELECT * FROM Setting").ToList();
+
+        var settings = new Dictionary<Setting, string>();
+        
+        foreach (var result in results)
+        {
+            var key = Enum.Parse<Setting>(result.Key);
+            settings.TryAdd(key, result.Value);
+        }
+        
+        return new SettingsManager(connection, settings);
+    }
+
+    public void Add<T>(Setting setting, T value)
+    {
+        var text = value?.ToString();
+        
+        if (text is null)
+            throw new ArgumentException("Can not add setting with null value.");
+
+        _settings.TryAdd(setting, text);
     }
 
     public string Get(Setting setting)
@@ -51,18 +73,6 @@ public sealed class SettingsManager : ISettingsManager
         return _settings.TryGetValue(setting, out var value) ? convert(value) : default;
     }
 
-    public void Set(Setting setting, string? value)
-    {
-        if (value is null)
-        {
-            _settings.Remove(setting);
-            return;
-        }
-        
-        if (!_settings.TryAdd(setting, value))
-            _settings[setting] = value;
-    }
-
     public void Set<T>(Setting setting, T? value)
     {
         var text = value?.ToString();
@@ -74,16 +84,6 @@ public sealed class SettingsManager : ISettingsManager
         
         if (!_settings.TryAdd(setting, text))
             _settings[setting] = text;
-    }
-
-    public async Task Load()
-    {
-        var settings = (await _connection.QueryAsync("SELECT * FROM Setting")).ToList();
-        
-        foreach (var setting in settings)
-        {
-            _settings.TryAdd(setting.Key, setting.Value);
-        }
     }
 
     public async Task Save()

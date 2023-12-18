@@ -15,14 +15,12 @@
                         Orientation="Horizontal">
                 <Button Content="Create"
                         Command="{Binding CreateCommand}"
-                        CommandParameter="{Binding $parent[Window]}"
                         Height="30" Width="80" Padding="0"
                         Theme="{a:ControlTheme ButtonSolid}"
                         Classes="accent"
                         Margin="0 0 20 0" />
                 <Button Content="Cancel"
                         Command="{Binding CancelCommand}"
-                        CommandParameter="{Binding $parent[Window]}"
                         Height="30" Width="80" Padding="0"
                         Theme="{a:ControlTheme ButtonSoft}" />
             </StackPanel>
@@ -49,19 +47,19 @@
             <TextBlock Text="Enter a name and location on disc to create the project."
                        Classes="theme-text-body size-sm"
                        Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
-                       Margin="0 5" />
+                       Margin="0 10 0 0" />
         </StackPanel>
 
         <!--form-->
-        <StackPanel Margin="0 20">
+        <StackPanel Margin="0 20" Spacing="20">
             <TextBox Text="{Binding Name}"
                      Theme="{a:ControlTheme TextBoxOutline}"
-                     VerticalContentAlignment="Center" Margin="0 5"
+                     VerticalContentAlignment="Center"
                      Watermark="Project Name" />
 
             <TextBox Text="{Binding Location}"
                      Theme="{a:ControlTheme TextBoxOutline}"
-                     VerticalContentAlignment="Center" Margin="0 5"
+                     VerticalContentAlignment="Center"
                      Watermark="Project Location">
                 <TextBox.Styles>
                     <Style Selector="TextBox">
@@ -73,7 +71,7 @@
                                         Command="{Binding SelectLocationCommand}">
                                     <PathIcon Data="{StaticResource Icon.Outlined.Folder}"
                                               Height="16" Width="16"
-                                              Foreground="{a:ThemeResource ControlBorderBrushOutline}" />
+                                              Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
                                 </Button>
                             </Template>
                         </Setter>

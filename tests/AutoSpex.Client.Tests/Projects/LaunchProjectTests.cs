@@ -7,7 +7,7 @@ namespace AutoSpex.Client.Tests.Projects;
 [TestFixture]
 public class LaunchProjectTests
 {
-   [Test]
+    [Test]
     public async Task Valid_WhenCalled_ShouldReturnNotEmptyResults()
     {
         using var context = new TestContext();

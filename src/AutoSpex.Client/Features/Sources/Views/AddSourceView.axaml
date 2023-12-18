@@ -54,7 +54,7 @@
                      VerticalContentAlignment="Center" Margin="0 5"
                      Watermark="Source Name" />
 
-            <TextBox Text="{Binding Path}"
+            <TextBox Text="{Binding Uri}"
                      Theme="{a:ControlTheme TextBoxOutline}"
                      VerticalContentAlignment="Center" Margin="0 5"
                      Watermark="Source File">

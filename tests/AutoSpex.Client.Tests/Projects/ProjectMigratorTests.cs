@@ -1,4 +1,6 @@
-﻿using AutoSpex.Client.Services;
+﻿using AutoSpex.Client.Features.Projects;
+using AutoSpex.Client.Features.Projects.Services;
+using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
 using FluentAssertions;
 

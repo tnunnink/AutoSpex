@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using AutoSpex.Client.Behaviors;
+using AutoSpex.Client.Features.Projects.Services;
 using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
 using Avalonia.Controls.Notifications;
@@ -13,16 +14,23 @@ using MediatR;
 namespace AutoSpex.Client.Features.Projects;
 
 [PublicAPI]
-public record CreateProjectRequest(Uri Path) : INotifiableRequest<Result<Project>>
+public record CreateProjectRequest(Project Project) : INotifiableRequest<Result>
 {
-    public Notification? BuildNotification(Result<Project> result)
+    public Notification? BuildNotification(Result result)
     {
-        return new Notification("Test", "This is a test");
+        if (result.IsFailed)
+        {
+            return new Notification("Project Creation Error", 
+                $"Failed to new create project {Project.Name}. See notification for further details.",
+                NotificationType.Error);
+        }
+
+        return default;
     }
 }
 
 [UsedImplicitly]
-public class CreateProjectHandler : IRequestHandler<CreateProjectRequest, Result<Project>>
+public class CreateProjectHandler : IRequestHandler<CreateProjectRequest, Result>
 {
     private const string Upsert = "INSERT INTO Project(Path, OpenedOn) VALUES(@Path, @OpenedOn)" +
                                   "ON CONFLICT DO UPDATE SET OpenedOn = @OpenedOn";
@@ -38,20 +46,18 @@ public class CreateProjectHandler : IRequestHandler<CreateProjectRequest, Result
         _settings = settings;
     }
 
-    public async Task<Result<Project>> Handle(CreateProjectRequest request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(CreateProjectRequest request, CancellationToken cancellationToken)
     {
+        var project = request.Project;
+        
         //This will create and migrate the project.
-        var migration = await _migrator.Migrate(request.Path);
+        var migration = await _migrator.Migrate(project.Uri);
         if (migration.IsFailed)
         {
-            return migration.ToResult<Project>()
-                .WithError("Failed to create project due to migration result.");
+            return migration.WithError("Failed to create project due to migration result.");
         }
 
-        var project = new Project(request.Path)
-        {
-            OpenedOn = DateTime.UtcNow
-        };
+        project.OpenedOn = DateTime.Now;
         
         using var connection = await _dataStore.ConnectTo(StoreType.Application, cancellationToken);
         await connection.ExecuteAsync(Upsert, new { Path = project.Uri.LocalPath, project.OpenedOn });
@@ -60,6 +66,6 @@ public class CreateProjectHandler : IRequestHandler<CreateProjectRequest, Result
         _settings.Set(Setting.OpenProjectPath, project.Uri.LocalPath);
         await _settings.Save();
         
-        return Result.Ok(project);
+        return Result.Ok();
     }
 }

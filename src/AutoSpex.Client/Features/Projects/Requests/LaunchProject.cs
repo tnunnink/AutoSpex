@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ActiproSoftware.UI.Avalonia.Controls;
 using AutoSpex.Client.Behaviors;
+using AutoSpex.Client.Features.Projects.Services;
 using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
 using Avalonia.Controls.Notifications;

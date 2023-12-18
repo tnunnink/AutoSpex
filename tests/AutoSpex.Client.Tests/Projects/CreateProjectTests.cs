@@ -12,8 +12,9 @@ public class CreateProjectTests
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
+        var project = new Project(context.ProjectPath);
+        var request = new CreateProjectRequest(project);
         
-        var request = new CreateProjectRequest(context.ProjectPath);
         var result = await mediator.Send(request);
 
         result.IsSuccess.Should().BeTrue();
@@ -24,8 +25,9 @@ public class CreateProjectTests
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
+        var project = new Project(new Uri(@"D:\Files\Proejcts"));
+        var request = new CreateProjectRequest(project);
         
-        var request = new CreateProjectRequest(new Uri(@"D:\Files\Proejcts"));
         var result = await mediator.Send(request);
 
         result.IsFailed.Should().BeTrue();

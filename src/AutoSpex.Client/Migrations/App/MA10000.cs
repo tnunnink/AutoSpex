@@ -12,8 +12,7 @@ public class MA10000 : AutoReversingMigration
     {
         Create.Table("Project")
             .WithColumn("Path").AsString().PrimaryKey()
-            .WithColumn("OpenedOn").AsDateTime().NotNullable().WithDefault(SystemMethods.CurrentUTCDateTime)
-            .WithColumn("Pinned").AsBoolean().NotNullable().WithDefaultValue(false);
+            .WithColumn("OpenedOn").AsDateTime().NotNullable().WithDefault(SystemMethods.CurrentUTCDateTime);
 
         Create.Table("Setting")
             .WithColumn("Key").AsString().PrimaryKey()

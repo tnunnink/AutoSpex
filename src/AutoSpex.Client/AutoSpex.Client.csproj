@@ -34,6 +34,8 @@
         <PackageReference Include="ActiproSoftware.Controls.Avalonia.Pro" Version="23.1.2" />
         <PackageReference Include="ActiproSoftware.Controls.Avalonia.Themes.ColorPicker" Version="23.1.2" />
         <PackageReference Include="ActiproSoftware.Controls.Avalonia.Themes.DataGrid" Version="23.1.2" />
+        <PackageReference Include="Ardalis.SmartEnum" Version="2.1.0" />
+        <PackageReference Include="Ardalis.SmartEnum.Dapper" Version="1.0.0" />
         <PackageReference Include="Avalonia" Version="11.0.6" />
         <PackageReference Include="Avalonia.Controls.ColorPicker" Version="11.0.6" />
         <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.0.6" />
@@ -45,12 +47,15 @@
         <PackageReference Include="Avalonia.Xaml.Behaviors" Version="11.0.5" />
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
         <PackageReference Include="Dapper" Version="2.1.24" />
+        <PackageReference Include="Dapper.Contrib" Version="2.0.78" />
         <PackageReference Include="dotParse" Version="1.0.0" />
         <PackageReference Include="DynamicData" Version="8.1.1" />
         <PackageReference Include="FluentMigrator" Version="3.3.2" />
         <PackageReference Include="FluentMigrator.Runner" Version="3.3.2" />
         <PackageReference Include="FluentMigrator.Runner.SQLite" Version="3.3.2" />
         <PackageReference Include="FluentResults" Version="3.15.2" />
+        <PackageReference Include="HanumanInstitute.MvvmDialogs.Avalonia" Version="2.0.0" />
+        <PackageReference Include="HanumanInstitute.MvvmDialogs.Avalonia.DialogHost" Version="2.0.0" />
         <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
         <PackageReference Include="Lamar" Version="12.0.2" />
         <PackageReference Include="MediatR" Version="12.1.1" />
@@ -65,10 +70,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="Shell.axaml.cs">
-        <DependentUpon>Shell.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
       <Compile Update="Features\Shared\DetailsView.axaml.cs">
         <DependentUpon>DetailsView.axaml</DependentUpon>
         <SubType>Code</SubType>
@@ -85,16 +86,8 @@
         <DependentUpon>AppView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
-      <Compile Update="Pages\ProjectPage.axaml.cs">
-        <DependentUpon>ProjectView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
       <Compile Update="Features\StatusBar\StatusBarView.axaml.cs">
         <DependentUpon>StatusBarView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Features\Projects\Views\LauncherView.axaml.cs">
-        <DependentUpon>LauncherView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
       <Compile Update="Features\Projects\Views\NewProjectView.axaml.cs">
@@ -121,6 +114,26 @@
         <DependentUpon>SourceView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Features\Nodes\Views\NodesView.axaml.cs">
+        <DependentUpon>DetailsPage.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Features\Common\NavigationView.axaml.cs">
+        <DependentUpon>NavigationView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Pages\AppView.axaml.cs">
+        <DependentUpon>AppView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Pages\LauncherView.axaml.cs">
+        <DependentUpon>LauncherView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Windows\ShellView.axaml.cs">
+        <DependentUpon>ShellView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 
     <ItemGroup>
@@ -135,8 +148,23 @@
     </ItemGroup>
 
     <ItemGroup>
-      <AvaloniaResource Include="Resources\Images\logo.png" />
+      <AvaloniaResource Include="Resources\Images\logo_check.png" />
       <None Remove="Resources\Images\box-arrow-up-right.svg" />
-      <AvaloniaResource Include="Resources\Images\box-arrow-up-right.svg" />
+      <AvaloniaXaml Remove="Features\Projects\Resources\ProjectContextMenu.axaml" />
+      <AvaloniaResource Include="Features\Projects\Resources\ProjectContextMenu.axaml" />
+      <None Remove="Resources\Images\clipboard-filled-32.png" />
+      <AvaloniaResource Include="Resources\Images\clipboard-filled-32.png" />
+      <None Remove="Resources\Images\clipboard-outlined-32.png" />
+      <AvaloniaResource Include="Resources\Images\clipboard-outlined-32.png" />
+      <None Remove="Resources\Images\clipboard-outlined-64.png" />
+      <AvaloniaResource Include="Resources\Images\clipboard-outlined-64.png" />
+      <None Remove="Resources\Images\icons8-clipboard-64.png" />
+      <AvaloniaResource Include="Resources\Images\icons8-clipboard-64.png" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <AvaloniaResource Include="..\..\docs\logo.png">
+        <Link>Resources\Images\logo.png</Link>
+      </AvaloniaResource>
     </ItemGroup>
 </Project>

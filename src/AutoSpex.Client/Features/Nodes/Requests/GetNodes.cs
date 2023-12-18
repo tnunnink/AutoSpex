@@ -12,22 +12,22 @@ using MediatR;
 
 namespace AutoSpex.Client.Features.Nodes;
 
-public record GetNodesRequest(NodeType NodeType) : IRequest<Result<IEnumerable<Node>>>;
+public record GetNodesRequest(Feature Feature) : IRequest<Result<IEnumerable<Node>>>;
 
 [UsedImplicitly]
 public class GetNodeTreeHandler : IRequestHandler<GetNodesRequest, Result<IEnumerable<Node>>>
 {
     private const string Query = """
                                  WITH Tree AS
-                                          (SELECT NodeId, ParentId, NodeType, Name, Depth, Ordinal
+                                          (SELECT NodeId, ParentId, Feature, NodeType, Name, Depth, Ordinal
                                            FROM Node
-                                           WHERE NodeType = @NodeType
+                                           WHERE ParentId = @ParentId AND Feature = @Feature
                                  
                                            UNION ALL
                                  
-                                           SELECT p.NodeId, p.ParentId, p.NodeType, p.Name, p.Depth, p.Ordinal
-                                           FROM Node p
-                                                    INNER JOIN Tree t ON p.NodeId = t.ParentId)
+                                           SELECT n.NodeId, n.ParentId, n.Feature, n.NodeType, n.Name, n.Depth, n.Ordinal
+                                           FROM Node n
+                                                    INNER JOIN Tree t ON n.ParentId = t.NodeId)
                                  SELECT *
                                  FROM Tree
                                  ORDER BY Depth, Ordinal;
@@ -45,20 +45,17 @@ public class GetNodeTreeHandler : IRequestHandler<GetNodesRequest, Result<IEnume
     {
         var connection = await _store.ConnectTo(StoreType.Project, cancellationToken);
 
-        var records = (await connection.QueryAsync(Query, new {NodeType = request.NodeType.ToString()})).ToList();
+        var records = await connection.QueryAsync<Node>(Query,
+            new { ParentId = Guid.Empty.ToString(), Feature = request.Feature.ToString() });
 
         var lookup = new Dictionary<Guid, Node>();
 
-        foreach (var node in records.Select(r => new Node(r)))
+        foreach (var node in records)
         {
             lookup.Add(node.NodeId, node);
 
-            if (!lookup.ContainsKey(node.ParentId))
-                continue;
-
-            var parent = lookup[node.ParentId];
-            parent.Nodes.Add(node);
-            node.AssignParent(parent);
+            if (lookup.TryGetValue(node.ParentId, out var parent))
+                parent.AddNode(node);
         }
 
         var results = lookup.Values.Where(x => x.ParentId == Guid.Empty).AsEnumerable();
