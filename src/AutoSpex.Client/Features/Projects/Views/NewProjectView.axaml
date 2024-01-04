@@ -4,7 +4,7 @@
              xmlns:f="clr-namespace:AutoSpex.Client.Features.Projects"
              x:Class="AutoSpex.Client.Features.Projects.NewProjectView"
              x:DataType="f:NewProjectViewModel"
-             MinWidth="500" MinHeight="300"
+             MinWidth="500"
              Background="{a:ThemeResource Container2BackgroundBrush}"
              BorderBrush="{a:ThemeResource Container2BorderBrush}">
     <DockPanel LastChildFill="True" Margin="20">
@@ -12,17 +12,17 @@
         <DockPanel DockPanel.Dock="Bottom" LastChildFill="True">
             <!--buttons-->
             <StackPanel DockPanel.Dock="Right"
-                        Orientation="Horizontal">
-                <Button Content="Create"
-                        Command="{Binding CreateCommand}"
-                        Height="30" Width="80" Padding="0"
-                        Theme="{a:ControlTheme ButtonSolid}"
-                        Classes="accent"
-                        Margin="0 0 20 0" />
+                        Orientation="Horizontal"
+                        Spacing="10">
                 <Button Content="Cancel"
                         Command="{Binding CancelCommand}"
-                        Height="30" Width="80" Padding="0"
+                        Height="26" Width="70" Padding="0"
                         Theme="{a:ControlTheme ButtonSoft}" />
+                <Button Content="Create"
+                        Command="{Binding CreateCommand}"
+                        Height="26" Width="70" Padding="0"
+                        Theme="{a:ControlTheme ButtonSolid}"
+                        Classes="accent"/>
             </StackPanel>
             <!--error message-->
             <Grid>
@@ -37,7 +37,7 @@
         <!--heading-->
         <StackPanel DockPanel.Dock="Top">
             <StackPanel Orientation="Horizontal">
-                <PathIcon Data="{StaticResource Icon.Filled.Cube}"
+                <PathIcon Data="{StaticResource Icon.Outlined.Cube}"
                           Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
                           Height="16" Width="16"
                           Margin="0 2 10 0" />
@@ -51,7 +51,7 @@
         </StackPanel>
 
         <!--form-->
-        <StackPanel Margin="0 20" Spacing="20">
+        <StackPanel Margin="0 30" Spacing="20">
             <TextBox Text="{Binding Name}"
                      Theme="{a:ControlTheme TextBoxOutline}"
                      VerticalContentAlignment="Center"
@@ -60,21 +60,26 @@
             <TextBox Text="{Binding Location}"
                      Theme="{a:ControlTheme TextBoxOutline}"
                      VerticalContentAlignment="Center"
-                     Watermark="Project Location">
+                     Watermark="Project Location"
+                     Classes="folder">
                 <TextBox.Styles>
                     <Style Selector="TextBox">
                         <Setter Property="InnerRightContent">
                             <Template>
                                 <Button DockPanel.Dock="Right"
                                         Classes="icon"
-                                        Theme="{a:ControlTheme ButtonSubtle}"
-                                        Command="{Binding SelectLocationCommand}">
+                                        IsTabStop="False"
+                                        Theme="{a:ControlTheme ButtonInvisible}">
                                     <PathIcon Data="{StaticResource Icon.Outlined.Folder}"
-                                              Height="16" Width="16"
-                                              Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                                              Height="16" Width="16" 
+                                              Foreground="{TemplateBinding Foreground}"/>
                                 </Button>
                             </Template>
                         </Setter>
+
+                        <Style Selector="^.pointerover /template/ ContentPresenter:pointerover">
+                            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+                        </Style>
                     </Style>
                 </TextBox.Styles>
             </TextBox>

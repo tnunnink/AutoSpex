@@ -1,0 +1,108 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:f="clr-namespace:AutoSpex.Client.Features.Specifications"
+                    xmlns:nodes="clr-namespace:AutoSpex.Client.Features.Nodes"
+                    x:DataType="nodes:Node">
+  
+  <Design.PreviewWith>
+    <Border Padding="100">
+      <StackPanel Spacing="50">
+        <Button ContextFlyout="{DynamicResource FolderMenu}" Content="Test" />
+      </StackPanel>
+    </Border>
+  </Design.PreviewWith>
+
+  <MenuFlyout x:Key="FolderMenu">
+    
+    <MenuItem Header="Add Spec"
+              Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
+              Command="{Binding $parent[TreeView].((f:SpecTreeViewModel)DataContext).AddSpecificationCommand, FallbackValue={x:Null}}"
+              CommandParameter="{Binding}"
+              IsEnabled="{Binding Converter={x:Static ObjectConverters.IsNotNull}}"
+              InputGesture="Shift+S">
+      <MenuItem.Icon>
+        <PathIcon Theme="{StaticResource ThemedIcon.Spec}" />
+      </MenuItem.Icon>
+    </MenuItem>
+
+    <MenuItem Header="Add Folder"
+              Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
+              Command="{Binding $parent[TreeView].((f:SpecTreeViewModel)DataContext).AddFolderCommand, FallbackValue={x:Null}}"
+              CommandParameter="{Binding}"
+              IsEnabled="{Binding Converter={x:Static ObjectConverters.IsNotNull}}"
+              InputGesture="Shift+F">
+      <MenuItem.Icon>
+        <PathIcon Theme="{StaticResource ThemedIcon.Folder}" />
+      </MenuItem.Icon>
+    </MenuItem>
+
+    <Separator />
+
+    <MenuItem Header="Open Tab"
+              Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
+              Command="{Binding $parent[TreeView].((f:SpecTreeViewModel)DataContext).OpenInTabCommand, FallbackValue={x:Null}}"
+              CommandParameter="{Binding}"
+              IsEnabled="{Binding Converter={x:Static ObjectConverters.IsNotNull}}">
+    </MenuItem>
+
+    <Separator />
+
+    <MenuItem Header="Rename"
+                  Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
+                  Command="{Binding $parent[TreeView].((f:SpecTreeViewModel)DataContext).RenameNodeCommand, FallbackValue={x:Null}}"
+                  CommandParameter="{Binding}"
+                  InputGesture="Ctrl+E">
+        </MenuItem>
+
+        <MenuItem Header="Duplicate"
+                  Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
+                  Command="{Binding $parent[TreeView].((f:SpecTreeViewModel)DataContext).RenameNodeCommand, FallbackValue={x:Null}}"
+                  CommandParameter="{Binding}"
+                  InputGesture="Ctrl+D">
+        </MenuItem>
+
+        <MenuItem Header="Paste"
+                  Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
+                  Command="{Binding $parent[TreeView].((f:SpecTreeViewModel)DataContext).RenameNodeCommand, FallbackValue={x:Null}}"
+                  CommandParameter="{Binding}"
+                  InputGesture="Ctrl+V">
+        </MenuItem>
+
+        <MenuItem Header="Delete"
+                  Foreground="{a:ThemeResource ControlForegroundBrushSoftDanger}"
+                  Command="{Binding $parent[TreeView].((f:SpecTreeViewModel)DataContext).DeleteNodeCommand, FallbackValue={x:Null}}"
+                  CommandParameter="{Binding}"
+                  IsEnabled="{Binding Converter={x:Static ObjectConverters.IsNotNull}}"
+                  Classes="danger"
+                  InputGesture="Delete">
+            <MenuItem.Styles>
+                <Style Selector="MenuItem.danger">
+                    <Style Selector="^ /template/ ContentPresenter#headerPresenter">
+                        <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftDanger}" />
+                    </Style>
+                    <Style Selector="^ /template/ TextBlock#inputGestureTextBlock">
+                        <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftDanger}" />
+                    </Style>
+
+                    <Style Selector="^:pointerover /template/ ContentPresenter#headerPresenter">
+                        <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSolidDanger}" />
+                    </Style>
+                    <Style Selector="^:pointerover /template/ Viewbox#iconHost > ContentPresenter">
+                        <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSolidDanger}" />
+                    </Style>
+                    <Style Selector="^:pointerover /template/ Border#border">
+                        <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSolidDanger}" />
+                        <Setter Property="BorderBrush" Value="{a:ThemeResource MenuItemBorderBrushSelected}" />
+                    </Style>
+                    <Style Selector="^:pointerover /template/ TextBlock#inputGestureTextBlock">
+                        <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSolidDanger}" />
+                    </Style>
+                </Style>
+            </MenuItem.Styles>
+            <MenuItem.Icon>
+                <PathIcon Data="{StaticResource Icon.Outlined.Trash}" />
+            </MenuItem.Icon>
+        </MenuItem>
+  </MenuFlyout>
+</ResourceDictionary>

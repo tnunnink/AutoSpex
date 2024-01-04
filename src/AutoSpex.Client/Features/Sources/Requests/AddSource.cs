@@ -18,7 +18,7 @@ public record AddSourceRequest(Uri Path, string Name, Guid ParentId = default) :
 [UsedImplicitly]
 public class AddSourceHandler : IRequestHandler<AddSourceRequest, Result<Node>>
 {
-    private readonly IDataStoreProvider _store;
+    private readonly ProjectDatabase _database;
     
     private const string GetNextOrdinal =
         "SELECT coalesce(MAX(Ordinal) + 1, 0) FROM [Node] WHERE ParentId = @ParentId AND NodeType = @NodeType";
@@ -32,9 +32,9 @@ public class AddSourceHandler : IRequestHandler<AddSourceRequest, Result<Node>>
     private const string InsertSource = "INSERT INTO Source (SourceId, Controller, Processor, Revision, IsContext, TargetType, TargetName, ExportedBy, ExportedOn, Content) " +
                                         "VALUES (@NodeId, @Controller, @Processor, @Revision, @IsContext, @TargetType, @TargetName, @ExportedBy, @ExportedOn, @Content)";
     
-    public AddSourceHandler(IDataStoreProvider store)
+    public AddSourceHandler(ProjectDatabase database)
     {
-        _store = store;
+        _database = database;
     }
 
     public async Task<Result<Node>> Handle(AddSourceRequest request, CancellationToken cancellationToken)

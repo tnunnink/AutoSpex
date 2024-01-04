@@ -31,8 +31,6 @@ public partial class ProjectListViewModel : ViewModelBase
         _messenger = messenger;
         _dialog = dialog;
 
-        Run = LoadProjects();
-
         _projectCache.Connect()
             .Sort(SortExpressionComparer<Project>.Ascending(t => t.Name))
             .Bind(out _projects)
@@ -44,7 +42,21 @@ public partial class ProjectListViewModel : ViewModelBase
     [ObservableProperty] private string _filter = string.Empty;
 
     [ObservableProperty] private bool _hasRecent;
+    
+    [RelayCommand]
+    private async Task LoadProjects()
+    {
+        var result = await _mediator.Send(new GetProjectsRequest());
 
+        if (result.IsSuccess)
+        {
+            _allProjects.Clear();
+            _allProjects.AddRange(result.Value);
+            _projectCache.AddOrUpdate(_allProjects.ToArray());
+        }
+
+        HasRecent = _allProjects.Count > 0;
+    }
 
     [RelayCommand]
     private async Task NewProject()
@@ -139,20 +151,6 @@ public partial class ProjectListViewModel : ViewModelBase
         {
             _allProjects.Remove(project);
             _projectCache.Edit(l => l.Remove(project));
-        }
-
-        HasRecent = _allProjects.Count > 0;
-    }
-
-    private async Task LoadProjects()
-    {
-        var result = await _mediator.Send(new GetProjectsRequest());
-
-        if (result.IsSuccess)
-        {
-            _allProjects.Clear();
-            _allProjects.AddRange(result.Value);
-            _projectCache.AddOrUpdate(_allProjects.ToArray());
         }
 
         HasRecent = _allProjects.Count > 0;

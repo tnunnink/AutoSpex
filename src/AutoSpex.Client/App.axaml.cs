@@ -3,8 +3,7 @@ using System.Data.SQLite;
 using System.IO;
 using System.Threading.Tasks;
 using ActiproSoftware.UI.Avalonia.Controls;
-using AutoSpex.Client.Services;
-using AutoSpex.Client.Shared;
+using ActiproSoftware.UI.Avalonia.Media;
 using AutoSpex.Client.Windows;
 using Avalonia;
 using Avalonia.Controls;
@@ -13,7 +12,6 @@ using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
 using JetBrains.Annotations;
-using Lamar;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Events;
@@ -23,8 +21,7 @@ namespace AutoSpex.Client;
 [UsedImplicitly]
 public sealed class App : Application, IDisposable, IAsyncDisposable
 {
-    private readonly IContainer _container;
-    private readonly ISettingsManager _settings;
+    /*private readonly ISettingsManager _settings;*/
 
     public App()
     {
@@ -33,15 +30,13 @@ public sealed class App : Application, IDisposable, IAsyncDisposable
             .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
 
         var config = builder.Build();
-        _container = Bootstrapper.Build(config);
-        _settings = _container.GetInstance<ISettingsManager>();
+        Container.Build(config);
 
         PropertyChanged += (_, e) =>
         {
             if (e.Property != RequestedThemeVariantProperty) return;
-            var theme = e.NewValue;
-            _settings.Set(Setting.Theme, theme);
-            _settings.Save();
+            var theme = e.NewValue as ThemeVariant ?? throw new InvalidOperationException("Not a ThemeVariant");
+            Settings.App.Save(s => s.Theme = theme);
         };
     }
 
@@ -73,23 +68,15 @@ public sealed class App : Application, IDisposable, IAsyncDisposable
     {
         AvaloniaXamlLoader.Load(this);
 
-        var theme = _settings.Find(Setting.Theme);
-
-        RequestedThemeVariant = theme is not null
-            ? theme == "Light" ? ThemeVariant.Light
-            : theme == "Dark" ? ThemeVariant.Dark
-            : ThemeVariant.Default
-            : ThemeVariant.Default;
+        ImageProvider.Default.ChromaticAdaptationMode = ImageChromaticAdaptationMode.DarkThemes;
+        
+        RequestedThemeVariant = Settings.App.Theme;
     }
 
     public static App Instance => (App)Current!;
 
-    public static IContainer Container => ((App)Current!)._container;
-
     public static Window MainWindow =>
         ((IClassicDesktopStyleApplicationLifetime)Current!.ApplicationLifetime!).MainWindow!;
-
-    public static ISettingsManager Settings => ((App)Current!)._settings;
 
     public override void OnFrameworkInitializationCompleted()
     {
@@ -102,7 +89,7 @@ public sealed class App : Application, IDisposable, IAsyncDisposable
             //Tells Actipro to show all prompts as an overlay by default
             UserPromptBuilder.DefaultDisplayMode = UserPromptDisplayMode.Overlay;
 
-            desktop.MainWindow = _container.GetInstance<LauncherView>();
+            desktop.MainWindow = Container.Resolve<LauncherView>();
         }
 
         base.OnFrameworkInitializationCompleted();
@@ -115,7 +102,7 @@ public sealed class App : Application, IDisposable, IAsyncDisposable
         var current = desktop.MainWindow;
         current?.Hide();
 
-        desktop.MainWindow = _container.GetInstance<ShellView>();
+        desktop.MainWindow = Container.Resolve<ShellView>();
         desktop.MainWindow.Activate();
         desktop.MainWindow.Show();
 
@@ -124,15 +111,13 @@ public sealed class App : Application, IDisposable, IAsyncDisposable
 
     public void Dispose()
     {
-        _settings.Dispose();
-        _container.Dispose();
+        Container.Dispose();
         Log.CloseAndFlush();
     }
 
     public async ValueTask DisposeAsync()
     {
-        await _settings.DisposeAsync();
-        await _container.DisposeAsync();
+        await Container.DisposeAsync();
         await Log.CloseAndFlushAsync();
     }
 }

@@ -11,4 +11,9 @@ public class CountOperation : CollectionOperation
     {
         return operation.Execute(collection.Count(), values);
     }
+
+    protected override bool Evaluate(IEnumerable<object?> collection, Criterion criterion)
+    {
+        return criterion.Evaluate(collection.Count());
+    }
 }

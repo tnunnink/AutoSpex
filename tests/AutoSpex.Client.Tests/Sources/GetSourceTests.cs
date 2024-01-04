@@ -12,7 +12,7 @@ public class GetSourceTests
     {
         using var context = new TestContext();
         context.BuildProject();
-        var mediator = context.Resolve<IMediator>();
+        var mediator = Resolve<IMediator>();
         var addRequest = new AddSourceRequest(new Uri(TestL5X), "MySource");
         var addResult = await mediator.Send(addRequest);
 

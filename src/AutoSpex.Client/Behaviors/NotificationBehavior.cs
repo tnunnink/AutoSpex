@@ -14,12 +14,13 @@ public interface INotifiableRequest<TResponse> : IRequest<TResponse>
 public class NotificationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : INotifiableRequest<TResponse>
 {
-    private readonly INotificationService _service;
+    private readonly INotificationService _notifier;
 
-    public NotificationBehavior(INotificationService service)
+    public NotificationBehavior(INotificationService notifier)
     {
-        _service = service;
+        _notifier = notifier;
     }
+    
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         var result = await next();
@@ -28,8 +29,7 @@ public class NotificationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequ
 
         if (notification is not null)
         {
-            //todo service should hold notifications for us to view later.
-            _service.Show(notification);    
+            _notifier.Show(notification);    
         }
 
         return result;

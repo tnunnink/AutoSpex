@@ -40,11 +40,11 @@ public class DeleteProjectHandler : IRequestHandler<DeleteProjectRequest, Result
 {
     private const string Command = "DELETE FROM Project WHERE Path = @Path";
 
-    private readonly IDataStoreProvider _dataStore;
+    private readonly AppDatabase _database;
 
-    public DeleteProjectHandler(IDataStoreProvider dataStore)
+    public DeleteProjectHandler(AppDatabase database)
     {
-        _dataStore = dataStore;
+        _database = database;
     }
 
     public async Task<Result> Handle(DeleteProjectRequest request, CancellationToken cancellationToken)
@@ -53,7 +53,7 @@ public class DeleteProjectHandler : IRequestHandler<DeleteProjectRequest, Result
 
         var project = request.Project;
 
-        var connection = await _dataStore.ConnectTo(StoreType.Application, cancellationToken);
+        var connection = await _database.Connect(cancellationToken);
         await connection.ExecuteAsync(Command, new { Path = project.Uri.LocalPath });
 
         return Result.Try(() => { File.Delete(project.Uri.LocalPath); });

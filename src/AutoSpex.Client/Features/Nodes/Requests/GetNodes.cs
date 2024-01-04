@@ -21,7 +21,7 @@ public class GetNodeTreeHandler : IRequestHandler<GetNodesRequest, Result<IEnume
                                  WITH Tree AS
                                           (SELECT NodeId, ParentId, Feature, NodeType, Name, Depth, Ordinal
                                            FROM Node
-                                           WHERE ParentId = @ParentId AND Feature = @Feature
+                                           WHERE ParentId is null AND Feature = @Feature
                                  
                                            UNION ALL
                                  
@@ -33,20 +33,19 @@ public class GetNodeTreeHandler : IRequestHandler<GetNodesRequest, Result<IEnume
                                  ORDER BY Depth, Ordinal;
                                  """;
 
-    private readonly IDataStoreProvider _store;
+    private readonly ProjectDatabase _database;
 
-    public GetNodeTreeHandler(IDataStoreProvider store)
+    public GetNodeTreeHandler(ProjectDatabase database)
     {
-        _store = store;
+        _database = database;
     }
 
     public async Task<Result<IEnumerable<Node>>> Handle(GetNodesRequest request,
         CancellationToken cancellationToken)
     {
-        var connection = await _store.ConnectTo(StoreType.Project, cancellationToken);
+        var connection = await _database.Connect(cancellationToken);
 
-        var records = await connection.QueryAsync<Node>(Query,
-            new { ParentId = Guid.Empty.ToString(), Feature = request.Feature.ToString() });
+        var records = await connection.QueryAsync<Node>(Query, new {request.Feature});
 
         var lookup = new Dictionary<Guid, Node>();
 

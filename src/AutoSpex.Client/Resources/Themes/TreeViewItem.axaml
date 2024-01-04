@@ -1,0 +1,60 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:markup="using:ActiproSoftware.UI.Avalonia.Markup.Xaml">
+
+    <Design.PreviewWith>
+        <Border Padding="20"
+                MinWidth="300"
+                MinHeight="500">
+            <TreeView ItemContainerTheme="{DynamicResource SpexTreeViewItem}">
+                <TreeViewItem Header="Level 1" IsExpanded="True">
+                    <TreeViewItem Header="Level 2.1" IsSelected="True" IsExpanded="True">
+                        <TreeViewItem Header="Level 3.1" />
+                        <TreeViewItem Header="Level 3.2" IsSelected="True">
+                            <TreeViewItem Header="Level 4" />
+                        </TreeViewItem>
+                    </TreeViewItem>
+                    <TreeViewItem Header="Level 2.2" IsEnabled="False" />
+                </TreeViewItem>
+            </TreeView>
+        </Border>
+    </Design.PreviewWith>
+
+    <!-- SpexTreeViewItem -->
+    <ControlTheme x:Key="SpexTreeViewItem"
+                  TargetType="TreeViewItem"
+                  BasedOn="{markup:ControlTheme TreeViewItem}">
+        
+        <Setter Property="BorderThickness" Value="3 0 0 0" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        
+        <Style Selector="^:empty /template/ ToggleButton">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+        <Style Selector="^:pointerover /template/ Border#border:pointerover">
+            <Setter Property="Background" Value="{markup:ThemeResource ListItemBackgroundBrushPointerOver}" />
+            <Setter Property="BorderBrush" Value="DimGray" />
+        </Style>
+        <Style Selector="^:pressed /template/ Border#border:pointerover">
+            <Setter Property="Background" Value="{markup:ThemeResource ListItemBackgroundBrushPressed}" />
+        </Style>
+        <Style Selector="^:disabled /template/ Border#border">
+            <Setter Property="TextElement.Foreground" Value="{markup:ThemeResource ListItemForegroundBrushDisabled}" />
+        </Style>
+        <Style Selector="^:selected /template/ Border#border">
+            <Setter Property="Background" Value="{markup:ThemeResource ListItemBackgroundBrushPointerOver}" />
+            <Setter Property="BorderBrush" Value="{markup:ThemeResource ControlBackgroundBrushSolidAccent}" />
+            <Setter Property="TextElement.Foreground" Value="{markup:ThemeResource ListItemForegroundBrushSelected}" />
+        </Style>
+        <Style Selector="^:selected:pointerover /template/ Border#border:pointerover">
+            <Setter Property="Background" Value="{markup:ThemeResource ListItemBackgroundBrushPointerOver}" />
+        </Style>
+        <Style Selector="^:selected:pressed /template/ Border#border:pointerover">
+            <Setter Property="Background" Value="{markup:ThemeResource ListItemBackgroundBrushSelectedPressed}" />
+        </Style>
+        <Style Selector="^:selected:disabled /template/ Border#border">
+            <Setter Property="TextElement.Foreground"
+                    Value="{markup:ThemeResource ListItemForegroundBrushSelectedDisabled}" />
+        </Style>
+    </ControlTheme>
+</ResourceDictionary>

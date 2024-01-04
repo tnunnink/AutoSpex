@@ -11,18 +11,19 @@ public class GeneralTests
         var property = element.Property("RedundancyInfo.KeepTestEditsOnSwitchOver");
         
         property.Should().NotBeNull();
-        property.Name.Should().Be("KeepTestEditsOnSwitchOver");
-        property.Type.Should().Be(typeof(bool));
+        property?.Path.Should().Be("KeepTestEditsOnSwitchOver");
+        property?.Type.Should().Be(typeof(bool));
     }
 
-    [Test]
-    public void Getter_Nested_ShouldNotBeNull()
-    {
-        var element = Element.Controller;
 
-        var getter = element.Getter("RedundancyInfo");
-        
-        getter.Should().NotBeNull();
+    [Test]
+    public void IsComponent_ForComponent_ShouldBeTrue()
+    {
+        var element = Element.Tag;
+
+        var result = element.IsComponent;
+
+        result.Should().BeTrue();
     }
     
     [Test]

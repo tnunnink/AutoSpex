@@ -9,8 +9,9 @@ public class CriterionConceptTests
     [Test]
     public void Evaluate_SimpleImmediateProperty_ShouldBeExpectedResult()
     {
-        var criterion = new Criterion(Element.Tag, "Name", Operation.EqualTo, "Test");
         var tag = new Tag {Name = "Test"};
+        
+        var criterion = new Criterion("Name", Operation.Equal, "Test");
 
         var evaluation = criterion.Evaluate(tag);
 
@@ -20,9 +21,10 @@ public class CriterionConceptTests
     [Test]
     public void Evaluate_InvalidOperationForPropertyType_ShouldHaveErrorEvaluation()
     {
-        var criterion = new Criterion(Element.Tag, "Name", Operation.Between, 1, 10);
         var tag = new Tag {Name = "Test"};
-
+        
+        var criterion = new Criterion("Name", Operation.Between, 1, 10);
+        
         var evaluation = criterion.Evaluate(tag);
         
         evaluation.Result.Should().Be(ResultType.Error);
@@ -31,10 +33,12 @@ public class CriterionConceptTests
     [Test]
     public void AsExpression_WhenCompiled_ShouldAlsoWork()
     {
-        var criterion = new Criterion(Element.Tag, "Name", Operation.EqualTo, "Test");
         var tag = new Tag {Name = "Test"};
+        
+        var criterion = new Criterion("Name", Operation.Equal, "Test");
+        
 
-        var expression = (Expression<Func<object, bool>>) criterion;
+        var expression = (Expression<Func<object?, bool>>) criterion;
         var func = expression.Compile();
 
         var result = func(tag);
@@ -44,30 +48,10 @@ public class CriterionConceptTests
     [Test]
     public void ToString_WhenCalled_ShouldNotBeEmpty()
     {
-        var criterion = new Criterion(Element.Tag, "Name", Operation.EqualTo, "Test");
+        var criterion = new Criterion("Name", Operation.Equal, "Test");
 
         var result = criterion.ToString();
         
         result.Should().NotBeEmpty();
-    }
-    
-    [Test]
-    public void AsExpressionString_ShouldWork()
-    {
-        var criterion = new Criterion(Element.Tag, "Name", Operation.EqualTo, "Test");
-
-        var result = criterion.ToExpressionString();
-        
-        result.Should().NotBeEmpty();
-    }
-
-    [Test]
-    public void ToString_WhenCalled_ShouldBeReadableLol()
-    {
-        var criterion = new Criterion(Element.Tag, "Name", Operation.EqualTo, "Test");
-
-        var result = criterion.ToString();
-
-        result.Should().NotBeNullOrEmpty();
     }
 }

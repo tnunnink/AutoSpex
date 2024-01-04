@@ -10,9 +10,10 @@ public class SpecificationTests
     public async Task Run_InPrinciple_ShouldRun()
     {
         var content = L5X.Load(Known.Test);
-        var spec = new Specification(Element.Tag);
+        var runner = new Runner(content);
+        var spec = Specification.For(Element.Tag);
 
-        var result = await spec.Run(content);
+        var result = await runner.Run(spec);
 
         result.Should().NotBeNull();
     }
@@ -21,12 +22,13 @@ public class SpecificationTests
     public async Task Run_ValidFilterAndVerification_ShouldBeExpected()
     {
         var content = L5X.Load(Known.Test);
-        var spec = new Specification(Element.Tag);
+        var runner = new Runner(content);
+        
+        var spec = Specification.For(Element.Tag)
+            .WithFilter(Element.Has("Name", Operation.Equal, "TestSimpleTag"))
+            .Verify(Element.Has("DataType", Operation.Equal, "SimpleType"));
 
-        spec.UseFilter(Filter.By(Element.Tag.Has("Name", Operation.EqualTo, "TestSimpleTag")));
-        spec.Verify(Element.Tag.Has("DataType", Operation.EqualTo, "SimpleType"));
-
-        var result = await spec.Run(content);
+        var result = await runner.Run(spec);
         
         result.Result.Should().Be(ResultType.Passed);
     }
@@ -35,12 +37,13 @@ public class SpecificationTests
     public async Task Run_5094IB16A_ShouldBeAtRevision_2_011()
     {
         var content = L5X.Load(Known.Example);
-        var spec = new Specification(Element.Module);
+        var runner = new Runner(content);
+        var spec = Specification.For(Element.Module);
 
-        spec.UseFilter(Filter.By(Element.Module.Has("CatalogNumber", Operation.EqualTo, "5094-IB16/A")));
-        spec.Verify(Element.Module.Has("Revision", Operation.EqualTo, new Revision("2.11")));
+        spec.WithFilter(Element.Has("CatalogNumber", Operation.Equal, "5094-IB16/A"));
+        spec.Verify(Element.Has("Revision", Operation.Equal, "2.11"));
 
-        var result = await spec.Run(content);
+        var result = await runner.Run(spec);
         
         result.Result.Should().Be(ResultType.Passed);
     }
@@ -49,12 +52,13 @@ public class SpecificationTests
     public async Task Run_VerifyWithNoResults_ShouldBeFailed()
     {
         var content = L5X.Load(Known.Test);
-        var spec = new Specification(Element.Tag);
+        var runner = new Runner(content);
+        var spec = Specification.For(Element.Tag);
 
-        spec.UseFilter(Filter.By(Element.Tag.Has("Name", Operation.EqualTo, "Fake")));
-        spec.Verify(Element.Tag.Has("DataType", Operation.EqualTo, "SimpleType"));
+        spec.WithFilter(Element.Has("Name", Operation.Equal, "Fake"));
+        spec.Verify(Element.Has("DataType", Operation.Equal, "SimpleType"));
 
-        var result = await spec.Run(content);
+        var result = await runner.Run(spec);
         
         result.Result.Should().Be(ResultType.Failed);
     }

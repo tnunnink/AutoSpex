@@ -2,7 +2,7 @@
 
 public class IsNullOrWhiteSpaceOperation : UnaryOperation
 {
-    public IsNullOrWhiteSpaceOperation() : base("IsNullOrWhiteSpace")
+    public IsNullOrWhiteSpaceOperation() : base("Is Null Or WhiteSpace")
     {
     }
 
@@ -10,4 +10,6 @@ public class IsNullOrWhiteSpaceOperation : UnaryOperation
     {
         return string.IsNullOrWhiteSpace(input?.ToString());
     }
+
+    protected override bool Supports(TypeGroup group) => group == TypeGroup.Text;
 }

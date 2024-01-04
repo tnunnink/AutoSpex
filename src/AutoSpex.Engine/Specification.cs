@@ -1,73 +1,58 @@
-﻿using System.Linq.Expressions;
-using AutoSpex.Engine.Operations;
-using L5Sharp.Core;
-using Task = System.Threading.Tasks.Task;
+﻿using AutoSpex.Engine.Operations;
 
 namespace AutoSpex.Engine;
 
 public class Specification
 {
-    private readonly Element _element;
-
-    public Specification(Element element)
-    {
-        _element = element;
-    }
-
-    /// <summary>
-    /// The <see cref="Func{T, TResult}"/> used to filter the results of the element query. This represents
-    /// the second step of a common <c>Specification</c>. Once results are returns then we check the range and run
-    /// the verification criterion.
-    /// </summary>
-    private Func<object, bool> _filter = _ => true;
-
-    /// <summary>
-    /// The <see cref="Criterion"/> used to check the range of the results of the filtered element query.
-    /// </summary>
-    private Func<int, bool> _range => i => i > 0;
-
-    /// <summary>
-    /// Holds a list of verifications.
-    /// </summary>
+    private readonly List<Criterion> _filters = new();
     private readonly List<Criterion> _verifications = new();
 
-    public Task<RunResult> Run(L5X file, RunConfig? config = default, CancellationToken token = default)
+    private Specification(Element element)
     {
-        //todo handle cancellation and return inconclusive.
-        return Task.Run(() =>
-        {
-            config ??= RunConfig.Default;
-
-            //Query content
-            var elements = _element.Query(file).ToList();
-            var found = elements.Count;
-
-            //Filter content
-            var candidates = elements.Where(_filter).ToList();
-            var targets = candidates.Count;
-
-            //Evaluate range
-            var range = _range(candidates.Count);
-
-            //Generate verification results
-            var results = _verifications.Select(v => new Verification(candidates.Select(v.Evaluate).ToList())).ToList();
-
-            return RunResult.Process(found, targets, range, results, config);
-        }, token);
+        Element = element;
     }
 
-    public void UseFilter(Filter filter)
+    public Element Element { get; }
+
+    public IEnumerable<Criterion> Filters => _filters;
+
+    public Criterion Range { get; private set; } = new(Operation.GreaterThan, 0);
+
+    public IEnumerable<Criterion> Verifications => _verifications;
+
+    public static Specification For(Element element) => new(element);
+
+    public Specification WithFilter(Criterion criterion)
     {
-        _filter = ((Expression<Func<object, bool>>) filter).Compile();
+        if (criterion is null) throw new ArgumentNullException(nameof(criterion));
+        _filters.Add(criterion);
+        return this;
     }
 
-    public void UseRange(Operation operation, params object[] values)
+    public Specification WithFilters(ICollection<Criterion> criteria)
     {
-        throw new NotImplementedException();
+        if (criteria is null) throw new ArgumentNullException(nameof(criteria));
+        _filters.AddRange(criteria);
+        return this;
     }
 
-    public void Verify(Criterion criterion)
+    public Specification VerifyRange(Operation operation, params Arg[] arguments)
     {
+        Range = new Criterion(operation, arguments);
+        return this;
+    }
+
+    public Specification Verify(Criterion criterion)
+    {
+        if (criterion is null) throw new ArgumentNullException(nameof(criterion));
         _verifications.Add(criterion);
+        return this;
+    }
+
+    public Specification Verify(ICollection<Criterion> criteria)
+    {
+        if (criteria is null) throw new ArgumentNullException(nameof(criteria));
+        _verifications.AddRange(criteria);
+        return this;
     }
 }

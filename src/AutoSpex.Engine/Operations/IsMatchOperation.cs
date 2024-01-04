@@ -4,7 +4,7 @@ namespace AutoSpex.Engine.Operations;
 
 public class IsMatchOperation : BinaryOperation
 {
-    public IsMatchOperation() : base("IsMatch")
+    public IsMatchOperation() : base("Is Match")
     {
     }
 
@@ -15,4 +15,6 @@ public class IsMatchOperation : BinaryOperation
         
         return input?.ToString() is not null && Regex.IsMatch(input.ToString()!, value.ToString()!);
     }
+
+    protected override bool Supports(TypeGroup group) => group == TypeGroup.Text;
 }

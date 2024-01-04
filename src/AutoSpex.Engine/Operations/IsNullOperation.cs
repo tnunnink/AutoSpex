@@ -2,7 +2,7 @@
 
 public class IsNullOperation : UnaryOperation
 {
-    public IsNullOperation() : base("IsNull")
+    public IsNullOperation() : base("Is Null")
     {
     }
     

@@ -2,7 +2,7 @@
 
 public class EndsWithOperation : BinaryOperation
 {
-    public EndsWithOperation() : base("EndsWith")
+    public EndsWithOperation() : base("Ends With")
     {
     }
 
@@ -13,4 +13,6 @@ public class EndsWithOperation : BinaryOperation
         
         return input is not null && input.ToString()?.EndsWith(value.ToString()!) == true;
     }
+
+    protected override bool Supports(TypeGroup group) => group == TypeGroup.Text;
 }

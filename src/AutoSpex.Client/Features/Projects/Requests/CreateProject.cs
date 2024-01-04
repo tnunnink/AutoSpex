@@ -34,16 +34,14 @@ public class CreateProjectHandler : IRequestHandler<CreateProjectRequest, Result
 {
     private const string Upsert = "INSERT INTO Project(Path, OpenedOn) VALUES(@Path, @OpenedOn)" +
                                   "ON CONFLICT DO UPDATE SET OpenedOn = @OpenedOn";
-    
-    private readonly IProjectMigrator _migrator;
-    private readonly ISettingsManager _settings;
-    private readonly IDataStoreProvider _dataStore;
 
-    public CreateProjectHandler(IDataStoreProvider dataStore, IProjectMigrator migrator, ISettingsManager settings)
+    private readonly AppDatabase _database;
+    private readonly IProjectMigrator _migrator;
+
+    public CreateProjectHandler(AppDatabase database, IProjectMigrator migrator)
     {
-        _dataStore = dataStore;
+        _database = database;
         _migrator = migrator;
-        _settings = settings;
     }
 
     public async Task<Result> Handle(CreateProjectRequest request, CancellationToken cancellationToken)
@@ -59,12 +57,10 @@ public class CreateProjectHandler : IRequestHandler<CreateProjectRequest, Result
 
         project.OpenedOn = DateTime.Now;
         
-        using var connection = await _dataStore.ConnectTo(StoreType.Application, cancellationToken);
+        using var connection = await _database.Connect(cancellationToken);
         await connection.ExecuteAsync(Upsert, new { Path = project.Uri.LocalPath, project.OpenedOn });
         
-        _settings.Set(Setting.OpenProjectConnection, project.ConnectionString);
-        _settings.Set(Setting.OpenProjectPath, project.Uri.LocalPath);
-        await _settings.Save();
+        await Settings.App.SaveAsync(s => s.OpenProject = project.Uri.LocalPath);
         
         return Result.Ok();
     }

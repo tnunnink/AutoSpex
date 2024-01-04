@@ -2,7 +2,7 @@
 
 public class IsNullOrEmptyOperation : UnaryOperation
 {
-    public IsNullOrEmptyOperation() : base("IsNullOrEmpty")
+    public IsNullOrEmptyOperation() : base("Is Null Or Empty")
     {
     }
 
@@ -10,4 +10,6 @@ public class IsNullOrEmptyOperation : UnaryOperation
     {
         return string.IsNullOrEmpty(input?.ToString());
     }
+
+    protected override bool Supports(TypeGroup group) => group == TypeGroup.Text;
 }

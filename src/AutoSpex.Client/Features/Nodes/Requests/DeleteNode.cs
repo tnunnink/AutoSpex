@@ -16,16 +16,16 @@ public record DeleteNodeRequest(Guid NodeId) : IRequest<Result<Guid>>;
 [UsedImplicitly]
 public class DeleteNodeHandler : IRequestHandler<DeleteNodeRequest, Result<Guid>>
 {
-    private readonly IDataStoreProvider _store;
+    private readonly ProjectDatabase _database;
 
-    public DeleteNodeHandler(IDataStoreProvider store)
+    public DeleteNodeHandler(ProjectDatabase database)
     {
-        _store = store;
+        _database = database;
     }
 
     public async Task<Result<Guid>> Handle(DeleteNodeRequest request, CancellationToken cancellationToken)
     {
-        var connection = await _store.ConnectTo(StoreType.Project, cancellationToken);
+        var connection = await _database.Connect(cancellationToken);
 
         var result = await connection.ExecuteAsync("DELETE FROM Node WHERE NodeId = @NodeId", new {request.NodeId});
         

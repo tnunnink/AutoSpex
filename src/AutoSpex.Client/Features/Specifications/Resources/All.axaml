@@ -1,0 +1,16 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:c="clr-namespace:AutoSpex.Client.Resources.Converters"
+                    xmlns:nodes="clr-namespace:AutoSpex.Client.Features.Nodes">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceInclude Source="CollectionMenu.axaml" />
+        <ResourceInclude Source="FolderMenu.axaml" />
+        <ResourceInclude Source="SpecMenu.axaml" />
+    </ResourceDictionary.MergedDictionaries>
+    
+    <c:ValueToResourceConverter x:Key="NodeToMenuConverter">
+        <c:ValueResourceKey Value="{x:Static nodes:NodeType.Collection}" ResourceKey="CollectionMenu" />
+        <c:ValueResourceKey Value="{x:Static nodes:NodeType.Folder}" ResourceKey="FolderMenu" />
+        <c:ValueResourceKey Value="{x:Static nodes:NodeType.Spec}" ResourceKey="SpecMenu" />
+    </c:ValueToResourceConverter>
+</ResourceDictionary>

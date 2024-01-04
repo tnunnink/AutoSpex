@@ -27,7 +27,7 @@ public class DataTypeElementTests
     {
         var element = Element.DataType;
         
-        element.Properties.Should().ContainSingle(p => p.Name == nameof(DataType.Family));
+        element.Properties.Should().ContainSingle(p => p.Path == nameof(DataType.Family));
     }
 
     [Test]
@@ -38,9 +38,8 @@ public class DataTypeElementTests
         var property = element.Property("Name");
 
         property.Should().NotBeNull();
-        property.Name.Should().Be("Name");
-        property.Type.Should().Be(typeof(string));
-        property.Properties.Should().BeEmpty();
+        property?.Path.Should().Be("Name");
+        property?.Type.Should().Be(typeof(string));
     }
     
     [Test]
@@ -51,9 +50,8 @@ public class DataTypeElementTests
         var property = element.Property("Description");
 
         property.Should().NotBeNull();
-        property.Name.Should().Be("Description");
-        property.Type.Should().Be(typeof(string));
-        property.Properties.Should().BeEmpty();
+        property?.Path.Should().Be("Description");
+        property?.Type.Should().Be(typeof(string));
     }
     
     [Test]
@@ -74,9 +72,8 @@ public class DataTypeElementTests
         var property = element.Property("Class");
 
         property.Should().NotBeNull();
-        property.Name.Should().Be("Family");
-        property.Type.Should().Be(typeof(DataTypeFamily));
-        property.Properties.Should().BeEmpty();
+        property?.Path.Should().Be("Class");
+        property?.Type.Should().Be(typeof(DataTypeClass));
     }
     
     [Test]
@@ -87,9 +84,8 @@ public class DataTypeElementTests
         var property = element.Property("Members");
 
         property.Should().NotBeNull();
-        property.Name.Should().Be("Members");
-        property.Type.Should().Be(typeof(LogixContainer<DataTypeMember>));
-        property.Properties.Should().BeEmpty();
+        property?.Path.Should().Be("Members");
+        property?.Type.Should().Be(typeof(LogixContainer<DataTypeMember>));
     }
     
     [Test]
@@ -100,9 +96,8 @@ public class DataTypeElementTests
         var property = element.Property("Scope");
 
         property.Should().NotBeNull();
-        property.Name.Should().Be("Scope");
-        property.Type.Should().Be(typeof(Scope));
-        property.Properties.Should().BeEmpty();
+        property?.Path.Should().Be("Scope");
+        property?.Type.Should().Be(typeof(Scope));
     }
 
     [Test]

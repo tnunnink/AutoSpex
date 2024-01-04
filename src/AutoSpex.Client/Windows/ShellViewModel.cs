@@ -17,7 +17,7 @@ public partial class ShellViewModel : ViewModelBase, IRecipient<ProjectLaunchedM
     {
         _mediator = mediator;
 
-        var path = App.Settings.Get(Setting.OpenProjectPath);
+        var path = Settings.App.OpenProject;
         Project = new Project(new Uri(path));
     }
 

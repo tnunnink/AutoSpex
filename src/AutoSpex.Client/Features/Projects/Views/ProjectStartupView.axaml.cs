@@ -9,6 +9,6 @@ public partial class ProjectStartupView : UserControl
     public ProjectStartupView()
     {
         InitializeComponent();
-        DataContext = App.Container.GetInstance<ProjectStartupViewModel>();
+        DataContext = Container.Resolve<ProjectStartupViewModel>();
     }
 }

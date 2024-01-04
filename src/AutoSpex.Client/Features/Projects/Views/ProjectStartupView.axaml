@@ -1,6 +1,7 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             
              xmlns:f="clr-namespace:AutoSpex.Client.Features.Projects"
              x:Class="AutoSpex.Client.Features.Projects.ProjectStartupView"
              x:DataType="f:ProjectStartupViewModel">

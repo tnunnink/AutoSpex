@@ -2,7 +2,7 @@
 
 public class IsEmptyOperation : UnaryOperation
 {
-    public IsEmptyOperation() : base("IsEmpty")
+    public IsEmptyOperation() : base("Is Empty")
     {
     }
 
@@ -14,4 +14,6 @@ public class IsEmptyOperation : UnaryOperation
             _ => false
         };
     }
+
+    protected override bool Supports(TypeGroup group) => group == TypeGroup.Text;
 }

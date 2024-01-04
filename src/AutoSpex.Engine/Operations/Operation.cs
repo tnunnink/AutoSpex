@@ -9,16 +9,38 @@ namespace AutoSpex.Engine.Operations;
 /// </summary>
 public abstract class Operation : SmartEnum<Operation, string>
 {
-    protected Operation(string name) : base(name, name)
+    protected Operation(string name) : base(name, name.Replace(" ", string.Empty))
     {
     }
+    
+    public abstract int NumberOfArguments { get; }
+    
+    /// <summary>
+    /// Performs the operation on the input and provided values and returns the result.
+    /// The actual implementation of the operation (how it's evaluated) is defined
+    /// in derived operation classes.
+    /// </summary>
+    /// <param name="input">The value that will be compared/evaluated by the operation.</param>
+    /// <param name="values">Additional parameters needed for some operations.</param>
+    /// <returns>The result of the predicate operation. This is typically a boolean
+    /// value indicating whether the input value meets the criteria defined by the operation.</returns>
+    /// <remarks>
+    /// As an abstract method, this must be implemented by each specific Operation subclass.
+    /// Be aware that this function may throw exceptions if input data is not of the expected 
+    /// type or proper format for the executing operation.
+    /// </remarks>
+    public abstract bool Execute(object? input, params object[] values);
+
+    public static IEnumerable<Operation> Supporting(Property property) => List.Where(x => x.Supports(property.Group));
+
+    protected virtual bool Supports(TypeGroup group) => true;
 
     /// <summary>
     /// Represents an equality operation. The operation checks if the input value 
     /// is equal to the comparison value. Comparison is done based on the underlying
     /// type of the input value.
     /// </summary>
-    public static readonly Operation EqualTo = new EqualToOperation();
+    public static readonly Operation Equal = new EqualsOperation();
 
     /// <summary>
     /// Represents a greater than operation. The operation checks if the input value 
@@ -31,7 +53,7 @@ public abstract class Operation : SmartEnum<Operation, string>
     /// Represents an operation that checks whether a value is greater than or equal to another value.
     /// This operation is only valid for input types that implement IComparable interface.
     /// </summary>
-    public static readonly Operation GreaterThanOrEqualTo = new GreaterThanOrEqualToOperation();
+    public static readonly Operation GreaterThanOrEqual = new GreaterThanOrEqualOperation();
 
     /// <summary>
     /// Represents the less than comparison operation. The operation checks if the input value 
@@ -45,7 +67,7 @@ public abstract class Operation : SmartEnum<Operation, string>
     /// is less than or equal to the comparison value. This operation is only valid for 
     /// input types that implement IComparable interface.
     /// </summary>
-    public static readonly Operation LessThanOrEqualTo = new LessThanOrEqualToOperation();
+    public static readonly Operation LessThanOrEqual = new LessThanOrEqualOperation();
 
     /// <summary>
     /// Represents an operation that checks for null values. It returns true 
@@ -108,23 +130,5 @@ public abstract class Operation : SmartEnum<Operation, string>
 
     public static readonly Operation Count = new CountOperation();
 
-    /// <summary>
-    /// Performs the operation on the input and provided values and returns the result.
-    /// The actual implementation of the operation (how it's evaluated) is defined
-    /// in derived operation classes.
-    /// </summary>
-    /// <param name="input">The value that will be compared/evaluated by the operation.</param>
-    /// <param name="values">Additional parameters needed for some operations.</param>
-    /// <returns>The result of the predicate operation. This is typically a boolean
-    /// value indicating whether the input value meets the criteria defined by the operation.</returns>
-    /// <remarks>
-    /// As an abstract method, this must be implemented by each specific Operation subclass.
-    /// Be aware that this function may throw exceptions if input data is not of the expected 
-    /// type or proper format for the executing operation.
-    /// </remarks>
-    public abstract bool Execute(object? input, params object[] values);
-
-    public static IEnumerable<Operation> Supporting(Type type) => List.Where(x => x.Supports(type));
     
-    public virtual bool Supports(Type type) => true;
 }

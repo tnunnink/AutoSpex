@@ -1,0 +1,14 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:c="clr-namespace:AutoSpex.Client.Resources.Converters"
+                    xmlns:nodes="clr-namespace:AutoSpex.Client.Features.Nodes">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceInclude Source="Icons.axaml" />
+    </ResourceDictionary.MergedDictionaries>
+    
+    <c:ValueToResourceConverter x:Key="NodeToIconConverter">
+        <c:ValueResourceKey Value="{x:Static nodes:NodeType.Collection}" ResourceKey="ThemedIcon.Collection" />
+        <c:ValueResourceKey Value="{x:Static nodes:NodeType.Folder}" ResourceKey="ThemedIcon.Folder" />
+        <c:ValueResourceKey Value="{x:Static nodes:NodeType.Spec}" ResourceKey="ThemedIcon.Spec" />
+    </c:ValueToResourceConverter>
+</ResourceDictionary>

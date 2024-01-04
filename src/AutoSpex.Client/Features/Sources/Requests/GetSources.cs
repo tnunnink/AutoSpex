@@ -18,18 +18,18 @@ public record GetSourceRequest(Guid NodeId) : IRequest<Result<Source>>;
 public class GetSourceHandler : IRequestHandler<GetSourceRequest, Result<Source>>
 {
     private const string Query = "SELECT * FROM Source WHERE NodeId = @NodeId";
-    
-    private readonly IDataStoreProvider _dataStore;
 
-    public GetSourceHandler(IDataStoreProvider dataStore)
+    private readonly AppDatabase _database;
+
+    public GetSourceHandler(AppDatabase database)
     {
-        _dataStore = dataStore;
+        _database = database;
     }
 
     public async Task<Result<Source>> Handle(GetSourceRequest request,
         CancellationToken cancellationToken)
     {
-        var connection = await _dataStore.ConnectTo(StoreType.Project, cancellationToken);
+        var connection = await _database.Connect(cancellationToken);
 
         var record = await connection.QuerySingleOrDefaultAsync(Query, new {request.NodeId});
         

@@ -1,0 +1,17 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui">
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Light">
+
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Dark">
+
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
+
+    <ControlTheme x:Key="{x:Type PathIcon}" TargetType="PathIcon" BasedOn="{a:ControlTheme PathIcon}">
+        <Setter Property="Height" Value="16" />
+        <Setter Property="Width" Value="16" />
+    </ControlTheme>
+</ResourceDictionary>

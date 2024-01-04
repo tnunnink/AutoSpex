@@ -12,7 +12,7 @@ public class LaunchProjectTests
     {
         using var context = new TestContext();
         context.BuildProject();
-        var mediator = context.Resolve<IMediator>();
+        var mediator = Resolve<IMediator>();
         var request = new LaunchProjectRequest(context.ProjectPath);
 
         var result = await mediator.Send(request);

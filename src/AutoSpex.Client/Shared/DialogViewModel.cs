@@ -6,7 +6,7 @@ namespace AutoSpex.Client.Shared;
 
 public abstract partial class DialogViewModel : ViewModelBase, IModalDialogViewModel, ICloseable
 {
-    public bool? DialogResult { get; private set; }
+    public bool? DialogResult { get; protected set; }
     public event EventHandler? RequestClose;
     
     [RelayCommand]
@@ -22,4 +22,6 @@ public abstract partial class DialogViewModel : ViewModelBase, IModalDialogViewM
         DialogResult = false;
         RequestClose?.Invoke(this, EventArgs.Empty);
     }
+    
+    protected void RaiseRequestClose() => RequestClose?.Invoke(this, EventArgs.Empty);
 }

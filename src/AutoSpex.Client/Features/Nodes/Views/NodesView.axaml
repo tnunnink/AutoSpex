@@ -82,18 +82,22 @@
 
     <TabControl ItemsSource="{Binding Nodes}"
                 SelectedItem="{Binding Selected}"
-                BorderThickness="0 1 0 0"
+                BorderThickness="0 1 0 0" 
+                Padding="0"
                 ItemContainerTheme="{StaticResource DetailsTabItem}">
         <TabControl.ItemTemplate>
             <DataTemplate>
-                <DockPanel LastChildFill="True">
-                    <PathIcon DockPanel.Dock="Left"
-                              Data="{StaticResource Icon.Xml}" />
+                <DockPanel>
+                    <PathIcon Theme="{Binding Node.NodeType, Converter={StaticResource NodeToIconConverter}}" 
+                              DockPanel.Dock="Left"/>
+                    
+                    <Ellipse Height="10" Width="10"
+                             Fill="{a:ThemeResource ControlForegroundBrushOutlineWarning}"
+                             IsVisible="{Binding IsChanged}"/>
 
                     <Button DockPanel.Dock="Right"
                             Command="{Binding $parent[TabControl].((f:NodesViewModel)DataContext).CloseNodeCommand, FallbackValue={x:Null}}"
                             CommandParameter="{Binding}"
-                            Margin="5 0 0 0"
                             Classes="icon">
                         <PathIcon Data="{StaticResource Icon.Close}"
                                   Height="8" Width="8"
@@ -109,7 +113,7 @@
         </TabControl.ItemTemplate>
         <TabControl.ContentTemplate>
             <DataTemplate x:DataType="f:NodeDetailViewModel">
-                <ContentControl Content="{Binding View}" />
+                <ContentControl Content="{Binding}" />
             </DataTemplate>
         </TabControl.ContentTemplate>
 

@@ -1,6 +1,4 @@
-﻿using System.Linq.Expressions;
-using System.Reflection;
-using Ardalis.SmartEnum;
+﻿using Ardalis.SmartEnum;
 using AutoSpex.Engine.Operations;
 using L5Sharp.Core;
 using Module = L5Sharp.Core.Module;
@@ -11,18 +9,10 @@ namespace AutoSpex.Engine;
 public abstract class Element : SmartEnum<Element, string>
 {
     /// <summary>
-    /// Holds compiled property getter functions so we don't have to recreate them each time we need to get a property.
-    /// This will improve the overall performance when we go to run many criterion for many specifications.
-    /// These are cached as the are accessed. We can't be greedy and create them ahead of time because of the recursive nature
-    /// of the type structures and these being static type, we could cause overflow exceptions. 
-    /// </summary>
-    private readonly Dictionary<string, Func<object, object?>> _cache = new();
-    
-    /// <summary>
     /// Holds "custom" properties, or properties we attach to the element and provide a custom function to retrieve
     /// it's value. This would allow derived classes to add properties or make method calls show up as a property. 
     /// </summary>
-    private readonly Dictionary<Property, Func<object, object?>> _customProperties = new();
+    private readonly List<Property> _customProperties = new();
 
     private Element(Type type) : base(type.Name, type.Name)
     {
@@ -32,8 +22,10 @@ public abstract class Element : SmartEnum<Element, string>
     public Type Type { get; }
 
     public IEnumerable<Property> Properties => GetProperties();
-    
+
     public Func<L5X, IEnumerable<object>> Query => file => file.Query(Type);
+
+    public bool IsComponent => ComponentType.All().Any(t => t.Name == Type.L5XType());
 
     #region ComponentTypes
 
@@ -77,101 +69,41 @@ public abstract class Element : SmartEnum<Element, string>
     /// <param name="operation">The operation to perform on the property.</param>
     /// <param name="arguments">The arguments required for the operation.</param>
     /// <returns>A new instance of the <see cref="Has"/> class.</returns>
-    public Criterion Has(string property, Operation operation, params object[] arguments) =>
-        new(this, property, operation, arguments);
+    public static Criterion Has(string property, Operation operation, params Arg[] arguments)
+    {
+        return new Criterion(property, operation, arguments);
+    }
 
     /// <summary>
-    /// Retrieves the getter function based on the given path.
+    /// Retrieves a property from the current object based on the specified path.
     /// </summary>
-    /// <param name="path">The path to retrieve the getter function.</param>
-    /// <returns>The getter function.</returns>
-    public Func<object, object?> Getter(string path) => GenerateGetter(path);
+    /// <param name="path">The path to the desired property, separated by dots.</param>
+    /// <returns>The <see cref="Property"/> object representing the specified property if found, otherwise, <c>null</c>.</returns>
+    public Property? Property(string? path) => Type.Property(path);
 
-    /// <summary
-    public Property Property(string path)
+    private void Register<T>(string name, Func<object?, object?> getter)
     {
-        Property? property = null;
-        var properties = Properties.ToList();
-
-        while (!string.IsNullOrEmpty(path) && properties.Any())
-        {
-            var dot = path.IndexOf('.');
-            var member = dot >= 0 ? path[..dot] : path;
-            property = properties.SingleOrDefault(p => p.Name == member);
-            properties = property?.Properties.ToList() ?? Enumerable.Empty<Property>().ToList();
-            path = dot >= 0 ? path[(dot + 1)..] : string.Empty;
-        }
-
-        return property ?? throw new InvalidOperationException($"No property '{path}' defined for element '{Type}'");
+        var property = new Property(Type, name, typeof(T), getter);
+        _customProperties.Add(property);
     }
 
-    private void Register<T>(string name, Func<object, object?> getter)
-    {
-        var property = new Property(name, typeof(T));
-        _customProperties.TryAdd(property, getter);
-    }
-    
+    /// <summary>
+    /// Retrieves a collection of properties from the object's type and custom properties.
+    /// </summary>
+    /// <returns>
+    /// An <see cref="IEnumerable{T}"/> of <see cref="Property"/> objects representing the properties of the object.
+    /// </returns>
     private IEnumerable<Property> GetProperties()
     {
         var results = new HashSet<Property>();
-        
-        var typeProperties = Type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-            .Where(p => p.GetIndexParameters().Length == 0 && PropertyExclusions().All(e => e != p.Name));
 
-        foreach (var typeProperty in typeProperties)
-            results.Add(new Property(typeProperty));
+        foreach (var property in Type.Properties())
+            results.Add(property);
 
-        foreach (var customProperty in _customProperties)
-            results.Add(customProperty.Key);
+        foreach (var property in _customProperties)
+            results.Add(property);
 
         return results;
-    }
-
-    private Func<object, object?> GenerateGetter(string property)
-    {
-        if (_cache.TryGetValue(property, out var cached)) return cached;
-
-        var custom = _customProperties.FirstOrDefault(p => p.Key.Name == property).Value;
-        if (custom is not null)
-        {
-            _cache.Add(property, custom);
-            return custom;
-        }
-        
-        var parameter = Expression.Parameter(typeof(object), "x");
-        var converted = Expression.TypeAs(parameter, Type);
-        var member = GetMember(converted, property);
-        
-        var getter = Expression.Lambda<Func<object, object?>>(member, parameter).Compile();
-        
-        _cache.Add(property, getter);
-        return getter;
-    }
-
-    /// <summary>
-    /// Recursively gets the member expression for the provided property name. This will also add null checks for
-    /// each nested member to prevent null reference exceptions, and to allow null to be propagated through the
-    /// member expression and returns to the operation's evaluation method.
-    /// </summary>
-    /// <param name="parameter">The current member access expression for the type.</param>
-    /// <param name="property">The current property name to create member access to.</param>
-    /// <returns>An <see cref="Expression{TDelegate}"/> that represents member access to a immediate or nested/complex
-    /// member property or field, with corresponding conditional null checks for each member level.</returns>
-    private static Expression GetMember(Expression parameter, string property)
-    {
-        if (!property.Contains('.'))
-            return Expression.TypeAs(Expression.PropertyOrField(parameter, property), typeof(object));
-
-        var index = property.IndexOf('.');
-        var member = Expression.PropertyOrField(parameter, property[..index]);
-        var notNull = Expression.NotEqual(member, Expression.Constant(null));
-        return Expression.Condition(notNull, GetMember(member, property[(index + 1)..]), Expression.Constant(null),
-            typeof(object));
-    }
-    
-    private static IEnumerable<string> PropertyExclusions()
-    {
-        return new[] {"L5X", "L5XType", "IsAttached"};
     }
 
     private class ControllerElement : Element
@@ -185,7 +117,7 @@ public abstract class Element : SmartEnum<Element, string>
     {
         public DataTypeElement() : base(typeof(DataType))
         {
-            Register<IEnumerable<LogixComponent>>("Dependencies", x => ((DataType)x).Dependencies());
+            Register<IEnumerable<LogixComponent>>("Dependencies", x => ((DataType) x!).Dependencies());
         }
     }
 

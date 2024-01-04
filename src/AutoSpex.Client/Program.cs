@@ -1,6 +1,7 @@
 ﻿using System;
 using Avalonia;
 using Avalonia.Logging;
+using Avalonia.Svg.Skia;
 using JetBrains.Annotations;
 
 namespace AutoSpex.Client;
@@ -22,6 +23,9 @@ public static class Program
     /// <returns>The <see cref="AppBuilder"/> object that was created.</returns>
     private static AppBuilder BuildAvaloniaApp()
     {
+        GC.KeepAlive(typeof(SvgImageExtension).Assembly);
+        GC.KeepAlive(typeof(Avalonia.Svg.Skia.Svg).Assembly);
+        
         return AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .LogToTrace(LogEventLevel.Verbose);

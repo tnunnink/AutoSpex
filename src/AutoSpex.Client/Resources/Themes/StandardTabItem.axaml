@@ -1,0 +1,94 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui">
+	<Design.PreviewWith>
+		<Border Padding="20">
+			<TabControl ItemContainerTheme="{DynamicResource TabItemStandard}">
+				<TabItem Header="Item 1" />
+				<TabItem Header="Item 2" />
+				<TabItem Header="Item 3" />
+			</TabControl>
+		</Border>
+	</Design.PreviewWith>
+    
+    
+    <ControlTheme x:Key="TabItemStandard" TargetType="TabItem">
+		<ControlTheme.Resources>
+			<a:ThicknessConverter x:Key="HorizontalPaddingConverter" Filter="Horizontal" />
+			<a:ThicknessConverter x:Key="VerticalPaddingConverter" Filter="Vertical" />
+		</ControlTheme.Resources>
+
+		<Setter Property="Background" Value="Transparent" />
+		<Setter Property="BorderBrush" Value="{a:ThemeResource TabItemBorderBrushSubtle}" />
+		<Setter Property="FontSize" Value="{a:ThemeResource TabItemFontSizeSubtle}" />
+		<Setter Property="FontWeight" Value="{a:ThemeResource TabItemFontWeightSubtle}" />
+		<Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+		<Setter Property="HorizontalContentAlignment" Value="Center" />
+		<Setter Property="Padding" Value="10 5" />
+		<Setter Property="Margin" Value="5 0" />
+		<Setter Property="VerticalContentAlignment" Value="Center" />
+
+		<Setter Property="Template">
+			<ControlTemplate>
+
+				<Panel>
+					<Border
+						x:Name="PART_LayoutRoot"
+						Background="{TemplateBinding Background}"
+						BorderBrush="{TemplateBinding BorderBrush}"
+						BorderThickness="{TemplateBinding BorderThickness}"
+						CornerRadius="{TemplateBinding CornerRadius}"
+						Padding="{TemplateBinding Padding}"
+						>
+						<ContentPresenter
+							x:Name="PART_ContentPresenter"
+							Content="{TemplateBinding Header}"
+							ContentTemplate="{TemplateBinding HeaderTemplate}"
+							HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+							VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+							/>
+					</Border>
+
+					<Border
+						x:Name="PART_SelectedPipe"
+						Background="{TemplateBinding BorderBrush}"
+						Height="2"
+						VerticalAlignment="Bottom"
+						IsVisible="False">
+					</Border>
+				</Panel>
+
+			</ControlTemplate>
+		</Setter>
+				
+		<Style Selector="^:pointerover">
+			<Style Selector="^ /template/ Border#PART_SelectedPipe">
+				<Setter Property="IsVisible" Value="True" />
+			</Style>
+		</Style>
+		<Style Selector="^:selected">
+			<Setter Property="Foreground" Value="{a:ThemeResource TabItemForegroundBrushSubtleSelected}" />
+			<Setter Property="BorderBrush" Value="{a:ThemeResource TabItemBorderBrushSubtleSelected}" />
+			<Setter Property="ZIndex" Value="100" />
+
+			<Style Selector="^ /template/ Border#PART_SelectedPipe">
+				<Setter Property="IsVisible" Value="True" />
+			</Style>
+
+			<Style Selector="^:pointerover">
+				<Setter Property="Foreground" Value="{a:ThemeResource TabItemForegroundBrushSubtleSelectedPointerOver}" />
+
+				<Style Selector="^ /template/ Border#PART_SelectedPipe">
+					<Setter Property="Margin" Value="0" />
+				</Style>
+			</Style>
+
+			<Style Selector="^:disabled">
+				<Setter Property="BorderBrush" Value="{a:ThemeResource TabItemBorderBrushSubtleSelectedDisabled}" />
+			</Style>
+		</Style>
+		<Style Selector="^:disabled">
+			<Setter Property="Foreground" Value="{a:ThemeResource TabItemForegroundBrushSubtleDisabled}" />
+		</Style>
+	</ControlTheme>
+</ResourceDictionary>

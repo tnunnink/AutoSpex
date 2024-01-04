@@ -18,17 +18,17 @@ public record GetProjectsRequest : IRequest<Result<IEnumerable<Project>>>;
 public class GetProjectsHandler : IRequestHandler<GetProjectsRequest, Result<IEnumerable<Project>>>
 {
     private const string Query = "SELECT * FROM Project ORDER BY OpenedOn DESC";
-    
-    private readonly IDataStoreProvider _dataStore;
 
-    public GetProjectsHandler(IDataStoreProvider dataStore)
+    private readonly AppDatabase _database;
+
+    public GetProjectsHandler(AppDatabase database)
     {
-        _dataStore = dataStore;
+        _database = database;
     }
     
     public async Task<Result<IEnumerable<Project>>> Handle(GetProjectsRequest request, CancellationToken cancellationToken)
     {
-        using var connection = await _dataStore.ConnectTo(StoreType.Application, cancellationToken);
+        var connection = await _database.Connect(cancellationToken);
         var projects = await connection.QueryAsync<Project>(Query);
         return Result.Ok(projects);
     }

@@ -1,7 +1,6 @@
 ﻿using AutoSpex.Client.Features.Nodes;
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Interactivity;
 
 namespace AutoSpex.Client.Features.Specifications;
 
@@ -10,13 +9,13 @@ public partial class SpecTreeView : UserControl
     public SpecTreeView()
     {
         InitializeComponent();
-        DataContext = App.Container.GetInstance<SpecTreeViewModel>();
-        
-        // found2 = true | result2 = "Hello World" 
-        var found2 = this.TryFindResource("TheKey", ActualThemeVariant, out var result2);
+        DataContext = Container.Resolve<SpecTreeViewModel>();
+        ViewModel = (DataContext as SpecTreeViewModel)!;
     }
+
+    public SpecTreeViewModel ViewModel { get; }
     
-    private void OnTextBoxLostFocus(object sender, RoutedEventArgs e)
+    /*private void OnTextBoxLostFocus(object sender, RoutedEventArgs e)
     {
         var textBox = (TextBox)sender;
         var node = (Node)textBox.DataContext!;
@@ -45,5 +44,23 @@ public partial class SpecTreeView : UserControl
 
         e.Handled = true;
         node.IsEditing = false;
+    }*/
+    /*private void OnSpecTreeTapped(object? sender, TappedEventArgs e)
+    {
+        e.
+        if (e.Source is not Control{DataContext: Node node} control) return;
+        var 
+    }*/
+
+    private void OnTreePointerReleased(object? sender, PointerReleasedEventArgs e)
+    {
+        if (e.Source is not Control{DataContext: Node node} control) return;
+        
+        var point = e.GetCurrentPoint(control);
+        
+        if (e.InitialPressMouseButton == MouseButton.Left)
+        {
+            ViewModel.OpenCommand.Execute(node);
+        }
     }
 }

@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using AutoSpex.Client.Features.Nodes;
 using AutoSpex.Client.Features.Projects;
-using AutoSpex.Client.Windows;
 using Avalonia;
-using Avalonia.Controls;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.Avalonia.DialogHost;
 using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
@@ -74,23 +71,5 @@ public static class DialogExtensions
         await service.ShowDialogHostAsync(owner, settings).ConfigureAwait(true);
 
         return vm.DialogResult == true ? vm.Uri : default;
-    }
-    
-    public static async Task<string?> ShowNodeNameDialog(this IDialogService service, string title, NodeType nodeType)
-    {
-        var owner = (App.MainWindow.DataContext as ViewModelBase)!;
-
-        var vm = new NodeNameViewModel(title, nodeType);
-
-        var settings = new DialogHostSettings
-        {
-            Content = vm,
-            CloseOnClickAway = true,
-            DialogMargin = new Thickness(0)
-        };
-
-        await service.ShowDialogHostAsync(owner, settings).ConfigureAwait(true);
-
-        return vm.DialogResult == true ? vm.Name : default;
     }
 }

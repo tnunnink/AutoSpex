@@ -1,4 +1,5 @@
-﻿using AutoSpex.Client.Features.Nodes;
+﻿using AutoSpex.Client.Features.Collections;
+using AutoSpex.Client.Features.Nodes;
 using AutoSpex.Client.Features.Specifications;
 using FluentAssertions;
 using MediatR;
@@ -13,7 +14,7 @@ public class GetNodesTests
     {
         using var context = new TestContext();
         context.BuildProject();
-        var mediator = context.Resolve<IMediator>();
+        var mediator = Resolve<IMediator>();
         var request = new GetNodesRequest(Feature.Specifications);
 
         var result = await mediator.Send(request);
@@ -26,7 +27,7 @@ public class GetNodesTests
     {
         using var context = new TestContext();
         context.BuildProject();
-        var mediator = context.Resolve<IMediator>();
+        var mediator = Resolve<IMediator>();
         var request = new GetNodesRequest(Feature.Sources);
 
         var result = await mediator.Send(request);
@@ -40,7 +41,7 @@ public class GetNodesTests
         using var context = new TestContext();
         context.BuildProject();
         context.RunMigration("SeedCollectionNodesMigration");
-        var mediator = context.Resolve<IMediator>();
+        var mediator = Resolve<IMediator>();
         var request = new GetNodesRequest(Feature.Specifications);
         
         var result = await mediator.Send(request);
@@ -54,9 +55,10 @@ public class GetNodesTests
     {
         using var context = new TestContext();
         context.BuildProject();
-        var mediator = context.Resolve<IMediator>();
+        var mediator = Resolve<IMediator>();
 
-        var add = new AddCollectionRequest("MyCollection");
+        var collection = Node.SpecCollection("MyCollection");
+        var add = new AddCollectionRequest(collection);
         var addResult = await mediator.Send(add);
         addResult.IsSuccess.Should().BeTrue();
         

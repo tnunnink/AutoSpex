@@ -11,7 +11,7 @@ public class GetProjectsTests
     public async Task Send_NoProjectFileExists_ShouldReturnIsSuccessAndEmptyCollection()
     {
         using var context = new TestContext();
-        var mediator = context.Resolve<IMediator>();
+        var mediator = Resolve<IMediator>();
         var request = new GetProjectsRequest();
 
         var result = await mediator.Send(request);
@@ -24,7 +24,7 @@ public class GetProjectsTests
     public async Task Send_ProjectFilesExist_ShouldReturnIsSuccessAndNonEmptyCollection()
     {
         using var context = new TestContext();
-        var mediator = context.Resolve<IMediator>();
+        var mediator = Resolve<IMediator>();
 
         var project = new Project(context.ProjectPath);
         var createRequest = new CreateProjectRequest(project);

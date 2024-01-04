@@ -7,6 +7,6 @@ public partial class NodesView : UserControl
     public NodesView()
     {
         InitializeComponent();
-        DataContext = App.Container.GetInstance<NodesViewModel>();
+        DataContext = Container.Resolve<NodesViewModel>();
     }
 }

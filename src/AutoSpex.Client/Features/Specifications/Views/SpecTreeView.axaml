@@ -2,121 +2,86 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:f="clr-namespace:AutoSpex.Client.Features.Specifications"
+             xmlns:specs="clr-namespace:AutoSpex.Client.Features.Specifications"
              xmlns:nodes="clr-namespace:AutoSpex.Client.Features.Nodes"
              d:DesignHeight="800" d:DesignWidth="400"
              x:Class="AutoSpex.Client.Features.Specifications.SpecTreeView"
-             x:DataType="f:SpecTreeViewModel"
+             x:DataType="specs:SpecTreeViewModel"
              Background="{a:ThemeResource Container2BackgroundBrush}"
              BorderBrush="{a:ThemeResource Container2BorderBrush}">
+    <Interaction.Behaviors>
+        <EventTriggerBehavior EventName="Loaded">
+            <InvokeCommandAction Command="{Binding GetNodesCommand}" />
+        </EventTriggerBehavior>
+    </Interaction.Behaviors>
 
-  <Grid RowDefinitions="Auto, Auto, *">
+    <Grid RowDefinitions="Auto, Auto, *">
 
-    <!--Header Area-->
-    <Border Grid.Row="0" Height="40"
-            BorderBrush="{a:ThemeResource Container2BorderBrush}"
-            BorderThickness="0 0 0 1">
-      <DockPanel Margin="5" LastChildFill="True">
+        <!--Header Area-->
+        <Border Grid.Row="0" Height="40"
+                BorderBrush="{a:ThemeResource Container2BorderBrush}"
+                BorderThickness="0 0 0 1">
+            <DockPanel Margin="5" LastChildFill="True">
 
-        <StackPanel DockPanel.Dock="Left"
-                    Spacing="10">
-          <Button Command="{Binding AddCollectionCommand}"
-                  Classes="icon"
-                  ToolTip.Tip="New Collection">
-            <PathIcon Data="{StaticResource Icon.Add}"
-                      Classes="button" />
-          </Button>
-        </StackPanel>
+                <StackPanel DockPanel.Dock="Left"
+                            Spacing="10">
+                    <Button Command="{Binding AddCollectionCommand}"
+                            Classes="icon"
+                            ToolTip.Tip="New Collection">
+                        <PathIcon Data="{StaticResource Icon.Add}"
+                                  Classes="small" />
+                    </Button>
+                </StackPanel>
 
-        <StackPanel DockPanel.Dock="Right"
-                    Spacing="10">
-          <Button DockPanel.Dock="Right"
-                  Classes="icon"
-                  ToolTip.Tip="Options">
-            <PathIcon Data="{StaticResource Icon.Dots.Vertical}"
-                      Classes="button" />
-          </Button>
-        </StackPanel>
+                <StackPanel DockPanel.Dock="Right"
+                            Spacing="10">
+                    <Button DockPanel.Dock="Right"
+                            Classes="icon"
+                            ToolTip.Tip="Options">
+                        <PathIcon Data="{StaticResource Icon.Dots.Vertical}"
+                                  Classes="small" />
+                    </Button>
+                </StackPanel>
 
-        <Panel />
+                <Panel />
 
-      </DockPanel>
-    </Border>
+            </DockPanel>
+        </Border>
 
-    <!--Tree Area-->
-    <Border Grid.Row="2">
-      <TreeView x:Name="SpecTree"
-                ItemsSource="{Binding Nodes^}"
-                SelectedItems="{Binding SelectedNodes}"
-                SelectionMode="Multiple"
-                VerticalAlignment="Stretch"
-                HorizontalAlignment="Stretch"
-                BorderThickness="0"
-                Background="Transparent">
-        <TreeView.Resources>
-          <nodes:NodeTypeToIconConverter x:Key="IconConverter" />
-        </TreeView.Resources>
-        <TreeView.ItemTemplate>
-          <TreeDataTemplate ItemsSource="{Binding Nodes}">
-            <StackPanel Spacing="10" Orientation="Horizontal"
-                        Height="20">
-              <Interaction.Behaviors>
-                <EventTriggerBehavior EventName="DoubleTapped" SourceObject="{Binding $parent[TreeViewItem]}">
-                  <InvokeCommandAction Command="{Binding $parent[TreeView].((f:SpecTreeViewModel)DataContext).OpenNodeCommand, FallbackValue={x:Null}}"
-                                       CommandParameter="{Binding}" />
-                </EventTriggerBehavior>
-              </Interaction.Behaviors>
-              
-              <PathIcon Data="{Binding NodeType, Converter={StaticResource IconConverter}}" />
-              <TextBlock Text="{Binding Name}"
-                         FontSize="{a:ThemeResource DefaultFontSizeSmall}"
-                         VerticalAlignment="Center"
-                         TextTrimming="CharacterEllipsis"
-                         TextWrapping="NoWrap"/>
-              <!--<TextBox Grid.Column="1"
-                                     IsVisible="{Binding IsEditing}"
-                                     Text="{Binding Name, Mode=OneWay}"
-                                     FontSize="{a:ThemeResource DefaultFontSizeSmall}"
-                                     VerticalAlignment="Center"
-                                     CornerRadius="0" BorderThickness="0" 
-                                     Padding="2" Margin="0 2 5 2"
-                                     LostFocus="OnTextBoxLostFocus"
-                                     KeyDown="OnTextBoxKeyDown" />-->
-            </StackPanel>
-          </TreeDataTemplate>
-        </TreeView.ItemTemplate>
-
-        <TreeView.ItemContainerTheme>
-          <ControlTheme TargetType="TreeViewItem"
-                        BasedOn="{a:ControlTheme TreeViewItem}"
-                        x:DataType="nodes:Node">
-            <Setter Property="IsVisible" Value="{Binding IsVisible}" />
-            <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
-            <Setter Property="IsSelected" Value="{Binding IsSelected}" />
-            <Setter Property="ContextMenu">
-              <ContextMenu>
-                <MenuItem Header="Add Specification"
-                          Command="{Binding $parent[TreeView].((f:SpecTreeViewModel)DataContext).AddSpecificationCommand, FallbackValue={x:Null}}"
-                          CommandParameter="{Binding}" />
-                <MenuItem Header="Add Folder"
-                          Command="{Binding $parent[TreeView].((f:SpecTreeViewModel)DataContext).AddFolderCommand, FallbackValue={x:Null}}"
-                          CommandParameter="{Binding}" />
-                <Separator />
-                <MenuItem Header="Run" />
-                <Separator />
-                <MenuItem Header="Edit" />
-                <MenuItem Header="Rename"
-                          Command="{Binding $parent[TreeView].((f:SpecTreeViewModel)DataContext).RenameNodeCommand, FallbackValue={x:Null}}"
-                          CommandParameter="{Binding}" />
-                <MenuItem Header="Duplicate" />
-                <MenuItem Header="Delete"
-                          Command="{Binding $parent[TreeView].((f:SpecTreeViewModel)DataContext).DeleteNodeCommand, FallbackValue={x:Null}}"
-                          CommandParameter="{Binding}" />
-              </ContextMenu>
-            </Setter>
-          </ControlTheme>
-        </TreeView.ItemContainerTheme>
-      </TreeView>
-    </Border>
-  </Grid>
+        <!--Tree Area-->
+        <Border Grid.Row="2">
+            <TreeView x:Name="SpecTree"
+                      ItemsSource="{Binding Nodes}"
+                      SelectedItems="{Binding SelectedNodes}"
+                      SelectedItem="{Binding SelectedNode}"
+                      SelectionMode="Multiple"
+                      VerticalAlignment="Stretch"
+                      HorizontalAlignment="Stretch"
+                      BorderThickness="0"
+                      Background="Transparent"
+                      PointerReleased="OnTreePointerReleased">
+                <TreeView.ItemTemplate>
+                    <TreeDataTemplate ItemsSource="{Binding Nodes}">
+                        <StackPanel Spacing="10"
+                                    Orientation="Horizontal">
+                            <PathIcon Theme="{Binding NodeType, Converter={StaticResource NodeToIconConverter}}" />
+                            <TextBlock Text="{Binding Name}"
+                                       FontSize="12"
+                                       VerticalAlignment="Center"
+                                       TextTrimming="CharacterEllipsis"
+                                       TextWrapping="NoWrap" />
+                        </StackPanel>
+                    </TreeDataTemplate>
+                </TreeView.ItemTemplate>
+                <TreeView.ItemContainerTheme>
+                    <ControlTheme BasedOn="{StaticResource SpexTreeViewItem}"
+                                  TargetType="TreeViewItem"
+                                  x:DataType="nodes:Node">
+                        <Setter Property="ContextFlyout"
+                                Value="{Binding NodeType, Converter={StaticResource NodeToMenuConverter}}" />
+                    </ControlTheme>
+                </TreeView.ItemContainerTheme>
+            </TreeView>
+        </Border>
+    </Grid>
 </UserControl>

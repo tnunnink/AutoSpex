@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
-using ActiproSoftware.UI.Avalonia.Controls;
+using AutoSpex.Client.Services;
+using Avalonia.Controls.Notifications;
+using CommunityToolkit.Mvvm.Messaging;
 using FluentResults;
 using MediatR.Pipeline;
 
@@ -14,28 +14,29 @@ public class ExceptionBehavior<TRequest, TResponse, TException> :
     where TResponse : class, IResultBase, new()
     where TException : Exception
 {
-    public ExceptionBehavior()
+    private const string Message =
+        "The request encounter an unexpected error. See log for details. If this issue persists, please report it.";
+
+    private readonly INotificationService _notifier;
+    private readonly IMessenger _messenger;
+
+    public ExceptionBehavior(INotificationService notifier, IMessenger messenger)
     {
-        //notification manager to send notification to UI for failure.
+        _notifier = notifier;
+        _messenger = messenger;
     }
-    
+
     public Task Handle(TRequest request, TException exception, RequestExceptionHandlerState<TResponse> state,
         CancellationToken cancellationToken)
     {
-        var error = new Error("This request encountered an unexpected error. If this issue persists, please report it.")
-            .CausedBy(exception);
+        var error = new Error(Message).CausedBy(exception);
 
-        /*await UserPromptBuilder.Configure()
-            .WithHeaderContent("This is embarrassing...")
-            .WithContent(error.Message)
-            .WithExpandedInformation("Error Message", "Error Message",
-                error.Reasons.First(r => r is ExceptionalError).Message)
-            .WithStandardButtons(MessageBoxButtons.OK)
-            .WithStatusImage(MessageBoxImage.Error)
-            .Show();*/
+        var notification = new Notification("Request Error", error.Message, NotificationType.Error);
+        _notifier.Show(notification);
 
         var response = new TResponse();
         response.Reasons.Add(error);
+        
         state.SetHandled(response);
         return Task.CompletedTask;
     }

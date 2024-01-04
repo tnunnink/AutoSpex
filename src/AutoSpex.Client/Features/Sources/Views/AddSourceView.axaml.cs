@@ -7,6 +7,6 @@ public partial class AddSourceView : UserControl
     public AddSourceView()
     {
         InitializeComponent();
-        DataContext = App.Container.GetInstance<AddSourceViewModel>();
+        DataContext = Container.Resolve<AddSourceViewModel>();
     }
 }

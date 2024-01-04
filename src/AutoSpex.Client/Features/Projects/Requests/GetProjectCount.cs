@@ -15,16 +15,16 @@ public record GetProjectCountRequest : IRequest<Result<int>>;
 [UsedImplicitly]
 public class GetProjectCountHandler : IRequestHandler<GetProjectCountRequest, Result<int>>
 {
-    private readonly IDataStoreProvider _store;
+    private readonly AppDatabase _database;
 
-    public GetProjectCountHandler(IDataStoreProvider store)
+    public GetProjectCountHandler(AppDatabase database)
     {
-        _store = store;
+        _database = database;
     }
 
     public async Task<Result<int>> Handle(GetProjectCountRequest request, CancellationToken cancellationToken)
     {
-        using var connection = await _store.ConnectTo(StoreType.Application, cancellationToken);
+        var connection = await _database.Connect(cancellationToken);
         var result = await connection.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM Project", cancellationToken);
         return Result.Ok(result);
     }

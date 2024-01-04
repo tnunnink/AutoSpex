@@ -17,7 +17,7 @@ public partial class Node : ObservableObject
         NodeType = NodeType.Collection;
         Depth = 0;
         Ordinal = 0;
-        Description = string.Empty;
+        Nodes = new ObservableCollection<Node>();
     }
 
     public Guid NodeId { get; private init; }
@@ -34,13 +34,16 @@ public partial class Node : ObservableObject
 
     [ObservableProperty] private long _ordinal;
 
-    [ObservableProperty] private string? _description;
-
-    [ObservableProperty] private ObservableCollection<Node> _nodes = new();
+    [ObservableProperty] private ObservableCollection<Node> _nodes;
 
     [ObservableProperty] private bool _isExpanded;
+
     [ObservableProperty] private bool _isSelected;
+
     [ObservableProperty] private bool _isVisible = true;
+
+    public Breadcrumb Breadcrumb => new(this, CrumbType.Target);
+
     [ObservableProperty] private bool _isEditing;
 
     public static Node SpecCollection(string name)
@@ -52,8 +55,7 @@ public partial class Node : ObservableObject
             Parent = default,
             Feature = Feature.Specifications,
             NodeType = NodeType.Collection,
-            Name = name,
-            Description = string.Empty
+            Name = name
         };
     }
 
@@ -66,29 +68,28 @@ public partial class Node : ObservableObject
             Parent = default,
             Feature = Feature.Sources,
             NodeType = NodeType.Collection,
-            Name = name,
-            Description = string.Empty
+            Name = name
         };
     }
 
     public void AddNode(Node node)
     {
         if (node is null) throw new ArgumentNullException(nameof(node));
-        
+
         if (node.Feature != Feature)
             throw new InvalidOperationException(
-                $"Can not add node to tree of different feature. Feature: {Feature}; Node: {node.Feature}");
+                $"Can not add node to tree of different feature. Tree: {Feature}; Node: {node.Feature}");
 
         node.Parent = this;
         node.ParentId = NodeId;
         Nodes.Add(node);
     }
 
-    public Node AddFolder(string name)
+    public Node NewFolder(string? name = default)
     {
-        if (string.IsNullOrEmpty(name)) throw new ArgumentException("Name can not be null or empty.");
+        name ??= "New Folder";
 
-        var folder = new Node
+        var node = new Node
         {
             NodeId = Guid.NewGuid(),
             ParentId = NodeId,
@@ -96,22 +97,17 @@ public partial class Node : ObservableObject
             Feature = Feature,
             NodeType = NodeType.Folder,
             Name = name,
-            Depth = Depth + 1,
-            Description = string.Empty
+            Depth = Depth + 1
         };
-
-        Nodes.Add(folder);
-        return folder;
+        
+        return node;
     }
 
-    public Node AddSpec(string name)
+    public Node NewSpec(string? name = default)
     {
-        if (string.IsNullOrEmpty(name)) throw new ArgumentException("Name can not be null or empty.");
+        name ??= "New Spec";
 
-        if (NodeType == NodeType.Collection || NodeType == NodeType.Folder)
-            throw new InvalidOperationException("Can not add specification node to a non collection or folder node");
-
-        var folder = new Node
+        var node = new Node
         {
             NodeId = Guid.NewGuid(),
             ParentId = NodeId,
@@ -119,12 +115,10 @@ public partial class Node : ObservableObject
             Feature = Feature.Specifications,
             NodeType = NodeType.Spec,
             Name = name,
-            Depth = Depth + 1,
-            Description = string.Empty
+            Depth = Depth + 1
         };
-
-        Nodes.Add(folder);
-        return folder;
+        
+        return node;
     }
 
     public override bool Equals(object? obj) => obj is Node other && other.NodeId == NodeId;
@@ -134,12 +128,6 @@ public partial class Node : ObservableObject
     public static bool operator ==(Node? left, Node? right) => Equals(left, right);
 
     public static bool operator !=(Node? left, Node? right) => !Equals(left, right);
-
-    public void Relocate(long depth, long ordinal)
-    {
-        Depth = depth;
-        Ordinal = ordinal;
-    }
 
     public bool FilterPath(string text)
     {

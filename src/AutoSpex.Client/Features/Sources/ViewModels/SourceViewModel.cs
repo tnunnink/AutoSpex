@@ -14,14 +14,12 @@ using MediatR;
 namespace AutoSpex.Client.Features.Sources;
 
 [UsedImplicitly]
-public partial class SourceViewModel : Nodes.NodeDetailViewModel
+public partial class SourceViewModel : NodeDetailViewModel
 {
     private readonly IMediator _mediator;
     
-    public SourceViewModel(Node node) : base(node, new SourceView())
+    public SourceViewModel(Node node) : base(node)
     {
-        _mediator = App.Container.GetInstance<IMediator>();
-        Run = LoadSource(node.NodeId);
     }
 
     [ObservableProperty] private Source? _source;
@@ -33,34 +31,19 @@ public partial class SourceViewModel : Nodes.NodeDetailViewModel
     [ObservableProperty] private ObservableCollection<Tag> _tags = new();
     
     public FlatTreeDataGridSource<DataType> DataTypeSource { get; private set; }
-    
+
+    protected override Task Load()
+    {
+        return base.Load();
+    }
+
     protected override Task Save()
     {
         throw new NotImplementedException();
     }
 
-    private async Task LoadSource(Guid nodeId)
+    protected override bool CanSave()
     {
-        var result = await _mediator.Send(new GetSourceRequest(nodeId));
-        if (result.IsFailed)
-        {
-            LoadFailed = true;
-        }
-
-        Source = result.Value;
-        
-        var data = Source.Content.Tags.Take(20).ToList();
-        Tags.AddRange(data);
-        
-        /*DataTypeSource = new FlatTreeDataGridSource<DataType>(_dataTypes)
-        {
-            Columns =
-            {
-                new TextColumn<DataType, string>("Name", x => x.Name),
-                new TextColumn<DataType, string>("Description", x => x.Description),
-                new TextColumn<DataType, string>("Container", x => x.Container),
-                new TextColumn<DataType, int>("Members", x => x.Members.Count()),
-            }
-        };*/
+        throw new NotImplementedException();
     }
 }

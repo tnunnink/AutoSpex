@@ -3,8 +3,14 @@
         xmlns:a="http://schemas.actiprosoftware.com/avaloniaui">
     <Design.PreviewWith>
         <Border Padding="30">
-            <TextBox Classes="folder"
-                     Watermark="Enter Value Here" Width="200" />
+            <StackPanel Spacing="10">
+                <TextBox Classes="folder"
+                         Watermark="Enter Value Here" Width="200" />
+                <TextBox Classes="subtle"
+                         Watermark="Enter Value Here" Width="200" />
+            </StackPanel>
+            
+            
         </Border>
     </Design.PreviewWith>
 
@@ -13,16 +19,33 @@
             <Template>
                 <Button DockPanel.Dock="Right"
                         Classes="icon"
+                        IsTabStop="False"
                         Theme="{a:ControlTheme ButtonInvisible}">
                     <PathIcon Data="{StaticResource Icon.Outlined.Folder}"
-                              Height="16" Width="16"
-                              Foreground="{a:ThemeResource ControlBorderBrushOutline}" />
+                              Height="16" Width="16" 
+                              Foreground="{TemplateBinding Foreground}"/>
                 </Button>
             </Template>
         </Setter>
-        
-        <Style Selector="^.pointerover">
+
+        <Style Selector="^.pointerover /template/ ContentPresenter:pointerover">
             <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+        </Style>
+    </Style>
+    
+    <Style Selector="TextBox.subtle">
+        <Setter Property="Theme" Value="{a:ControlTheme TextBoxSoft}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="2"></Setter>
+        <Setter Property="BorderBrush" Value="Transparent" />
+        
+        <Style Selector="^:pointerover /template/ Border#border">
+            <Setter Property="Background" Value="{a:ThemeResource EditBackgroundBrushSoft}" />
+            <Setter Property="BorderBrush" Value="{a:ThemeResource EditBackgroundBrushSoft}" />
+        </Style>
+        
+        <Style Selector="^:focus /template/ Border#border">
+            <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBackgroundBrushSolidAccent}" />
         </Style>
     </Style>
 </Styles>

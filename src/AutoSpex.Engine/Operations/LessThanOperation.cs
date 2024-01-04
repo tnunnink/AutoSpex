@@ -2,7 +2,7 @@
 
 public class LessThanOperation : BinaryOperation
 {
-    public LessThanOperation() : base("LessThan")
+    public LessThanOperation() : base("Less Than")
     {
     }
 
@@ -11,4 +11,6 @@ public class LessThanOperation : BinaryOperation
         if (input is not IComparable comparable) return false;
         return comparable.CompareTo(value) < 0;
     }
+
+    protected override bool Supports(TypeGroup group) => group == TypeGroup.Number || group == TypeGroup.Date;
 }

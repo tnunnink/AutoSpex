@@ -1,5 +1,8 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
+using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.LogicalTree;
 using Avalonia.VisualTree;
 
 namespace AutoSpex.Client.Features.Projects;
@@ -9,15 +12,13 @@ public partial class ProjectListView : UserControl
     public ProjectListView()
     {
         InitializeComponent();
-        DataContext = App.Container.GetInstance<ProjectListViewModel>();
+        DataContext = Container.Resolve<ProjectListViewModel>();
     }
 
-    /// <summary>
-    /// If this control is attached to a flyout menu then I want to close it have the user clicks a add or open button.
-    /// </summary>
-    private void OnActionClicked(object? sender, RoutedEventArgs e)
+    private void OnItemPointerReleased(object? sender, PointerReleasedEventArgs e)
     {
-        var flyout = this.FindAncestorOfType<Flyout>();
-        flyout?.Hide();
+        var popup = this.FindLogicalAncestorOfType<Popup>();
+        if (popup is null) return;
+        popup.IsOpen = false;
     }
 }

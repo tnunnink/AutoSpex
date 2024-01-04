@@ -1,13 +1,7 @@
 ﻿using System.Linq.Expressions;
-using AgileObjects.ReadableExpressions;
 using AutoSpex.Engine.Operations;
 
 namespace AutoSpex.Engine;
-
-public class Class
-{
-    
-}
 
 /// <summary>
 /// The <see cref="Criterion"/> class represents a single criterion that can be used to evaluate a candidate object.
@@ -21,71 +15,53 @@ public class Class
 /// </remarks>
 public class Criterion
 {
-    public Criterion(Element element, string property, Operation operation, params object[] arguments)
+    public Criterion()
     {
-        Element = element ?? throw new ArgumentNullException(nameof(element));
-        Property = property ?? throw new ArgumentNullException(nameof(property));
+    }
+    
+    public Criterion(string? property, Operation operation, params Arg[] arguments)
+    {
+        Property = property;
         Operation = operation ?? throw new ArgumentNullException(nameof(operation));
-        Arguments = arguments ?? throw new ArgumentNullException(nameof(arguments));
+        Arguments = arguments;
     }
 
-    /// <summary>
-    /// The object type the criterion is evaluating.
-    /// </summary>
-    /// <value>A <see cref="System.Type"/> object containing the type information.</value>
-    public Element Element { get; }
+    public Criterion(Operation operation, params Arg[] arguments)
+    {
+        Operation = operation ?? throw new ArgumentNullException(nameof(operation));
+        Arguments = arguments;
+    }
 
-    /// <summary>
-    /// The property name of the type the criterion is evaluating.
-    /// </summary>
-    /// <value>
-    /// A <see cref="string"/> representing an immediate or nested property of the type.
-    /// This mean you can specify complex properties, for example TagName.Path
-    /// </value>
-    public string Property { get; }
-
-    /// <summary>
-    /// The <see cref="Operation"/> to perform when evaluating the criterion using the property value and arguments.
-    /// </summary>
-    /// <value>An <see cref="Operations.Operation"/> type.</value>
-    public Operation Operation { get; }
-
-    /// <summary>
-    /// An array of arguments to pass to the <see cref="Operation"/> when evaluating the criterion.
-    /// </summary>
-    /// <value>A array of <see cref="object"/>.</value>
-    public object[] Arguments { get; }
+    public string? Property { get; set; }
+    public Operation Operation { get; set; } = Operation.Equal;
+    public Arg[] Arguments { get; set; } = Array.Empty<Arg>();
 
     public Evaluation Evaluate(object? candidate)
     {
-        if (candidate is null) return Evaluation.Failed(this);
-
         try
         {
-            var getter = Element.Getter(Property);
-            var value = getter(candidate);
-            var result = Operation.Execute(value, Arguments) ? ResultType.Passed : ResultType.Failed;
-            return Evaluation.Of(result, this, value);
+            var type = candidate?.GetType();
+            var property = type?.Property(Property);
+            var value = property?.Getter().Invoke(candidate) ?? candidate;
+            var args = Arguments.Select(a => a.Value);
+            var result = Operation.Execute(value, args);
+            return result ? Evaluation.Passed(this, candidate, value) : Evaluation.Failed(this, candidate, value);
         }
         catch (Exception e)
         {
-            //todo maybe we can catch different exceptions and figure out how to better report them here but for now will pass message
-            return Evaluation.Error(this, e.Message);
+            return Evaluation.Error(this, candidate, e);
         }
     }
 
-    public static implicit operator Func<object, bool>(Criterion criterion) => x => criterion.Evaluate(x);
+    public static implicit operator Func<object?, bool>(Criterion criterion) => x => criterion.Evaluate(x);
 
-    public static implicit operator Expression<Func<object, bool>>(Criterion criterion)
+    public static implicit operator Expression<Func<object?, bool>>(Criterion criterion) => criterion.GetExpression();
+
+    private Expression<Func<object?, bool>> GetExpression()
     {
         var parameter = Expression.Parameter(typeof(object), "x");
-        Func<object, bool> func = x => (bool) criterion.Evaluate(x);
+        Func<object, bool> func = x => (bool) Evaluate(x);
         var call = Expression.Call(Expression.Constant(func.Target), func.Method, parameter);
-        return Expression.Lambda<Func<object, bool>>(call, parameter);
+        return Expression.Lambda<Func<object?, bool>>(call, parameter);
     }
-
-    public override string ToString() =>
-        $"{Element.Name}.{Property} Should Evaluate {Operation} Against '{string.Join(',', Arguments)}'";
-
-    public string ToExpressionString() => ((Expression<Func<object, bool>>) this).ToReadableString();
 }

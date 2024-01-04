@@ -8,7 +8,7 @@ public class CriterionRungTests
     [Test]
     public void Evaluate_TextEqualTo_IsEqualTo_ShouldBeTrue()
     {
-        var criterion = new Criterion(Element.Rung, "Text", Operation.EqualTo, "XIC(Input)OTE(Output);");
+        var criterion = new Criterion("Text", Operation.Equal, "XIC(Input)OTE(Output);");
         var rung = new Rung {Text = "XIC(Input)OTE(Output);"};
         
         var evaluation = criterion.Evaluate(rung);

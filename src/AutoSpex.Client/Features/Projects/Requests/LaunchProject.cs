@@ -6,7 +6,6 @@ using ActiproSoftware.UI.Avalonia.Controls;
 using AutoSpex.Client.Behaviors;
 using AutoSpex.Client.Features.Projects.Services;
 using AutoSpex.Client.Services;
-using AutoSpex.Client.Shared;
 using Avalonia.Controls.Notifications;
 using Dapper;
 using FluentResults;
@@ -44,15 +43,15 @@ public class LaunchProjectHandler : IRequestHandler<LaunchProjectRequest, Result
     private const string Upsert = "INSERT INTO Project(Path, OpenedOn) VALUES(@Path, @OpenedOn)" +
                                   "ON CONFLICT DO UPDATE SET OpenedOn = excluded.OpenedOn";
     
-    private readonly IDataStoreProvider _dataStore;
+    private readonly AppDatabase _database;
     private readonly IProjectMigrator _migrator;
-    private readonly ISettingsManager _settings;
+    
 
-    public LaunchProjectHandler(IDataStoreProvider dataStore, IProjectMigrator migrator, ISettingsManager settings)
+    public LaunchProjectHandler(AppDatabase database, IProjectMigrator migrator)
     {
-        _dataStore = dataStore;
+        _database = database;
         _migrator = migrator;
-        _settings = settings;
+        
     }
 
     public async Task<Result<Project>> Handle(LaunchProjectRequest request, CancellationToken cancellationToken)
@@ -117,12 +116,10 @@ public class LaunchProjectHandler : IRequestHandler<LaunchProjectRequest, Result
         {
             OpenedOn = DateTime.UtcNow
         };
+        
+        await Settings.App.SaveAsync(s => s.OpenProject = project.Uri.LocalPath);
 
-        _settings.Set(Setting.OpenProjectConnection, project.ConnectionString);
-        _settings.Set(Setting.OpenProjectPath, project.Uri.LocalPath);
-        await _settings.Save();
-
-        using var connection = await _dataStore.ConnectTo(StoreType.Application, cancellationToken);
+        using var connection = await _database.Connect(cancellationToken);
         await connection.ExecuteAsync(Upsert, new {Path = project.Uri.LocalPath, project.OpenedOn});
         return Result.Ok(project);
     }

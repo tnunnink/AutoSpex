@@ -13,7 +13,7 @@ public class ProjectMigratorTests
     public async Task Migrate_ValidPath_ShouldReturnSuccess()
     {
         using var context = new TestContext();
-        var migrator = context.Resolve<IProjectMigrator>();
+        var migrator = Resolve<IProjectMigrator>();
 
         var result = await migrator.Migrate(context.ProjectPath);
 
@@ -25,7 +25,7 @@ public class ProjectMigratorTests
     {
         using var context = new TestContext();
         context.BuildProject();
-        var migrator = context.Resolve<IProjectMigrator>();
+        var migrator = Resolve<IProjectMigrator>();
 
         var result = migrator.Evaluate(context.ProjectPath);
 
@@ -38,7 +38,7 @@ public class ProjectMigratorTests
     {
         using var context = new TestContext();
         context.BuildProject(10000);
-        var migrator = context.Resolve<IProjectMigrator>();
+        var migrator = Resolve<IProjectMigrator>();
 
         var result = migrator.Evaluate(context.ProjectPath);
 
@@ -52,7 +52,7 @@ public class ProjectMigratorTests
         using var context = new TestContext();
         context.BuildProject();
         context.RunMigration("MockMajorVersionUpgrade");
-        var migrator = context.Resolve<IProjectMigrator>();
+        var migrator = Resolve<IProjectMigrator>();
 
         var result = migrator.Evaluate(context.ProjectPath);
 

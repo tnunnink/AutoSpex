@@ -105,7 +105,7 @@ public class ProjectMigrator : IProjectMigrator
             .Configure<RunnerOptions>(o => { o.Tags = new[] {"Project"}; })
             /*.AddLogging(lb => lb.AddSerilog())*/;
 
-        return new Container(registry);
+        return new Lamar.Container(registry);
     }
 
     /// <summary>

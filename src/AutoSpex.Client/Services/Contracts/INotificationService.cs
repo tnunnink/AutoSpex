@@ -4,5 +4,5 @@ namespace AutoSpex.Client.Services;
 
 public interface INotificationService
 {
-    void Show(Notification notification);
+    void Show(INotification notification);
 }

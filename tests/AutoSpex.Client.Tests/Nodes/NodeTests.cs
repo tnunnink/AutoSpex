@@ -27,7 +27,6 @@ public class NodeTests
         node.Name.Should().Be("Test");
         node.Depth.Should().Be(0);
         node.Ordinal.Should().Be(0);
-        node.Description.Should().BeEmpty();
     }
 
     [Test]
@@ -35,7 +34,7 @@ public class NodeTests
     {
         var parent = Node.SpecCollection("Test");
         
-        var node = parent.AddFolder("Test");
+        var node = parent.NewFolder("Test");
         
         node.NodeId.Should().NotBeEmpty();
         node.ParentId.Should().NotBeEmpty();
@@ -46,6 +45,22 @@ public class NodeTests
         node.Name.Should().Be("Test");
         node.Depth.Should().Be(1);
         node.Ordinal.Should().Be(0);
-        node.Description.Should().BeEmpty();
+    }
+
+    [Test]
+    public void AddSpec_ValidName_ShouldHaveExpectedValues()
+    {
+        var collection = Node.SpecCollection("Test");
+
+        var node = collection.NewSpec("MySpec");
+        
+        node.NodeId.Should().NotBeEmpty();
+        node.ParentId.Should().NotBeEmpty();
+        node.Parent.Should().Be(collection);
+        node.Feature.Should().Be(Feature.Specifications);
+        node.NodeType.Should().Be(NodeType.Spec);
+        node.Name.Should().Be("MySpec");
+        node.Depth.Should().Be(1);
+        node.Ordinal.Should().Be(0);
     }
 }

@@ -11,7 +11,7 @@ public class RemoveProjectTests
     public async Task Send_NoProjects_ShouldReturnIsFailed()
     {
         using var context = new TestContext();
-        var mediator = context.Resolve<IMediator>();
+        var mediator = Resolve<IMediator>();
 
         var project = new Project(context.ProjectPath);
         var request = new RemoveProjectRequest(project);
@@ -25,7 +25,7 @@ public class RemoveProjectTests
     public async Task Send_InvalidLocation_ShouldReturnFailed()
     {
         using var context = new TestContext();
-        var mediator = context.Resolve<IMediator>();
+        var mediator = Resolve<IMediator>();
 
         var project = new Project(context.ProjectPath);
         var createRequest = new CreateProjectRequest(project);

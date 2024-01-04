@@ -10,7 +10,7 @@ public class Migrator
     {
         using var context = new TestContext();
         
-        var migrator = context.Resolve<IMigrationRunner>();
+        var migrator = Resolve<IMigrationRunner>();
         
         migrator.MigrateUp();
     }

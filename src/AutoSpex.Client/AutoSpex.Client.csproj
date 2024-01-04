@@ -43,6 +43,7 @@
         <PackageReference Include="Avalonia.Desktop" Version="11.0.6" />
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
         <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.6" />
+        <PackageReference Include="Avalonia.Svg.Skia" Version="11.0.0.9" />
         <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.6" />
         <PackageReference Include="Avalonia.Xaml.Behaviors" Version="11.0.5" />
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
@@ -60,8 +61,10 @@
         <PackageReference Include="Lamar" Version="12.0.2" />
         <PackageReference Include="MediatR" Version="12.1.1" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="6.0.0" />
         <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
         <PackageReference Include="Serilog.Sinks.SQLite" Version="6.0.0" />
+        <PackageReference Include="Svg.Skia" Version="1.0.0.9" />
         <PackageReference Include="System.Data.SQLite.Core" Version="1.0.118" />
     </ItemGroup>
 
@@ -134,6 +137,31 @@
         <DependentUpon>ShellView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Features\Nodes\Views\BreadcrumbView.axaml.cs">
+        <DependentUpon>BreadcrumbView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Remove="Resources\Controls\SplitGrid.axaml.cs" />
+      <Compile Update="Features\Criteria\Views\CriterionView.axaml.cs">
+        <DependentUpon>CriterionView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Features\Elements\Views\ElementMenuView.axaml.cs">
+        <DependentUpon>ElementMenuView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Features\Folders\Views\FolderView.axaml.cs">
+        <DependentUpon>FolderView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Features\Collections\Views\CollectionView.axaml.cs">
+        <DependentUpon>CollectionView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Features\Sources\Views\QueryBuilderView.axaml.cs">
+        <DependentUpon>QueryBuilderView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 
     <ItemGroup>
@@ -148,23 +176,28 @@
     </ItemGroup>
 
     <ItemGroup>
-      <AvaloniaResource Include="Resources\Images\logo_check.png" />
       <None Remove="Resources\Images\box-arrow-up-right.svg" />
       <AvaloniaXaml Remove="Features\Projects\Resources\ProjectContextMenu.axaml" />
       <AvaloniaResource Include="Features\Projects\Resources\ProjectContextMenu.axaml" />
       <None Remove="Resources\Images\clipboard-filled-32.png" />
-      <AvaloniaResource Include="Resources\Images\clipboard-filled-32.png" />
       <None Remove="Resources\Images\clipboard-outlined-32.png" />
-      <AvaloniaResource Include="Resources\Images\clipboard-outlined-32.png" />
       <None Remove="Resources\Images\clipboard-outlined-64.png" />
-      <AvaloniaResource Include="Resources\Images\clipboard-outlined-64.png" />
       <None Remove="Resources\Images\icons8-clipboard-64.png" />
-      <AvaloniaResource Include="Resources\Images\icons8-clipboard-64.png" />
+      <None Remove="Resources\Images\icons8-clipboard-ok-62.png" />
+      <None Remove="Resources\Images\icons8-inspection-94.png" />
+      <None Remove="Resources\Images\icons8-clipboard-64 (1).png" />
+      <None Remove="Resources\Images\icons8-clipboard-64 (2).png" />
+      <None Remove="Resources\Images\icons8-inspection-96 (2).png" />
+      <None Remove="Resources\Images\logo.png" />
+      <AvaloniaResource Include="Resources\Images\logo.png" />
+      <AvaloniaXaml Remove="Features\Specifications\Resources\CollectionContextMenu.axaml" />
+      <None Remove="Resources\Images\Icons\link.svg" />
+      <AvaloniaXaml Remove="Resources\Controls\SplitGrid.axaml" />
     </ItemGroup>
 
     <ItemGroup>
-      <AvaloniaResource Include="..\..\docs\logo.png">
-        <Link>Resources\Images\logo.png</Link>
-      </AvaloniaResource>
+      <Folder Include="Features\Common\Messages\" />
+      <Folder Include="Features\Common\ViewModels\" />
+      <Folder Include="Features\Common\Views\" />
     </ItemGroup>
 </Project>

@@ -10,8 +10,9 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceInclude Source="Resources/Themes/NavigationTabItem.axaml" />
-                <ResourceInclude Source="Resources/Themes/DetailsTabItem.axaml" />
+                <ResourceInclude Source="Resources/Merged.axaml" />
+                <ResourceInclude Source="Features/Nodes/Resources/All.axaml" />
+                <ResourceInclude Source="Features/Specifications/Resources/All.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
@@ -19,7 +20,9 @@
     <Application.Styles>
         <a:ModernTheme Includes="All" />
         <StyleInclude Source="avares://DialogHost.Avalonia/Styles.xaml"/>
-        <StyleInclude Source="Resources/Styles/IconStyles.axaml" />
+        <StyleInclude Source="Resources/Styles/Global.axaml" />
+        <StyleInclude Source="Resources/Styles/ButtonStyles.axaml" />
+        <StyleInclude Source="Resources/Styles/TextBoxStyles.axaml" />
         <StyleInclude Source="Resources/Icons/OutlinedIcons.axaml" />
         <StyleInclude Source="Resources/Icons/FilledIcons.axaml" />
         <StyleInclude Source="Resources/Icons/RegularIcons.axaml" />

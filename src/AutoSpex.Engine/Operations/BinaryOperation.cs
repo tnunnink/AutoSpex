@@ -16,4 +16,6 @@ public abstract class BinaryOperation : Operation
     }
 
     protected abstract bool Evaluate(object? input, object value);
+    
+    public override int NumberOfArguments => 1;
 }

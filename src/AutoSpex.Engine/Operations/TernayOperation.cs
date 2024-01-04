@@ -16,4 +16,6 @@ public abstract class TernaryOperation : Operation
     }
     
     protected abstract bool Evaluate(object? input, object first, object second);
+    
+    public override int NumberOfArguments => 2;
 }

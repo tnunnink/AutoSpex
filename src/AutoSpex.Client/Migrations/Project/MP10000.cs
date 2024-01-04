@@ -1,4 +1,5 @@
-﻿using FluentMigrator;
+﻿using System.Data;
+using FluentMigrator;
 
 namespace AutoSpex.Client.Migrations.Project;
 
@@ -10,16 +11,15 @@ public class MP10000 : AutoReversingMigration
     {
         Create.Table("Node")
             .WithColumn("NodeId").AsString().PrimaryKey()
-            .WithColumn("ParentId").AsString().Nullable()
+            .WithColumn("ParentId").AsString().Nullable().ForeignKey("Node", "NodeId").OnDeleteOrUpdate(Rule.Cascade)
             .WithColumn("Feature").AsString().NotNullable()
             .WithColumn("NodeType").AsString().NotNullable()
             .WithColumn("Name").AsString().NotNullable()
             .WithColumn("Depth").AsInt32().NotNullable().WithDefaultValue(0)
-            .WithColumn("Ordinal").AsInt32().NotNullable().WithDefaultValue(0)
-            .WithColumn("Description").AsString().Nullable();
+            .WithColumn("Ordinal").AsInt32().NotNullable().WithDefaultValue(0);
 
         Create.Table("Source")
-            .WithColumn("SourceId").AsString().PrimaryKey()
+            .WithColumn("SourceId").AsString().PrimaryKey().ForeignKey("Node", "NodeId").OnDeleteOrUpdate(Rule.Cascade)
             .WithColumn("Controller").AsString().Nullable()
             .WithColumn("Processor").AsString().Nullable()
             .WithColumn("Revision").AsString().Nullable()
@@ -31,33 +31,13 @@ public class MP10000 : AutoReversingMigration
             .WithColumn("Content").AsString().NotNullable();
         
         Create.Table("Spec")
-            .WithColumn("SpecId").AsString().PrimaryKey()
+            .WithColumn("SpecId").AsString().PrimaryKey().ForeignKey("Node", "NodeId").OnDeleteOrUpdate(Rule.Cascade)
             .WithColumn("Element").AsString().NotNullable();
         
         Create.Table("ChangeLog")
-            .WithColumn("NodeId").AsString().PrimaryKey()
+            .WithColumn("NodeId").AsString().PrimaryKey().ForeignKey("Node", "NodeId").OnDeleteOrUpdate(Rule.Cascade)
             .WithColumn("ChangeType").AsInt16().NotNullable()
             .WithColumn("ChangedOn").AsDateTime().NotNullable().WithDefault(SystemMethods.CurrentUTCDateTime)
             .WithColumn("Message").AsString().Nullable();
-        
-        Create.ForeignKey()
-            .FromTable("Node").ForeignColumn("ParentId")
-            .ToTable("Node").PrimaryColumn("NodeId")
-            .OnDeleteOrUpdate(System.Data.Rule.Cascade);
-        
-        Create.ForeignKey()
-            .FromTable("Source").ForeignColumn("SourceId")
-            .ToTable("Node").PrimaryColumn("NodeId")
-            .OnDeleteOrUpdate(System.Data.Rule.Cascade);
-        
-        Create.ForeignKey()
-            .FromTable("Spec").ForeignColumn("SpecId")
-            .ToTable("Node").PrimaryColumn("NodeId")
-            .OnDeleteOrUpdate(System.Data.Rule.Cascade);
-        
-        Create.ForeignKey()
-            .FromTable("ChangeLog").ForeignColumn("NodeId")
-            .ToTable("Node").PrimaryColumn("NodeId")
-            .OnDeleteOrUpdate(System.Data.Rule.Cascade);
     }
 }

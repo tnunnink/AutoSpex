@@ -1,9 +1,10 @@
-﻿using Ardalis.SmartEnum.Dapper;
+﻿using Ardalis.SmartEnum;
+using Ardalis.SmartEnum.Dapper;
 
 namespace AutoSpex.Client.Features.Nodes;
 
 [IgnoreCase]
-public class NodeType : DapperSmartEnumByName<NodeType, int>
+public class NodeType : SmartEnum<NodeType, int>
 {
     private NodeType(string name, int value) : base(name, value)
     {

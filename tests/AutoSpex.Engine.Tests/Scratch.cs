@@ -1,4 +1,6 @@
-﻿using Task = L5Sharp.Core.Task;
+﻿using Serialize.Linq.Factories;
+using Serialize.Linq.Serializers;
+using Task = L5Sharp.Core.Task;
 
 namespace AutoSpex.Engine.Tests;
 
@@ -11,13 +13,13 @@ public class Scratch
         var uri = new Uri("Project Name/Some Folder/Sub folder/My Specification Name");
 
         uri.Should().NotBeNull();
-
-        Parser.Parse(typeof(ExternalAccess), "Read/Write");
     }
 
     [Test]
-    public void METHOD()
+    public void TypeTests()
     {
-        var task = new Task();
+        var type = Type.GetType("System.String");
+
+        type.Should().Be(typeof(string));
     }
 }

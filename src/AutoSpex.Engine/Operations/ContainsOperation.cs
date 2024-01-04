@@ -13,4 +13,6 @@ public class ContainsOperation : BinaryOperation
         
         return input is not null && input.ToString()?.Contains(value.ToString()!) == true;
     }
+
+    protected override bool Supports(TypeGroup group) => group == TypeGroup.Text;
 }

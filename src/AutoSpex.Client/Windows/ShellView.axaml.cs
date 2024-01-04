@@ -2,6 +2,8 @@ using System;
 using AutoSpex.Client.Shared;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
+using Avalonia.Platform;
 using JetBrains.Annotations;
 
 namespace AutoSpex.Client.Windows;
@@ -12,9 +14,28 @@ public partial class ShellView : Window
     public ShellView()
     {
         InitializeComponent();
+        DataContext = Container.Resolve<ShellViewModel>();
         
-        DataContext = App.Container.GetInstance<ShellViewModel>();
+        //This is a work around to solve the window covering the task bar when maximizing while we are using custom title bar 
+        this.GetPropertyChangedObservable(WindowStateProperty).AddClassHandler<Visual>((t, args) =>
+        {
+            if (!OperatingSystem.IsWindows()) return;
+            if (args.GetNewValue<WindowState>() != WindowState.Maximized) return;
+            
+            var screen = Screens.ScreenFromWindow(this);
+            if (screen is null) return;
+            
+            if (!(screen.WorkingArea.Height < ClientSize.Height * screen.Scaling)) return;
+           
+            ClientSize = screen.WorkingArea.Size.ToSize(screen.Scaling);
+
+            if (Position is {X: >= 0, Y: >= 0}) return;
+            
+            Position = screen.WorkingArea.Position;
+            WindowHelper.FixAfterMaximizing(TryGetPlatformHandle().Handle, screen);
+        });
         
+        Loaded += OnLoaded;
         Closing += OnClosing;
         Opened += OnOpened;
 #if DEBUG
@@ -23,26 +44,28 @@ public partial class ShellView : Window
     }
 
     /// <summary>
+    /// This is to override the Chrome hints that Actipro is configuring so that we can get a window drop shaddow.
+    /// </summary>
+    private void OnLoaded(object? sender, RoutedEventArgs e)
+    {
+        ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.SystemChrome;
+    }
+
+    /// <summary>
     /// Configures the default shell positions if they are not already set so we know we will get something
     /// when the project is launched.
     /// </summary>
     private void OnOpened(object? sender, EventArgs e)
     {
-        App.Settings.Add(Setting.ShellHeight, 800);
-        App.Settings.Add(Setting.ShellWidth, 1400);
-        App.Settings.Add(Setting.ShellState, WindowState.Normal);
-
-        var position = DefaultPosition(800, 1600);
-        App.Settings.Add(Setting.ShellX, position.X);
-        App.Settings.Add(Setting.ShellY, position.Y);
-        App.Settings.Save();
+        var position = DefaultPosition(800, 1400);
+        Settings.App.Add(nameof(Settings.ShellX), position.X);
+        Settings.App.Add(nameof(Settings.ShellY), position.Y);
         
-        Height = App.Settings.Get(Setting.ShellHeight, double.Parse);
-        Width = App.Settings.Get(Setting.ShellWidth, double.Parse);
-        WindowState = App.Settings.Get(Setting.ShellState, Enum.Parse<WindowState>);
-        var x = App.Settings.Get(Setting.ShellX, int.Parse);
-        var y = App.Settings.Get(Setting.ShellY, int.Parse);
-        Position = new PixelPoint(x, y);
+        Height = Settings.App.ShellHeight;
+        Width = Settings.App.ShellWidth;
+        WindowState = Settings.App.ShellState;
+        Position = new PixelPoint(Settings.App.ShellX, Settings.App.ShellY);
+        Focusable = true;
     }
 
     /// <summary>
@@ -51,12 +74,14 @@ public partial class ShellView : Window
     /// </summary>
     private void OnClosing(object? sender, WindowClosingEventArgs e)
     {
-        App.Settings.Set(Setting.ShellHeight, Height);
-        App.Settings.Set(Setting.ShellWidth, Width);
-        App.Settings.Set(Setting.ShellState, WindowState);
-        App.Settings.Set(Setting.ShellX, Position.X);
-        App.Settings.Set(Setting.ShellY, Position.Y);
-        App.Settings.Save();
+        Settings.App.Save(s =>
+        {
+            s.ShellHeight = Height;
+            s.ShellWidth = Width;
+            s.ShellState = WindowState;
+            s.ShellX = Position.X;
+            s.ShellY = Position.Y;
+        });
     }
     
 

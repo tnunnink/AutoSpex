@@ -7,6 +7,6 @@ public partial class StatusBarView : UserControl
     public StatusBarView()
     {
         InitializeComponent();
-        DataContext = App.Container.GetInstance<StatusBarViewModel>();
+        DataContext = Container.Resolve<StatusBarViewModel>();
     }
 }

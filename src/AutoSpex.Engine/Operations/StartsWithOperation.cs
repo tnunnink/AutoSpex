@@ -2,7 +2,7 @@
 
 public class StartsWithOperation : BinaryOperation
 {
-    public StartsWithOperation() : base("StartsWith")
+    public StartsWithOperation() : base("Starts With")
     {
     }
 
@@ -13,4 +13,6 @@ public class StartsWithOperation : BinaryOperation
         
         return input is not null && input.ToString()?.StartsWith(value.ToString()!) == true;
     }
+
+    protected override bool Supports(TypeGroup group) => group == TypeGroup.Text;
 }

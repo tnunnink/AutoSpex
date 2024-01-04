@@ -1,0 +1,11 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceInclude Source="Brushes.axaml" />
+        <ResourceInclude Source="Themes/DetailsTabItem.axaml" />
+        <ResourceInclude Source="Themes/NavigationTabItem.axaml" />
+        <ResourceInclude Source="Themes/StandardTabItem.axaml" />
+        <ResourceInclude Source="Themes/PathIcon.axaml" />
+        <ResourceInclude Source="Themes/TreeViewItem.axaml" />
+    </ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>

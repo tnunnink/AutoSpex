@@ -36,8 +36,6 @@ public partial class SourceListViewModel : ViewModelBase
         _messenger = messenger;
         _dialog = dialog;
 
-        Run = LoadSources();
-
         _cache.Connect()
             .Sort(SortExpressionComparer<Node>.Ascending(t => t.Ordinal))
             .Filter(x => x.Name.ToString().Contains(Filter))
@@ -51,6 +49,19 @@ public partial class SourceListViewModel : ViewModelBase
 
     [ObservableProperty] private string _filter = string.Empty;
 
+    [RelayCommand]
+    private async Task LoadSources()
+    {
+        var result = await _mediator.Send(new GetNodesRequest(Feature.Sources));
+
+        if (result.IsSuccess)
+        {
+            _allNodes.Clear();
+            _allNodes.AddRange(result.Value);
+            _cache.AddOrUpdate(_allNodes.ToArray());
+        }
+    }
+    
     [RelayCommand]
     private async Task AddSource()
     {
@@ -84,19 +95,7 @@ public partial class SourceListViewModel : ViewModelBase
     {
         if (value is not null)
         {
-            _messenger.Send(new OpenNode(value));
-        }
-    }
-
-    private async Task LoadSources()
-    {
-        var result = await _mediator.Send(new GetNodesRequest(Feature.Sources));
-
-        if (result.IsSuccess)
-        {
-            _allNodes.Clear();
-            _allNodes.AddRange(result.Value);
-            _cache.AddOrUpdate(_allNodes.ToArray());
+            _messenger.Send(new OpenNodeMessage(value));
         }
     }
 }

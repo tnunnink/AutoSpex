@@ -13,7 +13,6 @@ public sealed class TestContext : IDisposable
 {
     private const string ProjectName = "test.spex";
     private readonly IConfigurationRoot _configuration;
-    private readonly IContainer _container;
 
     public TestContext()
     {
@@ -22,16 +21,13 @@ public sealed class TestContext : IDisposable
             .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
 
         _configuration = builder.Build();
-        _container = Bootstrapper.Build(_configuration);
-
+        
+        Container.Build(_configuration);
         
         ProjectPath = new Uri(Path.Combine(Directory.GetCurrentDirectory(), ProjectName));
         ProjectConnection = new SQLiteConnectionStringBuilder {DataSource = ProjectPath.AbsolutePath}.ConnectionString;
         
-        var settings = _container.GetInstance<ISettingsManager>();
-        settings.Set(Setting.OpenProjectConnection, ProjectConnection);
-        settings.Set(Setting.OpenProjectPath, ProjectPath.AbsolutePath);
-        settings.Save();
+        Settings.App.Save(s => s.OpenProject = ProjectPath.LocalPath);
     }
 
     public readonly Uri ProjectPath;
@@ -40,7 +36,7 @@ public sealed class TestContext : IDisposable
 
     public const string TestL5X = @"C:\Users\admin\Documents\L5X\Example.L5X";
 
-    public T Resolve<T>() => _container.GetInstance<T>();
+    public static T Resolve<T>() => Container.Resolve<T>();
 
     public void BuildProject(long version = 0)
     {
@@ -50,10 +46,10 @@ public sealed class TestContext : IDisposable
             .ConfigureRunner(rb => rb
                 .AddSQLite()
                 .WithGlobalConnectionString(ProjectConnection)
-                .ScanIn(typeof(Bootstrapper).Assembly).For.Migrations())
+                .ScanIn(typeof(Container).Assembly).For.Migrations())
             .Configure<RunnerOptions>(opt => { opt.Tags = new[] {"Project"}; });
 
-        var container = new Container(registry);
+        var container = new Lamar.Container(registry);
         var runner = container.GetInstance<IMigrationRunner>();
 
         if (version > 0)
@@ -79,7 +75,7 @@ public sealed class TestContext : IDisposable
                 .ScanIn(typeof(TestContext).Assembly).For.Migrations())
             .Configure<RunnerOptions>(opt => { opt.Tags = new[] {tag}; });
 
-        var container = new Container(registry);
+        var container = new Lamar.Container(registry);
         var runner = container.GetInstance<IMigrationRunner>();
         runner.MigrateUp();
         container.Dispose();
@@ -87,14 +83,13 @@ public sealed class TestContext : IDisposable
 
     public void Dispose()
     {
-        _container.Dispose();
-        
+        Container.Dispose();
         GC.Collect();
         GC.WaitForPendingFinalizers();
         
         var path = Path.Combine(Directory.GetCurrentDirectory(), _configuration["AppDatabase"]!);
         
         if (File.Exists(path)) File.Delete(path);
-        if (File.Exists(ProjectPath.AbsolutePath)) File.Delete(ProjectPath.AbsolutePath);
+        if (File.Exists(ProjectPath.LocalPath)) File.Delete(ProjectPath.LocalPath);
     }
 }
