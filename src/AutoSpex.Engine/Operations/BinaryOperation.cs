@@ -1,11 +1,7 @@
-﻿namespace AutoSpex.Engine.Operations;
+﻿namespace AutoSpex.Engine;
 
-public abstract class BinaryOperation : Operation
+public abstract class BinaryOperation(string name) : Operation(name)
 {
-    protected BinaryOperation(string name) : base(name)
-    {
-    }
-
     public override bool Execute(object? input, params object[] values)
     {
         if (values is null) throw new ArgumentNullException(nameof(values));

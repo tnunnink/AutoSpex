@@ -1,10 +1,8 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
-        xmlns:projects="clr-namespace:AutoSpex.Client.Features.Projects"
-        xmlns:nodes="clr-namespace:AutoSpex.Client.Features.Nodes"
-        xmlns:specifications="clr-namespace:AutoSpex.Client.Features.Specifications"
         xmlns:windows="clr-namespace:AutoSpex.Client.Windows"
+        xmlns:views="clr-namespace:AutoSpex.Client.Views"
         x:Class="AutoSpex.Client.Windows.ShellView"
         x:DataType="windows:ShellViewModel"
         Width="700" Height="600"
@@ -44,7 +42,7 @@
                                       Height="16" Width="16" Margin="5 0" />
                             <ContentPresenter ContentTemplate="{a:GlyphTemplate DropDownArrow16}"
                                               DockPanel.Dock="Right" />
-                            <TextBlock Text="{Binding Project.Name, FallbackValue={x:Null}}"
+                            <TextBlock Text="{Binding Project}"
                                        Margin="5 0"
                                        VerticalAlignment="Center" />
                         </DockPanel>
@@ -53,7 +51,7 @@
                                     ShowMode="TransientWithDismissOnPointerMoveAway"
                                     HorizontalOffset="-10">
                                 <Border Padding="5">
-                                    <projects:ProjectListView />
+                                    <views:ProjectListView />
                                 </Border>
                             </Flyout>
                         </Button.Flyout>
@@ -101,7 +99,7 @@
                 <Border Grid.Column="0"
                         Background="{a:ThemeResource Container2BackgroundBrush}"
                         MinWidth="200">
-                    <specifications:SpecTreeView />
+                    <views:SpecTreeView />
                 </Border>
 
                 <GridSplitter Grid.Column="1"
@@ -119,7 +117,7 @@
                 </GridSplitter>
 
                 <Border Grid.Column="2" Background="{a:ThemeResource Container1BackgroundBrush}">
-                    <nodes:NodesView />
+                    <views:NodesView />
                 </Border>
             </Grid>
         </Border>

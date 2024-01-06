@@ -1,11 +1,7 @@
-﻿namespace AutoSpex.Engine.Operations;
+﻿namespace AutoSpex.Engine;
 
-public abstract class UnaryOperation : Operation
+public abstract class UnaryOperation(string name) : Operation(name)
 {
-    protected UnaryOperation(string name) : base(name)
-    {
-    }
-    
     public override bool Execute(object? input, params object[] values) => Evaluate(input);
 
     protected abstract bool Evaluate(object? input);

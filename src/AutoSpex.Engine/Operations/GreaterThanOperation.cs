@@ -1,11 +1,7 @@
-﻿namespace AutoSpex.Engine.Operations;
+﻿namespace AutoSpex.Engine;
 
-public class GreaterThanOperation : BinaryOperation
+public class GreaterThanOperation() : BinaryOperation("Greater Than")
 {
-    public GreaterThanOperation() : base("Greater Than")
-    {
-    }
-
     protected override bool Evaluate(object? input, object value)
     {
         if (input is not IComparable comparable) return false;

@@ -1,11 +1,7 @@
-﻿namespace AutoSpex.Engine.Operations;
+﻿namespace AutoSpex.Engine;
 
-public class EqualsOperation : BinaryOperation
+public class EqualsOperation() : BinaryOperation("Equal")
 {
-    public EqualsOperation() : base("Equal")
-    {
-    }
-    
     protected override bool Evaluate(object? input, object value)
     {
         return input is not null && input.Equals(value);

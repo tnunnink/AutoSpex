@@ -1,11 +1,7 @@
-namespace AutoSpex.Engine.Operations;
+namespace AutoSpex.Engine;
 
-public class CountOperation : CollectionOperation
+public class CountOperation() : CollectionOperation("Count")
 {
-    public CountOperation() : base("Count")
-    {
-    }
-
     protected override bool Evaluate(IEnumerable<object?> collection, Operation operation,
         params object[] values)
     {

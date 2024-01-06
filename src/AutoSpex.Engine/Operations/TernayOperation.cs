@@ -1,11 +1,7 @@
-﻿namespace AutoSpex.Engine.Operations;
+﻿namespace AutoSpex.Engine;
 
-public abstract class TernaryOperation : Operation
+public abstract class TernaryOperation(string name) : Operation(name)
 {
-    protected TernaryOperation(string name) : base(name)
-    {
-    }
-
     public override bool Execute(object? input, params object[] values)
     {
         if (values is null) throw new ArgumentNullException(nameof(values));

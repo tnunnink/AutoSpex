@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using L5Sharp.Core;
 
 namespace AutoSpex.Engine;
 
@@ -65,5 +66,21 @@ public static class TypeExtensions
                    string.Join(", ", type.GetGenericArguments().Select(TypeIdentifier).ToArray()) + ">";
 
         return type.Name;
+    }
+    
+    public static IEnumerable<object> GetOptions(this Type type)
+    {
+        var group = TypeGroup.FromType(type);
+        
+        if (group == TypeGroup.Boolean)
+            return new object[] {true, false};
+
+        if (type.IsEnum)
+            return Enum.GetNames(type);
+        
+        if (typeof(LogixEnum).IsAssignableFrom(type)) 
+            return LogixEnum.Names(type);
+        
+        return Enumerable.Empty<object>();
     }
 }

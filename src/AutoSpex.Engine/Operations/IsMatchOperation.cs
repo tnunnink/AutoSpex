@@ -1,13 +1,9 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace AutoSpex.Engine.Operations;
+namespace AutoSpex.Engine;
 
-public class IsMatchOperation : BinaryOperation
+public class IsMatchOperation() : BinaryOperation("Is Match")
 {
-    public IsMatchOperation() : base("Is Match")
-    {
-    }
-
     protected override bool Evaluate(object? input, object value)
     {
         if (value.ToString() is null) 

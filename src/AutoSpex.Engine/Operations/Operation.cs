@@ -1,20 +1,16 @@
 ﻿using Ardalis.SmartEnum;
 
-namespace AutoSpex.Engine.Operations;
+namespace AutoSpex.Engine;
 
 /// <summary>
 /// Represents an operation that can be performed on input values. Operations are 
 /// important components of filtering and querying data because they define the criteria 
 /// for what data should be fetched.
 /// </summary>
-public abstract class Operation : SmartEnum<Operation, string>
+public abstract class Operation(string name) : SmartEnum<Operation, string>(name, name.Replace(" ", string.Empty))
 {
-    protected Operation(string name) : base(name, name.Replace(" ", string.Empty))
-    {
-    }
-    
     public abstract int NumberOfArguments { get; }
-    
+
     /// <summary>
     /// Performs the operation on the input and provided values and returns the result.
     /// The actual implementation of the operation (how it's evaluated) is defined
@@ -34,6 +30,13 @@ public abstract class Operation : SmartEnum<Operation, string>
     public static IEnumerable<Operation> Supporting(Property property) => List.Where(x => x.Supports(property.Group));
 
     protected virtual bool Supports(TypeGroup group) => true;
+    
+    /// <summary>
+    /// Represents an equality operation. The operation checks if the input value 
+    /// is equal to the comparison value. Comparison is done based on the underlying
+    /// type of the input value.
+    /// </summary>
+    public static readonly Operation None = new NoneOperation();
 
     /// <summary>
     /// Represents an equality operation. The operation checks if the input value 
@@ -129,6 +132,4 @@ public abstract class Operation : SmartEnum<Operation, string>
     public static readonly Operation Any = new AnyOperation();
 
     public static readonly Operation Count = new CountOperation();
-
-    
 }

@@ -1,11 +1,7 @@
-﻿namespace AutoSpex.Engine.Operations;
+﻿namespace AutoSpex.Engine;
 
-public class InOperation : Operation
+public class InOperation() : Operation("In")
 {
-    public InOperation() : base("In")
-    {
-    }
-
     public override bool Execute(object? input, params object[] values)
     {
         return input is not null && values.Length != 0 && values.Contains(input);

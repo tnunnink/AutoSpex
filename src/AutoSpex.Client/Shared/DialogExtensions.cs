@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using AutoSpex.Client.Features.Projects;
 using Avalonia;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.Avalonia.DialogHost;
 using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
+using NewProjectViewModel = AutoSpex.Client.ViewModels.NewProjectViewModel;
 
 namespace AutoSpex.Client.Shared;
 

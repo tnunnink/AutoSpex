@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using AutoSpex.Engine.Operations;
 
 namespace AutoSpex.Engine.Tests.OperationTests;
 

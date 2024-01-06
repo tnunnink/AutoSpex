@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net7.0</TargetFramework>
         <RuntimeIdentifier>win-x64</RuntimeIdentifier>
         <Nullable>enable</Nullable>
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-        <LangVersion>11</LangVersion>
+        <LangVersion>12</LangVersion>
     </PropertyGroup>
 
     <!--<Choose>
@@ -34,8 +34,6 @@
         <PackageReference Include="ActiproSoftware.Controls.Avalonia.Pro" Version="23.1.2" />
         <PackageReference Include="ActiproSoftware.Controls.Avalonia.Themes.ColorPicker" Version="23.1.2" />
         <PackageReference Include="ActiproSoftware.Controls.Avalonia.Themes.DataGrid" Version="23.1.2" />
-        <PackageReference Include="Ardalis.SmartEnum" Version="2.1.0" />
-        <PackageReference Include="Ardalis.SmartEnum.Dapper" Version="1.0.0" />
         <PackageReference Include="Avalonia" Version="11.0.6" />
         <PackageReference Include="Avalonia.Controls.ColorPicker" Version="11.0.6" />
         <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.0.6" />
@@ -43,33 +41,26 @@
         <PackageReference Include="Avalonia.Desktop" Version="11.0.6" />
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
         <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.6" />
-        <PackageReference Include="Avalonia.Svg.Skia" Version="11.0.0.9" />
         <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.6" />
         <PackageReference Include="Avalonia.Xaml.Behaviors" Version="11.0.5" />
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
-        <PackageReference Include="Dapper" Version="2.1.24" />
-        <PackageReference Include="Dapper.Contrib" Version="2.0.78" />
-        <PackageReference Include="dotParse" Version="1.0.0" />
         <PackageReference Include="DynamicData" Version="8.1.1" />
-        <PackageReference Include="FluentMigrator" Version="3.3.2" />
-        <PackageReference Include="FluentMigrator.Runner" Version="3.3.2" />
-        <PackageReference Include="FluentMigrator.Runner.SQLite" Version="3.3.2" />
         <PackageReference Include="FluentResults" Version="3.15.2" />
         <PackageReference Include="HanumanInstitute.MvvmDialogs.Avalonia" Version="2.0.0" />
         <PackageReference Include="HanumanInstitute.MvvmDialogs.Avalonia.DialogHost" Version="2.0.0" />
         <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
-        <PackageReference Include="Lamar" Version="12.0.2" />
-        <PackageReference Include="MediatR" Version="12.1.1" />
+        <PackageReference Include="Lamar" Version="13.0.0" />
+        <PackageReference Include="MediatR" Version="12.2.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
         <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="6.0.0" />
         <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
         <PackageReference Include="Serilog.Sinks.SQLite" Version="6.0.0" />
-        <PackageReference Include="Svg.Skia" Version="1.0.0.9" />
-        <PackageReference Include="System.Data.SQLite.Core" Version="1.0.118" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\AutoSpex.Engine\AutoSpex.Engine.csproj" />
+      <ProjectReference Include="..\AutoSpex.Persistence\AutoSpex.Persistence.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -89,42 +80,6 @@
         <DependentUpon>AppView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
-      <Compile Update="Features\StatusBar\StatusBarView.axaml.cs">
-        <DependentUpon>StatusBarView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Features\Projects\Views\NewProjectView.axaml.cs">
-        <DependentUpon>NewProjectView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Features\Specifications\Views\SpecificationView.axaml.cs">
-        <DependentUpon>SpecificationView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Features\Specifications\Views\SpecTreeView.axaml.cs">
-        <DependentUpon>SpecTreeView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Features\Sources\Views\AddSourceView.axaml.cs">
-        <DependentUpon>AddSourceView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Features\Sources\Views\SourceListView.axaml.cs">
-        <DependentUpon>SourceListView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Features\Sources\Views\SourceView.axaml.cs">
-        <DependentUpon>SourceView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Features\Nodes\Views\NodesView.axaml.cs">
-        <DependentUpon>DetailsPage.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Features\Common\NavigationView.axaml.cs">
-        <DependentUpon>NavigationView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
       <Compile Update="Pages\AppView.axaml.cs">
         <DependentUpon>AppView.axaml</DependentUpon>
         <SubType>Code</SubType>
@@ -137,29 +92,77 @@
         <DependentUpon>ShellView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
-      <Compile Update="Features\Nodes\Views\BreadcrumbView.axaml.cs">
-        <DependentUpon>BreadcrumbView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
       <Compile Remove="Resources\Controls\SplitGrid.axaml.cs" />
-      <Compile Update="Features\Criteria\Views\CriterionView.axaml.cs">
-        <DependentUpon>CriterionView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Features\Elements\Views\ElementMenuView.axaml.cs">
-        <DependentUpon>ElementMenuView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Features\Folders\Views\FolderView.axaml.cs">
+      <Compile Update="Views\FolderView.axaml.cs">
         <DependentUpon>FolderView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
-      <Compile Update="Features\Collections\Views\CollectionView.axaml.cs">
+      <Compile Update="Views\ElementMenuView.axaml.cs">
+        <DependentUpon>ElementMenuView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\NavigationView.axaml.cs">
+        <DependentUpon>NavigationView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\CollectionView.axaml.cs">
         <DependentUpon>CollectionView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
-      <Compile Update="Features\Sources\Views\QueryBuilderView.axaml.cs">
+      <Compile Update="Views\CriterionView.axaml.cs">
+        <DependentUpon>CriterionView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\ProcessIndicatorVew.axaml.cs">
+        <DependentUpon>ProcessIndicatorVew.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\AddSourceView.axaml.cs">
+        <DependentUpon>AddSourceView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\QueryBuilderView.axaml.cs">
         <DependentUpon>QueryBuilderView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\SourceListView.axaml.cs">
+        <DependentUpon>SourceListView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\SourceView.axaml.cs">
+        <DependentUpon>SourceView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\NewProjectView.axaml.cs">
+        <DependentUpon>NewProjectView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\ProjectListView.axaml.cs">
+        <DependentUpon>ProjectListView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\ProjectStartupView.axaml.cs">
+        <DependentUpon>ProjectStartupView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\BreadcrumbView.axaml.cs">
+        <DependentUpon>BreadcrumbView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\NodesView.axaml.cs">
+        <DependentUpon>NodesView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\SpecificationView.axaml.cs">
+        <DependentUpon>SpecificationView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\SpecTreeView.axaml.cs">
+        <DependentUpon>SpecTreeView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\StatusBarView.axaml.cs">
+        <DependentUpon>StatusBarView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
     </ItemGroup>
@@ -178,7 +181,6 @@
     <ItemGroup>
       <None Remove="Resources\Images\box-arrow-up-right.svg" />
       <AvaloniaXaml Remove="Features\Projects\Resources\ProjectContextMenu.axaml" />
-      <AvaloniaResource Include="Features\Projects\Resources\ProjectContextMenu.axaml" />
       <None Remove="Resources\Images\clipboard-filled-32.png" />
       <None Remove="Resources\Images\clipboard-outlined-32.png" />
       <None Remove="Resources\Images\clipboard-outlined-64.png" />
@@ -196,8 +198,12 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Features\Common\Messages\" />
-      <Folder Include="Features\Common\ViewModels\" />
-      <Folder Include="Features\Common\Views\" />
+      <AdditionalFiles Include="Resources\Menus\CollectionMenu.axaml" />
+      <AdditionalFiles Include="Resources\Menus\FolderMenu.axaml" />
+      <AdditionalFiles Include="Resources\Menus\SpecMenu.axaml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <UpToDateCheckInput Remove="Features\Specifications\Resources\All.axaml" />
     </ItemGroup>
 </Project>

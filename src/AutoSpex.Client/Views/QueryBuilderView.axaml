@@ -1,0 +1,45 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:viewModels="clr-namespace:AutoSpex.Client.ViewModels"
+             xmlns:views="clr-namespace:AutoSpex.Client.Views"
+             x:Class="AutoSpex.Client.Views.QueryBuilderView"
+             x:DataType="viewModels:SpecificationViewModel">
+
+    <Border DockPanel.Dock="Top"
+            CornerRadius="5"
+            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+            BorderThickness="1">
+        <DockPanel>
+            <DropDownButton Theme="{a:ControlTheme DropDownButtonSoft}"
+                            CornerRadius="4 0 0 4"
+                            Content="{Binding Element.Name, FallbackValue='Select Element'}"
+                            VerticalAlignment="Center"
+                            Padding="10 5">
+                <DropDownButton.Flyout>
+                    <Flyout Placement="BottomEdgeAlignedLeft"
+                            ShowMode="Standard"
+                            HorizontalOffset="-10">
+                        <views:ElementMenuView />
+                    </Flyout>
+                </DropDownButton.Flyout>
+            </DropDownButton>
+
+            <StackPanel DockPanel.Dock="Right"
+                        Orientation="Horizontal"
+                        Margin="5 0"
+                        Spacing="10">
+                
+                <Button Classes="icon">
+                    <PathIcon Data="{StaticResource Icon.Outlined.Filter}"/>    
+                </Button>
+            </StackPanel>
+
+            <TextBox 
+                     Watermark="Enter element filter"
+                     BorderThickness="0"
+                     VerticalContentAlignment="Center"
+                     MinWidth="100" />
+        </DockPanel>
+    </Border>
+</UserControl>

@@ -1,11 +1,7 @@
-﻿namespace AutoSpex.Engine.Operations;
+﻿namespace AutoSpex.Engine;
 
-public class StartsWithOperation : BinaryOperation
+public class StartsWithOperation() : BinaryOperation("Starts With")
 {
-    public StartsWithOperation() : base("Starts With")
-    {
-    }
-
     protected override bool Evaluate(object? input, object value)
     {
         if (string.IsNullOrEmpty(value.ToString()))

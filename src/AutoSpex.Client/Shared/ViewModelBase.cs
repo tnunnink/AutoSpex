@@ -48,7 +48,6 @@ public abstract partial class ViewModelBase : ObservableValidator, IChangeTracki
 
     protected virtual bool CanSave() => true;
     
-    
 
     /// <summary>
     /// Accepts the changes made to the object and resets the IsChanged flag to false.

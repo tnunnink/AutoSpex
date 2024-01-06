@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoSpex.Engine.Tests", "..
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoSpex.Persistence", "AutoSpex.Persistence\AutoSpex.Persistence.csproj", "{4276FEEF-F5F7-4F5E-96B8-78E21FCDC232}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoSpex.Persistence.Tests", "..\tests\AutoSpex.Persistence.Tests\AutoSpex.Persistence.Tests.csproj", "{7857D401-5D5C-40A1-8B33-B936F2A3DC7D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,9 +40,14 @@ Global
 		{4276FEEF-F5F7-4F5E-96B8-78E21FCDC232}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4276FEEF-F5F7-4F5E-96B8-78E21FCDC232}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4276FEEF-F5F7-4F5E-96B8-78E21FCDC232}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7857D401-5D5C-40A1-8B33-B936F2A3DC7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7857D401-5D5C-40A1-8B33-B936F2A3DC7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7857D401-5D5C-40A1-8B33-B936F2A3DC7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7857D401-5D5C-40A1-8B33-B936F2A3DC7D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{FFCD4B15-C761-41AE-A4D1-3E3CB43A21AD} = {E5B152FB-F149-4076-86EE-7923618DE6B8}
 		{49DEBC94-F539-4F0C-82C8-4EA84BF1E50D} = {E5B152FB-F149-4076-86EE-7923618DE6B8}
+		{7857D401-5D5C-40A1-8B33-B936F2A3DC7D} = {E5B152FB-F149-4076-86EE-7923618DE6B8}
 	EndGlobalSection
 EndGlobal

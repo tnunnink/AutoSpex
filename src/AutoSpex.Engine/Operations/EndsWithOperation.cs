@@ -1,11 +1,7 @@
-﻿namespace AutoSpex.Engine.Operations;
+﻿namespace AutoSpex.Engine;
 
-public class EndsWithOperation : BinaryOperation
+public class EndsWithOperation() : BinaryOperation("Ends With")
 {
-    public EndsWithOperation() : base("Ends With")
-    {
-    }
-
     protected override bool Evaluate(object? input, object value)
     {
         if (string.IsNullOrEmpty(value.ToString()))

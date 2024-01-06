@@ -1,7 +1,7 @@
 ﻿using System;
 using Avalonia.Controls.Notifications;
 
-namespace AutoSpex.Client.Services;
+namespace AutoSpex.Client.Services.Mocks;
 
 public class MockNotificationService : INotificationService
 {

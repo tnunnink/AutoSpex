@@ -1,5 +1,8 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:converters="clr-namespace:AutoSpex.Client.Resources.Converters"
+                    xmlns:persist="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Persistence"
+                    xmlns:persistence="clr-namespace:AutoSpex.Persistence;assembly=AutoSpex.Persistence">
     <ResourceDictionary.MergedDictionaries>
         <ResourceInclude Source="Brushes.axaml" />
         <ResourceInclude Source="Themes/DetailsTabItem.axaml" />
@@ -7,5 +10,20 @@
         <ResourceInclude Source="Themes/StandardTabItem.axaml" />
         <ResourceInclude Source="Themes/PathIcon.axaml" />
         <ResourceInclude Source="Themes/TreeViewItem.axaml" />
+        <ResourceInclude Source="Menus/CollectionMenu.axaml" />
+        <ResourceInclude Source="Menus/FolderMenu.axaml" />
+        <ResourceInclude Source="Menus/SpecMenu.axaml" />
+        <ResourceInclude Source="Icons/NodeIcons.axaml" />
     </ResourceDictionary.MergedDictionaries>
+    
+    <converters:ValueToResourceConverter x:Key="NodeToMenuConverter">
+        <converters:ValueResourceKey Value="{x:Static persistence:NodeType.Collection}" ResourceKey="CollectionMenu" />
+        <converters:ValueResourceKey Value="{x:Static persistence:NodeType.Folder}" ResourceKey="FolderMenu" />
+        <converters:ValueResourceKey Value="{x:Static persistence:NodeType.Spec}" ResourceKey="SpecMenu" />
+    </converters:ValueToResourceConverter>
+    <converters:ValueToResourceConverter x:Key="NodeToIconConverter">
+        <converters:ValueResourceKey Value="{x:Static persistence:NodeType.Collection}" ResourceKey="ThemedIcon.Collection" />
+        <converters:ValueResourceKey Value="{x:Static persistence:NodeType.Folder}" ResourceKey="ThemedIcon.Folder" />
+        <converters:ValueResourceKey Value="{x:Static persistence:NodeType.Spec}" ResourceKey="ThemedIcon.Spec" />
+    </converters:ValueToResourceConverter>
 </ResourceDictionary>

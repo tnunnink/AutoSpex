@@ -1,13 +1,9 @@
 using System.Collections;
 
-namespace AutoSpex.Engine.Operations;
+namespace AutoSpex.Engine;
 
-public abstract class CollectionOperation : Operation
+public abstract class CollectionOperation(string name) : Operation(name)
 {
-    protected CollectionOperation(string name) : base(name)
-    {
-    }
-
     public override bool Execute(object? input, params object[] values)
     {
         if (input is not IEnumerable enumerable)

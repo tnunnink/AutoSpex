@@ -1,10 +1,13 @@
 ﻿using System.Threading.Tasks;
-using AutoSpex.Client.Features.Projects;
+using AutoSpex.Client.Messages;
 using AutoSpex.Client.Shared;
+using AutoSpex.Persistence;
 using Avalonia;
 using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
 using MediatR;
+using ProjectListView = AutoSpex.Client.Views.ProjectListView;
+using ProjectStartupView = AutoSpex.Client.Views.ProjectStartupView;
 
 namespace AutoSpex.Client.Windows;
 
@@ -23,7 +26,7 @@ public class LauncherViewModel : ViewModelBase, IRecipient<ProjectLaunchedMessag
 
     private async Task<Visual> DetermineInitialView()
     {
-        var result = await _mediator.Send(new GetProjectCountRequest());
+        var result = await _mediator.Send(new GetProjectCount());
 
         if (result.IsFailed || result.Value == 0)
         {

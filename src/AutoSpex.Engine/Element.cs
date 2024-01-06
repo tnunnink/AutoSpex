@@ -1,8 +1,8 @@
 ﻿using Ardalis.SmartEnum;
-using AutoSpex.Engine.Operations;
 using L5Sharp.Core;
 using Module = L5Sharp.Core.Module;
 using Task = L5Sharp.Core.Task;
+// ReSharper disable ConvertToPrimaryConstructor
 
 namespace AutoSpex.Engine;
 
@@ -12,7 +12,7 @@ public abstract class Element : SmartEnum<Element, string>
     /// Holds "custom" properties, or properties we attach to the element and provide a custom function to retrieve
     /// it's value. This would allow derived classes to add properties or make method calls show up as a property. 
     /// </summary>
-    private readonly List<Property> _customProperties = new();
+    private readonly List<Property> _customProperties = [];
 
     private Element(Type type) : base(type.Name, type.Name)
     {
@@ -61,18 +61,6 @@ public abstract class Element : SmartEnum<Element, string>
     public static readonly Element WatchTag = new WatchTagElement();
 
     #endregion
-
-    /// <summary>
-    /// Represents a criterion used for filtering data based on a property, operation, and arguments.
-    /// </summary>
-    /// <param name="property">The property to filter on.</param>
-    /// <param name="operation">The operation to perform on the property.</param>
-    /// <param name="arguments">The arguments required for the operation.</param>
-    /// <returns>A new instance of the <see cref="Has"/> class.</returns>
-    public static Criterion Has(string property, Operation operation, params Arg[] arguments)
-    {
-        return new Criterion(property, operation, arguments);
-    }
 
     /// <summary>
     /// Retrieves a property from the current object based on the specified path.

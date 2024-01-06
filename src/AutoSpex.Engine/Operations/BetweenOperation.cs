@@ -1,11 +1,7 @@
-﻿namespace AutoSpex.Engine.Operations;
+﻿namespace AutoSpex.Engine;
 
-public class BetweenOperation : TernaryOperation
+public class BetweenOperation() : TernaryOperation("Between")
 {
-    public BetweenOperation() : base("Between")
-    {
-    }
-
     protected override bool Evaluate(object? input, object first, object second)
     {
         if (input is not IComparable comparable) return false;

@@ -82,8 +82,8 @@ public class TypeGroup : SmartEnum<TypeGroup, int>
         return Engine.Element.List.Any(e => e.Type == type);
     }
 
-    private static readonly HashSet<Type> NumericTypes = new()
-    {
+    private static readonly HashSet<Type> NumericTypes =
+    [
         typeof(byte), typeof(sbyte),
         typeof(short), typeof(ushort),
         typeof(int), typeof(uint),
@@ -94,5 +94,5 @@ public class TypeGroup : SmartEnum<TypeGroup, int>
         typeof(DINT), typeof(UDINT),
         typeof(LINT), typeof(ULINT),
         typeof(REAL), typeof(LREAL)
-    };
+    ];
 }

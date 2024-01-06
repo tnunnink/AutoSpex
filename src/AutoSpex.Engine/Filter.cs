@@ -43,18 +43,6 @@ public class Filter
         return criteria.Aggregate(None(), (f, c) => f.Chain(c, ChainType.Or));
     }
 
-    public Filter And(Filter filter)
-    {
-        var expression = Chain(_expression, filter, ChainType.And);
-        return new Filter(expression);
-    }
-
-    public Filter Or(Filter filter)
-    {
-        var expression = Chain(_expression, filter, ChainType.Or);
-        return new Filter(expression);
-    }
-
     public Filter Chain(Criterion criterion, ChainType chainType)
     {
         var expression = Chain(_expression, criterion, chainType);

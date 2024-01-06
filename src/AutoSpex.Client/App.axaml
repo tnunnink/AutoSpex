@@ -11,8 +11,6 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="Resources/Merged.axaml" />
-                <ResourceInclude Source="Features/Nodes/Resources/All.axaml" />
-                <ResourceInclude Source="Features/Specifications/Resources/All.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

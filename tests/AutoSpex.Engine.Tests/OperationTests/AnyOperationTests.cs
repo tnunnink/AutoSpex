@@ -1,6 +1,4 @@
-﻿using AutoSpex.Engine.Operations;
-
-namespace AutoSpex.Engine.Tests.OperationTests;
+﻿namespace AutoSpex.Engine.Tests.OperationTests;
 
 public class AnyOperationTests
 {

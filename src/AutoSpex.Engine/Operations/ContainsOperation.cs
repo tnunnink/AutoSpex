@@ -1,11 +1,7 @@
-﻿namespace AutoSpex.Engine.Operations;
+﻿namespace AutoSpex.Engine;
 
-public class ContainsOperation : BinaryOperation
+public class ContainsOperation() : BinaryOperation("Contains")
 {
-    public ContainsOperation() : base("Contains")
-    {
-    }
-
     protected override bool Evaluate(object? input, object value)
     {
         if (string.IsNullOrEmpty(value.ToString()))

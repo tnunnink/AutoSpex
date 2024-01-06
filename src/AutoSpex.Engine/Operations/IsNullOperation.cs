@@ -1,10 +1,6 @@
-﻿namespace AutoSpex.Engine.Operations;
+﻿namespace AutoSpex.Engine;
 
-public class IsNullOperation : UnaryOperation
+public class IsNullOperation() : UnaryOperation("Is Null")
 {
-    public IsNullOperation() : base("Is Null")
-    {
-    }
-    
     protected override bool Evaluate(object? input) => input is null;
 }

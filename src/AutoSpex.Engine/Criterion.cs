@@ -1,5 +1,4 @@
 ﻿using System.Linq.Expressions;
-using AutoSpex.Engine.Operations;
 
 namespace AutoSpex.Engine;
 
@@ -18,23 +17,23 @@ public class Criterion
     public Criterion()
     {
     }
-    
-    public Criterion(string? property, Operation operation, params Arg[] arguments)
+
+    public Criterion(string? property, Operation operation, params Argument[] arguments)
     {
         Property = property;
         Operation = operation ?? throw new ArgumentNullException(nameof(operation));
-        Arguments = arguments;
+        Arguments = arguments.ToList();
     }
-
-    public Criterion(Operation operation, params Arg[] arguments)
+    
+    public Criterion(Operation operation, params Argument[] arguments)
     {
         Operation = operation ?? throw new ArgumentNullException(nameof(operation));
-        Arguments = arguments;
+        Arguments = arguments.ToList();
     }
-
-    public string? Property { get; set; }
-    public Operation Operation { get; set; } = Operation.Equal;
-    public Arg[] Arguments { get; set; } = Array.Empty<Arg>();
+    
+    public string? Property { get; set; } = string.Empty;
+    public Operation Operation { get; set; } = Operation.None;
+    public List<Argument> Arguments { get; set; } = [];
 
     public Evaluation Evaluate(object? candidate)
     {

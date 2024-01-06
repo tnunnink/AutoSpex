@@ -1,11 +1,7 @@
-﻿namespace AutoSpex.Engine.Operations;
+﻿namespace AutoSpex.Engine;
 
-public class LessThanOrEqualOperation : BinaryOperation
+public class LessThanOrEqualOperation() : BinaryOperation("Less Than Or Equal")
 {
-    public LessThanOrEqualOperation() : base("Less Than Or Equal")
-    {
-    }
-
     protected override bool Evaluate(object? input, object value)
     {
         if (input is not IComparable comparable) return false;

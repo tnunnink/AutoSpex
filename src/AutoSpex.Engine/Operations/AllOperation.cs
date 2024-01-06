@@ -1,11 +1,7 @@
-namespace AutoSpex.Engine.Operations;
+namespace AutoSpex.Engine;
 
-public class AllOperation : CollectionOperation
+public class AllOperation() : CollectionOperation("All")
 {
-    public AllOperation() : base("All")
-    {
-    }
-
     protected override bool Evaluate(IEnumerable<object?> collection, Operation operation, params object[] values)
     {
         return collection.Select(item => operation.Execute(item, values)).All(result => result);
