@@ -19,7 +19,7 @@ public class ValueToResourceConverter : IValueConverter
 {
     [Content]
     // ReSharper disable once CollectionNeverUpdated.Global updated in resource files
-    public List<ValueResourceKey> Map { get; set; } = new();
+    public List<ValueResourceKey> Map { get; set; } = [];
 
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {

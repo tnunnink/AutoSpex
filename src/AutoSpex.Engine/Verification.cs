@@ -1,15 +1,39 @@
-﻿using System.Collections;
+﻿using JetBrains.Annotations;
+using L5Sharp.Core;
 
 namespace AutoSpex.Engine;
 
-public class Verification(IEnumerable<Evaluation> evaluations) : IReadOnlyCollection<Evaluation>
+[PublicAPI]
+public record Verification
 {
-    private readonly List<Evaluation> _evaluations = evaluations.ToList() ?? throw new ArgumentNullException(nameof(evaluations));
+    private Verification(ResultState result, object? candidate, params Evaluation[] evaluations)
+    {
+        Result = result;
+        Type = candidate?.GetType().TypeIdentifier();
+        Data = candidate is LogixElement element ? element.Serialize().ToString() : candidate?.ToString();
+        Evaluations = evaluations ?? throw new ArgumentNullException(nameof(evaluations));
+    }
 
-    public int Count => _evaluations.Count;
+    public ResultState Result { get; }
+    public string? Type { get; }
+    public string? Data { get; }
+    public IReadOnlyCollection<Evaluation> Evaluations { get; }
 
-    public IEnumerator<Evaluation> GetEnumerator() => _evaluations.GetEnumerator();
+    public IEnumerable<string> Successes =>
+        Evaluations.Where(e => e.Result == ResultState.Passed).Select(e => e.Message);
 
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-    
+    public IEnumerable<string> Failures =>
+        Evaluations.Where(e => e.Result == ResultState.Failed).Select(e => e.Message);
+
+    public IEnumerable<string> Errors =>
+        Evaluations.Where(e => e.Result == ResultState.Error).Select(e => e.Message);
+
+    public static Verification For(object? candidate, Evaluation evaluation) =>
+        new(evaluation.Result, candidate, evaluation);
+
+    public static Verification All(object? candidate, Evaluation[] evaluations) =>
+        new(evaluations.Max(e => e.Result), candidate, evaluations);
+
+    public static Verification Any(object? candidate, Evaluation[] evaluations) =>
+        new(evaluations.Min(e => e.Result), candidate, evaluations);
 }

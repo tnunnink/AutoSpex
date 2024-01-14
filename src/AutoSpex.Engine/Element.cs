@@ -2,6 +2,7 @@
 using L5Sharp.Core;
 using Module = L5Sharp.Core.Module;
 using Task = L5Sharp.Core.Task;
+
 // ReSharper disable ConvertToPrimaryConstructor
 
 namespace AutoSpex.Engine;
@@ -26,6 +27,8 @@ public abstract class Element : SmartEnum<Element, string>
     public Func<L5X, IEnumerable<object>> Query => file => file.Query(Type);
 
     public bool IsComponent => ComponentType.All().Any(t => t.Name == Type.L5XType());
+
+    public static readonly Element Default = new DefaultElement();
 
     #region ComponentTypes
 
@@ -69,6 +72,14 @@ public abstract class Element : SmartEnum<Element, string>
     /// <returns>The <see cref="Property"/> object representing the specified property if found, otherwise, <c>null</c>.</returns>
     public Property? Property(string? path) => Type.Property(path);
 
+    /// <summary>
+    /// Registers a custom property for the element type using the provided property name and getter function.
+    /// </summary>
+    /// <param name="name">The name of the custom property.</param>
+    /// <param name="getter">A function for retrieving the value of the property given a input object.</param>
+    /// <typeparam name="T">The property return type.</typeparam>
+    /// <remarks>This allows me to turn methods into properties so that they are discoverable from the UI. This requires
+    /// that the method takes no arguments, but is a convenient way to provide some additional properties without changing the base API.</remarks>
     private void Register<T>(string name, Func<object?, object?> getter)
     {
         var property = new Property(Type, name, typeof(T), getter);
@@ -94,6 +105,13 @@ public abstract class Element : SmartEnum<Element, string>
         return results;
     }
 
+    private class DefaultElement : Element
+    {
+        public DefaultElement() : base(typeof(object))
+        {
+        }
+    }
+
     private class ControllerElement : Element
     {
         public ControllerElement() : base(typeof(Controller))
@@ -106,6 +124,7 @@ public abstract class Element : SmartEnum<Element, string>
         public DataTypeElement() : base(typeof(DataType))
         {
             Register<IEnumerable<LogixComponent>>("Dependencies", x => ((DataType) x!).Dependencies());
+            Register<IEnumerable<LogixComponent>>("References", x => ((DataType) x!).References());
         }
     }
 

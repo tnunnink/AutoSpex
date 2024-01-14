@@ -5,7 +5,7 @@ using Avalonia;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.Avalonia.DialogHost;
 using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
-using NewProjectViewModel = AutoSpex.Client.ViewModels.NewProjectViewModel;
+using NewProjectViewModel = AutoSpex.Client.Features.NewProjectViewModel;
 
 namespace AutoSpex.Client.Shared;
 

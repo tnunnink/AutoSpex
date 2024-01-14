@@ -4,7 +4,7 @@ using AutoSpex.Client.Services;
 using AutoSpex.Client.Services.Mocks;
 using AutoSpex.Client.Services.Options;
 using AutoSpex.Client.Shared;
-using AutoSpex.Client.Windows;
+using AutoSpex.Client.Views;
 using AutoSpex.Persistence;
 using CommunityToolkit.Mvvm.Messaging;
 using HanumanInstitute.MvvmDialogs.Avalonia;

@@ -16,10 +16,35 @@ public abstract partial class ViewModelBase : ObservableValidator, IChangeTracki
     //Instead of DI I'm resolving these dependencies for every view model directly.
     //I am choosing to do this to simplify the construction of child view models, and since I am never really
     //mocking these dependencies, but rather using the real implementations to preform integration testing for my application.
-    protected readonly IMessenger Messenger = Container.Resolve<IMessenger>();
-    protected readonly IMediator Mediator = Container.Resolve<IMediator>();
+    protected readonly IMessenger Messenger;
+    protected readonly IMediator Mediator;
+    
+    /// <summary>
+    /// List of tracked view models
+    /// </summary>
+    private readonly List<ViewModelBase> _tracked = [];
 
-    private readonly List<ViewModelBase> _tracked = new();
+    /// <summary>
+    /// Creates a new <see cref="ViewModelBase"/> with the required <see cref="Messenger"/> and <see cref="Mediator"/>
+    /// services resolved through the application <see cref="Container"/> instance. 
+    /// </summary>
+    protected ViewModelBase()
+    {
+        Messenger = Container.Resolve<IMessenger>();
+        Mediator = Container.Resolve<IMediator>();
+    }
+
+    /// <summary>
+    /// Creates a new <see cref="ViewModelBase"/> with the provided service instances.
+    /// </summary>
+    /// <param name="messenger">The <see cref="IMessenger"/> instane for which to communicate between view modes.</param>
+    /// <param name="mediator">THe <see cref="IMediator"/> instance for which to send external requests.</param>
+    /// <exception cref="ArgumentNullException">Either service is null.</exception>
+    protected ViewModelBase(IMessenger messenger, IMediator mediator)
+    {
+        Messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
+        Mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+    }
 
     /// <summary>
     /// Gets or sets a value indicating whether the object's state has changed.
@@ -47,7 +72,7 @@ public abstract partial class ViewModelBase : ObservableValidator, IChangeTracki
     }
 
     protected virtual bool CanSave() => true;
-    
+
 
     /// <summary>
     /// Accepts the changes made to the object and resets the IsChanged flag to false.

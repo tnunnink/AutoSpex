@@ -33,6 +33,22 @@ public class PropertyTests
 
         var properties = property.Properties;
 
-        properties.Should().HaveCount(23);
+        properties.Should().HaveCount(25);
+    }
+
+    [Test]
+    public void Path_NestedProperty_ShouldBeExpected()
+    {
+        var property = new Property(typeof(Tag), "ConsumeInfo.Producer", typeof(string));
+
+        property.Path.Should().Be("ConsumeInfo.Producer");
+    }
+    
+    [Test]
+    public void Options_EnumProperty_ShouldNotBeEmpty()
+    {
+        var property = new Property(typeof(Tag), "ExternalAccess", typeof(ExternalAccess));
+
+        property.Options.Should().HaveCount(3);
     }
 }

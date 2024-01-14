@@ -2,6 +2,8 @@
 
 public class ContainsOperation() : BinaryOperation("Contains")
 {
+    public override string ShouldMessage => $"Should Contain";
+    
     protected override bool Evaluate(object? input, object value)
     {
         if (string.IsNullOrEmpty(value.ToString()))

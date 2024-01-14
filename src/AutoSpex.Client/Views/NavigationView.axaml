@@ -1,8 +1,8 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
-             xmlns:views="clr-namespace:AutoSpex.Client.Views"
-             x:Class="AutoSpex.Client.Views.NavigationView"
+             xmlns:features="clr-namespace:AutoSpex.Client.Features"
+             x:Class="AutoSpex.Client.Features.NavigationView"
              Background="{a:ThemeResource Container2BackgroundBrush}"
              BorderBrush="{a:ThemeResource Container2BorderBrush}"
              BorderThickness="0">
@@ -36,7 +36,7 @@
                     <Border BorderThickness="1 0 0 0"
                             BorderBrush="{a:ThemeResource Container2BorderBrush}"
                             Background="{a:ThemeResource Container2BackgroundBrush}">
-                        <views:SpecTreeView />    
+                        <features:SpecTreeView />    
                     </Border>
                 </TabItem.Content>
             </TabItem>

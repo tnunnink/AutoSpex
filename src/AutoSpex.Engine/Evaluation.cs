@@ -5,51 +5,53 @@ namespace AutoSpex.Engine;
 [PublicAPI]
 public record Evaluation
 {
-    private readonly string? _message;
-
-    private Evaluation(ResultType result, Criterion criterion, object? candidate, object? actual,
-        string? message = null, Exception? exception = null)
+    private Evaluation(ResultState result, string message)
     {
         Result = result;
-        Candidate = candidate;
-        Type = candidate?.GetType();
-        Property = criterion.Property;
-        Operation = criterion.Operation;
-        Expected = string.Join(",", criterion.Arguments.Select(a => a.Value));
-        Actual = actual;
-        Exception = exception;
-        _message = exception is not null ? exception.Message : message;
+        Message = message;
+    }
+    
+    public ResultState Result { get; init; } = ResultState.None;
+    public string Message { get; init; } = "No Evaluation Available";
+
+    public static Evaluation Passed(Criterion criterion, string? type, object[]? args, object? actual)
+    {
+        if (criterion is null)
+            throw new ArgumentNullException(nameof(criterion));
+
+        var reference = $"{type}.{criterion.Property}".Trim().Trim('.');
+        var result = $"Evaluation Passed for {reference}";
+        var expected = args is not null ? $" {string.Join(',', args)}." : string.Empty;
+        var message = $"{result}. Value {criterion.Operation.ShouldMessage}{expected} Found: {actual}";
+
+        return new Evaluation(ResultState.Passed, message);
     }
 
-    public ResultType Result { get; }
-    public Type? Type { get; }
-    public string? Property { get; }
-    public Operation Operation { get; }
-    public string Expected { get; }
-    public object? Actual { get; }
-    public object? Candidate { get; }
-    public string Message => _message ?? GenerateMessage();
-    public Exception? Exception { get; }
+    public static Evaluation Failed(Criterion criterion, string? type, object[]? args, object? actual)
+    {
+        if (criterion is null)
+            throw new ArgumentNullException(nameof(criterion));
 
-    public static Evaluation Passed(Criterion criterion, object? candidate, object? actual) =>
-        new(ResultType.Passed, criterion, candidate, actual);
+        var reference = $"{type}.{criterion.Property}".Trim().Trim('.');
+        var result = $"Evaluation Failed for {reference}";
+        var expected = args is not null ? $" {string.Join(',', args)}." : string.Empty;
+        var message = $"{result}. Value {criterion.Operation.ShouldMessage}{expected} Found: {actual}";
 
-    public static Evaluation Failed(Criterion criterion, object? candidate, object? actual = null) =>
-        new(ResultType.Failed, criterion, candidate, actual);
+        return new Evaluation(ResultState.Failed, message);
+    }
 
-    public static Evaluation Error(Criterion criterion, object? candidate, Exception exception) =>
-        new(ResultType.Error, criterion, candidate, null, exception: exception);
+    public static Evaluation Error(Criterion criterion, Exception exception, string? type)
+    {
+        if (criterion is null)
+            throw new ArgumentNullException(nameof(criterion));
 
-    public static Evaluation Inconclusive(Criterion criterion, object? candidate, string message) =>
-        new(ResultType.Inconclusive, criterion, candidate, null, message);
+        var reference = $"{type}.{criterion.Property}".Trim().Trim('.');
+        var result = $"Evaluation Error for {reference} using operation '{criterion.Operation}'";
+        var message = $"{result}. Exception: {exception.Message}.";
 
-    public static Evaluation NotRun(Criterion criterion, object? candidate) =>
-        new(ResultType.None, criterion, candidate, null);
-
-    private string GenerateMessage() =>
-        $"Evaluation of {Operation} for {Type?.Name}.{Property} {Result}. Expected: '{Expected}' Found: '{Actual}'";
+        return new Evaluation(ResultState.Error, message);
+    }
 
     public override string ToString() => Message;
-
-    public static implicit operator bool(Evaluation evaluation) => evaluation.Result == ResultType.Passed;
+    public static implicit operator bool(Evaluation evaluation) => evaluation.Result == ResultState.Passed;
 }

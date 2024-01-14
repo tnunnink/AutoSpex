@@ -11,7 +11,11 @@
         <entry key="AutoSpex.Client/Features/Common/Test.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Features/Criteria/CriterionView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Features/Criteria/Views/CriterionView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
+        <entry key="AutoSpex.Client/Features/Details/DetailsView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
+        <entry key="AutoSpex.Client/Features/Details/NavigationView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Features/Elements/Views/ElementMenuView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
+        <entry key="AutoSpex.Client/Features/Nodes/BreadcrumbView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
+        <entry key="AutoSpex.Client/Features/Nodes/NodeTreeView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Features/Nodes/Resources/All.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Features/Nodes/Resources/AllResources.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Features/Nodes/Resources/Icons.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
@@ -23,6 +27,8 @@
         <entry key="AutoSpex.Client/Features/Nodes/Views/RenameNodeView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Features/Projects/LauncherView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Features/Projects/NewProjectView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
+        <entry key="AutoSpex.Client/Features/Projects/ProjectListView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
+        <entry key="AutoSpex.Client/Features/Projects/ProjectStartupView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Features/Projects/Resources/ProjectContextMenu.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Features/Projects/Views/LauncherView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Features/Projects/Views/NavigationPage.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
@@ -63,6 +69,13 @@
         <entry key="AutoSpex.Client/Features/Specifications/Views/QueryBuilderView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Features/Specifications/Views/SpecTreeView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Features/Specifications/Views/SpecificationView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
+        <entry key="AutoSpex.Client/Features/Specs/CollectionMenu.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
+        <entry key="AutoSpex.Client/Features/Specs/CriterionView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
+        <entry key="AutoSpex.Client/Features/Specs/FolderMenu.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
+        <entry key="AutoSpex.Client/Features/Specs/Nodes/BreadcrumbView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
+        <entry key="AutoSpex.Client/Features/Specs/Resources/CollectionMenu.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
+        <entry key="AutoSpex.Client/Features/Specs/Resources/Merged.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
+        <entry key="AutoSpex.Client/Features/Specs/SpecMenu.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Features/StatusBar/Views/ProcessIndicatorVew.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Pages/AppPage.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Pages/AppView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
@@ -77,6 +90,7 @@
         <entry key="AutoSpex.Client/Resources/Icons/FilledIcons.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Resources/Icons/Icons.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Resources/Icons/IconsTest.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
+        <entry key="AutoSpex.Client/Resources/Icons/NodeIcons.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Resources/Icons/OutlinedIcons.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Resources/Icons/RegularIcons.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Resources/Menus/CollectionMenu.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
@@ -110,13 +124,19 @@
         <entry key="AutoSpex.Client/Views/AddSourceView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Views/BreadcrumbView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Views/CollectionView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
+        <entry key="AutoSpex.Client/Views/Common/NodesView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Views/CriterionView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
+        <entry key="AutoSpex.Client/Views/DetailsView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Views/ElementMenuView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Views/FolderView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
+        <entry key="AutoSpex.Client/Views/LauncherView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
+        <entry key="AutoSpex.Client/Views/NavigationView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
+        <entry key="AutoSpex.Client/Views/NodeTreeView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Views/NodesView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Views/ProcessIndicatorVew.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Views/ProjectListView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Views/QueryBuilderView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
+        <entry key="AutoSpex.Client/Views/ShellView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Views/SourceListView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Views/SourceView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Views/SpecTreeView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />

@@ -93,76 +93,88 @@
         <SubType>Code</SubType>
       </Compile>
       <Compile Remove="Resources\Controls\SplitGrid.axaml.cs" />
-      <Compile Update="Views\FolderView.axaml.cs">
+      <Compile Update="Feautres\Nodes\NodeTreeView.axaml.cs">
+        <DependentUpon>NodeTreeView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Features\Specs\SpecificationView.axaml.cs">
+        <DependentUpon>SpecificationView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Features\Specs\CollectionView.axaml.cs">
+        <DependentUpon>CollectionView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Features\Specs\FolderView.axaml.cs">
         <DependentUpon>FolderView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
-      <Compile Update="Views\ElementMenuView.axaml.cs">
+      <Compile Update="Features\Specs\ElementMenuView.axaml.cs">
         <DependentUpon>ElementMenuView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Features\Specs\CriterionView.axaml.cs">
+        <DependentUpon>CriterionView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Features\Projects\ProjectStartupView.axaml.cs">
+        <DependentUpon>ProjectStartupView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Features\Projects\ProjectListView.axaml.cs">
+        <DependentUpon>ProjectListView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Features\Projects\NewProjectView.axaml.cs">
+        <DependentUpon>NewProjectView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Features\Sources\AddSourceView.axaml.cs">
+        <DependentUpon>AddSourceView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Features\Sources\QueryBuilderView.axaml.cs">
+        <DependentUpon>QueryBuilderView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Features\Sources\SourceListView.axaml.cs">
+        <DependentUpon>SourceListView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Features\Sources\SourceView.axaml.cs">
+        <DependentUpon>SourceView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Features\StatusBar\ProcessIndicatorVew.axaml.cs">
+        <DependentUpon>ProcessIndicatorVew.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Features\StatusBar\StatusBarView.axaml.cs">
+        <DependentUpon>StatusBarView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Features\Common\DetailsView.axaml.cs">
+        <DependentUpon>DetailsView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Features\Common\NavigationView.axaml.cs">
+        <DependentUpon>NavigationView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Features\Specs\BreadcrumbView.axaml.cs">
+        <DependentUpon>BreadcrumbView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Features\Specs\NodeTreeView.axaml.cs">
+        <DependentUpon>NodeTreeView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Views\DetailsView.axaml.cs">
+        <DependentUpon>DetailsView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
       <Compile Update="Views\NavigationView.axaml.cs">
         <DependentUpon>NavigationView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\CollectionView.axaml.cs">
-        <DependentUpon>CollectionView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\CriterionView.axaml.cs">
-        <DependentUpon>CriterionView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\ProcessIndicatorVew.axaml.cs">
-        <DependentUpon>ProcessIndicatorVew.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\AddSourceView.axaml.cs">
-        <DependentUpon>AddSourceView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\QueryBuilderView.axaml.cs">
-        <DependentUpon>QueryBuilderView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\SourceListView.axaml.cs">
-        <DependentUpon>SourceListView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\SourceView.axaml.cs">
-        <DependentUpon>SourceView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\NewProjectView.axaml.cs">
-        <DependentUpon>NewProjectView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\ProjectListView.axaml.cs">
-        <DependentUpon>ProjectListView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\ProjectStartupView.axaml.cs">
-        <DependentUpon>ProjectStartupView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\BreadcrumbView.axaml.cs">
-        <DependentUpon>BreadcrumbView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\NodesView.axaml.cs">
-        <DependentUpon>NodesView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\SpecificationView.axaml.cs">
-        <DependentUpon>SpecificationView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\SpecTreeView.axaml.cs">
-        <DependentUpon>SpecTreeView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Views\StatusBarView.axaml.cs">
-        <DependentUpon>StatusBarView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
     </ItemGroup>
@@ -180,7 +192,6 @@
 
     <ItemGroup>
       <None Remove="Resources\Images\box-arrow-up-right.svg" />
-      <AvaloniaXaml Remove="Features\Projects\Resources\ProjectContextMenu.axaml" />
       <None Remove="Resources\Images\clipboard-filled-32.png" />
       <None Remove="Resources\Images\clipboard-outlined-32.png" />
       <None Remove="Resources\Images\clipboard-outlined-64.png" />
@@ -198,12 +209,12 @@
     </ItemGroup>
 
     <ItemGroup>
-      <AdditionalFiles Include="Resources\Menus\CollectionMenu.axaml" />
-      <AdditionalFiles Include="Resources\Menus\FolderMenu.axaml" />
-      <AdditionalFiles Include="Resources\Menus\SpecMenu.axaml" />
+      <UpToDateCheckInput Remove="Features\Specifications\Resources\All.axaml" />
     </ItemGroup>
 
     <ItemGroup>
-      <UpToDateCheckInput Remove="Features\Specifications\Resources\All.axaml" />
+      <Folder Include="Features\Sources\Messages\" />
+      <Folder Include="Features\Sources\Resources\" />
+      <Folder Include="Resources\Menus\" />
     </ItemGroup>
 </Project>

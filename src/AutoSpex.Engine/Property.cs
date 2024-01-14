@@ -31,19 +31,12 @@ public class Property : IEquatable<Property>
     }
 
     public Type Origin { get; }
-
     public string Path { get; }
-
     public Type Type { get; }
-
     public string Name => Path[(Path.LastIndexOf(Separator) + 1)..];
-
     public string Identifier => Type.TypeIdentifier();
-
     public TypeGroup Group => TypeGroup.FromType(Type);
-
-    public IEnumerable<object> Options => GetValueOptions();
-
+    public IEnumerable<object> Options => Type.GetOptions();
     public IEnumerable<Property> Properties => GetProperties(Type);
 
     public Func<object?, object?> Getter() => Getter(Origin, Path);
@@ -72,19 +65,6 @@ public class Property : IEquatable<Property>
 
         var element = Element.FromName(Type.Name);
         return element.Properties;
-    }
-
-    private IEnumerable<object> GetValueOptions()
-    {
-        if (typeof(bool).IsAssignableFrom(Type) || typeof(BOOL).IsAssignableFrom(Type))
-        {
-            return new object[] {true, false};
-        }
-
-        if (Group != TypeGroup.Enum) return Enumerable.Empty<object>();
-
-        if (Type.IsEnum) return Enum.GetNames(Type);
-        return LogixEnum.Names(Type);
     }
 
     private Func<object?, object?> Getter(Type origin, string path)

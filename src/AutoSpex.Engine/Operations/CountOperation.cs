@@ -2,11 +2,7 @@ namespace AutoSpex.Engine;
 
 public class CountOperation() : CollectionOperation("Count")
 {
-    protected override bool Evaluate(IEnumerable<object?> collection, Operation operation,
-        params object[] values)
-    {
-        return operation.Execute(collection.Count(), values);
-    }
+    public override string ShouldMessage => $"Should Have {Name}";
 
     protected override bool Evaluate(IEnumerable<object?> collection, Criterion criterion)
     {

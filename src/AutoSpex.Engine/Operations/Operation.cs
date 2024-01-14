@@ -11,6 +11,8 @@ public abstract class Operation(string name) : SmartEnum<Operation, string>(name
 {
     public abstract int NumberOfArguments { get; }
 
+    public virtual string ShouldMessage => $"Should {Name}:";
+
     /// <summary>
     /// Performs the operation on the input and provided values and returns the result.
     /// The actual implementation of the operation (how it's evaluated) is defined
@@ -43,7 +45,7 @@ public abstract class Operation(string name) : SmartEnum<Operation, string>(name
     /// is equal to the comparison value. Comparison is done based on the underlying
     /// type of the input value.
     /// </summary>
-    public static readonly Operation Equal = new EqualsOperation();
+    public static readonly Operation Equal = new EqualOperation();
 
     /// <summary>
     /// Represents a greater than operation. The operation checks if the input value 

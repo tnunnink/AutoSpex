@@ -1,6 +1,6 @@
-﻿using AutoSpex.Client.Observers;
+﻿using AutoSpex.Client.Features;
+using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
-using AutoSpex.Persistence;
 using FluentAssertions;
 
 namespace AutoSpex.Client.Tests;
@@ -13,14 +13,14 @@ public class ObserverCollectionTests
     {
         var list = new List<Node>
         {
-            Node.Collection(Feature.Specifications, "Test1"),
-            Node.Collection(Feature.Specifications, "Test2"),
-            Node.Collection(Feature.Specifications, "Test3"),
+            Node.NewCollection(),
+            Node.NewCollection(),
+            Node.NewCollection(),
         };
 
         var collection = new ObserverCollection<Node, NodeObserver>(list, n => new NodeObserver(n));
         
-        collection.Add(new NodeObserver(Node.Collection(Feature.Runners, "Test")));
+        collection.Add(new NodeObserver(Node.NewCollection("Test")));
 
         collection.Should().HaveCount(4);
         list.Should().HaveCount(4);
@@ -29,19 +29,18 @@ public class ObserverCollectionTests
     [Test]
     public void Add_ToCollectionInitializedCustomFunctions_ShouldUpdateBothCollections()
     {
-        var list = new List<NodeObserver>
+        var list = new List<Node>
         {
-            new(Node.Collection(Feature.Specifications, "Test1")),
-            new(Node.Collection(Feature.Specifications, "Test2")),
-            new(Node.Collection(Feature.Specifications, "Test3")),
+            Node.NewCollection(),
+            Node.NewCollection(),
+            Node.NewCollection(),
         };
 
         var collection = new ObserverCollection<Node, NodeObserver>(
-            list,
+            list.ToList(),
+            m => new NodeObserver(m),
             (_, n) => list.Add(n),
-            (i, _) => list.RemoveAt(i));
-        
-        collection.Add(new NodeObserver(Node.Collection(Feature.Runners, "Test")));
+            (i, _) => list.RemoveAt(i)) {new(Node.NewCollection("Test"))};
 
         collection.Should().HaveCount(4);
         list.Should().HaveCount(4);

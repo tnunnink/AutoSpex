@@ -8,25 +8,25 @@
       <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/AutoSpex.Client/bin/Debug/net6.0/win-x64/app.db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="Test.spex" uuid="55088bd5-1582-4457-aa2f-a6e56b1da3d8">
-      <driver-ref>sqlite.xerial</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:$USER_HOME$/Documents/Spex/Test.spex</jdbc-url>
-      <working-dir>$ProjectFileDir$</working-dir>
-    </data-source>
-    <data-source source="LOCAL" name="test.spex" uuid="f14bc453-c6c2-4c71-9d5e-452cbbc7c96b">
-      <driver-ref>sqlite.xerial</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/../tests/AutoSpex.Client.Tests/bin/Debug/net6.0/test.spex</jdbc-url>
-      <working-dir>$ProjectFileDir$</working-dir>
-    </data-source>
     <data-source source="LOCAL" name="settings.db" uuid="d123c7c2-898a-4cb7-8d87-eda5c5d58693">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
       <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/AutoSpex.Client/bin/Debug/net6.0/win-x64/settings.db</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="persistence.db" uuid="7fbcc162-511f-4e14-b2bf-ab989e8b915e">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/../tests/AutoSpex.Persistence.Tests/bin/Debug/net7.0/persistence.db</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="project.db" uuid="fdd6e609-9b54-4b29-8e0a-fb759734ac22">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/../tests/AutoSpex.Persistence.Tests/bin/Debug/net7.0/project.db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>

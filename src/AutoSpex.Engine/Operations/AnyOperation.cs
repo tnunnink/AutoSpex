@@ -2,10 +2,7 @@
 
 public class AnyOperation() : CollectionOperation("Any")
 {
-    protected override bool Evaluate(IEnumerable<object?> collection, Operation operation, params object[] values)
-    {
-        return collection.Select(item => operation.Execute(item, values)).Any(result => result);
-    }
+    public override string ShouldMessage => $"Should Have {Name}";
 
     protected override bool Evaluate(IEnumerable<object?> collection, Criterion criterion)
     {

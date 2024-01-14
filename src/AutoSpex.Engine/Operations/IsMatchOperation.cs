@@ -4,6 +4,8 @@ namespace AutoSpex.Engine;
 
 public class IsMatchOperation() : BinaryOperation("Is Match")
 {
+    public override string ShouldMessage => "Should Match";
+    
     protected override bool Evaluate(object? input, object value)
     {
         if (value.ToString() is null) 

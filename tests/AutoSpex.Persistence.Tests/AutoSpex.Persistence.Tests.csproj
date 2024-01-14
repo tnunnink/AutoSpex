@@ -19,25 +19,12 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="Nodes\**" />
-      <None Remove="Sources\**" />
-      <None Remove="Specifications\**" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\..\src\AutoSpex.Persistence\AutoSpex.Persistence.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Remove="Nodes\**" />
-      <Compile Remove="Sources\**" />
-      <Compile Remove="Specifications\**" />
+      <None Update="Test.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
-
-    <ItemGroup>
-      <EmbeddedResource Remove="Nodes\**" />
-      <EmbeddedResource Remove="Sources\**" />
-      <EmbeddedResource Remove="Specifications\**" />
-    </ItemGroup>
-
 </Project>

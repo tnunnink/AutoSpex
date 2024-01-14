@@ -4,7 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using ActiproSoftware.UI.Avalonia.Controls;
 using ActiproSoftware.UI.Avalonia.Media;
-using AutoSpex.Client.Windows;
+using AutoSpex.Client.Views;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;

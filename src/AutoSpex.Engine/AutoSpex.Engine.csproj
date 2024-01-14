@@ -8,8 +8,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Ardalis.SmartEnum" Version="2.1.0" />
-      <PackageReference Include="L5Sharp" Version="0.18.1" />
+      <PackageReference Include="Ardalis.SmartEnum" Version="7.0.0" />
+      <PackageReference Include="Ardalis.SmartEnum.SystemTextJson" Version="7.0.0" />
+      <PackageReference Include="L5Sharp" Version="0.18.3" />
       <PackageReference Include="Serialize.Linq" Version="3.0.148" />
     </ItemGroup>
 

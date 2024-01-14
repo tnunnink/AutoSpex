@@ -2,6 +2,8 @@
 
 public class EndsWithOperation() : BinaryOperation("Ends With")
 {
+    public override string ShouldMessage => "Should End With";
+    
     protected override bool Evaluate(object? input, object value)
     {
         if (string.IsNullOrEmpty(value.ToString()))

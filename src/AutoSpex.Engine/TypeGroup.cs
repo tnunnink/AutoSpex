@@ -20,11 +20,11 @@ public class TypeGroup : SmartEnum<TypeGroup, int>
     public static TypeGroup Date => new(nameof(Date), 4);
 
     public static TypeGroup Enum => new(nameof(Enum), 5);
-    
+
     public static TypeGroup Collection => new(nameof(Collection), 6);
-    
+
     public static TypeGroup Element => new(nameof(Element), 7);
-    
+
     public static TypeGroup FromType(Type type)
     {
         if (IsBooleanType(type)) return Boolean;
@@ -39,46 +39,43 @@ public class TypeGroup : SmartEnum<TypeGroup, int>
 
     private static bool IsBooleanType(Type type)
     {
-        /*type = type.IsNullableType() ? Nullable.GetUnderlyingType(type)! : type;*/
+        type = Nullable.GetUnderlyingType(type) ?? type;
         return type == typeof(bool) || type == typeof(BOOL);
     }
 
     private static bool IsTextType(Type type)
     {
+        type = Nullable.GetUnderlyingType(type) ?? type;
         return type == typeof(string) || typeof(StringType).IsAssignableFrom(type);
     }
 
     private static bool IsDateType(Type type)
     {
-        /*type = type.IsNullableType() ? Nullable.GetUnderlyingType(type)! : type;*/
+        type = Nullable.GetUnderlyingType(type) ?? type;
         return type == typeof(DateTime);
     }
 
     private static bool IsNumericType(Type type)
     {
-        /*type = type.IsNullableType() ? Nullable.GetUnderlyingType(type)! : type;*/
+        type = Nullable.GetUnderlyingType(type) ?? type;
         return NumericTypes.Contains(type);
     }
 
-    private static bool IsEnumType(Type? type)
+    private static bool IsEnumType(Type type)
     {
-        while (type is not null && type != typeof(object))
-        {
-            var current = type.IsGenericType ? type.GetGenericTypeDefinition() : type;
-            if (current.IsEnum || current == typeof(LogixEnum<,>)) return true;
-            type = type.BaseType!;
-        }
+        type = Nullable.GetUnderlyingType(type) ?? type;
+        return type.IsEnum || type.IsAssignableTo(typeof(LogixEnum));
+    }
 
-        return false;
-    }
-    
-    private static bool IsCollectionType(Type? type)
+    private static bool IsCollectionType(Type type)
     {
-        return typeof(IEnumerable<>).IsAssignableFrom(type) && type != typeof(string);
+        type = Nullable.GetUnderlyingType(type) ?? type;
+        return type.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>));
     }
-    
-    private static bool IsElementType(Type? type)
+
+    private static bool IsElementType(Type type)
     {
+        type = Nullable.GetUnderlyingType(type) ?? type;
         return Engine.Element.List.Any(e => e.Type == type);
     }
 

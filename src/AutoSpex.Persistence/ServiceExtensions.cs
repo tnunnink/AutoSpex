@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using Ardalis.SmartEnum.Dapper;
 using AutoSpex.Engine;
+using AutoSpex.Engine.Converters;
 using Dapper;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,10 +14,11 @@ public static class ServiceExtensions
         services.AddMediatR(c =>
             c.RegisterServicesFromAssembly(typeof(ServiceExtensions).Assembly)
                 .AddOpenBehavior(typeof(NotificationBehavior<,>)));
-        
+
         services.AddSingleton<IConnectionManager>(_ => ConnectionManager.Default);
-        
+
         var options = new JsonSerializerOptions();
+        options.Converters.Add(new JsonSpecConverter());
         options.Converters.Add(new JsonCriterionConverter());
         options.Converters.Add(new JsonArgumentConverter());
         options.Converters.Add(new JsonTypeConverter());
@@ -27,9 +29,7 @@ public static class ServiceExtensions
         SqlMapper.RemoveTypeMap(typeof(Guid));
         SqlMapper.RemoveTypeMap(typeof(Guid?));
         SqlMapper.AddTypeHandler(new SmartEnumByNameTypeHandler<Element, string>());
-        SqlMapper.AddTypeHandler(new SmartEnumByNameTypeHandler<Operation, string>());
+        SqlMapper.AddTypeHandler(new SmartEnumByValueTypeHandler<Operation, string>());
         SqlMapper.AddTypeHandler(new SmartEnumByNameTypeHandler<NodeType, int>());
-        SqlMapper.AddTypeHandler(new SmartEnumByNameTypeHandler<Feature, int>());
-        SqlMapper.AddTypeHandler(new SmartEnumByNameTypeHandler<CriterionUsage, int>());
     }
 }

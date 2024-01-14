@@ -4,30 +4,23 @@ namespace AutoSpex.Engine;
 
 public abstract class CollectionOperation(string name) : Operation(name)
 {
+    public override int NumberOfArguments => 1;
+    
     public override bool Execute(object? input, params object[] values)
     {
         if (input is not IEnumerable enumerable)
             throw new ArgumentException("Collection operations require an enumerable input", nameof(input));
 
-        if (values.Length == 0)
-            throw new ArgumentException("Collection operations require at least on inner value", nameof(values));
+        if (values.Length != 1)
+            throw new ArgumentException("Collection operations require one argument", nameof(values));
 
-        return values[0] switch
-        {
-            Operation operation => Evaluate(enumerable.Cast<object>(), operation, values[1..]),
-            Criterion criterion => Evaluate(enumerable.Cast<object>(), criterion),
-            _ => Evaluate(enumerable.Cast<object>(), Equal, values)
-        };
+        if (values[0] is not Criterion criterion)
+            throw new ArgumentException("Collection operations require criterion argument");
+        
+        return Evaluate(enumerable.Cast<object?>(), criterion);
     }
-
-    protected abstract bool Evaluate(IEnumerable<object?> collection, Operation operation, params object[] values);
     
     protected abstract bool Evaluate(IEnumerable<object?> collection, Criterion criterion);
 
-    protected override bool Supports(TypeGroup group)
-    {
-        return group == TypeGroup.Collection;
-    }
-
-    public override int NumberOfArguments => -1;
+    protected override bool Supports(TypeGroup group) => group == TypeGroup.Collection;
 }

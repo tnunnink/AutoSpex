@@ -29,24 +29,7 @@ public sealed class TestContext : IDisposable
 
     public readonly string ProjectPath;
 
-    public const string TestL5X = @"C:\Users\admin\Documents\L5X\Text.L5X";
-
     public T Resolve<T>() where T : notnull => _provider.GetRequiredService<T>();
-
-    /*public void RunMigration(Database database, long version = 0)
-    {
-        
-
-        if (version > 0)
-        {
-            //todo migrate to
-            return;
-        }
-
-        var path = database == Database.App ? AppPath : ProjectPath;
-        var connectionString = $"Data Source={path};";
-        migrator.Migrate(connectionString, database);
-    }*/
 
     public void Dispose()
     {
