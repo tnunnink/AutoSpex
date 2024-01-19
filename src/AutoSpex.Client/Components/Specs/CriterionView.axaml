@@ -1,0 +1,219 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
+             xmlns:components="clr-namespace:AutoSpex.Client.Components"
+             mc:Ignorable="d" d:DesignWidth="800"
+             x:Class="AutoSpex.Client.Components.CriterionView"
+             x:DataType="components:CriterionViewModel">
+
+    <UserControl.Styles>
+        <Style Selector="Border.container">
+            <Setter Property="Background" Value="{a:ThemeResource Container1BackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{a:ThemeResource Container1BorderBrush}" />
+            <Setter Property="BorderThickness" Value="1 0 1 1" />
+            <Setter Property="Padding" Value="2" />
+        </Style>
+
+        <Style Selector="TextBox.entry">
+            <Setter Property="Theme" Value="{a:ControlTheme TextBoxOutline}" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+
+            <!--<Style Selector="^:pointerover /template/ Border#border">
+                <Setter Property="Background" Value="{a:ThemeResource ButtonBackgroundBrushSubtlePointerOver}" />
+                <Setter Property="BorderBrush" Value="{a:ThemeResource ButtonBackgroundBrushSubtlePointerOver}" />
+            </Style>-->
+
+            <Style Selector="^:focus /template/ Border#border">
+                <Setter Property="Background" Value="{a:ThemeResource ButtonBackgroundBrushSubtlePointerOver}" />
+                <Setter Property="BorderBrush" Value="{a:ThemeResource ButtonBackgroundBrushSubtlePointerOver}" />
+            </Style>
+        </Style>
+
+        <!--<Style Selector="TextBox">
+            <Setter Property="Background" Value="Red"></Setter>
+            <Setter Property="InnerRightContent">
+                <Template>
+                    <Button>
+                        <Interaction.Behaviors>
+                            <EventTriggerBehavior EventName="PointerReleased">
+                                <behaviors:AutoCompleteShowDropdownAction />
+                            </EventTriggerBehavior>
+                        </Interaction.Behaviors>
+                    </Button>
+                </Template>
+            </Setter>
+        </Style>-->
+
+        <Style Selector="ComboBox.entry">
+            <Setter Property="Theme" Value="{a:ControlTheme ComboBoxSoft}" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+
+            <Style Selector="^:pointerover /template/ Border#border">
+                <Setter Property="Background" Value="{a:ThemeResource ButtonBackgroundBrushSubtlePointerOver}" />
+                <Setter Property="BorderBrush" Value="{a:ThemeResource ButtonBackgroundBrushSubtlePointerOver}" />
+            </Style>
+
+
+            <Style Selector="^:focus /template/ Border#border">
+                <Setter Property="Background" Value="{a:ThemeResource ButtonBackgroundBrushSubtlePointerOver}" />
+                <Setter Property="BorderBrush" Value="{a:ThemeResource ButtonBackgroundBrushSubtlePointerOver}" />
+            </Style>
+        </Style>
+    </UserControl.Styles>
+
+    <Border Name="Root"
+            Classes="container">
+        <DockPanel LastChildFill="True">
+            <!--Buttons-->
+            <StackPanel DockPanel.Dock="Right"
+                        Orientation="Horizontal"
+                        Spacing="5"
+                        Margin="5 0">
+                <Button Classes="icon"
+                        IsVisible="{Binding CanAddValues}"
+                        ToolTip.Tip="Add Value"
+                        ToolTip.Placement="BottomEdgeAlignedRight">
+                    <PathIcon Data="{StaticResource IconAdd}"
+                              Height="12" Width="12" />
+                </Button>
+                <ToggleButton Classes="icon warning"
+                              ToolTip.Tip="Invert"
+                              ToolTip.Placement="BottomEdgeAlignedRight">
+                    <PathIcon Data="{StaticResource IconExclamation}"
+                              Height="12" Width="12" />
+                </ToggleButton>
+                <ToggleButton Classes="icon danger"
+                              ToolTip.Tip="Disable"
+                              ToolTip.Placement="BottomEdgeAlignedRight">
+                    <PathIcon Data="{StaticResource IconBanOutlined}"
+                              Height="14" Width="14" />
+                </ToggleButton>
+                <Button Classes="icon"
+                        ToolTip.Tip="Remove"
+                        ToolTip.Placement="BottomEdgeAlignedRight">
+                    <PathIcon Data="{StaticResource IconClose}"
+                              Height="10" Width="10" />
+                </Button>
+            </StackPanel>
+
+            <!--Fields-->
+            <StackPanel Orientation="Horizontal">
+
+                <CheckBox Theme="{a:ControlTheme CheckBoxSolid}"
+                          Classes="size-xs accent"
+                          Margin="5 0"
+                          Padding="0" />
+
+                <AutoCompleteBox Name="PropertyInput"
+                                 Text="{Binding PropertyName, Mode=OneWay}"
+                                 Classes="entry"
+                                 Watermark="Property Name"
+                                 FilterMode="None"
+                                 MinimumPrefixLength="0"
+                                 GotFocus="AutoCompleteGotFocus"
+                                 LostFocus="AutoCompleteLostFocus"
+                                 KeyUp="AutoCompleteKeyUp">
+                    <AutoCompleteBox.ItemTemplate>
+                        <DataTemplate x:DataType="engine:Property">
+                            <DockPanel LastChildFill="False"
+                                       MinWidth="300">
+                                <TextBlock Text="{Binding Path}"
+                                           DockPanel.Dock="Left"
+                                           Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
+                                           VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding Identifier}"
+                                           DockPanel.Dock="Right"
+                                           Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                                           FontSize="12"
+                                           VerticalAlignment="Center" />
+                            </DockPanel>
+                        </DataTemplate>
+                    </AutoCompleteBox.ItemTemplate>
+                </AutoCompleteBox>
+
+                <Border BorderThickness="1 0 0 0"
+                        BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                        Margin="2 8" />
+
+                <ComboBox SelectedItem="{Binding Operation}"
+                          ItemsSource="{Binding Operations}"
+                          PlaceholderText="Operation"
+                          Classes="entry"
+                          HorizontalContentAlignment="Left">
+                </ComboBox>
+
+                <ItemsControl ItemsSource="{Binding Args}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.DataTemplates>
+                        <!--<dataTemplates:ArgumentTemplates>
+                            <DataTemplate x:Key="{x:Static engine:TypeGroup.Boolean}" x:DataType="engine:Arg">
+                                <StackPanel Orientation="Horizontal">
+                                    <Border BorderThickness="1 0 0 0"
+                                            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                                            Margin="2 8" />
+                                    <ComboBox SelectedIndex="{Binding Value}"
+                                              ItemsSource="{Binding Property.Options}"
+                                              Classes="entry"
+                                              PlaceholderText="value" />
+                                </StackPanel>
+
+                            </DataTemplate>
+                            <DataTemplate x:Key="{x:Static engine:TypeGroup.Text}" x:DataType="engine:Arg">
+                                <StackPanel Orientation="Horizontal">
+                                    <Border BorderThickness="1 0 0 0"
+                                            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                                            Margin="2 8" />
+                                    <TextBox Text="{Binding Value}"
+                                             Watermark="value"
+                                             Classes="entry" />
+                                </StackPanel>
+                            </DataTemplate>
+                            <DataTemplate x:Key="{x:Static engine:TypeGroup.Number}" x:DataType="engine:Arg">
+                                <StackPanel Orientation="Horizontal">
+                                    <Border BorderThickness="1 0 0 0"
+                                            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                                            Margin="2 8" />
+                                    <TextBox Text="{Binding Value}"
+                                             Watermark="value"
+                                             Classes="entry" />
+                                </StackPanel>
+                            </DataTemplate>
+                            <DataTemplate x:Key="{x:Static engine:TypeGroup.Enum}" x:DataType="engine:Arg">
+                                <StackPanel Orientation="Horizontal">
+                                    <Border BorderThickness="1 0 0 0"
+                                            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                                            Margin="2 8" />
+                                    <ComboBox SelectedIndex="{Binding Value}"
+                                              ItemsSource="{Binding Property.Options}"
+                                              Classes="entry"
+                                              PlaceholderText="value" />
+                                </StackPanel>
+                            </DataTemplate>
+                            <DataTemplate x:Key="{x:Static engine:TypeGroup.Default}" x:DataType="engine:Arg">
+                                <StackPanel Orientation="Horizontal">
+                                    <Border BorderThickness="1 0 0 0"
+                                            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                                            Margin="2 8" />
+                                    <TextBox Text="{Binding Value}"
+                                             Watermark="value"
+                                             Classes="entry" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </dataTemplates:ArgumentTemplates>-->
+
+                    </ItemsControl.DataTemplates>
+                </ItemsControl>
+            </StackPanel>
+        </DockPanel>
+    </Border>
+
+</UserControl>

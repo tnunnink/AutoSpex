@@ -50,7 +50,7 @@
             <Setter Property="Background" Value="{markup:ThemeResource ListItemBackgroundBrushPointerOver}" />
         </Style>
         <Style Selector="^:selected:pressed /template/ Border#border:pointerover">
-            <Setter Property="Background" Value="{markup:ThemeResource ListItemBackgroundBrushSelectedPressed}" />
+            <Setter Property="Background" Value="{markup:ThemeResource ListItemBackgroundBrushPointerOver}" />
         </Style>
         <Style Selector="^:selected:disabled /template/ Border#border">
             <Setter Property="TextElement.Foreground"

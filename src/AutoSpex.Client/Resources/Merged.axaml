@@ -4,13 +4,24 @@
                     xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine">
     
     <ResourceDictionary.MergedDictionaries>
+        <ResourceInclude Source="Icons.axaml" />
         <ResourceInclude Source="Brushes.axaml" />
+        <ResourceInclude Source="Themes/FocusTextBox.axaml" />
         <ResourceInclude Source="Themes/DetailsTabItem.axaml" />
         <ResourceInclude Source="Themes/NavigationTabItem.axaml" />
         <ResourceInclude Source="Themes/StandardTabItem.axaml" />
         <ResourceInclude Source="Themes/PathIcon.axaml" />
         <ResourceInclude Source="Themes/TreeViewItem.axaml" />
     </ResourceDictionary.MergedDictionaries>
+    
+    <converters:ValueToResourceConverter x:Key="KeyToIconConverter">
+        <converters:ValueResourceKey Value="Specs" ResourceKey="IconClipboardOutlined" />
+        <converters:ValueResourceKey Value="Sources" ResourceKey="IconXml" />
+        <converters:ValueResourceKey Value="Runners" ResourceKey="IconPlayOutlinedCollection" />
+        <converters:ValueResourceKey Value="Collection" ResourceKey="ThemedIcon.Collection" />
+        <converters:ValueResourceKey Value="Folder" ResourceKey="ThemedIcon.Folder" />
+        <converters:ValueResourceKey Value="Spec" ResourceKey="ThemedIcon.Spec" />
+    </converters:ValueToResourceConverter>
     
     <converters:ValueToResourceConverter x:Key="NodeToMenuConverter">
         <converters:ValueResourceKey Value="{x:Static engine:NodeType.Collection}" ResourceKey="CollectionMenu" />

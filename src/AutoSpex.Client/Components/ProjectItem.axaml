@@ -1,0 +1,63 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+             xmlns:components="clr-namespace:AutoSpex.Client.Components"
+             x:Class="AutoSpex.Client.Components.ProjectItem"
+             x:DataType="observers:ProjectObserver">
+
+    <Design.Width>400</Design.Width>
+    <Design.DataContext>
+        <components:DesignProjectObserver />
+    </Design.DataContext>
+
+    <Border Padding="7">
+        <DockPanel LastChildFill="True">
+            <Panel DockPanel.Dock="Left"
+                   Margin="0 0 10 0">
+                <PathIcon Data="{StaticResource IconCubeOutlined}"
+                          IsVisible="{Binding Exists}"
+                          Foreground="{actipro:ThemeResource ControlForegroundBrushOutlineAccent}"
+                          Height="20" Width="20" />
+                <PathIcon Data="{StaticResource IconExclamationOutlined}"
+                          IsVisible="{Binding !Exists}"
+                          Foreground="{actipro:ThemeResource ControlForegroundBrushOutlineDanger}"
+                          Height="20" Width="20"
+                          ToolTip.Tip="Project Not Found" />
+            </Panel>
+
+
+            <Panel DockPanel.Dock="Right"
+                   IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}">
+                <Button Classes="icon"
+                        IsVisible="{Binding Exists}"
+                        Flyout="{StaticResource ProjectListFlyout}">
+                    <PathIcon Data="{StaticResource IconDotsVertical}"
+                              Classes="small" />
+                </Button>
+                <Button Classes="icon"
+                        Command="{Binding RemoveCommand}"
+                        IsVisible="{Binding !Exists}">
+                    <PathIcon Data="{StaticResource IconClose}"
+                              Height="10" Width="10"
+                              Classes="small" />
+                </Button>
+            </Panel>
+
+            <StackPanel Spacing="3"
+                        VerticalAlignment="Center">
+                <StackPanel.Styles>
+                    <Style Selector="TextBlock.nonexistent">
+                        <Setter Property="Opacity" Value="0.5" />
+                    </Style>
+                </StackPanel.Styles>
+                <TextBlock Text="{Binding Name}"
+                           Classes.nonexistent="{Binding !Exists}" />
+                <TextBlock Text="{Binding Uri.AbsolutePath}"
+                           FontSize="12"
+                           Classes.nonexistent="{Binding !Exists}"
+                           Foreground="{actipro:ThemeResource DefaultForegroundBrushTertiary}" />
+            </StackPanel>
+        </DockPanel>
+    </Border>
+</UserControl>

@@ -1,0 +1,90 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             mc:Ignorable="d" d:DesignHeight="800" d:DesignWidth="400"
+             x:DataType="pages:SourcesPageModel"
+             x:Class="AutoSpex.Client.Pages.SourcesPage"
+             Background="{a:ThemeResource Container2BackgroundBrush}">
+
+    <Grid RowDefinitions="Auto, *">
+
+        <!--Header Area-->
+        <Border Grid.Row="0" Height="40"
+                BorderBrush="{a:ThemeResource Container2BorderBrush}"
+                BorderThickness="0 0 0 1">
+            <DockPanel LastChildFill="True"
+                       Margin="10 0">
+
+                <StackPanel DockPanel.Dock="Left"
+                            Spacing="2"
+                            Orientation="Horizontal">
+                    <!--Add-->
+                    <Button Classes="icon"
+                            ToolTip.Tip="New Source">
+                        <PathIcon Data="{StaticResource IconAdd}"
+                                  Height="14" Width="14" />
+                    </Button>
+                    <!--Search-->
+                    <Button Classes="icon"
+                            ToolTip.Tip="Search Sources">
+                        <PathIcon Data="{StaticResource IconFilterFilled}"
+                                  Height="14" Width="14" />
+                    </Button>
+                </StackPanel>
+
+                <StackPanel DockPanel.Dock="Right"
+                            Spacing="2"
+                            Orientation="Horizontal">
+                    <!--Options-->
+                    <Button Classes="icon"
+                            ToolTip.Tip="Options">
+                        <PathIcon Data="{StaticResource IconDotsVertical}"
+                                  Height="14" Width="14" />
+                    </Button>
+                </StackPanel>
+
+                <Panel>
+
+                </Panel>
+                <!--<TextBox Text="{Binding Filter}"
+                         Classes="has-clear-button"
+                         BorderThickness="0" Padding="0"
+                         VerticalContentAlignment="Center"
+                         Background="Transparent"
+                         Watermark="Search Recent Projects">
+                    <TextBox.InnerLeftContent>
+                        <PathIcon Data="{StaticResource Icon.Search}"
+                                  Margin="5 0" 
+                                  FontSize="10"
+                                  Height="14" Width="14"
+                                  VerticalAlignment="Center"
+                                  Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                    </TextBox.InnerLeftContent>
+                </TextBox>-->
+            </DockPanel>
+        </Border>
+
+        <Border Grid.Row="1">
+            <ListBox ItemsSource="{Binding Sources}"
+                     SelectedItem="{Binding Selected}"
+                     Background="Transparent"
+                     BorderThickness="0">
+                <ListBox.ItemTemplate>
+                    <DataTemplate x:DataType="observers:NodeObserver">
+                        <DockPanel LastChildFill="True">
+                            <PathIcon Data="{StaticResource IconXml}"
+                                      DockPanel.Dock="Left"
+                                      Margin="10 5" />
+                            <TextBlock Text="{Binding Name}" 
+                                       VerticalAlignment="Center"/>
+                        </DockPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Border>
+    </Grid>
+</UserControl>

@@ -37,7 +37,6 @@ public sealed class Settings
 
     private Settings()
     {
-        AddDefault(nameof(OpenProject), string.Empty);
         AddDefault(nameof(Theme), ThemeVariant.Light);
         AddDefault(nameof(ShellHeight), 800);
         AddDefault(nameof(ShellWidth), 1400);
@@ -48,12 +47,6 @@ public sealed class Settings
     public static Settings App => _settings ??= new Settings();
 
     #region Settings
-
-    public string OpenProject
-    {
-        get => GetSetting<string>(o => o.ToString());
-        set => SetSetting(value);
-    }
 
     public ThemeVariant Theme
     {

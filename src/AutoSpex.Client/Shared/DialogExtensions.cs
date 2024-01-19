@@ -1,75 +1,76 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
-using Avalonia;
-using HanumanInstitute.MvvmDialogs;
-using HanumanInstitute.MvvmDialogs.Avalonia.DialogHost;
-using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
-using NewProjectViewModel = AutoSpex.Client.Features.NewProjectViewModel;
+using Avalonia.Platform.Storage;
+using FluentResults;
 
 namespace AutoSpex.Client.Shared;
 
 public static class DialogExtensions
 {
-    public static async Task<Uri?> ShowSelectFolderDialog(this IDialogService service, string title)
+    private static FilePickerFileType Spex { get; } = new("Spex Project")
     {
-        var owner = (App.MainWindow.DataContext as ViewModelBase)!;
-
-        var settings = new OpenFolderDialogSettings()
+        Patterns = new[] {"*.spex"}
+    };
+    
+    private static FilePickerFileType L5X { get; } = new("L5X")
+    {
+        Patterns = new[] {"*.L5X"}
+    };
+    
+    public static async Task<Uri?> SelectFolderUri(this IStorageProvider provider, string title)
+    {
+        var options = new FolderPickerOpenOptions
         {
             Title = title,
             AllowMultiple = false,
         };
 
-        var folder = await service.ShowOpenFolderDialogAsync(owner, settings);
+        var folder = (await provider.OpenFolderPickerAsync(options)).SingleOrDefault();
         return folder?.Path;
     }
 
-    public static async Task<Uri?> ShowSelectProjectDialog(this IDialogService service, string title)
+    public static async Task<Uri?> SelectProjectUri(this IStorageProvider provider)
     {
-        var owner = (App.MainWindow.DataContext as ViewModelBase)!;
-
-        var settings = new OpenFileDialogSettings
+        var options = new FilePickerOpenOptions
         {
-            Title = title,
+            Title = "Select Spex Project",
             AllowMultiple = false,
-            Filters = new List<FileFilter> { new("Spex Project", ".spex") }
+            FileTypeFilter = [Spex],
         };
 
-        var folder = await service.ShowOpenFileDialogAsync(owner, settings);
+        var folder = (await provider.OpenFilePickerAsync(options)).SingleOrDefault();
         return folder?.Path;
     }
 
-    public static async Task<Uri?> ShowSelectSourceDialog(this IDialogService service)
+    public static async Task<Uri?> SelectL5XUri(this IStorageProvider provider)
     {
-        var owner = (App.MainWindow.DataContext as ViewModelBase)!;
-
-        var settings = new OpenFileDialogSettings
+        var options = new FilePickerOpenOptions
         {
             Title = "Select Source L5X",
             AllowMultiple = false,
-            Filters = new List<FileFilter> { new("L5X", new[] { ".L5X", ".l5x" }) }
+            FileTypeFilter = [L5X]
         };
 
-        var folder = await service.ShowOpenFileDialogAsync(owner, settings);
+        var folder = (await provider.OpenFilePickerAsync(options)).SingleOrDefault();
         return folder?.Path;
     }
-
-    public static async Task<Uri?> ShowNewProjectDialog(this IDialogService service)
+    
+    public static Task ShowInExplorer(this IStorageProvider service, string directory)
     {
-        var owner = (App.MainWindow.DataContext as ViewModelBase)!;
-
-        var vm = service.CreateViewModel<NewProjectViewModel>();
-
-        var settings = new DialogHostSettings
+        return Task.FromResult(Result.Try(() =>
         {
-            Content = vm,
-            CloseOnClickAway = true,
-            DialogMargin = new Thickness(0)
-        };
+            if (OperatingSystem.IsWindows())
+                Process.Start(new ProcessStartInfo {FileName = directory, UseShellExecute = true});
 
-        await service.ShowDialogHostAsync(owner, settings).ConfigureAwait(true);
+            if (OperatingSystem.IsLinux())
+                Process.Start("xdg-open", directory);
 
-        return vm.DialogResult == true ? vm.Uri : default;
+            else if (OperatingSystem.IsMacOS())
+                Process.Start("open", directory);
+
+            else throw new NotImplementedException("File browser opening not implemented for this platform.");
+        }));
     }
 }

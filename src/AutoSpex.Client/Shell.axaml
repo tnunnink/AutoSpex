@@ -1,0 +1,90 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+        xmlns:client="clr-namespace:AutoSpex.Client"
+        x:Class="AutoSpex.Client.Shell"
+        x:DataType="client:ShellViewModel"
+        Width="1200" Height="800"
+        WindowState="Normal"
+        WindowStartupLocation="CenterScreen"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="SystemChrome"
+        ExtendClientAreaTitleBarHeightHint="0"
+        SystemDecorations="BorderOnly">
+    <Interaction.Behaviors>
+        <EventTriggerBehavior EventName="Loaded">
+            <InvokeCommandAction Command="{Binding NavigateHomeCommand}"/>
+        </EventTriggerBehavior>
+    </Interaction.Behaviors>
+    
+    <DockPanel>
+        <!-- Title Bar -->
+        <a:ChromedTitleBar DockPanel.Dock="Top" Height="40">
+            <a:ChromedTitleBar.Resources>
+                <a:ComparisonConverter x:Key="RightContentMarginConverter">
+                    <a:ComparisonConverter.TrueResult>
+                        <Thickness>0,0,10,0</Thickness>
+                    </a:ComparisonConverter.TrueResult>
+                    <a:ComparisonConverter.FalseResult>
+                        <Thickness>0,0,0,0</Thickness>
+                    </a:ComparisonConverter.FalseResult>
+                </a:ComparisonConverter>
+            </a:ChromedTitleBar.Resources>
+
+            <a:ChromedTitleBar.LeftContent>
+                <StackPanel Orientation="Horizontal">
+                    <Button
+                        ContentTemplate="{a:GlyphTemplate Menu16}"
+                        Theme="{a:ControlTheme TitleBarButton}" />
+                    <Button
+                        ContentTemplate="{a:GlyphTemplate Home16}"
+                        Theme="{a:ControlTheme TitleBarButton}" 
+                        Command="{Binding NavigateHomeCommand}"/>
+                    <Button
+                        ContentTemplate="{a:GlyphTemplate LeftArrow16}"
+                        Theme="{a:ControlTheme TitleBarButton}" />
+                    <Button
+                        ContentTemplate="{a:GlyphTemplate RightArrow16}"
+                        Theme="{a:ControlTheme TitleBarButton}" />
+
+                </StackPanel>
+            </a:ChromedTitleBar.LeftContent>
+
+            <a:ChromedTitleBar.RightContent>
+                <StackPanel
+                    Margin="{Binding $parent[a:ChromedTitleBar].HasCaptionButtons, Converter={StaticResource RightContentMarginConverter}}"
+                    Orientation="Horizontal">
+                    <a:ToggleThemeButton
+                        Theme="{a:ControlTheme TitleBarToggleThemeButton}"
+                        ToolTip.Tip="Toggle Theme" />
+                    <Button Theme="{a:ControlTheme TitleBarButton}"
+                            ToolTip.Tip="Settings">
+                        <PathIcon Data="{StaticResource IconCogOutlined}" Height="16" Width="16" Opacity="0.9" />
+                    </Button>
+                </StackPanel>
+            </a:ChromedTitleBar.RightContent>
+        </a:ChromedTitleBar>
+
+        <!--~1~ Status Bar @1@
+        <Border DockPanel.Dock="Bottom" Background="{a:ThemeResource StatusBarBackgroundBrush}"
+                BorderBrush="{a:ThemeResource StatusBarBorderBrush}"
+                BorderThickness="{a:ThemeResource StatusBarBorderThickness}"
+                TextElement.Foreground="{a:ThemeResource StatusBarForegroundBrush}">
+            <Grid Margin="0,0,0,1" ColumnDefinitions="*,Auto,Auto">
+                <TextBlock Margin="20,4" Text="StatusMessage" />
+                <TextBlock Grid.Column="1" Margin="0,4" Text="ProductVersionAndDateSummaryText" />
+                <a:WindowResizeGrip Grid.Column="2" />
+            </Grid>
+        </Border>-->
+        
+        <!-- Client Area -->
+        <Border Background="Transparent" BorderBrush="{a:ThemeResource Container2BorderBrush}"
+                BorderThickness="0,1,0,0">
+            <TransitioningContentControl Content="{Binding CurrentPage}">
+                <TransitioningContentControl.PageTransition>
+                    <PageSlide Orientation="Horizontal" Duration="0:00:00.200" />
+                </TransitioningContentControl.PageTransition>
+            </TransitioningContentControl>
+        </Border>
+    </DockPanel>
+</Window>

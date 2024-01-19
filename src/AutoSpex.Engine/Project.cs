@@ -1,18 +1,9 @@
-﻿using JetBrains.Annotations;
-
-namespace AutoSpex.Engine;
+﻿namespace AutoSpex.Engine;
 
 public class Project
 {
     private readonly FileInfo _file;
 
-    [UsedImplicitly]
-    private Project()
-    {
-        Uri = new Uri(@"C:\default.spex");
-        _file = new FileInfo(Uri.LocalPath);
-    }
-    
     public Project(Uri path)
     {
         Uri = path ?? throw new ArgumentNullException(nameof(path));
@@ -23,12 +14,14 @@ public class Project
     {
         if (string.IsNullOrEmpty(path))
             throw new ArgumentException("Can not create Project with null or empty path.");
-        
+
         Uri = new Uri(path);
         _file = new FileInfo(Uri.LocalPath);
     }
 
-    public Uri Uri { get; init; }
+    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Local populated via dapper ORM
+    public Uri Uri { get; }
+    public string Summary { get; set; } = string.Empty;
     public DateTime OpenedOn { get; set; }
     public string Name => Path.GetFileNameWithoutExtension(Uri.LocalPath);
     public string Directory => Path.GetDirectoryName(Uri.LocalPath) ?? string.Empty;

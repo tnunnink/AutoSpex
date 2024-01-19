@@ -22,7 +22,16 @@ internal class ListProjectsHandler(IConnectionManager manager)
         CancellationToken cancellationToken)
     {
         var connection = await manager.Connect(Database.App, cancellationToken);
-        var projects = await connection.QueryAsync<Project>(Query);
-        return Result.Ok(projects);
+        var records = (await connection.QueryAsync(Query)).ToList();
+        
+        var projects = new List<Project>();
+        foreach (var record in records)
+        {
+            var project = new Project(record.Path);
+            project.OpenedOn = DateTime.Parse(record.OpenedOn);
+            projects.Add(project);
+        }
+        
+        return Result.Ok(projects.AsEnumerable());
     }
 }

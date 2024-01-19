@@ -63,13 +63,13 @@ public class Criterion
     {
         var type = candidate?.GetType();
         var property = type?.Property(Property);
-        var inputType = property?.Type ?? type;
         var getter = property?.Getter();
         
         try
         {
             var value = getter is not null ? getter(candidate) : candidate;
-            var args = Arguments.Select(a => a.Resolve(inputType)).ToArray();
+            var valueType = value?.GetType();
+            var args = Arguments.Select(a => a.ResolveAs(valueType)).ToArray();
             var result = Operation.Execute(value, args);
 
             return result

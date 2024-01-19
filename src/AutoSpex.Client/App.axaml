@@ -4,27 +4,24 @@
              xmlns:shared="clr-namespace:AutoSpex.Client.Shared"
              x:Class="AutoSpex.Client.App">
     <Application.DataTemplates>
-        <shared:ViewLocator/>
+        <shared:PageLocator/>
     </Application.DataTemplates>
     
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="Resources/Merged.axaml" />
-                <ResourceInclude Source="Features/Specs/Resources/Merged.axaml" />
+                <ResourceInclude Source="Components/All.axaml" />
+                <ResourceInclude Source="Components/Specs/Resources/Merged.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
     
     <Application.Styles>
         <a:ModernTheme Includes="All" />
-        <StyleInclude Source="avares://DialogHost.Avalonia/Styles.xaml"/>
         <StyleInclude Source="Resources/Styles/Global.axaml" />
         <StyleInclude Source="Resources/Styles/ButtonStyles.axaml" />
         <StyleInclude Source="Resources/Styles/TextBoxStyles.axaml" />
-        <StyleInclude Source="Resources/Icons/OutlinedIcons.axaml" />
-        <StyleInclude Source="Resources/Icons/FilledIcons.axaml" />
-        <StyleInclude Source="Resources/Icons/RegularIcons.axaml" />
     </Application.Styles>
     
    

@@ -1,0 +1,123 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:components="clr-namespace:AutoSpex.Client.Components"
+             xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+             x:Class="AutoSpex.Client.Components.BreadcrumbView"
+             x:DataType="observers:Breadcrumb">
+
+    <ItemsControl Name="ItemsControl"
+                  ItemsSource="{Binding Items}"
+                  Focusable="True">
+        <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+                <StackPanel Orientation="Horizontal" />
+            </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.DataTemplates>
+            <components:BreadcrumbTemplates>
+                <DataTemplate x:Key="{x:Static observers:CrumbType.Parent}"
+                              x:DataType="observers:Breadcrumb">
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="{Binding Name}"
+                                Command="{Binding NavigateCommand}"
+                                Theme="{a:ControlTheme ButtonSubtle}"
+                                Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                                TextElement.FontSize="13"
+                                Padding="2" />
+                        <Button Content=">"
+                                Theme="{a:ControlTheme ButtonSubtle}"
+                                Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                                TextElement.FontSize="13"
+                                Padding="2">
+                            <Button.Flyout>
+                                <Flyout Placement="BottomEdgeAlignedLeft">
+                                    <ItemsControl ItemsSource="{Binding Children}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate x:DataType="observers:Breadcrumb">
+                                                <Button Theme="{a:ControlTheme ButtonSubtle}"
+                                                        Command="{Binding NavigateCommand}"
+                                                        HorizontalContentAlignment="Stretch"
+                                                        Padding="5"
+                                                        Margin="2">
+                                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                                        <PathIcon
+                                                            Theme="{Binding Model.NodeType, Converter={StaticResource NodeToIconConverter}}" />
+                                                        <TextBlock Text="{Binding Name}"
+                                                                   VerticalAlignment="Center"
+                                                                   Classes="theme-text-body size-sm" />
+                                                    </StackPanel>
+                                                </Button>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Flyout>
+                            </Button.Flyout>
+                        </Button>
+                    </StackPanel>
+                </DataTemplate>
+
+                <DataTemplate x:Key="{x:Static observers:CrumbType.Target}"
+                              x:DataType="observers:Breadcrumb">
+                    <StackPanel Orientation="Horizontal">
+                        <Panel>
+                            <TextBox Name="TargetEntry"
+                                     Text="{Binding Name}"
+                                     Classes="subtle"
+                                     Focusable="True"
+                                     FontSize="13"
+                                     Padding="2"
+                                     VerticalAlignment="Center"
+                                     GotFocus="CrumbEntryGotFocus"
+                                     LostFocus="CrumbEntryLostFocus"
+                                     KeyDown="CrumbEntryKeyDown">
+                                <TextBox.InnerLeftContent>
+                                    <PathIcon
+                                        Theme="{Binding Model.NodeType, Converter={StaticResource NodeToIconConverter}}"
+                                        Margin="5 0" />
+                                </TextBox.InnerLeftContent>
+                                <Interaction.Behaviors>
+                                    <DataTriggerBehavior Binding="{Binding InFocus}" 
+                                                         ComparisonCondition="Equal"
+                                                         Value="True">
+                                        <FocusControlAction TargetControl="TargetEntry" />
+                                    </DataTriggerBehavior>
+                                </Interaction.Behaviors>
+                            </TextBox>
+                        </Panel>
+                        <Button Content=">"
+                                IsVisible="{Binding HasNodes}"
+                                Theme="{a:ControlTheme ButtonSubtle}"
+                                Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                                Padding="2">
+                            <Button.Flyout>
+                                <Flyout Placement="BottomEdgeAlignedLeft">
+                                    <ItemsControl ItemsSource="{Binding Children}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate x:DataType="observers:Breadcrumb">
+                                                <Button Theme="{a:ControlTheme ButtonSubtle}"
+                                                        Command="{Binding NavigateCommand}"
+                                                        CommandParameter="{Binding }"
+                                                        HorizontalContentAlignment="Stretch"
+                                                        Padding="5"
+                                                        Margin="2">
+                                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                                        <PathIcon
+                                                            Theme="{Binding Model.NodeType, Converter={StaticResource NodeToIconConverter}}" />
+                                                        <TextBlock Text="{Binding Name}"
+                                                                   VerticalAlignment="Center"
+                                                                   Classes="theme-text-body size-sm" />
+                                                    </StackPanel>
+                                                </Button>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Flyout>
+                            </Button.Flyout>
+                        </Button>
+                    </StackPanel>
+                </DataTemplate>
+            </components:BreadcrumbTemplates>
+        </ItemsControl.DataTemplates>
+    </ItemsControl>
+</UserControl>

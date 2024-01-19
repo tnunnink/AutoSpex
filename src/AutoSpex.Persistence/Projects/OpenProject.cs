@@ -16,9 +16,10 @@ namespace AutoSpex.Persistence;
 public record OpenProject(Project Project) : ICommand<Result>;
 
 [UsedImplicitly]
-internal class UpdateProjectHandler(IConnectionManager manager) : IRequestHandler<OpenProject, Result>
+internal class OpenProjectHandler(IConnectionManager manager) : IRequestHandler<OpenProject, Result>
 {
-    private const string Update = "UPDATE Project SET OpenedOn = @OpenedOn WHERE Path = @Path";
+    private const string Update = "INSERT INTO Project(Path, OpenedOn) VALUES (@Path, @OpenedOn)" +
+                                  "ON CONFLICT DO UPDATE SET OpenedOn = @OpenedOn";
 
     public async Task<Result> Handle(OpenProject request, CancellationToken cancellationToken)
     {
@@ -26,7 +27,7 @@ internal class UpdateProjectHandler(IConnectionManager manager) : IRequestHandle
         project.OpenedOn = DateTime.Now;
         
         var connection = await manager.Connect(Database.App, cancellationToken);
-        await connection.ExecuteAsync(Update, new {Path = project.Uri.LocalPath, project.OpenedOn});
+        await connection.ExecuteAsync(Update, new {Path = project.Uri.LocalPath, project.OpenedOn, project.Summary});
         
         manager.Register(Database.Project, project.Uri.LocalPath);
         

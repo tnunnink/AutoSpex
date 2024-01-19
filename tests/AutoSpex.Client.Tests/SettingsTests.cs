@@ -11,14 +11,6 @@ public class SettingsTests
     {
         File.Delete("settings.db");
     }
-
-    [Test]
-    public void OpenProject_Default_ShouldBeEmpty()
-    {
-        var setting = Settings.App.OpenProject;
-
-        setting.Should().BeEmpty();
-    }
     
     [Test]
     public void Theme_Default_ShouldBeEmpty()

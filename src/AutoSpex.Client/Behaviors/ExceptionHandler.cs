@@ -8,7 +8,7 @@ using MediatR.Pipeline;
 
 namespace AutoSpex.Client.Behaviors;
 
-public class ExceptionBehavior<TRequest, TResponse, TException> :
+public class ExceptionBehavior<TRequest, TResponse, TException>(IMessenger messenger) :
     IRequestExceptionHandler<TRequest, TResponse, TException>
     where TRequest : notnull
     where TResponse : class, IResultBase, new()
@@ -17,22 +17,15 @@ public class ExceptionBehavior<TRequest, TResponse, TException> :
     private const string Message =
         "The request encounter an unexpected error. See log for details. If this issue persists, please report it.";
 
-    private readonly INotificationService _notifier;
-    private readonly IMessenger _messenger;
-
-    public ExceptionBehavior(INotificationService notifier, IMessenger messenger)
-    {
-        _notifier = notifier;
-        _messenger = messenger;
-    }
+    private readonly IMessenger _messenger = messenger;
 
     public Task Handle(TRequest request, TException exception, RequestExceptionHandlerState<TResponse> state,
         CancellationToken cancellationToken)
     {
         var error = new Error(Message).CausedBy(exception);
 
-        var notification = new Notification("Request Error", error.Message, NotificationType.Error);
-        _notifier.Show(notification);
+        /*var notification = new Notification("Request Error", error.Message, NotificationType.Error);
+        _notifier.Show(notification);*/
 
         var response = new TResponse();
         response.Reasons.Add(error);

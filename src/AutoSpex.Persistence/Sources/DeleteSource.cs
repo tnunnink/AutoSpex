@@ -16,7 +16,7 @@ internal class DeleteSourceHandler(IConnectionManager manager) : IRequestHandler
     public async Task<Result> Handle(DeleteSource request, CancellationToken cancellationToken)
     {
         using var connection = await manager.Connect(Database.Project, cancellationToken);
-        var result = await connection.ExecuteAsync(Command, request.SourceId);
-        return Result.OkIf(result == 1, $"Source Not Found: '{request.SourceId}'");
+        var result = await connection.ExecuteAsync(Command, new {request.SourceId});
+        return Result.OkIf(result == 1, $"Source not found: '{request.SourceId}'");
     }
 } 

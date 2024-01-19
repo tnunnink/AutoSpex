@@ -103,11 +103,11 @@ public class Node
         return node;
     }
 
-    public Node AddSpec(string? name = default)
+    public Node AddSpec(string? name = default, Action<Spec>? config = default)
     {
         if (!NodeType.CanAdd(NodeType.Spec))
             throw new ArgumentException($"Can not add a {NodeType.Spec} to a {NodeType} node.");
-
+        
         var node = new Node
         {
             NodeId = Guid.NewGuid(),
@@ -115,10 +115,11 @@ public class Node
             Parent = this,
             NodeType = NodeType.Spec,
             Name = name ?? "New Spec",
-            Depth = Depth + 1,
-            Spec = new Spec()
+            Depth = Depth + 1
         };
-
+        
+        node.Spec = new Spec(node);
+        config?.Invoke(node.Spec);
         _nodes.Add(node);
         return node;
     }

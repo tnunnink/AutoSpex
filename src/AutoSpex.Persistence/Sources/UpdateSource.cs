@@ -12,9 +12,9 @@ public record UpdateSource(Source Source) : ICommand<Result>;
 [UsedImplicitly]
 internal class UpdateSourceHandler(IConnectionManager manager) : IRequestHandler<UpdateSource, Result>
 {
-    private const string UnselectSources = 
+    private const string UnselectSources =
         "UPDATE Source Set IsSelected = 0 WHERE SourceId <> @SourceId";
-    
+
     private const string UpdateSource =
         "UPDATE Source SET IsSelected = @IsSelected, Name = @Name, Description = @Description, " +
         "TargetType = @TargetType, TargetName = @TargetName, ExportedOn = @ExportedOn, " +
@@ -25,7 +25,7 @@ internal class UpdateSourceHandler(IConnectionManager manager) : IRequestHandler
     {
         using var connection = await manager.Connect(Database.Project, cancellationToken);
         using var transaction = connection.BeginTransaction();
-        
+
         //If the source to add is to be selected then reset all other sources first.
         if (request.Source.IsSelected)
         {
@@ -33,6 +33,9 @@ internal class UpdateSourceHandler(IConnectionManager manager) : IRequestHandler
         }
         
         var result = await connection.ExecuteAsync(UpdateSource, request.Source, transaction);
+        
+        transaction.Commit();
+        
         return Result.OkIf(result == 1, $"Source not found: '{request.Source.SourceId}'");
     }
 }

@@ -1,0 +1,71 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    x:DataType="observers:ProjectObserver">
+  <Design.PreviewWith>
+    <Border Padding="100">
+      <StackPanel Spacing="50">
+        <Button ContextFlyout="{DynamicResource ProjectListFlyout}" Content="Test" />
+      </StackPanel>
+    </Border>
+  </Design.PreviewWith>
+
+  <MenuFlyout x:Key="ProjectListFlyout">
+    
+    <MenuItem Header="Open"
+              Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
+              Command="{Binding OpenCommand}"
+              IsEnabled="{Binding Exists}">
+      <MenuItem.Icon>
+        <PathIcon Data="{StaticResource IconLaunchOutlined}" />
+      </MenuItem.Icon>
+    </MenuItem>
+
+    <MenuItem Header="Show In Explorer"
+              Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
+              Command="{Binding LocateCommand}"
+              IsEnabled="{Binding Exists}">
+      <MenuItem.Icon>
+        <PathIcon Data="{StaticResource IconFolderOutlined}" />
+      </MenuItem.Icon>
+    </MenuItem>
+
+    <MenuItem Header="Copy Path"
+              Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
+              Command="{Binding CopyPathCommand}">
+      <MenuItem.Icon>
+        <PathIcon Data="{StaticResource IconCopyOutlined}" />
+      </MenuItem.Icon>
+    </MenuItem>
+
+    <Separator />
+
+    <MenuItem Header="Remove"
+              Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
+              Command="{Binding RemoveCommand}">
+      <MenuItem.Icon>
+        <PathIcon Data="{StaticResource IconClose}" Height="10" Width="10" />
+      </MenuItem.Icon>
+    </MenuItem>
+
+    <!--<MenuItem Header="Delete"
+              Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
+              Command="{Binding DeleteCommand}"
+              IsEnabled="{Binding Converter={x:Static ObjectConverters.IsNotNull}}"
+              Classes="danger">
+      <MenuItem.Styles>
+        <Style Selector="MenuItem.danger:pointerover /template/ Border">
+          <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSolidDanger}" />
+        </Style>
+        <Style Selector="MenuItem.danger:pointerover /template/ ContentPresenter">
+          <Setter Property="TextElement.Foreground" Value="{a:ThemeResource ControlForegroundBrushSolidDanger}" />
+        </Style>
+      </MenuItem.Styles>
+      <MenuItem.Icon>
+        <PathIcon Data="{StaticResource Icon.Outlined.Trash}" />
+      </MenuItem.Icon>
+    </MenuItem>-->
+  </MenuFlyout>
+</ResourceDictionary>

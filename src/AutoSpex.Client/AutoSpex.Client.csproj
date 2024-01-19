@@ -46,14 +46,11 @@
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
         <PackageReference Include="DynamicData" Version="8.1.1" />
         <PackageReference Include="FluentResults" Version="3.15.2" />
-        <PackageReference Include="HanumanInstitute.MvvmDialogs.Avalonia" Version="2.0.0" />
-        <PackageReference Include="HanumanInstitute.MvvmDialogs.Avalonia.DialogHost" Version="2.0.0" />
         <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
         <PackageReference Include="Lamar" Version="13.0.0" />
         <PackageReference Include="MediatR" Version="12.2.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
-        <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="6.0.0" />
         <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
         <PackageReference Include="Serilog.Sinks.SQLite" Version="6.0.0" />
     </ItemGroup>
@@ -125,10 +122,6 @@
         <DependentUpon>ProjectListView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
-      <Compile Update="Features\Projects\NewProjectView.axaml.cs">
-        <DependentUpon>NewProjectView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
       <Compile Update="Features\Sources\AddSourceView.axaml.cs">
         <DependentUpon>AddSourceView.axaml</DependentUpon>
         <SubType>Code</SubType>
@@ -169,12 +162,37 @@
         <DependentUpon>NodeTreeView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
-      <Compile Update="Views\DetailsView.axaml.cs">
+      <Compile Update="Features\Projects\ProjectLaunchView.axaml.cs">
+        <DependentUpon>LauncherView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Pages\NewProjectPage.axaml.cs">
+        <DependentUpon>NewProjectView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Components\ProjectSelector.axaml.cs">
+        <DependentUpon>ProjectSelector.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Pages\HomePage.axaml.cs">
+        <DependentUpon>HomePage.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Components\ProjectDefault.axaml.cs">
+        <DependentUpon>ProjectDefaultView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Pages\DetailsPage.axaml.cs">
         <DependentUpon>DetailsView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
-      <Compile Update="Views\NavigationView.axaml.cs">
-        <DependentUpon>NavigationView.axaml</DependentUpon>
+      <Compile Remove="ShellView.axaml.cs" />
+      <Compile Update="Pages\SpecsPage.axaml.cs">
+        <DependentUpon>NodeTreeView.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Pages\SourcesPage.axaml.cs">
+        <DependentUpon>SourceListView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
     </ItemGroup>
@@ -206,15 +224,18 @@
       <AvaloniaXaml Remove="Features\Specifications\Resources\CollectionContextMenu.axaml" />
       <None Remove="Resources\Images\Icons\link.svg" />
       <AvaloniaXaml Remove="Resources\Controls\SplitGrid.axaml" />
+      <None Remove="Resources\Images\icons8-inspection-96 (4).png" />
+      <AvaloniaResource Include="Resources\Images\logo_new.png" />
+      <AvaloniaXaml Remove="ShellView.axaml" />
+      <None Remove="Resources\Images\icons8-true-false-96.png" />
+      <None Remove="Resources\Images\inspect-code.png" />
+      <AvaloniaResource Include="Resources\Images\inspect-code.png" />
+      <AvaloniaXaml Remove="Resources\Icons\FilledIcons.axaml" />
+      <AvaloniaXaml Remove="Resources\Icons\OutlinedIcons.axaml" />
+      <AvaloniaXaml Remove="Resources\Icons\RegularIcons.axaml" />
     </ItemGroup>
 
     <ItemGroup>
       <UpToDateCheckInput Remove="Features\Specifications\Resources\All.axaml" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Features\Sources\Messages\" />
-      <Folder Include="Features\Sources\Resources\" />
-      <Folder Include="Resources\Menus\" />
     </ItemGroup>
 </Project>

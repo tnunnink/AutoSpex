@@ -1,0 +1,48 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:controls="using:AutoSpex.Client.Components"
+                    xmlns:shared="clr-namespace:AutoSpex.Client.Shared">
+    <Design.PreviewWith>
+        <Border>
+            <controls:ProjectNavMenu />
+        </Border>
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type controls:ProjectNavMenu}" TargetType="controls:ProjectNavMenu">
+        <!-- Set Defaults -->
+        <Setter Property="Template">
+            <ControlTemplate>
+                <TabControl ItemsSource="{TemplateBinding Pages}"
+                            SelectedItem="{TemplateBinding SelectedPage}"
+                            Theme="{a:ControlTheme TabControlOutline}"
+                            ItemContainerTheme="{StaticResource NavigationTabItem}"
+                            Background="Transparent"
+                            HorizontalContentAlignment="Stretch"
+                            VerticalContentAlignment="Stretch"
+                            TabStripPlacement="Left"
+                            BorderThickness="0"
+                            Padding="0">
+                    <TabControl.ItemTemplate>
+                        <DataTemplate x:DataType="shared:PageViewModel">
+                            <StackPanel Spacing="5">
+                                <PathIcon Data="{Binding Icon, Converter={StaticResource KeyToIconConverter}}" 
+                                          Height="18" Width="18"/>
+                                <TextBlock Text="{Binding Title}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </TabControl.ItemTemplate>
+                    <TabControl.ContentTemplate>
+                        <DataTemplate x:DataType="shared:PageViewModel">
+                            <Border BorderThickness="1 0 0 0"
+                                    BorderBrush="{a:ThemeResource Container2BorderBrush}"
+                                    Background="{a:ThemeResource Container2BackgroundBrush}">
+                                <ContentControl Content="{Binding}" />
+                            </Border>
+                        </DataTemplate>
+                    </TabControl.ContentTemplate>
+                </TabControl>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

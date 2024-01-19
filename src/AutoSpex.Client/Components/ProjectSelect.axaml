@@ -1,0 +1,36 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:controls="using:AutoSpex.Client.Components">
+
+    <Design.PreviewWith>
+        <controls:ProjectSelect />
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type controls:ProjectSelect}" TargetType="controls:ProjectSelect">
+
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Button Theme="{actipro:ControlTheme TitleBarButton}">
+                    <DockPanel LastChildFill="True">
+                        <PathIcon Data="{StaticResource IconCubeOutlined}"
+                                  Foreground="{DynamicResource IconBrushDefault}" Margin="5 0" />
+                        <ContentPresenter ContentTemplate="{actipro:GlyphTemplate DropDownArrow16}"
+                                          DockPanel.Dock="Right" />
+                        <TextBlock Text="{TemplateBinding SelectedProject}"
+                                   Margin="5 0"
+                                   VerticalAlignment="Center" />
+                    </DockPanel>
+                    <Button.Flyout>
+                        <Flyout Placement="BottomEdgeAlignedLeft"
+                                ShowMode="TransientWithDismissOnPointerMoveAway"
+                                HorizontalOffset="-10">
+                            <Border Padding="5">
+                            </Border>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

@@ -45,7 +45,6 @@ public class MP10000 : AutoReversingMigration
 
         Create.Table("Runner")
             .WithColumn("RunnerId").AsString().PrimaryKey()
-            .WithColumn("SourceId").AsString().NotNullable().ForeignKey("Source", "SourceId")
             .WithColumn("Name").AsString().NotNullable()
             .WithColumn("Description").AsString();
 

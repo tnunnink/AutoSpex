@@ -21,8 +21,8 @@
         <Setter Property="FontWeight" Value="{a:ThemeResource TabItemFontWeightOutline}" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushSecondary}" />
-        <Setter Property="CornerRadius" Value="10" />
-        <Setter Property="Margin" Value="5 10" />
+        <Setter Property="CornerRadius" Value="5" />
+        <Setter Property="Margin" Value="5" />
         <Setter Property="Padding" Value="10" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="Template">
@@ -51,12 +51,9 @@
 
         <!--  Selected state  -->
         <Style Selector="^:selected /template/ Border#PART_LayoutRoot">
-            <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoft}" />
+            <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftAccent}" />
             <Setter Property="TextElement.Foreground"
                     Value="{a:ThemeResource ControlForegroundBrushSoftAccent}" />
-        </Style>
-        <Style Selector="^:selected /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="FontWeight" Value="SemiBold"></Setter>
         </Style>
 
         <!--  PointerOver state  -->
@@ -68,7 +65,7 @@
 
         <!-- PointerOver Selected state  -->
         <Style Selector="^:selected:pointerover /template/ Border#PART_LayoutRoot">
-            <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoft}" />
+            <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftAccent}" />
             <Setter Property="TextElement.Foreground"
                     Value="{a:ThemeResource ControlForegroundBrushSoftAccent}" />
         </Style>

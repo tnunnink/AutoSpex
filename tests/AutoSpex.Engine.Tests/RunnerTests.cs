@@ -1,4 +1,6 @@
-﻿namespace AutoSpex.Engine.Tests;
+﻿using Task = System.Threading.Tasks.Task;
+
+namespace AutoSpex.Engine.Tests;
 
 [TestFixture]
 public class RunnerTests
@@ -55,5 +57,45 @@ public class RunnerTests
         runner.Collections.First().Descendents().Should().HaveCount(2);
         runner.Collections.First().Should().NotBeSameAs(collection);
         runner.Collections.First().NodeId.Should().Be(collection.NodeId);
+    }
+
+    [Test]
+    public async Task Run_ValidSpecNode_ShouldReturnExpectedOutcomes()
+    {
+        var source = new Source(L5X.Load(Known.Test));
+        var runner = new Runner();
+        var collection = Node.NewCollection();
+        var spec = collection.AddSpec("AllProgramsShouldNotBeDisabled", c =>
+        {
+            c.Element = Element.Program;
+            c.Verify(nameof(Program.Disabled), Operation.Equal, false);
+        });
+        runner.AddNode(spec);
+        
+        var run = await runner.Run(source);
+
+        run.Result.Should().Be(ResultState.Passed);
+        run.Outcomes.Should().NotBeEmpty();
+    }
+    
+    [Test]
+    public async Task Run_NotAFIExists_ShouldBePassedIfThatIsTrue()
+    {
+        var source = new Source(L5X.Load(Known.Test));
+        var runner = new Runner();
+        var collection = Node.NewCollection();
+        var spec = collection.AddSpec("No_AFIs_Should_Exist", c =>
+        {
+            c.Element = Element.Rung;
+            c.Where(nameof(Rung.Text), Operation.Contains, "AFI");
+            c.Settings.CountOperation = Operation.Equal;
+            c.Settings.CountValue = 0;
+        });
+        runner.AddNode(spec);
+        
+        var run = await runner.Run(source);
+
+        run.Result.Should().Be(ResultState.Passed);
+        run.Outcomes.Should().NotBeEmpty();
     }
 }

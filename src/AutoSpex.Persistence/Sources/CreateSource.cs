@@ -1,4 +1,5 @@
-﻿using AutoSpex.Engine;
+﻿using System.Data.SQLite;
+using AutoSpex.Engine;
 using Dapper;
 using FluentResults;
 using JetBrains.Annotations;

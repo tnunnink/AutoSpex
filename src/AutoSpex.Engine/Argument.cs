@@ -27,12 +27,12 @@ public class Argument
     /// will return whatever value we have. And finally this method will attempt to parse the value if it is a string
     /// and the specified type is something other than a string type.
     /// </remarks>
-    public object Resolve(Type? type)
+    public object ResolveAs(Type? type)
     {
-        //If a variable was provided, use the inner variable value.
+        //If a variable was provided, take the inner variable value, otherwise take this value.
         var value = Value is Variable variable ? variable.Value : Value;
 
-        //If a criterion was provided, just return that.
+        //If a criterion was provided, just return that. Nested arguments will return get resolved here too.
         if (value is Criterion criterion)
             return criterion;
 
@@ -41,12 +41,19 @@ public class Argument
         if (type is null)
             return value;
 
-        //If this is a string argument but the type needs to be parsed, we need to attempt that here.
-        if (value is string text && type != typeof(string))
-        {
-            return text.Parse(type); //todo at some point we want to TryParse the text and if failed just return value.
-        }
+        //If this is is not a string or we are simply trying to resolve it as one, just return that.
+        if (value is not string text || type == typeof(string)) return value;
         
+        //If not parsable by L5Sharp then just return.
+        if (!type.IsParsable()) return value;
+        
+        //Otherwise we want to attempt to parse the string to the specified typed value if possible in order
+        //to use that types defined equality overrides. This is using a built in method from L5Sharp which
+        //knows how to parse it's types (as well as primitive types).
+        var parsed = text.TryParse(type);
+        if (parsed is not null) return parsed;
+
+        //And if none of that returned, just return the value.
         return value;
     }
     

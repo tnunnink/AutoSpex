@@ -8,27 +8,25 @@ namespace AutoSpex.Persistence.Tests.Projects;
 public class CreateProjectTests
 {
     [Test]
-    public async Task Send_ValidRequest_ShouldReturnSuccess()
+    public async Task CreateProject_ValidRequest_ShouldReturnSuccess()
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
         var project = new Project(context.ProjectPath);
-        var command = new CreateProject(project);
         
-        var result = await mediator.Send(command);
+        var result = await mediator.Send(new CreateProject(project));
 
         result.IsSuccess.Should().BeTrue();
     }
 
     [Test]
-    public async Task Send_InvalidLocation_ShouldReturnFailed()
+    public async Task CreateProject_InvalidLocation_ShouldReturnFailed()
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
         var project = new Project(new Uri(@"D:\Files\Proejcts"));
-        var command = new CreateProject(project);
         
-        var result = await mediator.Send(command);
+        var result = await mediator.Send(new CreateProject(project));
 
         result.IsFailed.Should().BeTrue();
         result.Errors.Should().NotBeEmpty();

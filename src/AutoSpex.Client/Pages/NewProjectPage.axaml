@@ -1,0 +1,96 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             x:Class="AutoSpex.Client.Pages.NewProjectPage"
+             x:DataType="pages:NewProjectPageModel">
+    <UserControl.Transitions>
+        <Transitions>
+            
+        </Transitions>
+    </UserControl.Transitions>
+    
+    <Design.Width>1000</Design.Width>
+    <Design.Height>800</Design.Height>
+
+    <Grid ColumnDefinitions="*,Auto,*"
+          RowDefinitions="*,Auto,2*">
+
+        <StackPanel Grid.Column="1" Grid.Row="1"
+                    MinWidth="400">
+            <!--heading-->
+            <StackPanel Orientation="Horizontal"
+                        Margin="0 10">
+                <PathIcon Data="{StaticResource IconCubeOutlined}"
+                          Foreground="{DynamicResource IconBrushDefault}"
+                          Height="30" Width="30"
+                          Margin="0 3 12 0" />
+                <TextBlock Text="Create Project"
+                           Classes="theme-text-heading size-lg" />
+            </StackPanel>
+            <TextBlock Text="Specify a name and location to create a blank project."
+                       Classes="caption" />
+
+            <!--form-->
+            <StackPanel Margin="0 30" Spacing="20">
+                <TextBox Text="{Binding Name}"
+                         Theme="{StaticResource FocusTextBoxTheme}"
+                         VerticalContentAlignment="Center"
+                         Watermark="Name"
+                         UseFloatingWatermark="True" />
+
+                <TextBox Text="{Binding Location}"
+                         Theme="{StaticResource FocusTextBoxTheme}"
+                         VerticalContentAlignment="Center"
+                         Watermark="Location"
+                         UseFloatingWatermark="True"
+                         Classes="folder">
+                    <TextBox.Styles>
+                        <Style Selector="TextBox">
+                            <Setter Property="InnerRightContent">
+                                <Template>
+                                    <Button DockPanel.Dock="Right"
+                                            Command="{Binding SelectLocationCommand}"
+                                            Classes="icon"
+                                            IsTabStop="False"
+                                            Theme="{a:ControlTheme ButtonInvisible}">
+                                        <PathIcon Data="{StaticResource IconFolderOutlined}"
+                                                  Height="16" Width="16"
+                                                  Foreground="{TemplateBinding Foreground}" />
+                                    </Button>
+                                </Template>
+                            </Setter>
+
+                            <Style Selector="^.pointerover /template/ ContentPresenter:pointerover">
+                                <Setter Property="Foreground"
+                                        Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+                            </Style>
+                        </Style>
+                    </TextBox.Styles>
+                </TextBox>
+
+                <TextBox Text="{Binding Summary}"
+                         Theme="{StaticResource FocusTextBoxTheme}"
+                         Height="80"
+                         Watermark="Summary"
+                         UseFloatingWatermark="True" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Spacing="10">
+                <Button Content="Cancel"
+                        Command="{Binding CancelCommand}"
+                        Theme="{a:ControlTheme ButtonSoft}" />
+                <Button Content="Test"
+                        Command="{Binding SelectLocationCommand}"
+                        Theme="{a:ControlTheme ButtonSoft}" />
+                <Button Content="Create"
+                        Command="{Binding CreateCommand}"
+                        Theme="{a:ControlTheme ButtonSolid}"
+                        Classes="accent" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+
+</UserControl>

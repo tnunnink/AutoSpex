@@ -5,22 +5,22 @@
         <Border Padding="20">
             <WrapPanel>
                 <Button Classes="icon">
-                    <PathIcon Data="{StaticResource Icon.Outlined.Cog}" />
+                    <PathIcon Data="{StaticResource IconCogOutlined}" />
                 </Button>
                 <Button Classes="icon">
-                    <PathIcon Data="{StaticResource Icon.Outlined.Cube}" />
+                    <PathIcon Data="{StaticResource IconOutlinedCube}" />
                 </Button>
                 <Button Classes="icon-sm">
-                    <PathIcon Data="{StaticResource Icon.Search}" />
+                    <PathIcon Data="{StaticResource IconSearch}" />
                 </Button>
                 <Button Classes="icon">
-                    <PathIcon Data="{StaticResource Icon.Filled.Clipboard}" />
+                    <PathIcon Data="{StaticResource IconClipboardFilled}" />
                 </Button>
                 <Button Classes="icon">
-                    <PathIcon Data="{StaticResource Icon.Filled.Filter}" />
+                    <PathIcon Data="{StaticResource IconFilterFilled}" />
                 </Button>
                 <ToggleButton Classes="icon accent">
-                    <PathIcon Data="{StaticResource Icon.Filled.Filter}" />
+                    <PathIcon Data="{StaticResource IconFilterFilled}" />
                 </ToggleButton>
             </WrapPanel>
         </Border>

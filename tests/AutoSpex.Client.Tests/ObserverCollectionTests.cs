@@ -1,5 +1,5 @@
-﻿using AutoSpex.Client.Features;
-using AutoSpex.Client.Shared;
+﻿using AutoSpex.Client.Components;
+using AutoSpex.Client.Observers;
 using AutoSpex.Engine;
 using FluentAssertions;
 
