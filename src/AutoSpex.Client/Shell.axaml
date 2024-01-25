@@ -59,7 +59,7 @@
                         ToolTip.Tip="Toggle Theme" />
                     <Button Theme="{a:ControlTheme TitleBarButton}"
                             ToolTip.Tip="Settings">
-                        <PathIcon Data="{StaticResource IconCogOutlined}" Height="16" Width="16" Opacity="0.9" />
+                        <PathIcon Theme="{StaticResource IconCogOutlined}" Opacity="0.9" />
                     </Button>
                 </StackPanel>
             </a:ChromedTitleBar.RightContent>

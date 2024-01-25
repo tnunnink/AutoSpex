@@ -11,7 +11,7 @@ namespace AutoSpex.Persistence;
 /// </summary>
 /// <param name="Project">The project to remove.</param>
 [PublicAPI]
-public record RemoveProject(Project Project) : ICommand<Result>;
+public record RemoveProject(Project Project) : IDbCommand<Result>;
 
 [UsedImplicitly]
 internal class RemoveProjectHandler(IConnectionManager manager) : IRequestHandler<RemoveProject, Result>

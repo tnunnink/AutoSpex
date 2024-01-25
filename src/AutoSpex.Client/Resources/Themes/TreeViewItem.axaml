@@ -6,7 +6,7 @@
         <Border Padding="20"
                 MinWidth="300"
                 MinHeight="500">
-            <TreeView ItemContainerTheme="{DynamicResource SpexTreeViewItem}">
+            <TreeView ItemContainerTheme="{DynamicResource TreeViewItemSubtle}">
                 <TreeViewItem Header="Level 1" IsExpanded="True">
                     <TreeViewItem Header="Level 2.1" IsSelected="True" IsExpanded="True">
                         <TreeViewItem Header="Level 3.1" />
@@ -20,20 +20,21 @@
         </Border>
     </Design.PreviewWith>
 
-    <!-- SpexTreeViewItem -->
-    <ControlTheme x:Key="SpexTreeViewItem"
+    <!-- TreeViewItemSubtle -->
+    <ControlTheme x:Key="TreeViewItemSubtle"
                   TargetType="TreeViewItem"
                   BasedOn="{markup:ControlTheme TreeViewItem}">
         
         <Setter Property="BorderThickness" Value="3 0 0 0" />
         <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="Padding" Value="5" />
         
         <Style Selector="^:empty /template/ ToggleButton">
             <Setter Property="IsVisible" Value="False" />
         </Style>
         <Style Selector="^:pointerover /template/ Border#border:pointerover">
             <Setter Property="Background" Value="{markup:ThemeResource ListItemBackgroundBrushPointerOver}" />
-            <Setter Property="BorderBrush" Value="DimGray" />
+            <Setter Property="BorderBrush" Value="{markup:ThemeResource Container4BorderBrush}" />
         </Style>
         <Style Selector="^:pressed /template/ Border#border:pointerover">
             <Setter Property="Background" Value="{markup:ThemeResource ListItemBackgroundBrushPressed}" />

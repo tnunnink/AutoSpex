@@ -7,7 +7,7 @@
     
     <Button Theme="{actipro:ControlTheme TitleBarButton}">
         <DockPanel LastChildFill="True">
-            <PathIcon Data="{StaticResource IconCubeFilled}"
+            <PathIcon Theme="{StaticResource IconCubeFilled}"
                       Foreground="{DynamicResource IconBrushDefault}" Margin="5 0" />
             <ContentPresenter ContentTemplate="{actipro:GlyphTemplate DropDownArrow16}"
                               DockPanel.Dock="Right" />

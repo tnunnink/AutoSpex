@@ -7,7 +7,7 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record CreateRunner(Runner Runner) : ICommand<Result>;
+public record CreateRunner(Runner Runner) : IDbCommand<Result>;
 
 [UsedImplicitly]
 internal class CreateRunnerHandler(IConnectionManager manager) : IRequestHandler<CreateRunner, Result>

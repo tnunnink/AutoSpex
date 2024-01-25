@@ -10,7 +10,7 @@ namespace AutoSpex.Persistence;
 /// Returns all <see cref="Runner"/> with the id and name properties populated for showing selectable list of runners.
 /// </summary>
 [PublicAPI]
-public record ListRunners : IQuery<Result<IEnumerable<Runner>>>;
+public record ListRunners : IDbQuery<Result<IEnumerable<Runner>>>;
 
 [UsedImplicitly]
 internal class ListRunnersHandler(IConnectionManager manager)

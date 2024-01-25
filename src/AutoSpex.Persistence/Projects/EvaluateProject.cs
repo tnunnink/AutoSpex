@@ -15,7 +15,7 @@ namespace AutoSpex.Persistence;
 /// which will indicate what course of action the application must take in order to launch the project.
 /// </summary>
 [PublicAPI]
-public record EvaluateProject(Project Project) : IQuery<Result<ProjectAction>>;
+public record EvaluateProject(Project Project) : IDbQuery<Result<ProjectAction>>;
 
 [UsedImplicitly]
 internal class EvaluateProjectHandler : IRequestHandler<EvaluateProject, Result<ProjectAction>>

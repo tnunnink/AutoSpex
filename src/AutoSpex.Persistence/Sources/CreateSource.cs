@@ -8,7 +8,7 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record CreateSource(Source Source) : ICommand<Result>;
+public record CreateSource(Source Source) : IDbCommand<Result>;
 
 [UsedImplicitly]
 internal class CreateSourceHandler(IConnectionManager manager) : IRequestHandler<CreateSource, Result>

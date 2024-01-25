@@ -7,7 +7,7 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record GetSelectedSource : IQuery<Result<Source?>>;
+public record GetSelectedSource : IDbQuery<Result<Source?>>;
 
 [UsedImplicitly]
 internal class GetSelectedSourceHandler(IConnectionManager manager)

@@ -1,9 +1,18 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <ResourceDictionary.MergedDictionaries>
-        <ResourceInclude Source="ProjectDefault.axaml" />
-        <ResourceInclude Source="ProjectList.axaml" />
-        <ResourceInclude Source="ProjectListFlyouy.axaml" />
-        <ResourceInclude Source="ProjectNavMenu.axaml" />
+        <ResourceInclude Source="HomeMenu.axaml" />
+        <ResourceInclude Source="ProjectDefaultView.axaml" />
+        <ResourceInclude Source="ProjectListView.axaml" />
+        <ResourceInclude Source="ProjectTemplate.axaml" />
+        <ResourceInclude Source="ProjectMenu.axaml" />
+        <ResourceInclude Source="DetailsTab.axaml" />
+        <ResourceInclude Source="DetailsTabMenu.axaml" />
+        <ResourceInclude Source="DetailsContainer.axaml" />
+        <ResourceInclude Source="ProjectNavigationView.axaml" />
+        <ResourceInclude Source="SpecTreeView.axaml" />
+        <ResourceInclude Source="Specs/CollectionMenu.axaml" />
+        <ResourceInclude Source="Specs/FolderMenu.axaml" />
+        <ResourceInclude Source="Specs/SpecMenu.axaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

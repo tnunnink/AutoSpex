@@ -7,7 +7,7 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record ListVariables(Guid NodeId) : IQuery<Result<IEnumerable<Variable>>>;
+public record ListVariables(Guid NodeId) : IDbQuery<Result<IEnumerable<Variable>>>;
 
 [UsedImplicitly]
 internal class ListVariablesHandler(IConnectionManager manager)

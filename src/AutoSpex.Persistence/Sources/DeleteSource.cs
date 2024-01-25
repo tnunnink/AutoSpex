@@ -6,7 +6,7 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record DeleteSource(Guid SourceId) : ICommand<Result>;
+public record DeleteSource(Guid SourceId) : IDbCommand<Result>;
 
 [UsedImplicitly]
 internal class DeleteSourceHandler(IConnectionManager manager) : IRequestHandler<DeleteSource, Result>

@@ -1,33 +1,31 @@
 ﻿using System;
+using AutoSpex.Client.Pages;
 using AutoSpex.Engine;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace AutoSpex.Client.Components.Sources;
+namespace AutoSpex.Client.Observers;
 
-public partial class SourceObserver : ObservableObject
+public partial class SourceObserver(Source source) : Observer<Source>(source)
 {
-    private readonly Source _source;
+    public Guid SourceId => Model.SourceId;
 
-    public SourceObserver(Source source)
+    public string Name
     {
-        _source = source;
+        get => Model.Name;
+        set => SetProperty(Model.Name, value, Model, (s, v) => s.Name = v, true);
+    }
+    
+    public string Description
+    {
+        get => Model.Description;
+        set => SetProperty(Model.Description, value, Model, (s, v) => s.Description = v, true);
+    }
+    
+    public bool IsSelected
+    {
+        get => Model.IsSelected;
+        set => SetProperty(Model.IsSelected, value, Model, (s, v) => s.IsSelected = v, true);
     }
 
-    [ObservableProperty] private Guid _nodeId;
-
-    [ObservableProperty] private string _controller;
-
-    [ObservableProperty] private string? _processor;
-
-    [ObservableProperty] private string? _revision;
-
-    [ObservableProperty] private bool _isContext;
-
-    [ObservableProperty] private string? _targetType;
-
-    [ObservableProperty] private string? _targetName;
-
-    [ObservableProperty] private string? _exportedBy;
-
-    [ObservableProperty] private DateTime? _exportedOn;
+    /*private Task Open() => Navigator.Navigate<DetailsPageModel>(() => new SourcePageModel(this));*/
 }

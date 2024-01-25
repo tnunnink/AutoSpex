@@ -1,6 +1,7 @@
 ﻿using System;
-using AutoSpex.Client.Messages;
+using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
+using Avalonia.Input;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
@@ -15,16 +16,24 @@ public partial class ProjectObserver(Project project) : Observer<Project>(projec
     public DateTime OpenedOn => Model.OpenedOn;
 
     [RelayCommand]
-    private void Open() => Messenger.Send(new ProjectOpenMessage(this));
+    private void Open() => Messenger.Send(new OpenMessage(this));
 
     [RelayCommand]
-    private void Locate() => Messenger.Send(new ProjectLocateMessage(this));
+    private void Locate() => Messenger.Send(new LocateMessage(this));
 
     [RelayCommand]
-    private void CopyPath() => Messenger.Send(new ProjectCopyPathMessage(this));
+    private void CopyPath() => Messenger.Send(new CopyPathMessage(this));
     
     //todo pin/unpin
 
     [RelayCommand]
-    private void Remove() => Messenger.Send(new ProjectRemoveMessage(this));
+    private void Remove() => Messenger.Send(new RemoveMessage(this));
+    
+    public record OpenMessage(ProjectObserver Project);
+    public record RemoveMessage(ProjectObserver Project);
+    public record LocateMessage(ProjectObserver Project);
+    public record CopyPathMessage(ProjectObserver Project);
+    public record PinMessage(ProjectObserver Project);
+    public record UnpinMessage(ProjectObserver Project);
 }
+

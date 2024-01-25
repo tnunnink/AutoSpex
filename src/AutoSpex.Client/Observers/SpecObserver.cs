@@ -1,9 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using AutoSpex.Client.Observers;
-using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
+using CommunityToolkit.Mvvm.Input;
 
-namespace AutoSpex.Client.Components;
+namespace AutoSpex.Client.Observers;
 
 public partial class SpecObserver : Observer<Spec>
 {
@@ -24,8 +23,32 @@ public partial class SpecObserver : Observer<Spec>
         set => SetProperty(Model.Element, value, Model, (s, e) => s.Element = e, validate: true);
     }
 
-    public ObserverCollection<Criterion, CriterionObserver> Filters { get; private set; }
-    public ObserverCollection<Criterion, CriterionObserver> Verifications { get; private set; }
+    public ObserverCollection<Criterion, CriterionObserver> Filters { get; }
+    public ObserverCollection<Criterion, CriterionObserver> Verifications { get; }
+
+    [RelayCommand]
+    private void AddFilter()
+    {
+        Filters.Add(new Criterion());
+    }
+    
+    [RelayCommand]
+    private void RemoveFilter(Criterion criterion)
+    {
+        Filters.Add(criterion);
+    }
+    
+    [RelayCommand]
+    private void AddVerification()
+    {
+        Verifications.Add(new Criterion());
+    }
+    
+    [RelayCommand]
+    private void RemoveVerifications(Criterion criterion)
+    {
+        Verifications.Add(criterion);
+    }
 
     public static implicit operator SpecObserver(Spec model) => new(model);
 

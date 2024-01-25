@@ -4,7 +4,7 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 public class NotificationBehavior<TRequest, TResponse>(IPublisher mediator) : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : ICommand<TResponse>
+    where TRequest : IDbCommand<TResponse>
     where TResponse : IResultBase
 {
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next,

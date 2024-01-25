@@ -14,7 +14,7 @@ namespace AutoSpex.Persistence;
 /// </summary>
 /// <param name="Project">The <see cref="Engine.Project"/> to migrate.</param>
 [PublicAPI]
-public record MigrateProject(Project Project) : ICommand<Result>;
+public record MigrateProject(Project Project) : IDbCommand<Result>;
 
 [UsedImplicitly]
 internal class MigrateProjectHandler(IConnectionManager manager) : IRequestHandler<MigrateProject, Result>

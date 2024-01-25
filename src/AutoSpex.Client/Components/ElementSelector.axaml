@@ -1,0 +1,73 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="using:AutoSpex.Client.Components"
+                    xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui">
+    <Design.PreviewWith>
+        <controls:ElementSelector Width="500" Height="200"/>
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type controls:ElementSelector}" TargetType="controls:ElementSelector">
+
+        <Setter Property="Template">
+            <ControlTemplate>
+                <DockPanel>
+                    <TextBox DockPanel.Dock="Top"
+                             Text="{Binding FilterText, RelativeSource={RelativeSource TemplatedParent}}"
+                             Watermark="Filter Elements"
+                             CornerRadius="0"
+                             BorderThickness="0 0 0 1"
+                             BorderBrush="{actipro:ThemeResource Container1BorderBrush}">
+                        <TextBox.InnerLeftContent>
+                            <PathIcon Theme="{StaticResource IconSearch}"
+                                      Height="14" Width="14"
+                                      Foreground="{actipro:ThemeResource DefaultForegroundBrushTertiary}"
+                                      Margin="10 0 0 0" />
+                        </TextBox.InnerLeftContent>
+                    </TextBox>
+
+                    <ScrollViewer Classes="theme-scroll-overlay"
+                                  HorizontalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <ListBox ItemsSource="{TemplateBinding Elements}"
+                                     SelectedItem="{TemplateBinding SelectedElement}"
+                                     BorderThickness="0"
+                                     Background="Transparent">
+                            </ListBox>
+
+                            <Border BorderBrush="{actipro:ThemeResource Container1BorderBrush}"
+                                    BorderThickness="0 1 0 0"
+                                    IsVisible="{TemplateBinding FilterText, Converter={x:Static StringConverters.IsNullOrEmpty}}" />
+
+                            <Panel IsVisible="{TemplateBinding FilterText, Converter={x:Static StringConverters.IsNullOrEmpty}}">
+                                <ToggleButton IsChecked="{TemplateBinding ShowAll}"
+                                              Theme="{actipro:ControlTheme ToggleButtonLink}"
+                                              Classes="accent"
+                                              HorizontalContentAlignment="Left"
+                                              Foreground="{actipro:ThemeResource DefaultForegroundBrushSecondary}"
+                                              CornerRadius="0"
+                                              BorderThickness="0"
+                                              Padding="5">
+                                    <StackPanel Orientation="Horizontal" Spacing="5">
+                                        <TextBlock Text="Show All"
+                                                   Margin="5 0"
+                                                   VerticalAlignment="Center" />
+                                    </StackPanel>
+                                    <ToggleButton.Styles>
+                                        <Style Selector="ToggleButton:not(:unchecked)">
+                                            <Style Selector="^ /template/ Border#checkedBorder">
+                                                <Setter Property="IsVisible" Value="False" />
+                                            </Style>
+                                            <Style Selector="^ TextBlock">
+                                                <Setter Property="Text" Value="Show Less"></Setter>    
+                                            </Style>
+                                        </Style>
+                                    </ToggleButton.Styles>
+                                </ToggleButton>
+                            </Panel>
+                        </StackPanel>
+                    </ScrollViewer>
+                </DockPanel>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

@@ -7,7 +7,7 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record UpdateSource(Source Source) : ICommand<Result>;
+public record UpdateSource(Source Source) : IDbCommand<Result>;
 
 [UsedImplicitly]
 internal class UpdateSourceHandler(IConnectionManager manager) : IRequestHandler<UpdateSource, Result>

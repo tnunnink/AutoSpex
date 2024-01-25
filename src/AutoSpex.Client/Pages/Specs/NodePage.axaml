@@ -1,0 +1,121 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             xmlns:specs="clr-namespace:AutoSpex.Client.Pages.Specs"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="AutoSpex.Client.Pages.Specs.NodePage"
+             x:DataType="specs:NodePageModel">
+
+    <DockPanel LastChildFill="True">
+        <!--Header-->
+        <Border DockPanel.Dock="Top"
+                BorderThickness="0 0 0 1"
+                BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                Padding="5">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+
+                <!--<components:BreadcrumbView Grid.Column="0" />-->
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10">
+
+                    <!--<DropDownButton Theme="{a:ControlTheme DropDownButtonSubtle}"
+                                    Classes.warning="{Binding Element, Converter={x:Static ObjectConverters.IsNull}}"
+                                    Classes.accent="{Binding Element, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                    Content="{Binding Element.Name, FallbackValue='Select Element'}"
+                                    VerticalAlignment="Center"
+                                    Padding="10 5">
+                        <DropDownButton.Flyout>
+                            <Flyout Placement="BottomEdgeAlignedRight"
+                                    ShowMode="Standard"
+                                    HorizontalOffset="8"
+                                    Content="{Binding ElementMenu}">
+                            </Flyout>
+                        </DropDownButton.Flyout>
+                    </DropDownButton>-->
+
+                    <controls:IconButton
+                        Icon="{StaticResource IconFloppyOutlined}"
+                        Command="{Binding SaveCommand}" />
+                    <controls:IconButton
+                        Icon="{StaticResource IconPlayOutlined}"/>
+                    <Button Command="{Binding SaveCommand}"
+                            Theme="{a:ControlTheme ButtonSubtle}"
+                            Classes="accent">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <PathIcon Theme="{StaticResource IconFloppyOutlined}" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button x:Name="Run"
+                            Theme="{a:ControlTheme ButtonSubtle}"
+                            Classes="success">
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="10">
+                            <PathIcon Theme="{StaticResource IconPlayOutlined}" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!--Detail Tabs-->
+        <Panel>
+            <StackPanel Spacing="5"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+                <TextBlock Text="No Element Selected" />
+            </StackPanel>
+
+            <TabControl BorderThickness="0"
+                        ItemContainerTheme="{StaticResource TabItemStandard}">
+                <TabControl.Styles>
+                    <Style Selector="Border.header">
+                        <Setter Property="Background" Value="{a:ThemeResource Container3BackgroundBrush}" />
+                        <Setter Property="BorderBrush" Value="{a:ThemeResource Container3BorderBrush}" />
+                        <Setter Property="BorderThickness" Value="1" />
+                        <Setter Property="Padding" Value="7 3" />
+                    </Style>
+
+                    <Style Selector="Button.icon-header">
+                        <Setter Property="Theme" Value="{a:ControlTheme ButtonSubtle}" />
+                        <Setter Property="Foreground" Value="{DynamicResource IconBrushDefault}" />
+                        <Setter Property="Height" Value="24" />
+                        <Setter Property="Width" Value="24" />
+                        <Setter Property="Padding" Value="0" />
+
+                        <Style Selector="^:pointerover /template/ ContentPresenter">
+                            <Setter Property="Background" Value="{a:ThemeResource Container2BackgroundBrush}" />
+                        </Style>
+
+                        <Style Selector="^ PathIcon">
+                            <Setter Property="Height" Value="14" />
+                            <Setter Property="Width" Value="14" />
+                        </Style>
+
+                        <Style Selector="^:pointerover PathIcon">
+                            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+                        </Style>
+                    </Style>
+
+                    <Style Selector="PathIcon.icon-header">
+                        <Setter Property="Foreground" Value="{DynamicResource IconBrushDefault}" />
+                        <Setter Property="Height" Value="16" />
+                        <Setter Property="Width" Value="16" />
+
+                        <Style Selector="^:pointerover">
+                            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+                        </Style>
+                    </Style>
+                </TabControl.Styles>
+                <TabControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" Margin="10 0" />
+                    </ItemsPanelTemplate>
+                </TabControl.ItemsPanel>
+            </TabControl>
+        </Panel>
+    </DockPanel>
+</UserControl>

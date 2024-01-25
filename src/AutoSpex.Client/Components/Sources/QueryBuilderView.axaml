@@ -2,8 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
              xmlns:components="clr-namespace:AutoSpex.Client.Components"
-             x:Class="AutoSpex.Client.Components.Sources.QueryBuilderView"
-             x:DataType="components:SpecPageModel">
+             x:Class="AutoSpex.Client.Components.Sources.QueryBuilderView">
 
     <Border DockPanel.Dock="Top"
             CornerRadius="5"
@@ -18,7 +17,7 @@
                     <Flyout Placement="BottomEdgeAlignedLeft"
                             ShowMode="Standard"
                             HorizontalOffset="-10">
-                        <components:ElementMenuView />
+                        <components:ElementSelector />
                     </Flyout>
                 </DropDownButton.Flyout>
             </DropDownButton>
@@ -29,7 +28,7 @@
                         Spacing="10">
                 
                 <Button Classes="icon">
-                    <PathIcon Data="{StaticResource IconFilterOutlined}"/>    
+                    <PathIcon Theme="{StaticResource IconFilterOutlined}"/>    
                 </Button>
             </StackPanel>
 

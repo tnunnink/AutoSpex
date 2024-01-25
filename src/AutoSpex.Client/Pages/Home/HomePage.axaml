@@ -1,0 +1,28 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:home="clr-namespace:AutoSpex.Client.Pages.Home"
+             xmlns:components="clr-namespace:AutoSpex.Client.Components"
+             mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="800"
+             x:Class="AutoSpex.Client.Pages.Home.HomePage"
+             x:DataType="home:HomePageModel">
+
+    <Grid ColumnDefinitions="Auto, *">
+        <Border Background="{a:ThemeResource Container2BackgroundBrush}"
+                Width="300"
+                Padding="10">
+            <components:HomeMenu SelectedMenu="{Binding Menu}"/>
+        </Border>
+
+        <Border Grid.Column="1"
+                Background="{a:ThemeResource Container1BackgroundBrush}">
+            <TransitioningContentControl Content="{Binding Page}">
+                <TransitioningContentControl.PageTransition>
+                    <PageSlide Orientation="Horizontal" Duration="0:00:00.200" />
+                </TransitioningContentControl.PageTransition>
+            </TransitioningContentControl>
+        </Border>
+    </Grid>
+</UserControl>

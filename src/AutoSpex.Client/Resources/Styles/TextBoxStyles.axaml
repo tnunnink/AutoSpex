@@ -23,7 +23,7 @@
                         Classes="icon"
                         IsTabStop="False"
                         Theme="{a:ControlTheme ButtonInvisible}">
-                    <PathIcon Data="{StaticResource IconFolderOutlined}"
+                    <PathIcon Theme="{StaticResource IconFolderOutlined}"
                               Height="16" Width="16" 
                               Foreground="{TemplateBinding Foreground}"/>
                 </Button>

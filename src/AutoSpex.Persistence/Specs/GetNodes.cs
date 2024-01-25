@@ -7,7 +7,7 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record GetNodes : IQuery<Result<IEnumerable<Node>>>;
+public record GetNodes : IDbQuery<Result<IEnumerable<Node>>>;
 
 [UsedImplicitly]
 internal class GetNodeTreeHandler(IConnectionManager manager)

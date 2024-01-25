@@ -2,84 +2,116 @@
 using System.Collections.Generic;
 using System.Linq;
 using AutoSpex.Client.Observers;
-using AutoSpex.Client.Pages;
 using AutoSpex.Client.Shared;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using FluentResults;
 using JetBrains.Annotations;
+using HomePageModel = AutoSpex.Client.Pages.Home.HomePageModel;
+using ProjectPageModel = AutoSpex.Client.Pages.Projects.ProjectPageModel;
 
 namespace AutoSpex.Client.Services;
 
 [UsedImplicitly]
 [PublicAPI]
-public sealed class Navigator(IMessenger messenger)
+public sealed class Navigator(IMessenger messenger) : IDisposable
 {
-    private PageViewModel? _currentPage;
+    private readonly Dictionary<string, PageViewModel> _openPages = [];
 
     public Task NavigateHome()
     {
-        return PerformNavigation(Container.Resolve<HomePageModel>, nameof(ShellViewModel));
+        return OpenPage(Container.Resolve<HomePageModel>);
     }
 
     public Task NavigateProject(ProjectObserver project)
     {
-        return PerformNavigation(() => new ProjectPageModel(project), nameof(ShellViewModel));
+        return OpenPage(() => new ProjectPageModel(project));
     }
 
-    public Task Navigate<TPageModel>(params KeyValuePair<string, object>[] parameters) where TPageModel : PageViewModel
+    public Task Navigate<TPage>(params KeyValuePair<string, object>[] parameters)
+        where TPage : PageViewModel
     {
         var dictionary = parameters.Length > 0 ? parameters.ToDictionary(p => p.Key, p => p.Value) : default;
-        return PerformNavigation(Container.Resolve<TPageModel>, nameof(ShellViewModel), dictionary);
+        return OpenPage(Container.Resolve<TPage>, dictionary);
     }
 
-    public Task Navigate(Func<PageViewModel> factory, params KeyValuePair<string, object>[] parameters)
+    public Task Navigate<TPage>(Func<TPage> factory, params KeyValuePair<string, object>[] parameters)
+        where TPage : PageViewModel
     {
         var dictionary = parameters.Length > 0 ? parameters.ToDictionary(p => p.Key, p => p.Value) : default;
-        return PerformNavigation(factory, nameof(ShellViewModel), dictionary);
+        return OpenPage(factory, dictionary);
     }
 
-    public Task NavigateTo<TPage, TOwner>(params KeyValuePair<string, object>[] parameters) where TPage : PageViewModel
+    public void Remove(PageViewModel page)
     {
-        var dictionary = parameters.Length > 0 ? parameters.ToDictionary(p => p.Key, p => p.Value) : default;
-        return PerformNavigation(Container.Resolve<TPage>, typeof(TOwner).Name, dictionary);
+        _openPages.Remove(page.Route);
     }
 
-    public Task NavigateTo<TOwner>(Func<PageViewModel> factory, params KeyValuePair<string, object>[] parameters)
+    public void Dispose()
     {
-        var dictionary = parameters.Length > 0 ? parameters.ToDictionary(p => p.Key, p => p.Value) : default;
-        return PerformNavigation(factory, typeof(TOwner).Name, dictionary);
-    }
-
-    private async Task PerformNavigation(Func<PageViewModel> factory, string owner,
-        Dictionary<string, object>? parameters = null)
-    {
-        if (_currentPage is not null && _currentPage.IsChanged)
+        foreach (var page in _openPages.Values)
         {
-            //todo prompt
-            return;
+            page.IsActive = false;
         }
 
-        if (_currentPage is not null)
-            _currentPage.IsActive = false;
+        _openPages.Clear();
+    }
 
+    private async Task OpenPage<TPage>(Func<TPage> factory, Dictionary<string, object>? parameters = null)
+        where TPage : PageViewModel
+    {
+        var page = ResolvePage(factory);
+
+        var request = new NavigationRequest<TPage>(page, parameters);
+
+        try
+        {
+            await messenger.Send(request);
+        }
+        catch (Exception)
+        {
+            //todo send ui notification perhaps. definitely log. and yeah this should not happen if properly setup.
+            Console.WriteLine(
+                $"No owner is registered to receive navigation requests for page with route {page.Route}");
+            throw;
+        }
+
+        await ActivatePage(page);
+        CleanUp();
+    }
+
+    private TPage ResolvePage<TPage>(Func<TPage> factory) where TPage : PageViewModel
+    {
         var page = factory();
 
-        var request = new NavigationRequest(page, parameters);
-        var result = await messenger.Send(request, owner);
-
-        if (result.IsSuccess)
+        if (!_openPages.TryAdd(page.Route, page))
         {
-            _currentPage = page;
-            _currentPage.IsActive = true;
+            page = (TPage) _openPages[page.Route];
+        }
+
+        return page;
+    }
+
+    private static async Task ActivatePage(PageViewModel page)
+    {
+        if (page.IsActive) return;
+        page.IsActive = true;
+        await page.Load();
+    }
+
+    private void CleanUp()
+    {
+        var deactivated = _openPages.Where(p => !p.Value.IsActive).Select(p => p.Key).ToList();
+        foreach (var page in deactivated)
+        {
+            _openPages.Remove(page);
         }
     }
 }
 
-public class NavigationRequest(PageViewModel page, Dictionary<string, object>? parameters = null)
-    : AsyncRequestMessage<Result>
+public class NavigationRequest<TPage>(TPage page, Dictionary<string, object>? parameters = null)
+    : AsyncRequestMessage<Result> where TPage : PageViewModel
 {
-    public PageViewModel Page { get; } = page ?? throw new ArgumentNullException(nameof(page));
-
+    public TPage Page { get; } = page ?? throw new ArgumentNullException(nameof(page));
     public Dictionary<string, object> Parameters { get; } = parameters ?? [];
 }

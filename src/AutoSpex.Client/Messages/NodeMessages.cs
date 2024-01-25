@@ -14,9 +14,14 @@ public class NodeCreateRequest(NodeObserver node) : AsyncRequestMessage<Result>
     public NodeObserver Node { get; } = node ?? throw new ArgumentNullException(nameof(node));
 }
 
-public class NodeDeleteRequest(Guid nodeId) : AsyncRequestMessage<Result>
+public class NodeDeleteRequest(NodeObserver node) : AsyncRequestMessage<Result>
 {
-    public Guid NodeId { get; } = nodeId;
+    public NodeObserver Node { get; } = node ?? throw new ArgumentNullException(nameof(node));
+}
+
+public class NodeRenameRequest(NodeObserver node) : AsyncRequestMessage<Result>
+{
+    public NodeObserver Node { get; } = node ?? throw new ArgumentNullException(nameof(node));
 }
 
 public record NodeRenamedMessage(NodeObserver Node);

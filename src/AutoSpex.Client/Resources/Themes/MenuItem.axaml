@@ -1,0 +1,220 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:converters="using:Avalonia.Controls.Converters"
+                    xmlns:primitives="clr-namespace:ActiproSoftware.UI.Avalonia.Controls.Primitives;assembly=ActiproSoftware.Avalonia.Shared">
+
+    <Design.PreviewWith>
+        <Button Content="Test"
+                Margin="500">
+            <Button.ContextFlyout>
+                <MenuFlyout>
+                    <MenuItem Theme="{DynamicResource ContextMenuItem}"
+                              Header="Delete Item" />
+                    <MenuItem Theme="{DynamicResource ContextMenuItem}"
+                              Header="Add Item" />
+                    <MenuItem Theme="{DynamicResource ContextMenuItem}"
+                              Header="Play Item"/>
+                </MenuFlyout>
+            </Button.ContextFlyout>
+            <Button.Flyout>
+                <MenuFlyout>
+                    <MenuItem Theme="{DynamicResource ContextMenuItem}"
+                              Header="Delete Item" />
+                    <MenuItem Icon="{StaticResource IconAdd}"
+                              Theme="{DynamicResource ContextMenuItem}"
+                              Header="Add Item" />
+                    <MenuItem Icon="{StaticResource IconPlayOutlined}"
+                              Theme="{DynamicResource ContextMenuItem}"
+                              Header="Play Item"
+                              InputGesture="Shift+R" />
+                    <MenuItem Header="-" />
+                    <MenuItem Theme="{DynamicResource ContextMenuItem}"
+                              Icon="{StaticResource IconFloppyOutlined}"
+                              Header="Add Item">
+                        <MenuItem Theme="{DynamicResource ContextMenuItem}"
+                                  Header="Delete Item" />
+                        <MenuItem Icon="{StaticResource IconAdd}"
+                                  Theme="{DynamicResource ContextMenuItem}"
+                                  Header="Add Item" />
+                        <MenuItem Icon="{StaticResource IconPlayOutlined}"
+                                  Theme="{DynamicResource ContextMenuItem}"
+                                  Header="Play Item"
+                                  InputGesture="Shift+R" />
+                    </MenuItem>
+                    <MenuItem Header="-" />
+                    <MenuItem Theme="{DynamicResource ContextMenuItem}"
+                              Icon="{StaticResource IconTrashOutlined}"
+                              Header="Delete Item"
+                              Classes="danger"
+                              InputGesture="Delete" />
+
+                </MenuFlyout>
+            </Button.Flyout>
+        </Button>
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="ContextMenuItem" TargetType="MenuItem" BasedOn="{actipro:ControlTheme MenuItem}">
+        
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="MenuItemIconColumnGroup" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="MenuItemRightColumnGroup" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.Resources>
+                        <converters:PlatformKeyGestureConverter x:Key="KeyGestureConverter" />
+                        <actipro:MathConverter x:Key="MathConverter" />
+                    </Grid.Resources>
+
+                    <Border
+                        x:Name="border"
+                        Grid.ColumnSpan="3"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="3" />
+
+                    <Viewbox x:Name="iconHost" Grid.Column="0"
+                             IsVisible="{TemplateBinding Icon, Converter={x:Static ObjectConverters.IsNotNull}}"
+                             Margin="7 0 0 0" Width="16" Height="16"
+                             StretchDirection="DownOnly"
+                             HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <PathIcon Theme="{TemplateBinding Icon}" Padding="1" />
+                    </Viewbox>
+
+                    <ContentPresenter
+                        x:Name="headerPresenter"
+                        Grid.Column="1"
+                        Content="{TemplateBinding Header}"
+                        ContentTemplate="{TemplateBinding HeaderTemplate}"
+                        Padding="10 5"
+                        RecognizesAccessKey="True"
+                        VerticalAlignment="Center"
+                        HorizontalContentAlignment="Left" />
+
+                    <TextBlock
+                        x:Name="inputGestureTextBlock"
+                        Grid.Column="2"
+                        Margin="35 0 10 0"
+                        FontSize="{actipro:ThemeResource DefaultFontSizeSmall}"
+                        IsVisible="{Binding $self.Text, Mode=OneWay, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                        Text="{TemplateBinding InputGesture, Converter={StaticResource KeyGestureConverter}}"
+                        VerticalAlignment="Center"
+                        TextAlignment="Right">
+                        <TextBlock.RenderTransform>
+                            <TranslateTransform>
+                                <TranslateTransform.Y>
+                                    <MultiBinding Converter="{StaticResource MathConverter}"
+                                                  ConverterParameter="(x - y) / 2">
+                                        <Binding Path="#headerPresenter.FontSize" />
+                                        <Binding Path="#inputGestureTextBlock.FontSize" />
+                                    </MultiBinding>
+                                </TranslateTransform.Y>
+                            </TranslateTransform>
+                        </TextBlock.RenderTransform>
+                    </TextBlock>
+
+                    <ContentPresenter
+                        x:Name="popupGlyphPresenter"
+                        Grid.Column="2"
+                        Margin="0 0 5 0"
+                        ContentTemplate="{actipro:GlyphTemplate MenuPopup16}"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center" />
+
+                    <primitives:ChromedPopup
+                        x:Name="PART_Popup"
+                        Grid.ColumnSpan="3"
+                        Background="{actipro:ThemeResource MenuPopupBackgroundBrush}"
+                        BorderBrush="{actipro:ThemeResource MenuPopupBorderBrush}"
+                        BorderThickness="{actipro:ThemeResource PopupBorderThickness}"
+                        CornerRadius="{actipro:ThemeResource MenuPopupCornerRadius}"
+                        HorizontalOffset="{actipro:ThemeResource MenuItemPopupHorizontalOffset}"
+                        IsOpen="{TemplateBinding IsSubMenuOpen, Mode=TwoWay}"
+                        Padding="0"
+                        PlacementTarget="{TemplateBinding}"
+                        Placement="RightEdgeAlignedTop">
+                        <ScrollViewer
+                            HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                            Theme="{actipro:ControlTheme MenuScrollViewer}"
+                            VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}">
+                            <ItemsPresenter
+                                x:Name="PART_ItemsPresenter"
+                                Margin="{actipro:ThemeResource MenuPopupPadding}"
+                                Grid.IsSharedSizeScope="True"
+                                ItemsPanel="{TemplateBinding ItemsPanel}"
+                                KeyboardNavigation.TabNavigation="Continue" />
+                        </ScrollViewer>
+                    </primitives:ChromedPopup>
+                </Grid>
+
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^ /template/ TextBlock#inputGestureTextBlock">
+            <Setter Property="Foreground" Value="{actipro:ThemeResource MenuItemDescriptionForegroundBrush}" />
+        </Style>
+        <Style Selector="^ /template/ ContentPresenter#popupGlyphPresenter">
+            <Setter Property="Foreground" Value="{actipro:ThemeResource MenuItemDescriptionForegroundBrush}" />
+        </Style>
+
+        <Style Selector="^:empty /template/ ContentPresenter#popupGlyphPresenter">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+        <Style Selector="^:separator">
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Separator />
+                </ControlTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="^:selected">
+            <Style Selector="^ /template/ Border#border">
+                <Setter Property="Background" Value="{actipro:ThemeResource MenuItemBackgroundBrushSelected}" />
+                <Setter Property="BorderBrush" Value="{actipro:ThemeResource MenuItemBorderBrushSelected}" />
+            </Style>
+            <Style Selector="^ /template/ ContentPresenter#headerPresenter">
+                <Setter Property="Foreground" Value="{actipro:ThemeResource MenuItemForegroundBrushSelected}" />
+            </Style>
+            <Style Selector="^ /template/ TextBlock#inputGestureTextBlock">
+                <Setter Property="Foreground"
+                        Value="{actipro:ThemeResource MenuItemDescriptionForegroundBrushSelected}" />
+            </Style>
+            <Style Selector="^ /template/ ContentPresenter#popupGlyphPresenter">
+                <Setter Property="Foreground" Value="{actipro:ThemeResource MenuItemForegroundBrushSelected}" />
+            </Style>
+        </Style>
+
+        <Style Selector="^:disabled">
+            <Style Selector="^ /template/ Viewbox#iconHost">
+                <Setter Property="Opacity" Value="0.4" />
+            </Style>
+            <Style Selector="^ /template/ ContentPresenter#headerPresenter">
+                <Setter Property="Foreground" Value="{actipro:ThemeResource MenuItemForegroundBrushDisabled}" />
+            </Style>
+            <Style Selector="^ /template/ TextBlock#inputGestureTextBlock">
+                <Setter Property="Foreground" Value="{actipro:ThemeResource MenuItemForegroundBrushDisabled}" />
+            </Style>
+            <Style Selector="^ /template/ ContentPresenter#popupGlyphPresenter">
+                <Setter Property="Foreground" Value="{actipro:ThemeResource MenuItemForegroundBrushDisabled}" />
+            </Style>
+        </Style>
+
+        <Style Selector="^.danger">
+            <Style Selector="^ /template/ Viewbox#iconHost PathIcon">
+                <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushSoftDanger}" />
+            </Style>
+            <Style Selector="^ /template/ ContentPresenter#headerPresenter">
+                <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushSoftDanger}" />
+            </Style>
+            <Style Selector="^:selected /template/ Border#border">
+                <Setter Property="Background" Value="{actipro:ThemeResource ControlBackgroundBrushSoftDanger}" />
+                <Setter Property="BorderBrush" Value="{actipro:ThemeResource ControlBackgroundBrushSoftDanger}" />
+            </Style>
+        </Style>
+    </ControlTheme>
+</ResourceDictionary>

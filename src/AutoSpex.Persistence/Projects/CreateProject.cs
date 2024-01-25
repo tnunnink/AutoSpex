@@ -7,7 +7,7 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record CreateProject(Project Project) : ICommand<Result>;
+public record CreateProject(Project Project) : IDbCommand<Result>;
 
 [UsedImplicitly]
 internal class CreateProjectHandler(IConnectionManager manager)

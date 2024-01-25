@@ -1,9 +1,0 @@
-﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <ResourceDictionary.MergedDictionaries>
-        <ResourceInclude Source="NodeIcons.axaml" />
-        <ResourceInclude Source="CollectionMenu.axaml" />
-        <ResourceInclude Source="FolderMenu.axaml" />
-        <ResourceInclude Source="SpecMenu.axaml" />
-    </ResourceDictionary.MergedDictionaries>
-</ResourceDictionary>

@@ -7,7 +7,7 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record ListSources : IQuery<Result<IEnumerable<Source>>>;
+public record ListSources : IDbQuery<Result<IEnumerable<Source>>>;
 
 [UsedImplicitly]
 internal class ListSourcesHandler(IConnectionManager manager)

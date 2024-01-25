@@ -1,9 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using AutoSpex.Client.Observers;
-using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 
-namespace AutoSpex.Client.Components;
+namespace AutoSpex.Client.Observers;
 
 public class CriterionObserver(Criterion criterion) : Observer<Criterion>(criterion)
 {

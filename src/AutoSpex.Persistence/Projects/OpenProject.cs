@@ -13,7 +13,7 @@ namespace AutoSpex.Persistence;
 /// </summary>
 /// <param name="Project">The <see cref="Engine.Project"/> to open.</param>
 [PublicAPI]
-public record OpenProject(Project Project) : ICommand<Result>;
+public record OpenProject(Project Project) : IDbCommand<Result>;
 
 [UsedImplicitly]
 internal class OpenProjectHandler(IConnectionManager manager) : IRequestHandler<OpenProject, Result>

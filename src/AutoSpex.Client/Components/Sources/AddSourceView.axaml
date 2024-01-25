@@ -35,7 +35,7 @@
         <!--heading-->
         <StackPanel DockPanel.Dock="Top">
             <StackPanel Orientation="Horizontal">
-                <PathIcon Data="{StaticResource IconXml}"
+                <PathIcon Theme="{StaticResource IconXml}"
                           Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
                           Height="16" Width="16"
                           Margin="0 2 10 0" />
@@ -67,7 +67,7 @@
                                         Classes="icon"
                                         Theme="{a:ControlTheme ButtonSubtle}"
                                         Command="{Binding SelectSourceCommand}">
-                                    <PathIcon Data="{StaticResource IconFolderOutlined}"
+                                    <PathIcon Theme="{StaticResource IconFolderOutlined}"
                                               Height="16" Width="16"
                                               Foreground="{a:ThemeResource ControlBorderBrushOutline}" />
                                 </Button>

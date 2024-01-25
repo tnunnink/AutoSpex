@@ -4,84 +4,23 @@
     <Design.PreviewWith>
         <Border Padding="20">
             <WrapPanel>
-                <Button Classes="icon">
-                    <PathIcon Data="{StaticResource IconCogOutlined}" />
-                </Button>
-                <Button Classes="icon">
-                    <PathIcon Data="{StaticResource IconOutlinedCube}" />
-                </Button>
-                <Button Classes="icon-sm">
-                    <PathIcon Data="{StaticResource IconSearch}" />
-                </Button>
-                <Button Classes="icon">
-                    <PathIcon Data="{StaticResource IconClipboardFilled}" />
-                </Button>
-                <Button Classes="icon">
-                    <PathIcon Data="{StaticResource IconFilterFilled}" />
-                </Button>
-                <ToggleButton Classes="icon accent">
-                    <PathIcon Data="{StaticResource IconFilterFilled}" />
+                <PathIcon Theme="{StaticResource IconFilterFilled}" />
+                <ToggleButton>
+                    <PathIcon Theme="{StaticResource IconFilterFilled}" />
                 </ToggleButton>
             </WrapPanel>
         </Border>
     </Design.PreviewWith>
-
-
-    <Style Selector="Button.icon">
-        <Setter Property="Theme" Value="{a:ControlTheme ButtonSubtle}" />
-        <Setter Property="Foreground" Value="{DynamicResource IconBrushDefault}" />
-        <Setter Property="Height" Value="24" />
-        <Setter Property="Width" Value="24" />
-        <Setter Property="Padding" Value="0" />
-
-        <Style Selector="^ PathIcon">
-            <Setter Property="Height" Value="16" />
-            <Setter Property="Width" Value="16" />
-        </Style>
-
-        <Style Selector="^:pointerover PathIcon">
-            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
-        </Style>
-    </Style>
-
-    <Style Selector="Button.icon-sm">
-        <Setter Property="Theme" Value="{a:ControlTheme ButtonSubtle}" />
-        <Setter Property="Foreground" Value="{DynamicResource IconBrushDefault}" />
-        <Setter Property="Height" Value="24" />
-        <Setter Property="Width" Value="24" />
-        <Setter Property="Padding" Value="0" />
-
-        <Style Selector="^ PathIcon">
-            <Setter Property="Height" Value="14" />
-            <Setter Property="Width" Value="14" />
-        </Style>
-
-        <Style Selector="^:pointerover PathIcon">
-            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
-        </Style>
-    </Style>
+    
 
     <Style Selector="ToggleButton.icon">
         <Setter Property="Theme" Value="{a:ControlTheme ToggleButtonSubtle}" />
-        <Setter Property="Foreground" Value="{DynamicResource IconBrushDefault}" />
-        <Setter Property="Height" Value="24" />
-        <Setter Property="Width" Value="24" />
-        <Setter Property="Padding" Value="0" />
-
-        <Style Selector="^ PathIcon">
-            <Setter Property="Height" Value="14" />
-            <Setter Property="Width" Value="14" />
-        </Style>
 
         <Style Selector="^:not(:unchecked)">
             <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoft}" />
             
             <Style Selector="^ /template/ Border#checkedBorder">
                 <Setter Property="IsVisible" Value="False" />
-            </Style>
-
-            <Style Selector="^ PathIcon">
-                <Setter Property="Foreground" Value="{a:ThemeResource ButtonForegroundBrushEmphasized}" />
             </Style>
 
             <Style Selector="^.accent">

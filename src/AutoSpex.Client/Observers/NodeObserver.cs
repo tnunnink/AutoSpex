@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using ActiproSoftware.UI.Avalonia.Controls;
-using AutoSpex.Client.Components;
 using AutoSpex.Client.Messages;
-using AutoSpex.Client.Pages;
+using AutoSpex.Client.Pages.Projects;
+using AutoSpex.Client.Pages.Specs;
 using AutoSpex.Engine;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -37,73 +37,75 @@ public partial class NodeObserver : Observer<Node>
 
     public ObserverCollection<Node, NodeObserver> Nodes { get; }
     public SpecObserver? Spec => Model.Spec is not null ? new SpecObserver(Model.Spec) : default;
-    
+
     public Breadcrumb Breadcrumb => new(this, CrumbType.Target);
 
-    [ObservableProperty] private bool _isExpanded;
-
-    [ObservableProperty] private bool _isSelected;
-
-    [ObservableProperty] private bool _isVisible = true;
-    
     [ObservableProperty] private bool _isEditing;
 
     [RelayCommand]
     private void Open()
     {
-        Navigator.NavigateTo<DetailsPageModel>(() => new NodePageModel(this));
+        Navigator.Navigate(() => new NodePageModel(this));
     }
 
     [RelayCommand]
     private void OpenInTab()
     {
-        var inNewTab = new KeyValuePair<string, object>("InNewTab", true);
-        Navigator.NavigateTo<DetailsPageModel>(() => new NodePageModel(this), inNewTab);
+        var newTab = new KeyValuePair<string, object>("NewTab", true);
+        Navigator.Navigate(() => new NodePageModel(this), newTab);
     }
 
     [RelayCommand]
-    private async Task AddFolder(NodeObserver parent)
+    private async Task AddFolder()
     {
         var folder = new NodeObserver(Node.NewFolder());
-        parent.Nodes.Add(folder);
+        Nodes.Add(folder);
 
         var result = await Messenger.Send(new NodeCreateRequest(folder));
 
         if (result.IsFailed)
         {
-            parent.Nodes.Remove(folder);
+            Nodes.Remove(folder);
             return;
         }
-
-        folder.IsSelected = true;
+        
         var inFocus = new KeyValuePair<string, object>("InFocus", true);
-        await Navigator.NavigateTo<DetailsPageModel>(() => new NodePageModel(this), inFocus);
+        await Navigator.Navigate(() => new NodePageModel(this), inFocus);
     }
-    
+
     [RelayCommand]
-    private async Task AddSpec(NodeObserver parent)
+    private async Task AddSpec()
     {
         var spec = new NodeObserver(Node.NewSpec());
-        parent.Nodes.Add(spec);
+        Nodes.Add(spec);
 
         var result = await Messenger.Send(new NodeCreateRequest(spec));
 
         if (result.IsFailed)
         {
-            parent.Nodes.Remove(spec);
+            Nodes.Remove(spec);
             return;
         }
-
-        spec.IsSelected = true;
+        
         var inFocus = new KeyValuePair<string, object>("InFocus", true);
-        await Navigator.NavigateTo<DetailsPageModel>(() => new NodePageModel(this), inFocus);
+        await Navigator.Navigate(() => new NodePageModel(this), inFocus);
     }
 
     [RelayCommand]
-    private void RenameNode(string name)
+    private async Task RenameNode(string name)
     {
         if (string.IsNullOrEmpty(name)) return;
+
+        var previous = Name;
         Name = name;
+
+        var reply = await Messenger.Send(new NodeRenameRequest(this));
+        if (reply.IsFailed)
+        {
+            Name = previous;
+            return;
+        }
+
         Messenger.Send(new NodeRenamedMessage(this));
     }
 
@@ -118,38 +120,11 @@ public partial class NodeObserver : Observer<Node>
 
         if (answer != MessageBoxResult.Yes) return;
 
-        var result = await Messenger.Send(new NodeDeleteRequest(NodeId));
-
-        if (result.IsSuccess)
-        {
-            if (Parent is null)
-            {
-                //we have to send collection as message.
-                return;
-            }
-
-            Parent.Nodes.Remove(this);
-        }
+        var result = await Messenger.Send(new NodeDeleteRequest(this));
+        if (result.IsFailed) return;
+        Parent?.Nodes.Remove(this);
     }
 
     public static implicit operator NodeObserver(Node node) => new(node);
     public static implicit operator Node(NodeObserver observer) => observer.Model;
-
-    public bool FilterPath(string text)
-    {
-        var descendents = Nodes.Select(n => n.FilterPath(text)).Where(r => r).ToList().Count;
-
-        if (string.IsNullOrEmpty(text))
-        {
-            IsVisible = true;
-            IsExpanded = false;
-        }
-        else
-        {
-            IsVisible = Name.Contains(text) || descendents > 0;
-            IsExpanded = IsVisible && (NodeType == NodeType.Folder || NodeType == NodeType.Collection);
-        }
-
-        return IsVisible;
-    }
 }

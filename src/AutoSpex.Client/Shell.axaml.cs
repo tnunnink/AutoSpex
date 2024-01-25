@@ -14,7 +14,9 @@ public partial class Shell : Window
     public Shell()
     {
         InitializeComponent();
-        DataContext = Container.Resolve<ShellViewModel>();
+        var shell = Container.Resolve<ShellViewModel>();
+        shell.IsActive = true;
+        DataContext = shell;
         
         //This is a work around to solve the window covering the task bar when maximizing while we are using custom title bar 
         this.GetPropertyChangedObservable(WindowStateProperty).AddClassHandler<Visual>((_, args) =>

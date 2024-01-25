@@ -9,7 +9,7 @@ namespace AutoSpex.Persistence;
 /// Gets the number of projects stored in the projects table of the local application database.
 /// </summary>
 [PublicAPI]
-public record GetProjectCount : IQuery<Result<int>>;
+public record GetProjectCount : IDbQuery<Result<int>>;
 
 [UsedImplicitly]
 internal class GetProjectCountHandler(IConnectionManager manager) : IRequestHandler<GetProjectCount, Result<int>>

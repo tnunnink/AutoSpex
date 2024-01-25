@@ -8,6 +8,7 @@ namespace AutoSpex.Client.Components;
 
 public class ProjectSelect : TemplatedControl
 {
+    
     private string _selectedProject = "Select Project";
     private ObservableCollection<ProjectObserver> _projects = [];
 
@@ -18,7 +19,7 @@ public class ProjectSelect : TemplatedControl
     [UsedImplicitly]
     public static readonly DirectProperty<ProjectSelect, ObservableCollection<ProjectObserver>> ProjectsProperty =
         AvaloniaProperty.RegisterDirect<ProjectSelect, ObservableCollection<ProjectObserver>>(
-            nameof(Projects), o => o.Projects);
+            nameof(Projects), o => o.Projects, (o, v) => o.Projects = v);
 
     public string SelectedProject
     {

@@ -1,0 +1,124 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+
+    <Design.PreviewWith>
+        <components:HomeMenu Height="800" Width="300" />
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type components:HomeMenu}" TargetType="components:HomeMenu">
+        <!-- Set Defaults -->
+        <Setter Property="Template">
+            <ControlTemplate>
+
+                <Border Background="{actipro:ThemeResource Container2BackgroundBrush}"
+                        Width="300"
+                        Padding="10">
+                    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,*"
+                          Margin="10">
+                        <StackPanel Grid.Row="0"
+                                    Spacing="20">
+                            <StackPanel Orientation="Vertical"
+                                        HorizontalAlignment="Center">
+                                <Image Source="../Resources/Images/inspect-code.png"
+                                       Height="60" />
+                                <TextBlock Text="AutoSpex"
+                                           Classes="theme-text-heading"
+                                           Padding="10" />
+                            </StackPanel>
+
+                            <StackPanel Spacing="5">
+                                <TextBlock Text="Automated PLC Verification"
+                                           Foreground="{actipro:ThemeResource DefaultForegroundBrushTertiary}"
+                                           Classes="theme-text-heading size-xs"
+                                           TextWrapping="Wrap" />
+                                <TextBlock
+                                    Text="Build and run collections of PLC specifications to automate you quality check workflow."
+                                    Foreground="{actipro:ThemeResource DefaultForegroundBrushTertiary}"
+                                    Classes="theme-text-body size-sm"
+                                    TextWrapping="Wrap" />
+                            </StackPanel>
+
+                            <!--<StackPanel Spacing="10">
+                                <Button Theme="{actipro:ControlTheme ButtonSoft}"
+                                        HorizontalContentAlignment="Left"
+                                        Padding="0"
+                                        Classes="accent">
+                                    <StackPanel Orientation="Horizontal">
+                                        <PathIcon Theme="{StaticResource IconAdd}"
+                                                  Foreground="{actipro:ThemeResource ControlForegroundBrushSoftAccent}" />
+                                        <TextBlock Text="Create Project"
+                                                   Margin="0 0 0 1" />
+                                    </StackPanel>
+                                </Button>
+                                <Button Theme="{actipro:ControlTheme ButtonSoft}"
+                                        HorizontalContentAlignment="Left"
+                                        Padding="0">
+                                    <StackPanel Orientation="Horizontal">
+                                        <PathIcon Theme="{StaticResource IconFolderOutlinedOpen}"
+                                                  Foreground="{actipro:ThemeResource DefaultForegroundBrush}" />
+                                        <TextBlock Text="Open Project"
+                                                   Margin="0 0 0 1" />
+                                    </StackPanel>
+                                </Button>    
+                            </StackPanel>-->
+                        </StackPanel>
+
+                        <Border Grid.Row="1"
+                                BorderThickness="0 1 0 0"
+                                Margin="0 20"
+                                BorderBrush="{actipro:ThemeResource Container2BorderBrush}" />
+
+                        <ListBox Grid.Row="2"
+                                 x:Name="PART_Menu"
+                                 BorderThickness="0"
+                                 Background="Transparent"
+                                 SelectionMode="Single">
+                            <ListBox.Styles>
+                                <Style Selector="ListBoxItem PathIcon">
+                                    <Setter Property="Foreground"
+                                            Value="{actipro:ThemeResource ListItemForegroundBrush}" />
+                                </Style>
+                                <Style Selector="ListBoxItem:selected PathIcon">
+                                    <Setter Property="Foreground"
+                                            Value="{actipro:ThemeResource ListItemForegroundBrushSelected}" />
+                                </Style>
+                            </ListBox.Styles>
+
+                            <ListBox.ItemTemplate>
+
+                            </ListBox.ItemTemplate>
+                            <ListBoxItem>
+                                <StackPanel Orientation="Horizontal">
+                                    <PathIcon Theme="{StaticResource IconCubeOutlined}" />
+                                    <TextBlock Text="Projects"
+                                               Margin="5 0 0 2" />
+                                </StackPanel>
+                            </ListBoxItem>
+                            <ListBoxItem>
+                                <StackPanel Orientation="Horizontal">
+                                    <PathIcon Theme="{StaticResource IconCardList}" />
+                                    <TextBlock Text="Release Notes"
+                                               Margin="5 0 0 2" />
+                                </StackPanel>
+                            </ListBoxItem>
+                            <ListBox.ItemContainerTheme>
+                                <ControlTheme TargetType="ListBoxItem" BasedOn="{actipro:ControlTheme ListBoxItem}">
+                                    <Setter Property="Margin" Value="0 5" />
+                                    <Setter Property="Padding" Value="5" />
+                                    <Setter Property="CornerRadius" Value="5" />
+                                </ControlTheme>
+                            </ListBox.ItemContainerTheme>
+                        </ListBox>
+                        
+                        <Border Grid.Row="3"
+                                BorderThickness="0 1 0 0"
+                                Margin="0 20"
+                                BorderBrush="{actipro:ThemeResource Container2BorderBrush}" />
+                    </Grid>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

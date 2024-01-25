@@ -10,7 +10,7 @@ namespace AutoSpex.Persistence;
 /// Retrieves all <see cref="Project"/> stored in the local application database.
 /// </summary>
 [PublicAPI]
-public record ListProjects : IQuery<Result<IEnumerable<Project>>>;
+public record ListProjects : IDbQuery<Result<IEnumerable<Project>>>;
 
 [UsedImplicitly]
 internal class ListProjectsHandler(IConnectionManager manager)

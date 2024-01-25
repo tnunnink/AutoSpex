@@ -7,7 +7,7 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record GetFullNode(Guid NodeId) : IQuery<Result<Node>>;
+public record GetFullNode(Guid NodeId) : IDbQuery<Result<Node>>;
 
 [UsedImplicitly]
 internal class GetFullNodeHandler(IConnectionManager manager) : IRequestHandler<GetFullNode, Result<Node>>

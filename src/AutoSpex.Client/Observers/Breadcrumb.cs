@@ -6,6 +6,8 @@ using AutoSpex.Client.Pages;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using DetailsPageModel = AutoSpex.Client.Pages.Projects.DetailsPageModel;
+using NodePageModel = AutoSpex.Client.Pages.Specs.NodePageModel;
 
 namespace AutoSpex.Client.Observers;
 
@@ -32,7 +34,7 @@ public partial class Breadcrumb : Observer<NodeObserver>
     [RelayCommand]
     private void Navigate()
     {
-        Navigator.NavigateTo<DetailsPageModel>(() => new NodePageModel(Model));
+        Navigator.Navigate(() => new NodePageModel(Model));
     }
 
     [RelayCommand]

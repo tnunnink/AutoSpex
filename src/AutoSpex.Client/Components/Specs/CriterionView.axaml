@@ -78,25 +78,24 @@
                         IsVisible="{Binding CanAddValues}"
                         ToolTip.Tip="Add Value"
                         ToolTip.Placement="BottomEdgeAlignedRight">
-                    <PathIcon Data="{StaticResource IconAdd}"
-                              Height="12" Width="12" />
+                    <PathIcon Height="12" Width="12" />
                 </Button>
                 <ToggleButton Classes="icon warning"
                               ToolTip.Tip="Invert"
                               ToolTip.Placement="BottomEdgeAlignedRight">
-                    <PathIcon Data="{StaticResource IconExclamation}"
+                    <PathIcon Theme="{StaticResource IconExclamation}"
                               Height="12" Width="12" />
                 </ToggleButton>
                 <ToggleButton Classes="icon danger"
                               ToolTip.Tip="Disable"
                               ToolTip.Placement="BottomEdgeAlignedRight">
-                    <PathIcon Data="{StaticResource IconBanOutlined}"
+                    <PathIcon Theme="{StaticResource IconBanOutlined}"
                               Height="14" Width="14" />
                 </ToggleButton>
                 <Button Classes="icon"
                         ToolTip.Tip="Remove"
                         ToolTip.Placement="BottomEdgeAlignedRight">
-                    <PathIcon Data="{StaticResource IconClose}"
+                    <PathIcon Theme="{StaticResource IconClose}"
                               Height="10" Width="10" />
                 </Button>
             </StackPanel>

@@ -61,16 +61,7 @@ public static class DialogExtensions
     {
         return Task.FromResult(Result.Try(() =>
         {
-            if (OperatingSystem.IsWindows())
-                Process.Start(new ProcessStartInfo {FileName = directory, UseShellExecute = true});
-
-            if (OperatingSystem.IsLinux())
-                Process.Start("xdg-open", directory);
-
-            else if (OperatingSystem.IsMacOS())
-                Process.Start("open", directory);
-
-            else throw new NotImplementedException("File browser opening not implemented for this platform.");
+            Process.Start(new ProcessStartInfo {FileName = directory, UseShellExecute = true});
         }));
     }
 }

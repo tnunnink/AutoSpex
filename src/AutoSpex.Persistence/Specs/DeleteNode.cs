@@ -6,7 +6,7 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record DeleteNode(Guid NodeId) : ICommand<Result>;
+public record DeleteNode(Guid NodeId) : IDbCommand<Result>;
 
 [UsedImplicitly]
 internal class DeleteNodeHandler(IConnectionManager manager) : IRequestHandler<DeleteNode, Result>

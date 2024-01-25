@@ -7,7 +7,7 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record SaveNode(Node Node) : ICommand<Result>;
+public record SaveNode(Node Node) : IDbCommand<Result>;
 
 [UsedImplicitly]
 internal class SaveNodeHandler(IConnectionManager manager) : IRequestHandler<SaveNode, Result>

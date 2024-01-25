@@ -1,0 +1,39 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui">
+    <Design.PreviewWith>
+        <Border Padding="20">
+            <ListBox Height="100" Width="100"
+                     ItemContainerTheme="{DynamicResource ListBoxItemSimple}">
+                <ListBoxItem Content="Item 1" />
+                <ListBoxItem Content="Item 2" />
+                <ListBoxItem Content="Item 3" />
+            </ListBox>
+        </Border>
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="ListBoxItemSimple" TargetType="ListBoxItem" BasedOn="{actipro:ControlTheme ListBoxItem}">
+        <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{actipro:ThemeResource ListItemBackgroundBrushPointerOver}" />
+        </Style>
+        <Style Selector="^:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{actipro:ThemeResource ListItemBackgroundBrushPointerOver}" />
+        </Style>
+        <Style Selector="^:disabled /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Foreground" Value="{actipro:ThemeResource ListItemForegroundBrushDisabled}" />
+        </Style>
+        <Style Selector="^:selected /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{actipro:ThemeResource ListItemBackgroundBrushPointerOver}" />
+            <Setter Property="Foreground" Value="{actipro:ThemeResource ListItemForegroundBrush}" />
+        </Style>
+        <Style Selector="^:selected:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{actipro:ThemeResource ListItemBackgroundBrushPointerOver}" />
+        </Style>
+        <Style Selector="^:selected:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{actipro:ThemeResource ListItemBackgroundBrushPointerOver}" />
+        </Style>
+        <Style Selector="^:selected:disabled /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Foreground" Value="{actipro:ThemeResource ListItemForegroundBrushSelectedDisabled}" />
+        </Style>
+    </ControlTheme>
+</ResourceDictionary>

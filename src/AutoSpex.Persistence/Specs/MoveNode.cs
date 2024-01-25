@@ -7,7 +7,7 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record MoveNode(Node Node) : ICommand<Result>;
+public record MoveNode(Node Node) : IDbCommand<Result>;
 
 [UsedImplicitly]
 internal class MoveNodeHandler(IConnectionManager manager) : IRequestHandler<MoveNode, Result>

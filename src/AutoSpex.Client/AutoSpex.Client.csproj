@@ -166,33 +166,49 @@
         <DependentUpon>LauncherView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
-      <Compile Update="Pages\NewProjectPage.axaml.cs">
-        <DependentUpon>NewProjectView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
       <Compile Update="Components\ProjectSelector.axaml.cs">
         <DependentUpon>ProjectSelector.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
-      <Compile Update="Pages\HomePage.axaml.cs">
-        <DependentUpon>HomePage.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Components\ProjectDefault.axaml.cs">
+      <Compile Update="Components\ProjectDefaultView.axaml.cs">
         <DependentUpon>ProjectDefaultView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
-      <Compile Update="Pages\DetailsPage.axaml.cs">
-        <DependentUpon>DetailsView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
       <Compile Remove="ShellView.axaml.cs" />
-      <Compile Update="Pages\SpecsPage.axaml.cs">
-        <DependentUpon>NodeTreeView.axaml</DependentUpon>
+      <Compile Update="Components\BreadcrumbView.axaml.cs">
+        <DependentUpon>BreadcrumbView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
-      <Compile Update="Pages\SourcesPage.axaml.cs">
-        <DependentUpon>SourceListView.axaml</DependentUpon>
+      <Compile Update="Pages\Home\HomeProjectPage.axaml.cs">
+        <DependentUpon>HomeProjectPage.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Pages\Home\HomePage.axaml.cs">
+        <DependentUpon>HomePage.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Pages\Project\DetailsPage.axaml.cs">
+        <DependentUpon>DetailsPage.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Pages\Project\ProjectPage.axaml.cs">
+        <DependentUpon>ProjectPage.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Pages\Project\SourcesPage.axaml.cs">
+        <DependentUpon>SourcesPage.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Pages\Project\SpecsPage.axaml.cs">
+        <DependentUpon>SpecsPage.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Pages\Home\CreateProjectPage.axaml.cs">
+        <DependentUpon>NewProjectPage.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Pages\Specs\NodePage.axaml.cs">
+        <DependentUpon>NodePage.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
     </ItemGroup>
@@ -237,5 +253,10 @@
 
     <ItemGroup>
       <UpToDateCheckInput Remove="Features\Specifications\Resources\All.axaml" />
+      <UpToDateCheckInput Remove="Components\Specs\Resources\CollectionMenu.axaml" />
+      <UpToDateCheckInput Remove="Components\Specs\Resources\FolderMenu.axaml" />
+      <UpToDateCheckInput Remove="Components\Specs\Resources\Merged.axaml" />
+      <UpToDateCheckInput Remove="Components\Specs\Resources\NodeIcons.axaml" />
+      <UpToDateCheckInput Remove="Components\Specs\Resources\SpecMenu.axaml" />
     </ItemGroup>
 </Project>
