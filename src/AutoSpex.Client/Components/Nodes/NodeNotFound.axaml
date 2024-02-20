@@ -1,0 +1,61 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="using:AutoSpex.Client.Components"
+                    xmlns:system="clr-namespace:System;assembly=System.Runtime">
+
+    <Design.PreviewWith>
+        <components:NodeNotFound Height="800" Width="800"
+                                 NodeId="{x:Static system:Guid.Empty}"
+                                 NodeName="Test Node" />
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type components:NodeNotFound}" TargetType="components:NodeNotFound">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border>
+                    <StackPanel VerticalAlignment="Center"
+                                HorizontalAlignment="Center">
+
+                        <StackPanel>
+                            <PathIcon Theme="{StaticResource IconExclamationOutlined}"
+                                      Height="40" Width="40" Padding="0" Margin="10"
+                                      Foreground="{actipro:ThemeResource ControlForegroundBrushOutlineDanger}" />
+                            <TextBlock Text="Node Not Found"
+                                       Classes="theme-text-heading"
+                                       HorizontalAlignment="Center" />
+                        </StackPanel>
+
+                        <StackPanel Margin="20">
+                            <TextBlock TextWrapping="Wrap"
+                                       TextAlignment="Center"
+                                       MaxWidth="400"
+                                       FontSize="15"
+                                       Foreground="{actipro:ThemeResource DefaultForegroundBrushTertiary}">
+                                <TextBlock.Inlines>
+                                    <Run Text="The node" />
+                                    <Run Text="{TemplateBinding NodeName}"
+                                         FontWeight="SemiBold"
+                                         Foreground="{actipro:ThemeResource ControlForegroundBrushSoftDanger}" />
+                                    <Run
+                                        Text="was not found in this project. This node may have been deleted while you were working" />
+                                    <Run Text="Click" />
+                                    <Run Text="Remove"
+                                         FontWeight="SemiBold"
+                                         Foreground="{actipro:ThemeResource ControlForegroundBrushSoftDanger}" />
+                                    <Run Text="to remove the node." />
+                                </TextBlock.Inlines>
+                            </TextBlock>
+                        </StackPanel>
+
+                        <Button Theme="{actipro:ControlTheme ButtonSoft}"
+                                Content="Remove"
+                                Classes="danger" 
+                                HorizontalAlignment="Center"
+                                Padding="10"/>
+                    </StackPanel>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

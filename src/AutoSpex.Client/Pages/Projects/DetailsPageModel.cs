@@ -1,62 +1,74 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
-using AutoSpex.Client.Pages.Specs;
+using AutoSpex.Client.Observers;
 using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using FluentResults;
 using JetBrains.Annotations;
 
 namespace AutoSpex.Client.Pages.Projects;
 
 [UsedImplicitly]
-public partial class DetailsPageModel : PageViewModel, IRecipient<NavigationRequest<NodePageModel>>
+public partial class DetailsPageModel : PageViewModel, IRecipient<NavigationRequest>
 {
-    [ObservableProperty] private ObservableCollection<PageViewModel> _pages = [];
+    [ObservableProperty] private ObservableCollection<DetailPageModel> _pages = [];
 
     [ObservableProperty] private PageViewModel? _selected;
 
     [RelayCommand]
-    private Task AddSpec()
+    private async Task AddSpec()
     {
-        var node = Node.NewSpec();
-        var newTab = new KeyValuePair<string, object>("NewTab", true);
-        return Navigator.Navigate(() => new NodePageModel(node), newTab);
+        var node = new NodeObserver(Node.NewSpec()) {FocusName = true};
+        await Navigator.Navigate(node);
     }
 
-    public void Receive(NavigationRequest<NodePageModel> message)
+    public void Receive(NavigationRequest message)
     {
-        if (message.Parameters.TryGetValue("NewTab", out var newTab) && newTab is true)
+        if (message.Page is not DetailPageModel details) return;
+
+        if (message.Action == NavigationAction.Close)
         {
-            ShowInNewTab(message.Page);
-            message.Reply(Result.Ok());
+            CloseTab(details);
             return;
         }
 
-        var existing = Pages.SingleOrDefault(x => x.Route == message.Page.Route);
-        if (existing is not null)
+        if (SelectExistingIfOpen(details)) return;
+
+        if (message.Action == NavigationAction.Open)
         {
-            Selected = existing;
-            message.Reply(Result.Ok());
+            ShowInNewTab(details);
             return;
         }
 
-        ShowOrReplace(message.Page);
-        message.Reply(Result.Ok());
+        ShowOrReplace(details);
     }
 
-    private void ShowOrReplace(PageViewModel page)
+    private bool SelectExistingIfOpen(PageViewModel page)
+    {
+        var existing = Pages.SingleOrDefault(x => x.Route == page.Route);
+        if (existing is null) return false;
+        Selected = existing;
+        return true;
+    }
+
+    private void ShowInNewTab(DetailPageModel page)
+    {
+        Pages.Add(page);
+        Selected = page;
+    }
+
+    private void ShowOrReplace(DetailPageModel page)
     {
         //Try to replace an existing page that has not been changed.
         for (var i = 0; i < Pages.Count; i++)
         {
             if (Pages[i].IsChanged) continue;
-            var replaceable = Pages[i];
-            replaceable.IsActive = false;
+            var closable = Pages[i];
+            closable.IsActive = false;
             Pages[i] = page;
             Selected = page;
             return;
@@ -67,9 +79,11 @@ public partial class DetailsPageModel : PageViewModel, IRecipient<NavigationRequ
         Selected = page;
     }
 
-    private void ShowInNewTab(PageViewModel page)
+    private void CloseTab(DetailPageModel page)
     {
-        Pages.Add(page);
-        Selected = page;
+        Pages.Remove(page);
+
+        if (Selected is not null && Selected == page)
+            Selected = Pages.FirstOrDefault();
     }
 }

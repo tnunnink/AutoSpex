@@ -1,7 +1,6 @@
 ﻿using System;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
-using Avalonia.Input;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 

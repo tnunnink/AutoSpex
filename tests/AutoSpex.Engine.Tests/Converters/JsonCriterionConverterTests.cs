@@ -20,12 +20,12 @@ public class JsonCriterionConverterTests
     [Test]
     public void RunSerializationForLogixAtomicTypeAndValidateResults()
     {
-        var argument = new Criterion("Test", Operation.All, 1, 2, 3);
+        var criterion = new Criterion("Test", Operation.All, 1, 2, 3);
         
-        var data = JsonSerializer.Serialize(argument, _options);
+        var data = JsonSerializer.Serialize(criterion, _options);
         data.Should().NotBeEmpty();
 
         var result = JsonSerializer.Deserialize(data, typeof(Criterion), _options);
-        result.Should().BeEquivalentTo(argument);
+        result.Should().BeEquivalentTo(criterion, options => options.Excluding(m => m.Type == typeof(Guid)));
     }
 }

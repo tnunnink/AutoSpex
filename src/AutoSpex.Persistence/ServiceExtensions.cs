@@ -20,6 +20,7 @@ public static class ServiceExtensions
         var options = new JsonSerializerOptions();
         options.Converters.Add(new JsonSpecConverter());
         options.Converters.Add(new JsonCriterionConverter());
+        options.Converters.Add(new JsonVariableConverter());
         options.Converters.Add(new JsonArgumentConverter());
         options.Converters.Add(new JsonTypeConverter());
         services.AddSingleton(options);

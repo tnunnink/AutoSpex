@@ -1,0 +1,66 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:components="using:AutoSpex.Client.Components"
+                    xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers">
+    <Design.PreviewWith>
+        <components:BreadcrumbMenu BreadcrumbsSource="{x:Static components:DesignData.Breadcrumbs}"
+                                   Height="300"/>
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type components:BreadcrumbMenu}" TargetType="components:BreadcrumbMenu"
+                  x:DataType="observers:Breadcrumb">
+
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid RowDefinitions="Auto,*"
+                      Margin="5" Width="300">
+                    <TextBox x:Name="PART_FilterText"
+                             Grid.Row="0"
+                             Watermark="Search Nodes"
+                             Theme="{actipro:ControlTheme TextBoxOutline}"
+                             BorderThickness="0 0 0 1"
+                             CornerRadius="0"
+                             BorderBrush="{actipro:ThemeResource Container1BorderBrush}"
+                             Margin="5 0"
+                             Padding="10 7" />
+
+                    <Panel Grid.Row="1">
+                        <ListBox ItemsSource="{Binding Breadcrumbs, RelativeSource={RelativeSource TemplatedParent}}"
+                                 IsVisible="{Binding Breadcrumbs.Count, RelativeSource={RelativeSource TemplatedParent}}"
+                                 Padding="5"
+                                 BorderThickness="0"
+                                 Background="Transparent"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                            <ListBox.ItemContainerTheme>
+                                <ControlTheme TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemSimple}">
+                                    <Setter Property="Padding" Value="5 0 " />
+                                    <Setter Property="CornerRadius" Value="5" />
+                                </ControlTheme>
+                            </ListBox.ItemContainerTheme>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate x:DataType="observers:Breadcrumb">
+                                    <Button Command="{Binding NavigateCommand}"
+                                            Theme="{actipro:ControlTheme ButtonInvisible}"
+                                            HorizontalContentAlignment="Stretch"
+                                            MaxWidth="300">
+                                        <DockPanel>
+                                            <PathIcon
+                                                Theme="{Binding Model.NodeType.Name, Converter={StaticResource KeyToIconConverter}}"
+                                                DockPanel.Dock="Left" />
+                                            <TextBlock Text="{Binding Model.Name}"
+                                                       FontSize="{actipro:ThemeResource DefaultFontSizeSmall}"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       ToolTip.Tip="{Binding Model.Name}" />
+                                        </DockPanel>
+                                    </Button>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Panel>
+
+                </Grid>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoSpex.Client.Observers;
+using AutoSpex.Client.Pages;
+using AutoSpex.Client.Pages.Home;
+using AutoSpex.Client.Pages.Projects;
 using AutoSpex.Client.Shared;
+using AutoSpex.Engine;
 using CommunityToolkit.Mvvm.Messaging;
-using CommunityToolkit.Mvvm.Messaging.Messages;
-using FluentResults;
 using JetBrains.Annotations;
-using HomePageModel = AutoSpex.Client.Pages.Home.HomePageModel;
-using ProjectPageModel = AutoSpex.Client.Pages.Projects.ProjectPageModel;
 
 namespace AutoSpex.Client.Services;
 
@@ -16,37 +18,60 @@ namespace AutoSpex.Client.Services;
 [PublicAPI]
 public sealed class Navigator(IMessenger messenger) : IDisposable
 {
+    /// <summary>
+    /// The locally maintained set of open page references.
+    /// </summary>
     private readonly Dictionary<string, PageViewModel> _openPages = [];
 
-    public Task NavigateHome()
+    /// <summary>
+    /// A default instance of the <see cref="Navigator"/> service which uses the <see cref="WeakReferenceMessenger"/>
+    /// as the internal messenger for sending the <see cref="NavigationRequest"/> message.
+    /// </summary>
+    public static Navigator Default => new(WeakReferenceMessenger.Default);
+
+    /// <summary>
+    /// Performs navigation of the <see cref="HomePageModel"/>.
+    /// </summary>
+    /// <returns>A <see cref="Task"/> representing the async function with the page result.</returns>
+    public Task<HomePageModel> NavigateHome()
     {
         return OpenPage(Container.Resolve<HomePageModel>);
     }
 
-    public Task NavigateProject(ProjectObserver project)
+    /// <summary>
+    /// Performs navigation of the <see cref="PageViewModel"/> specified using the generic type parameter. This method
+    /// will use the application <see cref="Container"/> to resolve the page specified.
+    /// </summary>
+    /// <param name="action">The optional navigation action to perform.</param>
+    /// <typeparam name="TPage">The page view model type to navigate.</typeparam>
+    /// <returns>The Task representing the async function with the page view model result.</returns>
+    public Task<TPage> Navigate<TPage>(NavigationAction action = NavigationAction.Replace) where TPage : PageViewModel
     {
-        return OpenPage(() => new ProjectPageModel(project));
+        return OpenPage(Container.Resolve<TPage>);
     }
 
-    public Task Navigate<TPage>(params KeyValuePair<string, object>[] parameters)
+    public Task<TPage> Navigate<TPage>(Func<TPage> factory, NavigationAction action = NavigationAction.Replace)
         where TPage : PageViewModel
     {
-        var dictionary = parameters.Length > 0 ? parameters.ToDictionary(p => p.Key, p => p.Value) : default;
-        return OpenPage(Container.Resolve<TPage>, dictionary);
+        return OpenPage(factory);
     }
 
-    public Task Navigate<TPage>(Func<TPage> factory, params KeyValuePair<string, object>[] parameters)
-        where TPage : PageViewModel
+    public Task<PageViewModel> Navigate<TObserver>(TObserver observer,
+        NavigationAction action = NavigationAction.Replace)
+        where TObserver : ITrackable
     {
-        var dictionary = parameters.Length > 0 ? parameters.ToDictionary(p => p.Key, p => p.Value) : default;
-        return OpenPage(factory, dictionary);
+        return OpenPage(GetPageResolver(observer), action);
     }
 
-    public void Remove(PageViewModel page)
-    {
-        _openPages.Remove(page.Route);
-    }
+    /// <summary>
+    /// Closes the provided <see cref="PageViewModel"/> by issuing the close cation navigation request message. 
+    /// </summary>
+    /// <param name="page">The page to close.</param>
+    public void Close(PageViewModel page) => ClosePage(page);
 
+    /// <summary>
+    /// Disposes/Deactivates all pages current open in this instance of the <see cref="Navigator"/> service.
+    /// </summary>
     public void Dispose()
     {
         foreach (var page in _openPages.Values)
@@ -57,27 +82,42 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
         _openPages.Clear();
     }
 
-    private async Task OpenPage<TPage>(Func<TPage> factory, Dictionary<string, object>? parameters = null)
+    /// <summary>
+    /// Opens a page using the provided page factory and navigation action. This will resolve the page and use the open
+    /// instance if found (allowing the created instance to be garbage collected). It will then create the
+    /// <see cref="NavigationRequest"/> message and send that out. The owning pages responsible for displaying this
+    /// page should receive and render the page. Once rendered this service will await the Activation/Loading of the
+    /// page to initialize it's state. Finally it will clean up inactive pages from memory and then return the active
+    /// page to the caller of the navigation request. 
+    /// </summary>
+    private async Task<TPage> OpenPage<TPage>(Func<TPage> factory, NavigationAction action = NavigationAction.Replace)
         where TPage : PageViewModel
     {
         var page = ResolvePage(factory);
-
-        var request = new NavigationRequest<TPage>(page, parameters);
-
-        try
-        {
-            await messenger.Send(request);
-        }
-        catch (Exception)
-        {
-            //todo send ui notification perhaps. definitely log. and yeah this should not happen if properly setup.
-            Console.WriteLine(
-                $"No owner is registered to receive navigation requests for page with route {page.Route}");
-            throw;
-        }
-
+        var request = new NavigationRequest(page, action);
+        messenger.Send(request);
         await ActivatePage(page);
         CleanUp();
+        return page;
+    }
+
+    private async Task<PageViewModel> OpenPage(Func<PageViewModel> factory,
+        NavigationAction action = NavigationAction.Replace)
+    {
+        var page = ResolvePage(factory);
+        var request = new NavigationRequest(page, action);
+        messenger.Send(request);
+        await ActivatePage(page);
+        CleanUp();
+        return page;
+    }
+
+    private void ClosePage(PageViewModel page)
+    {
+        var request = new NavigationRequest(page, NavigationAction.Close);
+        messenger.Send(request);
+        _openPages.Remove(page.Route);
+        page.IsActive = false;
     }
 
     private TPage ResolvePage<TPage>(Func<TPage> factory) where TPage : PageViewModel
@@ -107,11 +147,64 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
             _openPages.Remove(page);
         }
     }
+
+    private static Func<PageViewModel> GetPageResolver(ITrackable observer)
+    {
+        return observer switch
+        {
+            ProjectObserver project => () => new ProjectPageModel(project),
+            NodeObserver node => NodePageResolver(node),
+            SourceObserver source => () => new SourcePageModel(source),
+            _ => throw new NotSupportedException($"THe observer type {observer.GetType()} does not support navigation")
+        };
+    }
+
+    private static Func<PageViewModel> NodePageResolver(NodeObserver node)
+    {
+        Func<PageViewModel>? creator = null;
+
+        node.NodeType
+            .When(NodeType.Collection).Then(() => creator = () => new CollectionPageModel(node))
+            .When(NodeType.Folder).Then(() => creator = () => new FolderPageModel(node))
+            .When(NodeType.Spec).Then(() => creator = () => new SpecPageModel(node))
+            .Default(() => throw new NotSupportedException($"NodeType {node.NodeType} a navigable page type."));
+
+        return creator ?? throw new UnreachableException();
+    }
 }
 
-public class NavigationRequest<TPage>(TPage page, Dictionary<string, object>? parameters = null)
-    : AsyncRequestMessage<Result> where TPage : PageViewModel
+/// <summary>
+/// A common message to be sent via the application <see cref="IMessenger"/> to navigate (open/close) a specific page
+/// in the application. 
+/// </summary>
+/// <param name="page">The page to navigate.</param>
+/// <param name="action">The navigation action to perform.</param>
+public class NavigationRequest(PageViewModel page, NavigationAction action = NavigationAction.Replace)
+{
+    /// <summary>
+    /// The instance of the <see cref="PageViewModel"/> to navigate for this request.
+    /// </summary>
+    public PageViewModel Page { get; } = page ?? throw new ArgumentNullException(nameof(page));
+
+    /// <summary>
+    /// The <see cref="NavigationAction"/> to perform for this request.
+    /// </summary>
+    public NavigationAction Action { get; } = action;
+}
+
+/*public class NavigationRequest<TPage>(TPage page, NavigationAction action = NavigationAction.Replace)
+    where TPage : PageViewModel
 {
     public TPage Page { get; } = page ?? throw new ArgumentNullException(nameof(page));
-    public Dictionary<string, object> Parameters { get; } = parameters ?? [];
+    public NavigationAction Action { get; } = action;
+}*/
+
+/// <summary>
+/// An enumeration of navigation actions to perform.
+/// </summary>
+public enum NavigationAction
+{
+    Replace,
+    Open,
+    Close
 }

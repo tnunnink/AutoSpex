@@ -1,0 +1,138 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="using:AutoSpex.Client.Components"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:converters="clr-namespace:AutoSpex.Client.Resources.Converters"
+                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
+                    xmlns:ap="clr-namespace:AutoSpex.Client.Resources.AttachedProperties">
+
+    <Design.PreviewWith>
+        <components:SpecTree Collections="{x:Static components:DesignData.Nodes}"
+                             Height="800" Width="300"
+                             Background="{actipro:ThemeResource Container2BackgroundBrush}" />
+    </Design.PreviewWith>
+
+    <converters:KeyResourceConverter x:Key="NodeToMenuConverter">
+        <converters:ValueResourceKey Value="{x:Static engine:NodeType.Collection}" Resource="CollectionMenu" />
+        <converters:ValueResourceKey Value="{x:Static engine:NodeType.Folder}" Resource="FolderMenu" />
+        <converters:ValueResourceKey Value="{x:Static engine:NodeType.Spec}" Resource="SpecMenu" />
+    </converters:KeyResourceConverter>
+
+    <ControlTheme x:Key="{x:Type components:SpecTree}" TargetType="components:SpecTree">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="{actipro:ThemeResource Container2BackgroundBrush}">
+                    <Grid RowDefinitions="Auto, Auto, *">
+                        <Border Grid.Row="0"
+                                MinHeight="42">
+                            <StackPanel VerticalAlignment="Center">
+                                <DockPanel Margin="10 5"
+                                           LastChildFill="False">
+                                    <StackPanel DockPanel.Dock="Left"
+                                                Orientation="Horizontal"
+                                                Spacing="5">
+                                        <Button Command="{TemplateBinding AddCommand}"
+                                                ap:ButtonIcon.Theme="{StaticResource IconAdd}"
+                                                Theme="{StaticResource IconButton}"
+                                                Classes="accent"
+                                                ToolTip.Tip="Add Collection" />
+                                    </StackPanel>
+
+                                    <StackPanel DockPanel.Dock="Right"
+                                                Orientation="Horizontal"
+                                                Spacing="2">
+                                        <Button Command="{TemplateBinding ExpandAllCommand}"
+                                                ap:ButtonIcon.Theme="{StaticResource IconChevronExpand}"
+                                                Theme="{StaticResource IconButton}"
+                                                ToolTip.Tip="Expand All" />
+                                        <Button Command="{TemplateBinding CollapseAllCommand}"
+                                                ap:ButtonIcon.Theme="{StaticResource IconChevronCollapse}"
+                                                Theme="{StaticResource IconButton}"
+                                                ToolTip.Tip="Collapse All" />
+                                        <Button
+                                            ap:ButtonIcon.Theme="{StaticResource IconDotsVertical}"
+                                            Theme="{StaticResource IconButton}"
+                                            ToolTip.Tip="Options" />
+                                    </StackPanel>
+                                </DockPanel>
+                                <TextBox x:Name="PART_FilterText"
+                                         Theme="{actipro:ControlTheme TextBoxOutline}"
+                                         Watermark="Search Specs"
+                                         Padding="7"
+                                         Background="Transparent"
+                                         BorderThickness="0 1"
+                                         BorderBrush="{actipro:ThemeResource Container2BorderBrush}"
+                                         CornerRadius="0"
+                                         VerticalContentAlignment="Center">
+                                    <TextBox.InnerLeftContent>
+                                        <PathIcon Theme="{StaticResource IconSearch}"
+                                                  VerticalAlignment="Center"
+                                                  Margin="10 0 5 0" />
+                                    </TextBox.InnerLeftContent>
+                                </TextBox>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Row="2">
+                            <TreeView x:Name="PART_TreeView"
+                                      ItemsSource="{TemplateBinding Collections}"
+                                      SelectionMode="Multiple"
+                                      VerticalAlignment="Stretch"
+                                      HorizontalAlignment="Stretch"
+                                      BorderThickness="0"
+                                      Background="Transparent">
+                                <TreeView.Styles>
+                                    <Style Selector="ScrollViewer">
+                                        <Setter Property="Theme" Value="{actipro:ControlTheme ScrollViewerOverlay}" />
+                                    </Style>
+                                </TreeView.Styles>
+                                <TreeView.ItemContainerTheme>
+                                    <ControlTheme TargetType="TreeViewItem"
+                                                  BasedOn="{StaticResource TreeViewItemSubtle}"
+                                                  x:DataType="observers:NodeObserver">
+                                        <Setter Property="Padding" Value="0" />
+                                        <Setter Property="IsVisible" Value="{Binding IsVisible}" />
+                                        <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
+                                        <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+                                        <Setter Property="ContextFlyout"
+                                                Value="{Binding NodeType, Converter={StaticResource NodeToMenuConverter}}" />
+                                    </ControlTheme>
+                                </TreeView.ItemContainerTheme>
+                                <TreeView.ItemTemplate>
+                                    <TreeDataTemplate x:DataType="observers:NodeObserver"
+                                                      ItemsSource="{Binding Nodes}">
+                                        <DockPanel>
+                                            <PathIcon DockPanel.Dock="Left"
+                                                      Theme="{Binding Model.NodeType.Name, 
+                                                      Converter={StaticResource KeyToIconConverter}}" />
+                                            <Panel>
+                                                <TextBlock Text="{Binding Name}"
+                                                           IsVisible="{Binding !IsEditing}"
+                                                           FontSize="{actipro:ThemeResource DefaultFontSizeSmall}"
+                                                           VerticalAlignment="Center"
+                                                           TextTrimming="CharacterEllipsis"
+                                                           TextWrapping="NoWrap" />
+                                                <TextBox x:Name="PART_EntryText"
+                                                         Text="{Binding Name}"
+                                                         Focusable="True"
+                                                         Theme="{actipro:ControlTheme TextBoxOutline}"
+                                                         FontSize="{actipro:ThemeResource DefaultFontSizeSmall}"
+                                                         IsVisible="{Binding IsEditing}"
+                                                         BorderThickness="0"
+                                                         Padding="3 0 0 0"
+                                                         Margin="0 3 3 3"
+                                                         VerticalContentAlignment="Center"
+                                                         TextWrapping="NoWrap" />
+                                            </Panel>
+                                        </DockPanel>
+                                    </TreeDataTemplate>
+                                </TreeView.ItemTemplate>
+                            </TreeView>
+                        </Border>
+                    </Grid>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

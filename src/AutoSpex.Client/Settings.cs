@@ -41,7 +41,7 @@ public sealed class Settings
         AddDefault(nameof(ShellHeight), 800);
         AddDefault(nameof(ShellWidth), 1400);
         AddDefault(nameof(ShellState), WindowState.Normal);
-        AddDefault(nameof(BypassElementChangePrompt), true);
+        AddDefault(nameof(PromptSaveChanges), true);
     }
 
     public static Settings App => _settings ??= new Settings();
@@ -91,8 +91,8 @@ public sealed class Settings
         get => GetSetting(Enum.Parse<WindowState>);
         set => SetSetting(value);
     }
-
-    public bool BypassElementChangePrompt
+    
+    public bool PromptSaveChanges
     {
         get => GetSetting(bool.Parse);
         set => SetSetting(value);

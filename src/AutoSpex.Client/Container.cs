@@ -14,7 +14,7 @@ public class Container
 {
     private static IContainer? _container;
 
-    public static T Resolve<T>()
+    public static T Resolve<T>() where T : class
     {
         if (_container is null)
             throw new InvalidOperationException(
@@ -22,7 +22,7 @@ public class Container
 
         return _container.GetInstance<T>();
     }
-    
+
     public static object Resolve(Type type)
     {
         if (_container is null)
@@ -30,6 +30,11 @@ public class Container
                 "Container is not initialized. Call build providing configuration before resolving.");
 
         return _container.GetInstance(type);
+    }
+
+    public static T? TryResolve<T>() where T : class
+    {
+        return _container?.TryGetInstance<T>();
     }
 
     public static void Build()
@@ -42,6 +47,7 @@ public class Container
         registry.RegisterMessenger();
         registry.RegisterNavigator();
         registry.RegisterNotifier();
+        registry.RegisterPrompter();
         registry.RegisterLauncher();
         registry.RegisterPages();
 
@@ -67,7 +73,7 @@ internal static class RegistrationExtensions
     {
         registry.For<Shell>().Use<Shell>().Singleton();
     }
-    
+
     internal static void RegisterMediatr(this ServiceRegistry registry)
     {
         registry.AddMediatR(cfg =>
@@ -76,20 +82,25 @@ internal static class RegistrationExtensions
 
         registry.For(typeof(IRequestExceptionHandler<,,>)).Use(typeof(ExceptionBehavior<,,>));
     }
-    
+
     internal static void RegisterMessenger(this ServiceRegistry registry)
     {
         registry.For<IMessenger>().Use(_ => WeakReferenceMessenger.Default).Singleton();
     }
-    
+
     internal static void RegisterNavigator(this ServiceRegistry registry)
     {
         registry.For<Navigator>().Use<Navigator>().Singleton();
     }
-    
+
     internal static void RegisterNotifier(this ServiceRegistry registry)
     {
         registry.For<Notifier>().Use<Notifier>().Singleton();
+    }
+    
+    internal static void RegisterPrompter(this ServiceRegistry registry)
+    {
+        registry.For<Prompter>().Use<Prompter>().Singleton();
     }
 
     internal static void RegisterLauncher(this ServiceRegistry registry)

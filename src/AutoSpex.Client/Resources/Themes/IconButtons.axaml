@@ -1,0 +1,538 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:ap="clr-namespace:AutoSpex.Client.Resources.AttachedProperties">
+
+    <Design.PreviewWith>
+        <StackPanel Margin="20" Spacing="5">
+            <StackPanel Spacing="10" Orientation="Horizontal">
+                <Button Theme="{DynamicResource IconButton}"
+                        ap:ButtonIcon.Theme="{StaticResource IconAdd}" />
+                <Button Theme="{DynamicResource IconButton}"
+                        ap:ButtonIcon.Theme="{StaticResource IconAdd}"
+                        Classes="accent" />
+                <Button Theme="{DynamicResource IconButton}"
+                        ap:ButtonIcon.Theme="{StaticResource IconClose}"
+                        Padding="10"
+                        Classes="danger" />
+                <Button Theme="{DynamicResource IconButton}"
+                        ap:ButtonIcon.Theme="{StaticResource IconExclamation}"
+                        Classes="warning" />
+                <Button Theme="{DynamicResource IconButton}"
+                        ap:ButtonIcon.Theme="{StaticResource IconClipboardOutlined}"
+                        Classes="success" />
+            </StackPanel>
+            <StackPanel Spacing="10" Orientation="Horizontal">
+                <Button Theme="{DynamicResource IconButton}"
+                        ap:ButtonIcon.Theme="{StaticResource IconAdd}"
+                        IsEnabled="False" />
+                <Button Theme="{DynamicResource IconButton}"
+                        ap:ButtonIcon.Theme="{StaticResource IconAdd}"
+                        Classes="accent"
+                        IsEnabled="False" />
+                <Button Theme="{DynamicResource IconButton}"
+                        ap:ButtonIcon.Theme="{StaticResource IconClose}"
+                        Padding="10"
+                        Classes="danger"
+                        IsEnabled="False" />
+                <Button Theme="{DynamicResource IconButton}"
+                        ap:ButtonIcon.Theme="{StaticResource IconExclamation}"
+                        Classes="warning"
+                        IsEnabled="False" />
+                <Button Theme="{DynamicResource IconButton}"
+                        ap:ButtonIcon.Theme="{StaticResource IconClipboardOutlined}"
+                        Classes="success"
+                        IsEnabled="False" />
+            </StackPanel>
+            <StackPanel Spacing="10" Orientation="Horizontal">
+                <ToggleButton Theme="{DynamicResource ToggleIconButton}"
+                              ap:ButtonIcon.Theme="{StaticResource IconAdd}" />
+                <ToggleButton Theme="{DynamicResource ToggleIconButton}"
+                              Classes="accent"
+                              ap:ButtonIcon.Theme="{StaticResource IconAdd}" />
+                <ToggleButton Theme="{DynamicResource ToggleIconButton}"
+                              Classes="danger"
+                              Padding="10"
+                              ap:ButtonIcon.Theme="{StaticResource IconClose}" />
+                <ToggleButton Theme="{DynamicResource ToggleIconButton}"
+                              Classes="warning"
+                              ap:ButtonIcon.Theme="{StaticResource IconExclamation}" />
+                <ToggleButton Theme="{DynamicResource ToggleIconButton}"
+                              Classes="success"
+                              ap:ButtonIcon.Theme="{StaticResource IconClipboardOutlined}" />
+            </StackPanel>
+            <StackPanel Spacing="10" Orientation="Horizontal">
+                <ToggleButton Theme="{DynamicResource ToggleIconButton}"
+                              ap:ButtonIcon.Theme="{StaticResource IconAdd}"
+                              IsEnabled="False" />
+                <ToggleButton Theme="{DynamicResource ToggleIconButton}"
+                              Classes="accent"
+                              ap:ButtonIcon.Theme="{StaticResource IconAdd}"
+                              IsEnabled="False" />
+                <ToggleButton Theme="{DynamicResource ToggleIconButton}"
+                              Classes="danger"
+                              Padding="10"
+                              ap:ButtonIcon.Theme="{StaticResource IconClose}"
+                              IsEnabled="False" />
+                <ToggleButton Theme="{DynamicResource ToggleIconButton}"
+                              Classes="warning"
+                              ap:ButtonIcon.Theme="{StaticResource IconExclamation}"
+                              IsEnabled="False" />
+            </StackPanel>
+            <StackPanel Spacing="10" Orientation="Horizontal">
+                <ToggleButton Theme="{DynamicResource ToggleIconButton}"
+                              ap:ButtonIcon.Theme="{StaticResource IconAdd}"
+                              IsEnabled="False"
+                              IsChecked="True" />
+                <ToggleButton Theme="{DynamicResource ToggleIconButton}"
+                              Classes="accent"
+                              ap:ButtonIcon.Theme="{StaticResource IconAdd}"
+                              IsEnabled="False"
+                              IsChecked="True" />
+                <ToggleButton Theme="{DynamicResource ToggleIconButton}"
+                              Classes="danger"
+                              Padding="10"
+                              ap:ButtonIcon.Theme="{StaticResource IconClose}"
+                              IsEnabled="False"
+                              IsChecked="True" />
+                <ToggleButton Theme="{DynamicResource ToggleIconButton}"
+                              Classes="warning"
+                              ap:ButtonIcon.Theme="{StaticResource IconExclamation}"
+                              IsEnabled="False"
+                              IsChecked="True" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Button Theme="{DynamicResource IconPillButtonLeft}"
+                        ap:ButtonIcon.Theme="{StaticResource IconAdd}"/>
+                <Button Theme="{DynamicResource IconPillButtonCenter}"
+                        ap:ButtonIcon.Theme="{StaticResource IconAdd}"
+                        Classes="accent" />
+                <Button Theme="{DynamicResource IconPillButtonCenter}"
+                        ap:ButtonIcon.Theme="{StaticResource IconClose}"
+                        Padding="10"
+                        Classes="danger" />
+                <Button Theme="{DynamicResource IconPillButtonCenter}"
+                        ap:ButtonIcon.Theme="{StaticResource IconExclamation}"
+                        Classes="warning" />
+                <Button Theme="{DynamicResource IconPillButtonRight}"
+                        ap:ButtonIcon.Theme="{StaticResource IconClipboardOutlined}"
+                        Classes="success" />
+            </StackPanel>
+        </StackPanel>
+    </Design.PreviewWith>
+
+    <!-- IconButton -->
+    <ControlTheme x:Key="IconButton" TargetType="Button">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushDefault}" />
+        <Setter Property="BorderThickness" Value="{actipro:ThemeResource ButtonBorderThickness}" />
+        <Setter Property="CornerRadius" Value="{actipro:ThemeResource ButtonCornerRadius}" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Height" Value="26" />
+        <Setter Property="Width" Value="26" />
+        <Setter Property="Padding" Value="8" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border x:Name="border"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                        VerticalAlignment="{TemplateBinding VerticalAlignment}">
+                    <PathIcon Theme="{TemplateBinding ap:ButtonIcon.Theme}"
+                              Padding="{TemplateBinding Padding}"
+                              Foreground="{TemplateBinding Foreground}"
+                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                </Border>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^:pointerover /template/ Border#border">
+            <Setter Property="Background" Value="{actipro:ThemeResource ButtonBackgroundBrushSubtlePointerOver}" />
+            <Setter Property="BorderBrush" Value="{actipro:ThemeResource ButtonBackgroundBrushSubtlePointerOver}" />
+        </Style>
+        <Style Selector="^:pressed /template/ Border#border">
+            <Setter Property="Background" Value="{actipro:ThemeResource ButtonBackgroundBrushSubtlePressed}" />
+            <Setter Property="BorderBrush" Value="{actipro:ThemeResource ButtonBackgroundBrushSubtlePressed}" />
+        </Style>
+        <Style Selector="^:disabled /template/ PathIcon">
+            <Setter Property="Foreground" Value="{actipro:ThemeResource ButtonForegroundBrushDisabled}" />
+        </Style>
+
+        <Style Selector="^.accent">
+            <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushOutlineAccent}" />
+
+            <Style Selector="^:pointerover /template/ Border#border">
+                <Setter Property="Background"
+                        Value="{actipro:ThemeResource ControlBackgroundBrushSubtleAccentPointerOver}" />
+                <Setter Property="BorderBrush"
+                        Value="{actipro:ThemeResource ControlBackgroundBrushSubtleAccentPointerOver}" />
+                <Style Selector="^ PathIcon">
+                    <Setter Property="Foreground"
+                            Value="{actipro:ThemeResource ControlForegroundBrushOutlineAccentPointerOver}" />
+                </Style>
+            </Style>
+            <Style Selector="^:pressed /template/ Border#border">
+                <Setter Property="Background"
+                        Value="{actipro:ThemeResource ControlBackgroundBrushSubtleAccentPressed}" />
+                <Setter Property="BorderBrush"
+                        Value="{actipro:ThemeResource ControlBackgroundBrushSubtleAccentPressed}" />
+                <Style Selector="^ PathIcon">
+                    <Setter Property="Foreground"
+                            Value="{actipro:ThemeResource ControlForegroundBrushOutlineAccentPressed}" />
+                </Style>
+            </Style>
+            <Style Selector="^:disabled /template/ PathIcon">
+                <Setter Property="Foreground"
+                        Value="{actipro:ThemeResource ControlForegroundBrushOutlineAccentDisabled}" />
+            </Style>
+        </Style>
+
+        <Style Selector="^.danger">
+            <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushOutlineDanger}" />
+
+            <Style Selector="^:pointerover /template/ Border#border">
+                <Setter Property="Background"
+                        Value="{actipro:ThemeResource ControlBackgroundBrushSubtleDangerPointerOver}" />
+                <Setter Property="BorderBrush"
+                        Value="{actipro:ThemeResource ControlBackgroundBrushSubtleDangerPointerOver}" />
+                <Style Selector="^ PathIcon">
+                    <Setter Property="Foreground"
+                            Value="{actipro:ThemeResource ControlForegroundBrushOutlineDangerPointerOver}" />
+                </Style>
+            </Style>
+            <Style Selector="^:pressed /template/ Border#border">
+                <Setter Property="Background"
+                        Value="{actipro:ThemeResource ControlBackgroundBrushSubtleDangerPressed}" />
+                <Setter Property="BorderBrush"
+                        Value="{actipro:ThemeResource ControlBackgroundBrushSubtleDangerPressed}" />
+                <Style Selector="^ PathIcon">
+                    <Setter Property="Foreground"
+                            Value="{actipro:ThemeResource ControlForegroundBrushOutlineDangerPressed}" />
+                </Style>
+            </Style>
+            <Style Selector="^:disabled /template/ PathIcon">
+                <Setter Property="Foreground"
+                        Value="{actipro:ThemeResource ControlForegroundBrushOutlineDangerDisabled}" />
+            </Style>
+        </Style>
+
+        <Style Selector="^.warning">
+            <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushOutlineWarning}" />
+
+            <Style Selector="^:pointerover /template/ Border#border">
+                <Setter Property="Background"
+                        Value="{actipro:ThemeResource ControlBackgroundBrushSubtleWarningPointerOver}" />
+                <Setter Property="BorderBrush"
+                        Value="{actipro:ThemeResource ControlBackgroundBrushSubtleWarningPointerOver}" />
+                <Style Selector="^ PathIcon">
+                    <Setter Property="Foreground"
+                            Value="{actipro:ThemeResource ControlForegroundBrushOutlineWarningPointerOver}" />
+                </Style>
+            </Style>
+            <Style Selector="^:pressed /template/ Border#border">
+                <Setter Property="Background"
+                        Value="{actipro:ThemeResource ControlBackgroundBrushSubtleWarningPressed}" />
+                <Setter Property="BorderBrush"
+                        Value="{actipro:ThemeResource ControlBackgroundBrushSubtleWarningPressed}" />
+                <Style Selector="^ PathIcon">
+                    <Setter Property="Foreground"
+                            Value="{actipro:ThemeResource ControlForegroundBrushOutlineWarningPressed}" />
+                </Style>
+            </Style>
+            <Style Selector="^:disabled /template/ PathIcon">
+                <Setter Property="Foreground"
+                        Value="{actipro:ThemeResource ControlForegroundBrushOutlineWarningDisabled}" />
+            </Style>
+        </Style>
+
+        <Style Selector="^.success">
+            <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushOutlineSuccess}" />
+
+            <Style Selector="^:pointerover /template/ Border#border">
+                <Setter Property="Background"
+                        Value="{actipro:ThemeResource ControlBackgroundBrushSubtleSuccessPointerOver}" />
+                <Setter Property="BorderBrush"
+                        Value="{actipro:ThemeResource ControlBackgroundBrushSubtleSuccessPointerOver}" />
+                <Style Selector="^ PathIcon">
+                    <Setter Property="Foreground"
+                            Value="{actipro:ThemeResource ControlForegroundBrushOutlineSuccessPointerOver}" />
+                </Style>
+            </Style>
+            <Style Selector="^:pressed /template/ Border#border">
+                <Setter Property="Background"
+                        Value="{actipro:ThemeResource ControlBackgroundBrushSubtleSuccessPressed}" />
+                <Setter Property="BorderBrush"
+                        Value="{actipro:ThemeResource ControlBackgroundBrushSubtleSuccessPressed}" />
+                <Style Selector="^ PathIcon">
+                    <Setter Property="Foreground"
+                            Value="{actipro:ThemeResource ControlForegroundBrushOutlineSuccessPressed}" />
+                </Style>
+            </Style>
+            <Style Selector="^:disabled /template/ PathIcon">
+                <Setter Property="Foreground"
+                        Value="{actipro:ThemeResource ControlForegroundBrushOutlineSuccessDisabled}" />
+            </Style>
+        </Style>
+    </ControlTheme>
+
+    <!-- IconPillButton -->
+    <ControlTheme x:Key="IconPillButton" TargetType="Button" BasedOn="{StaticResource IconButton}">
+        <Setter Property="BorderBrush" Value="{actipro:ThemeResource ButtonBorderBrushOutline}" />
+        <Setter Property="CornerRadius" Value="{actipro:ThemeResource ButtonCornerRadius}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Height" Value="30" />
+        <Setter Property="Width" Value="30" />
+        <Setter Property="Padding" Value="8" />
+
+        <Style Selector="^:pointerover /template/ Border#border">
+            <Setter Property="Background" Value="{actipro:ThemeResource ButtonBackgroundBrushSubtlePointerOver}" />
+            <Setter Property="BorderBrush" Value="{actipro:ThemeResource ButtonBorderBrushOutline}" />
+        </Style>
+        <Style Selector="^:pressed /template/ Border#border">
+            <Setter Property="Background" Value="{actipro:ThemeResource ButtonBackgroundBrushSubtlePressed}" />
+            <Setter Property="BorderBrush" Value="{actipro:ThemeResource ButtonBorderBrushOutline}" />
+        </Style>
+        <Style Selector="^:disabled /template/ PathIcon">
+            <Setter Property="Foreground" Value="{actipro:ThemeResource ButtonForegroundBrushDisabled}" />
+        </Style>
+
+        <Style Selector="^.accent">
+            <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushOutlineAccent}" />
+
+            <Style Selector="^:pointerover /template/ Border#border">
+                <Setter Property="Background"
+                        Value="{actipro:ThemeResource ControlBackgroundBrushSubtleAccentPointerOver}" />
+                <Setter Property="BorderBrush"
+                        Value="{actipro:ThemeResource ButtonBorderBrushOutline}" />
+                <Style Selector="^ PathIcon">
+                    <Setter Property="Foreground"
+                            Value="{actipro:ThemeResource ControlForegroundBrushOutlineAccentPointerOver}" />
+                </Style>
+            </Style>
+            <Style Selector="^:pressed /template/ Border#border">
+                <Setter Property="Background"
+                        Value="{actipro:ThemeResource ControlBackgroundBrushSubtleAccentPressed}" />
+                <Setter Property="BorderBrush"
+                        Value="{actipro:ThemeResource ButtonBorderBrushOutline}" />
+                <Style Selector="^ PathIcon">
+                    <Setter Property="Foreground"
+                            Value="{actipro:ThemeResource ControlForegroundBrushOutlineAccentPressed}" />
+                </Style>
+            </Style>
+            <Style Selector="^:disabled /template/ PathIcon">
+                <Setter Property="Foreground"
+                        Value="{actipro:ThemeResource ControlForegroundBrushOutlineAccentDisabled}" />
+            </Style>
+        </Style>
+
+        <Style Selector="^.danger">
+            <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushOutlineDanger}" />
+
+            <Style Selector="^:pointerover /template/ Border#border">
+                <Setter Property="Background"
+                        Value="{actipro:ThemeResource ControlBackgroundBrushSubtleDangerPointerOver}" />
+                <Setter Property="BorderBrush"
+                        Value="{actipro:ThemeResource ButtonBorderBrushOutline}" />
+                <Style Selector="^ PathIcon">
+                    <Setter Property="Foreground"
+                            Value="{actipro:ThemeResource ControlForegroundBrushOutlineDangerPointerOver}" />
+                </Style>
+            </Style>
+            <Style Selector="^:pressed /template/ Border#border">
+                <Setter Property="Background"
+                        Value="{actipro:ThemeResource ControlBackgroundBrushSubtleDangerPressed}" />
+                <Setter Property="BorderBrush"
+                        Value="{actipro:ThemeResource ButtonBorderBrushOutline}" />
+                <Style Selector="^ PathIcon">
+                    <Setter Property="Foreground"
+                            Value="{actipro:ThemeResource ControlForegroundBrushOutlineDangerPressed}" />
+                </Style>
+            </Style>
+            <Style Selector="^:disabled /template/ PathIcon">
+                <Setter Property="Foreground"
+                        Value="{actipro:ThemeResource ControlForegroundBrushOutlineDangerDisabled}" />
+            </Style>
+        </Style>
+
+        <Style Selector="^.warning">
+            <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushOutlineWarning}" />
+
+            <Style Selector="^:pointerover /template/ Border#border">
+                <Setter Property="Background"
+                        Value="{actipro:ThemeResource ControlBackgroundBrushSubtleWarningPointerOver}" />
+                <Setter Property="BorderBrush"
+                        Value="{actipro:ThemeResource ButtonBorderBrushOutline}" />
+                <Style Selector="^ PathIcon">
+                    <Setter Property="Foreground"
+                            Value="{actipro:ThemeResource ControlForegroundBrushOutlineWarningPointerOver}" />
+                </Style>
+            </Style>
+            <Style Selector="^:pressed /template/ Border#border">
+                <Setter Property="Background"
+                        Value="{actipro:ThemeResource ControlBackgroundBrushSubtleWarningPressed}" />
+                <Setter Property="BorderBrush"
+                        Value="{actipro:ThemeResource ButtonBorderBrushOutline}" />
+                <Style Selector="^ PathIcon">
+                    <Setter Property="Foreground"
+                            Value="{actipro:ThemeResource ControlForegroundBrushOutlineWarningPressed}" />
+                </Style>
+            </Style>
+            <Style Selector="^:disabled /template/ PathIcon">
+                <Setter Property="Foreground"
+                        Value="{actipro:ThemeResource ControlForegroundBrushOutlineWarningDisabled}" />
+            </Style>
+        </Style>
+
+        <Style Selector="^.success">
+            <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushOutlineSuccess}" />
+
+            <Style Selector="^:pointerover /template/ Border#border">
+                <Setter Property="Background"
+                        Value="{actipro:ThemeResource ControlBackgroundBrushSubtleSuccessPointerOver}" />
+                <Setter Property="BorderBrush"
+                        Value="{actipro:ThemeResource ButtonBorderBrushOutline}" />
+                <Style Selector="^ PathIcon">
+                    <Setter Property="Foreground"
+                            Value="{actipro:ThemeResource ControlForegroundBrushOutlineSuccessPointerOver}" />
+                </Style>
+            </Style>
+            <Style Selector="^:pressed /template/ Border#border">
+                <Setter Property="Background"
+                        Value="{actipro:ThemeResource ControlBackgroundBrushSubtleSuccessPressed}" />
+                <Setter Property="BorderBrush"
+                        Value="{actipro:ThemeResource ButtonBorderBrushOutline}" />
+                <Style Selector="^ PathIcon">
+                    <Setter Property="Foreground"
+                            Value="{actipro:ThemeResource ControlForegroundBrushOutlineSuccessPressed}" />
+                </Style>
+            </Style>
+            <Style Selector="^:disabled /template/ PathIcon">
+                <Setter Property="Foreground"
+                        Value="{actipro:ThemeResource ControlForegroundBrushOutlineSuccessDisabled}" />
+            </Style>
+        </Style>
+    </ControlTheme>
+    
+    <!-- IconPillButtonCenter -->
+    <ControlTheme x:Key="IconPillButtonCenter" TargetType="Button" BasedOn="{StaticResource IconPillButton}">
+        <Setter Property="BorderThickness" Value="0 1 1 1" />
+        <Setter Property="CornerRadius" Value="0" />
+    </ControlTheme>
+    
+    <!-- IconPillButtonLeft -->
+    <ControlTheme x:Key="IconPillButtonLeft" TargetType="Button" BasedOn="{StaticResource IconPillButton}">
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="5 0 0 5" />
+    </ControlTheme>
+    
+    <!-- IconPillButtonRight -->
+    <ControlTheme x:Key="IconPillButtonRight" TargetType="Button" BasedOn="{StaticResource IconPillButton}">
+        <Setter Property="BorderThickness" Value="0 1 1 1" />
+        <Setter Property="CornerRadius" Value="0 5 5 0" />
+    </ControlTheme>
+
+    <!--ToggleIconButton-->
+    <ControlTheme x:Key="ToggleIconButton" TargetType="ToggleButton">
+        <Setter Property="CornerRadius" Value="{actipro:ThemeResource ButtonCornerRadius}" />
+        <Setter Property="Foreground" Value="{actipro:ThemeResource DefaultForegroundBrushTertiary}" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Height" Value="26" />
+        <Setter Property="Width" Value="26" />
+        <Setter Property="Padding" Value="8" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border x:Name="Border"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                        VerticalAlignment="{TemplateBinding VerticalAlignment}">
+                    <PathIcon x:Name="Icon"
+                              Theme="{TemplateBinding ap:ButtonIcon.Theme}"
+                              Padding="{TemplateBinding Padding}"
+                              Foreground="{TemplateBinding Foreground}"
+                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                </Border>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^:pointerover /template/ Border#Border">
+            <Setter Property="Background" Value="{actipro:ThemeResource ButtonBackgroundBrushSubtlePointerOver}" />
+            <Setter Property="BorderBrush" Value="{actipro:ThemeResource ButtonBackgroundBrushSubtlePointerOver}" />
+        </Style>
+
+        <Style Selector="^:not(:unchecked)">
+            <Style Selector="^ /template/ Border#Border">
+                <Setter Property="Background" Value="{actipro:ThemeResource ControlBackgroundBrushSoft}" />
+                <Setter Property="BorderBrush" Value="{actipro:ThemeResource ControlBackgroundBrushSoft}" />
+            </Style>
+            <Style Selector="^ /template/ PathIcon#Icon">
+                <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushDefault}" />
+            </Style>
+
+            <Style Selector="^.accent">
+                <Style Selector="^ /template/ Border#Border">
+                    <Setter Property="Background"
+                            Value="{actipro:ThemeResource ControlBackgroundBrushSoftAccentDisabled}" />
+                    <Setter Property="BorderBrush"
+                            Value="{actipro:ThemeResource ControlBackgroundBrushSoftAccentDisabled}" />
+                </Style>
+                <Style Selector="^ /template/ PathIcon#Icon">
+                    <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushOutlineAccent}" />
+                </Style>
+            </Style>
+
+            <Style Selector="^.danger">
+                <Style Selector="^ /template/ Border#Border">
+                    <Setter Property="Background"
+                            Value="{actipro:ThemeResource ControlBackgroundBrushSoftDangerDisabled}" />
+                    <Setter Property="BorderBrush"
+                            Value="{actipro:ThemeResource ControlBackgroundBrushSoftDangerDisabled}" />
+                </Style>
+                <Style Selector="^ /template/ PathIcon#Icon">
+                    <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushSoftDanger}" />
+                </Style>
+            </Style>
+
+            <Style Selector="^.success">
+                <Style Selector="^ /template/ Border#Border">
+                    <Setter Property="Background"
+                            Value="{actipro:ThemeResource ControlBackgroundBrushSoftSuccessDisabled}" />
+                    <Setter Property="BorderBrush"
+                            Value="{actipro:ThemeResource ControlBackgroundBrushSoftSuccessDisabled}" />
+                </Style>
+                <Style Selector="^ /template/ PathIcon#Icon">
+                    <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushSoftSuccess}" />
+                </Style>
+            </Style>
+
+            <Style Selector="^.warning">
+                <Style Selector="^ /template/ Border#Border">
+                    <Setter Property="Background"
+                            Value="{actipro:ThemeResource ControlBackgroundBrushSoftWarningDisabled}" />
+                    <Setter Property="BorderBrush"
+                            Value="{actipro:ThemeResource ControlBackgroundBrushSoftWarningDisabled}" />
+                </Style>
+                <Style Selector="^ /template/ PathIcon#Icon">
+                    <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushSoftWarning}" />
+                </Style>
+            </Style>
+        </Style>
+
+        <Style Selector="^:disabled">
+            <Style Selector="^ /template/ Border#Border">
+                <Setter Property="Opacity" Value="{actipro:ThemeResource EditWatermarkOpacity}" />
+            </Style>
+        </Style>
+    </ControlTheme>
+</ResourceDictionary>

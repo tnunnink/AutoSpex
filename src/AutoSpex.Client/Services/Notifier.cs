@@ -7,14 +7,15 @@ namespace AutoSpex.Client.Services;
 
 [UsedImplicitly]
 [PublicAPI]
-public sealed class Notifier(IMessenger messenger)
+public sealed class Notifier(Shell shell)
 {
+    private INotificationManager _manager = new WindowNotificationManager(shell);
     public List<INotification> Notifications { get; } = [];
 
     public void Notify(INotification notification)
     {
         Notifications.Add(notification);
-        messenger.Send(new NotificationMessage(notification));
+        _manager.Show(notification);
     }
 
     public record NotificationMessage(INotification Notification);

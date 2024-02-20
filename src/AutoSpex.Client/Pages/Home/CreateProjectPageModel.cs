@@ -4,6 +4,7 @@ using System.IO;
 using AutoSpex.Client.Observers;
 using AutoSpex.Client.Pages.Projects;
 using AutoSpex.Client.Shared;
+using AutoSpex.Client.Validation;
 using AutoSpex.Engine;
 using AutoSpex.Persistence;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -19,14 +20,14 @@ public partial class CreateProjectPageModel : PageViewModel
     [NotifyDataErrorInfo]
     [NotifyCanExecuteChangedFor(nameof(CreateCommand))]
     [Required]
-    [CustomValidation(typeof(CreateProjectPageModel), nameof(ValidateFileName))]
+    [PathValidCharacters]
     private string _name = string.Empty;
 
     [ObservableProperty]
     [NotifyDataErrorInfo]
     [NotifyCanExecuteChangedFor(nameof(CreateCommand))]
     [Required]
-    [CustomValidation(typeof(CreateProjectPageModel), nameof(ValidateDirectoryName))]
+    [PathValidCharacters]
     private string _location = string.Empty;
 
     [ObservableProperty] private string _summary = string.Empty;
@@ -68,19 +69,5 @@ public partial class CreateProjectPageModel : PageViewModel
     private Task Cancel()
     {
         return Navigator.Navigate<HomeProjectPageModel>();
-    }
-
-    public static ValidationResult? ValidateFileName(string value, ValidationContext context)
-    {
-        return value.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0
-            ? new ValidationResult($"The name {value} is not a valid file name.")
-            : ValidationResult.Success;
-    }
-
-    public static ValidationResult? ValidateDirectoryName(string value, ValidationContext context)
-    {
-        return value.IndexOfAny(Path.GetInvalidPathChars()) >= 0
-            ? new ValidationResult($"The path {value} is not a valid directory.")
-            : ValidationResult.Success;
     }
 }

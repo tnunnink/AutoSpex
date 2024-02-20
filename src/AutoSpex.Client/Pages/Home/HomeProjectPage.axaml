@@ -5,7 +5,7 @@
              xmlns:home="clr-namespace:AutoSpex.Client.Pages.Home"
              x:Class="AutoSpex.Client.Pages.Home.HomeProjectPage"
              x:DataType="home:HomeProjectPageModel">
-    
+
     <Design.Width>1000</Design.Width>
     <Design.Height>500</Design.Height>
 
@@ -31,9 +31,9 @@
                            Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
             </StackPanel>
 
-            <components:ProjectListView ProjectSource="{Binding Projects}"
-                                        CreateCommand="{Binding CreateProjectCommand}"
-                                        OpenCommand="{Binding OpenProjectCommand}" />
+            <components:ProjectList ProjectSource="{Binding Projects}"
+                                    CreateCommand="{Binding CreateProjectCommand}"
+                                    OpenCommand="{Binding OpenProjectCommand}" />
         </DockPanel>
     </Panel>
 </UserControl>

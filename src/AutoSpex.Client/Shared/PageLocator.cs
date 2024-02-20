@@ -15,21 +15,20 @@ public class PageLocator : IDataTemplate
         if (data is not PageViewModel model)
             throw new InvalidOperationException(
                 $"Unexpected type received at PageLocator: {data?.GetType().FullName}");
-        
+
         var pageName = GetPageName(model);
         var pageType = Type.GetType(pageName);
 
-        if (pageType is not null)
-        {
-            return Activator.CreateInstance(pageType) as Control ?? new TextBlock { Text = "Page Not Found: " + pageName }; 
-        }
-
-        return new TextBlock { Text = "Page Not Found: " + pageName };
+        if (pageType is null) return NotFound(pageName);
+        
+        var page = Activator.CreateInstance(pageType) as Control ?? NotFound(pageName);
+        page.DataContext = model;
+        return page;
     }
 
     /// <inheritdoc />
     public bool Match(object? data) => data is PageViewModel;
-    
+
     private static string GetPageName(PageViewModel model)
     {
         var typeName = model.GetType().FullName;
@@ -40,7 +39,12 @@ public class PageLocator : IDataTemplate
         if (!typeName.Contains("PageModel"))
             throw new InvalidOperationException(
                 $"Unexpected type name '{typeName}' received at PageLocator. Type should end with PageModel.");
-        
+
         return typeName.Replace("Model", string.Empty);
+    }
+    
+    private static Control NotFound(string pageName)
+    {
+        return new TextBlock {Text = "Page Not Found: " + pageName};
     }
 }

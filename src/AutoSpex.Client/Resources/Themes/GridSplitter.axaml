@@ -1,0 +1,45 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui">
+
+    <Design.PreviewWith>
+        <Grid ColumnDefinitions="*,Auto,*" Width="500" Height="500">
+            <Rectangle Fill="{actipro:ThemeResource Container2BackgroundBrush}" />
+            <GridSplitter Theme="{DynamicResource GridSplitterHighlight}"
+                          BorderBrush="Green" BorderThickness="1"
+                          Grid.Column="1" Width="1" />
+            <Rectangle Fill="{actipro:ThemeResource Container1BackgroundBrush}"
+                       Grid.Column="2" />
+        </Grid>
+
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="GridSplitterHighlight" TargetType="GridSplitter">
+        <Setter Property="Background" Value="{actipro:ThemeResource Container1BorderBrush}" />
+        <Setter Property="ClipToBounds" Value="False" />
+        <Setter Property="Focusable" Value="True" />
+        <Setter Property="ZIndex" Value="100" />
+
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border x:Name="outer_border"
+                        Background="Transparent"
+                        Margin="-3">
+                    <Border x:Name="inner_border"
+                            Background="{TemplateBinding Background}"
+                            Width="{TemplateBinding Width}"
+                            Height="{TemplateBinding Height}" />
+                </Border>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^:pointerover /template/ Border#inner_border">
+            <Setter Property="Background"
+                    Value="{actipro:ThemeResource ControlBackgroundBrushEmphasizedAccent}" />
+            <Setter Property="Height"
+                    Value="{TemplateBinding Height, Converter={StaticResource MathConverter}, ConverterParameter='2*x'}" />
+            <Setter Property="Width"
+                    Value="{TemplateBinding Width, Converter={StaticResource MathConverter}, ConverterParameter='2*x'}" />
+        </Style>
+    </ControlTheme>
+</ResourceDictionary>

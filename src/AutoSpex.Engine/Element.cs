@@ -7,26 +7,48 @@ using Task = L5Sharp.Core.Task;
 
 namespace AutoSpex.Engine;
 
+/// <summary>
+/// A enumeration of all usable Logix program element in which we can write specifications for. This smart enum class
+/// add functionality needed to this application to navigate the property graphic of the logix elements and components.
+/// It also allows the ability to define some custom properties which expose getters to other data on the object as a property
+/// which can be selected for various criteria. These types are persisted and deserialized by name using the
+/// <see cref="SmartEnum{TEnum}"/> library.
+/// </summary>
 public abstract class Element : SmartEnum<Element, string>
 {
     /// <summary>
+    /// The name of the self referential property for the elements.
+    /// </summary>
+    private const string ThisProperty = "This";
+    
+    /// <summary>
     /// Holds "custom" properties, or properties we attach to the element and provide a custom function to retrieve
-    /// it's value. This would allow derived classes to add properties or make method calls show up as a property. 
+    /// it's value. This would allow derived classes to add properties or make method calls show up as a property as needed. 
     /// </summary>
     private readonly List<Property> _customProperties = [];
 
     private Element(Type type) : base(type.Name, type.Name)
     {
         Type = type ?? throw new ArgumentNullException(nameof(type));
+        RegisterThis();
+    }
+
+    private Element(string name, Type type) : base(name, type.FullName ?? throw new ArgumentNullException(nameof(type)))
+    {
+        Type = type ?? throw new ArgumentNullException(nameof(type));
+        RegisterThis();
     }
 
     public Type Type { get; }
-
-    public IEnumerable<Property> Properties => GetProperties();
-
+    public IEnumerable<Property> Properties => Type.Properties();
+    public IEnumerable<Property> CustomProperties => _customProperties;
+    public Property This => _customProperties.Single(p => p.Name == ThisProperty);
     public Func<L5X, IEnumerable<object>> Query => file => file.Query(Type);
-
-    public bool IsComponent => ComponentType.All().Any(t => t.Name == Type.L5XType());
+    public Func<L5X, string, object?> Lookup => (file, name) => file.Find(new ComponentKey(Type.L5XType(), name));
+    public bool IsComponent => Type.IsAssignableTo(typeof(LogixComponent));
+    protected virtual bool IsSelectable => IsComponent;
+    public static IEnumerable<Element> Components => List.Where(e => e.IsComponent);
+    public static IEnumerable<Element> Selectable => List.Where(e => e.IsSelectable);
 
     public static readonly Element Default = new DefaultElement();
 
@@ -87,27 +109,19 @@ public abstract class Element : SmartEnum<Element, string>
     }
 
     /// <summary>
-    /// Retrieves a collection of properties from the object's type and custom properties.
+    /// Registers a custom property called "This" as a reference to current instance of an object to the internal
+    /// custom property collection. This allows all elements to reference themselves as a property for filtering or
+    /// validation.
     /// </summary>
-    /// <returns>
-    /// An <see cref="IEnumerable{T}"/> of <see cref="Property"/> objects representing the properties of the object.
-    /// </returns>
-    private IEnumerable<Property> GetProperties()
+    private void RegisterThis()
     {
-        var results = new HashSet<Property>();
-
-        foreach (var property in Type.Properties())
-            results.Add(property);
-
-        foreach (var property in _customProperties)
-            results.Add(property);
-
-        return results;
+        var property = new Property(Type, ThisProperty, Type, x => x);
+        _customProperties.Add(property);
     }
 
     private class DefaultElement : Element
     {
-        public DefaultElement() : base(typeof(object))
+        public DefaultElement() : base("None", typeof(object))
         {
         }
     }
@@ -124,7 +138,7 @@ public abstract class Element : SmartEnum<Element, string>
         public DataTypeElement() : base(typeof(DataType))
         {
             Register<IEnumerable<LogixComponent>>("Dependencies", x => ((DataType) x!).Dependencies());
-            Register<IEnumerable<LogixComponent>>("References", x => ((DataType) x!).References());
+            Register<IEnumerable<CrossReference>>("References", x => ((DataType) x!).References());
         }
     }
 
@@ -146,6 +160,7 @@ public abstract class Element : SmartEnum<Element, string>
     {
         public TagElement() : base(typeof(Tag))
         {
+            Register<IEnumerable<Tag>>("Members", x => ((Tag) x!).Members());
         }
     }
 
@@ -189,6 +204,8 @@ public abstract class Element : SmartEnum<Element, string>
         public BlockElement() : base(typeof(Block))
         {
         }
+
+        protected override bool IsSelectable => true;
     }
 
     private class CommunicationsElement : Element
@@ -210,6 +227,8 @@ public abstract class Element : SmartEnum<Element, string>
         public DataTypeMemberElement() : base(typeof(DataTypeMember))
         {
         }
+
+        protected override bool IsSelectable => true;
     }
 
     private class LineElement : Element
@@ -217,6 +236,8 @@ public abstract class Element : SmartEnum<Element, string>
         public LineElement() : base(typeof(Line))
         {
         }
+
+        protected override bool IsSelectable => true;
     }
 
     private class ParameterElement : Element
@@ -224,6 +245,8 @@ public abstract class Element : SmartEnum<Element, string>
         public ParameterElement() : base(typeof(Parameter))
         {
         }
+
+        protected override bool IsSelectable => true;
     }
 
     private class ParameterConnectionElement : Element
@@ -231,6 +254,8 @@ public abstract class Element : SmartEnum<Element, string>
         public ParameterConnectionElement() : base(typeof(ParameterConnection))
         {
         }
+
+        protected override bool IsSelectable => true;
     }
 
     private class PenElement : Element
@@ -259,6 +284,8 @@ public abstract class Element : SmartEnum<Element, string>
         public RungElement() : base(typeof(Rung))
         {
         }
+
+        protected override bool IsSelectable => true;
     }
 
     private class SafetyInfoElement : Element

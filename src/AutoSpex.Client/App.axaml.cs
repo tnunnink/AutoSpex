@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using ActiproSoftware.UI.Avalonia.Controls;
 using ActiproSoftware.UI.Avalonia.Media;
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
@@ -18,19 +17,16 @@ public sealed class App : Application, IDisposable, IAsyncDisposable
 {
     public App()
     {
-        /*var builder = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
-
-        var config = builder.Build();*/
         Container.Build();
+    }
 
-        PropertyChanged += (_, e) =>
-        {
-            if (e.Property != RequestedThemeVariantProperty) return;
-            var theme = e.NewValue as ThemeVariant ?? throw new InvalidOperationException("Not a ThemeVariant");
-            Settings.App.Save(s => s.Theme = theme);
-        };
+    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+    {
+        base.OnPropertyChanged(change);
+
+        if (change.Property != RequestedThemeVariantProperty) return;
+        var theme = (ThemeVariant)change.NewValue!;
+        Settings.App.Save(s => s.Theme = theme);
     }
 
     public override void Initialize()
@@ -39,9 +35,6 @@ public sealed class App : Application, IDisposable, IAsyncDisposable
         ImageProvider.Default.ChromaticAdaptationMode = ImageChromaticAdaptationMode.DarkThemes;
         RequestedThemeVariant = Settings.App.Theme;
     }
-
-    public static Window MainWindow =>
-        ((IClassicDesktopStyleApplicationLifetime) Current!.ApplicationLifetime!).MainWindow!;
 
     public override void OnFrameworkInitializationCompleted()
     {

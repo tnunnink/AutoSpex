@@ -73,4 +73,17 @@ public class ProofTests
         result.Result.Should().Be(ResultState.Passed);
         result.Duration.Should().BeLessThan(1000);
     }
+
+    [Test]
+    public void Hashing()
+    {
+        var first = "Decimal";
+        var second = "DECIMAL";
+
+        Console.WriteLine(StringComparer.OrdinalIgnoreCase.GetHashCode(first));
+        Console.WriteLine(StringComparer.OrdinalIgnoreCase.GetHashCode(second));
+        
+        Console.WriteLine(first.StableHash());
+        Console.WriteLine(second.StableHash());
+    }
 }

@@ -1,5 +1,6 @@
 ﻿using AutoSpex.Client.Components;
 using AutoSpex.Client.Observers;
+using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using FluentAssertions;
 
@@ -19,13 +20,13 @@ public class ObserverCollectionTests
         };
 
         var collection = new ObserverCollection<Node, NodeObserver>(list, n => new NodeObserver(n));
-        
+
         collection.Add(new NodeObserver(Node.NewCollection("Test")));
 
         collection.Should().HaveCount(4);
         list.Should().HaveCount(4);
     }
-    
+
     [Test]
     public void Add_ToCollectionInitializedCustomFunctions_ShouldUpdateBothCollections()
     {
@@ -36,11 +37,7 @@ public class ObserverCollectionTests
             Node.NewCollection(),
         };
 
-        var collection = new ObserverCollection<Node, NodeObserver>(
-            list.ToList(),
-            m => new NodeObserver(m),
-            (_, n) => list.Add(n),
-            (i, _) => list.RemoveAt(i)) {new(Node.NewCollection("Test"))};
+        var collection = new ObserverCollection<Node, NodeObserver>(list.ToList(), m => new NodeObserver(m));
 
         collection.Should().HaveCount(4);
         list.Should().HaveCount(4);

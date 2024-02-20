@@ -45,10 +45,16 @@ public class Spec()
         return JsonSerializer.Serialize(this, options);
     }
 
+    /// <summary>
+    /// Runs the Spec on the given L5X content and returns the outcome.
+    /// </summary>
+    /// <param name="content">The L5X content to run the Spec on.</param>
+    /// <returns>The outcome of the Spec run.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when the content parameter is null.</exception>
     public Task<Outcome> Run(L5X content)
     {
         _node ??= Node.NewSpec("Spec");
-            
+
         if (content is null)
             throw new ArgumentNullException(nameof(content));
 
@@ -110,6 +116,22 @@ public class Spec()
     public void Verify(string property, Operation operation, params Argument[] args)
     {
         Verifications.Add(new Criterion(property, operation, args));
+    }
+
+    /// <summary>
+    /// Determines if the provided criterion is one contained somewhere within this spec, either in filters,
+    /// verifications, or nested within as a child criterion. 
+    /// </summary>
+    /// <param name="criterion">The criterion to search for in the object graph.</param>
+    /// <returns><c>true</c> if this spec contains the provided criterion. Otherwise, <c>false</c>.</returns>
+    /// <remarks>
+    /// This allows us to determine if this spec "owns" a criterion which is important from the interface and
+    /// data retrieval perspective.
+    /// </remarks>
+    public bool Contains(Criterion criterion)
+    {
+        return Filters.Any(c => c.CriterionId == criterion.CriterionId || c.Contains(criterion)) ||
+               Verifications.Any(c => c.CriterionId == criterion.CriterionId || c.Contains(criterion));
     }
 
     /// <summary>

@@ -1,0 +1,130 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:ap="clr-namespace:AutoSpex.Client.Resources.AttachedProperties"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+    <Design.PreviewWith>
+        <components:SourceList Height="800" Width="400"
+                             Sources="{x:Static components:DesignData.Sources}" />
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type components:SourceList}" TargetType="components:SourceList">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="{actipro:ThemeResource Container2BackgroundBrush}">
+                    <Grid RowDefinitions="Auto, Auto, *">
+                        <Border Grid.Row="0"
+                                MinHeight="42">
+                            <StackPanel VerticalAlignment="Center">
+                                <DockPanel Margin="10 5"
+                                           LastChildFill="False">
+                                    <StackPanel DockPanel.Dock="Left"
+                                                Orientation="Horizontal"
+                                                Spacing="5">
+                                        <Button Command="{TemplateBinding AddSourceCommand}"
+                                                Theme="{StaticResource IconButton}"
+                                                ap:ButtonIcon.Theme="{StaticResource IconAdd}"
+                                                Classes="accent"
+                                                ToolTip.Tip="Add Collection" />
+                                    </StackPanel>
+
+                                    <StackPanel DockPanel.Dock="Right"
+                                                Orientation="Horizontal"
+                                                Spacing="2">
+                                        <Button
+                                            
+                                            ap:ButtonIcon.Theme="{StaticResource IconDotsVertical}"
+                                            Theme="{StaticResource IconButton}"
+                                            ToolTip.Tip="Options" />
+                                    </StackPanel>
+                                </DockPanel>
+                                <TextBox x:Name="PART_FilterText"
+                                         Theme="{actipro:ControlTheme TextBoxOutline}"
+                                         Watermark="Search Specs"
+                                         Padding="7"
+                                         Background="Transparent"
+                                         BorderThickness="0 1"
+                                         BorderBrush="{actipro:ThemeResource Container2BorderBrush}"
+                                         CornerRadius="0"
+                                         VerticalContentAlignment="Center">
+                                    <TextBox.InnerLeftContent>
+                                        <PathIcon Theme="{StaticResource IconSearch}"
+                                                  VerticalAlignment="Center"
+                                                  Margin="10 0 5 0" />
+                                    </TextBox.InnerLeftContent>
+                                </TextBox>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Row="2">
+                            <ListBox x:Name="SourceList"
+                                     ItemsSource="{TemplateBinding Sources}"
+                                     SelectionMode="Multiple"
+                                     VerticalAlignment="Stretch"
+                                     HorizontalAlignment="Stretch"
+                                     BorderThickness="0"
+                                     Background="Transparent">
+                                <ListBox.Styles>
+                                    <Style Selector="ScrollViewer">
+                                        <Setter Property="Theme" Value="{actipro:ControlTheme ScrollViewerOverlay}" />
+                                    </Style>
+                                </ListBox.Styles>
+                                <ListBox.ItemContainerTheme>
+                                    <ControlTheme TargetType="ListBoxItem"
+                                                  BasedOn="{StaticResource ListBoxItemSubtle}"
+                                                  x:DataType="observers:SourceObserver">
+                                        <Setter Property="Padding" Value="0" />
+                                    </ControlTheme>
+                                </ListBox.ItemContainerTheme>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate x:DataType="observers:SourceObserver">
+                                        <DockPanel>
+                                            <DockPanel.Styles>
+                                                <Style Selector="TextBlock.caption">
+                                                    <Setter Property="VerticalAlignment" Value="Center" />
+                                                    <Setter Property="TextAlignment" Value="Right" />
+                                                    <Setter Property="FontSize"
+                                                            Value="{actipro:ThemeResource DefaultFontSizeSmall}" />
+                                                    <Setter Property="Foreground"
+                                                            Value="{actipro:ThemeResource DefaultForegroundBrushDisabled}" />
+                                                </Style>
+                                            </DockPanel.Styles>
+                                            <PathIcon DockPanel.Dock="Left"
+                                                      Theme="{StaticResource IconXml}" />
+                                            <StackPanel DockPanel.Dock="Right"
+                                                        Orientation="Horizontal"
+                                                        Margin="5 0">
+                                                <TextBlock Classes="caption"
+                                                           Text="{Binding TargetType}" />
+                                            </StackPanel>
+                                            <Panel>
+                                                <TextBlock Text="{Binding Name}"
+                                                           IsVisible="{Binding !IsEditing}"
+                                                           FontSize="{actipro:ThemeResource DefaultFontSizeSmall}"
+                                                           VerticalAlignment="Center"
+                                                           TextTrimming="CharacterEllipsis"
+                                                           TextWrapping="NoWrap" />
+                                                <TextBox x:Name="PART_EntryText"
+                                                         Text="{Binding Name}"
+                                                         Focusable="True"
+                                                         Theme="{actipro:ControlTheme TextBoxOutline}"
+                                                         FontSize="{actipro:ThemeResource DefaultFontSizeSmall}"
+                                                         IsVisible="{Binding IsEditing}"
+                                                         BorderThickness="0"
+                                                         Padding="3 0 0 0"
+                                                         Margin="0 3 3 3"
+                                                         VerticalContentAlignment="Center"
+                                                         TextWrapping="NoWrap" />
+                                            </Panel>
+                                        </DockPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Border>
+                    </Grid>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

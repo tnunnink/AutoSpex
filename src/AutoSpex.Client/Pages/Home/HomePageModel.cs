@@ -2,13 +2,12 @@
 using AutoSpex.Client.Shared;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
-using FluentResults;
 using JetBrains.Annotations;
 
 namespace AutoSpex.Client.Pages.Home;
 
 [UsedImplicitly]
-public partial class HomePageModel : PageViewModel, IRecipient<NavigationRequest<HomeProjectPageModel>>
+public partial class HomePageModel : PageViewModel, IRecipient<NavigationRequest>
 {
     [ObservableProperty] private PageViewModel? _page;
 
@@ -30,13 +29,13 @@ public partial class HomePageModel : PageViewModel, IRecipient<NavigationRequest
         }
     }
 
-    public void Receive(NavigationRequest<HomeProjectPageModel> message)
+    public void Receive(NavigationRequest message)
     {
+        if (message.Page is not HomeProjectPageModel and not CreateProjectPageModel) return;
+
         if (Page is not null)
             Page.IsActive = false;
 
         Page = message.Page;
-        
-        message.Reply(Result.Ok());
     }
 }

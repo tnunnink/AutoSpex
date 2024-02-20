@@ -56,7 +56,7 @@ public class ArgumentTests
         argument.Should().NotBeNull();
         argument.Value.Should().BeEquivalentTo(value);
         argument.Type.Should().Be(typeof(Variable));
-        argument.Group.Should().Be(TypeGroup.Default);
+        argument.Group.Should().Be(TypeGroup.Variable);
     }
     
     [Test]
@@ -68,7 +68,7 @@ public class ArgumentTests
         argument.Should().NotBeNull();
         argument.Value.Should().BeEquivalentTo(value);
         argument.Type.Should().Be(typeof(Criterion));
-        argument.Group.Should().Be(TypeGroup.Default);
+        argument.Group.Should().Be(TypeGroup.Criterion);
     }
     
     [Test]

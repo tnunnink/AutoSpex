@@ -11,8 +11,6 @@
                 <TextBox Classes="subtle"
                          Watermark="Enter Value Here" Width="200" />
             </StackPanel>
-            
-            
         </Border>
     </Design.PreviewWith>
 

@@ -108,12 +108,12 @@
 
                             <Border Name="focus"
                                     BorderThickness="{actipro:ThemeResource FocusAdornerBorderThickness}"
-                                    BorderBrush="{actipro:ThemeResource ControlBackgroundBrushSolidAccent}"
+                                    BorderBrush="{actipro:ThemeResource ControlForegroundBrushOutlineAccent}"
                                     CornerRadius="{TemplateBinding CornerRadius}"
                                     Opacity="0">
                                 <Border.Transitions>
                                     <Transitions>
-                                        <DoubleTransition Property="Opacity" Duration="0:0:0.3" />    
+                                        <DoubleTransition Property="Opacity" Duration="0:0:0.2" />    
                                     </Transitions>
                                 </Border.Transitions>
                             </Border>
@@ -127,7 +127,7 @@
         <!-- Focused State -->
         <Style Selector="^:focus">
             <Style Selector="^ /template/ Border#focus">
-                <Setter Property="Opacity" Value="0.5" />
+                <Setter Property="Opacity" Value="1" />
             </Style>
             <!--<Style Selector="^ /template/ Border#border">
                 <Setter Property="BorderBrush" Value="Transparent" />

@@ -1,0 +1,74 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:ap="clr-namespace:AutoSpex.Client.Resources.AttachedProperties"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+
+    <Design.PreviewWith>
+        <components:SelectSourceView Padding="20" />
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type components:SelectSourceView}" TargetType="components:SelectSourceView">
+        <Setter Property="Height" Value="400" />
+        <Setter Property="Width" Value="500" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        Padding="{TemplateBinding Padding}"
+                        Margin="{TemplateBinding Margin}">
+                    <DockPanel>
+                        <Border DockPanel.Dock="Top">
+                            <TextBox Text="{Binding Location, RelativeSource={RelativeSource TemplatedParent}}"
+                                     Theme="{StaticResource TextBoxOutlineHighlight}"
+                                     BorderBrush="{actipro:ThemeResource Container2BorderBrush}"
+                                     VerticalContentAlignment="Center"
+                                     Watermark="Enter source path">
+                                <TextBox.InnerLeftContent>
+                                    <PathIcon Theme="{StaticResource IconXml}" />
+                                </TextBox.InnerLeftContent>
+                                <TextBox.InnerRightContent>
+                                    <Button
+                                        Command="{Binding $parent[components:SelectSourceView].PickFileCommand}"
+                                        ap:ButtonIcon.Theme="{StaticResource IconFolderOutlinedOpen}"
+                                        Theme="{ StaticResource IconButton}"
+                                        Height="24" Width="24"
+                                        Padding="7" Margin="3 0" />
+                                </TextBox.InnerRightContent>
+                            </TextBox>
+                        </Border>
+
+                        <Border CornerRadius="5"
+                                Margin="0 10 0 0"
+                                Background="{actipro:ThemeResource Container2BackgroundBrush}">
+                            <Panel>
+                                <Rectangle Stroke="{actipro:ThemeResource Container4BorderBrush}"
+                                           StrokeThickness="1"
+                                           StrokeDashArray="5,3"
+                                           RadiusX="5" RadiusY="5" />
+                                <StackPanel VerticalAlignment="Center"
+                                            HorizontalAlignment="Center">
+                                    <PathIcon Theme="{StaticResource IconImportOutline}"
+                                              Padding="0" Margin="10"
+                                              Foreground="{actipro:ThemeResource ControlForegroundBrushOutlineAccent}" />
+                                    <TextBlock Text="Drop here to add source"
+                                               Classes="theme-text-heading size-sm"
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Center" />
+                                    <TextBlock Text="Or select a file or folder to import."
+                                               FontSize="{actipro:ThemeResource DefaultFontSizeSmall}"
+                                               Foreground="{actipro:ThemeResource DefaultForegroundBrushDisabled}"
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Center"
+                                               Margin="5" />
+                                </StackPanel>
+                            </Panel>
+                        </Border>
+                    </DockPanel>
+                </Border>
+
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

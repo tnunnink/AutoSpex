@@ -1,0 +1,70 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="using:AutoSpex.Client.Components"
+                    xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui">
+    <Design.PreviewWith>
+        <Border Padding="10"
+                BorderBrush="{actipro:ThemeResource Container2BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="10">
+            <controls:ElementFlyout />
+        </Border>
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type controls:ElementFlyout}" TargetType="controls:ElementFlyout">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <DockPanel Height="260" Width="300">
+                    <Border DockPanel.Dock="Top"
+                            BorderThickness="0 0 0 1"
+                            BorderBrush="{actipro:ThemeResource Container2BorderBrush}"
+                            Padding="5">
+                        <DockPanel>
+                            <ToggleButton DockPanel.Dock="Right"
+                                          IsChecked="{Binding ShowAll, RelativeSource={RelativeSource TemplatedParent}}"
+                                          Theme="{actipro:ControlTheme ToggleButtonLink}"
+                                          Classes="accent"
+                                          VerticalContentAlignment="Center"
+                                          Foreground="{actipro:ThemeResource DefaultForegroundBrushSecondary}"
+                                          CornerRadius="0"
+                                          BorderThickness="0"
+                                          Padding="5">
+                                <TextBlock Text="Show All" />
+                                <ToggleButton.Styles>
+                                    <Style Selector="ToggleButton:not(:unchecked)">
+                                        <Style Selector="^ /template/ Border#checkedBorder">
+                                            <Setter Property="IsVisible" Value="False" />
+                                        </Style>
+                                        <Style Selector="^ TextBlock">
+                                            <Setter Property="Text" Value="Show Components"></Setter>
+                                        </Style>
+                                    </Style>
+                                </ToggleButton.Styles>
+                            </ToggleButton>
+
+                            <TextBox x:Name="PART_TextBox"
+                                     Watermark="Filter Types"
+                                     BorderThickness="0" />
+                        </DockPanel>
+                    </Border>
+
+                    <ListBox ItemsSource="{Binding Elements, RelativeSource={RelativeSource TemplatedParent}}"
+                             BorderThickness="0"
+                             Background="Transparent"
+                             Padding="5">
+                        <ListBox.Styles>
+                            <Style Selector="ListBoxItem">
+                                <Setter Property="CornerRadius" Value="5" />
+                                <Setter Property="Theme" Value="{StaticResource ListBoxItemSimple}" />
+                            </Style>
+                            <Style Selector="ScrollViewer">
+                                <Setter Property="Theme" Value="{actipro:ControlTheme ScrollViewerOverlay}" />
+                                <Setter Property="HorizontalScrollBarVisibility" Value="Auto" />
+                            </Style>
+                        </ListBox.Styles>
+                    </ListBox>
+                </DockPanel>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

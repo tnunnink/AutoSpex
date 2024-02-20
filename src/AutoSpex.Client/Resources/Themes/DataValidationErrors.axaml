@@ -1,0 +1,66 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:system="clr-namespace:System;assembly=System.Runtime">
+
+    <Design.PreviewWith>
+        <Border Padding="20">
+            <StackPanel Spacing="20">
+                <TextBox Text="Sample">
+                    <DataValidationErrors.Error>
+                        <system:Exception />
+                    </DataValidationErrors.Error>
+                </TextBox>
+                <TextBox Text="Sample">
+                    <TextBox.Styles>
+                        <Style Selector="DataValidationErrors">
+                            <Setter Property="Theme" Value="{actipro:ControlTheme ToolTipDataValidationErrors}" />
+                        </Style>
+                    </TextBox.Styles>
+                    <DataValidationErrors.Error>
+                        <system:Exception />
+                    </DataValidationErrors.Error>
+                    
+                </TextBox>
+                <TextBox x:Name="TestBox" Text="Sample"
+                         Theme="{actipro:ControlTheme TextBoxSoft}">
+                    <TextBox.Styles>
+                        <Style Selector="DataValidationErrors">
+                            <Setter Property="Theme" Value="{DynamicResource EmptyValidationTemplate}" />
+                        </Style>
+                        <Style Selector=":error /template/ Border">
+                            <Setter Property="Background" Value="{actipro:ThemeResource ControlBackgroundBrushSoftDanger}" />
+                            <Setter Property="TextElement.Foreground" Value="{actipro:ThemeResource ControlForegroundBrushSoftDanger}" />
+                        </Style>
+                    </TextBox.Styles>
+                    <DataValidationErrors.Error>
+                        <system:Exception />
+                    </DataValidationErrors.Error>
+                </TextBox>
+            </StackPanel>
+        </Border>
+    </Design.PreviewWith>
+    
+    <DataTemplate x:Key="ErrorTooltipTemplate">
+        <StackPanel Width="200" Height="100">
+            <TextBlock Foreground="White" Background="Red" Text="Error!" />
+            <TextBlock Text="We got problems" />
+        </StackPanel>
+    </DataTemplate>
+
+    <!-- EmptyValidationTemplate -->
+    <ControlTheme x:Key="EmptyValidationTemplate" TargetType="DataValidationErrors">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <ContentPresenter
+                    x:Name="PART_ContentPresenter"
+                    Background="{TemplateBinding Background}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    Content="{TemplateBinding Content}"
+                    ContentTemplate="{TemplateBinding ContentTemplate}"
+                    CornerRadius="{TemplateBinding CornerRadius}"
+                    Padding="{TemplateBinding Padding}" />
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

@@ -1,0 +1,43 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="using:AutoSpex.Client.Components"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+                    xmlns:system="clr-namespace:System;assembly=System.Runtime">
+
+    <Design.PreviewWith>
+        <components:DeletePrompt ItemName="MySpec" />
+    </Design.PreviewWith>
+    
+    <system:Boolean x:Key="True">True</system:Boolean>
+    <system:Boolean x:Key="False">False</system:Boolean>
+
+    <ControlTheme x:Key="{x:Type components:DeletePrompt}" TargetType="components:DeletePrompt">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <controls:Prompt Header="{TemplateBinding Title}"
+                                 HeaderIcon="{StaticResource IconWarningFilled}"
+                                 ActionButtonText="Delete"
+                                 ActionButtonTheme="{actipro:ControlTheme ButtonSoft}"
+                                 ActionCommandParameter="{StaticResource True}"
+                                 CancelButtonTheme="{actipro:ControlTheme ButtonSoft}"
+                                 CancelCommandParameter="{StaticResource False}"
+                                 Classes="danger"
+                                 MaxWidth="500" Padding="20">
+                    <controls:Prompt.Content>
+                        <TextBlock TextWrapping="Wrap">
+                            <TextBlock.Inlines>
+                                <Run Text="Are you sure you wan to delete" />
+                                <Run Text="{TemplateBinding ItemName}"
+                                     FontWeight="SemiBold"
+                                     Foreground="{actipro:ThemeResource ControlForegroundBrushOutlineAccent}" />
+                                <Run Text="from this project?" />
+                                <Run Text="It will not be recoverable after deletion." />
+                            </TextBlock.Inlines>
+                        </TextBlock>
+                    </controls:Prompt.Content>
+                </controls:Prompt>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

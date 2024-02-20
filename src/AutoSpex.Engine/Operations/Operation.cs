@@ -30,6 +30,8 @@ public abstract class Operation(string name) : SmartEnum<Operation, string>(name
     public abstract bool Execute(object? input, params object[] values);
 
     public static IEnumerable<Operation> Supporting(Property property) => List.Where(x => x.Supports(property.Group));
+    
+    public static IEnumerable<Operation> Supporting(TypeGroup group) => List.Where(x => x.Supports(group));
 
     protected virtual bool Supports(TypeGroup group) => true;
     
@@ -46,6 +48,11 @@ public abstract class Operation(string name) : SmartEnum<Operation, string>(name
     /// type of the input value.
     /// </summary>
     public static readonly Operation Equal = new EqualOperation();
+
+    /// <summary>
+    /// Represents an operation that checks whether two values are equivalent.
+    /// </summary>
+    public static readonly Operation IsEquivalent = new IsEquivalentOperation();
 
     /// <summary>
     /// Represents a greater than operation. The operation checks if the input value 
@@ -73,6 +80,16 @@ public abstract class Operation(string name) : SmartEnum<Operation, string>(name
     /// input types that implement IComparable interface.
     /// </summary>
     public static readonly Operation LessThanOrEqual = new LessThanOrEqualOperation();
+    
+    /// <summary>
+    /// Returns the an <see cref="Operation"/> which evaluates whether an input value is <c>true</c>. 
+    /// </summary>
+    public static readonly Operation IsTrue = new IsTrueOperation();
+    
+    /// <summary>
+    /// Returns the an <see cref="Operation"/> which evaluates whether an input value is <c>false</c>. 
+    /// </summary>
+    public static readonly Operation IsFalse = new IsFalseOperation();
 
     /// <summary>
     /// Represents an operation that checks for null values. It returns true 
@@ -121,6 +138,9 @@ public abstract class Operation(string name) : SmartEnum<Operation, string>(name
     /// matches any value within a supplied list of values.
     /// </summary>
     public static readonly Operation In = new InOperation();
+    
+    
+    public static readonly Operation Like = new LikeOperation();
 
     /// <summary>
     /// Represents a "between" operation. This operation checks if the input value falls between 

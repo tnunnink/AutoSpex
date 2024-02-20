@@ -1,0 +1,95 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+
+    <Design.PreviewWith>
+        <components:EditSourceView Padding="20" Source="{x:Static components:DesignData.Source}" />
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type components:EditSourceView}" TargetType="components:EditSourceView">
+        <Setter Property="Height" Value="400" />
+        <Setter Property="Width" Value="500" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        Padding="{TemplateBinding Padding}"
+                        Margin="{TemplateBinding Margin}">
+                    <StackPanel Spacing="10">
+                        <TextBox
+                            Text="{Binding Source.Name, RelativeSource={RelativeSource TemplatedParent}, FallbackValue={x:Null}}"
+                            Theme="{StaticResource TextBoxOutlineHighlight}"
+                            BorderBrush="{actipro:ThemeResource Container2BorderBrush}"
+                            VerticalContentAlignment="Center"
+                            UseFloatingWatermark="True"
+                            Watermark="Source name" />
+
+                        <TextBox
+                            Text="{Binding Source.Description, RelativeSource={RelativeSource TemplatedParent}, FallbackValue={x:Null}}"
+                            Theme="{StaticResource TextBoxOutlineHighlight}"
+                            BorderBrush="{actipro:ThemeResource Container2BorderBrush}"
+                            MinHeight="100"
+                            UseFloatingWatermark="True"
+                            Watermark="Source description" />
+
+                        <Border BorderBrush="{actipro:ThemeResource Container2BorderBrush}"
+                                CornerRadius="{actipro:ThemeResource EditCornerRadius}"
+                                BorderThickness="1"
+                                Padding="10">
+                            <StackPanel Spacing="5">
+                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                    <Label Content="Target Type"
+                                           Theme="{actipro:ControlTheme LabelFormControlLabel}" />
+                                    <TextBlock Grid.Column="2"
+                                               FontSize="{actipro:ThemeResource DefaultFontSizeSmall}"
+                                               Foreground="{actipro:ThemeResource DefaultForegroundBrushSecondary}"
+                                               Text="{Binding Source.TargetType, RelativeSource={RelativeSource TemplatedParent}, FallbackValue={x:Null}}" />
+                                </Grid>
+                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                    <Label Content="Target Name"
+                                           Theme="{actipro:ControlTheme LabelFormControlLabel}" />
+                                    <TextBlock Grid.Column="2"
+                                               FontSize="{actipro:ThemeResource DefaultFontSizeSmall}"
+                                               Foreground="{actipro:ThemeResource DefaultForegroundBrushSecondary}"
+                                               Text="{Binding Source.TargetName, RelativeSource={RelativeSource TemplatedParent}, FallbackValue={x:Null}}" />
+                                </Grid>
+                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                    <Label Content="Exported By"
+                                           Theme="{actipro:ControlTheme LabelFormControlLabel}" />
+                                    <TextBlock Grid.Column="2"
+                                               FontSize="{actipro:ThemeResource DefaultFontSizeSmall}"
+                                               Foreground="{actipro:ThemeResource DefaultForegroundBrushSecondary}"
+                                               Text="{Binding Source.ExportedBy, RelativeSource={RelativeSource TemplatedParent}, FallbackValue={x:Null}}" />
+                                </Grid>
+                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                    <Label Content="Exported On"
+                                           Theme="{actipro:ControlTheme LabelFormControlLabel}" />
+                                    <TextBlock Grid.Column="2"
+                                               FontSize="{actipro:ThemeResource DefaultFontSizeSmall}"
+                                               Foreground="{actipro:ThemeResource DefaultForegroundBrushSecondary}"
+                                               Text="{Binding Source.ExportedOn, RelativeSource={RelativeSource TemplatedParent}, FallbackValue={x:Null}}" />
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="10" Margin="0 20"
+                                    HorizontalAlignment="Right">
+                            <Button Content="Cancel"
+                                    Width="80"
+                                    Theme="{actipro:ControlTheme ButtonSoft}" />
+                            <Button Content="Add"
+                                    Command="{TemplateBinding AddCommand}"
+                                    CommandParameter="{Binding $parent[Window]}"
+                                    Width="80"
+                                    Theme="{actipro:ControlTheme ButtonSolid}"
+                                    Classes="accent" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

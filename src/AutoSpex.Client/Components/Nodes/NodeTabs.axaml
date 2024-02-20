@@ -1,0 +1,17 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:AutoSpex.Client.Components">
+    <Design.PreviewWith>
+        <controls:NodeTabs />
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type controls:NodeTabs}" TargetType="controls:NodeTabs">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <TabControl >
+                    
+                </TabControl>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

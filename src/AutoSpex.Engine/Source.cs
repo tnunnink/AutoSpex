@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using System.Xml.Linq;
+using JetBrains.Annotations;
 using L5Sharp.Core;
 
 namespace AutoSpex.Engine;
@@ -7,7 +8,10 @@ namespace AutoSpex.Engine;
 public class Source
 {
     private L5X? _l5X;
-    
+
+    private HashSet<string> _elementNames =
+        [L5XName.Description, L5XName.Comment, L5XName.Text, L5XName.RevisionNote, L5XName.AdditionalHelpText];
+
     [UsedImplicitly]
     private Source()
     {
@@ -37,6 +41,28 @@ public class Source
     public string Content { get; private set; } = string.Empty;
     public L5X L5X => _l5X ??= L5X.Parse(Content.Decompress());
 
+    public IEnumerable<string> GetDistinctValues()
+    {
+        var values = new HashSet<string>();
+
+        foreach (var element in L5X.Serialize().DescendantsAndSelf())
+        {
+            if (!_elementNames.Contains(element.Name.LocalName)) continue;
+            var value = element.Value.Trim().Trim(';');
+            if (string.IsNullOrEmpty(value)) continue;
+            values.Add(element.Value);
+        }
+
+        foreach (var attribute in L5X.Serialize().DescendantsAndSelf().Attributes())
+        {
+            var value = attribute.Value.Trim();
+            if (string.IsNullOrEmpty(value)) continue;
+            values.Add(attribute.Value);
+        }
+
+        return values;
+    }
+
     public void Update(L5X l5X)
     {
         _l5X = l5X ?? throw new ArgumentNullException(nameof(l5X));
@@ -45,5 +71,12 @@ public class Source
         ExportedOn = _l5X.Info.ExportDate ?? DateTime.Today;
         ExportedBy = _l5X.Info.Owner ?? string.Empty;
         Content = _l5X.ToString().Compress();
+    }
+    
+    public class SourceValueComparer : IEqualityComparer<string>
+    {
+        public bool Equals(string? x, string? y) => StringComparer.Ordinal.Equals(x, y);
+
+        public int GetHashCode(string obj) => obj.StableHash();
     }
 }

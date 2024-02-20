@@ -1,0 +1,39 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:components="using:AutoSpex.Client.Components"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers">
+    <Design.PreviewWith>
+        <components:BreadcrumbControl Breadcrumb="{x:Static components:DesignData.PathBreadcrumb}" Margin="20" />
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type components:BreadcrumbControl}" TargetType="components:BreadcrumbControl">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border>
+                    <ItemsControl
+                        ItemsSource="{Binding Breadcrumb.Items, RelativeSource={RelativeSource TemplatedParent}, FallbackValue='Invalid Path'}"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.DataTemplates>
+                            <components:BreadcrumbTemplates>
+                                <DataTemplate x:Key="{x:Static observers:CrumbType.Parent}"
+                                              x:DataType="observers:Breadcrumb">
+                                    <components:BreadcrumbParent />
+                                </DataTemplate>
+                                <DataTemplate x:Key="{x:Static observers:CrumbType.Target}"
+                                              x:DataType="observers:Breadcrumb">
+                                    <components:BreadcrumbTarget />
+                                </DataTemplate>
+                            </components:BreadcrumbTemplates>
+                        </ItemsControl.DataTemplates>
+                    </ItemsControl>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

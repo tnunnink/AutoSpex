@@ -14,7 +14,7 @@
                     <MenuItem Theme="{DynamicResource ContextMenuItem}"
                               Header="Add Item" />
                     <MenuItem Theme="{DynamicResource ContextMenuItem}"
-                              Header="Play Item"/>
+                              Header="Play Item" />
                 </MenuFlyout>
             </Button.ContextFlyout>
             <Button.Flyout>
@@ -55,7 +55,7 @@
     </Design.PreviewWith>
 
     <ControlTheme x:Key="ContextMenuItem" TargetType="MenuItem" BasedOn="{actipro:ControlTheme MenuItem}">
-        
+        <Setter Property="FontSize" Value="{actipro:ThemeResource DefaultFontSizeSmall}" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Grid>
@@ -77,12 +77,13 @@
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="3" />
 
-                    <Viewbox x:Name="iconHost" Grid.Column="0"
+                    <Viewbox x:Name="iconHost" 
+                             Grid.Column="0"
                              IsVisible="{TemplateBinding Icon, Converter={x:Static ObjectConverters.IsNotNull}}"
-                             Margin="7 0 0 0" Width="16" Height="16"
-                             StretchDirection="DownOnly"
+                             Margin="7 0 0 0" Width="20" Height="20"
                              HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <PathIcon Theme="{TemplateBinding Icon}" Padding="1" />
+                        <PathIcon Theme="{TemplateBinding Icon}"
+                                  Height="20" Width="20" Padding="3" />
                     </Viewbox>
 
                     <ContentPresenter
@@ -127,6 +128,7 @@
 
                     <primitives:ChromedPopup
                         x:Name="PART_Popup"
+                        Grid.Column="0"
                         Grid.ColumnSpan="3"
                         Background="{actipro:ThemeResource MenuPopupBackgroundBrush}"
                         BorderBrush="{actipro:ThemeResource MenuPopupBorderBrush}"
@@ -150,7 +152,6 @@
                         </ScrollViewer>
                     </primitives:ChromedPopup>
                 </Grid>
-
             </ControlTemplate>
         </Setter>
 

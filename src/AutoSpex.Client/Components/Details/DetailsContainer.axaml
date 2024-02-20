@@ -1,0 +1,106 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="using:AutoSpex.Client.Components"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+                    xmlns:shared="clr-namespace:AutoSpex.Client.Shared">
+
+    <Design.PreviewWith>
+        <components:DetailsContainer Height="600" Width="600"
+                                     ItemsSource="{x:Static components:DesignData.Pages}" />
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type components:DetailsContainer}" TargetType="components:DetailsContainer">
+        <Setter Property="BorderThickness" Value=" 0 1 0 0" />
+        <Setter Property="BorderBrush" Value="{actipro:ThemeResource Container1BorderBrush}" />
+
+        <Setter Property="ItemContainerTheme">
+            <ControlTheme TargetType="components:DetailsTab"
+                          x:DataType="shared:PageViewModel"
+                          BasedOn="{StaticResource DetailsTab}">
+                <Setter Property="Title" Value="{Binding Title}" />
+                <Setter Property="Icon" Value="{Binding Icon, Converter={StaticResource KeyToIconConverter}}" />
+                <Setter Property="IsChanged" Value="{Binding IsChanged}" />
+            </ControlTheme>
+        </Setter>
+
+        <Setter Property="Template">
+            <ControlTemplate>
+                <DockPanel>
+                    <Grid DockPanel.Dock="Top"
+                          MinHeight="40"
+                          ColumnDefinitions="*,Auto">
+                        <ScrollViewer Grid.Column="0"
+                                      Classes="theme-scroll-overlay"
+                                      VerticalScrollBarVisibility="Disabled"
+                                      HorizontalScrollBarVisibility="Hidden">
+                            <ItemsPresenter x:Name="PART_ItemsPresenter"
+                                            ItemsPanel="{TemplateBinding ItemsPanel}"
+                                            ZIndex="1" />
+                        </ScrollViewer>
+
+                        <Border Grid.Column="1"
+                                BorderBrush="{actipro:ThemeResource Container1BorderBrush}"
+                                BorderThickness="1 0 0 0">
+                            <StackPanel Orientation="Horizontal"
+                                        Spacing="3"
+                                        Margin="5 0">
+                                <controls:IconButton
+                                    Icon="{StaticResource IconChevronDown}"
+                                    Padding="8 9 8 8">
+                                    <controls:IconButton.Flyout>
+                                        <Flyout Placement="BottomEdgeAlignedRight"
+                                                VerticalOffset="3" HorizontalOffset="5">
+                                            <components:DetailsOpenTabs OpenTabsSource="{TemplateBinding ItemsSource}"
+                                                                        CloseTabCommand="{Binding $parent[components:DetailsContainer].CloseTabCommand}" />
+                                        </Flyout>
+                                    </controls:IconButton.Flyout>
+                                </controls:IconButton>
+                                <controls:IconButton
+                                    Icon="{StaticResource IconAdd}"
+                                    Classes="accent"
+                                    Command="{TemplateBinding AddCommand}" />
+                                <controls:IconButton
+                                    Icon="{StaticResource IconDotsVertical}">
+                                    <controls:IconButton.Flyout>
+                                        <MenuFlyout Placement="BottomEdgeAlignedRight">
+                                            <MenuFlyout.ItemContainerTheme>
+                                                <ControlTheme TargetType="MenuItem"
+                                                              BasedOn="{StaticResource ContextMenuItem}" />
+                                            </MenuFlyout.ItemContainerTheme>
+
+                                            <MenuItem Header="Close Tab"
+                                                      InputGesture="Ctrl+W"
+                                                      Command="{Binding $parent[components:DetailsContainer].CloseTabCommand}"
+                                                      CommandParameter="{Binding $parent[components:DetailsContainer].SelectedItem}" />
+                                            <MenuItem Header="Close All Tabs"
+                                                      InputGesture="Ctrl+Shift+W"
+                                                      Command="{Binding $parent[components:DetailsContainer].CloseAllTabsCommand}" />
+                                            <MenuItem Header="Force Close All Tabs"
+                                                      InputGesture="Alt+Shift+W"
+                                                      Command="{Binding $parent[components:DetailsContainer].ForceCloseAllTabsCommand}" />
+                                        </MenuFlyout>
+                                    </controls:IconButton.Flyout>
+                                </controls:IconButton>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
+                        <ContentPresenter
+                            x:Name="PART_SelectedContentHost"
+                            Margin="{TemplateBinding Padding}"
+                            Content="{TemplateBinding SelectedContent}"
+                            ContentTemplate="{TemplateBinding SelectedContentTemplate}"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    </Border>
+                </DockPanel>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

@@ -1,0 +1,77 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:components="using:AutoSpex.Client.Components"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:system="clr-namespace:System;assembly=System.Runtime"
+                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine">
+
+    <Design.PreviewWith>
+        <Border Padding="40">
+            <components:CriterionEntry Width="1000" />
+        </Border>
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type components:CriterionEntry}" TargetType="components:CriterionEntry"
+                  x:DataType="observers:CriterionObserver">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <ScrollViewer VerticalScrollBarVisibility="Disabled"
+                              HorizontalScrollBarVisibility="Hidden">
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel.Styles>
+                            <Style Selector="Border">
+
+                            </Style>
+                        </StackPanel.Styles>
+
+                        <components:PropertyEntry
+                            OriginType="{Binding Criterion.Type, RelativeSource={RelativeSource TemplatedParent}, FallbackValue={x:Null}}"
+                            Property="{Binding Criterion.Property, RelativeSource={RelativeSource TemplatedParent}}"
+                            PropertyName="{Binding Criterion.PropertyName, RelativeSource={RelativeSource TemplatedParent}}" />
+
+                        <Border
+                            BorderThickness="1 0 0 0"
+                            BorderBrush="{actipro:ThemeResource Container1BorderBrush}"
+                            Margin="5" />
+
+                        <components:OperationEntry
+                            Operation="{Binding Criterion.Operation, RelativeSource={RelativeSource TemplatedParent}}"
+                            Property="{Binding Criterion.Property, RelativeSource={RelativeSource TemplatedParent}}" />
+
+                        <Border BorderThickness="1 0 0 0"
+                                BorderBrush="{actipro:ThemeResource Container1BorderBrush}"
+                                Margin="5" />
+
+                        <ItemsControl
+                            ItemsSource="{Binding Criterion.Arguments, RelativeSource={RelativeSource TemplatedParent}}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.DataTemplates>
+                                <components:ArgumentTemplates>
+                                    <DataTemplate x:Key="{x:Type system:String}"
+                                                  x:DataType="observers:ArgumentObserver">
+                                        <StackPanel Orientation="Horizontal">
+                                            <components:ArgumentEntry Value="{Binding Value}"
+                                                                      SuggestionSource="{Binding Suggestions}" />
+                                            <Border BorderThickness="1 0 0 0"
+                                                    BorderBrush="{actipro:ThemeResource Container1BorderBrush}"
+                                                    Margin="5" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                    <DataTemplate x:Key="{x:Type engine:Criterion}"
+                                                  x:DataType="observers:ArgumentObserver">
+                                        <components:CriterionEntry Criterion="{Binding Value}" />
+                                    </DataTemplate>
+                                </components:ArgumentTemplates>
+                            </ItemsControl.DataTemplates>
+                        </ItemsControl>
+                    </StackPanel>
+                </ScrollViewer>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

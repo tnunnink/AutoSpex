@@ -1,0 +1,56 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui">
+    
+    <!-- DataGridRow -->
+	<ControlTheme x:Key="VariableDataGridRow" TargetType="DataGridRow">
+		<Setter Property="Background" Value="{Binding $parent[DataGrid].RowBackground}" />
+		
+		<Setter Property="Template">
+			<ControlTemplate>
+
+				<Border
+					x:Name="border"
+					Background="{TemplateBinding Background}"
+					BorderBrush="{TemplateBinding BorderBrush}"
+					BorderThickness="{TemplateBinding BorderThickness}"
+					CornerRadius="{TemplateBinding CornerRadius}"
+					>
+					<DataGridFrozenGrid x:Name="PART_Root" ColumnDefinitions="Auto,*" RowDefinitions="*,Auto,Auto">
+						<DataGridRowHeader x:Name="PART_RowHeader" Grid.RowSpan="3" DataGridFrozenGrid.IsFrozen="True" />
+						<DataGridCellsPresenter x:Name="PART_CellsPresenter" Grid.Column="1" DataGridFrozenGrid.IsFrozen="True" />
+						<DataGridDetailsPresenter x:Name="PART_DetailsPresenter" Grid.Row="1" Grid.Column="1" Background="{actipro:ThemeResource Container2BackgroundBrush}" />
+						
+						<Rectangle x:Name="PART_BottomGridLine" Grid.Row="2" Grid.Column="1" Height="1" HorizontalAlignment="Stretch" />
+					</DataGridFrozenGrid>
+				</Border>
+
+			</ControlTemplate>
+		</Setter>
+
+		<Style Selector="^:invalid">
+			<Setter Property="Background" Value="{actipro:ThemeResource ControlBackgroundBrushSoftDanger}" />
+		</Style>
+
+		<!--<Style Selector="^:pointerover /template/ Border#border">
+			<Setter Property="Background" Value="{actipro:ThemeResource ListItemBackgroundBrushPointerOver}" />
+		</Style>-->
+		<Style Selector="^:pressed /template/ Border#border">
+			<Setter Property="Background" Value="{actipro:ThemeResource ListItemBackgroundBrushPressed}" />
+		</Style>
+
+		<!--<Style Selector="^:selected">
+			<Setter Property="Foreground" Value="{actipro:ThemeResource ListItemForegroundBrushSelected}" />
+
+			<Style Selector="^ /template/ Border#border">
+				<Setter Property="Background" Value="{actipro:ThemeResource ListItemBackgroundBrushSelected}" />
+			</Style>
+			<Style Selector="^:pointerover /template/ Border#border">
+				<Setter Property="Background" Value="{actipro:ThemeResource ListItemBackgroundBrushSelectedPointerOver}" />
+			</Style>
+			<Style Selector="^:pointerover:focus /template/ Border#border">
+				<Setter Property="Background" Value="{actipro:ThemeResource ListItemBackgroundBrushSelectedPressed}" />
+			</Style>
+		</Style>-->
+	</ControlTheme>
+</ResourceDictionary>

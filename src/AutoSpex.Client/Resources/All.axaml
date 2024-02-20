@@ -1,7 +1,8 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:converters="clr-namespace:AutoSpex.Client.Resources.Converters"
-                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine">
+                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
+                    xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui">
     
     <ResourceDictionary.MergedDictionaries>
         <ResourceInclude Source="Icons.axaml" />
@@ -10,8 +11,12 @@
         <ResourceInclude Source="Themes/TextBox.axaml" />
         <ResourceInclude Source="Themes/TabItem.axaml" />
         <ResourceInclude Source="Themes/IconButton.axaml" />
+        <ResourceInclude Source="Themes/IconButtons.axaml" />
         <ResourceInclude Source="Themes/TreeViewItem.axaml" />
         <ResourceInclude Source="Themes/MenuItem.axaml" />
+        <ResourceInclude Source="Themes/DrawerView.axaml" />
+        <ResourceInclude Source="Themes/GridSplitter.axaml" />
+        <ResourceInclude Source="Themes/Prompt.axaml" />
     </ResourceDictionary.MergedDictionaries>
     
     <converters:KeyResourceConverter x:Key="NodeToIconConverter">
@@ -19,5 +24,9 @@
         <converters:ValueResourceKey Value="{x:Static engine:NodeType.Folder}" Resource="ThemedIcon.Folder" />
         <converters:ValueResourceKey Value="{x:Static engine:NodeType.Spec}" Resource="ThemedIcon.Spec" />
     </converters:KeyResourceConverter>
+    
+    <actipro:ComparisonConverter x:Key="EqualToConverter" Operator="EqualTo" />
+    <actipro:ComparisonConverter x:Key="NotEqualToConverter" Operator="NotEqualTo" />
+    <actipro:MathConverter x:Key="MathConverter" />
 
 </ResourceDictionary>

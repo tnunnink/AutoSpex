@@ -1,0 +1,110 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="using:AutoSpex.Client.Components"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
+                    xmlns:ap="clr-namespace:AutoSpex.Client.Resources.AttachedProperties">
+    
+    <Design.PreviewWith>
+        <components:CriteriaList Height="600" Width="800"
+                                 Criteria="{x:Static components:DesignData.Criteria}"
+                                 Element="{x:Static engine:Element.Tag}" />
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type components:CriteriaList}" TargetType="components:CriteriaList">
+        <Setter Property="Padding" Value="10" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Padding="{TemplateBinding Padding}"
+                        Margin="{TemplateBinding Margin}"
+                        Background="{TemplateBinding Background}">
+                    <DockPanel>
+                        <!--Header-->
+                        <Border DockPanel.Dock="Top"
+                                Padding="5">
+                            <DockPanel LastChildFill="False">
+
+                                <StackPanel DockPanel.Dock="Left"
+                                            Orientation="Horizontal"
+                                            Spacing="10">
+
+                                    <CheckBox x:Name="CheckAll"
+                                              Theme="{actipro:ControlTheme CheckBoxSolid}"
+                                              Classes="size-xs accent"
+                                              ToolTip.Tip="Select All" />
+
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button ap:ButtonIcon.Theme="{StaticResource IconAdd}"
+                                                Theme="{StaticResource IconPillButtonLeft}"
+                                                Command="{Binding AddCriterionCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                                                Classes="accent"
+                                                Padding="9"
+                                                ToolTip.Tip="Add Criteria" />
+                                        <Button ap:ButtonIcon.Theme="{StaticResource IconTrashOutlined}"
+                                                Theme="{StaticResource IconPillButtonCenter}"
+                                                Command="{Binding RemoveSelectedCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                                                ToolTip.Tip="Delete Selected" />
+                                        <Button ap:ButtonIcon.Theme="{StaticResource IconDots}"
+                                                Theme="{StaticResource IconPillButtonRight}" />
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <StackPanel DockPanel.Dock="Right"
+                                            Orientation="Horizontal"
+                                            Spacing="10">
+
+                                </StackPanel>
+                            </DockPanel>
+                        </Border>
+
+                        <!--No Criteria View-->
+                        <StackPanel DockPanel.Dock="Top"
+                                    IsVisible="{Binding !Criteria.Count, RelativeSource={RelativeSource TemplatedParent}}"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center"
+                                    Margin="20">
+                            <TextBlock
+                                Text="No criteria defined"
+                                Foreground="{actipro:ThemeResource DefaultForegroundBrushTertiary}"
+                                FontWeight="SemiBold"
+                                HorizontalAlignment="Center" />
+
+                            <StackPanel Orientation="Horizontal"
+                                        HorizontalAlignment="Center">
+                                <TextBlock
+                                    Text="Click the "
+                                    Foreground="{actipro:ThemeResource DefaultForegroundBrushDisabled}"
+                                    TextAlignment="Center" />
+                                <PathIcon
+                                    Theme="{StaticResource IconAdd}"
+                                    Foreground="{actipro:ThemeResource ControlForegroundBrushOutlineAccent}"
+                                    Height="20" Width="20" Padding="4" Margin="0 2 0 0" />
+                                <TextBlock Text=" button to add a new criteria to this spec."
+                                           Foreground="{actipro:ThemeResource DefaultForegroundBrushDisabled}"
+                                           TextAlignment="Center" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!--Criteria List-->
+                        <ListBox ItemsSource="{TemplateBinding Criteria}"
+                                 IsVisible="{Binding Criteria.Count, RelativeSource={RelativeSource TemplatedParent}}"
+                                 BorderThickness="0">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate x:DataType="observers:CriterionObserver">
+                                    <components:CriteriaListItem />
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                            <ListBox.ItemContainerTheme>
+                                <ControlTheme TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemInvisible}">
+                                    <Setter Property="Padding" Value="0 5" />
+                                </ControlTheme>
+                            </ListBox.ItemContainerTheme>
+                        </ListBox>
+
+                    </DockPanel>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

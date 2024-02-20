@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using AutoSpex.Engine.Converters;
+using FluentAssertions.Equivalency;
 
 namespace AutoSpex.Engine.Tests.Converters;
 
@@ -63,6 +64,6 @@ public class JsonSpecConverterTests
         var data = JsonSerializer.Serialize(spec, _options);
         
         var result = JsonSerializer.Deserialize(data, typeof(Spec), _options);
-        result.Should().BeEquivalentTo(spec);
+        result.Should().BeEquivalentTo(spec, options => options.Excluding(m => m.Type == typeof(Guid)));
     }
 }

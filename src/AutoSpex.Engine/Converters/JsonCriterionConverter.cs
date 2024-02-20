@@ -30,6 +30,9 @@ public class JsonCriterionConverter : JsonConverter<Criterion>
                     if (args is null) break;
                     criterion.Arguments = [..args];
                     break;
+                case nameof(Criterion.Invert):
+                    criterion.Invert = reader.GetBoolean();
+                    break;
             }
         }
 
@@ -49,6 +52,8 @@ public class JsonCriterionConverter : JsonConverter<Criterion>
 
         writer.WritePropertyName(nameof(Criterion.Arguments));
         JsonSerializer.Serialize(writer, value.Arguments.ToArray(), options);
+        
+        writer.WriteBoolean(nameof(Criterion.Invert), value.Invert);
 
         writer.WriteEndObject();
     }

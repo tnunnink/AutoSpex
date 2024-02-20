@@ -1,0 +1,73 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="using:AutoSpex.Client.Components"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:core="clr-namespace:L5Sharp.Core;assembly=L5Sharp.Core">
+
+    <Design.PreviewWith>
+        <Border Padding="100, 400">
+            <StackPanel Spacing="10">
+                <components:PropertyEntry OriginType="{x:Type core:Tag}" />
+                <components:PropertyEntry OriginType="{x:Type core:Tag}"
+                                          PropertyName="TagName.Member"/>
+            </StackPanel>
+        </Border>
+
+    </Design.PreviewWith>
+
+    <ToolTip x:Key="ToolTipError"
+             Placement="TopEdgeAlignedLeft">
+        <StackPanel>
+            <PathIcon Theme="{StaticResource IconExclamationOutlined}" />
+            <TextBlock Text="Testing"></TextBlock>
+        </StackPanel>
+    </ToolTip>
+
+
+    <ControlTheme x:Key="{x:Type components:PropertyEntry}" TargetType="components:PropertyEntry"
+                  x:DataType="observers:CriterionObserver">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Button x:Name="PART_ButtonRoot"
+                        Theme="{actipro:ControlTheme ButtonSoft}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        Foreground="{TemplateBinding Foreground}"
+                        FontFamily="{actipro:ThemeResource CodeFontFamily}"
+                        FontSize="{actipro:ThemeResource DefaultFontSizeSmall}"
+                        MinHeight="30"
+                        HorizontalContentAlignment="Left">
+                    <Panel>
+                        <TextBlock Text="Enter Property"
+                                   IsVisible="{TemplateBinding PropertyName, Converter={x:Static StringConverters.IsNullOrEmpty}}"
+                                   FontStyle="Italic"
+                                   Opacity="{actipro:ThemeResource EditWatermarkOpacity}"
+                                   Margin="0 1 0 0"
+                                   TextWrapping="NoWrap" />
+                        <TextBlock Text="{TemplateBinding PropertyName}"
+                                   IsVisible="{TemplateBinding PropertyName, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                                   TextWrapping="NoWrap"
+                                   Margin="0 1 0 0" />
+                    </Panel>
+                    <Button.Flyout>
+                        <Flyout Placement="BottomEdgeAlignedLeft"
+                                HorizontalOffset="-8" VerticalOffset="-32">
+                            <components:PropertyFlyout
+                                OriginType="{Binding OriginType, RelativeSource={RelativeSource TemplatedParent}}"
+                                PropertyName="{Binding PropertyName, RelativeSource={RelativeSource TemplatedParent}}" />
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^:unresolved">
+            <Style Selector="^ /template/ Button#PART_ButtonRoot">
+                <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushOutlineDanger}" />
+            </Style>
+        </Style>
+    </ControlTheme>
+</ResourceDictionary>

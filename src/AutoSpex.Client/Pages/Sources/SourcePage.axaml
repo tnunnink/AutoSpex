@@ -1,0 +1,9 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             x:Class="AutoSpex.Client.Pages.SourcePage"
+             x:DataType="pages:SourcePageModel">
+    
+    
+</UserControl>

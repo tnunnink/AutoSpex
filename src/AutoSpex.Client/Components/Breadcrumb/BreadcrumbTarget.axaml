@@ -1,0 +1,60 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="using:AutoSpex.Client.Components"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers">
+    <Design.PreviewWith>
+        <StackPanel Orientation="Horizontal"
+                    Margin="10">
+            <components:BreadcrumbTarget DataContext="{x:Static components:DesignData.TargetBreadcrumb}" />
+        </StackPanel>
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type components:BreadcrumbTarget}"
+                  TargetType="components:BreadcrumbTarget"
+                  x:DataType="observers:Breadcrumb">
+
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border x:Name="border" Height="36">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox x:Name="PART_TextEntry"
+                                 Text="{Binding Model.Name}"
+                                 Classes="subtle"
+                                 Focusable="True"
+                                 FontSize="{actipro:ThemeResource DefaultFontSizeSmall}"
+                                 Padding="0 6 5 5"
+                                 VerticalAlignment="Center"
+                                 HorizontalAlignment="Center">
+                            <TextBox.InnerLeftContent>
+                                <PathIcon
+                                    Theme="{Binding Model.NodeType.Name, Converter={StaticResource KeyToIconConverter}}"
+                                    Height="20" Width="20" Padding="2" Margin="5 0" />
+                            </TextBox.InnerLeftContent>
+                            <Interaction.Behaviors>
+                                <DataTriggerBehavior Binding="{Binding InFocus}"
+                                                     ComparisonCondition="Equal"
+                                                     Value="True">
+                                    <FocusControlAction TargetControl="PART_TextEntry" />
+                                </DataTriggerBehavior>
+                            </Interaction.Behaviors>
+                        </TextBox>
+                        <Button Content=">"
+                                IsVisible="{Binding Children.Count}"
+                                Theme="{actipro:ControlTheme ButtonSubtle}"
+                                Foreground="{actipro:ThemeResource DefaultForegroundBrushTertiary}"
+                                TextElement.FontSize="{actipro:ThemeResource DefaultFontSizeSmall}"
+                                Padding="4 0 4 2">
+                            <Button.Flyout>
+                                <Flyout Placement="BottomEdgeAlignedLeft"
+                                        HorizontalOffset="5">
+                                    <components:BreadcrumbMenu BreadcrumbsSource="{Binding Children}"/>
+                                </Flyout>
+                            </Button.Flyout>
+                        </Button>
+                    </StackPanel>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

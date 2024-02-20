@@ -1,8 +1,8 @@
-﻿using AutoSpex.Client.Shared;
+﻿using Avalonia.Controls;
 
 namespace AutoSpex.Client.Pages.Projects;
 
-public partial class DetailsPage : PageView<DetailsPageModel>
+public partial class DetailsPage : UserControl
 {
     public DetailsPage()
     {

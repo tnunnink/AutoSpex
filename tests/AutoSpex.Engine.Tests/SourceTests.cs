@@ -18,7 +18,7 @@ public class SourceTests
         source.TargetType.Should().Be(file.Info.TargetType);
         source.ExportedBy.Should().Be(file.Info.Owner);
         source.ExportedOn.Should().Be(file.Info.ExportDate);
-        
+
         source.Content.Should().NotBeEmpty();
         source.L5X.Should().NotBeNull();
     }
@@ -36,5 +36,32 @@ public class SourceTests
         source.TargetType.Should().Be(example.Info.TargetType);
         source.ExportedBy.Should().Be(example.Info.Owner);
         source.ExportedOn.Should().Be(example.Info.ExportDate);
+    }
+
+    [Test]
+    public void GetValueTable_WhenCalled_ShouldNotBeEmpty()
+    {
+        var test = L5X.Load(Known.Test);
+        var source = new Source(test);
+
+        var values = source.GetDistinctValues().ToList();
+
+        values.Should().NotBeEmpty();
+
+        var filtered = values.Where(v => v.StartsWith("Ch4")).ToList();
+        filtered.Should().NotBeEmpty();
+    }
+
+    [Test]
+    public void IsItPossibleToFilterByWhatIsParsableToAGivenType()
+    {
+        var test = L5X.Load(Known.Test);
+        var source = new Source(test);
+
+        var values = source.GetDistinctValues().ToList();
+
+        var typed = values.Where(v => v.TryParse(typeof(bool)) is not null);
+
+        typed.Should().NotBeEmpty();
     }
 }

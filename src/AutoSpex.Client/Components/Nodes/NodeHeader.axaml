@@ -1,0 +1,84 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="using:AutoSpex.Client.Components"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
+
+    <Design.PreviewWith>
+        <components:NodeHeader Width="1000" Height="60" />
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type components:NodeHeader}" TargetType="components:NodeHeader">
+        <Setter Property="Padding" Value="10" />
+        <Setter Property="Template">
+            <ControlTemplate>
+
+                <Border BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        Background="{TemplateBinding Background}"
+                        Padding="{TemplateBinding Padding}"
+                        Margin="{TemplateBinding Margin}">
+                    <Grid ColumnDefinitions="Auto,*,Auto">
+
+                        <components:BreadcrumbControl Grid.Column="0"
+                                                      VerticalAlignment="Center"
+                                                      HorizontalAlignment="Center"
+                                                      Breadcrumb="{TemplateBinding Breadcrumb}" />
+
+                        <StackPanel Grid.Column="2"
+                                    Orientation="Horizontal"
+                                    Spacing="10">
+
+                            <SplitButton Command="{TemplateBinding SaveCommand}"
+                                         IsEnabled="{TemplateBinding IsChanged}"
+                                         Classes="theme-soft"
+                                         Classes.warning="{TemplateBinding IsChanged}"
+                                         BorderThickness="1"
+                                         BorderBrush="{actipro:ThemeResource ControlBorderBrushOutline}"
+                                         VerticalAlignment="Center"
+                                         HorizontalAlignment="Center"
+                                         Height="30" Padding="5">
+                                <PathIcon Theme="{StaticResource IconFloppyOutlined}"
+                                          Height="20" Width="20" Padding="3" />
+                                <SplitButton.Styles>
+                                    <Style Selector="PathIcon">
+                                        <Setter Property="Foreground"
+                                                Value="{actipro:ThemeResource ButtonForegroundBrush}" />
+                                    </Style>
+                                    <Style Selector="SplitButton[IsEnabled=False] PathIcon">
+                                        <Setter Property="Foreground"
+                                                Value="{actipro:ThemeResource DefaultForegroundBrushDisabled}" />
+                                    </Style>
+                                    <Style Selector=".warning PathIcon">
+                                        <Setter Property="Foreground"
+                                                Value="{actipro:ThemeResource ControlForegroundBrushSoftWarning}" />
+                                    </Style>
+                                </SplitButton.Styles>
+                            </SplitButton>
+
+                            <SplitButton
+                                Classes="theme-soft accent"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Height="30" Padding="5">
+                                <PathIcon Theme="{StaticResource IconPlayOutlined}"
+                                          Height="20" Width="20" Padding="3" />
+                                <SplitButton.Styles>
+                                    <Style Selector="PathIcon">
+                                        <Setter Property="Foreground"
+                                                Value="{actipro:ThemeResource ControlForegroundBrushSoftAccent}" />
+                                    </Style>
+                                </SplitButton.Styles>
+                            </SplitButton>
+
+                            <controls:IconButton Icon="{StaticResource IconDotsVertical}"
+                                                 Height="30" Width="30" Padding="9" />
+
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

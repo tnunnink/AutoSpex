@@ -25,6 +25,10 @@ public class TypeGroup : SmartEnum<TypeGroup, int>
 
     public static TypeGroup Element => new(nameof(Element), 7);
 
+    public static TypeGroup Criterion => new(nameof(Criterion), 8);
+
+    public static TypeGroup Variable => new(nameof(Variable), 9);
+
     public static TypeGroup FromType(Type type)
     {
         if (IsBooleanType(type)) return Boolean;
@@ -34,6 +38,8 @@ public class TypeGroup : SmartEnum<TypeGroup, int>
         if (IsEnumType(type)) return Enum;
         if (IsCollectionType(type)) return Collection;
         if (IsElementType(type)) return Element;
+        if (IsCriterionType(type)) return Criterion;
+        if (IsVariableType(type)) return Variable;
         return Default;
     }
 
@@ -43,22 +49,22 @@ public class TypeGroup : SmartEnum<TypeGroup, int>
         return type == typeof(bool) || type == typeof(BOOL);
     }
 
+    private static bool IsNumericType(Type type)
+    {
+        type = Nullable.GetUnderlyingType(type) ?? type;
+        return NumericTypes.Contains(type);
+    }
+
     private static bool IsTextType(Type type)
     {
         type = Nullable.GetUnderlyingType(type) ?? type;
-        return type == typeof(string) || typeof(StringType).IsAssignableFrom(type);
+        return TextTypes.Contains(type);
     }
 
     private static bool IsDateType(Type type)
     {
         type = Nullable.GetUnderlyingType(type) ?? type;
         return type == typeof(DateTime);
-    }
-
-    private static bool IsNumericType(Type type)
-    {
-        type = Nullable.GetUnderlyingType(type) ?? type;
-        return NumericTypes.Contains(type);
     }
 
     private static bool IsEnumType(Type type)
@@ -70,13 +76,24 @@ public class TypeGroup : SmartEnum<TypeGroup, int>
     private static bool IsCollectionType(Type type)
     {
         type = Nullable.GetUnderlyingType(type) ?? type;
-        return type.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>));
+        return (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>)) ||
+               type.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>));
     }
 
     private static bool IsElementType(Type type)
     {
         type = Nullable.GetUnderlyingType(type) ?? type;
         return Engine.Element.List.Any(e => e.Type == type);
+    }
+
+    private static bool IsCriterionType(Type type)
+    {
+        return type == typeof(Criterion);
+    }
+
+    private static bool IsVariableType(Type type)
+    {
+        return type == typeof(Variable);
     }
 
     private static readonly HashSet<Type> NumericTypes =
@@ -90,6 +107,21 @@ public class TypeGroup : SmartEnum<TypeGroup, int>
         typeof(INT), typeof(UINT),
         typeof(DINT), typeof(UDINT),
         typeof(LINT), typeof(ULINT),
-        typeof(REAL), typeof(LREAL)
+        typeof(REAL), typeof(LREAL),
+        typeof(Watchdog),
+        typeof(TaskPriority),
+        typeof(ScanRate),
+        typeof(LogixType)
+    ];
+
+    private static readonly HashSet<Type> TextTypes =
+    [
+        typeof(string),
+        typeof(StringType),
+        typeof(STRING),
+        typeof(NeutralText),
+        typeof(TagName),
+        typeof(L5Sharp.Core.Argument),
+        typeof(LogixType)
     ];
 }

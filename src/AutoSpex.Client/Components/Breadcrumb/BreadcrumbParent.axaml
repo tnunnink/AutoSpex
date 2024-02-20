@@ -1,0 +1,58 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="using:AutoSpex.Client.Components"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers">
+
+    <Design.PreviewWith>
+        <StackPanel Orientation="Horizontal"
+                    Margin="50">
+            <components:BreadcrumbParent DataContext="{x:Static components:DesignData.ParentBreadcrumb}" />
+            <components:BreadcrumbParent DataContext="{x:Static components:DesignData.ParentBreadcrumb}" />
+        </StackPanel>
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type components:BreadcrumbParent}"
+                  x:DataType="observers:Breadcrumb"
+                  TargetType="components:BreadcrumbParent">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border x:Name="border" Height="36">
+                    <StackPanel Orientation="Horizontal">
+
+                        <Button Content="{Binding Model.Name}"
+                                Command="{Binding NavigateCommand}"
+                                Theme="{actipro:ControlTheme ButtonSubtle}"
+                                Foreground="{actipro:ThemeResource DefaultForegroundBrushTertiary}"
+                                TextElement.FontSize="{actipro:ThemeResource DefaultFontSizeSmall}"
+                                Padding="5" />
+
+                        <Button Content=">"
+                                Theme="{actipro:ControlTheme ButtonSubtle}"
+                                Foreground="{actipro:ThemeResource DefaultForegroundBrushTertiary}"
+                                TextElement.FontSize="{actipro:ThemeResource DefaultFontSizeSmall}"
+                                Padding="4 0 4 2">
+                            <Button.Flyout>
+                                <Flyout Placement="BottomEdgeAlignedLeft"
+                                        HorizontalOffset="5">
+                                    <components:BreadcrumbMenu BreadcrumbsSource="{Binding Children}"/>
+                                </Flyout>
+                            </Button.Flyout>
+                        </Button>
+                    </StackPanel>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+
+        <!--<Style Selector="^">
+            <Style Selector="TextBlock">
+                <Setter Property="FontSize" Value="{actipro:ThemeResource DefaultFontSizeSmall}" />
+            </Style>
+            <Style Selector="Button">
+                <Setter Property="Theme" Value="{actipro:ControlTheme ButtonSubtle}" />
+                <Setter Property="Foreground" Value="{actipro:ThemeResource DefaultForegroundBrushTertiary}" />
+                <Setter Property="TextElement.FontSize" Value="{actipro:ThemeResource DefaultFontSizeSmall}" />
+            </Style>
+        </Style>-->
+    </ControlTheme>
+</ResourceDictionary>

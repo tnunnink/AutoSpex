@@ -1,13 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
-using AutoSpex.Client.Components;
-using AutoSpex.Client.Messages;
-using AutoSpex.Client.Pages;
+using AutoSpex.Client.Services;
+using AutoSpex.Client.Shared;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
-using DetailsPageModel = AutoSpex.Client.Pages.Projects.DetailsPageModel;
-using NodePageModel = AutoSpex.Client.Pages.Specs.NodePageModel;
 
 namespace AutoSpex.Client.Observers;
 
@@ -15,46 +12,34 @@ public partial class Breadcrumb : Observer<NodeObserver>
 {
     public Breadcrumb(NodeObserver node, CrumbType type) : base(node)
     {
-        Name = Model.Name;
         Type = type;
-        HasNodes = Model.Nodes.Count > 0;
     }
-
-    [ObservableProperty] private string _name;
 
     [ObservableProperty] private CrumbType _type;
 
-    [ObservableProperty] private bool _hasNodes;
-    
     [ObservableProperty] private bool _inFocus;
 
-    public IEnumerable<Breadcrumb> Items => GetItems();
-    public IEnumerable<Breadcrumb> Children => Model.Nodes.Select(n => n.Breadcrumb);
-    
-    [RelayCommand]
-    private void Navigate()
+    public ObservableCollection<Breadcrumb> Items => new(GetItems());
+
+    public ObservableCollection<Breadcrumb> Children =>
+        new(Model.Nodes.Select(n => new Breadcrumb(n, CrumbType.Target)));
+
+    public override Task Navigate()
     {
-        Navigator.Navigate(() => new NodePageModel(Model));
+        return Navigator.Navigate(Model);
     }
 
     [RelayCommand]
     private void Rename()
     {
-        if (string.IsNullOrEmpty(Name) || string.Equals(Name, Model.Name)) return;
-        Model.Name = Name;
-        Messenger.Send(new NodeRenamedMessage(Model));
-    }
-
-    public void ResetName()
-    {
-        Name = Model.Name;
+        Model.RenameNodeCommand.Execute(null);
     }
 
     private IEnumerable<Breadcrumb> GetItems()
     {
         var items = new List<Breadcrumb> {this};
 
-        var parent = Model.Parent;
+        var parent = Model.Model.Parent;
         while (parent is not null)
         {
             items.Add(new Breadcrumb(parent, CrumbType.Parent));

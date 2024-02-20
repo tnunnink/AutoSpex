@@ -45,14 +45,31 @@ public class Criterion
     }
 
     /// <summary>
+    /// A <see cref="Guid"/> that uniquely identifies this object.
+    /// </summary>
+    public Guid CriterionId { get; } = Guid.NewGuid();
+
+    /// <summary>
     /// The property name of the provided object which will be the target or input value of the evaluation. If null or
     /// empty, then <see cref="Evaluate"/> will simply use the provided candidate object itself as the target of the
     /// evaluation. This allows use to pass simple or complex objects to the criterion and specify which property to evaluate.
     /// </summary>
     public string? Property { get; set; } = string.Empty;
 
+    /// <summary>
+    /// The operation the evaluation will execute on the input and argument values.
+    /// </summary>
     public Operation Operation { get; set; } = Operation.None;
+
+    /// <summary>
+    /// The collection of argument values required for the operation to execute.
+    /// </summary>
     public List<Argument> Arguments { get; set; } = [];
+
+    /// <summary>
+    /// A flag to invert the result of the operation.
+    /// </summary>
+    public bool Invert { get; set; }
 
     /// <summary>
     /// Evaluates a candidate object using the current state/properties of the criterion object.
@@ -64,13 +81,13 @@ public class Criterion
         var type = candidate?.GetType();
         var property = type?.Property(Property);
         var getter = property?.Getter();
-        
+
         try
         {
             var value = getter is not null ? getter(candidate) : candidate;
             var valueType = value?.GetType();
             var args = Arguments.Select(a => a.ResolveAs(valueType)).ToArray();
-            var result = Operation.Execute(value, args);
+            var result = !Invert ? Operation.Execute(value, args) : !Operation.Execute(value, args);
 
             return result
                 ? Evaluation.Passed(this, type?.TypeIdentifier(), args, value)
@@ -82,8 +99,21 @@ public class Criterion
         }
     }
 
-    public static implicit operator Func<object?, bool>(Criterion criterion) => x => criterion.Evaluate(x);
+    /// <summary>
+    /// Determines if the provided criterion is a nested object of this criterion, meaning that one of this criterion's
+    /// arguments or descendent arguments is this criterion object. 
+    /// </summary>
+    /// <param name="other">The criterion to search for in the object graph.</param>
+    /// <returns>
+    /// <c>true</c> if this criterion contains the provided criterion within it's nested argument structure;
+    /// Otherwise, <c>false</c>.
+    /// </returns>
+    /// <remarks>This allows us to determine if one criterion "owns" another.</remarks>
+    public bool Contains(Criterion other) =>
+        Arguments.Any(a => a.Value is Criterion criterion &&
+                           (criterion.CriterionId == other.CriterionId || criterion.Contains(other)));
 
+    public static implicit operator Func<object?, bool>(Criterion criterion) => x => criterion.Evaluate(x);
     public static implicit operator Expression<Func<object?, bool>>(Criterion criterion) => criterion.GetExpression();
 
     private Expression<Func<object?, bool>> GetExpression()

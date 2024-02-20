@@ -33,7 +33,7 @@ public class PropertyTests
 
         var properties = property.Properties;
 
-        properties.Should().HaveCount(25);
+        properties.Should().HaveCount(24);
     }
 
     [Test]

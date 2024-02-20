@@ -168,6 +168,17 @@ public class Node
 
         _nodes.Remove(node);
     }
+    
+    public void ClearNodes()
+    {
+        foreach (var node in _nodes)
+        {
+            node.Parent = default;
+            node.ParentId = Guid.Empty;
+        }
+        
+        _nodes.Clear();
+    }
 
     public IEnumerable<Node> Ancestors()
     {
@@ -216,6 +227,14 @@ public class Node
             throw new ArgumentException("Can not update ordinal for node which belongs to a parent node.");
 
         _ordinal = ordinal;
+    }
+
+    public IEnumerable<Variable> ScopedVariables()
+    {
+        if (Parent is null) 
+            return _variables.Values;
+        
+        return _variables.Values.UnionBy(Parent.ScopedVariables(), v => v.Name);
     }
 
     public Variable AddVariable(string name, string value, string? description = default)
@@ -288,7 +307,7 @@ public class Node
         Spec.Filters.AddRange(spec.Filters);
 
         Spec.Verifications.Clear();
-        Spec.Verifications.AddRange(spec.Filters);
+        Spec.Verifications.AddRange(spec.Verifications);
     }
 
     public void Configure(Action<Spec> config)

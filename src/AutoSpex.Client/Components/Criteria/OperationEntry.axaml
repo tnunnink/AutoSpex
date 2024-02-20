@@ -1,0 +1,102 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:controls="using:AutoSpex.Client.Components"
+                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine">
+    <Design.PreviewWith>
+        <Grid Margin="300">
+            <controls:OperationEntry Property="{x:Static controls:DesignData.Property}" />
+        </Grid>
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type controls:OperationEntry}" TargetType="controls:OperationEntry">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Button x:Name="ButtonRoot"
+                        Theme="{actipro:ControlTheme ButtonSoft}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        Foreground="{TemplateBinding Foreground}"
+                        FontFamily="{actipro:ThemeResource CodeFontFamily}"
+                        FontSize="{actipro:ThemeResource DefaultFontSizeSmall}"
+                        MinHeight="30"
+                        HorizontalContentAlignment="Left"
+                        IsEnabled="{Binding Operations.Count, RelativeSource={RelativeSource TemplatedParent}}">
+                    <Button.Styles>
+                        <Style Selector="Button:disabled /template/ ContentPresenter#PART_ContentPresenter">
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="BorderBrush" Value="Transparent" />
+                        </Style>
+                    </Button.Styles>
+                    <Panel>
+                        <TextBlock Text="Select Operation"
+                                   FontStyle="Italic"
+                                   Opacity="{actipro:ThemeResource EditWatermarkOpacity}"
+                                   Margin="0 1 0 0">
+                            <TextBlock.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                    <TemplateBinding Property="Operation"
+                                                     Converter="{x:Static ObjectConverters.IsNull}" />
+                                    <TemplateBinding Property="Operation"
+                                                     Converter="{StaticResource EqualToConverter}"
+                                                     ConverterParameter="{x:Static engine:Operation.None}" />
+                                </MultiBinding>
+                            </TextBlock.IsVisible>
+                        </TextBlock>
+                        <TextBlock
+                            Text="{Binding Operation.Name, RelativeSource={RelativeSource TemplatedParent}, FallbackValue={x:Null}}"
+                            Margin="0 1 0 0">
+                            <TextBlock.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                    <TemplateBinding Property="Operation"
+                                                     Converter="{x:Static ObjectConverters.IsNotNull}" />
+                                    <TemplateBinding Property="Operation"
+                                                     Converter="{StaticResource NotEqualToConverter}"
+                                                     ConverterParameter="{x:Static engine:Operation.None}" />
+                                </MultiBinding>
+                            </TextBlock.IsVisible>
+                        </TextBlock>
+                    </Panel>
+                    <Button.Flyout>
+                        <Flyout Placement="BottomEdgeAlignedLeft"
+                                HorizontalOffset="-8">
+                            <ListBox x:Name="OperationList"
+                                     ItemsSource="{Binding Operations, RelativeSource={RelativeSource TemplatedParent}}"
+                                     SelectedItem="{Binding Operation, RelativeSource={RelativeSource TemplatedParent}}"
+                                     BorderThickness="0" MinWidth="200" MaxHeight="300"
+                                     Background="Transparent">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate x:DataType="engine:Operation">
+                                        <TextBlock Text="{Binding Name}"
+                                                   DockPanel.Dock="Left"
+                                                   Foreground="{actipro:ThemeResource DefaultForegroundBrushSecondary}"
+                                                   FontSize="{actipro:ThemeResource DefaultFontSizeSmall}"
+                                                   FontFamily="{actipro:ThemeResource CodeFontFamily}"
+                                                   VerticalAlignment="Center" />
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                                <ListBox.Styles>
+                                    <Style Selector="ScrollViewer">
+                                        <Setter Property="Theme" Value="{actipro:ControlTheme ScrollViewerOverlay}" />
+                                    </Style>
+                                    <Style Selector="ListBoxItem">
+                                        <Setter Property="ClipToBounds" Value="True" />
+                                        <Setter Property="CornerRadius" Value="3" />
+                                    </Style>
+                                </ListBox.Styles>
+                            </ListBox>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+            </ControlTemplate>
+        </Setter>
+        
+        <Style Selector="^:unsupported">
+            <Style Selector="^ /template/ Button#ButtonRoot">
+                <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushOutlineDanger}" />
+            </Style>
+        </Style>
+    </ControlTheme>
+</ResourceDictionary>
