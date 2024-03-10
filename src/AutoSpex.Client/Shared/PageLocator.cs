@@ -21,9 +21,7 @@ public class PageLocator : IDataTemplate
 
         if (pageType is null) return NotFound(pageName);
         
-        var page = Activator.CreateInstance(pageType) as Control ?? NotFound(pageName);
-        page.DataContext = model;
-        return page;
+        return Activator.CreateInstance(pageType) as Control ?? NotFound(pageName);
     }
 
     /// <inheritdoc />

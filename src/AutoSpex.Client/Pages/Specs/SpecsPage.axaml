@@ -1,12 +1,74 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:components="clr-namespace:AutoSpex.Client.Components"
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
-             d:DesignHeight="800" d:DesignWidth="400"
+             xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
              x:Class="AutoSpex.Client.Pages.SpecsPage"
              x:DataType="pages:SpecsPageModel">
+    <Design.Height>800</Design.Height>
+    <Design.Width>300</Design.Width>
 
-    <components:SpecTree Collections="{Binding Collections}"
-                         AddCommand="{Binding AddCollectionCommand}" />
+    <components:NavigationTree ItemsSource="{Binding Collections}"
+                               SelectedItems="{Binding SelectedNodes}"
+                               AddCommand="{Binding AddCollectionCommand}"
+                               AddToolTip="Add Collection">
+        <components:NavigationTree.ItemContainerTheme>
+            <ControlTheme TargetType="components:NavigationTreeItem" BasedOn="{StaticResource NavigationTreeItem}"
+                          x:DataType="observers:NodeObserver">
+                <Setter Property="ItemName" Value="{Binding Name}" />
+                <Setter Property="IconTheme"
+                        Value="{Binding NodeType.Name, Converter={StaticResource KeyToIconConverter}}" />
+                <Setter Property="NavigateCommand" Value="{Binding NavigateCommand}" />
+                <Setter Property="RenameCommand" Value="{Binding RenameCommand}" />
+                <Setter Property="IsVisible" Value="{Binding IsVisible}" />
+                <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+                <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
+                <Setter Property="IsEditing" Value="{Binding IsEditing}" />
+                <Setter Property="ContextFlyout">
+                    <MenuFlyout x:DataType="observers:NodeObserver"
+                                ItemContainerTheme="{StaticResource ContextMenuItem}">
+                        <MenuItem Header="Add Spec"
+                                  IsVisible="{Binding NodeType.Name, Converter={StaticResource NotEqualToConverter}, ConverterParameter='Spec'}"
+                                  Icon="{StaticResource IconSpecThemed}"
+                                  Command="{Binding AddSpecCommand}"
+                                  CommandParameter="{Binding}"
+                                  IsEnabled="{Binding Converter={x:Static ObjectConverters.IsNotNull}}"
+                                  InputGesture="Shift+S" />
+                        <MenuItem Header="Add Folder"
+                                  IsVisible="{Binding NodeType.Name, Converter={StaticResource NotEqualToConverter}, ConverterParameter='Spec'}"
+                                  Icon="{StaticResource IconFolderThemed}"
+                                  Command="{Binding AddFolderCommand}"
+                                  CommandParameter="{Binding}"
+                                  IsEnabled="{Binding Converter={x:Static ObjectConverters.IsNotNull}}"
+                                  InputGesture="Shift+F" />
+                        <Separator
+                            IsVisible="{Binding NodeType.Name, Converter={StaticResource NotEqualToConverter}, ConverterParameter='Spec'}" />
+
+                        <MenuItem Header="Open"
+                                  Command="{Binding NavigateCommand}" />
+                        <MenuItem Header="Rename"
+                                  Command="{Binding EditCommand}"
+                                  InputGesture="Ctrl+E" />
+                        <MenuItem Header="Duplicate"
+                                  Command="{Binding DuplicateCommand}"
+                                  InputGesture="Ctrl+D" />
+                        <MenuItem Header="Export" />
+                        <MenuItem Header="Delete"
+                                  Icon="{StaticResource IconTrashOutlined}"
+                                  Command="{Binding $parent[components:NavigationTree].((pages:SpecsPageModel)DataContext).DeleteNodesCommand, FallbackValue={x:Null}}"
+                                  InputGesture="Delete"
+                                  Classes="danger" />
+                    </MenuFlyout>
+                </Setter>
+            </ControlTheme>
+        </components:NavigationTree.ItemContainerTheme>
+
+        <components:NavigationTree.ItemTemplate>
+            <TreeDataTemplate x:DataType="observers:NodeObserver"
+                              ItemsSource="{Binding Nodes}">
+                <TextBlock Text="{Binding Name}" />
+            </TreeDataTemplate>
+        </components:NavigationTree.ItemTemplate>
+
+    </components:NavigationTree>
 </UserControl>

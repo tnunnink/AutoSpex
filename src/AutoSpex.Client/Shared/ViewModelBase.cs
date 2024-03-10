@@ -28,5 +28,5 @@ public abstract partial class ViewModelBase : ObservableValidator
     /// <returns>The <see cref="Task"/> representing the async navigation request.</returns>
     /// <remarks>Deriving classes will implement this using the internal <see cref="Navigator"/> service.</remarks>
     [RelayCommand]
-    public abstract Task Navigate();
+    protected abstract Task Navigate();
 }

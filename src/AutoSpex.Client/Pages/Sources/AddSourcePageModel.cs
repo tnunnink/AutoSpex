@@ -7,8 +7,10 @@ using AutoSpex.Engine;
 using AutoSpex.Persistence;
 using Avalonia.Controls;
 using Avalonia.Controls.Notifications;
+using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
 using L5Sharp.Core;
 
@@ -22,6 +24,8 @@ public partial class AddSourcePageModel : PageViewModel
 
     [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(AddSourceCommand))]
     private SourceObserver? _source;
+
+    [ObservableProperty] private IStorageItem? _droppedItem;
 
     [RelayCommand]
     private async Task SelectSource()
@@ -41,16 +45,11 @@ public partial class AddSourcePageModel : PageViewModel
 
         if (result.IsSuccess)
         {
-            dialog.Close(true);
+            Messenger.Send(new SourceObserver.Created(Source));
+            dialog.Close(Source);
         }
 
-        dialog.Close(false);
-    }
-
-    [RelayCommand]
-    private static void Cancel(Window dialog)
-    {
-        dialog.Close(false);
+        dialog.Close(null);
     }
 
     private bool CanAddSource() => !HasErrors && Source is not null && !Source.HasErrors;
@@ -59,6 +58,13 @@ public partial class AddSourcePageModel : PageViewModel
     {
         if (string.IsNullOrEmpty(value)) return;
         LoadSource(value);
+    }
+
+    partial void OnDroppedItemChanged(IStorageItem? value)
+    {
+        var path = value?.Path.LocalPath;
+        if (string.IsNullOrEmpty(path)) return;
+        LoadSource(path);
     }
 
     private void LoadSource(string location)

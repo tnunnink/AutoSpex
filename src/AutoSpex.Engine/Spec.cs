@@ -15,13 +15,50 @@ public class Spec()
     public Spec(Node node) : this()
     {
         _node = node;
+        SpecId = _node.NodeId;
     }
 
-    public Element Element { get; set; } = Element.Default;
-    public SpecSettings Settings { get; set; } = SpecSettings.Default;
-    public List<Criterion> Filters { get; } = [];
-    public List<Criterion> Verifications { get; } = [];
+    /// <summary>
+    /// A <see cref="Guid"/> that uniquely identifies this object.
+    /// </summary>
+    /// <remarks>
+    /// This is actually the same as the owning node NodeId since any given spec should belong to a node.
+    /// If this objects is created as a orphaned spec then this id will be <see cref="Guid.Empty"/>.
+    /// </remarks>
+    public Guid SpecId { get; private set; }
 
+    /// <summary>
+    /// The target <see cref="Engine.Element"/> this spec represents. This is the Logix type that we are validating.
+    /// </summary>
+    public Element Element { get; set; } = Element.Default;
+
+    /// <summary>
+    /// The <see cref="SpecSettings"/> defining how the spec should evaluate pass/failure.
+    /// </summary>
+    public SpecSettings Settings { get; set; } = SpecSettings.Default;
+
+    /// <summary>
+    /// The collection of <see cref="Criterion"/> that define how to filter elements to return candidates for verification.
+    /// </summary>
+    public List<Criterion> Filters { get; } = [];
+
+    /// <summary>
+    /// The collection of <see cref="Criterion"/> that define the checks to perform for each candidate element.
+    /// </summary>
+    public List<Criterion> Verifications { get; } = [];
+    
+    /// <summary>
+    /// A collection of <see cref="Variables"/> that are in scope of this spec. In other words, the variables that this
+    /// Spec has access to.
+    /// </summary>
+    public IEnumerable<Variable> Variables => _node?.ScopedVariables() ?? Enumerable.Empty<Variable>();
+
+    /// <summary>
+    /// Deserializes the provided specification string into a Spec object.
+    /// </summary>
+    /// <param name="spec">The specification string to deserialize.</param>
+    /// <returns>A Spec object representing the deserialized specification string.</returns>
+    /// <exception cref="ArgumentException">Thrown when the provided data cannot be deserialized into a valid specification.</exception>
     public static Spec Deserialize(string spec)
     {
         var options = new JsonSerializerOptions();
@@ -34,6 +71,10 @@ public class Spec()
                ?? throw new ArgumentException("Not able to deserialize provided data into a valid specification");
     }
 
+    /// <summary>
+    /// Serializes the Spec object to JSON using custom converters.
+    /// </summary>
+    /// <returns>A JSON string representation of the Spec object.</returns>
     public string Serialize()
     {
         var options = new JsonSerializerOptions();
@@ -80,7 +121,7 @@ public class Spec()
 
             //4.Verify candidates
             verifications.AddRange(filtered.Select(Verify));
-            
+
             stopwatch.Stop();
 
             return new Outcome(_node, stopwatch.ElapsedMilliseconds, verifications);
@@ -178,11 +219,11 @@ public class Spec()
         var evaluation = criterion.Evaluate(candidates.Count);
         return Verification.For(candidates, evaluation);
     }
-    
+
     /// <summary>
     /// Applies variable values to all filter and verification criterion of the provided spec.
     /// </summary>
-    public void ApplyVariables()
+    private void ApplyVariables()
     {
         Filters.ForEach(ApplyVariables);
         Verifications.ForEach(ApplyVariables);

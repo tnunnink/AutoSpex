@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 
 namespace AutoSpex.Client.Observers;
 
@@ -12,8 +10,11 @@ public partial class Breadcrumb : Observer<NodeObserver>
 {
     public Breadcrumb(NodeObserver node, CrumbType type) : base(node)
     {
+        Name = node.Name;
         Type = type;
     }
+    
+    [ObservableProperty] private string _name;
 
     [ObservableProperty] private CrumbType _type;
 
@@ -24,15 +25,14 @@ public partial class Breadcrumb : Observer<NodeObserver>
     public ObservableCollection<Breadcrumb> Children =>
         new(Model.Nodes.Select(n => new Breadcrumb(n, CrumbType.Target)));
 
-    public override Task Navigate()
+    protected override Task Navigate()
     {
         return Navigator.Navigate(Model);
     }
 
-    [RelayCommand]
-    private void Rename()
+    protected override async Task Rename(string? name)
     {
-        Model.RenameNodeCommand.Execute(null);
+        await Model.RenameCommand.ExecuteAsync(name);
     }
 
     private IEnumerable<Breadcrumb> GetItems()

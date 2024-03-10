@@ -1,0 +1,139 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="using:AutoSpex.Client.Components"
+                    xmlns:converters="clr-namespace:Avalonia.Controls.Converters;assembly=Avalonia.Controls">
+
+    <Design.PreviewWith>
+        <Border Background="{a:ThemeResource Container2BackgroundBrush}"
+                Padding="20" MinWidth="300" MinHeight="400">
+            <TreeView Background="{a:ThemeResource Container2BackgroundBrush}">
+                <components:NavigationTreeItem Header="Level 1" IsExpanded="True"
+                                               IconTheme="{StaticResource IconSpecThemed}" />
+                <components:NavigationTreeItem Header="Level 1" IsEditing="True" IsSelected="True"
+                                               IconTheme="{StaticResource IconSpecThemed}" />
+                <components:NavigationTreeItem Header="Level 1" IsSelected="True"
+                                               IconTheme="{StaticResource IconSpecThemed}" />
+                <components:NavigationTreeItem Header="Level 1" IsEnabled="False"
+                                               IconTheme="{StaticResource IconSpecThemed}" />
+            </TreeView>
+        </Border>
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="NavigationTreeItem" TargetType="components:NavigationTreeItem">
+        <ControlTheme.Resources>
+            <converters:MarginMultiplierConverter x:Key="LeftMarginConverter"
+                                                  Indent="{StaticResource {a:ThemeResourceKey TreeItemIndent}}"
+                                                  Left="True" />
+            <a:ThicknessConverter x:Key="PaddingConverter" Filter="Top, Right, Bottom" />
+        </ControlTheme.Resources>
+
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="3 0 0 0" />
+        <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeSmall}" />
+        <Setter Property="Focusable" Value="True" />
+        <Setter Property="FocusAdorner" Value="{x:Null}" />
+        <Setter Property="Padding" Value="5 2" />
+        <Setter Property="ItemIndent" Value="{a:ThemeResource TreeItemIndent}" />
+
+        <Setter Property="Template">
+            <ControlTemplate>
+                <StackPanel>
+                    <Border
+                        x:Name="border"
+                        MinHeight="{TemplateBinding MinHeight}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        Padding="{TemplateBinding Padding}"
+                        TemplatedControl.IsTemplateFocusTarget="True">
+
+                        <Grid Name="PART_Header"
+                              ColumnDefinitions="Auto,*"
+                              Margin="{TemplateBinding Level, Converter={StaticResource LeftMarginConverter}}">
+
+                            <Panel Grid.Column="0"
+                                   MinWidth="{TemplateBinding ItemIndent}">
+                                <ToggleButton x:Name="TreeToggle"
+                                              Focusable="False"
+                                              Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                                              IsChecked="{TemplateBinding IsExpanded, Mode=TwoWay}"
+                                              Theme="{a:ControlTheme TreeViewItemToggleButton}" />
+                            </Panel>
+
+                            <Border Grid.Column="1"
+                                    Padding="{TemplateBinding Padding, Converter={StaticResource PaddingConverter}}">
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <PathIcon Grid.Column="0"
+                                              Theme="{TemplateBinding IconTheme}"
+                                              IsVisible="{Binding IconTheme, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                              Classes="icon-small"
+                                              Margin="0 0 2 0" />
+                                    <Panel Grid.Column="1">
+                                        <ContentPresenter
+                                            x:Name="PART_HeaderPresenter"
+                                            Background="Transparent"
+                                            Content="{TemplateBinding Header}"
+                                            ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                            IsVisible="{Binding !IsEditing, RelativeSource={RelativeSource TemplatedParent}}"
+                                            VerticalAlignment="Center" />
+                                        <TextBox x:Name="NameEntry"
+                                                 Watermark="Enter name"
+                                                 IsVisible="{Binding IsEditing, RelativeSource={RelativeSource TemplatedParent}}"
+                                                 Focusable="True"
+                                                 Theme="{a:ControlTheme TextBoxOutline}"
+                                                 BorderThickness="0"
+                                                 Padding="5 0 0 0"
+                                                 VerticalContentAlignment="Center"
+                                                 TextWrapping="NoWrap">
+                                            <Interaction.Behaviors>
+                                                <DataTriggerBehavior
+                                                    Binding="{Binding IsEditing, RelativeSource={RelativeSource TemplatedParent}}"
+                                                    ComparisonCondition="Equal"
+                                                    Value="True">
+                                                    <FocusControlAction TargetControl="NameEntry" />
+                                                </DataTriggerBehavior>
+                                            </Interaction.Behaviors>
+                                        </TextBox>
+                                    </Panel>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                    </Border>
+
+                    <a:AnimatedExpanderDecorator
+                        x:Name="expanderDecorator"
+                        IsExpanded="{TemplateBinding IsExpanded}"
+                        IsAnimationEnabled="{TemplateBinding a:ThemeProperties.IsAnimationEnabled}">
+                        <ItemsPresenter ItemsPanel="{TemplateBinding ItemsPanel}" />
+                    </a:AnimatedExpanderDecorator>
+                </StackPanel>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^:empty /template/ ToggleButton">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+
+        <Style Selector="^:pointerover /template/ Border#border:pointerover">
+            <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftPointerOver}" />
+            <Setter Property="BorderBrush" Value="{a:ThemeResource Container4BorderBrush}" />
+        </Style>
+        <Style Selector="^:disabled /template/ Border#border">
+            <Setter Property="TextElement.Foreground" Value="{a:ThemeResource ListItemForegroundBrushDisabled}" />
+            <Setter Property="Opacity" Value="{a:ThemeResource EditWatermarkOpacity}" />
+        </Style>
+        <Style Selector="^:selected /template/ Border#border">
+            <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftPointerOver}" />
+            <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBackgroundBrushSolidAccent}" />
+            <Setter Property="TextElement.Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+        </Style>
+    </ControlTheme>
+
+    <!--Default Type Theme-->
+    <ControlTheme x:Key="{x:Type components:NavigationTreeItem}"
+                  TargetType="components:NavigationTreeItem"
+                  BasedOn="{StaticResource NavigationTreeItem}" />
+</ResourceDictionary>

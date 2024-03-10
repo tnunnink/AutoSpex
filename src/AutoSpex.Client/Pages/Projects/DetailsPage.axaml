@@ -13,5 +13,5 @@
 
     <components:DetailsContainer ItemsSource="{Binding Pages}"
                                  SelectedItem="{Binding Selected}"
-                                 AddCommand="{Binding AddSpecCommand}"/>
+                                 AddSpecCommand="{Binding CreateSpecCommand}"/>
 </UserControl>

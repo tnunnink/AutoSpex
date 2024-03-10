@@ -4,7 +4,7 @@
                     xmlns:components="using:AutoSpex.Client.Components"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
                     xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
-                    xmlns:ap="clr-namespace:AutoSpex.Client.Resources.AttachedProperties">
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
 
     <Design.PreviewWith>
         <Border Padding="50">
@@ -26,20 +26,21 @@
                                     Spacing="5"
                                     Margin="5 0">
                             <ToggleButton IsChecked="{Binding Invert}"
-                                          ap:ButtonIcon.Theme="{StaticResource IconExclamation}"
-                                          Theme="{StaticResource ToggleIconButton}"
+                                          properties:ButtonIcon.Theme="{StaticResource IconExclamation}"
+                                          Theme="{StaticResource IconToggleButton}"
                                           Classes="warning"
                                           ToolTip.Tip="Invert"
                                           ToolTip.Placement="BottomEdgeAlignedRight" />
-                            <ToggleButton IsChecked="{Binding !IsEnabled}" 
-                                          ap:ButtonIcon.Theme="{StaticResource IconBanOutlined}"
-                                          Theme="{StaticResource ToggleIconButton}"
+                            <ToggleButton IsChecked="{Binding !IsEnabled}"
+                                          properties:ButtonIcon.Theme="{StaticResource IconBanOutlined}"
+                                          Theme="{StaticResource IconToggleButton}"
                                           Classes="danger"
                                           ToolTip.Tip="Disable"
                                           ToolTip.Placement="BottomEdgeAlignedRight" />
                             <controls:IconButton Icon="{StaticResource IconTrashOutlined}"
                                                  Padding="8"
-                                                 Command="{Binding RemoveCommand}"
+                                                 Command="{Binding RemoveCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                                                 CommandParameter="{Binding $parent[components:CriteriaListItem].DataContext}"
                                                  Foreground="{actipro:ThemeResource DefaultForegroundBrushTertiary}"
                                                  ToolTip.Tip="Remove"
                                                  ToolTip.Placement="BottomEdgeAlignedRight" />

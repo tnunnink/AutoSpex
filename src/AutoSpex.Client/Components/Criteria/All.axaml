@@ -8,5 +8,7 @@
         <ResourceInclude Source="PropertyFlyout.axaml" />
         <ResourceInclude Source="OperationEntry.axaml" />
         <ResourceInclude Source="ArgumentEntry.axaml" />
+        <ResourceInclude Source="ArgumentValueTemplates.axaml" />
+        <ResourceInclude Source="InclusionSwitch.axaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

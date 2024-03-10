@@ -39,7 +39,17 @@ public class Source
     public DateTime ExportedOn { get; private set; } = DateTime.Now;
     public string ExportedBy { get; private set; } = string.Empty;
     public string Content { get; private set; } = string.Empty;
-    public L5X L5X => _l5X ??= L5X.Parse(Content.Decompress());
+    public L5X L5X => _l5X ??= ParseContent();
+
+    public void Update(L5X l5X)
+    {
+        _l5X = l5X ?? throw new ArgumentNullException(nameof(l5X));
+        TargetType = _l5X.Info.TargetType ?? string.Empty;
+        TargetName = _l5X.Info.TargetName ?? string.Empty;
+        ExportedOn = _l5X.Info.ExportDate ?? DateTime.Today;
+        ExportedBy = _l5X.Info.Owner ?? string.Empty;
+        Content = _l5X.ToString().Compress();
+    }
 
     public IEnumerable<string> GetDistinctValues()
     {
@@ -63,14 +73,14 @@ public class Source
         return values;
     }
 
-    public void Update(L5X l5X)
+    private L5X ParseContent()
     {
-        _l5X = l5X ?? throw new ArgumentNullException(nameof(l5X));
-        TargetType = _l5X.Info.TargetType ?? string.Empty;
-        TargetName = _l5X.Info.TargetName ?? string.Empty;
-        ExportedOn = _l5X.Info.ExportDate ?? DateTime.Today;
-        ExportedBy = _l5X.Info.Owner ?? string.Empty;
-        Content = _l5X.ToString().Compress();
+        if (string.IsNullOrEmpty(Content) || string.IsNullOrWhiteSpace(Content)) 
+            return L5X.New("Temp", "Temp"); //todo we need empty
+        
+        var xml = Content.Decompress();
+        
+        return L5X.Parse(xml);
     }
     
     public class SourceValueComparer : IEqualityComparer<string>

@@ -1,0 +1,57 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="using:AutoSpex.Client.Components"
+                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
+
+    <Design.PreviewWith>
+        <Border Padding="300">
+            <components:ElementEntry Element="{x:Static engine:Element.DataType}" />
+        </Border>
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type components:ElementEntry}" TargetType="components:ElementEntry">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border CornerRadius="5"
+                        BorderBrush="{actipro:ThemeResource Container1BorderBrush}"
+                        BorderThickness="1">
+                    <Grid ColumnDefinitions="Auto,*,Auto">
+
+                        <DropDownButton Grid.Column="0"
+                                        Theme="{actipro:ControlTheme DropDownButtonSoft}"
+                                        Content="{Binding Element.Name, RelativeSource={RelativeSource TemplatedParent}, FallbackValue='Select Element'}"
+                                        Classes.accent="{Binding Element, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Element.Default}}"
+                                        Classes.warning="{Binding Element, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:Element.Default}}"
+                                        CornerRadius="4 0 0 4">
+                            <DropDownButton.Flyout>
+                                <Flyout Placement="BottomEdgeAlignedLeft"
+                                        HorizontalOffset="-8">
+                                    <components:ElementSelector
+                                        Element="{Binding Element, RelativeSource={RelativeSource TemplatedParent}}" />
+                                </Flyout>
+                            </DropDownButton.Flyout>
+                        </DropDownButton>
+
+                        <TextBox Grid.Column="1"
+                                 Text="{TemplateBinding TargetName}"
+                                 IsEnabled="{Binding Element.IsComponent, RelativeSource={RelativeSource TemplatedParent}, FallbackValue={x:Null}}"
+                                 Watermark="Enter element name"
+                                 BorderThickness="0"
+                                 VerticalContentAlignment="Center" />
+
+                        <StackPanel Grid.Column="2"
+                                    Orientation="Horizontal"
+                                    VerticalAlignment="Center" Margin="5 0" Spacing="4">
+                            <controls:IconButton Icon="{StaticResource IconClose}" 
+                                                 CornerRadius="10" Height="20" Width="20" Padding="11"/>
+                            <controls:IconButton Icon="{StaticResource IconQuestion}" 
+                                                 CornerRadius="10" Height="20" Width="20" Padding="11"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

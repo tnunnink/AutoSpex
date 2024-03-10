@@ -4,10 +4,11 @@
                     xmlns:components="using:AutoSpex.Client.Components"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
                     xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
-                    xmlns:ap="clr-namespace:AutoSpex.Client.Resources.AttachedProperties">
-    
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+
     <Design.PreviewWith>
         <components:CriteriaList Height="600" Width="800"
+                                 UseElementSelector="True" UseRunButton="True"
                                  Criteria="{x:Static components:DesignData.Criteria}"
                                  Element="{x:Static engine:Element.Tag}" />
     </Design.PreviewWith>
@@ -23,9 +24,9 @@
                         <!--Header-->
                         <Border DockPanel.Dock="Top"
                                 Padding="5">
-                            <DockPanel LastChildFill="False">
+                            <Grid ColumnDefinitions="Auto,*,Auto">
 
-                                <StackPanel DockPanel.Dock="Left"
+                                <StackPanel Grid.Column="0"
                                             Orientation="Horizontal"
                                             Spacing="10">
 
@@ -35,27 +36,57 @@
                                               ToolTip.Tip="Select All" />
 
                                     <StackPanel Orientation="Horizontal">
-                                        <Button ap:ButtonIcon.Theme="{StaticResource IconAdd}"
-                                                Theme="{StaticResource IconPillButtonLeft}"
+                                        <Button properties:ButtonIcon.Theme="{StaticResource IconAdd}"
+                                                Theme="{StaticResource IconButtonPillLeft}"
                                                 Command="{Binding AddCriterionCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                                 Classes="accent"
                                                 Padding="9"
                                                 ToolTip.Tip="Add Criteria" />
-                                        <Button ap:ButtonIcon.Theme="{StaticResource IconTrashOutlined}"
-                                                Theme="{StaticResource IconPillButtonCenter}"
+                                        <Button properties:ButtonIcon.Theme="{StaticResource IconTrashOutlined}"
+                                                Theme="{StaticResource IconButtonPillCenter}"
                                                 Command="{Binding RemoveSelectedCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                                 ToolTip.Tip="Delete Selected" />
-                                        <Button ap:ButtonIcon.Theme="{StaticResource IconDots}"
-                                                Theme="{StaticResource IconPillButtonRight}" />
+                                        <Button properties:ButtonIcon.Theme="{StaticResource IconCopyOutlined}"
+                                                Theme="{StaticResource IconButtonPillCenter}"
+                                                Command="{Binding CopySelectedCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                                                ToolTip.Tip="Copy Selected" />
+                                        <Button properties:ButtonIcon.Theme="{StaticResource IconDots}"
+                                                Theme="{StaticResource IconButtonPillRight}" />
                                     </StackPanel>
+
+                                    <components:ElementSelector
+                                        Element="{Binding Element, RelativeSource={RelativeSource TemplatedParent}}"
+                                        IsVisible="{TemplateBinding UseElementSelector}"
+                                        ButtonTheme="{actipro:ControlTheme DropDownButtonOutline}"
+                                        Height="30" BorderThickness="1" CornerRadius="5" />
+
+                                    <Button
+                                        Command="{Binding RunCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                                        IsVisible="{TemplateBinding UseElementSelector}"
+                                        Theme="{actipro:ControlTheme ButtonOutline}"
+                                        Classes="success" Height="30" Width="60" Padding="0 0 5 0">
+                                        <StackPanel Orientation="Horizontal">
+                                            <PathIcon Theme="{StaticResource IconPlayOutlined}"
+                                                      Height="20" Width="20" Padding="3 5 3 3"
+                                                      Foreground="{Binding $parent[Button].Foreground}" />
+                                            <TextBlock Text="Run"
+                                                       FontSize="{actipro:ThemeResource DefaultFontSizeSmall}" />
+                                        </StackPanel>
+                                    </Button>
                                 </StackPanel>
 
-                                <StackPanel DockPanel.Dock="Right"
+
+                                <StackPanel Grid.Column="2"
                                             Orientation="Horizontal"
                                             Spacing="10">
 
+                                    <components:InclusionSwitch
+                                        Inclusion="{Binding Inclusion, RelativeSource={RelativeSource TemplatedParent}}" />
+
+                                    <Button properties:ButtonIcon.Theme="{StaticResource IconGear}"
+                                            Theme="{StaticResource IconButtonPill}" />
                                 </StackPanel>
-                            </DockPanel>
+                            </Grid>
                         </Border>
 
                         <!--No Criteria View-->
@@ -88,11 +119,12 @@
 
                         <!--Criteria List-->
                         <ListBox ItemsSource="{TemplateBinding Criteria}"
-                                 IsVisible="{Binding Criteria.Count, RelativeSource={RelativeSource TemplatedParent}}"
+                                 IsVisible="{Binding Criteria.Count, RelativeSource={RelativeSource TemplatedParent}, FallbackValue=0}"
                                  BorderThickness="0">
                             <ListBox.ItemTemplate>
                                 <DataTemplate x:DataType="observers:CriterionObserver">
-                                    <components:CriteriaListItem />
+                                    <components:CriteriaListItem
+                                        RemoveCommand="{Binding $parent[components:CriteriaList].RemoveCriterionCommand}" />
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                             <ListBox.ItemContainerTheme>
@@ -101,7 +133,6 @@
                                 </ControlTheme>
                             </ListBox.ItemContainerTheme>
                         </ListBox>
-
                     </DockPanel>
                 </Border>
             </ControlTemplate>

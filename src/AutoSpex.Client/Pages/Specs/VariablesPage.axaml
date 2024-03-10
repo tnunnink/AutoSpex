@@ -1,0 +1,96 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:components="clr-namespace:AutoSpex.Client.Components"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+             xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+             x:Class="AutoSpex.Client.Pages.VariablesPage"
+             x:DataType="pages:VariablesPageModel">
+
+    <Design.Width>1400</Design.Width>
+    <Design.Height>1000</Design.Height>
+
+    <DockPanel Margin="10">
+        <Border DockPanel.Dock="Top"
+                Padding="5">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <CheckBox
+                        IsChecked="{Binding CheckAll}"
+                        Theme="{a:ControlTheme CheckBoxSolid}"
+                        Classes="size-xs accent"
+                        Margin="10 0" Padding="0" />
+                    <Button
+                        Command="{Binding AddVariableCommand}"
+                        Theme="{StaticResource IconButtonPillLeft}"
+                        properties:ButtonIcon.Theme="{StaticResource IconAdd}"
+                        Classes="accent"
+                        ToolTip.Tip="Add Variable" />
+                    <Button
+                        Command="{Binding RemoveCheckedCommand}"
+                        Theme="{StaticResource IconButtonPillCenter}"
+                        properties:ButtonIcon.Theme="{StaticResource IconTrashOutlined}"
+                        ToolTip.Tip="Delete Variable" />
+                    <Button
+                        Theme="{StaticResource IconButtonPillRight}"
+                        properties:ButtonIcon.Theme="{StaticResource IconDots}" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="2"
+                            Orientation="Horizontal"
+                            Spacing="10">
+                    <Button properties:ButtonIcon.Theme="{StaticResource IconGear}"
+                            Theme="{StaticResource IconButtonPill}" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!--No variables view-->
+        <StackPanel DockPanel.Dock="Top"
+                    IsVisible="{Binding !Variables.Count}"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Margin="20">
+            <TextBlock
+                Text="No variables defined"
+                Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                FontWeight="SemiBold"
+                HorizontalAlignment="Center" />
+
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center">
+                <TextBlock
+                    Text="Click the "
+                    Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                    TextAlignment="Center" />
+                <PathIcon
+                    Theme="{StaticResource IconAdd}"
+                    Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
+                    Height="20" Width="20" Padding="4" Margin="0 2 0 0" />
+                <TextBlock Text=" button to add a new variable to this node."
+                           Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                           TextAlignment="Center" />
+            </StackPanel>
+        </StackPanel>
+
+        <!--Variable List-->
+        <ListBox ItemsSource="{Binding Variables}"
+                 IsVisible="{Binding Variables.Count}"
+                 BorderThickness="0"
+                 ScrollViewer.HorizontalScrollBarVisibility="Auto">
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="observers:VariableObserver">
+                    <components:VariableListItem
+                        RemoveCommand="{Binding $parent[ListBox].((pages:VariablesPageModel)DataContext).RemoveVariableCommand, FallbackValue={x:Null}}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+            <ListBox.ItemContainerTheme>
+                <ControlTheme TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemInvisible}">
+                    <Setter Property="Padding" Value="0 4" />
+                </ControlTheme>
+            </ListBox.ItemContainerTheme>
+        </ListBox>
+    </DockPanel>
+</UserControl>

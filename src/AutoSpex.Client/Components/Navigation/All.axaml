@@ -1,0 +1,9 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceInclude Source="NavigationMenus.axaml" />
+        <ResourceInclude Source="NavigationItem.axaml" />
+        <ResourceInclude Source="NavigationTree.axaml" />
+        <ResourceInclude Source="NavigationTreeItem.axaml" />
+    </ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>

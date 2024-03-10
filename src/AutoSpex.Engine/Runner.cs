@@ -12,7 +12,6 @@ public class Runner
     public string Name { get; set; } = "Runner";
     public string Description { get; set; } = string.Empty;
     public IEnumerable<Node> Collections => _nodes.Values.Where(n => n.ParentId == Guid.Empty);
-
     public IEnumerable<KeyValuePair<Guid, string>> Overrides => _overrides;
 
     public void AddNode(Node node) => AddNodesFor(node);

@@ -114,9 +114,9 @@ public class Criterion
                            (criterion.CriterionId == other.CriterionId || criterion.Contains(other)));
 
     public static implicit operator Func<object?, bool>(Criterion criterion) => x => criterion.Evaluate(x);
-    public static implicit operator Expression<Func<object?, bool>>(Criterion criterion) => criterion.GetExpression();
+    public static implicit operator Expression<Func<object?, bool>>(Criterion criterion) => criterion.ToExpression();
 
-    private Expression<Func<object?, bool>> GetExpression()
+    private Expression<Func<object?, bool>> ToExpression()
     {
         var parameter = Expression.Parameter(typeof(object), "x");
         Func<object, bool> func = x => (bool) Evaluate(x);

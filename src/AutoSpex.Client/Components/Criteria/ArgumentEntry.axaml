@@ -6,7 +6,12 @@
 
     <Design.PreviewWith>
         <Border Padding="300">
-            <components:ArgumentEntry SuggestionSource="{x:Static components:DesignData.RadixOptions}" />
+            <StackPanel>
+                <components:ArgumentEntry Argument="{x:Static components:DesignData.EmptyArgument}" />
+                <components:ArgumentEntry Argument="{x:Static components:DesignData.TextArgument}" />
+                <components:ArgumentEntry Argument="{x:Static components:DesignData.EnumArgument}" />
+                <components:ArgumentEntry Argument="{x:Static components:DesignData.VariableArgument}" />
+            </StackPanel>
         </Border>
     </Design.PreviewWith>
 
@@ -17,6 +22,7 @@
             <ControlTemplate>
                 <Grid>
                     <Button x:Name="ButtonRoot"
+                            Content="{Binding Argument.Value, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, FallbackValue={x:Null}}"
                             Theme="{actipro:ControlTheme ButtonSoft}"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
@@ -24,29 +30,22 @@
                             FontSize="{actipro:ThemeResource DefaultFontSizeSmall}"
                             FontFamily="{actipro:ThemeResource CodeFontFamily}"
                             MinHeight="30" MaxWidth="400">
-                        <Panel>
-                            <TextBlock
-                                IsVisible="{Binding !HasValue, RelativeSource={RelativeSource TemplatedParent}}"
-                                Text="Enter Value"
-                                FontStyle="Italic"
-                                Opacity="{actipro:ThemeResource EditWatermarkOpacity}"
-                                Margin="0 1 0 0" />
-                            <TextBlock
-                                Text="{Binding Value, RelativeSource={RelativeSource TemplatedParent}}"
-                                IsVisible="{Binding HasValue, RelativeSource={RelativeSource TemplatedParent}}"
-                                TextTrimming="CharacterEllipsis"
-                                Margin="0 1 0 0" />
-                        </Panel>
+                        <Button.DataTemplates>
+                            <StaticResource ResourceKey="ArgumentTextTemplate" />
+                            <StaticResource ResourceKey="ArgumentEnumTemplate" />
+                            <StaticResource ResourceKey="ArgumentVariableTemplate" />
+                        </Button.DataTemplates>
 
                         <Button.Flyout>
-                            <Flyout Placement="BottomEdgeAlignedLeft"
-                                    VerticalOffset="-33"
-                                    HorizontalOffset="-8">
+                            <Flyout
+                                Placement="BottomEdgeAlignedLeft"
+                                VerticalOffset="-33"
+                                HorizontalOffset="-8">
                                 <Border x:Name="FlyoutRoot"
                                         BorderThickness="0"
                                         BorderBrush="{actipro:ThemeResource Container2BorderBrush}"
                                         CornerRadius="4"
-                                        MinWidth="300" MaxWidth="500" 
+                                        MinWidth="300" MaxWidth="500"
                                         MaxHeight="400">
                                     <DockPanel>
                                         <Border DockPanel.Dock="Top">
@@ -75,6 +74,7 @@
                                                 </TextBox.InnerRightContent>
                                             </TextBox>
                                         </Border>
+
                                         <Panel>
                                             <TextBlock Text="No matching suggestions found"
                                                        IsVisible="{Binding !Suggestions.Count, RelativeSource={RelativeSource TemplatedParent}}"
@@ -93,7 +93,7 @@
                                                 <ListBox.ItemTemplate>
                                                     <DataTemplate x:DataType="engine:Argument">
                                                         <DockPanel LastChildFill="False">
-                                                            <TextBlock Text="{Binding Value}"
+                                                            <TextBlock Text="{Binding Formatted}"
                                                                        DockPanel.Dock="Left"
                                                                        Foreground="{actipro:ThemeResource DefaultForegroundBrushSecondary}"
                                                                        VerticalAlignment="Center" />

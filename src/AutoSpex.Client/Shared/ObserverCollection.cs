@@ -15,8 +15,12 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
     private readonly Action<int, TModel>? _add;
     private readonly Action<int, TModel>? _insert;
     private readonly Action<int, TModel>? _remove;
-
     private readonly Action? _clear;
+    
+    public ObserverCollection()
+    {
+        _refresh = () => Enumerable.Empty<TObserver>().ToList();
+    }
 
     public ObserverCollection(Func<ICollection<TObserver>> refresh,
         Action<int, TModel>? add = default,
@@ -57,6 +61,14 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
         }
 
         OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsChanged)));
+    }
+
+    public void AddRange(IEnumerable<TObserver> observers)
+    {
+        foreach (var observer in observers)
+        {
+            Add(observer);
+        }
     }
 
     public void Refresh()

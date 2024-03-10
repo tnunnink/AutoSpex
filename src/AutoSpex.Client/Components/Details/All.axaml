@@ -4,5 +4,6 @@
         <ResourceInclude Source="DetailsTab.axaml" />
         <ResourceInclude Source="DetailsOpenTabs.axaml" />
         <ResourceInclude Source="DetailsContainer.axaml" />
+        <ResourceInclude Source="DetailsDefaultView.axaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

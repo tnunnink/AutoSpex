@@ -30,13 +30,14 @@ public abstract class TrackableViewModel : ViewModelBase, ITrackable
     /// </summary>
     public virtual void AcceptChanges()
     {
-        foreach (var viewModel in _tracked)
-            viewModel.AcceptChanges();
+        foreach (var trackable in _tracked)
+            trackable.AcceptChanges();
 
         _changed.Clear();
+
         OnPropertyChanged(nameof(IsChanged));
     }
-    
+
     /// <summary>
     /// Refreshes all bindings to the derived observer object. This could be used if changes are made to the model
     /// internally without the observer knowing (data refresh or domain level logic/events) It should signify a reset or
@@ -47,7 +48,7 @@ public abstract class TrackableViewModel : ViewModelBase, ITrackable
         _changed.Clear();
         OnPropertyChanged(string.Empty);
     }
-    
+
     /// <summary>
     /// Adds a property name to the list of properties to track changes for.
     /// </summary>
@@ -85,7 +86,7 @@ public abstract class TrackableViewModel : ViewModelBase, ITrackable
         if (!removed) return;
         trackable.PropertyChanged -= OnTrackedModelPropertyChanged;
     }
-    
+
     /// <inheritdoc />
     protected override void OnDeactivated()
     {

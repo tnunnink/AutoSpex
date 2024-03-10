@@ -1,123 +1,155 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoSpex.Client.Observers;
+using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using AutoSpex.Persistence;
 using Avalonia.Controls.Notifications;
-using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
-using CommunityToolkit.Mvvm.Messaging.Messages;
 
 namespace AutoSpex.Client.Pages;
 
-public abstract partial class NodePageModel : DetailPageModel,
-    IRecipient<PropertyChangedMessage<string>>,
+public partial class NodePageModel : DetailPageModel,
+    IRecipient<NodeObserver.Renamed>,
     IRecipient<NodeObserver.Deleted>
 {
-    private readonly Guid _nodeId;
+    /// <summary>
+    /// This is the node that is passed in to this details page from a navigation tree. It does not contain.
+    /// </summary>
+    private readonly NodeObserver _target;
 
     /// <inheritdoc/>
-    protected NodePageModel(Node node)
+    public NodePageModel(NodeObserver target)
     {
-        _nodeId = node.NodeId;
-
-        Node = new NodeObserver(node);
-        Breadcrumb = new Breadcrumb(Node, CrumbType.Target);
-        Variables = new ObserverCollection<Variable, VariableObserver>(
-            () => Node.Model.ScopedVariables().Select(v => new VariableObserver(v)).ToList(),
-            (_, v) => Node.Model.AddVariable(v),
-            (_, v) => Node.Model.AddVariable(v),
-            (_, v) => Node.Model.RemoveVariable(v));
-        Track(Variables);
+        _target = target;
+        Breadcrumb = new Breadcrumb(_target, CrumbType.Target);
     }
 
-    public override string Route => $"{GetType().Name}/{_nodeId}";
-    public override string Title => Node.Name;
-    public override string Icon => Node.NodeType.Name;
+    public override string Route => $"Node/{_target.Id}";
+    public override string Title => _target.Name;
+    public override string Icon => _target.NodeType.Name;
+    public Breadcrumb Breadcrumb { get; }
 
-    [ObservableProperty] private NodeObserver _node;
+    /// <summary>
+    /// The fully loaded <see cref="NodeObserver"/> which will contain all the detail data for this node. This would
+    /// include variables for the node and the spec configuration if this node is a spec type node.
+    /// </summary>
+    [ObservableProperty] private NodeObserver? _node;
+    
+    public Task<ObservableCollection<SourceObserver>> Sources => RequestSources();
 
-    [ObservableProperty] private Breadcrumb _breadcrumb;
-
-    [ObservableProperty] private bool _notFound;
-
-    public ObserverCollection<Variable, VariableObserver> Variables { get; }
-
-    protected override void OnActivated()
+    private async Task<ObservableCollection<SourceObserver>> RequestSources()
     {
-        Messenger.Register<PropertyChangedMessage<string>, Guid>(this, _nodeId);
-        Messenger.Register<NodeObserver.Deleted, Guid>(this, _nodeId);
+        var result = await Mediator.Send(new ListSources());
+        if (result.IsFailed) return [];
+        var sources = result.Value.Select(s => new SourceObserver(s));
+        return new ObservableCollection<SourceObserver>(sources);
     }
 
+    /// <inheritdoc />
     public override async Task Load()
     {
-        //This is telling the UI to capture focus to the name of the node for immediate editing.
-        if (Node.FocusName)
+        var result = await Mediator.Send(new GetFullNode(_target.Id));
+
+        if (result.IsFailed || result.Value is null)
         {
-            Dispatcher.UIThread.Post(() => Breadcrumb.InFocus = true);
+            //todo navigate node not found...
+            return;
         }
 
-        //An orphaned node has not been persisted yet.
-        if (!Node.IsOrphaned)
-        {
-            await LoadFullNode();
-        }
-
-        SaveCommand.NotifyCanExecuteChanged();
-
-        //await Navigator.Navigate(() => new NodeInfoPageModel(Node));
-    }
-
-    private async Task LoadFullNode()
-    {
-        var result = await Mediator.Send(new GetFullNode(_nodeId));
-
-        if (result.IsFailed)
-        {
-            NotFound = true;
-        }
-
-        Node = new NodeObserver(result.Value);
+        Node = result.Value;
+        Track(Node);
+        
+        await NavigateTabs(Node);
     }
 
     protected override async Task Save()
     {
-        if (Node.IsOrphaned)
-        {
-            //todo then we need to open the "save as/to" popup the should probably just add the node whatever parent they select which will set the parent id.
-            return;
-        }
+        if (Node is null) return;
 
         var result = await Mediator.Send(new SaveNode(Node));
+        if (result.IsFailed) return;
 
-        if (!result.IsSuccess) return;
-
-        var notification = new Notification($"{Node.Name} Saved",
-            $"Saved {Node.Name} successfully @ {DateTime.Now.ToShortTimeString()}"
-            , NotificationType.Success);
-        Notifier.Notify(notification);
-
+        NotifySaveSuccess(Node);
         AcceptChanges();
     }
 
-    protected override bool CanSave() => IsChanged || Node.IsOrphaned;
+    protected override bool CanSave() => base.CanSave() && Node is not null;
 
-    public void Receive(NodeObserver.Deleted message)
+    private async Task Run(SourceObserver? source)
     {
-        if (message.Node.NodeId != _nodeId) return;
-        ForceClose();
+        if (source is null || Node is null) return;
+        var runner = new Runner();
+        runner.AddNode(Node);
+        var observer = new RunnerObserver(runner);
+        await Navigator.Navigate(observer);
     }
 
-    public void Receive(PropertyChangedMessage<string> message)
+    public override void Receive(NavigationRequest message)
     {
-        if (message is {Sender: NodeObserver node, PropertyName: nameof(NodeObserver.Name)} && node.NodeId == _nodeId)
+        if (!message.Page.Route.Contains(Route)) return;
+
+        switch (message.Page)
         {
-            OnPropertyChanged(nameof(Title));
+            case FiltersPageModel or VerificationsPageModel or VariablesPageModel or SpecOptionsPageModel:
+                NavigateTabPage(message.Page, message.Action);
+                break;
+            case NodeInfoPageModel:
+                NavigateDetailPage(message.Page, message.Action);
+                break;
         }
     }
 
-    public override bool Equals(object? obj) => obj is NodePageModel other && _nodeId == other._nodeId;
-    public override int GetHashCode() => _nodeId.GetHashCode();
+    public void Receive(Observer<Node>.Deleted message)
+    {
+        if (message.Observer.Id != _target.Id) return;
+        ForceClose();
+    }
+
+    public void Receive(Observer<Node>.Renamed message)
+    {
+        if (message.Observer is not NodeObserver node) return;
+        if (node.Id != _target.Id) return;
+        OnPropertyChanged(nameof(Title));
+    }
+
+    public override bool Equals(object? obj) => obj is NodePageModel other && _target.Id == other._target.Id;
+    public override int GetHashCode() => _target.Id.GetHashCode();
+
+    private void NotifySaveSuccess(NodeObserver node)
+    {
+        var title = $"{node.NodeType} Saved";
+        var message = $"{node.Name} was saved successfully @ {DateTime.Now.ToShortTimeString()}";
+        var notification = new Notification(title, message, NotificationType.Success);
+        Notifier.Notify(notification);
+    }
+
+    private async Task NavigateTabs(NodeObserver node)
+    {
+        if (node.NodeType == NodeType.Collection)
+        {
+            await Navigator.Navigate(() => new VariablesPageModel(node));
+            await Navigator.Navigate(() => new NodeInfoPageModel(node));
+        }
+
+        if (node.NodeType == NodeType.Folder)
+        {
+            await Navigator.Navigate(() => new VariablesPageModel(node));
+            await Navigator.Navigate(() => new NodeInfoPageModel(node));
+        }
+
+        if (node.NodeType == NodeType.Spec)
+        {
+            await Navigator.Navigate(() => new FiltersPageModel(node));
+            await Navigator.Navigate(() => new VerificationsPageModel(node));
+            await Navigator.Navigate(() => new VariablesPageModel(node));
+            await Navigator.Navigate(() => new SpecOptionsPageModel(node));
+            await Navigator.Navigate(() => new NodeInfoPageModel(node));
+        }
+    }
 }

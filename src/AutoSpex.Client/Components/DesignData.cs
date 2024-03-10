@@ -7,7 +7,6 @@ using AutoSpex.Engine;
 using JetBrains.Annotations;
 using L5Sharp.Core;
 using Argument = AutoSpex.Engine.Argument;
-using Tag = HarfBuzzSharp.Tag;
 
 namespace AutoSpex.Client.Components;
 
@@ -48,9 +47,15 @@ public static class DesignData
         new DesignTargetBreadcrumb()
     ];
 
-    public static Property Property = new DesignProperty();
+    public static Property Property = new DesignRadixProperty();
+
+    public static NodeObserver SpecNode = SpecNodeObserver();
 
     public static ObservableCollection<NodeObserver> Nodes = new(GenerateNodes().Select(n => new NodeObserver(n)));
+
+    public static VariableObserver VariableObserver = new DesignVariableObserver();
+
+    public static Variable Variable = new("MyVar", "123");
 
     public static ObservableCollection<VariableObserver> Variables =
     [
@@ -61,6 +66,14 @@ public static class DesignData
         new DesignVariableObserver()
     ];
 
+    public static ArgumentObserver EmptyArgument = new(Argument.Empty);
+
+    public static ArgumentObserver TextArgument = new(new Argument("Literal Text Value"));
+
+    public static ArgumentObserver EnumArgument = new(new Argument(ExternalAccess.ReadOnly));
+
+    public static ArgumentObserver VariableArgument = new(new Argument(new Variable("Var01", "Some Value")));
+
     public static ObservableCollection<ArgumentObserver> Arguments =
     [
         new DesignArgumentObserver(),
@@ -70,14 +83,39 @@ public static class DesignData
     public static ObservableCollection<Argument> RadixOptions =>
         new(LogixEnum.Options<Radix>().Select(e => new Argument(e)));
 
-    public static SourceObserver Source = new DesignSourceObserver();
-    
+    public static SourceObserver Source = new(new Source(L5X.Load(@"C:\Users\admin\Documents\L5X\Test.L5X")));
+
     public static ObservableCollection<SourceObserver> Sources =
     [
-        new DesignSourceObserver(),
-        new DesignSourceObserver(),
-        new DesignSourceObserver()
+        new SourceObserver(new Source(L5X.Load(@"C:\Users\admin\Documents\L5X\Test.L5X")))
+            {Name = "Test Source 01"},
+        new SourceObserver(new Source(L5X.Load(@"C:\Users\admin\Documents\L5X\Test.L5X")))
+            {Name = "Test Source 02", IsSelected = true},
+        new SourceObserver(new Source(L5X.Load(@"C:\Users\admin\Documents\L5X\Test.L5X")))
+            {Name = "Test Source 03"},
     ];
+
+    public static ObservableCollection<LogixElement> DataTypes = new(new DesignSourceObserver().Model.L5X.DataTypes);
+
+    public static ObservableCollection<ElementObserver> Tags = new(new DesignSourceObserver().Model.L5X.Query<Tag>()
+        .SelectMany(t => t.Members()).Select(x => new ElementObserver(x)));
+
+    public static ObservableCollection<ElementObserver> Rungs =
+        new(new DesignSourceObserver().Model.L5X.Query<Rung>().Select(x => new ElementObserver(x)));
+
+    public static string? RawData = new DesignSourceObserver().Model.L5X.Tags.FirstOrDefault()?.Serialize().ToString();
+
+    public static LogixElement? Tag = new DesignSourceObserver().Model.L5X.Tags.FirstOrDefault();
+
+    public static ElementObserver TagObserver = new(Tag!);
+
+    public static PropertyObserver RadixPropertyObserver => new DesignRadixPropertyObserver();
+
+    public static PropertyObserver TagNamePropertyObserver => new(new DesignTextProperty(),
+        new ElementObserver(new Tag {Name = "MyTag"}));
+
+    public static PropertyObserver MembersPropertyObserver => new(new DesignMembersProperty(),
+        new ElementObserver(new Tag {Name = "MyTag", Value = new TIMER()}));
 
     private static IEnumerable<Node> GenerateNodes()
     {
@@ -87,6 +125,14 @@ public static class DesignData
         folder.AddSpec();
         yield return collection;
         yield return Node.NewCollection();
+    }
+
+    private static NodeObserver SpecNodeObserver()
+    {
+        var collection = Node.NewCollection();
+        var folder = collection.AddFolder();
+        var spec = folder.AddSpec();
+        return new NodeObserver(spec);
     }
 }
 
@@ -108,12 +154,18 @@ public class DesignPathBreadcrumb() : Breadcrumb(Node.NewCollection().AddFolder(
 
 public class DesignCriterionObserver() : CriterionObserver(new Criterion(), Element.Tag.Type);
 
-public class DesignArgumentObserver()
-    : ArgumentObserver(new Argument("SomeData"), new CriterionObserver(new Criterion(), Element.Tag.Type));
+public class DesignArgumentObserver() : ArgumentObserver(new Argument("Literal Text Value"));
 
-public class DesignProperty() : Property(typeof(Tag), "Radix", typeof(Radix));
+public class DesignRadixProperty() : Property(typeof(Tag), "Radix", typeof(Radix));
 
-public class DesignVariableObserver() : VariableObserver(new Variable("MyVar", "123", "This is a test"));
+public class DesignTextProperty() : Property(typeof(Tag), "TagName", typeof(TagName));
+
+public class DesignMembersProperty() : Property(typeof(Tag), "Members", typeof(IEnumerable<Tag>));
+
+public class DesignRadixPropertyObserver()
+    : PropertyObserver(new DesignRadixProperty(), new ElementObserver(new Tag()));
+
+public class DesignVariableObserver() : VariableObserver(new Variable("MyVar", "123"));
 
 public class DesignSourceObserver()
     : SourceObserver(new Source(L5X.Load(@"C:\Users\admin\Documents\L5X\Test.L5X")));

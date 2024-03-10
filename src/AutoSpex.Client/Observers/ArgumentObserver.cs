@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
+using AutoSpex.Persistence.Variables;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
-using L5Sharp.Core;
-using Argument = AutoSpex.Engine.Argument;
 
 // ReSharper disable TailRecursiveCall
 
@@ -20,12 +21,17 @@ public class ArgumentObserver : Observer<Argument>
     /// Creates a new <see cref="ArgumentObserver"/> wrapping the provided <see cref="Argument"/>.
     /// </summary>
     /// <param name="model">The <see cref="Argument"/> object to wrap.</param>
-    /// <param name="owner">The owning <see cref="CriterionObserver"/> of the argument.</param>
-    public ArgumentObserver(Argument model, CriterionObserver owner) : base(model)
+    public ArgumentObserver(Argument model) : base(model)
     {
-        Owner = owner ?? throw new ArgumentNullException(nameof(owner));
         Track(nameof(Value));
     }
+
+    public override Guid Id => Model.ArgumentId;
+
+    /// <summary>
+    /// The owning <see cref="CriterionObserver"/> of the argument.
+    /// </summary>
+    public CriterionObserver? Criterion => RequestCriterion();
 
     /// <summary>
     /// The value of the argument which represents the data in which the criterion will evaluate against. This
@@ -34,14 +40,18 @@ public class ArgumentObserver : Observer<Argument>
     public object Value
     {
         get => GetValue();
-        set => SetProperty(Model.Value, value, Model, SetValue);
+        set
+        {
+            var set = SetProperty(Model.Value, value, Model, SetValue);
+            if (!set) return;
+            OnPropertyChanged(Formatted);
+        }
     }
 
     /// <summary>
-    /// The owning <see cref="CriterionObserver"/> of the argument. This is needed to pass into nested criterion
-    /// so that we can know which child properties are valid. This is not a underlying model property.
+    /// The value formatted as a string to be represented in the entry text field for the control.
     /// </summary>
-    public CriterionObserver Owner { get; }
+    public string Formatted => Model.Formatted;
 
     /// <summary>
     /// The <see cref="Type"/> for the argument.
@@ -59,34 +69,53 @@ public class ArgumentObserver : Observer<Argument>
     public TypeGroup Group => Model.Group;
 
     /// <summary>
-    /// The collection of available suggestions arguments which are wrapping several potential values ...
-    /// </summary>
-    public IEnumerable<Argument> Suggestions => Messenger.Send(new GetSuggestions(this)).Response;
-
-    /// <inheritdoc />
-    public override string? ToString() => Value.ToString();
-
-    /// <summary>
     /// Creates a new <see cref="ArgumentObserver"/> with an empty string as the initial value.
     /// </summary>
-    /// <param name="owner">The <see cref="CriterionObserver"/> which owns or has reference to this argument.</param>
     /// <returns>A new <see cref="ArgumentObserver"/> object.</returns>
-    public static ArgumentObserver Empty(CriterionObserver owner) => new(Argument.Empty, owner);
+    public static ArgumentObserver Empty => new(Argument.Empty);
+
+    /// <inheritdoc />
+    public override string ToString() => Model.Formatted;
 
     /// <summary>
-    /// Creates a new <see cref="ArgumentObserver"/> with an empty <see cref="Criterion"/> as the initial value.
+    /// Executes the code to retrieve possible suggestion values based on the current argument's parent criterion
+    /// property, scoped variables, and active source data, and returns a collection of values wrapped in
+    /// <see cref="Argument"/> objects and filtered based on the provided input text.
     /// </summary>
-    /// <param name="owner">The <see cref="CriterionObserver"/> which owns or has reference to this argument.</param>
-    /// <returns>A new <see cref="ArgumentObserver"/> object.</returns>
-    public static ArgumentObserver Criterion(CriterionObserver owner) => new(new Criterion(), owner);
+    public async Task<IEnumerable<ArgumentObserver>> GetSuggestions(string? filter = default)
+    {
+        var suggestions = await RequestSuggestions();
+
+        if (string.IsNullOrEmpty(filter))
+            return suggestions;
+
+        return suggestions.Where(s => s.Formatted.Contains(filter, StringComparison.OrdinalIgnoreCase));
+    }
 
     /// <summary>
-    /// Implicit conversion operator from an <see cref="ArgumentObserver"/> instance to an <see cref="Argument"/> instance.
-    /// This allows an <see cref="ArgumentObserver"/> to be used wherever an <see cref="Argument"/> is expected.
+    /// Since the user will enter text input as the argument, we need to take that and resolve the actual type it represents
+    /// depending on what was entered. If the user input a variable format meaning the text starts and ends with a bracket,
+    /// then we need to find the matching variable object, assign it to the <see cref="Value"/> and determine if it is valid.
+    /// If the user input a value matching an existing option for the criterion property (bool/enum), then we can...
     /// </summary>
-    /// <param name="observer">An instance of the <see cref="ArgumentObserver"/> class.</param>
-    /// <returns>An instance of the <see cref="Argument"/> class that represents the same data as the observer.</returns>
-    public static implicit operator Argument(ArgumentObserver observer) => observer.Model;
+    /// <param name="input"></param>
+    public void ResolveInput(string? input)
+    {
+        if (string.IsNullOrEmpty(input))
+        {
+            Value = string.Empty;
+            return;
+        }
+
+        if (input.StartsWith('{') && input.EndsWith('}'))
+        {
+            /*Criterion.Spec;*/
+        }
+
+        
+
+        Value = input;
+    }
 
     /// <summary>
     /// We need some special wrapping of the child values for Argument. it can be a nested criterion or variable, and
@@ -98,7 +127,7 @@ public class ArgumentObserver : Observer<Argument>
     {
         return Model.Value switch
         {
-            Criterion criterion => new CriterionObserver(criterion, Owner.Property?.Type),
+            Criterion criterion => new CriterionObserver(criterion, Criterion?.Property?.Type),
             Variable variable => new VariableObserver(variable),
             _ => Model.Value
         };
@@ -127,31 +156,77 @@ public class ArgumentObserver : Observer<Argument>
             case Variable variable:
                 argument.SetValue(variable);
                 break;
-            case LogixEnum enumeration:
-                argument.SetValue(enumeration.Name);
-                break;
-            case ILogixSerializable serializable:
-                argument.SetValue(serializable.Serialize());
-                break;
             default:
-                argument.SetValue(value.ToString());
+                argument.SetValue(value);
                 break;
         }
     }
 
     /// <summary>
-    /// A request message to send for retrieval of argument suggestions for this particular <see cref="ArgumentObserver"/>.
+    /// Tries to get a collection of suggestions to display to the user as potential arguments values. This collection
+    /// will contain either option values (bool/enum), variables in scope of this argument, or just simple string
+    /// values that match the criterion property name/property type.
     /// </summary>
-    /// <param name="argument">The argument for which to retrieve suggestions.</param>
-    /// <remarks>
-    /// The suggestions will represent possible option values for the type (enums/bools only), possible
-    /// variables defined in the scope of the node this argument exists, and possible source values that were indexed
-    /// from all loaded source files. Since this will all be a single list of args which will require external query/data
-    /// retrieval, we are using this message the means for obtaining the information, since the observer itself does
-    /// not have access to the Mediator instance.
-    /// </remarks>
-    public class GetSuggestions(ArgumentObserver argument) : RequestMessage<IEnumerable<Argument>>
+    private async Task<IEnumerable<ArgumentObserver>> RequestSuggestions()
     {
-        public ArgumentObserver Argument { get; } = argument;
+        var suggestions = new List<ArgumentObserver>();
+
+        var options = GetOptions();
+        suggestions.AddRange(options);
+
+        var variables = await GetScopedVariables();
+        suggestions.AddRange(variables);
+
+        //todo perhaps also get the matching value suggestions from the active source
+
+        return suggestions;
     }
+
+    /// <summary>
+    /// Query the database for variables that are in scope of this argument. These are variables that belong to or are
+    /// inherited by the parent spec object. Therefore we first request the parent spec and the use it's id to fetch
+    /// variable objects as suggestions to plug into the argument value for the user.
+    /// </summary>
+    private async Task<IEnumerable<ArgumentObserver>> GetScopedVariables()
+    {
+        var id = Criterion?.Spec?.Id ?? Guid.Empty;
+
+        var result = await Mediator.Send(new GetScopedVariables(id));
+        if (result.IsFailed) return Enumerable.Empty<ArgumentObserver>();
+
+        return result.Value.Select(x => new ArgumentObserver(new Argument(x)));
+    }
+
+    /// <summary>
+    /// Gets potential option values for the parent criterion property which are potential values to the argument input. 
+    /// </summary>
+    private IEnumerable<ArgumentObserver> GetOptions()
+    {
+        var property = Criterion?.Property;
+        if (property is null) return Enumerable.Empty<ArgumentObserver>();
+        return property.Options.Select(x => new ArgumentObserver(new Argument(x)));
+    }
+
+    /// <summary>
+    /// Send the request to retrieve the parent <see cref="CriterionObserver"/> for this argument object.
+    /// </summary>
+    private CriterionObserver? RequestCriterion()
+    {
+        var request = Messenger.Send(new CriterionRequest(Id));
+        if (!request.HasReceivedResponse) return default;
+        return request.Response;
+    }
+
+    /// <summary>
+    /// A request to retrieve the parent <see cref="CriterionObserver"/> of this argument.
+    /// </summary>
+    /// <param name="argumentId">The id of this argument for which to retrieve the parent criterion.</param>
+    public class CriterionRequest(Guid argumentId) : RequestMessage<CriterionObserver>
+    {
+        public Guid ArgumentId { get; } = argumentId;
+    }
+
+
+    public static implicit operator Argument(ArgumentObserver observer) => observer.Model;
+    public static implicit operator ArgumentObserver(Argument model) => new(model);
 }

@@ -7,7 +7,6 @@ public class PropertyTests
     public void New_ValidPropertyInfo_ShouldNotBeNull()
     {
         var property = new Property(typeof(Tag), "Name", typeof(string));
-
         property.Should().NotBeNull();
     }
 
@@ -20,7 +19,7 @@ public class PropertyTests
         property.Path.Should().Be("Test");
         property.Type.Should().Be(typeof(string));
         property.Name.Should().Be("Test");
-        property.Properties.Should().NotBeEmpty();
+        property.Properties.Should().BeEmpty();
         property.Identifier.Should().Be("string");
         property.Group.Should().Be(TypeGroup.Text);
         property.Options.Should().BeEmpty();
@@ -50,5 +49,11 @@ public class PropertyTests
         var property = new Property(typeof(Tag), "ExternalAccess", typeof(ExternalAccess));
 
         property.Options.Should().HaveCount(3);
+    }
+
+    [Test]
+    public void Getter_CollectionType_ShouldWork()
+    {
+        
     }
 }

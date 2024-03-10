@@ -1,0 +1,150 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:components="clr-namespace:AutoSpex.Client.Components"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             x:Class="AutoSpex.Client.Pages.QueryPage"
+             x:DataType="pages:QueryPageModel">
+
+    <Design.Width>1000</Design.Width>
+    <Design.Height>800</Design.Height>
+
+    <controls:DrawerView x:Name="PageDrawerView"
+                         DrawerPlacement="Bottom"
+                         IsDrawerOpen="{Binding DrawerOpen}">
+        <StackPanel>
+            <components:CriteriaList Element="{Binding Element}"
+                                     Criteria="{Binding Filters}"
+                                     Inclusion="{Binding Inclusion}"
+                                     RunCommand="{Binding SearchCommand}"
+                                     UseElementSelector="True"
+                                     UseRunButton="True" />
+        </StackPanel>
+
+        <controls:DrawerView.Drawer>
+            <Border Background="{a:ThemeResource Container1BackgroundBrush}">
+                <DockPanel>
+                    <Border DockPanel.Dock="Top"
+                            Height="30"
+                            Background="{a:ThemeResource Container2BackgroundBrush}"
+                            BorderBrush="{a:ThemeResource Container2BorderBrush}"
+                            BorderThickness="0 0 0 1">
+                        <Grid ColumnDefinitions="Auto,*,Auto">
+                            <StackPanel Grid.Column="0"
+                                        VerticalAlignment="Center"
+                                        Orientation="Horizontal">
+                                <TextBlock Text="Results" Margin="10 0"
+                                           Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}" />
+                                <StackPanel Orientation="Horizontal" Spacing="5"
+                                            Margin="10 0"
+                                            IsVisible="False">
+                                    <ProgressBar Height="10" Width="100"
+                                                 IsIndeterminate="True"
+                                                 Classes="accent" />
+                                    <Button Theme="{StaticResource IconButtonSmall}"
+                                            properties:ButtonIcon.Theme="{StaticResource IconCancelFilled}"
+                                            Command="{Binding CancelCommand}" />
+                                </StackPanel>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2"
+                                        VerticalAlignment="Center" Margin="10 0">
+                                <ToggleButton IsChecked="{Binding DrawerOpen}"
+                                              Theme="{StaticResource IconButtonSmall}"
+                                              properties:ButtonIcon.Theme="{StaticResource IconChevronUp}">
+                                    <ToggleButton.Styles>
+                                        <Style Selector="ToggleButton:checked /template/ PathIcon">
+                                            <Setter Property="Theme" Value="{StaticResource IconChevronDown}" />
+                                        </Style>
+                                    </ToggleButton.Styles>
+                                </ToggleButton>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <Panel>
+                        <Grid ColumnDefinitions="0.7*,Auto,*"
+                              IsVisible="{Binding Results.Count}">
+
+                            <components:ElementList
+                                Grid.Column="0"
+                                ElementSource="{Binding Results}"
+                                SelectedElement="{Binding SelectedResult}" />
+
+                            <GridSplitter
+                                Grid.Column="1"
+                                Theme="{StaticResource GridSplitterHighlight}"
+                                Width="1" Margin="0 3" />
+
+                            <components:PropertyTree
+                                Grid.Column="2"
+                                SourceElement="{Binding SelectedElement}" />
+                        </Grid>
+
+                        <!--Default View-->
+                        <Border Background="{a:ThemeResource Container1BackgroundBrush}"
+                                BorderThickness="0">
+                            <StackPanel
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
+                                <TextBlock
+                                    Text="No elements found"
+                                    Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                                    FontWeight="SemiBold"
+                                    HorizontalAlignment="Center" />
+                                <StackPanel Orientation="Horizontal"
+                                            HorizontalAlignment="Center">
+                                    <TextBlock
+                                        Text="Click the "
+                                        Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                                        TextAlignment="Center" />
+                                    <PathIcon
+                                        Theme="{StaticResource IconPlayOutlined}"
+                                        Foreground="{a:ThemeResource ControlForegroundBrushOutlineSuccess}"
+                                        Height="20" Width="20" Padding="4" Margin="0 2 0 0" />
+                                    <TextBlock Text="button to query the source file for elements."
+                                               Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                                               TextAlignment="Center" />
+                                </StackPanel>
+                            </StackPanel>
+                            <Border.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                    <Binding Path="!Searching" />
+                                    <Binding Path="!Results.Count" />
+                                </MultiBinding>
+                            </Border.IsVisible>
+                        </Border>
+
+                        <!--Searching Overlay-->
+                        <Border Background="{a:ThemeResource Container1BackgroundBrush}"
+                                BorderThickness="0">
+                            <StackPanel VerticalAlignment="Center"
+                                        HorizontalAlignment="Center">
+                                <PathIcon Theme="{StaticResource IconSearch}"
+                                          Classes="accent" Padding="5" Margin="5" />
+                                <TextBlock Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}">
+                                    <TextBlock.Inlines>
+                                        <Run Text="Searching" />
+                                        <Run Text="{Binding Source.Name, FallbackValue='source'}"
+                                             Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+                                        <Run Text="for matching" />
+                                        <Run Text="{Binding Element.Name, FallbackValue='target'}"
+                                             Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+                                        <Run Text="elements..." />
+                                    </TextBlock.Inlines>
+                                </TextBlock>
+                            </StackPanel>
+                            <Border.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                    <Binding Path="Searching" />
+                                    <Binding Path="!Results.Count" />
+                                </MultiBinding>
+                            </Border.IsVisible>
+                        </Border>
+                    </Panel>
+                </DockPanel>
+            </Border>
+        </controls:DrawerView.Drawer>
+    </controls:DrawerView>
+</UserControl>

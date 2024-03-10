@@ -373,7 +373,7 @@ public class NodeTests
         var config = new Spec {Element = Element.Tag};
         spec.Configure(config);
 
-        spec.Spec.Should().BeEquivalentTo(config);
+        spec.Spec.Should().BeEquivalentTo(config, options => options.Excluding(info => info.SpecId));
         spec.Spec?.Element.Should().Be(Element.Tag);
     }
 
@@ -480,7 +480,7 @@ public class NodeTests
     {
         var node = Node.NewCollection();
 
-        node.AddVariable("Test", "Value", "this is a test");
+        node.AddVariable("Test", "Value");
 
         node.Variables.Should().HaveCount(1);
     }
@@ -530,7 +530,7 @@ public class NodeTests
         spec.Configure(c =>
         {
             c.Element = Element.Tag;
-            c.Filters.Add(new Criterion("Name", Operation.Equal, "TestSimpleTag"));
+            c.Filters.Add(new Criterion("TagName", Operation.Equal, "TestSimpleTag"));
             c.Verifications.Add(new Criterion("DataType", Operation.Equal, "SimpleType"));
         });
 
@@ -556,7 +556,7 @@ public class NodeTests
         spec.Configure(c =>
         {
             c.Element = Element.Tag;
-            c.Filters.Add(new Criterion("Name", Operation.Equal, "TestSimpleTag"));
+            c.Filters.Add(new Criterion("TagName", Operation.Equal, "TestSimpleTag"));
             c.Verifications.Add(new Criterion("DataType", Operation.Equal, variable));
         });
 

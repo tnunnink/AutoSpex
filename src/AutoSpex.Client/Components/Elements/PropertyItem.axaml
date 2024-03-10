@@ -1,0 +1,101 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="using:AutoSpex.Client.Components"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine">
+
+    <Design.PreviewWith>
+        <StackPanel Margin="10">
+            <components:PropertyItem Width="300"
+                                     DataContext="{x:Static components:DesignData.RadixPropertyObserver}" />
+            <components:PropertyItem Width="300"
+                                     DataContext="{x:Static components:DesignData.TagNamePropertyObserver}" />
+            <components:PropertyItem Width="300"
+                                     DataContext="{x:Static components:DesignData.MembersPropertyObserver}" />
+        </StackPanel>
+
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type components:PropertyItem}" TargetType="components:PropertyItem"
+                  x:DataType="observers:PropertyObserver">
+        <ControlTheme.Resources>
+
+        </ControlTheme.Resources>
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="CornerRadius" Value="5" />
+        <Setter Property="Padding" Value="5" />
+        <Setter Property="Height" Value="30" />
+        <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeSmall}" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        Padding="{TemplateBinding Padding}"
+                        MaxWidth="{Binding $parent[TreeViewItem].Bounds.Width}">
+                    <Grid ColumnDefinitions="Auto,Auto">
+                        <StackPanel Grid.Column="0"
+                                    Orientation="Horizontal"
+                                    Spacing="5"
+                                    VerticalAlignment="Center">
+                            <TextBlock Text="{Binding Name}" />
+                            <TextBlock Text="="
+                                       Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                            <TextBlock Text="{Binding Type}"
+                                       Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                            <TextBlock Text="{Binding FormattedValue}"
+                                       TextTrimming="CharacterEllipsis"
+                                       TextWrapping="NoWrap"
+                                       MaxHeight="30"
+                                       Classes.warning="{Binding FormattedValue, Converter={StaticResource EqualToConverter}, ConverterParameter='null'}"
+                                       Classes.enum="{Binding Group, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:TypeGroup.Enum}}"
+                                       Classes.text="{Binding Group, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:TypeGroup.Text}}"
+                                       Classes.number="{Binding Group, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:TypeGroup.Number}}"
+                                       Classes.bool="{Binding Group, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:TypeGroup.Number}}"
+                                       Classes.collection="{Binding Group, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:TypeGroup.Collection}}">
+                                <TextBlock.Styles>
+                                    <Style Selector="TextBlock.enum">
+                                        <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+                                    </Style>
+                                    <Style Selector="TextBlock.text">
+                                        <Setter Property="Foreground" Value="LightSeaGreen" />
+                                    </Style>
+                                    <Style Selector="TextBlock.bool">
+                                        <Setter Property="Foreground" Value="LightBlue" />
+                                    </Style>
+                                    <Style Selector="TextBlock.number">
+                                        <Setter Property="Foreground" Value="LightBlue" />
+                                    </Style>
+                                    <Style Selector="TextBlock.collection">
+                                        <Setter Property="Foreground" Value="LightSteelBlue" />
+                                    </Style>
+                                </TextBlock.Styles>
+                            </TextBlock>
+                        </StackPanel>
+
+                        <Border Grid.Column="1"
+                                Background="{Binding $parent[TreeViewItem].Background}"
+                                Margin="10 0"
+                                IsVisible="{Binding $parent[components:PropertyItem].IsPointerOver}">
+                            <StackPanel Orientation="Horizontal"
+                                        Spacing="2">
+                                <Button Theme="{StaticResource IconButtonSmall}"
+                                        properties:ButtonIcon.Theme="{StaticResource IconCopyOutlined}"
+                                        ToolTip.Tip="Copy Data" />
+                                <Button Theme="{StaticResource IconButtonSmall}"
+                                        properties:ButtonIcon.Theme="{StaticResource IconBinocularsFilled}"
+                                        ToolTip.Tip="View Data" />
+                                <Button Theme="{StaticResource IconButtonSmall}"
+                                        properties:ButtonIcon.Theme="{StaticResource IconBraces}"
+                                        ToolTip.Tip="Create Variable" />
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

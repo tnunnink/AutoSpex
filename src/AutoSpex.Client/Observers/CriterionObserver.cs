@@ -1,21 +1,22 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Linq;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging.Messages;
 
 namespace AutoSpex.Client.Observers;
 
-public partial class CriterionObserver : Observer<Criterion>
+public partial class CriterionObserver : Observer<Criterion>, IRecipient<ArgumentObserver.CriterionRequest>
 {
     public CriterionObserver(Criterion model, Type? type = default) : base(model)
     {
         Type = type?.SelfOrInnerType();
+
         Arguments = new ObserverCollection<Argument, ArgumentObserver>(
-            Model.Arguments,
-            a => new ArgumentObserver(a, this));
+            Model.Arguments, a => new ArgumentObserver(a));
 
         Track(nameof(Invert));
         Track(nameof(PropertyName));
@@ -24,6 +25,9 @@ public partial class CriterionObserver : Observer<Criterion>
 
         ResolveProperty();
     }
+
+    public override Guid Id => Model.CriterionId;
+    public SpecObserver? Spec => RequestSpec();
 
     [ObservableProperty] private bool _isChecked;
 
@@ -55,9 +59,6 @@ public partial class CriterionObserver : Observer<Criterion>
 
     public ObserverCollection<Argument, ArgumentObserver> Arguments { get; }
 
-    [RelayCommand]
-    private void Remove() => Messenger.Send(new RemoveMessage(this));
-
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
         base.OnPropertyChanged(e);
@@ -88,18 +89,18 @@ public partial class CriterionObserver : Observer<Criterion>
         Arguments.Clear();
 
         if (Operation is BinaryOperation)
-            Arguments.Add(ArgumentObserver.Empty(this));
+            Arguments.Add(ArgumentObserver.Empty);
 
         if (Operation is TernaryOperation)
         {
-            Arguments.Add(ArgumentObserver.Empty(this));
-            Arguments.Add(ArgumentObserver.Empty(this));
+            Arguments.Add(ArgumentObserver.Empty);
+            Arguments.Add(ArgumentObserver.Empty);
         }
 
         if (Operation is not CollectionOperation)
             return;
 
-        Arguments.Add(ArgumentObserver.Criterion(this));
+        Arguments.Add(new ArgumentObserver(new Argument(new Criterion())));
     }
 
     /// <summary>
@@ -111,12 +112,32 @@ public partial class CriterionObserver : Observer<Criterion>
     public static implicit operator Criterion(CriterionObserver observer) => observer.Model;
 
     /// <summary>
-    /// Represents a message that indicates a request to remove a criterion.
+    /// Handles the reception of the <see cref="ArgumentObserver.CriterionRequest"/> message by checking if this object
+    /// contains an argument with the provided id. If so then it replies with this object instance.
     /// </summary>
-    /// <param name="Criterion">
-    /// The instance of <see cref="CriterionObserver"/> that is associated with this message. 
-    /// This represents the criterion to be removed.
-    /// </param>
-    /// <remarks>This should be received by the parent spec observers in order to remove the criterion.</remarks>
-    public record RemoveMessage(CriterionObserver Criterion);
+    public void Receive(ArgumentObserver.CriterionRequest message)
+    {
+        if (message.HasReceivedResponse) return;
+        if (Arguments.All(a => a.Id != message.ArgumentId)) return;
+        message.Reply(this);
+    }
+
+    /// <summary>
+    /// Sends the request message to retrieve the parent spec object for this <see cref="CriterionObserver"/>.
+    /// </summary>
+    private SpecObserver? RequestSpec()
+    {
+        var request = Messenger.Send(new SpecRequest(Id));
+        if (!request.HasReceivedResponse) return default;
+        return request.Response;
+    }
+
+    /// <summary>
+    /// A request to retrieve the parent <see cref="SpecObserver"/> for this criterion object.
+    /// </summary>
+    /// <param name="criterionId">The id of this criterion for which to retrieve the parent spec object.</param>
+    public class SpecRequest(Guid criterionId) : RequestMessage<SpecObserver>
+    {
+        public Guid CriterionId { get; } = criterionId;
+    }
 }

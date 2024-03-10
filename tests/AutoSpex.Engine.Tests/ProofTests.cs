@@ -14,7 +14,7 @@ public class ProofTests
         spec.Configure(c =>
         {
             c.Element = Element.Tag;
-            c.Filters.Add(new Criterion("Name", Operation.Equal, "TestSimpleTag"));
+            c.Filters.Add(new Criterion("TagName", Operation.Equal, "TestSimpleTag"));
             c.Verifications.Add(new Criterion("DataType", Operation.Equal, "SimpleType"));
         });
 
@@ -36,7 +36,7 @@ public class ProofTests
         spec.Configure(c =>
         {
             c.Element = Element.Tag;
-            c.Filters.Add(new Criterion("Name", Operation.Equal, "TestSimpleTag"));
+            c.Filters.Add(new Criterion("TagName", Operation.Equal, "TestSimpleTag"));
             c.Verifications.Add(new Criterion("DataType", Operation.Equal, "SimpleType"));
         });
 

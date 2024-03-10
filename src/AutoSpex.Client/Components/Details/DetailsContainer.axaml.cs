@@ -14,6 +14,10 @@ namespace AutoSpex.Client.Components;
 public class DetailsContainer : TabControl
 {
     private ICommand? _addCommand;
+    private ICommand? _addCollectionCommand;
+    private ICommand? _addSpecCommand;
+    private ICommand? _addSourceCommand;
+    private ICommand? _addRunnerCommand;
     private ICommand? _closeTabCommand;
     private ICommand? _closeAllTabsCommand;
     private ICommand? _closeOtherTabsCommand;
@@ -38,33 +42,22 @@ public class DetailsContainer : TabControl
             nameof(AddCommand), o => o.AddCommand, (o, v) => o.AddCommand = v,
             defaultBindingMode: BindingMode.TwoWay);
 
-    /*public static readonly DirectProperty<DetailsContainer, ICommand?> CloseTabCommandProperty =
+    public static readonly DirectProperty<DetailsContainer, ICommand?> AddCollectionCommandProperty =
         AvaloniaProperty.RegisterDirect<DetailsContainer, ICommand?>(
-            nameof(CloseTabCommand), o => o.CloseTabCommand, (o, v) => o.CloseTabCommand = v);
+            nameof(AddCollectionCommand), o => o.AddCollectionCommand, (o, v) => o.AddCollectionCommand = v);
 
-    public static readonly DirectProperty<DetailsContainer, ICommand?> CloseAllTabsCommandProperty =
+    public static readonly DirectProperty<DetailsContainer, ICommand?> AddSpecCommandProperty =
         AvaloniaProperty.RegisterDirect<DetailsContainer, ICommand?>(
-            nameof(CloseAllTabsCommand), o => o.CloseAllTabsCommand, (o, v) => o.CloseAllTabsCommand = v);
+            nameof(AddSpecCommand), o => o.AddSpecCommand, (o, v) => o.AddSpecCommand = v);
 
-    public static readonly DirectProperty<DetailsContainer, ICommand?> CloseOtherTabsCommandProperty =
+    public static readonly DirectProperty<DetailsContainer, ICommand?> AddSourceCommandProperty =
         AvaloniaProperty.RegisterDirect<DetailsContainer, ICommand?>(
-            nameof(CloseOtherTabsCommand), o => o.CloseOtherTabsCommand, (o, v) => o.CloseOtherTabsCommand = v);
+            nameof(AddSourceCommand), o => o.AddSourceCommand, (o, v) => o.AddSourceCommand = v);
 
-    public static readonly DirectProperty<DetailsContainer, ICommand?> CloseRightTabsCommandProperty =
+    public static readonly DirectProperty<DetailsContainer, ICommand?> AddRunnerCommandProperty =
         AvaloniaProperty.RegisterDirect<DetailsContainer, ICommand?>(
-            nameof(CloseRightTabsCommand), o => o.CloseRightTabsCommand, (o, v) => o.CloseRightTabsCommand = v);
+            nameof(AddRunnerCommand), o => o.AddRunnerCommand, (o, v) => o.AddRunnerCommand = v);
 
-    public static readonly DirectProperty<DetailsContainer, ICommand?> CloseLeftTabsCommandProperty =
-        AvaloniaProperty.RegisterDirect<DetailsContainer, ICommand?>(
-            nameof(CloseLeftTabsCommand), o => o.CloseLeftTabsCommand, (o, v) => o.CloseLeftTabsCommand = v);
-
-    public static readonly DirectProperty<DetailsContainer, ICommand?> ForceCloseTabCommandProperty =
-        AvaloniaProperty.RegisterDirect<DetailsContainer, ICommand?>(
-            nameof(ForceCloseTabCommand), o => o.ForceCloseTabCommand, (o, v) => o.ForceCloseTabCommand = v);*/
-
-    /*public static readonly DirectProperty<DetailsContainer, ICommand?> ForceCloseAllTabsCommandProperty =
-        AvaloniaProperty.RegisterDirect<DetailsContainer, ICommand?>(
-            nameof(ForceCloseAllTabsCommand), o => o.ForceCloseAllTabsCommand, (o, v) => o.ForceCloseAllTabsCommand = v);*/
 
     public ObservableCollection<DetailPageModel> PagesSource => (ItemsSource as ObservableCollection<DetailPageModel>)!;
 
@@ -72,6 +65,30 @@ public class DetailsContainer : TabControl
     {
         get => _addCommand;
         set => SetAndRaise(AddCommandProperty, ref _addCommand, value);
+    }
+
+    public ICommand? AddCollectionCommand
+    {
+        get => _addCollectionCommand;
+        set => SetAndRaise(AddCollectionCommandProperty, ref _addCollectionCommand, value);
+    }
+
+    public ICommand? AddSpecCommand
+    {
+        get => _addSpecCommand;
+        set => SetAndRaise(AddSpecCommandProperty, ref _addSpecCommand, value);
+    }
+
+    public ICommand? AddSourceCommand
+    {
+        get => _addSourceCommand;
+        set => SetAndRaise(AddSourceCommandProperty, ref _addSourceCommand, value);
+    }
+
+    public ICommand? AddRunnerCommand
+    {
+        get => _addRunnerCommand;
+        set => SetAndRaise(AddRunnerCommandProperty, ref _addRunnerCommand, value);
     }
 
     public ICommand? CloseTabCommand { get; }

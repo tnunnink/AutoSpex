@@ -1,0 +1,105 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+             xmlns:components="clr-namespace:AutoSpex.Client.Components"
+             x:Class="AutoSpex.Client.Pages.NewSpecPage"
+             x:DataType="pages:NewSpecPageModel"
+             Height="600" Width="600">
+
+    <controls:Prompt Header="Create new specification"
+                     HeaderIcon="{StaticResource IconSpecThemed}"
+                     CancelButtonTheme="{a:ControlTheme ButtonSoft}"
+                     CancelCommandParameter="{x:Null}"
+                     ActionButtonText="Create"
+                     ActionButtonTheme="{a:ControlTheme ButtonSolid}"
+                     ActionCommand="{Binding CreateCommand}"
+                     ActionCommandParameter="{Binding $parent[Window]}"
+                     Classes="accent"
+                     Padding="20">
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <Grid RowDefinitions="Auto,Auto,*">
+
+                <StackPanel Grid.Row="0" Spacing="5" Margin="0 0 0 10">
+                    <Label Content="Spec Name" />
+                    <TextBox
+                        Text="{Binding Name}"
+                        Watermark="Enter a descriptive name"
+                        Theme="{StaticResource TextBoxOutlineHighlight}" />
+                </StackPanel>
+
+                <Panel Grid.Row="1">
+                    <StackPanel Spacing="5" IsVisible="{Binding ShowDescription}">
+                        <Label Content="Description" />
+                        <TextBox
+                            Text="{Binding Documentation}"
+                            Theme="{StaticResource TextBoxOutlineHighlight}"
+                            TextWrapping="Wrap"
+                            Height="80" />
+                    </StackPanel>
+                    <Button
+                        Command="{Binding AddDescriptionCommand}"
+                        Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                        Classes="accent"
+                        IsVisible="{Binding !ShowDescription}"
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Left"
+                        Padding="0"
+                        Theme="{a:ControlTheme ButtonLink}">
+                        <TextBlock Text="Add description" TextDecorations="Underline" />
+                    </Button>
+                </Panel>
+
+                <DockPanel Grid.Row="2">
+                    <Border DockPanel.Dock="Top" Padding="0 10">
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <TextBlock Text="Save To" />
+                            <components:NodePath
+                                Node="{Binding SelectedNode}"
+                                ShowNodeIcon="False"
+                                IsVisible="{Binding SelectedNode, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border BorderBrush="{a:ThemeResource EditBorderBrush}"
+                            BorderThickness="{a:ThemeResource EditBorderThickness}"
+                            CornerRadius="{a:ThemeResource EditCornerRadius}">
+                        <StackPanel>
+                            <TextBox Text="{Binding SearchText}"
+                                     Theme="{a:ControlTheme TextBoxSoft}"
+                                     Background="Transparent" BorderThickness="0 0 0 1" CornerRadius="0"
+                                     Watermark="Search for collection or folder"
+                                     Padding="0 5"
+                                     VerticalContentAlignment="Center">
+                                <TextBox.InnerLeftContent>
+                                    <PathIcon Theme="{StaticResource IconFilter}"
+                                              Margin="5 0" />
+                                </TextBox.InnerLeftContent>
+                            </TextBox>
+
+                            <ListBox ItemsSource="{Binding Nodes}"
+                                     SelectedItem="{Binding SelectedNode}"
+                                     BorderThickness="0">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate x:DataType="observers:NodeObserver">
+                                        <components:NodePath Node="{Binding}" />
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                                <ListBox.ItemContainerTheme>
+                                    <ControlTheme TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemSimple}"
+                                                  x:DataType="observers:NodeObserver">
+                                        <Setter Property="Padding" Value="0" />
+                                    </ControlTheme>
+                                </ListBox.ItemContainerTheme>
+                            </ListBox>
+                        </StackPanel>
+                    </Border>
+                </DockPanel>
+            </Grid>
+        </ScrollViewer>
+    </controls:Prompt>
+</UserControl>

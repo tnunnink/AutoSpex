@@ -10,16 +10,14 @@
         </StackPanel>
     </Design.PreviewWith>
 
-    <ControlTheme x:Key="{x:Type components:BreadcrumbTarget}"
-                  TargetType="components:BreadcrumbTarget"
-                  x:DataType="observers:Breadcrumb">
-
+    <ControlTheme x:Key="{x:Type components:BreadcrumbTarget}" x:DataType="observers:Breadcrumb"
+                  TargetType="components:BreadcrumbTarget">
         <Setter Property="Template">
             <ControlTemplate>
                 <Border x:Name="border" Height="36">
                     <StackPanel Orientation="Horizontal">
-                        <TextBox x:Name="PART_TextEntry"
-                                 Text="{Binding Model.Name}"
+                        <TextBox x:Name="NameEntry"
+                                 Text="{Binding Name}"
                                  Classes="subtle"
                                  Focusable="True"
                                  FontSize="{actipro:ThemeResource DefaultFontSizeSmall}"
@@ -35,7 +33,7 @@
                                 <DataTriggerBehavior Binding="{Binding InFocus}"
                                                      ComparisonCondition="Equal"
                                                      Value="True">
-                                    <FocusControlAction TargetControl="PART_TextEntry" />
+                                    <FocusControlAction TargetControl="NameEntry" />
                                 </DataTriggerBehavior>
                             </Interaction.Behaviors>
                         </TextBox>
@@ -48,7 +46,7 @@
                             <Button.Flyout>
                                 <Flyout Placement="BottomEdgeAlignedLeft"
                                         HorizontalOffset="5">
-                                    <components:BreadcrumbMenu BreadcrumbsSource="{Binding Children}"/>
+                                    <components:BreadcrumbMenu BreadcrumbsSource="{Binding Children}" />
                                 </Flyout>
                             </Button.Flyout>
                         </Button>

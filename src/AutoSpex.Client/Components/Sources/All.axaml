@@ -4,5 +4,6 @@
         <ResourceInclude Source="SourceList.axaml" />
         <ResourceInclude Source="SelectSourceView.axaml" />
         <ResourceInclude Source="EditSourceView.axaml" />
+        <ResourceInclude Source="XmlEditor.axaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

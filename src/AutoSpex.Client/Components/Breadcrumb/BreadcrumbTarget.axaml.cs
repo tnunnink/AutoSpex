@@ -1,6 +1,5 @@
 ﻿using AutoSpex.Client.Observers;
 using Avalonia.Controls;
-using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -9,10 +8,9 @@ using Avalonia.VisualTree;
 
 namespace AutoSpex.Client.Components;
 
-[TemplatePart(PartEntry, typeof(TextBox))]
 public class BreadcrumbTarget : TemplatedControl
 {
-    private const string PartEntry = "PART_TextEntry";
+    private const string PartEntry = "NameEntry";
     private TextBox? _entry;
 
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
@@ -23,25 +21,20 @@ public class BreadcrumbTarget : TemplatedControl
 
     private void RegisterEntryEvents(TemplateAppliedEventArgs args)
     {
-        if (_entry is not null)
-        {
-            _entry.GotFocus -= EntryGotFocus;
-            _entry.LostFocus -= EntryLostFocus;
-            _entry.KeyUp -= EntryKeyUp;
-        }
+        _entry?.RemoveHandler(GotFocusEvent, EntryGotFocus);
+        _entry?.RemoveHandler(LostFocusEvent, EntryLostFocus);
+        _entry?.RemoveHandler(KeyUpEvent, EntryKeyUp);
 
-        _entry = args.NameScope.Find(PartEntry) as TextBox;
-
-        if (_entry is null) return;
-        _entry.GotFocus += EntryGotFocus;
-        _entry.LostFocus += EntryLostFocus;
-        _entry.KeyUp += EntryKeyUp;
+        _entry = args.NameScope.Find<TextBox>(PartEntry);
+        
+        _entry?.AddHandler(GotFocusEvent, EntryGotFocus);
+        _entry?.AddHandler(LostFocusEvent, EntryLostFocus);
+        _entry?.AddHandler(KeyUpEvent, EntryKeyUp);
     }
 
     private static void EntryGotFocus(object? sender, GotFocusEventArgs e)
     {
         if (e.Source is not TextBox textBox) return;
-
         Dispatcher.UIThread.Post(() => { textBox.SelectAll(); });
     }
 
@@ -49,11 +42,9 @@ public class BreadcrumbTarget : TemplatedControl
     {
         if (e.Source is not TextBox {DataContext: Breadcrumb breadcrumb} textBox) return;
 
-        breadcrumb.Model.Refresh();
-        
-        Dispatcher.UIThread.Post(() => { textBox.ClearSelection(); });
-        
+        breadcrumb.Name = breadcrumb.Model.Name;
         breadcrumb.InFocus = false;
+        textBox.ClearSelection();
     }
 
     private static void EntryKeyUp(object? sender, KeyEventArgs e)
@@ -63,7 +54,7 @@ public class BreadcrumbTarget : TemplatedControl
         
         if (e.Key == Key.Enter)
         {
-            breadcrumb.RenameCommand.Execute(null);
+            breadcrumb.RenameCommand.Execute(breadcrumb.Name);
             breadcrumb.InFocus = false;
         }
         

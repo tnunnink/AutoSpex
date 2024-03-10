@@ -11,7 +11,7 @@ namespace AutoSpex.Engine;
 public static class Extensions
 {
     //These are properties that I don't want to show up for the user because the are not really useful and are confusing.
-    private static readonly List<string> PropertyExclusions = ["L5X", "IsAttached", "L5XType"];
+    private static readonly List<string> PropertyExclusions = ["L5X", "IsAttached", "L5XType", "Length"];
 
     /// <summary>
     /// Gets all predefined and custom properties for the current type.

@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
+using AutoSpex.Client.Observers;
 using AutoSpex.Engine;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
-using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
-using DynamicData;
 
 namespace AutoSpex.Client.Components;
 
@@ -20,53 +17,22 @@ public class ArgumentEntry : TemplatedControl
     private const string PartInputText = "InputText";
     private const string PartSuggestionList = "SuggestionList";
 
-    public static readonly DirectProperty<ArgumentEntry, object?> ValueProperty =
-        AvaloniaProperty.RegisterDirect<ArgumentEntry, object?>(
-            nameof(Value), o => o.Value, (o, v) => o.Value = v, defaultBindingMode: BindingMode.TwoWay);
+    public static readonly DirectProperty<ArgumentEntry, ArgumentObserver?> ArgumentProperty =
+        AvaloniaProperty.RegisterDirect<ArgumentEntry, ArgumentObserver?>(
+            nameof(Argument), o => o.Argument, (o, v) => o.Argument = v);
 
-    public static readonly DirectProperty<ArgumentEntry, bool> HasValueProperty =
-        AvaloniaProperty.RegisterDirect<ArgumentEntry, bool>(
-            nameof(HasValue), o => o.HasValue, (o, v) => o.HasValue = v);
-
-    public static readonly DirectProperty<ArgumentEntry, IEnumerable<Argument>> SuggestionSourceProperty =
-        AvaloniaProperty.RegisterDirect<ArgumentEntry, IEnumerable<Argument>>(
-            nameof(SuggestionSource), o => o.SuggestionSource, (o, v) => o.SuggestionSource = v);
-
-    private object? _value;
-    private bool _hasValue;
-    private IEnumerable<Argument> _suggestionSource = [];
-    private readonly SourceList<Argument> _suggestionsList = new();
-    private readonly ReadOnlyObservableCollection<Argument> _suggestions;
+    private ArgumentObserver? _argument;
     private Border? _flyoutRoot;
-    private TextBox? _textBox;
-    private ListBox? _listBox;
+    private TextBox? _inputText;
+    private ListBox? _suggestionList;
 
-    public ArgumentEntry()
+    public ArgumentObserver? Argument
     {
-        _suggestionsList.Connect()
-            .Bind(out _suggestions)
-            .Subscribe();
+        get => _argument;
+        set => SetAndRaise(ArgumentProperty, ref _argument, value);
     }
 
-    public object? Value
-    {
-        get => _value;
-        set => SetAndRaise(ValueProperty, ref _value, value);
-    }
-
-    public bool HasValue
-    {
-        get => _hasValue;
-        set => SetAndRaise(HasValueProperty, ref _hasValue, value);
-    }
-
-    public IEnumerable<Argument> SuggestionSource
-    {
-        get => _suggestionSource;
-        set => SetAndRaise(SuggestionSourceProperty, ref _suggestionSource, value);
-    }
-
-    public ReadOnlyObservableCollection<Argument> Suggestions => _suggestions;
+    public ObservableCollection<Argument> Suggestions { get; } = [];
 
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
@@ -74,80 +40,71 @@ public class ArgumentEntry : TemplatedControl
         RegisterFlyoutRootPart(e);
         RegisterTextBoxPart(e);
         RegisterListBoxPart(e);
-        UpdateSuggestions(Value?.ToString() ?? string.Empty);
-    }
-
-    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
-    {
-        base.OnPropertyChanged(change);
-
-        if (change.Property == ValueProperty)
-            HandleValueChange(change);
-    }
-
-    private void HandleValueChange(AvaloniaPropertyChangedEventArgs change)
-    {
-        var value = change.NewValue;
-        HasValue = value is not null && !string.IsNullOrEmpty(value.ToString());
-
-        if (_textBox is null || value is null) return;
-        _textBox.Text = value.ToString();
     }
 
     private void RegisterFlyoutRootPart(TemplateAppliedEventArgs args)
     {
         _flyoutRoot?.RemoveHandler(KeyDownEvent, HandleKeyDownEvent);
+
         _flyoutRoot = args.NameScope.Find<Border>(PartFlyoutRoot);
-        _flyoutRoot?.AddHandler(KeyDownEvent, HandleKeyDownEvent, RoutingStrategies.Bubble);
+        if (_flyoutRoot is null) return;
+
+        _flyoutRoot.AddHandler(KeyDownEvent, HandleKeyDownEvent, RoutingStrategies.Bubble);
+        _flyoutRoot.AttachedToVisualTree += HandleFlyoutAttached;
+    }
+
+    private async void HandleFlyoutAttached(object? sender, VisualTreeAttachmentEventArgs e)
+    {
+        if (_inputText is null) return;
+
+        _inputText.Text = Argument?.Formatted ?? string.Empty;
+        _inputText.Focus();
+        _inputText.SelectAll();
+        _inputText.CaretIndex = _inputText.Text?.Length ?? 0;
+
+        await UpdateSuggestions(_inputText.Text);
     }
 
     private void RegisterTextBoxPart(TemplateAppliedEventArgs args)
     {
-        if (_textBox is not null) _textBox.TextChanged -= OnInputTextChanged;
-        _textBox = args.NameScope.Find<TextBox>(PartInputText);
-        if (_textBox is null) return;
-        _textBox.TextChanged += OnInputTextChanged;
-        _textBox.Text = Value?.ToString() ?? string.Empty;
-        _textBox.Focus();
-        _textBox.SelectAll();
-        _textBox.CaretIndex = _textBox.Text?.Length ?? 0;
+        if (_inputText is not null) _inputText.TextChanged -= OnInputTextChanged;
+        _inputText = args.NameScope.Find<TextBox>(PartInputText);
+        if (_inputText is null) return;
+        _inputText.TextChanged += OnInputTextChanged;
     }
 
     private void RegisterListBoxPart(TemplateAppliedEventArgs args)
     {
-        _listBox?.RemoveHandler(PointerPressedEvent, HandleListPointerPressed);
-        _listBox = args.NameScope.Find<ListBox>(PartSuggestionList);
-        _listBox?.AddHandler(PointerPressedEvent, HandleListPointerPressed, RoutingStrategies.Tunnel);
+        _suggestionList?.RemoveHandler(PointerPressedEvent, HandleListPointerPressed);
+        _suggestionList = args.NameScope.Find<ListBox>(PartSuggestionList);
+        _suggestionList?.AddHandler(PointerPressedEvent, HandleListPointerPressed, RoutingStrategies.Tunnel);
     }
 
-    private void OnInputTextChanged(object? sender, TextChangedEventArgs e)
+    private async void OnInputTextChanged(object? sender, TextChangedEventArgs e)
     {
         if (e.Source is not TextBox textBox) return;
         var text = textBox.Text ?? string.Empty;
-        UpdateSuggestions(text);
+        await UpdateSuggestions(text);
     }
 
-    private void UpdateSuggestions(string? text)
+    private async Task UpdateSuggestions(string? text)
     {
-        if (string.IsNullOrEmpty(text))
+        Suggestions.Clear();
+
+        if (Argument is null) return;
+
+        try
         {
-            ApplySuggestions(SuggestionSource);
-            return;
+            var suggestions = await Argument.GetSuggestions(text);
+
+            foreach (var suggestion in suggestions)
+                Suggestions.Add(suggestion);
         }
-
-        var suggestions = SuggestionSource.Where(a =>
-            a.Value.ToString()?.Contains(text, StringComparison.OrdinalIgnoreCase) is true);
-
-        ApplySuggestions(suggestions);
-    }
-
-    private void ApplySuggestions(IEnumerable<Argument> suggestions)
-    {
-        _suggestionsList.Edit(list =>
+        catch (Exception e)
         {
-            list.Clear();
-            list.AddRange(suggestions);
-        });
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
     private void HandleKeyDownEvent(object? sender, KeyEventArgs args)
@@ -180,37 +137,37 @@ public class ArgumentEntry : TemplatedControl
 
     private void HandleKeyUpNavigation()
     {
-        if (_listBox is null || _listBox.ItemCount == 0) return;
+        if (_suggestionList is null || _suggestionList.ItemCount == 0) return;
 
-        if (_listBox.SelectedIndex > 0)
+        if (_suggestionList.SelectedIndex > 0)
         {
-            _listBox.SelectedIndex--;
+            _suggestionList.SelectedIndex--;
         }
         else
         {
-            _listBox.SelectedIndex = _listBox.ItemCount - 1;
+            _suggestionList.SelectedIndex = _suggestionList.ItemCount - 1;
         }
     }
 
     private void HandleKeyDownNavigation()
     {
-        if (_listBox is null || _listBox.ItemCount == 0) return;
+        if (_suggestionList is null || _suggestionList.ItemCount == 0) return;
 
-        if (_listBox.SelectedIndex < _listBox.ItemCount - 1)
+        if (_suggestionList.SelectedIndex < _suggestionList.ItemCount - 1)
         {
-            _listBox.SelectedIndex++;
+            _suggestionList.SelectedIndex++;
         }
         else
         {
-            _listBox.SelectedIndex = 0;
+            _suggestionList.SelectedIndex = 0;
         }
     }
 
     private void HandleEscapeNavigation()
     {
-        if (_listBox is not null && _listBox.SelectedIndex >= 0)
+        if (_suggestionList is not null && _suggestionList.SelectedIndex >= 0)
         {
-            _listBox.SelectedIndex = -1;
+            _suggestionList.SelectedIndex = -1;
             return;
         }
 
@@ -232,23 +189,15 @@ public class ArgumentEntry : TemplatedControl
 
     private void UpdateValue()
     {
-        if (_listBox?.SelectedItem is Argument argument)
+        if (Argument is null) return;
+
+        if (_suggestionList?.SelectedItem is Argument argument)
         {
-            Value = argument.Value;
+            Argument.Value = argument.Value;
             return;
         }
 
-        var text = _textBox?.Text;
-        if (text is null) return;
-
-        var matching = SuggestionSource.FirstOrDefault(x => x.ToString() == text);
-        if (matching is not null)
-        {
-            Value = matching.Value;
-            return;
-        }
-
-        Value = text;
+        Argument.ResolveInput(_inputText?.Text);
     }
 
     private void CloseFlyout()

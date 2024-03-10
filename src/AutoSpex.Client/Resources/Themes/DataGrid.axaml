@@ -1,0 +1,128 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui">
+
+    <Design.PreviewWith>
+        <Border Padding="20">
+            <DataGrid Theme="{DynamicResource DataGridSoft}"
+                      Height="400" Width="400">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Name" Width="*" />
+                    <DataGridTextColumn Header="Value" Width="*" />
+                    <DataGridTextColumn Header="Description" Width="*" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+    </Design.PreviewWith>
+
+    <!-- DataGrid -->
+    <ControlTheme x:Key="DataGridSoft" TargetType="DataGrid">
+        <ControlTheme.Resources>
+
+            <!-- DataGridTopLeftColumnHeader -->
+            <ControlTheme x:Key="DataGridTopLeftColumnHeader" TargetType="DataGridColumnHeader"
+                          BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+                <Setter Property="BorderBrush" Value="{actipro:ThemeResource ListHeaderBorderBrush}" />
+                <Setter Property="BorderThickness" Value="0,0,1,1" />
+                <Setter Property="Template">
+                    <ControlTemplate>
+
+                        <Border BorderThickness="{TemplateBinding BorderThickness}"
+                                BorderBrush="{TemplateBinding BorderBrush}" />
+
+                    </ControlTemplate>
+                </Setter>
+            </ControlTheme>
+
+        </ControlTheme.Resources>
+
+        <Setter Property="ColumnHeaderTheme" Value="{StaticResource DataGridColumnHeaderSoft}" />
+        <Setter Property="ColumnHeaderHeight" Value="30" />
+        <Setter Property="RowTheme" Value="{StaticResource DataGridRowSoft}" />
+        <Setter Property="CellTheme" Value="{StaticResource DataGridCellSoft}" />
+        <Setter Property="CanUserResizeColumns" Value="True" />
+        <Setter Property="CanUserReorderColumns" Value="False" />
+        <Setter Property="CanUserSortColumns" Value="True" />
+        <Setter Property="Background" Value="{actipro:ThemeResource Container1BackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{actipro:ThemeResource Container1BorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="5" />
+        <Setter Property="FocusAdorner" Value="{x:Null}" />
+        <Setter Property="RowBackground" Value="Transparent" />
+        <Setter Property="SelectionMode" Value="Single" />
+        <Setter Property="GridLinesVisibility" Value="All" />
+        <Setter Property="HeadersVisibility" Value="Column" />
+        <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="VerticalGridLinesBrush" Value="{actipro:ThemeResource Container1BorderBrush}" />
+        <Setter Property="HorizontalGridLinesBrush" Value="{actipro:ThemeResource Container1BorderBrush}" />
+        <Setter Property="HorizontalScrollBarVisibility" Value="Auto" />
+        <Setter Property="actipro:ThemeProperties.ScrollBarHasLineButtons"
+                Value="{actipro:ThemeResource ScrollBarHasLineButtons}" />
+
+        <Setter Property="DropLocationIndicatorTemplate">
+            <Template>
+                <Rectangle Width="2" Fill="{actipro:ThemeResource DropIndicatorBackgroundBrush}" />
+            </Template>
+        </Setter>
+
+        <Setter Property="Template">
+            <ControlTemplate>
+
+                <Border
+                    x:Name="border"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="{TemplateBinding CornerRadius}">
+                    <Grid RowDefinitions="Auto,*,Auto,Auto" ColumnDefinitions="Auto,*,Auto" ClipToBounds="True">
+                        <DataGridColumnHeader x:Name="PART_TopLeftCornerHeader"
+                                              Theme="{StaticResource DataGridTopLeftColumnHeader}" />
+
+                        <DataGridColumnHeadersPresenter x:Name="PART_ColumnHeadersPresenter"
+                                                        Grid.Column="1" Grid.ColumnSpan="2" />
+
+                        <Rectangle x:Name="PART_ColumnHeadersAndRowsSeparator"
+                                   Grid.ColumnSpan="3"
+                                   Height="1"
+                                   Fill="{actipro:ThemeResource Container1BorderBrush}"
+                                   VerticalAlignment="Bottom" />
+
+                        <DataGridRowsPresenter x:Name="PART_RowsPresenter" Grid.Row="1" Grid.ColumnSpan="3">
+                            <DataGridRowsPresenter.GestureRecognizers>
+                                <ScrollGestureRecognizer CanHorizontallyScroll="True" CanVerticallyScroll="True" />
+                            </DataGridRowsPresenter.GestureRecognizers>
+                        </DataGridRowsPresenter>
+
+                        <Rectangle x:Name="PART_BottomRightCorner" Grid.Row="2" Grid.Column="2" Fill="Transparent" />
+
+                        <!-- The scrollbars don't always show up if a fixed Width/Height isn't set on them -->
+                        <ScrollBar x:Name="PART_VerticalScrollbar" Grid.Row="1" Grid.Column="2"
+                                   Width="20" Orientation="Vertical"
+                                   AllowAutoHide="{TemplateBinding (ScrollViewer.AllowAutoHide)}"
+                                   actipro:ThemeProperties.ScrollBarHasLineButtons="{TemplateBinding actipro:ThemeProperties.ScrollBarHasLineButtons}" />
+
+                        <Grid Grid.Row="2" Grid.Column="1" ColumnDefinitions="Auto,*">
+                            <Rectangle x:Name="PART_FrozenColumnScrollBarSpacer" />
+                            <ScrollBar x:Name="PART_HorizontalScrollbar" Grid.Column="1"
+                                       Height="20" Orientation="Horizontal"
+                                       AllowAutoHide="{TemplateBinding (ScrollViewer.AllowAutoHide)}"
+                                       actipro:ThemeProperties.ScrollBarHasLineButtons="{TemplateBinding actipro:ThemeProperties.ScrollBarHasLineButtons}" />
+                        </Grid>
+                    </Grid>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^:empty-columns">
+            <Style Selector="^ /template/ DataGridColumnHeader#PART_TopLeftCornerHeader">
+                <Setter Property="IsVisible" Value="False" />
+            </Style>
+            <Style Selector="^ /template/ DataGridColumnHeadersPresenter#PART_ColumnHeadersPresenter">
+                <Setter Property="IsVisible" Value="False" />
+            </Style>
+            <Style Selector="^ /template/ Rectangle#PART_ColumnHeadersAndRowsSeparator">
+                <Setter Property="IsVisible" Value="False" />
+            </Style>
+        </Style>
+    </ControlTheme>
+</ResourceDictionary>

@@ -36,8 +36,7 @@ public class MP10000 : AutoReversingMigration
             .WithColumn("VariableId").AsString().PrimaryKey()
             .WithColumn("NodeId").AsString().NotNullable().ForeignKey("Node", "NodeId").OnDeleteOrUpdate(Rule.Cascade)
             .WithColumn("Name").AsString().NotNullable()
-            .WithColumn("Value").AsString().NotNullable()
-            .WithColumn("Description").AsString().Nullable();
+            .WithColumn("Value").AsString().NotNullable();
 
         Create.UniqueConstraint("Unique_Variable_NodeId_Name")
             .OnTable("Variable")
@@ -59,14 +58,14 @@ public class MP10000 : AutoReversingMigration
         Create.UniqueConstraint("Unique_RunnerSpec_Runner_Node")
             .OnTable("RunnerNode")
             .Columns("RunnerId", "NodeId");
-        
+
         Create.Table("Override")
             .WithColumn("RunnerId").AsString().NotNullable()
             .ForeignKey("Runner", "RunnerId").OnDelete(Rule.Cascade)
             .WithColumn("VariableId").AsString().NotNullable()
             .ForeignKey("Variable", "VariableId").OnDelete(Rule.Cascade)
             .WithColumn("Value").AsString().NotNullable();
-        
+
         Create.UniqueConstraint("Unique_Override_Runner_Variable")
             .OnTable("Override")
             .Columns("RunnerId", "VariableId");
@@ -94,6 +93,5 @@ public class MP10000 : AutoReversingMigration
             .WithColumn("Failed").AsInt32().NotNullable()
             .WithColumn("Errored").AsInt32().NotNullable()
             .WithColumn("Verifications").AsString();
-
     }
 }

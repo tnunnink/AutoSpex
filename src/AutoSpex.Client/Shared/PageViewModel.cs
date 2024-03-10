@@ -1,6 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
-using ActiproSoftware.UI.Avalonia.Controls;
 using AutoSpex.Client.Services;
 using CommunityToolkit.Mvvm.Input;
 using MediatR;
@@ -50,31 +50,34 @@ public abstract partial class PageViewModel : TrackableViewModel, IEquatable<Pag
 
     /// <summary>
     /// Indicates whether the page can be saved or not. By default this looks at whether there are changes using the
-    /// <see cref="IsChanged"/> property. Derived classes can override this implementation as needed.
+    /// <see cref="TrackableViewModel.IsChanged"/> property. Derived classes can override this implementation as needed.
     /// </summary>
     /// <returns><c>true</c> if the page can be saved, Otherwise, <c>false</c>.</returns>
     protected virtual bool CanSave() => IsChanged;
 
-    [RelayCommand(CanExecute = nameof(CanClose))]
-    public virtual async Task<bool> Close()
+    [RelayCommand]
+    public async Task<bool> Close()
     {
-        var prompt = Settings.App.PromptSaveChanges;
-
-        if (!prompt || !IsChanged)
+        var discard = Settings.App.AlwaysDiscardChanges;
+        if (discard || !IsChanged)
         {
             Navigator.Close(this);
             return true;
         }
 
-        var answer = await UserPromptBuilder.Configure().SaveChangesPrompt(Title, prompt, SaveCommand).Show();
-        await Settings.App.SaveAsync(s => s.PromptSaveChanges = prompt);
-        if (answer != MessageBoxResult.Yes) return false;
+        var answer = await Prompter.PromptSave(Title);
+        switch (answer)
+        {
+            case "Save":
+                await Save();
+                break;
+            case "Cancel":
+                return false;
+        }
 
         Navigator.Close(this);
         return true;
     }
-
-    protected virtual bool CanClose() => !IsChanged;
 
     /// <summary>
     /// A command to force close the page regardless of the state. This would mean discarding any current changes.
@@ -86,12 +89,12 @@ public abstract partial class PageViewModel : TrackableViewModel, IEquatable<Pag
     {
         Navigator.Close(this);
     }
-    
+
     /// <summary>
     /// 
     /// </summary>
     /// <returns></returns>
-    public override Task Navigate() => Navigator.Navigate(() => this);
+    protected override Task Navigate() => Navigator.Navigate(() => this);
 
     /// <inheritdoc />
     public override bool Equals(object? obj)
@@ -104,6 +107,15 @@ public abstract partial class PageViewModel : TrackableViewModel, IEquatable<Pag
     public bool Equals(PageViewModel? other)
     {
         return other is not null && Equals(Route, other.Route);
+    }
+
+    //We need to notify the SaveCommand when the IsChange property changes since that is what it is controlled on.
+    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+    {
+        base.OnPropertyChanged(e);
+
+        if (e.PropertyName == nameof(IsChanged))
+            SaveCommand.NotifyCanExecuteChanged();
     }
 
     /// <inheritdoc />

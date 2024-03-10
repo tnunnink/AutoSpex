@@ -64,7 +64,7 @@ public class TagElementTests
         property?.Group.Should().Be(TypeGroup.Text);
         property?.Identifier.Should().Be("string");
         property?.Options.Should().BeEmpty();
-        property?.Properties.Should().NotBeEmpty();
+        property?.Properties.Should().BeEmpty();
     }
     
     [Test]
@@ -72,14 +72,14 @@ public class TagElementTests
     {
         var element = Element.Tag;
 
-        var property = element.Property("Radix.Name.Length");
+        var property = element.Property("Radix.Name");
         
         property?.Origin.Should().Be(typeof(Tag));
-        property?.Type.Should().Be(typeof(int));
-        property?.Name.Should().Be("Length");
-        property?.Path.Should().Be("Radix.Name.Length");
-        property?.Group.Should().Be(TypeGroup.Number);
-        property?.Identifier.Should().Be("int");
+        property?.Type.Should().Be(typeof(string));
+        property?.Name.Should().Be("Name");
+        property?.Path.Should().Be("Radix.Name");
+        property?.Group.Should().Be(TypeGroup.Text);
+        property?.Identifier.Should().Be("string");
         property?.Options.Should().BeEmpty();
         property?.Properties.Should().BeEmpty();
     }

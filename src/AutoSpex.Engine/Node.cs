@@ -237,9 +237,9 @@ public class Node
         return _variables.Values.UnionBy(Parent.ScopedVariables(), v => v.Name);
     }
 
-    public Variable AddVariable(string name, string value, string? description = default)
+    public Variable AddVariable(string name, string value)
     {
-        var variable = new Variable(name, value, description);
+        var variable = new Variable(name, value);
 
         if (!_variables.TryAdd(variable.Name, variable))
             throw new ArgumentException($"Variable {variable.Name} already exists for node {Name}.");

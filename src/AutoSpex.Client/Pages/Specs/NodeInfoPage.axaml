@@ -1,0 +1,60 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+             x:Class="AutoSpex.Client.Pages.NodeInfoPage"
+             x:DataType="pages:NodeInfoPageModel">
+
+    <Design.Width>300</Design.Width>
+    <Design.Height>800</Design.Height>
+
+    <StackPanel Spacing="10" Margin="10">
+        <Border>
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <TextBlock Grid.Column="0"
+                           Text="Information"
+                           FontWeight="{a:ThemeResource HeadingFontWeightSmall}"
+                           DockPanel.Dock="Left" />
+            </Grid>
+        </Border>
+
+        <TextBox Watermark="ID"
+                 UseFloatingWatermark="True"
+                 IsReadOnly="True"
+                 Text="{Binding Node.Id}"
+                 TextWrapping="NoWrap"
+                 Theme="{a:ControlTheme TextBoxSoft}">
+            <TextBox.InnerRightContent>
+                <Button Theme="{StaticResource IconButton}"
+                        properties:ButtonIcon.Theme="{StaticResource IconCopyOutlined}"
+                        Margin="5 0" />
+            </TextBox.InnerRightContent>
+        </TextBox>
+
+        <StackPanel Spacing="1">
+            <Label Content="Name" Theme="{a:ControlTheme LabelFormControlLabel }" />
+            <TextBlock Text="{Binding Node.Name}" />
+        </StackPanel>
+
+        <StackPanel Spacing="1">
+            <Label Content="Path" Theme="{a:ControlTheme LabelFormControlLabel }" />
+            <TextBlock Text="{Binding Node.Model.Path}" />
+        </StackPanel>
+
+        <StackPanel Spacing="1">
+            <Label Content="Created On" Theme="{a:ControlTheme LabelFormControlLabel }" />
+            <TextBlock Text="This is a test" />
+        </StackPanel>
+
+        <StackPanel Spacing="1">
+            <Label Content="Created By" Theme="{a:ControlTheme LabelFormControlLabel }" />
+            <TextBlock Text="This is a test" />
+        </StackPanel>
+
+        <StackPanel Spacing="1">
+            <Label Content="Updated On" Theme="{a:ControlTheme LabelFormControlLabel }" />
+            <TextBlock Text="This is a test" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>

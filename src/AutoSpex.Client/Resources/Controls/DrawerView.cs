@@ -134,6 +134,8 @@ public class DrawerView : ContentControl
     {
         base.OnApplyTemplate(e);
         RegisterDrawerPart(e);
+        
+        
     }
 
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
@@ -144,6 +146,7 @@ public class DrawerView : ContentControl
         // soon as we're attached so the template applies. The other visual states can
         // be updated after the template applies
         UpdateVisualStateForPanePlacementProperty(DrawerPlacement);
+        UpdateVisualStateForDrawerOpen(IsDrawerOpen);
     }
 
     /// <inheritdoc/>
@@ -152,47 +155,13 @@ public class DrawerView : ContentControl
         base.OnPropertyChanged(change);
 
         if (change.Property == IsDrawerOpenProperty)
-        {
-            var isPaneOpen = change.GetNewValue<bool>();
-
-            if (isPaneOpen)
-            {
-                DrawerGridLength = new GridLength(DrawerOpenLength, GridUnitType.Pixel);
-                PseudoClasses.Add(ClassOpen);
-                PseudoClasses.Remove(ClassClosed);
-            }
-            else
-            {
-                DrawerGridLength = new GridLength(DrawerClosedLength, GridUnitType.Pixel);
-                PseudoClasses.Add(ClassClosed);
-                PseudoClasses.Remove(ClassOpen);
-            }
-        }
-        else if (change.Property == DrawerProperty)
-        {
-            if (change.OldValue is ILogical oldChild)
-            {
-                LogicalChildren.Remove(oldChild);
-            }
-
-            if (change.NewValue is ILogical newChild)
-            {
-                LogicalChildren.Add(newChild);
-            }
-        }
-        else if (change.Property == DrawerPlacementProperty)
-        {
+            UpdateVisualStateForDrawerOpen(change.GetNewValue<bool>());
+        
+        if (change.Property == DrawerProperty)
+            UpdateVisualStateForDrawer(change);
+        
+        if (change.Property == DrawerPlacementProperty)
             UpdateVisualStateForPanePlacementProperty(change.GetNewValue<DrawerViewPlacement>());
-        }
-    }
-
-    /// <summary>
-    /// Called when the <see cref="IsDrawerOpen"/> property has to be coerced.
-    /// </summary>
-    /// <param name="value">The value to coerce.</param>
-    private bool OnCoerceIsPaneOpen(bool value)
-    {
-        return value;
     }
 
     private void RegisterDrawerPart(TemplateAppliedEventArgs e)
@@ -217,7 +186,36 @@ public class DrawerView : ContentControl
             DrawerOpenLength = e.NewSize.Height; 
         }
     }
+    
+    private void UpdateVisualStateForDrawerOpen(bool isOpen)
+    {
+        if (isOpen)
+        {
+            DrawerGridLength = new GridLength(DrawerOpenLength, GridUnitType.Pixel);
+            PseudoClasses.Add(ClassOpen);
+            PseudoClasses.Remove(ClassClosed);
+        }
+        else
+        {
+            DrawerGridLength = new GridLength(DrawerClosedLength, GridUnitType.Pixel);
+            PseudoClasses.Add(ClassClosed);
+            PseudoClasses.Remove(ClassOpen);
+        }
+    }
+    
+    private void UpdateVisualStateForDrawer(AvaloniaPropertyChangedEventArgs change)
+    {
+        if (change.OldValue is ILogical oldChild)
+        {
+            LogicalChildren.Remove(oldChild);
+        }
 
+        if (change.NewValue is ILogical newChild)
+        {
+            LogicalChildren.Add(newChild);
+        }
+    }
+    
     private void UpdateVisualStateForPanePlacementProperty(DrawerViewPlacement newValue)
     {
         if (!string.IsNullOrEmpty(_lastPlacement)) PseudoClasses.Remove(_lastPlacement);
@@ -225,15 +223,7 @@ public class DrawerView : ContentControl
         PseudoClasses.Add(_lastPlacement);
     }
 
-    private static bool CoerceIsPaneOpen(AvaloniaObject instance, bool value)
-    {
-        if (instance is DrawerView drawerView)
-        {
-            return drawerView.OnCoerceIsPaneOpen(value);
-        }
-
-        return value;
-    }
+    private static bool CoerceIsPaneOpen(AvaloniaObject instance, bool value) => value;
 
     /// <summary>
     /// Gets the appropriate PseudoClass for the given <see cref="SplitViewPanePlacement"/>.

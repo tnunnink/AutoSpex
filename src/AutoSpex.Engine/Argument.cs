@@ -21,7 +21,7 @@ public class Argument
     {
         Value = value ?? throw new ArgumentNullException(nameof(value), "Can not set argument to null value");
     }
-    
+
     /// <summary>
     /// A <see cref="Guid"/> that uniquely identifies this object.
     /// </summary>
@@ -31,17 +31,22 @@ public class Argument
     /// The value of the argument.
     /// </summary>
     public object Value { get; private set; }
-    
+
     /// <summary>
     /// The type of the argument value.
     /// </summary>
     public Type Type => Value.GetType();
-    
+
+    /// <summary>
+    /// A formatted string value for the argument value.
+    /// </summary>
+    public string Formatted => FormattedValue();
+
     /// <summary>
     /// The friendly type name of the argument value.
     /// </summary>
     public string Identifier => Type.TypeIdentifier();
-    
+
     /// <summary>
     /// The <see cref="TypeGroup"/> to which this argument value belongs.
     /// </summary>
@@ -97,7 +102,20 @@ public class Argument
         return value;
     }
 
-    public override string? ToString() => Value.ToString();
+    public override string ToString() => FormattedValue();
+
+    private string FormattedValue()
+    {
+        return Value switch
+        {
+            Variable variable => variable.Formatted,
+            Criterion criterion =>
+                $"({criterion.Property} {criterion.Operation} {string.Join(',', criterion.Arguments)})",
+            LogixEnum enumeration => enumeration.Name,
+            LogixComponent component => component.Key.ToString(),
+            _ => Value.ToString() ?? string.Empty
+        };
+    }
 
     public static Argument Empty => new();
     public static implicit operator Argument(ValueType value) => new(value);

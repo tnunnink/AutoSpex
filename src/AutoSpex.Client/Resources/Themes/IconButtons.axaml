@@ -1,121 +1,137 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
-                    xmlns:ap="clr-namespace:AutoSpex.Client.Resources.AttachedProperties">
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
 
     <Design.PreviewWith>
         <StackPanel Margin="20" Spacing="5">
             <StackPanel Spacing="10" Orientation="Horizontal">
                 <Button Theme="{DynamicResource IconButton}"
-                        ap:ButtonIcon.Theme="{StaticResource IconAdd}" />
+                        properties:ButtonIcon.Theme="{StaticResource IconAdd}" />
                 <Button Theme="{DynamicResource IconButton}"
-                        ap:ButtonIcon.Theme="{StaticResource IconAdd}"
+                        properties:ButtonIcon.Theme="{StaticResource IconAdd}"
                         Classes="accent" />
                 <Button Theme="{DynamicResource IconButton}"
-                        ap:ButtonIcon.Theme="{StaticResource IconClose}"
+                        properties:ButtonIcon.Theme="{StaticResource IconClose}"
                         Padding="10"
                         Classes="danger" />
                 <Button Theme="{DynamicResource IconButton}"
-                        ap:ButtonIcon.Theme="{StaticResource IconExclamation}"
+                        properties:ButtonIcon.Theme="{StaticResource IconExclamation}"
                         Classes="warning" />
                 <Button Theme="{DynamicResource IconButton}"
-                        ap:ButtonIcon.Theme="{StaticResource IconClipboardOutlined}"
+                        properties:ButtonIcon.Theme="{StaticResource IconClipboardOutlined}"
+                        Classes="success" />
+            </StackPanel>
+            <StackPanel Spacing="10" Orientation="Horizontal">
+                <Button Theme="{DynamicResource IconButtonSmall}"
+                        properties:ButtonIcon.Theme="{StaticResource IconAdd}" />
+                <Button Theme="{DynamicResource IconButtonSmall}"
+                        properties:ButtonIcon.Theme="{StaticResource IconAdd}"
+                        Classes="accent" />
+                <Button Theme="{DynamicResource IconButtonSmall}"
+                        properties:ButtonIcon.Theme="{StaticResource IconClose}"
+                        Classes="danger" />
+                <Button Theme="{DynamicResource IconButtonSmall}"
+                        properties:ButtonIcon.Theme="{StaticResource IconExclamation}"
+                        Classes="warning" />
+                <Button Theme="{DynamicResource IconButtonSmall}"
+                        properties:ButtonIcon.Theme="{StaticResource IconClipboardOutlined}"
                         Classes="success" />
             </StackPanel>
             <StackPanel Spacing="10" Orientation="Horizontal">
                 <Button Theme="{DynamicResource IconButton}"
-                        ap:ButtonIcon.Theme="{StaticResource IconAdd}"
+                        properties:ButtonIcon.Theme="{StaticResource IconAdd}"
                         IsEnabled="False" />
                 <Button Theme="{DynamicResource IconButton}"
-                        ap:ButtonIcon.Theme="{StaticResource IconAdd}"
+                        properties:ButtonIcon.Theme="{StaticResource IconAdd}"
                         Classes="accent"
                         IsEnabled="False" />
                 <Button Theme="{DynamicResource IconButton}"
-                        ap:ButtonIcon.Theme="{StaticResource IconClose}"
+                        properties:ButtonIcon.Theme="{StaticResource IconClose}"
                         Padding="10"
                         Classes="danger"
                         IsEnabled="False" />
                 <Button Theme="{DynamicResource IconButton}"
-                        ap:ButtonIcon.Theme="{StaticResource IconExclamation}"
+                        properties:ButtonIcon.Theme="{StaticResource IconExclamation}"
                         Classes="warning"
                         IsEnabled="False" />
                 <Button Theme="{DynamicResource IconButton}"
-                        ap:ButtonIcon.Theme="{StaticResource IconClipboardOutlined}"
+                        properties:ButtonIcon.Theme="{StaticResource IconClipboardOutlined}"
                         Classes="success"
                         IsEnabled="False" />
             </StackPanel>
             <StackPanel Spacing="10" Orientation="Horizontal">
-                <ToggleButton Theme="{DynamicResource ToggleIconButton}"
-                              ap:ButtonIcon.Theme="{StaticResource IconAdd}" />
-                <ToggleButton Theme="{DynamicResource ToggleIconButton}"
+                <ToggleButton Theme="{DynamicResource IconToggleButton}"
+                              properties:ButtonIcon.Theme="{StaticResource IconAdd}" />
+                <ToggleButton Theme="{DynamicResource IconToggleButton}"
                               Classes="accent"
-                              ap:ButtonIcon.Theme="{StaticResource IconAdd}" />
-                <ToggleButton Theme="{DynamicResource ToggleIconButton}"
+                              properties:ButtonIcon.Theme="{StaticResource IconAdd}" />
+                <ToggleButton Theme="{DynamicResource IconToggleButton}"
                               Classes="danger"
                               Padding="10"
-                              ap:ButtonIcon.Theme="{StaticResource IconClose}" />
-                <ToggleButton Theme="{DynamicResource ToggleIconButton}"
+                              properties:ButtonIcon.Theme="{StaticResource IconClose}" />
+                <ToggleButton Theme="{DynamicResource IconToggleButton}"
                               Classes="warning"
-                              ap:ButtonIcon.Theme="{StaticResource IconExclamation}" />
-                <ToggleButton Theme="{DynamicResource ToggleIconButton}"
+                              properties:ButtonIcon.Theme="{StaticResource IconExclamation}" />
+                <ToggleButton Theme="{DynamicResource IconToggleButton}"
                               Classes="success"
-                              ap:ButtonIcon.Theme="{StaticResource IconClipboardOutlined}" />
+                              properties:ButtonIcon.Theme="{StaticResource IconClipboardOutlined}" />
             </StackPanel>
             <StackPanel Spacing="10" Orientation="Horizontal">
-                <ToggleButton Theme="{DynamicResource ToggleIconButton}"
-                              ap:ButtonIcon.Theme="{StaticResource IconAdd}"
+                <ToggleButton Theme="{DynamicResource IconToggleButton}"
+                              properties:ButtonIcon.Theme="{StaticResource IconAdd}"
                               IsEnabled="False" />
-                <ToggleButton Theme="{DynamicResource ToggleIconButton}"
+                <ToggleButton Theme="{DynamicResource IconToggleButton}"
                               Classes="accent"
-                              ap:ButtonIcon.Theme="{StaticResource IconAdd}"
+                              properties:ButtonIcon.Theme="{StaticResource IconAdd}"
                               IsEnabled="False" />
-                <ToggleButton Theme="{DynamicResource ToggleIconButton}"
+                <ToggleButton Theme="{DynamicResource IconToggleButton}"
                               Classes="danger"
                               Padding="10"
-                              ap:ButtonIcon.Theme="{StaticResource IconClose}"
+                              properties:ButtonIcon.Theme="{StaticResource IconClose}"
                               IsEnabled="False" />
-                <ToggleButton Theme="{DynamicResource ToggleIconButton}"
+                <ToggleButton Theme="{DynamicResource IconToggleButton}"
                               Classes="warning"
-                              ap:ButtonIcon.Theme="{StaticResource IconExclamation}"
+                              properties:ButtonIcon.Theme="{StaticResource IconExclamation}"
                               IsEnabled="False" />
             </StackPanel>
             <StackPanel Spacing="10" Orientation="Horizontal">
-                <ToggleButton Theme="{DynamicResource ToggleIconButton}"
-                              ap:ButtonIcon.Theme="{StaticResource IconAdd}"
+                <ToggleButton Theme="{DynamicResource IconToggleButton}"
+                              properties:ButtonIcon.Theme="{StaticResource IconAdd}"
                               IsEnabled="False"
                               IsChecked="True" />
-                <ToggleButton Theme="{DynamicResource ToggleIconButton}"
+                <ToggleButton Theme="{DynamicResource IconToggleButton}"
                               Classes="accent"
-                              ap:ButtonIcon.Theme="{StaticResource IconAdd}"
+                              properties:ButtonIcon.Theme="{StaticResource IconAdd}"
                               IsEnabled="False"
                               IsChecked="True" />
-                <ToggleButton Theme="{DynamicResource ToggleIconButton}"
+                <ToggleButton Theme="{DynamicResource IconToggleButton}"
                               Classes="danger"
                               Padding="10"
-                              ap:ButtonIcon.Theme="{StaticResource IconClose}"
+                              properties:ButtonIcon.Theme="{StaticResource IconClose}"
                               IsEnabled="False"
                               IsChecked="True" />
-                <ToggleButton Theme="{DynamicResource ToggleIconButton}"
+                <ToggleButton Theme="{DynamicResource IconToggleButton}"
                               Classes="warning"
-                              ap:ButtonIcon.Theme="{StaticResource IconExclamation}"
+                              properties:ButtonIcon.Theme="{StaticResource IconExclamation}"
                               IsEnabled="False"
                               IsChecked="True" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <Button Theme="{DynamicResource IconPillButtonLeft}"
-                        ap:ButtonIcon.Theme="{StaticResource IconAdd}"/>
-                <Button Theme="{DynamicResource IconPillButtonCenter}"
-                        ap:ButtonIcon.Theme="{StaticResource IconAdd}"
+                <Button Theme="{DynamicResource IconButtonPillLeft}"
+                        properties:ButtonIcon.Theme="{StaticResource IconAdd}"/>
+                <Button Theme="{DynamicResource IconButtonPillCenter}"
+                        properties:ButtonIcon.Theme="{StaticResource IconAdd}"
                         Classes="accent" />
-                <Button Theme="{DynamicResource IconPillButtonCenter}"
-                        ap:ButtonIcon.Theme="{StaticResource IconClose}"
+                <Button Theme="{DynamicResource IconButtonPillCenter}"
+                        properties:ButtonIcon.Theme="{StaticResource IconClose}"
                         Padding="10"
                         Classes="danger" />
-                <Button Theme="{DynamicResource IconPillButtonCenter}"
-                        ap:ButtonIcon.Theme="{StaticResource IconExclamation}"
+                <Button Theme="{DynamicResource IconButtonPillCenter}"
+                        properties:ButtonIcon.Theme="{StaticResource IconExclamation}"
                         Classes="warning" />
-                <Button Theme="{DynamicResource IconPillButtonRight}"
-                        ap:ButtonIcon.Theme="{StaticResource IconClipboardOutlined}"
+                <Button Theme="{DynamicResource IconButtonPillRight}"
+                        properties:ButtonIcon.Theme="{StaticResource IconClipboardOutlined}"
                         Classes="success" />
             </StackPanel>
         </StackPanel>
@@ -134,7 +150,7 @@
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="Height" Value="26" />
         <Setter Property="Width" Value="26" />
-        <Setter Property="Padding" Value="8" />
+        <Setter Property="Padding" Value="9" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Border x:Name="border"
@@ -144,7 +160,7 @@
                         CornerRadius="{TemplateBinding CornerRadius}"
                         HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
                         VerticalAlignment="{TemplateBinding VerticalAlignment}">
-                    <PathIcon Theme="{TemplateBinding ap:ButtonIcon.Theme}"
+                    <PathIcon Theme="{TemplateBinding properties:ButtonIcon.Theme}"
                               Padding="{TemplateBinding Padding}"
                               Foreground="{TemplateBinding Foreground}"
                               HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
@@ -281,9 +297,16 @@
             </Style>
         </Style>
     </ControlTheme>
+    
+    <!-- IconButtonSmall -->
+    <ControlTheme x:Key="IconButtonSmall" TargetType="Button" BasedOn="{StaticResource IconButton}">
+        <Setter Property="Height" Value="20" />
+        <Setter Property="Width" Value="20" />
+        <Setter Property="Padding" Value="9" />
+    </ControlTheme>
 
-    <!-- IconPillButton -->
-    <ControlTheme x:Key="IconPillButton" TargetType="Button" BasedOn="{StaticResource IconButton}">
+    <!-- IconButtonPill -->
+    <ControlTheme x:Key="IconButtonPill" TargetType="Button" BasedOn="{StaticResource IconButton}">
         <Setter Property="BorderBrush" Value="{actipro:ThemeResource ButtonBorderBrushOutline}" />
         <Setter Property="CornerRadius" Value="{actipro:ThemeResource ButtonCornerRadius}" />
         <Setter Property="BorderThickness" Value="1" />
@@ -420,33 +443,33 @@
         </Style>
     </ControlTheme>
     
-    <!-- IconPillButtonCenter -->
-    <ControlTheme x:Key="IconPillButtonCenter" TargetType="Button" BasedOn="{StaticResource IconPillButton}">
+    <!-- IconButtonPillCenter -->
+    <ControlTheme x:Key="IconButtonPillCenter" TargetType="Button" BasedOn="{StaticResource IconButtonPill}">
         <Setter Property="BorderThickness" Value="0 1 1 1" />
         <Setter Property="CornerRadius" Value="0" />
     </ControlTheme>
     
-    <!-- IconPillButtonLeft -->
-    <ControlTheme x:Key="IconPillButtonLeft" TargetType="Button" BasedOn="{StaticResource IconPillButton}">
+    <!-- IconButtonPillLeft -->
+    <ControlTheme x:Key="IconButtonPillLeft" TargetType="Button" BasedOn="{StaticResource IconButtonPill}">
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="5 0 0 5" />
     </ControlTheme>
     
-    <!-- IconPillButtonRight -->
-    <ControlTheme x:Key="IconPillButtonRight" TargetType="Button" BasedOn="{StaticResource IconPillButton}">
+    <!-- IconButtonPillRight -->
+    <ControlTheme x:Key="IconButtonPillRight" TargetType="Button" BasedOn="{StaticResource IconButtonPill}">
         <Setter Property="BorderThickness" Value="0 1 1 1" />
         <Setter Property="CornerRadius" Value="0 5 5 0" />
     </ControlTheme>
 
     <!--ToggleIconButton-->
-    <ControlTheme x:Key="ToggleIconButton" TargetType="ToggleButton">
+    <ControlTheme x:Key="IconToggleButton" TargetType="ToggleButton">
         <Setter Property="CornerRadius" Value="{actipro:ThemeResource ButtonCornerRadius}" />
-        <Setter Property="Foreground" Value="{actipro:ThemeResource DefaultForegroundBrushTertiary}" />
+        <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushDefault}" />
         <Setter Property="HorizontalAlignment" Value="Center" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="Height" Value="26" />
         <Setter Property="Width" Value="26" />
-        <Setter Property="Padding" Value="8" />
+        <Setter Property="Padding" Value="9" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Border x:Name="Border"
@@ -457,7 +480,7 @@
                         HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
                         VerticalAlignment="{TemplateBinding VerticalAlignment}">
                     <PathIcon x:Name="Icon"
-                              Theme="{TemplateBinding ap:ButtonIcon.Theme}"
+                              Theme="{TemplateBinding properties:ButtonIcon.Theme}"
                               Padding="{TemplateBinding Padding}"
                               Foreground="{TemplateBinding Foreground}"
                               HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"

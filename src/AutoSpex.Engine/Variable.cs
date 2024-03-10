@@ -1,24 +1,29 @@
-﻿using JetBrains.Annotations;
-
-namespace AutoSpex.Engine;
+﻿namespace AutoSpex.Engine;
 
 public class Variable
 {
-    [UsedImplicitly]
-    private Variable()
+    private const char VariableStart = '{';
+    private const char VariableEnd = '}';
+
+    public Variable()
     {
     }
 
-    public Variable(string name, string value, string? description = default)
+    public Variable(string name)
     {
         Name = name ?? throw new ArgumentNullException(nameof(name));
-        Value = value ?? throw new ArgumentNullException(nameof(value));
-        Description = description;
+    }
+
+    public Variable(string name, string value)
+    {
+        Name = name ?? throw new ArgumentNullException(nameof(name));
+        Value = value;
     }
 
     public Guid VariableId { get; } = Guid.NewGuid();
     public string Name { get; set; } = string.Empty;
     public string Value { get; set; } = string.Empty;
-    public string? Description { get; set; } = string.Empty;
-    public override string ToString() => Name;
+    public string? Override { get; set; } = string.Empty;
+    public string Formatted => $"{VariableStart}{Name}{VariableEnd}";
+    public override string ToString() => Formatted;
 }

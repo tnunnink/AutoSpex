@@ -24,7 +24,7 @@ public partial class ProjectPageModel(ProjectObserver project) : PageViewModel, 
     [ObservableProperty] private PageViewModel? _detailsPage;
 
 
-    public override string Route => $"{nameof(ProjectPageModel)}{Project.Directory}/{Project.Name}";
+    public override string Route => $"{Project.Directory}/{Project.Name}";
 
     public override bool IsChanged => DetailsPage?.IsChanged ?? false;
 
@@ -37,6 +37,7 @@ public partial class ProjectPageModel(ProjectObserver project) : PageViewModel, 
     {
         await Navigator.Navigate(() => new SpecsPageModel());
         await Navigator.Navigate(() => new SourcesPageModel());
+        await Navigator.Navigate(() => new RunnerListPageModel());
         await Navigator.Navigate(() => new DetailsPageModel());
     }
 
@@ -57,7 +58,7 @@ public partial class ProjectPageModel(ProjectObserver project) : PageViewModel, 
     {
         switch (message.Page)
         {
-            case SpecsPageModel or SourcesPageModel:
+            case SpecsPageModel or SourcesPageModel or RunnerListPageModel:
             {
                 if (!Menus.Contains(message.Page))
                     Menus.Add(message.Page);

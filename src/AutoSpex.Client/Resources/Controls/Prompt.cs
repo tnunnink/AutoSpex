@@ -38,10 +38,6 @@ public class Prompt : HeaderedContentControl
         AvaloniaProperty.Register<Prompt, SolidColorBrush>(
             nameof(FooterBackground));
 
-    public static readonly StyledProperty<ICommand?> CloseCommandProperty =
-        AvaloniaProperty.Register<Prompt, ICommand?>(
-            nameof(CloseCommand));
-
     public static readonly StyledProperty<string?> ActionButtonTextProperty =
         AvaloniaProperty.Register<Prompt, string?>(
             nameof(ActionButtonText), defaultValue: "Yes");
@@ -50,9 +46,13 @@ public class Prompt : HeaderedContentControl
         AvaloniaProperty.Register<Prompt, ControlTheme?>(
             nameof(ActionButtonTheme));
 
+    public static readonly StyledProperty<ICommand?> ActionCommandProperty =
+        AvaloniaProperty.Register<Prompt, ICommand?>(
+            nameof(ActionCommand));
+
     public static readonly StyledProperty<object?> ActionCommandParameterProperty =
         AvaloniaProperty.Register<Prompt, object?>(
-            nameof(ActionCommandParameter));
+            nameof(ActionCommandParameter), true);
     
     public static readonly StyledProperty<string?> CancelButtonTextProperty =
         AvaloniaProperty.Register<Prompt, string?>(
@@ -61,10 +61,14 @@ public class Prompt : HeaderedContentControl
     public static readonly StyledProperty<ControlTheme?> CancelButtonThemeProperty =
         AvaloniaProperty.Register<Prompt, ControlTheme?>(
             nameof(CancelButtonTheme));
+    
+    public static readonly StyledProperty<ICommand?> CancelCommandProperty =
+        AvaloniaProperty.Register<Prompt, ICommand?>(
+            nameof(CancelCommand));
 
     public static readonly StyledProperty<object?> CancelCommandParameterProperty =
         AvaloniaProperty.Register<Prompt, object?>(
-            nameof(CancelCommandParameter));
+            nameof(CancelCommandParameter), false);
     
     public static readonly StyledProperty<string?> AlternateButtonTextProperty =
         AvaloniaProperty.Register<Prompt, string?>(
@@ -73,6 +77,10 @@ public class Prompt : HeaderedContentControl
     public static readonly StyledProperty<ControlTheme?> AlternateButtonThemeProperty =
         AvaloniaProperty.Register<Prompt, ControlTheme?>(
             nameof(AlternateButtonTheme));
+
+    public static readonly StyledProperty<ICommand?> AlternateCommandProperty =
+        AvaloniaProperty.Register<Prompt, ICommand?>(
+            nameof(AlternateCommand));
 
     public static readonly StyledProperty<object?> AlternateCommandParameterProperty =
         AvaloniaProperty.Register<Prompt, object?>(
@@ -90,7 +98,9 @@ public class Prompt : HeaderedContentControl
 
     public Prompt()
     {
-        CloseCommand = new RelayCommand<object>(CloseWindow);
+        CancelCommand = new RelayCommand<object>(CloseWindow);
+        ActionCommand = new RelayCommand<object>(CloseWindow);
+        AlternateCommand = new RelayCommand<object>(CloseWindow);
     }
 
     public SolidColorBrush? HeaderBackground
@@ -129,10 +139,10 @@ public class Prompt : HeaderedContentControl
         set => SetValue(FooterBackgroundProperty, value);
     }
 
-    public ICommand? CloseCommand
+    public ICommand? CancelCommand
     {
-        get => GetValue(CloseCommandProperty);
-        init => SetValue(CloseCommandProperty, value);
+        get => GetValue(CancelCommandProperty);
+        init => SetValue(CancelCommandProperty, value);
     }
 
     public string? ActionButtonText
@@ -145,6 +155,12 @@ public class Prompt : HeaderedContentControl
     {
         get => GetValue(ActionButtonThemeProperty);
         set => SetValue(ActionButtonThemeProperty, value);
+    }
+    
+    public ICommand? ActionCommand
+    {
+        get => GetValue(ActionCommandProperty);
+        set => SetValue(ActionCommandProperty, value);
     }
 
     public object? ActionCommandParameter
@@ -181,6 +197,12 @@ public class Prompt : HeaderedContentControl
     {
         get => GetValue(AlternateButtonThemeProperty);
         set => SetValue(AlternateButtonThemeProperty, value);
+    }
+    
+    public ICommand? AlternateCommand
+    {
+        get => GetValue(AlternateCommandProperty);
+        set => SetValue(AlternateCommandProperty, value);
     }
 
     public object? AlternateCommandParameter

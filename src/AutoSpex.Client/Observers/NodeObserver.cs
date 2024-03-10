@@ -8,15 +8,16 @@ using AutoSpex.Persistence;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using CommunityToolkit.Mvvm.Messaging.Messages;
 using JetBrains.Annotations;
 
 namespace AutoSpex.Client.Observers;
 
 [PublicAPI]
 public partial class NodeObserver : Observer<Node>,
-    IRecipient<NodeObserver.Deleted>,
-    IRecipient<PropertyChangedMessage<string>>
+    IRecipient<Observer<Node>.Created>,
+    IRecipient<Observer<Node>.Deleted>,
+    IRecipient<Observer<Node>.Renamed>,
+    IRecipient<VariableObserver.NodeRequest>
 {
     public NodeObserver(Node node) : base(node)
     {
@@ -29,19 +30,39 @@ public partial class NodeObserver : Observer<Node>,
             (_, n) => Model.RemoveNode(n),
             () => Model.ClearNodes());
 
-        Messenger.Register<PropertyChangedMessage<string>, Guid>(this, NodeId);
-        Messenger.Register<Deleted, Guid>(this, NodeId);
+        Variables = new ObserverCollection<Variable, VariableObserver>(
+            () => Model.Variables.Select(m => new VariableObserver(m)).ToList(),
+            (_, m) => Model.AddVariable(m),
+            (_, m) => Model.AddVariable(m),
+            (_, m) => Model.RemoveVariable(m));
+        Track(Variables);
+
+        if (node.Spec is not null)
+        {
+            Spec = new SpecObserver(node.Spec);
+            Track(Spec);
+        }
 
         IsOrphaned = Model.NodeType != NodeType.Collection && Model.ParentId == Guid.Empty;
     }
 
-    public Guid NodeId => Model.NodeId;
+    public override Guid Id => Model.NodeId;
+    public Guid ParentId => Model.ParentId;
     public NodeType NodeType => Model.NodeType;
+    public string Path => Model.Path;
 
-    [ObservableProperty] [NotifyDataErrorInfo] [Required] [MaxLength(100)]
-    private string _name;
+    [Required]
+    [MaxLength(100)]
+    public string Name
+    {
+        get => Model.Name;
+        set => SetProperty(Model.Name, value, Model, (s, v) => s.Name = v, true);
+    }
 
     public ObserverCollection<Node, NodeObserver> Nodes { get; }
+    public ObserverCollection<Variable, VariableObserver> Variables { get; }
+
+    [ObservableProperty] private SpecObserver? _spec;
 
     [ObservableProperty] private bool _isVisible = true;
 
@@ -53,23 +74,14 @@ public partial class NodeObserver : Observer<Node>,
 
     [ObservableProperty] private bool _isOrphaned;
 
-    [ObservableProperty] private bool _focusName;
+    [ObservableProperty] private bool _isNew;
 
-    /// <summary>
-    /// We are overriding the refresh here to sync the underlying model state which includes the name property for this
-    /// node and all child nodes.
-    /// </summary>
-    public override void Refresh()
-    {
-        Name = Model.Name;
-        Nodes.Refresh();
-        base.Refresh();
-    }
+    #region Commands
 
     [RelayCommand]
     private async Task AddFolder()
     {
-        var node = new NodeObserver(Node.NewFolder()) {FocusName = true};
+        var node = new NodeObserver(Node.NewFolder()) {IsNew = true};
         Nodes.Add(node);
 
         var result = await Mediator.Send(new CreateNode(node));
@@ -94,7 +106,7 @@ public partial class NodeObserver : Observer<Node>,
     [RelayCommand]
     private async Task AddSpec()
     {
-        var node = new NodeObserver(Node.NewSpec()) {FocusName = true};
+        var node = new NodeObserver(Node.NewSpec()) {IsNew = true};
         Nodes.Add(node);
 
         var result = await Mediator.Send(new CreateNode(node));
@@ -111,23 +123,31 @@ public partial class NodeObserver : Observer<Node>,
         await Navigator.Navigate(node);
     }
 
-    /// <summary>
-    /// This command syncs the current observer name property to the underlying model object property. It then sends the
-    /// <see cref="PropertyChangedMessage{T}"/> for the name property so other observer objects or pages can react to the
-    /// change. Note that if this is an "orphaned" node we assume there is not record in the database so we just update
-    /// this object instance and don't send the command to the database.
-    /// </summary>
-    [RelayCommand]
-    private async Task RenameNode()
+    /// <inheritdoc />
+    protected override async Task Delete()
     {
-        if (string.IsNullOrEmpty(Name) || string.Equals(Name, Model.Name) || Name.Length > 100) return;
+        var delete = await Prompter.PromptDelete(Name);
+        if (delete is not true) return;
 
-        var previous = Model.Name;
-        Model.Name = Name;
+        var result = await Mediator.Send(new DeleteNode(Id));
+        if (result.IsFailed) return;
+
+        //We don't have access to the actual parent observer only the underlying model object. Therefore we will rely
+        //on messages send to be handles by the parent and remove this node form it's Nodes collection.
+        Messenger.Send(new Deleted(this));
+    }
+
+    /// <inheritdoc />
+    protected override async Task Rename(string? name)
+    {
+        if (string.IsNullOrEmpty(name) || string.Equals(name, Name) || name.Length > 100) return;
+
+        var previous = Name;
+        Name = name;
 
         if (IsOrphaned)
         {
-            Messenger.Send(new PropertyChangedMessage<string>(this, nameof(Name), previous, Model.Name), NodeId);
+            Messenger.Send(new Renamed(this));
             return;
         }
 
@@ -135,65 +155,88 @@ public partial class NodeObserver : Observer<Node>,
 
         if (result.IsFailed)
         {
-            Model.Name = previous;
             Name = previous;
             return;
         }
 
-        Messenger.Send(new PropertyChangedMessage<string>(this, nameof(Name), previous, Model.Name), NodeId);
+        Messenger.Send(new Renamed(this));
+    }
+
+    [RelayCommand]
+    private void Edit()
+    {
+        IsEditing = true;
+    }
+
+    #endregion
+
+    #region MessageHandlers
+
+    public void Receive(Created message)
+    {
+        if (message.Observer is not NodeObserver node) return;
+
+        //If I am the parent of the created node then make sure it is added to my Nodes
+        if (Id == node.ParentId && Nodes.All(n => n.Id != node.Id))
+        {
+            // This will also add to the underlying model object which is fine because
+            // we assume the node was added to a different model somewhere.
+            Nodes.Add(node);
+        }
     }
 
     /// <summary>
-    /// The reception of the node name change message will allow us to propagate the change to other observers that wrap
-    /// the same object but are of a different memory instance. We still want to be able to update these other instance
-    /// and have them in turn trigger the property changed so containing pages (like NodePageModel) can receive and update
-    /// the UI accordingly. We just have to be careful here not to cause a stack overflow so we exit early on all the
-    /// conditions for which we would not want to set the name and send the message.
+    /// Will handle the removal of the node and/or child nodes as based on which observer object is received.
     /// </summary>
-    /// <param name="message">The <see cref="PropertyChangedMessage{T}"/> contianing the information regarding the property change.</param>
-    public void Receive(PropertyChangedMessage<string> message)
-    {
-        if (message.Sender is not NodeObserver node || message.PropertyName != nameof(Name)) return;
-        if (ReferenceEquals(this, node)) return;
-        if (node.NodeId != NodeId) return;
-        if (Name == message.NewValue || Name != message.OldValue) return;
-        Name = message.NewValue;
-        Messenger.Send(new PropertyChangedMessage<string>(this, nameof(Name), message.OldValue, Name), NodeId);
-    }
-
-    /// <inheritdoc />
-    /// <remarks>...</remarks>
-    protected override async Task Delete()
-    {
-        var delete = await Prompter.PromptDelete(Name);
-        if (delete is not true) return;
-
-        var result = await Mediator.Send(new DeleteNode(NodeId));
-        if (result.IsFailed) return; //todo failed commands will get caught and presented in pipeline.
-
-        var parentId = Model.ParentId;
-        Model.Parent?.RemoveNode(this);
-
-        Messenger.Send(new Deleted(this), NodeId); //Delete for this and all children.
-        Messenger.Send(new Deleted(this), parentId); //Tell the parent to refresh state including nodes.
-        Messenger.Send(new Deleted(this)); //Tell anyone else just listening for deletions.
-    }
-
+    /// <param name="message">The message that an observer has been deleted.</param>
     public void Receive(Deleted message)
     {
-        if (message.Node.NodeId != NodeId)
+        if (message.Observer is not NodeObserver node) return;
+
+        //If the deleted node is my child then remove if from nodes and return.
+        //This will in turn remove it from the model object as well.
+        if (Nodes.Any(n => n.Id == node.Id))
         {
-            Refresh();
+            Nodes.Remove(node);
             return;
         }
 
-        Nodes.ToList().ForEach(n => Messenger.Send(new Deleted(n), n.NodeId));
-        Nodes.Clear();
+        //If the deleted node is me then send messages for all the child nodes and clear the collection.
+        //We need to send messages for children in case they are in use by other pages.
+        //Doing in the message handler will all it to be propagated.
+        if (Id != node.Id) return;
+        Nodes.ToList().ForEach(n => Messenger.Send(new Deleted(n)));
         Messenger.UnregisterAll(this);
     }
 
+    public void Receive(Renamed message)
+    {
+        if (message.Observer is not NodeObserver node) return;
+        if (ReferenceEquals(this, node)) return;
+        if (Id != node.Id) return;
+
+        if (Name != node.Name)
+        {
+            Name = node.Name;
+            Messenger.Send(new Renamed(this));
+            return;
+        }
+
+        OnPropertyChanged(nameof(Name));
+    }
+
+    public void Receive(VariableObserver.NodeRequest message)
+    {
+        if (message.HasReceivedResponse) return;
+
+        if (Variables.Any(v => v.Id == message.VariableId))
+        {
+            message.Reply(this);
+        }
+    }
+
+    #endregion
+
     public static implicit operator NodeObserver(Node node) => new(node);
     public static implicit operator Node(NodeObserver observer) => observer.Model;
-
-    public record Deleted(NodeObserver Node);
 }

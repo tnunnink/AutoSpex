@@ -1,12 +1,12 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
-                    xmlns:ap="clr-namespace:AutoSpex.Client.Resources.AttachedProperties"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
-                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
     <Design.PreviewWith>
         <components:SourceList Height="800" Width="400"
-                             Sources="{x:Static components:DesignData.Sources}" />
+                               Sources="{x:Static components:DesignData.Sources}" />
     </Design.PreviewWith>
 
     <ControlTheme x:Key="{x:Type components:SourceList}" TargetType="components:SourceList">
@@ -18,30 +18,30 @@
                                 MinHeight="42">
                             <StackPanel VerticalAlignment="Center">
                                 <DockPanel Margin="10 5"
-                                           LastChildFill="False">
+                                           LastChildFill="False"
+                                           Height="30">
                                     <StackPanel DockPanel.Dock="Left"
                                                 Orientation="Horizontal"
                                                 Spacing="5">
                                         <Button Command="{TemplateBinding AddSourceCommand}"
                                                 Theme="{StaticResource IconButton}"
-                                                ap:ButtonIcon.Theme="{StaticResource IconAdd}"
+                                                properties:ButtonIcon.Theme="{StaticResource IconAdd}"
                                                 Classes="accent"
-                                                ToolTip.Tip="Add Collection" />
+                                                ToolTip.Tip="Add Source" />
                                     </StackPanel>
 
                                     <StackPanel DockPanel.Dock="Right"
                                                 Orientation="Horizontal"
                                                 Spacing="2">
                                         <Button
-                                            
-                                            ap:ButtonIcon.Theme="{StaticResource IconDotsVertical}"
+                                            properties:ButtonIcon.Theme="{StaticResource IconDotsVertical}"
                                             Theme="{StaticResource IconButton}"
                                             ToolTip.Tip="Options" />
                                     </StackPanel>
                                 </DockPanel>
-                                <TextBox x:Name="PART_FilterText"
+                                <TextBox x:Name="FilterText"
                                          Theme="{actipro:ControlTheme TextBoxOutline}"
-                                         Watermark="Search Specs"
+                                         Watermark="Search sources"
                                          Padding="7"
                                          Background="Transparent"
                                          BorderThickness="0 1"
@@ -59,67 +59,59 @@
 
                         <Border Grid.Row="2">
                             <ListBox x:Name="SourceList"
-                                     ItemsSource="{TemplateBinding Sources}"
+                                     ItemsSource="{Binding SourcesView, RelativeSource={RelativeSource TemplatedParent}}"
+                                     SelectedItems="{TemplateBinding SelectedSources}"
+                                     ItemContainerTheme="{StaticResource ListBoxItemSubtle}"
+                                     IsTextSearchEnabled="True"
                                      SelectionMode="Multiple"
-                                     VerticalAlignment="Stretch"
-                                     HorizontalAlignment="Stretch"
+                                     WrapSelection="True"
                                      BorderThickness="0"
                                      Background="Transparent">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate x:DataType="observers:SourceObserver">
+                                        <components:NavigationItem Content="{Binding}"
+                                                                   ItemName="{Binding Name}"
+                                                                   IconTheme="{StaticResource IconSourceThemed}"
+                                                                   RenameCommand="{Binding RenameCommand}"
+                                                                   NavigateCommand="{Binding NavigateCommand}">
+                                            <components:NavigationItem.ContentTemplate>
+                                                <DataTemplate x:DataType="observers:SourceObserver">
+                                                    <StackPanel Orientation="Horizontal" Spacing="5">
+                                                        <TextBlock Text="{Binding Name}"
+                                                                   TextTrimming="CharacterEllipsis"
+                                                                   TextWrapping="NoWrap" />
+                                                        <TextBlock Text="{Binding TargetTypeFormatted}"
+                                                                   Foreground="{actipro:ThemeResource DefaultForegroundBrushDisabled}" />
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </components:NavigationItem.ContentTemplate>
+                                            <components:NavigationItem.ContextFlyout>
+                                                <MenuFlyout x:DataType="observers:SourceObserver"
+                                                            ItemContainerTheme="{StaticResource ContextMenuItem}">
+                                                    <MenuItem Header="Open"
+                                                              Command="{Binding NavigateCommand}"
+                                                              InputGesture="Enter"
+                                                              IsEnabled="{Binding Converter={x:Static ObjectConverters.IsNotNull}}" />
+                                                    <MenuItem Header="Rename"
+                                                              InputGesture="Ctrl+E" />
+                                                    <MenuItem Header="Duplicate"
+                                                              Command="{Binding DuplicateCommand}"
+                                                              InputGesture="Ctrl+D" />
+                                                    <MenuItem Header="Delete"
+                                                              Command="{Binding $parent[components:SourceList].DeleteSources}"
+                                                              IsEnabled="{Binding $parent[components:SourceList].SelectedSources.Count}"
+                                                              InputGesture="Delete"
+                                                              Classes="danger" />
+                                                </MenuFlyout>
+                                            </components:NavigationItem.ContextFlyout>
+                                        </components:NavigationItem>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
                                 <ListBox.Styles>
                                     <Style Selector="ScrollViewer">
                                         <Setter Property="Theme" Value="{actipro:ControlTheme ScrollViewerOverlay}" />
                                     </Style>
                                 </ListBox.Styles>
-                                <ListBox.ItemContainerTheme>
-                                    <ControlTheme TargetType="ListBoxItem"
-                                                  BasedOn="{StaticResource ListBoxItemSubtle}"
-                                                  x:DataType="observers:SourceObserver">
-                                        <Setter Property="Padding" Value="0" />
-                                    </ControlTheme>
-                                </ListBox.ItemContainerTheme>
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate x:DataType="observers:SourceObserver">
-                                        <DockPanel>
-                                            <DockPanel.Styles>
-                                                <Style Selector="TextBlock.caption">
-                                                    <Setter Property="VerticalAlignment" Value="Center" />
-                                                    <Setter Property="TextAlignment" Value="Right" />
-                                                    <Setter Property="FontSize"
-                                                            Value="{actipro:ThemeResource DefaultFontSizeSmall}" />
-                                                    <Setter Property="Foreground"
-                                                            Value="{actipro:ThemeResource DefaultForegroundBrushDisabled}" />
-                                                </Style>
-                                            </DockPanel.Styles>
-                                            <PathIcon DockPanel.Dock="Left"
-                                                      Theme="{StaticResource IconXml}" />
-                                            <StackPanel DockPanel.Dock="Right"
-                                                        Orientation="Horizontal"
-                                                        Margin="5 0">
-                                                <TextBlock Classes="caption"
-                                                           Text="{Binding TargetType}" />
-                                            </StackPanel>
-                                            <Panel>
-                                                <TextBlock Text="{Binding Name}"
-                                                           IsVisible="{Binding !IsEditing}"
-                                                           FontSize="{actipro:ThemeResource DefaultFontSizeSmall}"
-                                                           VerticalAlignment="Center"
-                                                           TextTrimming="CharacterEllipsis"
-                                                           TextWrapping="NoWrap" />
-                                                <TextBox x:Name="PART_EntryText"
-                                                         Text="{Binding Name}"
-                                                         Focusable="True"
-                                                         Theme="{actipro:ControlTheme TextBoxOutline}"
-                                                         FontSize="{actipro:ThemeResource DefaultFontSizeSmall}"
-                                                         IsVisible="{Binding IsEditing}"
-                                                         BorderThickness="0"
-                                                         Padding="3 0 0 0"
-                                                         Margin="0 3 3 3"
-                                                         VerticalContentAlignment="Center"
-                                                         TextWrapping="NoWrap" />
-                                            </Panel>
-                                        </DockPanel>
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
                             </ListBox>
                         </Border>
                     </Grid>

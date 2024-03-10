@@ -1,0 +1,37 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:components="clr-namespace:AutoSpex.Client.Components"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
+             x:Class="AutoSpex.Client.Pages.SpecOptionsPage"
+             x:DataType="pages:SpecOptionsPageModel">
+
+    <Design.Width>1400</Design.Width>
+    <Design.Height>1000</Design.Height>
+
+    <StackPanel Spacing="5" Margin="10">
+        <components:SettingItem Label="Verify Candidate Count"
+                                InfoText="If enabled will by default verify that the filtered elements for this spec satisfy the count criteria using the count following operation and value options.">
+            <ToggleSwitch IsChecked="{Binding Spec.VerifyCount}"
+                          Theme="{a:ControlTheme ToggleSwitchSolid}"
+                          Margin="10"
+                          VerticalAlignment="Center" HorizontalAlignment="Center"
+                          Classes="accent size-sm"
+                          OffContent="{x:Null}" OnContent="{x:Null}" />
+        </components:SettingItem>
+        <components:SettingItem Label="Count Operation"
+                                InfoText="The operation used to evaluate the candidate element count. This only applies if Verify Candidate Count is enabled.">
+            <ComboBox ItemsSource="{x:Static engine:Operation.List}"
+                      SelectedItem="{Binding Spec.CountOperation}"
+                      Theme="{a:ControlTheme ComboBoxOutline}"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      Margin="10" PlaceholderText="Select Operation" />
+        </components:SettingItem>
+        <components:SettingItem Label="Count Value"
+                                InfoText="The value used to evaluate the filtered element count. This only applies if Verify Candidate Count is enabled.">
+            
+        </components:SettingItem>
+    </StackPanel>
+</UserControl>

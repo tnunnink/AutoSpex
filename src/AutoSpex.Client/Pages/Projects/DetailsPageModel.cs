@@ -4,7 +4,6 @@ using AutoSpex.Client.Observers;
 using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
-using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -20,10 +19,19 @@ public partial class DetailsPageModel : PageViewModel, IRecipient<NavigationRequ
     [ObservableProperty] private PageViewModel? _selected;
 
     [RelayCommand]
-    private async Task AddSpec()
+    private async Task CreateSpec()
     {
-        var node = new NodeObserver(Node.NewSpec()) {FocusName = true};
-        await Navigator.Navigate(node);
+        var spec = await Prompter.Show<NodeObserver?>(() => new NewSpecPageModel());
+        if (spec is null) return;
+        await Navigator.Navigate(spec);
+    }
+    
+    [RelayCommand]
+    private async Task AddSource()
+    {
+        var source = await Prompter.Show<SourceObserver?>(() => new AddSourcePageModel());
+        if (source is null) return;
+        await Navigator.Navigate(source);
     }
 
     public void Receive(NavigationRequest message)
@@ -38,30 +46,23 @@ public partial class DetailsPageModel : PageViewModel, IRecipient<NavigationRequ
 
         if (SelectExistingIfOpen(details)) return;
 
-        if (message.Action == NavigationAction.Open)
+        OpenTab(details);
+        /*if (message.Action == NavigationAction.Open)
         {
-            ShowInNewTab(details);
+
             return;
         }
 
-        ShowOrReplace(details);
+        ShowOrReplace(details);*/
     }
 
-    private bool SelectExistingIfOpen(PageViewModel page)
-    {
-        var existing = Pages.SingleOrDefault(x => x.Route == page.Route);
-        if (existing is null) return false;
-        Selected = existing;
-        return true;
-    }
-
-    private void ShowInNewTab(DetailPageModel page)
+    private void OpenTab(DetailPageModel page)
     {
         Pages.Add(page);
         Selected = page;
     }
 
-    private void ShowOrReplace(DetailPageModel page)
+    /*private void ShowOrReplace(DetailPageModel page)
     {
         //Try to replace an existing page that has not been changed.
         for (var i = 0; i < Pages.Count; i++)
@@ -77,7 +78,7 @@ public partial class DetailsPageModel : PageViewModel, IRecipient<NavigationRequ
         //No pages are open, so add and focus.
         Pages.Add(page);
         Selected = page;
-    }
+    }*/
 
     private void CloseTab(DetailPageModel page)
     {
@@ -85,5 +86,13 @@ public partial class DetailsPageModel : PageViewModel, IRecipient<NavigationRequ
 
         if (Selected is not null && Selected == page)
             Selected = Pages.FirstOrDefault();
+    }
+
+    private bool SelectExistingIfOpen(PageViewModel page)
+    {
+        var existing = Pages.SingleOrDefault(x => x.Route == page.Route);
+        if (existing is null) return false;
+        Selected = existing;
+        return true;
     }
 }

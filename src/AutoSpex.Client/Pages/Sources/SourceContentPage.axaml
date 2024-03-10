@@ -1,0 +1,15 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:components="clr-namespace:AutoSpex.Client.Components"
+             x:Class="AutoSpex.Client.Pages.SourceContentPage"
+             x:DataType="pages:SourceContentPageModel">
+
+    <Design.Width>1000</Design.Width>
+    <Design.Height>800</Design.Height>
+
+    <Border Margin="20">
+        <components:XmlEditor Xml="{Binding Content}" />
+    </Border>
+</UserControl>

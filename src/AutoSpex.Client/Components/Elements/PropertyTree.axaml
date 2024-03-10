@@ -1,0 +1,69 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="using:AutoSpex.Client.Components"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers">
+
+    <Design.PreviewWith>
+        <components:PropertyTree Width="500" SourceElement="{x:Static components:DesignData.TagObserver}" />
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type components:PropertyTree}" TargetType="components:PropertyTree">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid RowDefinitions="Auto,*">
+                    <Border Background="{a:ThemeResource Container1BackgroundBrush}"
+                            BorderBrush="{a:ThemeResource Container2BorderBrush}"
+                            BorderThickness="0 0 0 1"
+                            Height="40">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <TextBox x:Name="FilterText"
+                                     Grid.Column="0"
+                                     BorderThickness="0"
+                                     Background="Transparent"
+                                     Watermark="Filter properties"
+                                     VerticalContentAlignment="Center"
+                                     FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                                     Padding="5 0">
+                                <TextBox.InnerLeftContent>
+                                    <PathIcon Theme="{StaticResource IconSearch}"
+                                              Height="20" Width="20"
+                                              Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                                              Padding="3" Margin="5 0" />
+                                </TextBox.InnerLeftContent>
+                            </TextBox>
+
+                            <StackPanel Grid.Column="1"
+                                        Margin="5 0"
+                                        Orientation="Horizontal"
+                                        Spacing="5">
+                                <Button properties:ButtonIcon.Theme="{StaticResource IconDotsVertical}"
+                                        Theme="{StaticResource IconButton}" Padding="9"
+                                        ToolTip.Tip="Options" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <TreeView Grid.Row="1"
+                              BorderThickness="0"
+                              ItemsSource="{Binding Properties, RelativeSource={RelativeSource TemplatedParent}}"
+                              ScrollViewer.VerticalScrollBarVisibility="Visible"
+                              ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <TreeView.ItemTemplate>
+                            <TreeDataTemplate x:DataType="observers:PropertyObserver"
+                                              ItemsSource="{Binding Properties}">
+                                <components:PropertyItem DataContext="{Binding}" />
+                            </TreeDataTemplate>
+                        </TreeView.ItemTemplate>
+                        <TreeView.ItemContainerTheme>
+                            <ControlTheme TargetType="TreeViewItem" BasedOn="{StaticResource TreeViewItemSubtle}">
+                                <Setter Property="Padding" Value="0" />
+                            </ControlTheme>
+                        </TreeView.ItemContainerTheme>
+                    </TreeView>
+                </Grid>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

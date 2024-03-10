@@ -20,6 +20,14 @@ public class Property : IEquatable<Property>
     private static readonly Dictionary<Property, Func<object?, object?>> Cache = new();
 
     /// <summary>
+    /// A custom getter function for this property which will be used instead of trying to create a getter expression
+    /// using the property type information. This allows for pseudo creation of properties with custom getters which
+    /// I amd using in the client to get collection items for a type graph. The order of operation is cache, custom, then
+    /// generate expression.
+    /// </summary>
+    private readonly Func<object?, object?>? _getter;
+
+    /// <summary>
     /// Creates a new <see cref="Property"/> given the originating type, path, return type, and optional custom getter.
     /// </summary>
     /// <param name="origin">The type from which this property originates.</param>
@@ -38,10 +46,15 @@ public class Property : IEquatable<Property>
         Path = path;
         Type = type ?? throw new ArgumentNullException(nameof(type));
 
-        if (getter is not null)
+        if (getter is null) return;
+
+        if (CanCache(getter))
         {
             Cache.TryAdd(this, getter);
+            return;
         }
+
+        _getter = getter;
     }
 
     /// <summary>
@@ -65,7 +78,7 @@ public class Property : IEquatable<Property>
     public string Name => Path[(Path.LastIndexOf(Separator) + 1)..];
 
     /// <summary>
-    /// A friendly type identifier for the property.
+    /// A friendly type identifier for the property. This can be used to display in the client UI.
     /// </summary>
     public string Identifier => Type.TypeIdentifier();
 
@@ -73,24 +86,16 @@ public class Property : IEquatable<Property>
     /// The <see cref="TypeGroup"/> to which this property's return type belongs.
     /// </summary>
     public TypeGroup Group => TypeGroup.FromType(Type);
-    
+
     /// <summary>
     /// The set of object values that represent the options (enum/bool values) for the property type.
     /// </summary>
     public IEnumerable<object> Options => Type.GetOptions();
-    
-    /// <summary>
-    /// The set of child properties which can be navigated to from this property's return type.
-    /// </summary>
-    public IEnumerable<Property> Properties => Type.Properties(this);
 
     /// <summary>
-    /// Finds a child property of this property given the property name.
+    /// The set of child properties which can be navigated to from this property's type.
     /// </summary>
-    /// <param name="path">The path to the property.</param>
-    /// <returns>A property representing the provided property path if found, otherwise null.</returns>
-    /// <remarks>This simply forwards the call to the property return type Properties extension method.</remarks>
-    public Property? FindProperty(string path) => Type.Property(path);
+    public IEnumerable<Property> Properties => Type.Properties(this);
 
     /// <summary>
     /// Returns the value getter for the property which can be used to retrieve the property value from an instance of the
@@ -99,16 +104,26 @@ public class Property : IEquatable<Property>
     /// <returns>A <see cref="Func{TResult}"/> taking an instance object and returning this property value.</returns>
     public Func<object?, object?> Getter() => Getter(Origin, Path);
 
-    public override bool Equals(object? obj) => obj is Property other && other.Origin == Origin && other.Path == Path;
-    public override int GetHashCode() => HashCode.Combine(Origin, Path);
-    public override string ToString() => Path;
-
+    /// <summary>
+    /// Determines if two <see cref="Property"/> objects are equal. We are using the <see cref="Origin"/> and <see cref="Path"/>
+    /// to indicate if one property is the "same" as another, since properties on different type could have same name or path.
+    /// </summary>
+    /// <param name="other">The other <see cref="Property"/> to compare.</param>
+    /// <returns><c>true</c> if the properties are equal, otherwise, <c>false</c>.</returns>
     public bool Equals(Property? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
         return Origin == other.Origin && Path == other.Path;
     }
+    
+    /// <summary>
+    /// Determines if two <see cref="Property"/> objects are equal. We are using the <see cref="Origin"/> and <see cref="Path"/>
+    /// to indicate if one property is the "same" as another, since properties on different type could have same name or path.
+    /// </summary>
+    public override bool Equals(object? obj) => obj is Property other && other.Origin == Origin && other.Path == Path;
+    public override int GetHashCode() => HashCode.Combine(Origin, Path);
+    public override string ToString() => Path;
 
     /// <summary>
     /// Creates the getter expression for this property and caches the result for the next call.
@@ -116,14 +131,20 @@ public class Property : IEquatable<Property>
     /// </summary>
     private Func<object?, object?> Getter(Type origin, string path)
     {
+        //If we already have a cached getter function for this property then return that instead of creating it again.
         if (Cache.TryGetValue(this, out var cached)) return cached;
 
+        //If there is a custom getter that was not cached then return that instead of generating and expression.
+        if (_getter is not null) return _getter;
+
+        //Generate the property getter expression and compile the result.
         var parameter = Expression.Parameter(typeof(object), "x");
         var converted = Expression.TypeAs(parameter, origin);
         var member = GetMember(converted, path);
 
         var getter = Expression.Lambda<Func<object?, object?>>(member, parameter).Compile();
 
+        //Cache this getter for future calls to this property for other instance objects to improve performance.
         Cache.Add(this, getter);
         return getter;
     }
@@ -139,13 +160,36 @@ public class Property : IEquatable<Property>
     /// member property or field, with corresponding conditional null checks for each member level.</returns>
     private static Expression GetMember(Expression parameter, string path)
     {
+        //todo no going to support this for now since we have a way to access collection elements externally by passing in custom getter,
+        //  but I wonder if it is feasible to include collection index getters as they are also properties technically.
+
+        /*if (path.StartsWith('[') && path.EndsWith(']'))
+        {
+            var number = path.Substring(1, path.Length - 2).Trim();
+            if (int.TryParse(number, out var index))
+                return Expression.TypeAs(Expression.Property(parameter, "Item", Expression.Constant(index)), typeof(object));
+
+            throw new ArgumentException($"Invalid array index: {number}");
+        }*/
+
         if (!path.Contains(Separator))
             return Expression.TypeAs(Expression.PropertyOrField(parameter, path), typeof(object));
 
-        var index = path.IndexOf(Separator);
-        var member = Expression.PropertyOrField(parameter, path[..index]);
+        var separator = path.IndexOf(Separator);
+        var member = Expression.PropertyOrField(parameter, path[..separator]);
         var notNull = Expression.NotEqual(member, Expression.Constant(null));
-        return Expression.Condition(notNull, GetMember(member, path[(index + 1)..]), Expression.Constant(null),
+        return Expression.Condition(notNull, GetMember(member, path[(separator + 1)..]), Expression.Constant(null),
             typeof(object));
+    }
+
+    /// <summary>
+    /// Determines if the provided <see cref="Func{TResult}"/> is a delegate type that we can cache to our internal static
+    /// getter function collection. This is to avoid external type getters from being inadvertently cached. We only want to
+    /// cache known element type getters for types declared in this assembly.
+    /// </summary>
+    private static bool CanCache(Func<object?, object?> function)
+    {
+        return function.Method.DeclaringType is not null &&
+               function.Method.DeclaringType.Assembly == typeof(Property).Assembly;
     }
 }

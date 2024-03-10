@@ -43,7 +43,7 @@ public abstract class Element : SmartEnum<Element, string>
     public IEnumerable<Property> Properties => Type.Properties();
     public IEnumerable<Property> CustomProperties => _customProperties;
     public Property This => _customProperties.Single(p => p.Name == ThisProperty);
-    public Func<L5X, IEnumerable<object>> Query => file => file.Query(Type);
+    public virtual Func<L5X, IEnumerable<object>> Query => file => file.Query(Type);
     public Func<L5X, string, object?> Lookup => (file, name) => file.Find(new ComponentKey(Type.L5XType(), name));
     public bool IsComponent => Type.IsAssignableTo(typeof(LogixComponent));
     protected virtual bool IsSelectable => IsComponent;
@@ -162,6 +162,9 @@ public abstract class Element : SmartEnum<Element, string>
         {
             Register<IEnumerable<Tag>>("Members", x => ((Tag) x!).Members());
         }
+
+        public override Func<L5X, IEnumerable<object>> Query => 
+            x => x.Query<Tag>().SelectMany(t => t.Members()).Where(t => !t.TagName.Member.All(char.IsDigit));
     }
 
     private class ProgramElement : Element

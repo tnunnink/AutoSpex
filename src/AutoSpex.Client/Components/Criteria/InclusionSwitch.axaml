@@ -1,0 +1,58 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="using:AutoSpex.Client.Components"
+                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine">
+
+    <Design.PreviewWith>
+        <components:InclusionSwitch />
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type components:InclusionSwitch}" TargetType="components:InclusionSwitch">
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderBrush" Value="{a:ThemeResource ButtonBorderBrushOutline}" />
+        <Setter Property="CornerRadius" Value="{a:ThemeResource ButtonCornerRadius}" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border x:Name="border"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
+                    <StackPanel Orientation="Horizontal">
+                        <Button
+                            x:Name="AllButton" Content="All"
+                            BorderThickness="0" CornerRadius="4 0 0 4" Padding="5" Width="36"
+                            Background="Transparent"
+                            FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                            Theme="{a:ControlTheme ToggleButtonSoft}"
+                            Classes.accent="{Binding Inclusion, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:Inclusion.All}}"
+                            Command="{Binding SetInclusionCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                            CommandParameter="{x:Static engine:Inclusion.All}"
+                            />
+
+                        <Border BorderThickness="1 0 0 0"
+                                BorderBrush="{TemplateBinding BorderBrush}" />
+
+                        <Button
+                            x:Name="AnyButton" Content="Any"
+                            BorderThickness="0" CornerRadius="0 4 4 0" Padding="5" Width="36"
+                            Background="Transparent"
+                            FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                            Theme="{a:ControlTheme ToggleButtonSoft}"
+                            Classes.accent="{Binding Inclusion, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:Inclusion.Any}}"
+                            Command="{Binding SetInclusionCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                            CommandParameter="{x:Static engine:Inclusion.Any}" />
+                    </StackPanel>
+                </Border>
+
+            </ControlTemplate>
+        </Setter>
+        
+        <Style Selector="^ /template/ Button">
+            <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+        </Style>
+    </ControlTheme>
+
+
+</ResourceDictionary>

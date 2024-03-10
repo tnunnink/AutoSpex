@@ -4,7 +4,7 @@
                     xmlns:components="using:AutoSpex.Client.Components"
                     xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
-                    xmlns:ap="clr-namespace:AutoSpex.Client.Resources.AttachedProperties">
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
     <Design.PreviewWith>
         <components:ProjectList Height="300" Width="400" Margin="20"
                                 ProjectSource="{x:Static components:DesignData.Projects}" />
@@ -42,7 +42,7 @@
                                             Margin="5 0 0 0">
                                     <Button x:Name="PART_CreateButton"
                                             Command="{TemplateBinding CreateCommand}"
-                                            ap:ButtonIcon.Theme="{StaticResource IconAdd}"
+                                            properties:ButtonIcon.Theme="{StaticResource IconAdd}"
                                             Theme="{StaticResource IconButton}"
                                             Classes="accent"
                                             VerticalAlignment="Center"
@@ -50,7 +50,7 @@
                                             ToolTip.Tip="Create new project" />
                                     <Button x:Name="PART_OpenButton"
                                             Command="{TemplateBinding OpenCommand}"
-                                            ap:ButtonIcon.Theme="{StaticResource IconFolderOutlinedOpen}"
+                                            properties:ButtonIcon.Theme="{StaticResource IconFolderOutlinedOpen}"
                                             Theme="{StaticResource IconButton}"
                                             Padding="7"
                                             VerticalAlignment="Center"

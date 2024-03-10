@@ -2,8 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:components="using:AutoSpex.Client.Components"
-                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
-                    xmlns:shared="clr-namespace:AutoSpex.Client.Shared">
+                    xmlns:shared="clr-namespace:AutoSpex.Client.Shared"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
 
     <Design.PreviewWith>
         <components:DetailsContainer Height="600" Width="600"
@@ -45,24 +45,25 @@
                             <StackPanel Orientation="Horizontal"
                                         Spacing="3"
                                         Margin="5 0">
-                                <controls:IconButton
-                                    Icon="{StaticResource IconChevronDown}"
-                                    Padding="8 9 8 8">
-                                    <controls:IconButton.Flyout>
+                                <Button Theme="{StaticResource IconButton}"
+                                        properties:ButtonIcon.Theme="{StaticResource IconChevronDown}"
+                                        Padding="8 9 8 8">
+                                    <Button.Flyout>
                                         <Flyout Placement="BottomEdgeAlignedRight"
                                                 VerticalOffset="3" HorizontalOffset="5">
                                             <components:DetailsOpenTabs OpenTabsSource="{TemplateBinding ItemsSource}"
                                                                         CloseTabCommand="{Binding $parent[components:DetailsContainer].CloseTabCommand}" />
                                         </Flyout>
-                                    </controls:IconButton.Flyout>
-                                </controls:IconButton>
-                                <controls:IconButton
-                                    Icon="{StaticResource IconAdd}"
-                                    Classes="accent"
-                                    Command="{TemplateBinding AddCommand}" />
-                                <controls:IconButton
-                                    Icon="{StaticResource IconDotsVertical}">
-                                    <controls:IconButton.Flyout>
+                                    </Button.Flyout>
+                                </Button>
+                                <Button Theme="{StaticResource IconButton}"
+                                        properties:ButtonIcon.Theme="{StaticResource IconAdd}"
+                                        Classes="accent"
+                                        Command="{TemplateBinding AddCommand}" />
+                                <Button
+                                    Theme="{StaticResource IconButton}"
+                                    properties:ButtonIcon.Theme="{StaticResource IconDotsVertical}">
+                                    <Button.Flyout>
                                         <MenuFlyout Placement="BottomEdgeAlignedRight">
                                             <MenuFlyout.ItemContainerTheme>
                                                 <ControlTheme TargetType="MenuItem"
@@ -80,24 +81,32 @@
                                                       InputGesture="Alt+Shift+W"
                                                       Command="{Binding $parent[components:DetailsContainer].ForceCloseAllTabsCommand}" />
                                         </MenuFlyout>
-                                    </controls:IconButton.Flyout>
-                                </controls:IconButton>
+                                    </Button.Flyout>
+                                </Button>
                             </StackPanel>
                         </Border>
                     </Grid>
 
-                    <Border
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding CornerRadius}">
-                        <ContentPresenter
-                            x:Name="PART_SelectedContentHost"
-                            Margin="{TemplateBinding Padding}"
-                            Content="{TemplateBinding SelectedContent}"
-                            ContentTemplate="{TemplateBinding SelectedContentTemplate}"
-                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}">
+                        <Panel>
+                            <ContentPresenter
+                                x:Name="PART_SelectedContentHost"
+                                IsVisible="{Binding SelectedContent, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                Margin="{TemplateBinding Padding}"
+                                Content="{TemplateBinding SelectedContent}"
+                                ContentTemplate="{TemplateBinding SelectedContentTemplate}"
+                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            <components:DetailsDefaultView
+                                IsVisible="{Binding SelectedContent, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ObjectConverters.IsNull}}"
+                                AddCollectionCommand="{TemplateBinding AddCollectionCommand, Mode=TwoWay}"
+                                AddSpecCommand="{TemplateBinding AddSpecCommand, Mode=TwoWay}"
+                                AddSourceCommand="{TemplateBinding AddSourceCommand, Mode=TwoWay}"
+                                AddRunnerCommand="{TemplateBinding AddRunnerCommand, Mode=TwoWay}"/>
+                        </Panel>
                     </Border>
                 </DockPanel>
             </ControlTemplate>

@@ -4,7 +4,7 @@
         xmlns:client="clr-namespace:AutoSpex.Client"
         x:Class="AutoSpex.Client.Shell"
         x:DataType="client:Shell"
-        Width="1200" Height="800"
+        Width="1400" Height="800"
         WindowState="Normal"
         WindowStartupLocation="CenterScreen"
         ExtendClientAreaToDecorationsHint="True"

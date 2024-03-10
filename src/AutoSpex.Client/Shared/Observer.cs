@@ -1,50 +1,110 @@
 ﻿using System;
-using AutoSpex.Client.Services;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using FluentResults;
+using CommunityToolkit.Mvvm.Messaging;
 
 namespace AutoSpex.Client.Shared;
 
 /// <summary>
 /// <para>
 /// A wrapper for our engine models types so that we can expose and decorate the objects with UI related functionality.
-/// This class implements <see cref="ObservableValidator"/> which gives it the notification needed to sync the UI, as well
+/// This class implements <see cref="TrackableViewModel"/> which gives it the notification needed to sync the UI, as well
 /// as the ability to use property validation for inputs.
 /// </para>
-/// <para>
-/// This class also offers the application <see cref="Messenger"/> for sending messages to parent pages in a loosely
-/// coupled fashion. It also offers a simple change tracking implementation which we can use to determine if a model
-/// has been updated and requires a save changes to be sent.
-/// </para>
 /// </summary>
-/// <param name="model">The model instance to wrap.</param>
 /// <typeparam name="TModel">The model type to wrap.</typeparam>
-public abstract partial class Observer<TModel>(TModel model) : TrackableViewModel
+public abstract partial class Observer<TModel> : TrackableViewModel, IEquatable<Observer<TModel>>
 {
+    /// <summary>
+    /// Creates a new <see cref="Observer{TModel}"/> with the provided model object.
+    /// </summary>
+    /// <param name="model">The model instance to wrap.</param>
+    /// <typeparam name="TModel">The model type to wrap.</typeparam>
+    protected Observer(TModel model)
+    {
+        Model = model ?? throw new ArgumentNullException(nameof(model));
+        IsActive = true;
+    }
+
     /// <summary>
     /// The underlying model object that is being wrapped by the observer.
     /// </summary>
-    public TModel Model { get; } = model ?? throw new ArgumentNullException(nameof(model));
+    public TModel Model { get; }
+
+    /// <summary>
+    /// A <see cref="Guid"/> that uniquely identifies this observer. This should be the same for each instance wrapping
+    /// the same underlying model. By default this just creates a new <see cref="Guid"/> but deriving classes will
+    /// implement to point to the correct model id. 
+    /// </summary>
+    public virtual Guid Id { get; } = Guid.NewGuid();
 
     /// <summary>
     /// A command to issue deletion of this <see cref="Observer{TModel}"/> object from the database.
     /// </summary>
-    /// <returns>The <see cref="Result{TValue}"/> of the deletion command.</returns>
-    /// <remarks>The default is no implementation. Deriving observers can implement as needed.</remarks>
+    /// <returns>The <see cref="Task"/> representing the async function to perform.</returns>
+    /// <remarks>
+    /// Deriving classes are also expected to send the <see cref="Deleted"/> message to notify other observers
+    /// or pages that the object has been deleted so they can respond accordingly.
+    /// </remarks>
     [RelayCommand]
-    protected virtual Task Delete() => Task.CompletedTask;
+    // ReSharper disable once UnusedMemberInSuper.Global the command is though so don't remove.
+    protected virtual Task Delete() => Task.FromResult(Messenger.Send(new Deleted(this)));
+
+    /// <summary>
+    /// A command to perform a rename of the <see cref="Observer{TModel}"/> object in the database. Not all observers
+    /// may have a name property and that is fine, but this code is more to eliminate recreating commands and event
+    /// messages for every observer that supports this functionality.
+    /// </summary>
+    /// <param name="name">The new name to update the observer with.</param>
+    /// <returns>The <see cref="Task"/> representing the async function to perform.</returns>
+    /// <remarks>
+    /// Deriving classes are also expected to send the <see cref="Renamed"/> message to notify other observers
+    /// or pages that the object has been renamed so they can respond accordingly. Also note this command expects the new
+    /// name as the parameter to the command so it should be sent from the UI or when the command is invoked.
+    /// </remarks>
+    [RelayCommand]
+    protected virtual Task Rename(string? name) => Task.FromResult(Messenger.Send(new Renamed(this)));
+
+    /// <summary>
+    /// A command to duplicate the <see cref="Observer{TModel}"/> object in the database and UI. The default
+    /// implementation does nothing and not all observers may need this but it will be supported by more than one so
+    /// this is to consolidate the code. 
+    /// </summary>
+    /// <returns>The <see cref="Task"/> representing the async function to perform.</returns>
+    [RelayCommand]
+    protected virtual Task Duplicate() => Task.CompletedTask;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    [RelayCommand]
+    protected virtual Task Export() => Task.CompletedTask;
 
     /// <inheritdoc />
-    public override async Task Navigate()
+    protected override async Task Navigate()
     {
-        //todo I think we need to get some navigation action from the settings for the user so they can decide by default what this does (open or replace)
         await Navigator.Navigate(this);
     }
-    
-    [RelayCommand]
-    private async Task OpenInTab()
+
+    public bool Equals(Observer<TModel>? other)
     {
-        await Navigator.Navigate(this, NavigationAction.Open);
+        if (ReferenceEquals(this, other)) return true;
+        return other is not null && other.Id == Id;
     }
+
+    public override bool Equals(object? obj)
+    {
+        if (ReferenceEquals(this, obj)) return true;
+        return obj is Observer<TModel> other && other.Id == Id;
+    }
+
+    public override int GetHashCode() => Id.GetHashCode();
+    public static bool operator ==(Observer<TModel> first, Observer<TModel> second) => Equals(first, second);
+    public static bool operator !=(Observer<TModel> first, Observer<TModel> second) => !Equals(first, second);
+    
+    public record Created(Observer<TModel> Observer);
+
+    public record Deleted(Observer<TModel> Observer);
+
+    public record Renamed(Observer<TModel> Observer);
 }

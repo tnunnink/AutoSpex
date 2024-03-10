@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoSpex.Client.Observers;
@@ -8,7 +7,6 @@ using AutoSpex.Client.Pages;
 using AutoSpex.Client.Pages.Home;
 using AutoSpex.Client.Pages.Projects;
 using AutoSpex.Client.Shared;
-using AutoSpex.Engine;
 using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
 
@@ -88,7 +86,7 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
     /// <see cref="NavigationRequest"/> message and send that out. The owning pages responsible for displaying this
     /// page should receive and render the page. Once rendered this service will await the Activation/Loading of the
     /// page to initialize it's state. Finally it will clean up inactive pages from memory and then return the active
-    /// page to the caller of the navigation request. 
+    /// page to the caller of the navigation request.
     /// </summary>
     private async Task<TPage> OpenPage<TPage>(Func<TPage> factory, NavigationAction action = NavigationAction.Replace)
         where TPage : PageViewModel
@@ -153,23 +151,10 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
         return observer switch
         {
             ProjectObserver project => () => new ProjectPageModel(project),
-            NodeObserver node => NodePageResolver(node),
-            SourceObserver source => () => new SourcePageModel(source),
-            _ => throw new NotSupportedException($"THe observer type {observer.GetType()} does not support navigation")
+            NodeObserver node => () => new NodePageModel(node),
+            SourceObserver source => () => new SourcePageModel(source.Id),
+            _ => throw new NotSupportedException($"The observer type {observer.GetType()} does not support navigation")
         };
-    }
-
-    private static Func<PageViewModel> NodePageResolver(NodeObserver node)
-    {
-        Func<PageViewModel>? creator = null;
-
-        node.NodeType
-            .When(NodeType.Collection).Then(() => creator = () => new CollectionPageModel(node))
-            .When(NodeType.Folder).Then(() => creator = () => new FolderPageModel(node))
-            .When(NodeType.Spec).Then(() => creator = () => new SpecPageModel(node))
-            .Default(() => throw new NotSupportedException($"NodeType {node.NodeType} a navigable page type."));
-
-        return creator ?? throw new UnreachableException();
     }
 }
 
@@ -179,7 +164,7 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
 /// </summary>
 /// <param name="page">The page to navigate.</param>
 /// <param name="action">The navigation action to perform.</param>
-public class NavigationRequest(PageViewModel page, NavigationAction action = NavigationAction.Replace)
+public class NavigationRequest(PageViewModel page, NavigationAction action = NavigationAction.Open)
 {
     /// <summary>
     /// The instance of the <see cref="PageViewModel"/> to navigate for this request.
@@ -192,19 +177,12 @@ public class NavigationRequest(PageViewModel page, NavigationAction action = Nav
     public NavigationAction Action { get; } = action;
 }
 
-/*public class NavigationRequest<TPage>(TPage page, NavigationAction action = NavigationAction.Replace)
-    where TPage : PageViewModel
-{
-    public TPage Page { get; } = page ?? throw new ArgumentNullException(nameof(page));
-    public NavigationAction Action { get; } = action;
-}*/
-
 /// <summary>
 /// An enumeration of navigation actions to perform.
 /// </summary>
 public enum NavigationAction
 {
-    Replace,
     Open,
-    Close
+    Close,
+    Replace
 }

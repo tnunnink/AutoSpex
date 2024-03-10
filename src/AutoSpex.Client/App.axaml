@@ -18,14 +18,14 @@
     </Application.Resources>
     
     <Application.Styles>
+        <FluentTheme />
         <a:ModernTheme Includes="All">
             <a:ModernTheme.Definition>
                 <resources:SpexThemeDefinition />
             </a:ModernTheme.Definition>
         </a:ModernTheme>
-        <StyleInclude Source="Resources/Styles/Global.axaml" />
-        <StyleInclude Source="Resources/Styles/ButtonStyles.axaml" />
-        <StyleInclude Source="Resources/Styles/TextBoxStyles.axaml" />
+        <StyleInclude Source="avares://AvaloniaEdit/Themes/Fluent/AvaloniaEdit.xaml" />
+        <StyleInclude Source="Resources/Styles.axaml" />
     </Application.Styles>
     
    

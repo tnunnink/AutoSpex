@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Windows.Input;
 using AutoSpex.Client.Shared;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Platform;
+using CommunityToolkit.Mvvm.Input;
 
 namespace AutoSpex.Client.Resources.Controls;
 

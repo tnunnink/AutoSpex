@@ -4,7 +4,8 @@
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
                     xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:system="clr-namespace:System;assembly=System.Runtime"
-                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine">
+                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
 
     <Design.PreviewWith>
         <Border Padding="40">
@@ -51,22 +52,29 @@
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.DataTemplates>
-                                <components:ArgumentTemplates>
-                                    <DataTemplate x:Key="{x:Type system:String}"
+                                <components:ArgumentEntryTemplates>
+                                    <DataTemplate x:Key="Default"
                                                   x:DataType="observers:ArgumentObserver">
                                         <StackPanel Orientation="Horizontal">
-                                            <components:ArgumentEntry Value="{Binding Value}"
-                                                                      SuggestionSource="{Binding Suggestions}" />
+                                            <components:ArgumentEntry Argument="{Binding }" />
                                             <Border BorderThickness="1 0 0 0"
                                                     BorderBrush="{actipro:ThemeResource Container1BorderBrush}"
                                                     Margin="5" />
                                         </StackPanel>
                                     </DataTemplate>
-                                    <DataTemplate x:Key="{x:Type engine:Criterion}"
+                                    <DataTemplate x:Key="Criterion"
                                                   x:DataType="observers:ArgumentObserver">
                                         <components:CriterionEntry Criterion="{Binding Value}" />
                                     </DataTemplate>
-                                </components:ArgumentTemplates>
+                                    <DataTemplate x:Key="In"
+                                                  x:DataType="observers:ArgumentObserver">
+                                        <StackPanel Orientation="Horizontal">
+                                            <components:ArgumentEntry Argument="{Binding }" />
+                                            <Button Theme="{StaticResource IconButton}"
+                                                    properties:ButtonIcon.Theme="{StaticResource IconAdd}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </components:ArgumentEntryTemplates>
                             </ItemsControl.DataTemplates>
                         </ItemsControl>
                     </StackPanel>

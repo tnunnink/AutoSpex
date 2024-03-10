@@ -1,0 +1,153 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="using:AutoSpex.Client.Components">
+
+    <Design.PreviewWith>
+        <Border Padding="20" MaxWidth="300">
+            <StackPanel Spacing="20">
+                <components:VariableNameEntry
+                    Watermark="Watermark" />
+                <components:VariableNameEntry
+                    Text="This is some value" />
+                <components:VariableNameEntry
+                    Text="Really long value does this expand the border of the control?" />
+            </StackPanel>
+        </Border>
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type components:VariableNameEntry}" TargetType="components:VariableNameEntry">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="Foreground" Value="{a:ThemeResource EditForegroundBrush}" />
+        <Setter Property="CaretBrush" Value="{a:ThemeResource EditForegroundBrush}" />
+        <Setter Property="SelectionBrush" Value="{a:ThemeResource EditSelectionBackgroundBrush}" />
+        <Setter Property="SelectionForegroundBrush" Value="{a:ThemeResource EditSelectionForegroundBrush}" />
+        <Setter Property="BorderThickness" Value="{a:ThemeResource ButtonBorderThickness}" />
+        <Setter Property="CornerRadius" Value="{a:ThemeResource ButtonCornerRadius}" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Padding" Value="{a:ThemeResource ButtonPadding}" />
+        <Setter Property="FontFamily" Value="{a:ThemeResource CodeFontFamily}" />
+        <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeSmall}" />
+
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Panel>
+                    <Border
+                        x:Name="border"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        Padding="{TemplateBinding Padding}"
+                        TemplatedControl.IsTemplateFocusTarget="True">
+                        <a:MeasureAdjuster VerticalRoundMode="CeilingToEven">
+                            <Panel Margin="0 1 0 0"> <!--I don't know why text looks 1 pixel offset to me but it does-->
+                                <TextBlock
+                                    x:Name="Watermark"
+                                    FontStyle="Italic"
+                                    Opacity="{DynamicResource {a:ThemeResourceKey EditWatermarkOpacity}}"
+                                    Text="{TemplateBinding Watermark}"
+                                    TextAlignment="{TemplateBinding TextAlignment}"
+                                    TextWrapping="{TemplateBinding TextWrapping}"
+                                    IsVisible="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static StringConverters.IsNullOrEmpty}}">
+                                    <TextBlock.Transitions>
+                                        <Transitions>
+                                            <DoubleTransition Property="Opacity"
+                                                              Duration="{a:AnimationSetting SubtleAnimationDuration}" />
+                                        </Transitions>
+                                    </TextBlock.Transitions>
+                                </TextBlock>
+
+                                <TextBlock
+                                    x:Name="CurrentValue"
+                                    Text="{TemplateBinding Text}"
+                                    TextAlignment="{TemplateBinding TextAlignment}"
+                                    TextWrapping="{TemplateBinding TextWrapping}"
+                                    TextTrimming="CharacterEllipsis">
+                                    <TextBlock.IsVisible>
+                                        <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                            <Binding Path="Text"
+                                                     RelativeSource="{RelativeSource TemplatedParent}"
+                                                     Converter="{x:Static StringConverters.IsNotNullOrEmpty}" />
+                                            <Binding Path="!IsFocused"
+                                                     RelativeSource="{RelativeSource TemplatedParent}" />
+                                        </MultiBinding>
+                                    </TextBlock.IsVisible>
+                                </TextBlock>
+
+                                <TextPresenter
+                                    x:Name="PART_TextPresenter"
+                                    CaretBrush="{TemplateBinding CaretBrush}"
+                                    CaretIndex="{TemplateBinding CaretIndex}"
+                                    LineHeight="{TemplateBinding LineHeight}"
+                                    LetterSpacing="{TemplateBinding LetterSpacing}"
+                                    PasswordChar="{TemplateBinding PasswordChar}"
+                                    RevealPassword="{TemplateBinding RevealPassword}"
+                                    SelectionBrush="{TemplateBinding SelectionBrush}"
+                                    SelectionEnd="{TemplateBinding SelectionEnd}"
+                                    SelectionForegroundBrush="{TemplateBinding SelectionForegroundBrush}"
+                                    SelectionStart="{TemplateBinding SelectionStart}"
+                                    Text="{TemplateBinding Text, Mode=TwoWay}"
+                                    TextAlignment="{TemplateBinding TextAlignment}"
+                                    TextWrapping="{TemplateBinding TextWrapping}"
+                                    IsVisible="{Binding IsFocused, RelativeSource={RelativeSource TemplatedParent}}" />
+                            </Panel>
+                        </a:MeasureAdjuster>
+                    </Border>
+
+                    <Border x:Name="focus"
+                            BorderThickness="{a:ThemeResource FocusAdornerBorderThickness}"
+                            BorderBrush="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            Opacity="0">
+                        <Border.Transitions>
+                            <Transitions>
+                                <DoubleTransition Property="Opacity" Duration="0:0:0.1" />
+                            </Transitions>
+                        </Border.Transitions>
+                    </Border>
+                </Panel>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^[IsReadOnly=True] /template/ Border#border">
+            <Setter Property="TextElement.Foreground" Value="{a:ThemeResource EditForegroundBrushReadOnly}" />
+        </Style>
+        <Style Selector="^:disabled /template/ Border#border">
+            <Setter Property="Background" Value="{a:ThemeResource EditBackgroundBrushSoftDisabled}" />
+            <Setter Property="BorderBrush" Value="{a:ThemeResource EditBackgroundBrushSoftDisabled}" />
+            <Setter Property="TextElement.Foreground" Value="{a:ThemeResource EditForegroundBrushDisabled}" />
+        </Style>
+        <Style Selector="^:pointerover /template/ Border#border">
+            <Setter Property="Background" Value="{a:ThemeResource EditBackgroundBrushSoft}" />
+            <Setter Property="BorderBrush" Value="{a:ThemeResource EditBackgroundBrushSoft}" />
+        </Style>
+        <Style Selector="^:focus">
+            <Style Selector="^ /template/ Border#border">
+                <Setter Property="Background" Value="{a:ThemeResource EditBackgroundBrush}" />
+            </Style>
+            <Style Selector="^ /template/ Border#focus">
+                <Setter Property="Opacity" Value="1" />
+            </Style>
+        </Style>
+
+        <Style Selector="^.error">
+            <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftDanger}" />
+            <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBackgroundBrushSoftDanger}" />
+            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftDanger}" />
+
+            <Style Selector="^[IsReadOnly=True] /template/ Border#border">
+                <Setter Property="TextElement.Foreground"
+                        Value="{a:ThemeResource ControlForegroundBrushSoftDangerReadOnly}" />
+            </Style>
+            <Style Selector="^:disabled /template/ Border#border">
+                <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftDangerDisabled}" />
+                <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBackgroundBrushSoftDangerDisabled}" />
+                <Setter Property="TextElement.Foreground"
+                        Value="{a:ThemeResource ControlForegroundBrushSoftDangerDisabled}" />
+            </Style>
+        </Style>
+    </ControlTheme>
+</ResourceDictionary>

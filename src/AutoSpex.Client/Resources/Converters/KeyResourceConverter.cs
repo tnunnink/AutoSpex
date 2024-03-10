@@ -29,7 +29,7 @@ public class KeyResourceConverter : IValueConverter
             : AvaloniaProperty.UnsetValue;
     }
 
-    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         throw new NotSupportedException($"{GetType().Name} does not support ConvertBack.");
     }

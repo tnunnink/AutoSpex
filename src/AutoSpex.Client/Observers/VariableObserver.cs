@@ -2,24 +2,34 @@
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging.Messages;
 
 namespace AutoSpex.Client.Observers;
 
-public partial class VariableObserver(Variable model) : Observer<Variable>(model)
+public partial class VariableObserver : Observer<Variable>
 {
-    private const char VariableStart = '{';
-    private const char VariableEnd = '}';
+    public VariableObserver(Variable model) : base(model)
+    {
+        Track(Name);
+        Track(Value);
+    }
 
-    public Guid Id { get; } = Guid.NewGuid();
+    public override Guid Id => Model.VariableId;
+    public NodeObserver? Node => RequestNode();
+
+    [ObservableProperty] private bool _isChecked;
+
+    [ObservableProperty] private bool _isOverridden;
 
     public string Name
     {
         get => Model.Name;
         set
         {
-            SetProperty(Model.Name, value, Model, (m, v) => m.Name = v);
-            OnPropertyChanged(nameof(Formatted));
+            var set = SetProperty(Model.Name, value, Model, (m, v) => m.Name = v);
+            if (!set) return;
+            OnPropertyChanged(Formatted);
         }
     }
 
@@ -29,24 +39,33 @@ public partial class VariableObserver(Variable model) : Observer<Variable>(model
         set => SetProperty(Model.Value, value, Model, (m, v) => m.Value = v);
     }
 
-    public string? Description
+    public string? Override
     {
-        get => Model.Description;
-        set => SetProperty(Model.Description, value, Model, (m, v) => m.Description = v);
+        get => Model.Override;
+        set => SetProperty(Model.Override, value, Model, (m, v) => m.Override = v);
     }
 
-    [ObservableProperty] private string? _override;
-    public string Formatted => $"{VariableStart}{Name}{VariableEnd}";
+    public string Formatted => Model.Formatted;
 
-    [RelayCommand]
-    private void Remove()
+    public override string ToString() => Model.ToString();
+
+    partial void OnIsCheckedChanged(bool value)
     {
-        //todo send message to parent
+        Messenger.Send(new Checked(this));
     }
 
-    public override string ToString() => Name;
+    private NodeObserver? RequestNode()
+    {
+        var request = new NodeRequest(Id);
+        Messenger.Send(request);
+        if (!request.HasReceivedResponse) return default;
+        return request.Response;
+    }
 
-    public class RemoveMessage(VariableObserver variable);
-    
-    public class RenameRequest(VariableObserver variable);
+    public record Checked(VariableObserver Variable);
+
+    public class NodeRequest(Guid variableId) : RequestMessage<NodeObserver>
+    {
+        public Guid VariableId { get; } = variableId;
+    }
 }

@@ -1,0 +1,65 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:components="clr-namespace:AutoSpex.Client.Components"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             x:Class="AutoSpex.Client.Pages.SourceInfoPage"
+             x:DataType="pages:SourceInfoPageModel">
+
+    <Design.Width>1000</Design.Width>
+    <Design.Height>800</Design.Height>
+
+    <Border Padding="30">
+        <Grid ColumnDefinitions="*,10*,*">
+            <StackPanel Grid.Column="1" Spacing="10">
+                <StackPanel Spacing="10">
+
+                    <Border BorderThickness="1"
+                            CornerRadius="5"
+                            BorderBrush="{a:ThemeResource Container2BorderBrush}">
+                        <StackPanel>
+                            <TextBlock Text="Source Info"
+                                       Classes="theme-text-heading size-sm"
+                                       Margin="10" />
+                            <Border Padding="10"
+                                    BorderThickness="0 1 0 0"
+                                    BorderBrush="{a:ThemeResource Container2BorderBrush}">
+                                <StackPanel Spacing="10">
+                                    <DockPanel>
+                                        <TextBlock DockPanel.Dock="Left"
+                                                   Text="Target Type"
+                                                   Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                                        <TextBlock Text="{Binding Source.TargetType}"
+                                                   HorizontalAlignment="Right" />
+                                    </DockPanel>
+                                    <DockPanel>
+                                        <TextBlock DockPanel.Dock="Left"
+                                                   Text="Target Name"
+                                                   Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                                        <TextBlock Text="{Binding Source.TargetName}"
+                                                   HorizontalAlignment="Right" />
+                                    </DockPanel>
+                                    <DockPanel>
+                                        <TextBlock DockPanel.Dock="Left"
+                                                   Text="Exported On"
+                                                   Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                                        <TextBlock Text="{Binding Source.ExportedOn}"
+                                                   HorizontalAlignment="Right" />
+                                    </DockPanel>
+                                    <DockPanel>
+                                        <TextBlock DockPanel.Dock="Left"
+                                                   Text="Exported By"
+                                                   Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                                        <TextBlock Text="{Binding Source.ExportedBy}"
+                                                   HorizontalAlignment="Right" />
+                                    </DockPanel>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

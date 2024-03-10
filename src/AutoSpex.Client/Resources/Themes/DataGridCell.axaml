@@ -1,0 +1,60 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui">
+
+
+    <!-- DataGridCellTextBlockTheme (required string key) -->
+    <ControlTheme x:Key="DataGridCellTextBlockTheme" TargetType="TextBlock">
+        <Setter Property="Padding" Value="{actipro:ThemeResource EditPadding}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </ControlTheme>
+
+    <!-- DataGridCellTextBoxTheme (required string key) -->
+    <ControlTheme x:Key="DataGridCellTextBoxTheme" TargetType="TextBox"
+                  BasedOn="{actipro:ControlTheme TextBoxEmbeddedOutline}">
+        <Style Selector="^ /template/ DataValidationErrors">
+            <Setter Property="Theme" Value="{actipro:ControlTheme ToolTipDataValidationErrors}" />
+        </Style>
+    </ControlTheme>
+
+    <!-- DataGridCell -->
+    <ControlTheme x:Key="DataGridCellSoft" TargetType="DataGridCell">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border
+                    x:Name="border"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="{TemplateBinding CornerRadius}">
+                    <actipro:MeasureAdjuster HorizontalRoundMode="Ceiling" VerticalRoundMode="CeilingToEven">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <ContentPresenter
+                                Margin="{TemplateBinding Padding}"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            <Rectangle x:Name="PART_RightGridLine" Grid.Column="1" Width="1" />
+                        </Grid>
+                    </actipro:MeasureAdjuster>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^:pointerover /template/ Border#border">
+            <Setter Property="Background" Value="{actipro:ThemeResource ControlBackgroundBrushSoftPointerOver}" />
+        </Style>
+        <Style Selector="^:pressed /template/ Border#border">
+            <Setter Property="Background" Value="{actipro:ThemeResource ControlBackgroundBrushSoftPressed}" />
+        </Style>
+
+        <Style Selector="^:selected">
+            <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushOutlineAccent}" />
+            <Style Selector="^ /template/ Border#border">
+                <Setter Property="Background" Value="{actipro:ThemeResource ControlBackgroundBrushSoftPointerOver}" />
+            </Style>
+        </Style>
+    </ControlTheme>
+</ResourceDictionary>

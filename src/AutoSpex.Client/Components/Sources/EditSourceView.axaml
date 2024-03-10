@@ -1,13 +1,16 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
-                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers">
 
     <Design.PreviewWith>
-        <components:EditSourceView Padding="20" Source="{x:Static components:DesignData.Source}" />
+        <components:EditSourceView Padding="20" DataContext="{x:Static components:DesignData.Source}" />
     </Design.PreviewWith>
 
-    <ControlTheme x:Key="{x:Type components:EditSourceView}" TargetType="components:EditSourceView">
+    <ControlTheme x:Key="{x:Type components:EditSourceView}" TargetType="components:EditSourceView"
+                  x:DataType="observers:SourceObserver">
+
         <Setter Property="Height" Value="400" />
         <Setter Property="Width" Value="500" />
         <Setter Property="Template">
@@ -19,7 +22,7 @@
                         Margin="{TemplateBinding Margin}">
                     <StackPanel Spacing="10">
                         <TextBox
-                            Text="{Binding Source.Name, RelativeSource={RelativeSource TemplatedParent}, FallbackValue={x:Null}}"
+                            Text="{Binding Name}"
                             Theme="{StaticResource TextBoxOutlineHighlight}"
                             BorderBrush="{actipro:ThemeResource Container2BorderBrush}"
                             VerticalContentAlignment="Center"
@@ -27,7 +30,7 @@
                             Watermark="Source name" />
 
                         <TextBox
-                            Text="{Binding Source.Description, RelativeSource={RelativeSource TemplatedParent}, FallbackValue={x:Null}}"
+                            Text="{Binding Description}"
                             Theme="{StaticResource TextBoxOutlineHighlight}"
                             BorderBrush="{actipro:ThemeResource Container2BorderBrush}"
                             MinHeight="100"
@@ -45,7 +48,7 @@
                                     <TextBlock Grid.Column="2"
                                                FontSize="{actipro:ThemeResource DefaultFontSizeSmall}"
                                                Foreground="{actipro:ThemeResource DefaultForegroundBrushSecondary}"
-                                               Text="{Binding Source.TargetType, RelativeSource={RelativeSource TemplatedParent}, FallbackValue={x:Null}}" />
+                                               Text="{Binding TargetType}" />
                                 </Grid>
                                 <Grid ColumnDefinitions="Auto,*,Auto">
                                     <Label Content="Target Name"
@@ -53,7 +56,7 @@
                                     <TextBlock Grid.Column="2"
                                                FontSize="{actipro:ThemeResource DefaultFontSizeSmall}"
                                                Foreground="{actipro:ThemeResource DefaultForegroundBrushSecondary}"
-                                               Text="{Binding Source.TargetName, RelativeSource={RelativeSource TemplatedParent}, FallbackValue={x:Null}}" />
+                                               Text="{Binding TargetName}" />
                                 </Grid>
                                 <Grid ColumnDefinitions="Auto,*,Auto">
                                     <Label Content="Exported By"
@@ -61,7 +64,7 @@
                                     <TextBlock Grid.Column="2"
                                                FontSize="{actipro:ThemeResource DefaultFontSizeSmall}"
                                                Foreground="{actipro:ThemeResource DefaultForegroundBrushSecondary}"
-                                               Text="{Binding Source.ExportedBy, RelativeSource={RelativeSource TemplatedParent}, FallbackValue={x:Null}}" />
+                                               Text="{Binding ExportedBy}" />
                                 </Grid>
                                 <Grid ColumnDefinitions="Auto,*,Auto">
                                     <Label Content="Exported On"
@@ -69,24 +72,10 @@
                                     <TextBlock Grid.Column="2"
                                                FontSize="{actipro:ThemeResource DefaultFontSizeSmall}"
                                                Foreground="{actipro:ThemeResource DefaultForegroundBrushSecondary}"
-                                               Text="{Binding Source.ExportedOn, RelativeSource={RelativeSource TemplatedParent}, FallbackValue={x:Null}}" />
+                                               Text="{Binding ExportedOn}" />
                                 </Grid>
                             </StackPanel>
                         </Border>
-
-                        <StackPanel Orientation="Horizontal"
-                                    Spacing="10" Margin="0 20"
-                                    HorizontalAlignment="Right">
-                            <Button Content="Cancel"
-                                    Width="80"
-                                    Theme="{actipro:ControlTheme ButtonSoft}" />
-                            <Button Content="Add"
-                                    Command="{TemplateBinding AddCommand}"
-                                    CommandParameter="{Binding $parent[Window]}"
-                                    Width="80"
-                                    Theme="{actipro:ControlTheme ButtonSolid}"
-                                    Classes="accent" />
-                        </StackPanel>
                     </StackPanel>
                 </Border>
             </ControlTemplate>

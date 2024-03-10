@@ -1,0 +1,85 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="using:AutoSpex.Client.Components"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui">
+    <Design.PreviewWith>
+        <Grid>
+            <controls:ElementSelector Margin="100 10 400 500" IsEnabled="True" />
+        </Grid>
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type controls:ElementSelector}" TargetType="controls:ElementSelector">
+        <Setter Property="ButtonTheme" Value="{a:ControlTheme DropDownButtonOutline}" />
+        <Setter Property="BorderBrush" Value="{a:ThemeResource ButtonBorderBrushOutline}" />
+        <Setter Property="BorderThickness" Value="{a:ThemeResource ButtonBorderThickness}" />
+        <Setter Property="CornerRadius" Value="{a:ThemeResource ButtonCornerRadius}" />
+        <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeSmall}" />
+        <Setter Property="MinWidth" Value="60" />
+        <Setter Property="Height" Value="30" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <DropDownButton x:Name="DropDownButton"
+                                Theme="{a:ControlTheme DropDownButtonOutline}"
+                                Background="{TemplateBinding Background}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                CornerRadius="{TemplateBinding CornerRadius}"
+                                Content="{Binding Element.Name, RelativeSource={RelativeSource TemplatedParent}}">
+                    <DropDownButton.Styles>
+                        <Style Selector="DropDownButton /template/ ContentPresenter#glyph">
+                            <Setter Property="Padding" Value="0 1 0 0" />
+                        </Style>
+                        <Style Selector=":disabled /template/ Border#border">
+                            <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushOutline}" />
+                        </Style>
+                    </DropDownButton.Styles>
+                    <DropDownButton.Flyout>
+                        <Flyout Placement="BottomEdgeAlignedRight"
+                                HorizontalOffset="-8">
+                            <DockPanel Height="300" Width="300">
+                                <Border DockPanel.Dock="Top"
+                                        BorderThickness="0 0 0 1"
+                                        BorderBrush="{a:ThemeResource Container2BorderBrush}"
+                                        Padding="5">
+                                    <TextBox x:Name="FilterText"
+                                             Watermark="Filter elements"
+                                             BorderThickness="0">
+                                        <TextBox.InnerLeftContent>
+                                            <PathIcon Theme="{StaticResource IconSearch}"
+                                                      Height="20" Width="20" Padding="3"
+                                                      Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                                        </TextBox.InnerLeftContent>
+                                    </TextBox>
+                                </Border>
+
+                                <ListBox x:Name="ElementList"
+                                         ItemsSource="{Binding Elements, RelativeSource={RelativeSource TemplatedParent}}"
+                                         BorderThickness="0"
+                                         Background="Transparent"
+                                         Padding="5">
+                                    <ListBox.Styles>
+                                        <Style Selector="ListBoxItem">
+                                            <Setter Property="CornerRadius" Value="5" />
+                                            <Setter Property="Theme" Value="{StaticResource ListBoxItemSimple}" />
+                                        </Style>
+                                        <Style Selector="ScrollViewer">
+                                            <Setter Property="Theme" Value="{a:ControlTheme ScrollViewerOverlay}" />
+                                            <Setter Property="HorizontalScrollBarVisibility" Value="Auto" />
+                                        </Style>
+                                    </ListBox.Styles>
+                                </ListBox>
+                            </DockPanel>
+                        </Flyout>
+                    </DropDownButton.Flyout>
+                </DropDownButton>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^[IsDefaultElement=True] /template/ DropDownButton">
+            <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+        </Style>
+        <Style Selector="^[IsDefaultElement=False] /template/ DropDownButton">
+            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+        </Style>
+    </ControlTheme>
+</ResourceDictionary>

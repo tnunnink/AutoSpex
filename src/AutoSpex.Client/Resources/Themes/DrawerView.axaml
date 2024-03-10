@@ -76,8 +76,7 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <Panel x:Name="PART_DrawerRoot"
-                               Grid.Column="0">
+                        <Panel x:Name="PART_DrawerRoot" Grid.Column="0" ClipToBounds="True" ZIndex="100">
                             <ContentPresenter x:Name="PART_DrawerPresenter"
                                               Content="{TemplateBinding Drawer}"
                                               ContentTemplate="{TemplateBinding DrawerTemplate}" />
@@ -111,8 +110,7 @@
                                 MaxWidth="{Binding DrawerMaxLength, RelativeSource={RelativeSource TemplatedParent}}" />
                         </Grid.ColumnDefinitions>
 
-                        <Panel x:Name="PART_DrawerRoot"
-                               Grid.Column="2">
+                        <Panel x:Name="PART_DrawerRoot" Grid.Column="2" ClipToBounds="True" ZIndex="100">
                             <ContentPresenter x:Name="PART_DrawerPresenter"
                                               Content="{TemplateBinding Drawer}"
                                               ContentTemplate="{TemplateBinding DrawerTemplate}" />
@@ -146,8 +144,7 @@
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
-                        <Panel x:Name="PART_DrawerRoot"
-                               Grid.Row="0">
+                        <Panel x:Name="PART_DrawerRoot" Grid.Row="0" ClipToBounds="True" ZIndex="100">
                             <ContentPresenter x:Name="PART_DrawerPresenter"
                                               Content="{TemplateBinding Drawer}"
                                               ContentTemplate="{TemplateBinding DrawerTemplate}" />
@@ -181,8 +178,7 @@
                                 MaxHeight="{Binding DrawerMaxLength, RelativeSource={RelativeSource TemplatedParent}}" />
                         </Grid.RowDefinitions>
 
-                        <Panel x:Name="PART_DrawerRoot"
-                               Grid.Row="2">
+                        <Panel x:Name="PART_DrawerRoot" Grid.Row="2" ClipToBounds="True" ZIndex="100">
                             <ContentPresenter x:Name="PART_DrawerPresenter"
                                               Content="{TemplateBinding Drawer}"
                                               ContentTemplate="{TemplateBinding DrawerTemplate}" />

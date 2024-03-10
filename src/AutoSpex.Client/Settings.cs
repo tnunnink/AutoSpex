@@ -41,7 +41,7 @@ public sealed class Settings
         AddDefault(nameof(ShellHeight), 800);
         AddDefault(nameof(ShellWidth), 1400);
         AddDefault(nameof(ShellState), WindowState.Normal);
-        AddDefault(nameof(PromptSaveChanges), true);
+        AddDefault(nameof(AlwaysDiscardChanges), false);
     }
 
     public static Settings App => _settings ??= new Settings();
@@ -92,7 +92,7 @@ public sealed class Settings
         set => SetSetting(value);
     }
     
-    public bool PromptSaveChanges
+    public bool AlwaysDiscardChanges
     {
         get => GetSetting(bool.Parse);
         set => SetSetting(value);
