@@ -153,6 +153,7 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
             ProjectObserver project => () => new ProjectPageModel(project),
             NodeObserver node => () => new NodePageModel(node),
             SourceObserver source => () => new SourcePageModel(source.Id),
+            RunnerObserver runner => () => new RunnerPageModel(runner),
             _ => throw new NotSupportedException($"The observer type {observer.GetType()} does not support navigation")
         };
     }

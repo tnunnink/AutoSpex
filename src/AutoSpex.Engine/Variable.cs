@@ -22,7 +22,8 @@ public class Variable
 
     public Guid VariableId { get; } = Guid.NewGuid();
     public string Name { get; set; } = string.Empty;
-    public string Value { get; set; } = string.Empty;
+    public Type Type => Value?.GetType();
+    public string? Value { get; set; } = string.Empty;
     public string? Override { get; set; } = string.Empty;
     public string Formatted => $"{VariableStart}{Name}{VariableEnd}";
     public override string ToString() => Formatted;

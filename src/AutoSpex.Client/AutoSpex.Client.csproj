@@ -354,6 +354,8 @@
       <UpToDateCheckInput Remove="Components\Specs\Resources\NodeIcons.axaml" />
       <UpToDateCheckInput Remove="Components\Specs\Resources\SpecMenu.axaml" />
       <UpToDateCheckInput Remove="Resources\Styles\TextBoxStyles.axaml" />
+      <UpToDateCheckInput Remove="Pages\Runs\RunListPage.axaml" />
+      <UpToDateCheckInput Remove="Pages\Runs\RunPage.axaml" />
     </ItemGroup>
 
     <ItemGroup>

@@ -3,7 +3,6 @@ using System.Linq;
 using AutoSpex.Client.Observers;
 using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
-using AutoSpex.Engine;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -33,6 +32,13 @@ public partial class DetailsPageModel : PageViewModel, IRecipient<NavigationRequ
         if (source is null) return;
         await Navigator.Navigate(source);
     }
+    
+    [RelayCommand]
+    private async Task CreateRunner()
+    {
+        var runner = RunnerObserver.New;
+        await Navigator.Navigate(runner);
+    }
 
     public void Receive(NavigationRequest message)
     {
@@ -46,14 +52,13 @@ public partial class DetailsPageModel : PageViewModel, IRecipient<NavigationRequ
 
         if (SelectExistingIfOpen(details)) return;
 
-        OpenTab(details);
-        /*if (message.Action == NavigationAction.Open)
+        if (message.Action == NavigationAction.Replace)
         {
-
+            ShowOrReplace(details);
             return;
         }
-
-        ShowOrReplace(details);*/
+        
+        OpenTab(details);
     }
 
     private void OpenTab(DetailPageModel page)
@@ -61,24 +66,6 @@ public partial class DetailsPageModel : PageViewModel, IRecipient<NavigationRequ
         Pages.Add(page);
         Selected = page;
     }
-
-    /*private void ShowOrReplace(DetailPageModel page)
-    {
-        //Try to replace an existing page that has not been changed.
-        for (var i = 0; i < Pages.Count; i++)
-        {
-            if (Pages[i].IsChanged) continue;
-            var closable = Pages[i];
-            closable.IsActive = false;
-            Pages[i] = page;
-            Selected = page;
-            return;
-        }
-
-        //No pages are open, so add and focus.
-        Pages.Add(page);
-        Selected = page;
-    }*/
 
     private void CloseTab(DetailPageModel page)
     {
@@ -94,5 +81,23 @@ public partial class DetailsPageModel : PageViewModel, IRecipient<NavigationRequ
         if (existing is null) return false;
         Selected = existing;
         return true;
+    }
+
+    private void ShowOrReplace(DetailPageModel page)
+    {
+        //Try to replace an existing page that has not been changed.
+        for (var i = 0; i < Pages.Count; i++)
+        {
+            if (Pages[i].IsChanged) continue;
+            var closable = Pages[i];
+            closable.IsActive = false;
+            Pages[i] = page;
+            Selected = page;
+            return;
+        }
+
+        //No pages are open, so add and focus.
+        Pages.Add(page);
+        Selected = page;
     }
 }

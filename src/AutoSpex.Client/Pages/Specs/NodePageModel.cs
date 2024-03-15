@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,6 +9,7 @@ using AutoSpex.Engine;
 using AutoSpex.Persistence;
 using Avalonia.Controls.Notifications;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
 namespace AutoSpex.Client.Pages;
@@ -88,6 +88,13 @@ public partial class NodePageModel : DetailPageModel,
         runner.AddNode(Node);
         var observer = new RunnerObserver(runner);
         await Navigator.Navigate(observer);
+    }
+    
+    [RelayCommand]
+    private async Task Run(RunnerObserver? runner)
+    {
+        if (runner is null) return;
+        await Navigator.Navigate(runner);
     }
 
     public override void Receive(NavigationRequest message)

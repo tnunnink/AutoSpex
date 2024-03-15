@@ -39,7 +39,7 @@
                             Element="{Binding Node.Spec.Element, FallbackValue={x:Static engine:Element.Default}}"
                             Classes="soft" />
 
-                        <components:RunNodeButton Sources="{Binding Sources^}" />
+                        <components:RunNodeButton />
 
                         <components:SaveNodeButton SaveCommand="{Binding SaveCommand}" />
 

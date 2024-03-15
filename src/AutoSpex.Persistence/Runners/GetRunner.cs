@@ -12,7 +12,7 @@ public record GetRunner(Guid RunnerId) : IDbCommand<Result<Runner>>;
 [UsedImplicitly]
 internal class GetRunnerHandler(IConnectionManager manager) : IRequestHandler<GetRunner, Result<Runner>>
 {
-    private const string GetRunner = "SELECT RunnerId, Name, Description FROM Runner WHERE RunnerId = @RunnerId";
+    private const string GetRunner = "SELECT RunnerId, SourceId, Name FROM Runner WHERE RunnerId = @RunnerId";
     private const string GetNodes = "";
     private const string GetOverrides = "";
 

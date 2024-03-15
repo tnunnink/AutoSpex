@@ -10,28 +10,22 @@ public class Runner
 
     public Guid RunnerId { get; } = Guid.NewGuid();
     public string Name { get; set; } = "Runner";
-    public string Description { get; set; } = string.Empty;
-    public IEnumerable<Node> Collections => _nodes.Values.Where(n => n.ParentId == Guid.Empty);
+    public Source? Source { get; set; }
+    public IEnumerable<Node> Collections => _nodes.Values.Where(n => n.NodeType == NodeType.Collection);
+    public IEnumerable<Node> Specs => _nodes.Values.Where(n => n.NodeType == NodeType.Spec);
     public IEnumerable<KeyValuePair<Guid, string>> Overrides => _overrides;
 
-    public void AddNode(Node node) => AddNodesFor(node);
-
-    public void AddNodes(IEnumerable<Node> nodes) => nodes.ToList().ForEach(AddNodesFor);
-
-    public void RemoveNode(Node node) => RemoveNodesFor(node);
-
-    public void RemoveNodes(IEnumerable<Node> specs) => specs.ToList().ForEach(RemoveNodesFor);
-
-    public void Override(Guid variableId, string value)
-    {
-        if (!_overrides.TryAdd(variableId, value))
-            _overrides[variableId] = value;
-    }
-
+    /// <summary>
+    /// Executes the runner with the given input source.
+    /// </summary>
+    /// <param name="source">The input source to execute the runner.</param>
+    /// <param name="progress">The progress object for tracking the execution progress. (optional)</param>
+    /// <returns>The Run object that encapsulates the execution outcome.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when the input source is null.</exception>
     public async Task<Run> Run(Source source, IProgress<Outcome>? progress = default)
     {
         if (source is null)
-            throw new InvalidOperationException("Can not execute runner with null source.");
+            throw new InvalidOperationException("Can not execute runner with no input source.");
 
         var outcomes = new List<Outcome>();
 
@@ -45,44 +39,76 @@ public class Runner
         return new Run(this, source, outcomes);
     }
 
-    private void AddNodesFor(Node node)
+    /// <summary>
+    /// Adds a node to the Runner.
+    /// </summary>
+    /// <param name="node">The node to be added.</param>
+    /// <exception cref="ArgumentNullException">Thrown when the node is null.</exception>
+    /// <remarks>
+    /// This will add just this spec if it is a spec node. If a collection of folder it will add all
+    /// descendent spec nodes.
+    /// </remarks>
+    public void AddNode(Node node)
     {
         if (node is null)
             throw new ArgumentNullException(nameof(node));
 
-        _nodes.TryAdd(node.NodeId, node);
-
-        if (!_nodes.ContainsKey(node.ParentId))
+        if (node.NodeType == NodeType.Spec)
         {
-            //the following adds orphan copies of the node's root down to it's parent to ensure consistent tree.
-            var ancestors = node.Ancestors().OrderBy(a => a.Depth);
-            foreach (var ancestor in ancestors)
-            {
-                var copy = ancestor.OrphanedCopy();
-                
-                _nodes.TryAdd(copy.NodeId, copy);
-                
-                if (_nodes.TryGetValue(ancestor.ParentId, out var parent))
-                    parent.AddNode(copy);
-            }    
+            _nodes.TryAdd(node.NodeId, node);
+            return;
         }
-        
-        if (_nodes.TryGetValue(node.ParentId, out var runParent))
-            runParent.AddNode(node);
+
+        var specs = node.Descendents().Where(n => n.NodeType == NodeType.Spec);
+
+        foreach (var spec in specs)
+        {
+            _nodes.TryAdd(spec.NodeId, spec);
+        }
     }
 
-    private void RemoveNodesFor(Node node)
+    /// <summary>
+    /// Adds a collection of nodes to the Runner.
+    /// </summary>
+    /// <param name="nodes">The collection of nodes to add.</param>
+    /// <remarks>
+    /// This will add just this spec if it is a spec node. If a collection of folder it will add all
+    /// descendent spec nodes.
+    /// </remarks>
+    public void AddNodes(IEnumerable<Node> nodes) => nodes.ToList().ForEach(AddNode);
+
+    /// <summary>
+    /// Removes the specified node from the Runner.
+    /// </summary>
+    /// <param name="node">The node to be removed.</param>
+    /// <exception cref="ArgumentNullException">Thrown when the 'node' parameter is null.</exception>
+    public void RemoveNode(Node node)
     {
         if (node is null)
             throw new ArgumentNullException(nameof(node));
 
-        if (!_nodes.TryGetValue(node.NodeId, out var target)) return;
+        _nodes.Remove(node.NodeId);
+    }
 
-        _nodes.Remove(target.NodeId);
+    /// <summary>
+    /// Removes the specified nodes from the Runner.
+    /// </summary>
+    /// <param name="specs">The nodes to be removed.</param>
+    public void RemoveNodes(IEnumerable<Node> specs) => specs.ToList().ForEach(RemoveNode);
 
-        foreach (var descendent in target.Descendents())
-        {
-            _nodes.Remove(descendent.NodeId);
-        }
+    /// <summary>
+    /// Clears all node objects within the runner.
+    /// </summary>
+    public void ClearNodes() => _nodes.Clear();
+
+    /// <summary>
+    /// Overrides the value of a variable for the runner.
+    /// </summary>
+    /// <param name="variableId">The ID of the variable to override.</param>
+    /// <param name="value">The new value of the variable.</param>
+    public void Override(Guid variableId, string value)
+    {
+        if (!_overrides.TryAdd(variableId, value))
+            _overrides[variableId] = value;
     }
 }

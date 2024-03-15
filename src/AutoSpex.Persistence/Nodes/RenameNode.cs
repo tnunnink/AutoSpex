@@ -13,6 +13,7 @@ public record RenameNode(Node Node) : IDbCommand<Result>;
 internal class RenameNodeHandler(IConnectionManager manager) : IRequestHandler<RenameNode, Result>
 {
     private const string Command = "UPDATE Node SET Name = @Name WHERE NodeId = @NodeId";
+    
     public async Task<Result> Handle(RenameNode request, CancellationToken cancellationToken)
     {
         var connection = await manager.Connect(Database.Project, cancellationToken);

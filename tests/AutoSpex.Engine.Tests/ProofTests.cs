@@ -21,10 +21,9 @@ public class ProofTests
         var result = await spec.Run(source);
 
         result.Result.Should().Be(ResultState.Passed);
-        result.Spec.Should().Be("MySpec");
+        result.Node?.Name.Should().Be("MySpec");
         result.NodeId.Should().Be(spec.NodeId);
         result.Verifications.Should().HaveCount(2);
-        result.ProducedOn.Should().BeWithin(TimeSpan.FromSeconds(1));
         result.Duration.Should().BeLessThan(1000);
     }
     

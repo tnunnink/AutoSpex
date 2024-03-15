@@ -28,6 +28,11 @@ public class Spec()
     public Guid SpecId { get; private set; }
 
     /// <summary>
+    /// 
+    /// </summary>
+    public Guid NodeId { get; private set; } = Guid.Empty;
+
+    /// <summary>
     /// The target <see cref="Engine.Element"/> this spec represents. This is the Logix type that we are validating.
     /// </summary>
     public Element Element { get; set; } = Element.Default;

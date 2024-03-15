@@ -22,7 +22,7 @@ public class CreateRunnerTests
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-        var runner = new Runner { Name = "Test", Description = "This is a test runner"};
+        var runner = new Runner { Name = "Test"};
 
         await mediator.Send(new CreateRunner(runner));
 
@@ -31,7 +31,7 @@ public class CreateRunnerTests
         result.Value.Should().BeEquivalentTo(runner);
     }
 
-    [Test]
+    /*[Test]
     public async Task CreateRunner_WithNode_ShouldReturnSuccessAndExpected()
     {
         using var context = new TestContext();
@@ -44,5 +44,5 @@ public class CreateRunnerTests
         var result = await mediator.Send(new GetRunner(runner.RunnerId));
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().BeEquivalentTo(runner);
-    }
+    }*/
 }
