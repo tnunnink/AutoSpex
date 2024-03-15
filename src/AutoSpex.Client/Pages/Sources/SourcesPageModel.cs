@@ -30,8 +30,9 @@ public partial class SourcesPageModel : PageViewModel
     [RelayCommand]
     private async Task AddSource()
     {
-        var created = await Prompter.Show<bool?>(new AddSourcePageModel());
-        if (created is null or false) return;
-        await Load();
+        var source = await Prompter.Show<SourceObserver?>(new AddSourcePageModel());
+        if (source is null) return;
+        Sources.Add(source);
+        await Navigator.Navigate(source);
     }
 }

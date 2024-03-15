@@ -10,13 +10,11 @@ public record Verification
     {
         Result = result;
         Type = candidate?.GetType().TypeIdentifier();
-        Data = candidate is LogixElement element ? element.Serialize().ToString() : candidate?.ToString();
         Evaluations = evaluations ?? throw new ArgumentNullException(nameof(evaluations));
     }
 
     public ResultState Result { get; }
     public string? Type { get; }
-    public string? Data { get; }
     public IReadOnlyCollection<Evaluation> Evaluations { get; }
 
     public IEnumerable<string> Successes =>

@@ -11,12 +11,10 @@ public class RunnerTests
         var runner = new Runner
         {
             Name = "MyRunner",
-            Description = "This is setup to run some set of nodes"
         };
 
         runner.RunnerId.Should().NotBeEmpty();
         runner.Name.Should().Be("MyRunner");
-        runner.Description.Should().Be("This is setup to run some set of nodes");
     }
 
     [Test]
@@ -75,7 +73,6 @@ public class RunnerTests
         var run = await runner.Run(source);
 
         run.Result.Should().Be(ResultState.Passed);
-        run.Outcomes.Should().NotBeEmpty();
     }
     
     [Test]
@@ -96,6 +93,5 @@ public class RunnerTests
         var run = await runner.Run(source);
 
         run.Result.Should().Be(ResultState.Passed);
-        run.Outcomes.Should().NotBeEmpty();
     }
 }

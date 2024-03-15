@@ -6,14 +6,26 @@ namespace AutoSpex.Engine;
 [PublicAPI]
 public record Outcome
 {
+    [UsedImplicitly]
+    private Outcome()
+    {
+    }
+
+    public Outcome(Node node)
+    {
+        if (node is null) throw new ArgumentNullException(nameof(node));
+        
+        NodeId = node.NodeId;
+        Node = node;
+    }
+
     public Outcome(Node node, long duration, IList<Verification> verifications)
     {
         if (node is null) throw new ArgumentNullException(nameof(node));
         if (verifications is null) throw new ArgumentNullException(nameof(verifications));
 
         NodeId = node.NodeId;
-        Spec = node.Name;
-        Path = node.Path;
+        Node = node;
         Duration = duration;
         Result = verifications.Count > 0 ? verifications.Max(v => v.Result) : ResultState.Passed;
         Verified = verifications.Count;
@@ -24,17 +36,15 @@ public record Outcome
     }
 
     public Guid OutcomeId { get; } = Guid.NewGuid();
-    public Guid NodeId { get; }
-    public ResultState Result { get; }
-    public string Spec { get; }
-    public string Path { get; }
-    public DateTime ProducedOn { get; } = DateTime.Now;
-    public long Duration { get; }
-    public int Verified { get; }
-    public int Passed { get; }
-    public int Failed { get; }
-    public int Errored { get; }
-    public IReadOnlyCollection<Verification> Verifications { get; }
+    public Guid NodeId { get; } = Guid.Empty;
+    public Node? Node { get; set; } 
+    public ResultState Result { get; private set; } = ResultState.None;
+    public long Duration { get; private set; }
+    public int Verified { get; private set; }
+    public int Passed { get; private set; }
+    public int Failed { get; private set; }
+    public int Errored { get; private set; }
+    public IEnumerable<Verification> Verifications { get; private set; } = [];
 
     public IEnumerable<string> Successes => Verifications.Where(v => v.Result == ResultState.Passed)
         .SelectMany(v => v.Evaluations).Select(e => e.Message);

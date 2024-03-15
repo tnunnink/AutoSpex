@@ -1,4 +1,4 @@
-﻿namespace AutoSpex.Persistence.Tests.Specs;
+﻿namespace AutoSpex.Persistence.Tests.Nodes;
 
 [TestFixture]
 public class CreateNodeTests

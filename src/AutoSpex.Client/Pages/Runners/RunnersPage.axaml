@@ -1,0 +1,33 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:components="clr-namespace:AutoSpex.Client.Components"
+             xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+             x:Class="AutoSpex.Client.Pages.RunnersPage"
+             x:DataType="pages:RunnersPageModel">
+    
+    <Design.Height>500</Design.Height>
+    <Design.Width>300</Design.Width>
+
+    <components:NavigationTree ItemsSource="{Binding Runners}"
+                               AddCommand="{Binding AddRunnerCommand}">
+
+        <components:NavigationTree.ItemContainerTheme>
+            <ControlTheme TargetType="components:NavigationTreeItem" BasedOn="{StaticResource NavigationTreeItem}"
+                          x:DataType="observers:RunnerObserver">
+                <Setter Property="ItemName" Value="{Binding Name}" />
+                <Setter Property="IconTheme" Value="{StaticResource IconRunnerThemed}" />
+                <Setter Property="NavigateCommand" Value="{Binding NavigateCommand}" />
+                <Setter Property="RenameCommand" Value="{Binding RenameCommand}" />
+                <Setter Property="ItemIndent" Value="0" />
+            </ControlTheme>
+        </components:NavigationTree.ItemContainerTheme>
+
+        <components:NavigationTree.ItemTemplate>
+            <TreeDataTemplate x:DataType="observers:RunnerObserver">
+                <TextBlock Text="{Binding Name}" />
+            </TreeDataTemplate>
+        </components:NavigationTree.ItemTemplate>
+
+    </components:NavigationTree>
+</UserControl>

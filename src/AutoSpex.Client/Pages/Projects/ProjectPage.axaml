@@ -9,38 +9,6 @@
 
     <Design.Width>1920</Design.Width>
     <Design.Height>1080</Design.Height>
-    <!--<Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.5*" MinWidth="200" MaxWidth="600" />
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-
-        <Border Grid.Column="0"
-                Background="{a:ThemeResource Container2BackgroundBrush}"
-                MinWidth="200">
-            <components:NavigationMenus Pages="{Binding Menus}"
-                                        SelectedPage="{Binding SelectedMenu}" />
-        </Border>
-
-        <GridSplitter Grid.Column="1"
-                      BorderThickness="0 0 1 0"
-                      Margin="-5 0 0 0"
-                      Background="Transparent"
-                      BorderBrush="{a:ThemeResource Container2BorderBrush}">
-            <GridSplitter.Styles>
-                <Style Selector="GridSplitter:pointerover /template/ Border">
-                    <Setter Property="BorderBrush"
-                            Value="{a:ThemeResource ControlBackgroundBrushEmphasizedAccent}" />
-                    <Setter Property="BorderThickness" Value="0 0 2 0" />
-                </Style>
-            </GridSplitter.Styles>
-        </GridSplitter>
-
-        <Border Grid.Column="2" Background="{a:ThemeResource Container1BackgroundBrush}">
-            <ContentControl Content="{Binding DetailsPage}" />
-        </Border>
-    </Grid>-->
 
     <controls:DrawerView x:Name="StatusBarDrawer"
                          DrawerPlacement="Bottom"

@@ -1,7 +1,7 @@
 ﻿using L5Sharp.Core;
 using Task = System.Threading.Tasks.Task;
 
-namespace AutoSpex.Persistence.Tests.Specs;
+namespace AutoSpex.Persistence.Tests.Nodes;
 
 [TestFixture]
 public class GetFullNodeTests
