@@ -110,7 +110,7 @@ public class DetailsContainer : TabControl
         return new DetailsTab();
     }
 
-    private async Task CloseTab(PageViewModel? page)
+    private async Task CloseTab(DetailPageModel? page)
     {
         if (page is null) return;
         await page.Close();

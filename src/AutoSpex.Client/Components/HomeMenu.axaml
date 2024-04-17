@@ -12,110 +12,79 @@
         <Setter Property="Template">
             <ControlTemplate>
 
-                <Border Background="{actipro:ThemeResource Container2BackgroundBrush}"
-                        Width="300"
-                        Padding="10">
-                    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,*"
-                          Margin="10">
-                        <StackPanel Grid.Row="0"
-                                    Spacing="20">
-                            <StackPanel Orientation="Vertical"
-                                        HorizontalAlignment="Center">
-                                <Image Source="../Resources/Images/inspect-code.png"
-                                       Height="60" />
-                                <TextBlock Text="AutoSpex"
-                                           Classes="theme-text-heading"
-                                           Padding="10" />
-                            </StackPanel>
+                <Border Background="{actipro:ThemeResource Container2BackgroundBrush}" Padding="10">
+                    <Grid RowDefinitions="*,*,*" Margin="10">
 
-                            <StackPanel Spacing="5">
-                                <TextBlock Text="Automated PLC Verification"
-                                           Foreground="{actipro:ThemeResource DefaultForegroundBrushTertiary}"
-                                           Classes="theme-text-heading size-xs"
-                                           TextWrapping="Wrap" />
-                                <TextBlock
-                                    Text="Build and run collections of PLC specifications to automate you quality check workflow."
-                                    Foreground="{actipro:ThemeResource DefaultForegroundBrushTertiary}"
-                                    Classes="theme-text-body size-sm"
-                                    TextWrapping="Wrap" />
-                            </StackPanel>
+                        <Border Grid.Row="0"
+                                BorderThickness="0 0 0 1"
+                                Margin="0 20"
+                                BorderBrush="{actipro:ThemeResource Container2BorderBrush}">
+                            <StackPanel Spacing="20">
+                                <StackPanel Orientation="Vertical"
+                                            HorizontalAlignment="Center">
+                                    <Image Source="../Resources/Images/inspect-code.png"
+                                           Height="60" />
+                                    <TextBlock Text="AutoSpex"
+                                               Classes="theme-text-heading"
+                                               Padding="10" />
+                                </StackPanel>
 
-                            <!--<StackPanel Spacing="10">
-                                <Button Theme="{actipro:ControlTheme ButtonSoft}"
-                                        HorizontalContentAlignment="Left"
-                                        Padding="0"
-                                        Classes="accent">
-                                    <StackPanel Orientation="Horizontal">
-                                        <PathIcon Theme="{StaticResource IconAdd}"
-                                                  Foreground="{actipro:ThemeResource ControlForegroundBrushSoftAccent}" />
-                                        <TextBlock Text="Create Project"
-                                                   Margin="0 0 0 1" />
-                                    </StackPanel>
-                                </Button>
-                                <Button Theme="{actipro:ControlTheme ButtonSoft}"
-                                        HorizontalContentAlignment="Left"
-                                        Padding="0">
-                                    <StackPanel Orientation="Horizontal">
-                                        <PathIcon Theme="{StaticResource IconFolderOutlinedOpen}"
-                                                  Foreground="{actipro:ThemeResource DefaultForegroundBrush}" />
-                                        <TextBlock Text="Open Project"
-                                                   Margin="0 0 0 1" />
-                                    </StackPanel>
-                                </Button>    
-                            </StackPanel>-->
-                        </StackPanel>
+                                <StackPanel Spacing="5">
+                                    <TextBlock Text="Automated PLC Verification"
+                                               Foreground="{actipro:ThemeResource DefaultForegroundBrushTertiary}"
+                                               Classes="theme-text-heading size-xs" />
+                                    <TextBlock
+                                        Text="Build and run collections of PLC specifications to automate you quality check workflow."
+                                        Foreground="{actipro:ThemeResource DefaultForegroundBrushTertiary}"
+                                        Classes="theme-text-body size-sm"
+                                        TextWrapping="Wrap" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
 
                         <Border Grid.Row="1"
-                                BorderThickness="0 1 0 0"
                                 Margin="0 20"
-                                BorderBrush="{actipro:ThemeResource Container2BorderBrush}" />
+                                BorderThickness="0 0 0 1"
+                                BorderBrush="{actipro:ThemeResource Container2BorderBrush}">
+                            <StackPanel Spacing="20">
 
-                        <ListBox Grid.Row="2"
-                                 x:Name="PART_Menu"
-                                 BorderThickness="0"
-                                 Background="Transparent"
-                                 SelectionMode="Single">
-                            <ListBox.Styles>
-                                <Style Selector="ListBoxItem PathIcon">
-                                    <Setter Property="Foreground"
-                                            Value="{actipro:ThemeResource ListItemForegroundBrush}" />
-                                </Style>
-                                <Style Selector="ListBoxItem:selected PathIcon">
-                                    <Setter Property="Foreground"
-                                            Value="{actipro:ThemeResource ListItemForegroundBrushSelected}" />
-                                </Style>
-                            </ListBox.Styles>
-
-                            <ListBox.ItemTemplate>
-
-                            </ListBox.ItemTemplate>
-                            <ListBoxItem>
-                                <StackPanel Orientation="Horizontal">
-                                    <PathIcon Theme="{StaticResource IconCubeOutlined}" />
-                                    <TextBlock Text="Projects"
-                                               Margin="5 0 0 2" />
+                                <StackPanel Spacing="5">
+                                    <TextBlock Text="Launch Project"
+                                               Foreground="{actipro:ThemeResource DefaultForegroundBrushTertiary}"
+                                               Classes="theme-text-heading size-xs" />
+                                    <TextBlock
+                                        Text="Start by creating a new project or opening an existing one from disc."
+                                        Foreground="{actipro:ThemeResource DefaultForegroundBrushTertiary}"
+                                        Classes="theme-text-body size-sm"
+                                        TextWrapping="Wrap" />
                                 </StackPanel>
-                            </ListBoxItem>
-                            <ListBoxItem>
-                                <StackPanel Orientation="Horizontal">
-                                    <PathIcon Theme="{StaticResource IconCardList}" />
-                                    <TextBlock Text="Release Notes"
-                                               Margin="5 0 0 2" />
-                                </StackPanel>
-                            </ListBoxItem>
-                            <ListBox.ItemContainerTheme>
-                                <ControlTheme TargetType="ListBoxItem" BasedOn="{actipro:ControlTheme ListBoxItem}">
-                                    <Setter Property="Margin" Value="0 5" />
-                                    <Setter Property="Padding" Value="5" />
-                                    <Setter Property="CornerRadius" Value="5" />
-                                </ControlTheme>
-                            </ListBox.ItemContainerTheme>
-                        </ListBox>
-                        
-                        <Border Grid.Row="3"
-                                BorderThickness="0 1 0 0"
-                                Margin="0 20"
-                                BorderBrush="{actipro:ThemeResource Container2BorderBrush}" />
+
+                                <Grid ColumnDefinitions="*,10,*" Margin="10 0">
+                                    <Button Grid.Column="0"
+                                            Padding="10"
+                                            Foreground="{actipro:ThemeResource ControlForegroundBrushOutlineAccent}"
+                                            Theme="{actipro:ControlTheme ButtonCard}">
+                                        <StackPanel>
+                                            <PathIcon Theme="{StaticResource IconCubeOutlined}"
+                                                      Foreground="{Binding $parent[Button].Foreground}"
+                                                      Padding="5" />
+                                            <TextBlock Text="New Project" />
+                                        </StackPanel>
+                                    </Button>
+                                    <Button Grid.Column="2"
+                                            Padding="10"
+                                            Theme="{actipro:ControlTheme ButtonCard}"
+                                            Foreground="{actipro:ThemeResource DefaultForegroundBrushSecondary}">
+                                        <StackPanel>
+                                            <PathIcon Theme="{StaticResource IconFolderOutlinedOpen}"
+                                                      Foreground="{Binding $parent[Button].Foreground}"
+                                                      Padding="5" />
+                                            <TextBlock Text="Open Project" />
+                                        </StackPanel>
+                                    </Button>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
                     </Grid>
                 </Border>
             </ControlTemplate>

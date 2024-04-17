@@ -1,0 +1,90 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             x:Class="AutoSpex.Client.Pages.SourcePage"
+             x:DataType="pages:SourcePageModel">
+
+    <Design.Width>1400</Design.Width>
+    <Design.Height>1000</Design.Height>
+
+    <DockPanel>
+        <Border DockPanel.Dock="Top"
+                BorderThickness="0 0 0 1"
+                BorderBrush="{actipro:ThemeResource Container1BorderBrush}"
+                Padding="10">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <TextBox x:Name="NameEntry"
+                         Text="{Binding Source.Name, FallbackValue='Source Name'}"
+                         Classes="subtle"
+                         Focusable="True"
+                         FontSize="{actipro:ThemeResource DefaultFontSizeSmall}"
+                         Padding="0 6 5 5">
+                    <TextBox.InnerLeftContent>
+                        <PathIcon
+                            Theme="{StaticResource IconSourceThemed}"
+                            Height="20" Width="20" Padding="2" Margin="5 0" />
+                    </TextBox.InnerLeftContent>
+                    <Interaction.Behaviors>
+                        <!--<DataTriggerBehavior Binding="{Binding}"
+                                             ComparisonCondition="Equal"
+                                             Value="True">
+                            <FocusControlAction TargetControl="NameEntry" />
+                        </DataTriggerBehavior>-->
+                    </Interaction.Behaviors>
+                </TextBox>
+            </Grid>
+        </Border>
+
+        <TabControl ItemContainerTheme="{StaticResource TabItemStandard}"
+                    BorderThickness="0 1 0 0"
+                    BorderBrush="{actipro:ThemeResource Container1BorderBrush}"
+                    Padding="0">
+            <TabControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" Margin="10 0" />
+                </ItemsPanelTemplate>
+            </TabControl.ItemsPanel>
+            <TabItem Header="Overview">
+                <StackPanel Spacing="5" Margin="50">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <TextBlock Text="{Binding Source.TargetName}"
+                                   Classes="theme-text-heading accent" />
+                        <TextBlock Text="{Binding Source.TargetTypeFormatted}"
+                                   Foreground="{actipro:ThemeResource DefaultForegroundBrushSecondary}"
+                                   Margin="0 4 0 0" />
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Spacing="10" Margin="2">
+                        <TextBlock Text="{Binding Source.ExportedBy}"
+                                   Foreground="{actipro:ThemeResource DefaultForegroundBrushSecondary}" />
+                        <Ellipse Height="5" Width="5"
+                                 Fill="{actipro:ThemeResource DefaultForegroundBrushDisabled}"
+                                 Opacity="0.7" Margin="0 2 0 0" />
+                        <TextBlock Text="{Binding Source.ExportedOn}"
+                                   Foreground="{actipro:ThemeResource DefaultForegroundBrushSecondary}" />
+                        <Ellipse Height="5" Width="5"
+                                 Fill="{actipro:ThemeResource DefaultForegroundBrushDisabled}"
+                                 Opacity="0.7" Margin="0 2 0 0" />
+                        <TextBlock Text="{Binding Source.Size}"
+                                   Foreground="{actipro:ThemeResource DefaultForegroundBrushSecondary}" />
+                    </StackPanel>
+
+                    <TextBox
+                        Text="{Binding Source.Documentation}"
+                        Theme="{StaticResource TextBoxSubtle}"
+                        BorderThickness="0"
+                        VerticalContentAlignment="Top"
+                        MinHeight="100"
+                        Watermark="Add documentation to thie source file here" />
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Query">
+
+            </TabItem>
+            <TabItem Header="Variables">
+
+            </TabItem>
+        </TabControl>
+    </DockPanel>
+</UserControl>

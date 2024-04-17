@@ -13,16 +13,16 @@ public class MoveNodeTests
         var collection = Node.NewCollection();
         await mediator.Send(new CreateNode(collection));
         await mediator.Send(new CreateNode(collection.AddFolder()));
-        await mediator.Send(new CreateNode(collection.AddFolder()));
-        await mediator.Send(new CreateNode(collection.AddSpec()));
+        var destination = collection.AddFolder();
+        await mediator.Send(new CreateNode(destination));
         await mediator.Send(new CreateNode(collection.AddFolder()));
         var target = collection.AddSpec(); //store target for move
         await mediator.Send(new CreateNode(target));
         await mediator.Send(new CreateNode(collection.AddSpec()));
-        await mediator.Send(new CreateNode(collection.AddFolder()));
         
-        //maybe this should return node but idk
-        collection.InsertNode(target, 1);
+        //Will update the parent node for the target correctly.
+        destination.AddNode(target);
+        
         var result = await mediator.Send(new MoveNode(target));
         
         result.IsSuccess.Should().BeTrue();

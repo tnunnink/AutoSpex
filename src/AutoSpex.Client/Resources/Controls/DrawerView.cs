@@ -57,6 +57,10 @@ public class DrawerView : ContentControl
         AvaloniaProperty.Register<DrawerView, DrawerViewPlacement>(nameof(DrawerPlacement),
             defaultValue: DrawerViewPlacement.Left);
 
+    public static readonly StyledProperty<bool> HideSplitterOnCloseProperty =
+        AvaloniaProperty.Register<DrawerView, bool>(
+            nameof(HideSplitterOnClose));
+
     public static readonly StyledProperty<object?> DrawerProperty =
         AvaloniaProperty.Register<DrawerView, object?>(nameof(Drawer));
 
@@ -97,6 +101,15 @@ public class DrawerView : ContentControl
     {
         get => GetValue(DrawerPlacementProperty);
         set => SetValue(DrawerPlacementProperty, value);
+    }
+    
+    /// <summary>
+    /// When true will hide the grid splitter boder when the drawer is closed. Default is false.
+    /// </summary>
+    public bool HideSplitterOnClose
+    {
+        get => GetValue(HideSplitterOnCloseProperty);
+        set => SetValue(HideSplitterOnCloseProperty, value);
     }
 
     /// <summary>

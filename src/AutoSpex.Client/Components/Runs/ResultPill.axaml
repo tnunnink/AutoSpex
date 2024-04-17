@@ -1,0 +1,56 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="using:AutoSpex.Client.Components">
+
+    <Design.PreviewWith>
+        <StackPanel Spacing="10" Margin="20">
+            <components:ResultPill Result="None" />
+            <components:ResultPill Result="Passed" />
+            <components:ResultPill Result="Failed" />
+            <components:ResultPill Result="Error" />
+        </StackPanel>
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type components:ResultPill}" TargetType="components:ResultPill">
+        <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoft}" />
+        <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBorderBrushOutline}" />
+        <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="7 3" />
+        <Setter Property="CornerRadius" Value="20" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border x:Name="border"
+                        Background="{TemplateBinding Background}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        Padding="{TemplateBinding Padding}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
+                    <TextBlock x:Name="ResultText"
+                               Text="{Binding Result, RelativeSource={RelativeSource TemplatedParent}}"
+                               FontWeight="{a:ThemeResource HeadingFontWeightSmall}"
+                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                               Foreground="{TemplateBinding Foreground}" />
+                </Border>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^[Result=None]">
+            <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftDisabled}" />
+            <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+        </Style>
+        <Style Selector="^[Result=Passed]">
+            <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftSuccessDisabled}" />
+            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftSuccess}" />
+        </Style>
+        <Style Selector="^[Result=Failed]">
+            <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftDangerDisabled}" />
+            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftDanger}" />
+        </Style>
+        <Style Selector="^[Result=Error]">
+            <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftWarningDisabled}" />
+            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftWarning}" />
+        </Style>
+    </ControlTheme>
+</ResourceDictionary>

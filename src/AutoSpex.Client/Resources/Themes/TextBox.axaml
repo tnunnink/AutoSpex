@@ -6,9 +6,9 @@
             <StackPanel Spacing="20">
                 <TextBox Theme="{DynamicResource TextBoxSubtle}"
                          Watermark="Really long water mark does this expand the border"
-                         
-                         MaxWidth="200" 
-                         HorizontalContentAlignment="Left"/>
+
+                         MaxWidth="200"
+                         HorizontalContentAlignment="Left" />
                 <TextBox Theme="{DynamicResource TextBoxOutlineHighlight}"
                          Watermark="Label"
                          MinWidth="100"
@@ -19,6 +19,15 @@
                          BorderThickness="1">
                 </TextBox>
                 <TextBox Theme="{DynamicResource TextBoxSubtle}"
+                         Watermark="Label"
+                         MinWidth="100" />
+                <TextBox Theme="{DynamicResource TextBoxSubtle}"
+                         Text="This is the value"
+                         Watermark="Label"
+                         MinWidth="100" />
+                <TextBox Theme="{DynamicResource TextBoxSubtle}"
+                         IsEnabled="False"
+                         Text="This is the value"
                          Watermark="Label"
                          MinWidth="100" />
             </StackPanel>
@@ -35,10 +44,17 @@
         <Setter Property="SelectionForegroundBrush" Value="{a:ThemeResource EditSelectionForegroundBrush}" />
         <Setter Property="BorderThickness" Value="{a:ThemeResource ButtonBorderThickness}" />
         <Setter Property="CornerRadius" Value="{a:ThemeResource ButtonCornerRadius}" />
-        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Padding" Value="{a:ThemeResource ButtonPadding}" />
-        
+        <Setter Property="(Interaction.Behaviors)">
+            <BehaviorCollectionTemplate>
+                <BehaviorCollection>
+                    <SelectAllOnGotFocusBehavior />
+                </BehaviorCollection>
+            </BehaviorCollectionTemplate>
+        </Setter>
+
         <Setter Property="Template">
             <ControlTemplate>
                 <DockPanel>
@@ -106,7 +122,8 @@
                                                 SelectionStart="{TemplateBinding SelectionStart}"
                                                 Text="{TemplateBinding Text, Mode=TwoWay}"
                                                 TextAlignment="{TemplateBinding TextAlignment}"
-                                                TextWrapping="{TemplateBinding TextWrapping}" />
+                                                TextWrapping="{TemplateBinding TextWrapping}">
+                                            </TextPresenter>
                                         </Panel>
 
                                         <ContentPresenter Grid.Column="2" Content="{TemplateBinding InnerRightContent}"
@@ -141,12 +158,12 @@
             <Setter Property="TextElement.Foreground" Value="{a:ThemeResource EditForegroundBrushDisabled}" />
         </Style>
         <Style Selector="^:pointerover /template/ Border#border">
-            <Setter Property="Background" Value="{a:ThemeResource EditBackgroundBrushSoft}" />
-            <Setter Property="BorderBrush" Value="{a:ThemeResource EditBackgroundBrushSoft}" />
+            <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftPointerOver}" />
+            <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBackgroundBrushSoftPointerOver}" />
         </Style>
         <Style Selector="^:focus">
             <Style Selector="^ /template/ Border#border">
-                <Setter Property="Background" Value="{a:ThemeResource EditBackgroundBrush}" />
+                <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushOutline}" />
             </Style>
             <Style Selector="^ /template/ Border#focus">
                 <Setter Property="Opacity" Value="1" />
@@ -287,5 +304,5 @@
             </Style>-->
         </Style>
     </ControlTheme>
-    
+
 </ResourceDictionary>

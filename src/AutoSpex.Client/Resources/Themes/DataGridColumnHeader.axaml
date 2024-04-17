@@ -16,7 +16,7 @@
 
     <!-- DataGridColumnHeader -->
     <ControlTheme x:Key="DataGridColumnHeaderSoft" TargetType="DataGridColumnHeader">
-        <Setter Property="Background" Value="{actipro:ThemeResource Container3BackgroundBrush}" />
+        <Setter Property="Background" Value="Transparent" />
         <Setter Property="FontSize" Value="{actipro:ThemeResource DefaultFontSizeSmall}" />
         <Setter Property="Foreground" Value="{actipro:ThemeResource DefaultForegroundBrush}" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />

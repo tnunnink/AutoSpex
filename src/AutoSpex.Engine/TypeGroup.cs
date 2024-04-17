@@ -111,17 +111,17 @@ public class TypeGroup : SmartEnum<TypeGroup, int>
         typeof(Watchdog),
         typeof(TaskPriority),
         typeof(ScanRate),
-        typeof(LogixType)
+        typeof(LogixData)
     ];
 
     private static readonly HashSet<Type> TextTypes =
     [
         typeof(string),
-        typeof(StringType),
+        typeof(StringData),
         typeof(STRING),
         typeof(NeutralText),
         typeof(TagName),
         typeof(L5Sharp.Core.Argument),
-        typeof(LogixType)
+        typeof(LogixData)
     ];
 }

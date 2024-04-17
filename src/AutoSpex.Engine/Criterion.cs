@@ -90,12 +90,12 @@ public class Criterion
             var result = !Invert ? Operation.Execute(value, args) : !Operation.Execute(value, args);
 
             return result
-                ? Evaluation.Passed(this, type?.TypeIdentifier(), args, value)
-                : Evaluation.Failed(this, type?.TypeIdentifier(), args, value);
+                ? Evaluation.Passed(this, candidate, args, value)
+                : Evaluation.Failed(this, candidate, args, value);
         }
         catch (Exception e)
         {
-            return Evaluation.Error(this, e, type?.TypeIdentifier());
+            return Evaluation.Error(this, candidate, e);
         }
     }
 

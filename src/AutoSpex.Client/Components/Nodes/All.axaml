@@ -2,6 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <ResourceDictionary.MergedDictionaries>
         <ResourceInclude Source="NodeHeader.axaml" />
+        <ResourceInclude Source="NodeOverview.axaml" />
         <ResourceInclude Source="NodePath.axaml" />
         <ResourceInclude Source="NodeContextMenus.axaml" />
         <ResourceInclude Source="NodeNotFound.axaml" />

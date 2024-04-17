@@ -4,7 +4,7 @@
 public class CreateNodeTests
 {
     [Test]
-    public async Task AddNode_CollectionNode_ShouldBeSuccess()
+    public async Task CreateNode_CollectionNode_ShouldBeSuccess()
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
@@ -16,7 +16,7 @@ public class CreateNodeTests
     }
     
     [Test]
-    public async Task AddNode_FolderNode_ShouldBeSuccess()
+    public async Task CreateNode_FolderNode_ShouldBeSuccess()
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
@@ -28,7 +28,7 @@ public class CreateNodeTests
     }
 
     [Test]
-    public async Task AddNode_SpecNode_ShouldBeSuccess()
+    public async Task CreateNode_SpecNode_ShouldBeSuccess()
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
@@ -40,7 +40,26 @@ public class CreateNodeTests
     }
 
     [Test]
-    public async Task AddNodes_MultipleNodes_ShouldBeSuccess()
+    public async Task CreateNodeMultipleNodes_ShouldBeSuccess()
+    {
+        using var context = new TestContext();
+        var mediator = context.Resolve<IMediator>();
+        var collection = Node.NewCollection();
+        var folder = collection.AddFolder();
+        var spec = folder.AddSpec();
+
+        var collectionResult = await mediator.Send(new CreateNode(collection));
+        collectionResult.IsSuccess.Should().BeTrue();
+        
+        var folderResult = await mediator.Send(new CreateNode(folder));
+        folderResult.IsSuccess.Should().BeTrue();
+        
+        var specResult = await mediator.Send(new CreateNode(spec));
+        specResult.IsSuccess.Should().BeTrue();
+    }
+    
+    [Test]
+    public async Task CreateNode_MultipleNodes_ShouldBeBeEquivalentToSeeded()
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();

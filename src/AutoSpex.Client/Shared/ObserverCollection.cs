@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -71,14 +72,14 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
         }
     }
 
-    public void Refresh()
+    public void Refresh(IEnumerable<TObserver>? observers = default)
     {
         IsRefreshing = true;
         OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsRefreshing)));
 
         ClearItems();
 
-        var items = _refresh();
+        var items = observers ?? _refresh();
         foreach (var item in items)
         {
             Add(item);
@@ -97,6 +98,8 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
     protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
     {
         base.OnCollectionChanged(e);
+
+        if (IsRefreshing) return;
         _changed = true;
         OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsChanged)));
     }

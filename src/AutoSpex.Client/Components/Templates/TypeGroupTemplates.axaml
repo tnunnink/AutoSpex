@@ -1,0 +1,243 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:core="clr-namespace:L5Sharp.Core;assembly=L5Sharp.Core"
+                    xmlns:system="clr-namespace:System;assembly=System.Runtime"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+                    xmlns:primitives="clr-namespace:ActiproSoftware.UI.Avalonia.Controls.Primitives;assembly=ActiproSoftware.Avalonia.Shared">
+
+    <system:Double x:Key="TestDouble">1.234</system:Double>
+
+    <Design.PreviewWith>
+        <StackPanel Spacing="10" Margin="50">
+            <Button Content=""
+                    ContentTemplate="{DynamicResource TextGroupTemplate}"
+                    Theme="{a:ControlTheme ButtonLink}" />
+            <Button Content="Something"
+                    ContentTemplate="{DynamicResource TextGroupTemplate}"
+                    Theme="{a:ControlTheme ButtonLink}"
+                    MaxWidth="200" />
+            <Button Content="{StaticResource True}"
+                    ContentTemplate="{DynamicResource BooleanGroupTemplate}"
+                    Theme="{a:ControlTheme ButtonLink}" />
+            <Button Content="{StaticResource TestDouble}"
+                    ContentTemplate="{DynamicResource NumberGroupTemplate}"
+                    Theme="{a:ControlTheme ButtonLink}" />
+            <Button Content="{x:Static core:Radix.Decimal}"
+                    ContentTemplate="{DynamicResource EnumGroupTemplate}"
+                    Theme="{a:ControlTheme ButtonLink}" />
+            <Button Content="{x:Static components:DesignData.DataType}"
+                    ContentTemplate="{DynamicResource LogixComponentTemplate}"
+                    Theme="{a:ControlTheme ButtonLink}" />
+            <Button Content="{x:Static components:DesignData.Rung}"
+                    ContentTemplate="{DynamicResource LogixCodeTemplate}"
+                    Theme="{a:ControlTheme ButtonLink}" />
+            <Button Content="{x:Static components:DesignData.Rung}"
+                    ContentTemplate="{DynamicResource RungTemplate}"
+                    Theme="{a:ControlTheme ButtonLink}" />
+            <Button Content="{x:Static components:DesignData.Tag}"
+                    ContentTemplate="{DynamicResource TagTemplate}"
+                    Theme="{a:ControlTheme ButtonLink}" />
+            <!--<Button Content="{x:Static components:DesignData.VariableObserver}"
+                    ContentTemplate="{DynamicResource ArgumentVariableTemplate}" />-->
+        </StackPanel>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="DefaultGroupTemplate" x:DataType="system:Object">
+        <TextBlock Text="{Binding }"
+                   Foreground="{DynamicResource TypeGroupForegroundBrushDefault}" />
+    </DataTemplate>
+
+    <DataTemplate x:Key="BooleanGroupTemplate" x:DataType="system:Boolean">
+        <TextBlock Text="{Binding Converter={x:Static a:StringConverters.ToLowerInvariant}}"
+                   Foreground="{DynamicResource TypeGroupForegroundBrushBoolean}" />
+    </DataTemplate>
+
+    <DataTemplate x:Key="NumberGroupTemplate" x:DataType="system:ValueType">
+        <TextBlock
+            Text="{Binding}"
+            Foreground="{DynamicResource TypeGroupForegroundBrushNumber}"
+            TextTrimming="CharacterEllipsis">
+            <ToolTip.Tip>
+                <TextBlock Text="{Binding}" />
+            </ToolTip.Tip>
+        </TextBlock>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TextGroupTemplate" x:DataType="system:String">
+        <Panel>
+            <Border x:Name="Root">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="&quot;" Padding="0"
+                               Foreground="{DynamicResource TypeGroupForegroundBrushText}" />
+                    <TextBlock
+                        Text="{Binding}"
+                        Foreground="{DynamicResource TypeGroupForegroundBrushText}"
+                        IsVisible="{Binding Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                        TextTrimming="CharacterEllipsis">
+                    </TextBlock>
+                    <TextBlock Text="&quot;"
+                               Padding="0"
+                               Foreground="{DynamicResource TypeGroupForegroundBrushText}" />
+                </StackPanel>
+            </Border>
+            <!--<primitives:ChromedPopup
+                Placement="TopEdgeAlignedLeft"
+                IsOpen="{Binding #Root.IsPointerOver}">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="&quot;" Padding="0"
+                               Foreground="{DynamicResource TypeGroupForegroundBrushText}" />
+                    <TextBlock
+                        Text="{Binding}"
+                        Foreground="{DynamicResource TypeGroupForegroundBrushText}"
+                        IsVisible="{Binding Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                        TextTrimming="CharacterEllipsis">
+                    </TextBlock>
+                    <TextBlock Text="&quot;"
+                               Padding="0"
+                               Foreground="{DynamicResource TypeGroupForegroundBrushText}" />
+                    <Button Theme="{StaticResource IconButtonSmall}"
+                            properties:ButtonIcon.Theme="{StaticResource IconCopyOutlined}" />
+                </StackPanel>
+            </primitives:ChromedPopup>-->
+        </Panel>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DateGroupTemplate" x:DataType="system:DateTime">
+        <Panel Margin="0 1 0 0">
+            <TextBlock Text="{Binding }"
+                       Foreground="{DynamicResource TypeGroupForegroundBrushDate}" />
+        </Panel>
+    </DataTemplate>
+
+    <DataTemplate x:Key="EnumGroupTemplate" x:DataType="core:LogixEnum">
+        <Panel Margin="0 1 0 0">
+            <TextBlock
+                Text="{Binding Name}"
+                Foreground="{DynamicResource TypeGroupForegroundBrushEnum}" />
+            <ToolTip.Tip>
+                <StackPanel>
+                    <TextBlock Text="{Binding Name}" />
+                    <TextBlock Text="{Binding }" />
+                </StackPanel>
+            </ToolTip.Tip>
+        </Panel>
+    </DataTemplate>
+
+    <DataTemplate x:Key="LogixComponentTemplate" x:DataType="core:LogixComponent">
+        <TextBlock
+            Text="{Binding Name}"
+            Foreground="{DynamicResource TypeGroupForegroundBrushElement}">
+            <ToolTip.Tip>
+                <StackPanel>
+                    <TextBlock Text="{Binding Name}" />
+                    <TextBlock Text="{Binding Description}" />
+                </StackPanel>
+            </ToolTip.Tip>
+        </TextBlock>
+    </DataTemplate>
+
+    <DataTemplate x:Key="LogixCodeTemplate" x:DataType="core:LogixCode">
+        <Panel Margin="0 1 0 0">
+            <TextBlock>
+                <TextBlock.Inlines>
+                    <Run Text="{Binding Container}"
+                         Foreground="{DynamicResource TypeGroupForegroundBrushElement}" />
+                    <Run Text=">" Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                    <Run Text="{Binding Routine.Name, FallbackValue='?'}"
+                         Foreground="{DynamicResource TypeGroupForegroundBrushElement}" />
+                    <Run Text=">" Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                    <Run Text="{Binding Location}"
+                         Foreground="{DynamicResource TypeGroupForegroundBrushElement}" />
+                </TextBlock.Inlines>
+            </TextBlock>
+            <ToolTip.Tip>
+                <StackPanel>
+                    <TextBlock Text="{Binding Location}" />
+                </StackPanel>
+            </ToolTip.Tip>
+        </Panel>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TagTemplate" x:DataType="core:Tag">
+        <TextBlock Text="{Binding Name}"
+                   Foreground="{DynamicResource TypeGroupForegroundBrushElement}">
+            <ToolTip.Tip>
+                <StackPanel>
+                    <TextBlock Text="{Binding Name}" />
+                    <TextBlock Text="{Binding Description}" />
+                </StackPanel>
+            </ToolTip.Tip>
+        </TextBlock>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RungTemplate" x:DataType="core:Rung">
+        <TextBlock Grid.Row="0">
+            <TextBlock.Inlines>
+                <Run Text="{Binding Container}"
+                     Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                <Run Text=">"
+                     Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                <Run Text="{Binding Routine.Name, FallbackValue='?'}"
+                     Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                <Run Text=">"
+                     Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                <Run Text="{Binding Location}"
+                     Foreground="{DynamicResource TypeGroupForegroundBrushElement}" />
+            </TextBlock.Inlines>
+            <ToolTip.Tip>
+                <Grid RowDefinitions="Auto,*,Auto">
+                    <TextBlock Grid.Row="0">
+                        <TextBlock.Inlines>
+                            <Run Text="{Binding Container}"
+                                 Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                            <Run Text=">"
+                                 Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                            <Run Text="{Binding Routine.Name, FallbackValue='?'}"
+                                 Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                            <Run Text=">"
+                                 Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                            <Run Text="{Binding Location}"
+                                 Foreground="{DynamicResource TypeGroupForegroundBrushElement}" />
+                        </TextBlock.Inlines>
+                    </TextBlock>
+                    <TextBlock Grid.Row="1" Text="{Binding Text}"
+                               FontFamily="{a:ThemeResource CodeFontFamily}"
+                               TextWrapping="Wrap"
+                               Margin="0 10" />
+                    <Border Grid.Row="2"
+                            BorderBrush="{a:ThemeResource Container2BorderBrush}"
+                            BorderThickness="0 1 0 0">
+                        <TextBlock Text="{Binding Comment}"
+                                   Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                    </Border>
+                </Grid>
+            </ToolTip.Tip>
+        </TextBlock>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DataTypeMemberTemplate" x:DataType="core:DataTypeMember">
+        <TextBlock Text="{Binding Name}"
+                   Foreground="{DynamicResource TypeGroupForegroundBrushElement}">
+            <ToolTip.Tip>
+                <StackPanel>
+                    <TextBlock Text="{Binding Name}" />
+                    <TextBlock Text="{Binding Description}" />
+                </StackPanel>
+            </ToolTip.Tip>
+        </TextBlock>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ParameterTemplate" x:DataType="core:Parameter">
+        <TextBlock Text="{Binding Name}"
+                   Foreground="{DynamicResource TypeGroupForegroundBrushElement}">
+            <ToolTip.Tip>
+                <StackPanel>
+                    <TextBlock Text="{Binding Name}" />
+                    <TextBlock Text="{Binding Description}" />
+                </StackPanel>
+            </ToolTip.Tip>
+        </TextBlock>
+    </DataTemplate>
+</ResourceDictionary>

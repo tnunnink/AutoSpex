@@ -1,95 +1,89 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoSpex.Client.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using FluentResults;
+using MediatR;
 
 namespace AutoSpex.Client.Shared;
 
-public abstract partial class DetailPageModel : PageViewModel, IRecipient<NavigationRequest>
+public abstract partial class DetailPageModel : PageViewModel
 {
-    public ObservableCollection<PageViewModel> Tabs { get; } = [];
-    public ObservableCollection<PageViewModel> Details { get; } = [];
-
-    [ObservableProperty] private bool _isDetailDrawerOpen;
-
-    [ObservableProperty] private PageViewModel? _selectedDetailPage;
-
-    protected override void OnDeactivated()
-    {
-        foreach (var page in Tabs.ToList())
-            Navigator.Close(page);
-
-        foreach (var page in Details.ToList())
-            Navigator.Close(page);
-
-        base.OnDeactivated();
-    }
-
-    public virtual void Receive(NavigationRequest message)
-    {
-    }
+    /// <summary>
+    /// A command to initiate a save of the current state of the detail page.
+    /// </summary>
+    /// <returns>The <see cref="Task"/> which can await the <see cref="Result"/> of the save command.</returns>
+    /// <remarks>
+    /// Some pages will need the ability to save changes to the database by sending some command through the
+    /// <see cref="Mediator"/> object. This command by default has no implementation. Deriving classes will implement
+    /// this as needed. Each derived class can await the base implementation to get the result before processing further.
+    /// </remarks>
+    [RelayCommand(CanExecute = nameof(CanSave))]
+    protected virtual Task<Result> Save() => Task.FromResult(Result.Ok());
 
     /// <summary>
-    /// A command to control the view of a child detail page which can be shown in an inner side drawer view.
+    /// Indicates whether the page can be saved or not. By default this looks at whether there are changes using the
+    /// <see cref="TrackableViewModel.IsChanged"/> property. Derived classes can override this implementation as needed.
     /// </summary>
-    /// <param name="pageTitle">The title of the page to toggle into/out of the view of the page.</param>
+    /// <returns><c>true</c> if the page can be saved, Otherwise, <c>false</c>.</returns>
+    protected virtual bool CanSave() => IsChanged && !HasErrors;
+
+    /// <summary>
+    /// A command to close the current detail page.
+    /// </summary>
+    /// <returns>The <see cref="Task"/> which can await the flag indicating whether the page was closed or not.</returns>
+    /// <remarks>
+    /// This will first check for changes, and if any exists and the AlwaysDiscardChanges is not enabled, will
+    /// prompt the user whether or not they want to save, cancel, or discard changes. If the select an option which results
+    /// in the page closing, this method will return <c>true</c>, otherwise it will return <c>false</c>.
+    /// </remarks>
+    /// 
     [RelayCommand]
-    private void ShowDetailPage(string pageTitle)
+    public async Task<bool> Close()
     {
-        //If already open then toggle closed.
-        if (IsDetailDrawerOpen && SelectedDetailPage?.Route.Contains(pageTitle) is true)
+        var discard = Settings.App.AlwaysDiscardChanges;
+        if (discard || !IsChanged)
         {
-            SelectedDetailPage = null;
-            IsDetailDrawerOpen = false;
-            return;
+            Navigator.Close(this);
+            return true;
         }
 
-        //Otherwise set the selected detail page to the page with matching title name.
-        var page = Details.FirstOrDefault(p => p.Route.Contains(pageTitle));
-        SelectedDetailPage = page;
-        IsDetailDrawerOpen = true;
+        var answer = await Prompter.PromptSave(Title);
+        switch (answer)
+        {
+            case "Save":
+                await Save();
+                break;
+            case "Cancel":
+                return false;
+        }
+
+        Navigator.Close(this);
+        return true;
     }
 
     /// <summary>
-    /// Navigates the provided tab page into (or out of) the <see cref="Tabs"/> collection for the page.
+    /// A command to force close the page regardless of the state. This would mean discarding any current changes.
+    /// This command simply uses the <see cref="Navigator"/> to issue the <see cref="Navigator.Close"/> which
+    /// other pages should subscribe to if they are expected to close the pages they contain.
     /// </summary>
-    protected void NavigateTabPage(PageViewModel page, NavigationAction action)
+    [RelayCommand]
+    protected void ForceClose()
     {
-        switch (action)
-        {
-            case NavigationAction.Replace:
-            case NavigationAction.Open:
-                if (Tabs.Contains(page)) return;
-                Tabs.Add(page);
-                break;
-            case NavigationAction.Close:
-                Tabs.Remove(page);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(action), action, null);
-        }
+        Navigator.Close(this);
     }
 
-    /// <summary>
-    /// Navigates the provided detail page into (or out of) the <see cref="Details"/> collection for the page.
-    /// </summary>
-    protected void NavigateDetailPage(PageViewModel page, NavigationAction action)
+    //We need to notify the SaveCommand when the IsChange property changes since that is what it is controlled on.
+    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
-        switch (action)
-        {
-            case NavigationAction.Replace:
-            case NavigationAction.Open:
-                if (Details.Contains(page)) return;
-                Details.Add(page);
-                break;
-            case NavigationAction.Close:
-                Details.Remove(page);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(action), action, null);
-        }
+        base.OnPropertyChanged(e);
+
+        if (e.PropertyName == nameof(IsChanged))
+            SaveCommand.NotifyCanExecuteChanged();
     }
 }

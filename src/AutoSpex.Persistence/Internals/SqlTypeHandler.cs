@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using AutoSpex.Engine;
 using Dapper;
 
 namespace AutoSpex.Persistence;
@@ -23,7 +24,6 @@ public class SqlTypeHandler: SqlMapper.TypeHandler<Type>
         if (string.IsNullOrEmpty(typeName)) 
             return default;
 
-        /*return typeName.ToType();*/
-        throw new NotImplementedException();
+        return typeName.ToType();
     }
 }

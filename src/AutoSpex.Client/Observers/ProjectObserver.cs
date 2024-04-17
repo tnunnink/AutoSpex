@@ -1,6 +1,7 @@
 ﻿using System;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
+using AutoSpex.Persistence;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
@@ -15,24 +16,23 @@ public partial class ProjectObserver(Project project) : Observer<Project>(projec
     public DateTime OpenedOn => Model.OpenedOn;
 
     [RelayCommand]
-    private void Open() => Messenger.Send(new OpenMessage(this));
+    private Task Open() => Manager.OpenProject(this);
 
     [RelayCommand]
-    private void Locate() => Messenger.Send(new LocateMessage(this));
+    private Task Locate() => Shell.StorageProvider.ShowInExplorer(Directory);
 
     [RelayCommand]
-    private void CopyPath() => Messenger.Send(new CopyPathMessage(this));
-    
-    //todo pin/unpin
+    private async Task CopyPath()
+    {
+        if (Shell.Clipboard is null) return;
+        await Shell.Clipboard.SetTextAsync(Directory);
+    }
 
-    [RelayCommand]
-    private void Remove() => Messenger.Send(new RemoveMessage(this));
-    
-    public record OpenMessage(ProjectObserver Project);
-    public record RemoveMessage(ProjectObserver Project);
-    public record LocateMessage(ProjectObserver Project);
-    public record CopyPathMessage(ProjectObserver Project);
-    public record PinMessage(ProjectObserver Project);
-    public record UnpinMessage(ProjectObserver Project);
+    protected override async Task Delete()
+    {
+        var result = await Mediator.Send(new RemoveProject(Model));
+        if (result.IsFailed) return;
+        Messenger.Send(new Deleted(this));
+    }
 }
 

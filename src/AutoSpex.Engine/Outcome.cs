@@ -1,57 +1,43 @@
-﻿using System.Collections.ObjectModel;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 
 namespace AutoSpex.Engine;
 
 [PublicAPI]
-public record Outcome
+public class Outcome
 {
-    [UsedImplicitly]
-    private Outcome()
+    public Outcome(Guid specId, ICollection<Verification> verifications, long duration = 0)
     {
-    }
-
-    public Outcome(Node node)
-    {
-        if (node is null) throw new ArgumentNullException(nameof(node));
-        
-        NodeId = node.NodeId;
-        Node = node;
-    }
-
-    public Outcome(Node node, long duration, IList<Verification> verifications)
-    {
-        if (node is null) throw new ArgumentNullException(nameof(node));
-        if (verifications is null) throw new ArgumentNullException(nameof(verifications));
-
-        NodeId = node.NodeId;
-        Node = node;
+        SpecId = specId;
         Duration = duration;
         Result = verifications.Count > 0 ? verifications.Max(v => v.Result) : ResultState.Passed;
-        Verified = verifications.Count;
+        Total = verifications.Count;
         Passed = verifications.Count(v => v.Result == ResultState.Passed);
         Failed = verifications.Count(v => v.Result == ResultState.Failed);
         Errored = verifications.Count(v => v.Result == ResultState.Error);
-        Verifications = new ReadOnlyCollection<Verification>(verifications);
+        Evaluations = verifications.SelectMany(v => v.Evaluations);
+    }
+
+    public Outcome(Guid outcomeId, Guid specId, ResultState result,
+        long duration, int total, int passed, int failed, int errored, IEnumerable<Evaluation> evaluations)
+    {
+        OutcomeId = outcomeId;
+        SpecId = specId;
+        Result = result;
+        Duration = duration;
+        Total = total;
+        Passed = passed;
+        Failed = failed;
+        Errored = errored;
+        Evaluations = evaluations;
     }
 
     public Guid OutcomeId { get; } = Guid.NewGuid();
-    public Guid NodeId { get; } = Guid.Empty;
-    public Node? Node { get; set; } 
-    public ResultState Result { get; private set; } = ResultState.None;
-    public long Duration { get; private set; }
-    public int Verified { get; private set; }
-    public int Passed { get; private set; }
-    public int Failed { get; private set; }
-    public int Errored { get; private set; }
-    public IEnumerable<Verification> Verifications { get; private set; } = [];
-
-    public IEnumerable<string> Successes => Verifications.Where(v => v.Result == ResultState.Passed)
-        .SelectMany(v => v.Evaluations).Select(e => e.Message);
-
-    public IEnumerable<string> Failures => Verifications.Where(v => v.Result == ResultState.Failed)
-        .SelectMany(v => v.Evaluations).Select(e => e.Message);
-
-    public IEnumerable<string> Errors => Verifications.Where(v => v.Result == ResultState.Error)
-        .SelectMany(v => v.Evaluations).Select(e => e.Message);
+    public Guid SpecId { get; }
+    public ResultState Result { get; }
+    public long Duration { get; }
+    public int Total { get; }
+    public int Passed { get; }
+    public int Failed { get; }
+    public int Errored { get; }
+    public IEnumerable<Evaluation> Evaluations { get; private set; }
 }

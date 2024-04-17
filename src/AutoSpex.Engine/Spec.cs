@@ -10,27 +10,23 @@ namespace AutoSpex.Engine;
 [PublicAPI]
 public class Spec()
 {
-    private Node? _node;
-
-    public Spec(Node node) : this()
+    /// <summary>
+    /// Creates a new <see cref="Spec"/> with the provided node id.
+    /// </summary>
+    /// <param name="nodeId">The <see cref="Guid"/> representing the owning node for this spec config.</param>
+    public Spec(Guid nodeId) : this()
     {
-        _node = node;
-        SpecId = _node.NodeId;
+        SpecId = nodeId;
     }
 
     /// <summary>
     /// A <see cref="Guid"/> that uniquely identifies this object.
     /// </summary>
     /// <remarks>
-    /// This is actually the same as the owning node NodeId since any given spec should belong to a node.
+    /// This is actually the same as the owning node's NodeId since any given spec should belong to a node.
     /// If this objects is created as a orphaned spec then this id will be <see cref="Guid.Empty"/>.
     /// </remarks>
     public Guid SpecId { get; private set; }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public Guid NodeId { get; private set; } = Guid.Empty;
 
     /// <summary>
     /// The target <see cref="Engine.Element"/> this spec represents. This is the Logix type that we are validating.
@@ -45,18 +41,22 @@ public class Spec()
     /// <summary>
     /// The collection of <see cref="Criterion"/> that define how to filter elements to return candidates for verification.
     /// </summary>
-    public List<Criterion> Filters { get; } = [];
+    public List<Criterion> Filters { get; private set; } = [];
 
     /// <summary>
     /// The collection of <see cref="Criterion"/> that define the checks to perform for each candidate element.
     /// </summary>
-    public List<Criterion> Verifications { get; } = [];
-    
+    public List<Criterion> Verifications { get; private set; } = [];
+
     /// <summary>
-    /// A collection of <see cref="Variables"/> that are in scope of this spec. In other words, the variables that this
-    /// Spec has access to.
+    /// A collection of <see cref="Variable"/> configured for this spec.
     /// </summary>
-    public IEnumerable<Variable> Variables => _node?.ScopedVariables() ?? Enumerable.Empty<Variable>();
+    /// <remarks>
+    /// These are objects that are assigned to the argument value
+    /// for the <see cref="Filters"/> and <see cref="Verifications"/> criterion for this spec. We need to be able
+    /// to retrieve these in order to assign/refresh their values prior to running the spec.
+    /// </remarks>
+    public IEnumerable<Variable> Variables => GetVariables();
 
     /// <summary>
     /// Deserializes the provided specification string into a Spec object.
@@ -99,20 +99,15 @@ public class Spec()
     /// <exception cref="ArgumentNullException">Thrown when the content parameter is null.</exception>
     public Task<Outcome> Run(L5X content)
     {
-        _node ??= Node.NewSpec("Spec");
-
         if (content is null)
             throw new ArgumentNullException(nameof(content));
 
-        //Uses the attached node if available to resolve any variables in it's scope.
-        ApplyVariables();
-
         return Task.Run(() =>
         {
-            var verifications = new List<Verification>();
-
-            //Time the process for analysis
+            //Time the process for diagnostics
             var stopwatch = Stopwatch.StartNew();
+            
+            var verifications = new List<Verification>();
 
             //1.Query content
             var elements = Element.Query(content);
@@ -126,20 +121,49 @@ public class Spec()
 
             //4.Verify candidates
             verifications.AddRange(filtered.Select(Verify));
-
+            
             stopwatch.Stop();
 
-            return new Outcome(_node, stopwatch.ElapsedMilliseconds, verifications);
+            return new Outcome(SpecId, verifications, stopwatch.ElapsedMilliseconds);
         });
+    }
+
+    /// <summary>
+    /// Creates a new <see cref="Spec"/> with the provided configuration.
+    /// </summary>
+    /// <param name="config">The config to apply to the new spec.</param>
+    /// <returns>A <see cref="Spec"/> with the provided config applied.</returns>
+    public static Spec Configure(Action<Spec> config)
+    {
+        var spec = new Spec();
+        config.Invoke(spec);
+        return spec;
+    }
+
+    /// <summary>
+    /// Configures this spec with the data from the provided spec object.
+    /// </summary>
+    /// <param name="config">The spec to apply to the this spec.</param>
+    /// <returns>A <see cref="Spec"/> with the updated config.</returns>
+    /// <remarks>This is mostly so I can update the data returned from the database while maintaining the id.</remarks>
+    public Spec Configure(Spec config)
+    {
+        ArgumentNullException.ThrowIfNull(config);
+        Element = config.Element;
+        Settings = config.Settings;
+        Filters = [..config.Filters];
+        Verifications = [..config.Verifications];
+        return this;
     }
 
     /// <summary>
     /// Configures the <see cref="Element"/> for which this specification will query.
     /// </summary>
     /// <param name="element">The <see cref="Engine.Element"/> option to query.</param>
-    public void For(Element element)
+    public Spec Query(Element element)
     {
         Element = element ?? throw new ArgumentNullException(nameof(element));
+        return this;
     }
 
     /// <summary>
@@ -148,9 +172,10 @@ public class Spec()
     /// <param name="property">The property name to select for the filter criterion.</param>
     /// <param name="operation">The <see cref="Operation"/> the criterion will perform.</param>
     /// <param name="args">The collection of <see cref="Argument"/> to supply to the criterion operation.</param>
-    public void Where(string property, Operation operation, params Argument[] args)
+    public Spec Where(string property, Operation operation, params Argument[] args)
     {
         Filters.Add(new Criterion(property, operation, args));
+        return this;
     }
 
     /// <summary>
@@ -159,9 +184,10 @@ public class Spec()
     /// <param name="property">The property name to select for the filter criterion.</param>
     /// <param name="operation">The <see cref="Operation"/> the criterion will perform.</param>
     /// <param name="args">The collection of <see cref="Argument"/> to supply to the criterion operation.</param>
-    public void Verify(string property, Operation operation, params Argument[] args)
+    public Spec Verify(string property, Operation operation, params Argument[] args)
     {
         Verifications.Add(new Criterion(property, operation, args));
+        return this;
     }
 
     /// <summary>
@@ -208,8 +234,8 @@ public class Spec()
         var evaluations = Verifications.Select(v => v.Evaluate(candidate)).ToArray();
 
         return Settings.VerificationInclusion == Inclusion.All
-            ? Verification.All(candidate, evaluations)
-            : Verification.Any(candidate, evaluations);
+            ? Verification.All(evaluations)
+            : Verification.Any(evaluations);
     }
 
     /// <summary>
@@ -222,43 +248,40 @@ public class Spec()
     {
         var criterion = new Criterion(Settings.CountOperation, Settings.CountValue);
         var evaluation = criterion.Evaluate(candidates.Count);
-        return Verification.For(candidates, evaluation);
+        return Verification.For(evaluation);
     }
 
     /// <summary>
-    /// Applies variable values to all filter and verification criterion of the provided spec.
+    /// Gets all variables defined in the Filters and Verifications collections for this spec.
     /// </summary>
-    private void ApplyVariables()
+    private IEnumerable<Variable> GetVariables()
     {
-        Filters.ForEach(ApplyVariables);
-        Verifications.ForEach(ApplyVariables);
+        var variables = new List<Variable>();
+        variables.AddRange(Filters.SelectMany(GetVariables));
+        variables.AddRange(Verifications.SelectMany(GetVariables));
+        return variables;
     }
 
     /// <summary>
-    /// Recursively applies all current variable values to the provided criterion.
+    /// Gets all variables, including nested criterion variables, in the provided criterion. 
     /// </summary>
-    /// <remarks>
-    /// This is basically how we resolve variables. A user can specify a variable as a criterion argument.
-    /// The variable has the value to use as the actual argument value. This will get used when the argument calls
-    /// Resolve, so we just need to make sure they are set to the correct value as they are serialized and persisted.
-    /// </remarks>
-    private void ApplyVariables(Criterion criterion)
+    private static IEnumerable<Variable> GetVariables(Criterion criterion)
     {
+        var variables = new List<Variable>();
+
         foreach (var argument in criterion.Arguments)
         {
             switch (argument.Value)
             {
                 case Criterion child:
-                    ApplyVariables(child);
+                    variables.AddRange(GetVariables(child));
                     break;
                 case Variable variable:
-                {
-                    var match = _node?.FindVariable(variable.Name);
-                    if (match is null) break;
-                    variable.Value = match.Value;
+                    variables.Add(variable);
                     break;
-                }
             }
         }
+
+        return variables;
     }
 }

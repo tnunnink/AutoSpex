@@ -1,10 +1,12 @@
 ﻿using System.Windows.Input;
+using AutoSpex.Client.Resources.Controls;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.LogicalTree;
 using CommunityToolkit.Mvvm.Input;
 
 namespace AutoSpex.Client.Components;
@@ -27,12 +29,17 @@ public class NavigationTree : TreeView
         AvaloniaProperty.RegisterDirect<NavigationTree, string?>(
             nameof(AddToolTip), o => o.AddToolTip, (o, v) => o.AddToolTip = v);
 
+    public static readonly DirectProperty<NavigationTree, object?> OptionsContentProperty =
+        AvaloniaProperty.RegisterDirect<NavigationTree, object?>(
+            nameof(OptionsContent), o => o.OptionsContent, (o, v) => o.OptionsContent = v);
+
     #endregion
 
     private const string SearchTextPart = "SearchTextBox";
     private bool _isSearchActive;
     private ICommand? _addCommand;
     private string? _addToolTip;
+    private object? _optionsContent;
     private TextBox? _searchText;
 
     public NavigationTree()
@@ -40,6 +47,7 @@ public class NavigationTree : TreeView
         ToggleSearchCommand = new RelayCommand(ToggleSearch);
         ExpandAllCommand = new RelayCommand(ExpandAll);
         CollapseAllCommand = new RelayCommand(CollapseAll);
+        HideCommand = new RelayCommand(HidePanel);
     }
 
     public bool IsSearchActive
@@ -59,10 +67,17 @@ public class NavigationTree : TreeView
         get => _addToolTip;
         set => SetAndRaise(AddToolTipProperty, ref _addToolTip, value);
     }
+    
+    public object? OptionsContent
+    {
+        get => _optionsContent;
+        set => SetAndRaise(OptionsContentProperty, ref _optionsContent, value);
+    }
 
     public ICommand ToggleSearchCommand { get; private set; }
     public ICommand ExpandAllCommand { get; private set; }
     public ICommand CollapseAllCommand { get; private set; }
+    public ICommand HideCommand { get; private set; }
 
     protected override Control CreateContainerForItemOverride(object? item, int index, object? recycleKey)
     {
@@ -132,5 +147,15 @@ public class NavigationTree : TreeView
             if (container is not TreeViewItem item) return;
             CollapseSubTree(item);
         }
+    }
+
+    /// <summary>
+    /// Finds the parent Drawer view and sets the drawer panel closed.
+    /// </summary>
+    private void HidePanel()
+    {
+        var drawer = this.FindLogicalAncestorOfType<DrawerView>();
+        if (drawer is null) return;
+        drawer.IsDrawerOpen = false;
     }
 }

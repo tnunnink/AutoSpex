@@ -44,7 +44,7 @@ public abstract class Element : SmartEnum<Element, string>
     public IEnumerable<Property> CustomProperties => _customProperties;
     public Property This => _customProperties.Single(p => p.Name == ThisProperty);
     public virtual Func<L5X, IEnumerable<object>> Query => file => file.Query(Type);
-    public Func<L5X, string, object?> Lookup => (file, name) => file.Find(new ComponentKey(Type.L5XType(), name));
+    public Func<L5X, string, object?> Lookup => (file, name) => file.Find(new ComponentKey(Type.Name, name));
     public bool IsComponent => Type.IsAssignableTo(typeof(LogixComponent));
     protected virtual bool IsSelectable => IsComponent;
     public static IEnumerable<Element> Components => List.Where(e => e.IsComponent);
@@ -257,8 +257,6 @@ public abstract class Element : SmartEnum<Element, string>
         public ParameterConnectionElement() : base(typeof(ParameterConnection))
         {
         }
-
-        protected override bool IsSelectable => true;
     }
 
     private class PenElement : Element

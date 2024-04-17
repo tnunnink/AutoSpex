@@ -2,8 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:components="using:AutoSpex.Client.Components"
-                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
-                    xmlns:system="clr-namespace:System;assembly=System.Runtime">
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
 
     <Design.PreviewWith>
         <components:DeletePrompt ItemName="MySpec" />
@@ -15,7 +14,7 @@
                 <controls:Prompt Header="{TemplateBinding Title}"
                                  HeaderIcon="{StaticResource IconWarningFilled}"
                                  ActionButtonText="Delete"
-                                 ActionButtonTheme="{actipro:ControlTheme ButtonSoft}"
+                                 ActionButtonTheme="{actipro:ControlTheme ButtonSolid}"
                                  ActionCommandParameter="{StaticResource True}"
                                  CancelButtonTheme="{actipro:ControlTheme ButtonSoft}"
                                  CancelCommandParameter="{StaticResource False}"

@@ -1,4 +1,6 @@
 ﻿using AutoSpex.Persistence.Variables;
+using L5Sharp.Core;
+using Task = System.Threading.Tasks.Task;
 
 namespace AutoSpex.Persistence.Tests.Variables;
 
@@ -23,9 +25,10 @@ public class GetScopedVariablesTests
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
         var node = Node.NewCollection();
-        node.AddVariable("MyVar", "Test Value");
-        await mediator.Send(new SaveNode(node));
-
+        await mediator.Send(new CreateNode(node));
+        var variable = new Variable(node.NodeId, "MyVar", "Test Value");
+        await mediator.Send(new SaveVariables([variable]));
+        
         var result = await mediator.Send(new GetScopedVariables(node.NodeId));
 
         result.IsSuccess.Should().BeTrue();
@@ -37,12 +40,12 @@ public class GetScopedVariablesTests
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-
         var node = Node.NewCollection();
-        node.AddVariable("MyVar01", "Test Value");
-        node.AddVariable("MyVar02", "Test Value");
-        node.AddVariable("MyVar03", "Test Value");
-        await mediator.Send(new SaveNode(node));
+        await mediator.Send(new CreateNode(node));
+        var var01 = new Variable(node.NodeId, "Var01", "Test", "This is a test");
+        var var02 = new Variable(node.NodeId, "Var02", "Test", "This is a test");
+        var var03 = new Variable(node.NodeId, "Var03", "Test", "This is a test");
+        await mediator.Send(new SaveVariables([var01, var02, var03]));
 
         var result = await mediator.Send(new GetScopedVariables(node.NodeId));
 
@@ -55,16 +58,16 @@ public class GetScopedVariablesTests
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-
         var collection = Node.NewCollection();
-        collection.AddVariable("CollectionVar", "Test Value");
         var folder = collection.AddFolder();
-        folder.AddVariable("FolderVar", "Test Value");
         var spec = folder.AddSpec();
-        spec.AddVariable("SpecVar", "Test Value");
-        await mediator.Send(new SaveNode(collection));
-        await mediator.Send(new SaveNode(folder));
-        await mediator.Send(new SaveNode(spec));
+        await mediator.Send(new CreateNode(collection));
+        await mediator.Send(new CreateNode(folder));
+        await mediator.Send(new CreateNode(spec));
+        var var01 = new Variable(collection.NodeId, "CollectionVar", 123);
+        var var02 = new Variable(folder.NodeId, "FolderVar", "Test Value");
+        var var03 = new Variable(spec.NodeId, "SpecVar", TagType.Base);
+        await mediator.Send(new SaveVariables([var01, var02, var03]));
 
         var result = await mediator.Send(new GetScopedVariables(spec.NodeId));
 
@@ -77,20 +80,22 @@ public class GetScopedVariablesTests
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-
-        var node = Node.NewCollection();
-        node.AddVariable("MyVar01", "Test Value");
-        await mediator.Send(new SaveNode(node));
-
-        var spec = node.AddSpec();
-        var expected = spec.AddVariable("MyVar01", "A more local value");
-        await mediator.Send(new SaveNode(spec));
+        var collection = Node.NewCollection();
+        var folder = collection.AddFolder();
+        var spec = folder.AddSpec();
+        await mediator.Send(new CreateNode(collection));
+        await mediator.Send(new CreateNode(folder));
+        await mediator.Send(new CreateNode(spec));
+        var var01 = new Variable(collection.NodeId, "MyVar01", 123);
+        var var02 = new Variable(folder.NodeId, "MyVar01", "Test Value");
+        var var03 = new Variable(spec.NodeId, "MyVar01", TagType.Base);
+        await mediator.Send(new SaveVariables([var01, var02, var03]));
 
         var result = await mediator.Send(new GetScopedVariables(spec.NodeId));
 
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().HaveCount(1);
-        result.Value.First().Should().BeEquivalentTo(expected);
-        result.Value.First().Value.Should().Be("A more local value");
+        result.Value.First().Should().BeEquivalentTo(var03);
+        result.Value.First().Value.Should().Be(TagType.Base);
     }
 }

@@ -20,29 +20,18 @@ public class SourceList : TemplatedControl
         AvaloniaProperty.RegisterDirect<SourceList, ObservableCollection<SourceObserver>>(
             nameof(Sources), o => o.Sources, (o, v) => o.Sources = v);
 
-    public static readonly DirectProperty<SourceList, ObservableCollection<SourceObserver>> SelectedSourcesProperty =
-        AvaloniaProperty.RegisterDirect<SourceList, ObservableCollection<SourceObserver>>(
-            nameof(SelectedSources), o => o.SelectedSources, (o, v) => o.SelectedSources = v);
-
     public static readonly DirectProperty<SourceList, ICommand?> AddSourceCommandProperty =
         AvaloniaProperty.RegisterDirect<SourceList, ICommand?>(
             nameof(AddSourceCommand), o => o.AddSourceCommand, (o, v) => o.AddSourceCommand = v);
 
-    public static readonly DirectProperty<SourceList, ICommand?> DeleteSourcesProperty =
-        AvaloniaProperty.RegisterDirect<SourceList, ICommand?>(
-            nameof(DeleteSources), o => o.DeleteSources, (o, v) => o.DeleteSources = v);
-
     #endregion
 
-
     private ObservableCollection<SourceObserver> _sources = [];
-    private ObservableCollection<SourceObserver> _selectedSources = [];
     private ICommand? _addSourceCommand;
-    private ICommand? _deleteSources;
     private TextBox? _filterText;
     private ListBox? _sourceList;
 
-    public ObservableCollection<SourceObserver> SourcesView { get; } = [];
+    public ObservableCollection<SourceObserver> SourceCollection { get; } = [];
 
     public ObservableCollection<SourceObserver> Sources
     {
@@ -50,22 +39,10 @@ public class SourceList : TemplatedControl
         set => SetAndRaise(SourcesProperty, ref _sources, value);
     }
 
-    public ObservableCollection<SourceObserver> SelectedSources
-    {
-        get => _selectedSources;
-        set => SetAndRaise(SelectedSourcesProperty, ref _selectedSources, value);
-    }
-
     public ICommand? AddSourceCommand
     {
         get => _addSourceCommand;
         set => SetAndRaise(AddSourceCommandProperty, ref _addSourceCommand, value);
-    }
-
-    public ICommand? DeleteSources
-    {
-        get => _deleteSources;
-        set => SetAndRaise(DeleteSourcesProperty, ref _deleteSources, value);
     }
 
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
@@ -107,8 +84,8 @@ public class SourceList : TemplatedControl
     private void UpdateSourceList(string? filter = default)
     {
         var filtered = Sources.Where(s => FilterSource(s, filter));
-        SourcesView.Clear();
-        SourcesView.AddRange(filtered);
+        SourceCollection.Clear();
+        SourceCollection.AddRange(filtered);
     }
 
     private static bool FilterSource(SourceObserver source, string? text)

@@ -1,28 +1,43 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
-             xmlns:components="clr-namespace:AutoSpex.Client.Components"
-             x:Class="AutoSpex.Client.Components.ProjectSelector"
-             x:DataType="components:ProjectSelector">
-    
-    <Button Theme="{actipro:ControlTheme TitleBarButton}">
-        <DockPanel LastChildFill="True">
-            <PathIcon Theme="{StaticResource IconCubeFilled}"
-                      Foreground="{DynamicResource IconBrushDefault}" Margin="5 0" />
-            <ContentPresenter ContentTemplate="{actipro:GlyphTemplate DropDownArrow16}"
-                              DockPanel.Dock="Right" />
-            <TextBlock Text="{Binding Project.Name, FallbackValue='Select Project'}"
-                       Margin="5 0"
-                       VerticalAlignment="Center" />
-        </DockPanel>
-        <Button.Flyout>
-            <Flyout Placement="BottomEdgeAlignedLeft"
-                    ShowMode="TransientWithDismissOnPointerMoveAway"
-                    HorizontalOffset="-10">
-                <Border Padding="5">
-                    
-                </Border>
-            </Flyout>
-        </Button.Flyout>
-    </Button>
-</UserControl>
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:controls="using:AutoSpex.Client.Components">
+
+    <Design.PreviewWith>
+        <Border Padding="300">
+            <controls:ProjectSelector Projects="{x:Static controls:DesignData.Projects}" />
+        </Border>
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type controls:ProjectSelector}" TargetType="controls:ProjectSelector">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Button Theme="{actipro:ControlTheme TitleBarButton}"
+                        Padding="0">
+                    <Grid ColumnDefinitions="Auto,*,Auto">
+                        <PathIcon Grid.Column="0"
+                                  Theme="{StaticResource IconCubeOutlined}"
+                                  Foreground="{actipro:ThemeResource ControlForegroundBrushOutlineAccent}"
+                                  Margin="5 0" />
+                        <TextBlock Grid.Column="1"
+                                   Text="{TemplateBinding SelectedProject}" />
+                        <ContentPresenter Grid.Column="2" Margin="5 1 10 0"
+                                          ContentTemplate="{actipro:GlyphTemplate DropDownArrow16}" />
+                    </Grid>
+                    <Button.Flyout>
+                        <Flyout Placement="BottomEdgeAlignedLeft"
+                                ShowMode="TransientWithDismissOnPointerMoveAway"
+                                HorizontalOffset="-8">
+                            <controls:ProjectList
+                                CornerRadius="{actipro:ThemeResource PopupCornerRadius}"
+                                ShowButtons="True"
+                                ProjectSource="{Binding Projects, RelativeSource={RelativeSource TemplatedParent}}"
+                                CreateCommand="{Binding CreateCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                                OpenCommand="{Binding OpenCommand, RelativeSource={RelativeSource TemplatedParent}}" />
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

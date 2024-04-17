@@ -100,7 +100,7 @@ public static class Extensions
     /// </summary>
     /// <param name="type">The type to get the identifier for.</param>
     /// <returns>A string representing a UI friendly name of the type.</returns>
-    public static string TypeIdentifier(this Type type)
+    public static string CommonName(this Type type)
     {
         if (type == typeof(bool)) return "bool";
         if (type == typeof(byte)) return "byte";
@@ -117,17 +117,36 @@ public static class Extensions
         if (type == typeof(string)) return "string";
 
         if (type.IsEnumerable())
-            return $"{string.Join(", ", type.GetGenericArguments().Select(TypeIdentifier).ToArray())}[]";
+            return $"{string.Join(", ", type.GetGenericArguments().Select(CommonName).ToArray())}[]";
 
         if (type.IsNullable())
             // ReSharper disable once TailRecursiveCall dont care
-            return Nullable.GetUnderlyingType(type)!.TypeIdentifier();
+            return Nullable.GetUnderlyingType(type)!.CommonName();
 
         if (type.IsGenericType)
             return type.Name.Split('`')[0] + "<" +
-                   string.Join(", ", type.GetGenericArguments().Select(TypeIdentifier).ToArray()) + ">";
+                   string.Join(", ", type.GetGenericArguments().Select(CommonName).ToArray()) + ">";
 
         return type.Name;
+    }
+
+    /// <summary>
+    /// Based on the object type return a UI friendly text representation for which we can identify this object.
+    /// </summary>
+    public static string ToText(this object? candidate)
+    {
+        if (candidate is null) return "null";
+
+        return candidate switch
+        {
+            Tag tag => tag.Scope == Scope.Program ? $"{tag.Container}.{tag.TagName}" : $"{tag.TagName}",
+            DataTypeMember member => member.Name,
+            Parameter parameter => parameter.Name,
+            LogixCode code => $"{code.Container}>{code.Routine?.Name}>{code.Location}",
+            LogixComponent component => component.Name,
+            LogixEnum enumeration => enumeration.Name,
+            _ => TypeGroup.FromType(candidate.GetType()).Name
+        };
     }
 
     /// <summary>

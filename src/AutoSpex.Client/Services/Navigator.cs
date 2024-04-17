@@ -4,9 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoSpex.Client.Observers;
 using AutoSpex.Client.Pages;
-using AutoSpex.Client.Pages.Home;
-using AutoSpex.Client.Pages.Projects;
 using AutoSpex.Client.Shared;
+using AutoSpex.Engine;
 using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
 
@@ -88,7 +87,7 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
     /// page to initialize it's state. Finally it will clean up inactive pages from memory and then return the active
     /// page to the caller of the navigation request.
     /// </summary>
-    private async Task<TPage> OpenPage<TPage>(Func<TPage> factory, NavigationAction action = NavigationAction.Replace)
+    private async Task<TPage> OpenPage<TPage>(Func<TPage> factory, NavigationAction action = NavigationAction.Open)
         where TPage : PageViewModel
     {
         var page = ResolvePage(factory);
@@ -100,7 +99,7 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
     }
 
     private async Task<PageViewModel> OpenPage(Func<PageViewModel> factory,
-        NavigationAction action = NavigationAction.Replace)
+        NavigationAction action = NavigationAction.Open)
     {
         var page = ResolvePage(factory);
         var request = new NavigationRequest(page, action);
@@ -151,9 +150,10 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
         return observer switch
         {
             ProjectObserver project => () => new ProjectPageModel(project),
-            NodeObserver node => () => new NodePageModel(node),
+            NodeObserver node when node.NodeType == NodeType.Collection => () => new CollectionPageModel(node),
+            NodeObserver node when node.NodeType == NodeType.Folder => () => new FolderPageModel(node),
+            NodeObserver node when node.NodeType == NodeType.Spec => () => new SpecPageModel(node),
             SourceObserver source => () => new SourcePageModel(source.Id),
-            RunnerObserver runner => () => new RunnerPageModel(runner),
             _ => throw new NotSupportedException($"The observer type {observer.GetType()} does not support navigation")
         };
     }

@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Input;
 using AutoSpex.Client.Observers;
-using AutoSpex.Engine;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Data;
 using Avalonia.Interactivity;
 using CommunityToolkit.Mvvm.Input;
 
@@ -15,32 +16,45 @@ public class VariableList : TemplatedControl
 {
     private const string PartCheckAll = "CheckAll";
 
-    public static readonly DirectProperty<VariableList, ObservableCollection<VariableObserver>> VariablesProperty =
-        AvaloniaProperty.RegisterDirect<VariableList, ObservableCollection<VariableObserver>>(
+    public static readonly DirectProperty<VariableList, ObservableCollection<VariableObserver>?> VariablesProperty =
+        AvaloniaProperty.RegisterDirect<VariableList, ObservableCollection<VariableObserver>?>(
             nameof(Variables), o => o.Variables, (o, v) => o.Variables = v);
 
-    private ObservableCollection<VariableObserver> _variables = [];
+    public static readonly DirectProperty<VariableList, ICommand?> AddCommandProperty =
+        AvaloniaProperty.RegisterDirect<VariableList, ICommand?>(
+            nameof(AddCommand), o => o.AddCommand, (o, v) => o.AddCommand = v,
+            defaultBindingMode: BindingMode.TwoWay);
+
+    private ObservableCollection<VariableObserver>? _variables = [];
+    private ICommand? _addCommand;
     private CheckBox? _checkBox;
+    private List<VariableObserver> AllVariables => Variables?.ToList() ?? [];
+    private List<VariableObserver> CheckedVariables => Variables?.Where(v => v.IsChecked).ToList() ?? [];
 
     public VariableList()
     {
-        AddVariableCommand = new RelayCommand(AddVariable);
         RemoveVariableCommand = new RelayCommand<VariableObserver>(RemoveVariable);
         RemoveCheckedCommand = new RelayCommand(RemoveCheckedVariables, AnyChecked);
     }
 
     public ObservableCollection<VariableObserver> VariablesSource { get; } = [];
 
-    public ObservableCollection<VariableObserver> Variables
+    public ObservableCollection<VariableObserver>? Variables
     {
         get => _variables;
         set => SetAndRaise(VariablesProperty, ref _variables, value);
     }
 
-    public IRelayCommand AddVariableCommand { get; }
+    public ICommand? AddCommand
+    {
+        get => _addCommand;
+        set => SetAndRaise(AddCommandProperty, ref _addCommand, value);
+    }
 
     public IRelayCommand RemoveVariableCommand { get; }
     public IRelayCommand RemoveCheckedCommand { get; }
+    
+    public IRelayCommand CopyCheckedCommand { get; }
 
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
@@ -63,32 +77,23 @@ public class VariableList : TemplatedControl
     {
         if (e.Source is not CheckBox checkBox) return;
 
-        foreach (var variable in Variables)
+        foreach (var variable in AllVariables)
         {
             variable.IsChecked = checkBox.IsChecked is true;
         }
     }
 
-    private void AddVariable()
-    {
-        Variables.Add(new VariableObserver(new Variable("Var01")));
-    }
-
     private void RemoveVariable(VariableObserver? variable)
     {
         if (variable is null) return;
-        Variables.Remove(variable);
+        Variables?.Remove(variable);
     }
 
     private void RemoveCheckedVariables()
     {
-        var variables = GetCheckedVariables();
-
-        foreach (var variable in variables)
-            Variables.Remove(variable);
+        foreach (var variable in CheckedVariables)
+            Variables?.Remove(variable);
     }
 
-    private bool AnyChecked() => GetCheckedVariables().Count > 0;
-
-    private List<VariableObserver> GetCheckedVariables() => Variables.Where(v => v.IsChecked).ToList();
+    private bool AnyChecked() => CheckedVariables.Count > 0;
 }

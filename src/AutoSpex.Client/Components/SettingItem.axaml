@@ -26,9 +26,9 @@
     <ControlTheme x:Key="{x:Type components:SettingItem}" TargetType="components:SettingItem">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBorderBrushOutline}" />
-        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderThickness" Value="0" />
         <Setter Property="CornerRadius" Value="{a:ThemeResource ButtonCornerRadius}" />
-        <Setter Property="Padding" Value="5" />
+        <Setter Property="Padding" Value="20 5" />
         <Setter Property="HorizontalContentAlignment" Value="Right" />
         <Setter Property="Template">
             <ControlTemplate>
@@ -43,7 +43,8 @@
 
                         <StackPanel Grid.Column="0" Spacing="3" Margin="5">
                             <Label Content="{TemplateBinding Label}"
-                                   Theme="{a:ControlTheme LabelBody}"
+                                   Theme="{a:ControlTheme LabelFormControlLabel}"
+                                   Foreground="{a:ThemeResource DefaultForegroundBrush}"
                                    FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
                             <Label Content="{TemplateBinding InfoText}"
                                    Theme="{a:ControlTheme LabelFormControlMessage}" />
@@ -62,7 +63,7 @@
         </Setter>
 
         <Style Selector="^:pointerover /template/ Border#Border">
-            <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushOutlinePointerOver}" />
+            <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftPointerOver}" />
         </Style>
     </ControlTheme>
 </ResourceDictionary>

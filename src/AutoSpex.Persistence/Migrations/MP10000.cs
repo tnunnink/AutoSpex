@@ -1,8 +1,10 @@
 ﻿using System.Data;
 using FluentMigrator;
+using JetBrains.Annotations;
 
 namespace AutoSpex.Persistence;
 
+[UsedImplicitly]
 [MigrationId(1, 00, 00, "Initial Project Build")]
 [Tags("Project")]
 public class MP10000 : AutoReversingMigration
@@ -14,75 +16,70 @@ public class MP10000 : AutoReversingMigration
             .WithColumn("ParentId").AsString().Nullable().ForeignKey("Node", "NodeId").OnDeleteOrUpdate(Rule.Cascade)
             .WithColumn("NodeType").AsString().NotNullable()
             .WithColumn("Name").AsString().NotNullable()
-            .WithColumn("Depth").AsInt32().NotNullable().WithDefaultValue(0)
-            .WithColumn("Ordinal").AsInt32().NotNullable().WithDefaultValue(0);
+            .WithColumn("Documentation").AsString().Nullable();
 
         Create.Table("Spec")
-            .WithColumn("NodeId").AsString().PrimaryKey().ForeignKey("Node", "NodeId").OnDeleteOrUpdate(Rule.Cascade)
+            .WithColumn("SpecId").AsString().PrimaryKey().ForeignKey("Node", "NodeId").OnDeleteOrUpdate(Rule.Cascade)
             .WithColumn("Specification").AsString().NotNullable();
+        
+        Create.Table("Variable")
+            .WithColumn("VariableId").AsString().PrimaryKey()
+            .WithColumn("NodeId").AsString().NotNullable().ForeignKey("Node", "NodeId").OnDelete(Rule.Cascade)
+            .WithColumn("Name").AsString().NotNullable()
+            .WithColumn("Type").AsString().NotNullable()
+            .WithColumn("Data").AsString().NotNullable()
+            .WithColumn("Description").AsString().Nullable();
+        
+        Create.UniqueConstraint("Unique_Variable_NodeId_Name")
+            .OnTable("Variable")
+            .Columns("NodeId", "Name");
 
         Create.Table("Source")
             .WithColumn("SourceId").AsString().PrimaryKey()
             .WithColumn("IsSelected").AsBoolean().NotNullable()
             .WithColumn("Name").AsString().NotNullable().Unique()
-            .WithColumn("Description").AsString().Nullable()
+            .WithColumn("Documentation").AsString().Nullable()
             .WithColumn("TargetType").AsString().Nullable()
             .WithColumn("TargetName").AsString().Nullable()
             .WithColumn("ExportedBy").AsString().Nullable()
             .WithColumn("ExportedOn").AsDate().Nullable()
             .WithColumn("Content").AsString().NotNullable();
 
-        Create.Table("Variable")
-            .WithColumn("VariableId").AsString().PrimaryKey()
+        Create.Table("Override")
+            .WithColumn("SourceId").AsString().NotNullable().ForeignKey("Source", "SourceId").OnDelete(Rule.Cascade)
+            .WithColumn("VariableId").AsString().NotNullable().ForeignKey("Variable", "VariableId").OnDelete(Rule.Cascade)
+            .WithColumn("Data").AsString().NotNullable();
+
+        Create.UniqueConstraint("Unique_Override_Source_Variable")
+            .OnTable("Override")
+            .Columns("SourceId", "VariableId");
+
+        Create.Table("Run")
+            .WithColumn("RunId").AsString().PrimaryKey()
             .WithColumn("NodeId").AsString().NotNullable().ForeignKey("Node", "NodeId").OnDelete(Rule.Cascade)
+            .WithColumn("SourceId").AsString().NotNullable().ForeignKey("Source", "SourceId").OnDelete(Rule.Cascade)
             .WithColumn("Name").AsString().NotNullable()
-            .WithColumn("Value").AsString().NotNullable();
-
-        Create.UniqueConstraint("Unique_Variable_NodeId_Name")
-            .OnTable("Variable")
-            .Columns("NodeId", "Name");
-
-        Create.Table("Runner")
-            .WithColumn("RunnerId").AsString().PrimaryKey()
-            .WithColumn("SourceId").AsString().Nullable().ForeignKey("Source", "SourceId").OnDelete(Rule.SetNull)
-            .WithColumn("Name").AsString().NotNullable()
-            .WithColumn("Result").AsString().Nullable()
-            .WithColumn("RanOn").AsString().Nullable();
+            .WithColumn("Result").AsString().NotNullable()
+            .WithColumn("RanOn").AsString().NotNullable()
+            .WithColumn("RanBy").AsString().NotNullable();
 
         Create.Table("Outcome")
             .WithColumn("OutcomeId").AsString().PrimaryKey()
-            .WithColumn("RunnerId").AsString().NotNullable().ForeignKey("Runner", "RunnerId").OnDelete(Rule.Cascade)
-            .WithColumn("NodeId").AsString().NotNullable().ForeignKey("Node", "NodeId").OnDelete(Rule.Cascade)
+            .WithColumn("RunId").AsString().NotNullable().ForeignKey("Run", "RunId").OnDelete(Rule.Cascade)
+            .WithColumn("SpecId").AsString().NotNullable().ForeignKey("Spec", "SpecId").OnDelete(Rule.Cascade)
             .WithColumn("Result").AsString().NotNullable()
-            .WithColumn("SpecName").AsString().NotNullable()
-            .WithColumn("SpecPath").AsString().NotNullable()
             .WithColumn("Duration").AsInt32().NotNullable()
-            .WithColumn("Verified").AsInt32().NotNullable()
+            .WithColumn("Total").AsInt32().NotNullable()
             .WithColumn("Passed").AsInt32().NotNullable()
             .WithColumn("Failed").AsInt32().NotNullable()
             .WithColumn("Errored").AsInt32().NotNullable()
-            .WithColumn("Verifications").AsString();
-        
-        Create.Table("Override")
-            .WithColumn("RunnerId").AsString().NotNullable()
-            .ForeignKey("Runner", "RunnerId").OnDelete(Rule.Cascade)
-            .WithColumn("VariableId").AsString().NotNullable()
-            .ForeignKey("Variable", "VariableId").OnDelete(Rule.Cascade)
-            .WithColumn("Value").AsString().NotNullable();
+            .WithColumn("Evaluations").AsString();
 
-        Create.UniqueConstraint("Unique_Override_Runner_Variable")
-            .OnTable("Override")
-            .Columns("RunnerId", "VariableId");
-
-        Create.Table("ChangeLog")
+        /*Create.Table("ChangeLog")
             .WithColumn("ChangeId").AsString().PrimaryKey()
             .WithColumn("NodeId").AsString().NotNullable().ForeignKey("Node", "NodeId").OnDelete(Rule.Cascade)
             .WithColumn("ChangeType").AsString().NotNullable()
             .WithColumn("ChangedOn").AsString().NotNullable()
-            .WithColumn("ChangedBy").AsString().NotNullable();
-
-        Create.Table("Documentation")
-            .WithColumn("OwnerId").AsString().PrimaryKey()
-            .WithColumn("Text").AsString();
+            .WithColumn("ChangedBy").AsString().NotNullable();*/
     }
 }

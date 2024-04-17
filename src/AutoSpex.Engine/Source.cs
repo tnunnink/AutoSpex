@@ -8,9 +8,11 @@ namespace AutoSpex.Engine;
 public class Source
 {
     private L5X? _l5X;
-
+    private readonly Dictionary<Guid, string> _overrides = [];
+    
     private HashSet<string> _elementNames =
         [L5XName.Description, L5XName.Comment, L5XName.Text, L5XName.RevisionNote, L5XName.AdditionalHelpText];
+    
 
     [UsedImplicitly]
     private Source()
@@ -22,7 +24,7 @@ public class Source
         _l5X = l5X ?? throw new ArgumentNullException(nameof(l5X));
 
         Name = _l5X.Info.TargetName ?? "New Source";
-        Description = _l5X.Controller.Description ?? string.Empty;
+        Documentation = _l5X.Controller.Description ?? string.Empty;
         TargetType = _l5X.Info.TargetType ?? string.Empty;
         TargetName = _l5X.Info.TargetName ?? string.Empty;
         ExportedOn = _l5X.Info.ExportDate ?? DateTime.Today;
@@ -33,7 +35,7 @@ public class Source
     public Guid SourceId { get; private init; } = Guid.NewGuid();
     public bool IsSelected { get; set; }
     public string Name { get; set; } = string.Empty;
-    public string Description { get; set; } = string.Empty;
+    public string Documentation { get; set; } = string.Empty;
     public string TargetType { get; private set; } = string.Empty;
     public string TargetName { get; private set; } = string.Empty;
     public DateTime ExportedOn { get; private set; } = DateTime.Now;

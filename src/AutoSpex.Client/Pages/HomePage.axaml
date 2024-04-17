@@ -1,0 +1,87 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:components="clr-namespace:AutoSpex.Client.Components"
+             x:Class="AutoSpex.Client.Pages.HomePage"
+             x:DataType="pages:HomePageModel">
+
+    <Design.Height>1000</Design.Height>
+    <Design.Width>1400</Design.Width>
+
+    <Grid ColumnDefinitions="300, *">
+
+        <Border Grid.Column="0"
+                Background="{a:ThemeResource Container2BackgroundBrush}"
+                Padding="10">
+            <Grid RowDefinitions="Auto,Auto,Auto,Auto,*" Margin="10">
+
+                <!--Header-->
+                <StackPanel Grid.Row="0" Spacing="20">
+                    <StackPanel Orientation="Vertical"
+                                HorizontalAlignment="Center">
+                        <Image Source="../Resources/Images/inspect-code.png"
+                               Height="60" />
+                        <TextBlock Text="AutoSpex"
+                                   Classes="theme-text-heading"
+                                   Padding="10" />
+                    </StackPanel>
+
+                    <StackPanel Spacing="5">
+                        <TextBlock Text="Automated PLC Verification"
+                                   Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                                   Classes="theme-text-heading size-xs" />
+                        <TextBlock
+                            Text="Build and run collections of PLC specifications to automate you quality check workflow."
+                            Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                            Classes="theme-text-body size-sm"
+                            TextWrapping="Wrap" />
+                    </StackPanel>
+                </StackPanel>
+
+                <!--Divider-->
+                <Border Grid.Row="1"
+                        BorderThickness="0 0 0 1"
+                        BorderBrush="{a:ThemeResource Container2BorderBrush}"
+                        Margin="0 20" />
+
+                <!--Buttons-->
+                <StackPanel Grid.Row="2" Spacing="20">
+                    <StackPanel Spacing="5">
+                        <TextBlock Text="Launch Project"
+                                   Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                                   Classes="theme-text-heading size-xs" />
+                        <TextBlock
+                            Text="Start by creating a new project or opening an existing one from disc."
+                            Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                            Classes="theme-text-body size-sm"
+                            TextWrapping="Wrap" />
+                    </StackPanel>
+
+                    <StackPanel Spacing="10" Margin="10">
+                        <Button Command="{Binding CreateProjectCommand}"
+                                Content="New Project"
+                                Padding="8"
+                                Theme="{a:ControlTheme ButtonSolid}"
+                                Classes="accent" />
+                        <Button Command="{Binding OpenProjectCommand}"
+                                Content="Open Project"
+                                Padding="8"
+                                Theme="{a:ControlTheme ButtonSolid}" />
+                    </StackPanel>
+                </StackPanel>
+
+                <!--Divider-->
+                <Border Grid.Row="3"
+                        BorderThickness="0 0 0 1"
+                        BorderBrush="{a:ThemeResource Container2BorderBrush}"
+                        Margin="0 20" />
+            </Grid>
+        </Border>
+
+        <components:ProjectList
+            Grid.Column="1"
+            ProjectSource="{Binding Projects}"
+            ShowButtons="False" />
+    </Grid>
+</UserControl>

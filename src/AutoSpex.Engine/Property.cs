@@ -80,7 +80,7 @@ public class Property : IEquatable<Property>
     /// <summary>
     /// A friendly type identifier for the property. This can be used to display in the client UI.
     /// </summary>
-    public string Identifier => Type.TypeIdentifier();
+    public string Identifier => Type.CommonName();
 
     /// <summary>
     /// The <see cref="TypeGroup"/> to which this property's return type belongs.

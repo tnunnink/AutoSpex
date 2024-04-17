@@ -28,7 +28,7 @@ public class UpdateSourceTests
         await mediator.Send(new CreateSource(source));
 
         source.Name = "Renamed Source";
-        source.Description = "This source is a file for a project";
+        source.Documentation = "This source is a file for a project";
         source.IsSelected = true;
         
         var update = await mediator.Send(new UpdateSource(source));
@@ -37,7 +37,7 @@ public class UpdateSourceTests
         var result = await mediator.Send(new GetSource(source.SourceId));
         result.IsSuccess.Should().BeTrue();
         result.Value.Name.Should().Be("Renamed Source");
-        result.Value.Description.Should().Be("This source is a file for a project");
+        result.Value.Documentation.Should().Be("This source is a file for a project");
         result.Value.IsSelected.Should().BeTrue();
     }
 

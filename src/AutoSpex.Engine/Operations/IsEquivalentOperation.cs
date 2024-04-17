@@ -10,23 +10,11 @@ public class IsEquivalentOperation() : BinaryOperation("IsEquivalent")
     protected override bool Evaluate(object? input, object value)
     {
         if (value is not string data) return false;
+
+        if (input is not LogixElement element) return false;
         
-        switch (input)
-        {
-            case LogixElement element:
-            {
-                var other = XElement.Parse(data).Deserialize();
-                return element.IsEquivalent(other);
-            }
-            case LogixType type:
-            {
-                var xml = XElement.Parse(data);
-                var other = LogixData.Deserialize(xml);
-                return type.IsEquivalent(other);
-            }
-            default:
-                return false;
-        }
+        var other = XElement.Parse(data).Deserialize();
+        return element.EquivalentTo(other);
     }
     
     protected override bool Supports(TypeGroup group) => group == TypeGroup.Element;

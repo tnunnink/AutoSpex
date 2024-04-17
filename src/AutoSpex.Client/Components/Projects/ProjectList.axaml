@@ -2,126 +2,133 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:components="using:AutoSpex.Client.Components"
-                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
                     xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+
     <Design.PreviewWith>
-        <components:ProjectList Height="300" Width="400" Margin="20"
+        <components:ProjectList Height="600" Width="600"
+                                CornerRadius="5" BorderThickness="1"
+                                ShowButtons="True"
                                 ProjectSource="{x:Static components:DesignData.Projects}" />
     </Design.PreviewWith>
 
     <ControlTheme x:Key="{x:Type components:ProjectList}" TargetType="components:ProjectList">
-        <!-- Set Defaults -->
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Template">
             <ControlTemplate>
-                <Border CornerRadius="5" BorderThickness="1"
-                        Background="{actipro:ThemeResource Container1BackgroundBrush}"
-                        BorderBrush="{actipro:ThemeResource Container1BorderBrush}">
-                    <DockPanel LastChildFill="True">
-                        <Border DockPanel.Dock="Top"
+                <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        Padding="{TemplateBinding Padding}">
+                    <DockPanel>
+                        <Border BorderBrush="{actipro:ThemeResource Container1BorderBrush}"
                                 BorderThickness="0 0 0 1"
-                                BorderBrush="{actipro:ThemeResource Container1BorderBrush}">
-                            <Grid ColumnDefinitions="Auto,*,Auto" Margin="10 0">
-
-                                <!--Search-->
-                                <PathIcon Grid.Column="0"
-                                          Theme="{StaticResource IconSearch}" />
-                                <TextBox x:Name="PART_FilterText"
-                                         Grid.Column="1"
-                                         BorderThickness="0"
-                                         VerticalAlignment="Center"
-                                         Classes="has-clear-button"
-                                         Background="Transparent"
-                                         Padding="10"
-                                         Watermark="Search Projects" />
-
-                                <!--Buttons-->
-                                <StackPanel Grid.Column="2"
-                                            Orientation="Horizontal"
-                                            Spacing="5"
-                                            Margin="5 0 0 0">
-                                    <Button x:Name="PART_CreateButton"
-                                            Command="{TemplateBinding CreateCommand}"
-                                            properties:ButtonIcon.Theme="{StaticResource IconAdd}"
-                                            Theme="{StaticResource IconButton}"
-                                            Classes="accent"
-                                            VerticalAlignment="Center"
-                                            HorizontalAlignment="Center"
-                                            ToolTip.Tip="Create new project" />
-                                    <Button x:Name="PART_OpenButton"
-                                            Command="{TemplateBinding OpenCommand}"
-                                            properties:ButtonIcon.Theme="{StaticResource IconFolderOutlinedOpen}"
-                                            Theme="{StaticResource IconButton}"
-                                            Padding="7"
-                                            VerticalAlignment="Center"
-                                            HorizontalAlignment="Center"
-                                            ToolTip.Tip="Open existing project" />
-                                </StackPanel>
-                            </Grid>
-                        </Border>
-
-                        <Border>
-                            <!--Recent Project-->
-                            <ListBox Background="Transparent"
+                                DockPanel.Dock="Top">
+                            <TextBox x:Name="FilterText"
+                                     Watermark="Search recent projects"
                                      BorderThickness="0"
-                                     Padding="5"
-                                     ItemsSource="{TemplateBinding Projects}"
-                                     HorizontalAlignment="Stretch">
-                                <ListBox.ItemContainerTheme>
-                                    <ControlTheme TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemSimple}">
-                                        <Setter Property="Margin" Value="2" />
-                                        <Setter Property="CornerRadius" Value="5" />
-                                        <Setter Property="ContextFlyout" Value="{StaticResource ProjectListFlyout}" />
-                                    </ControlTheme>
-                                </ListBox.ItemContainerTheme>
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate x:DataType="observers:ProjectObserver">
-                                        <DockPanel LastChildFill="True">
-                                            <Panel DockPanel.Dock="Left"
-                                                   Margin="0 0 15 0">
-                                                <PathIcon Theme="{StaticResource IconCubeOutlined}"
-                                                          IsVisible="{Binding Exists}"
-                                                          Foreground="{actipro:ThemeResource ControlForegroundBrushSoftAccent}" />
-                                                <PathIcon Theme="{StaticResource IconExclamationOutlined}"
-                                                          IsVisible="{Binding !Exists}"
-                                                          Foreground="{actipro:ThemeResource ControlForegroundBrushOutlineDanger}"
-                                                          ToolTip.Tip="Project Not Found" />
-                                            </Panel>
-
-
-                                            <Panel DockPanel.Dock="Right"
-                                                   IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}">
-                                                <controls:IconButton Icon="{StaticResource IconDotsVertical}"
-                                                                     IsVisible="{Binding Exists}"
-                                                                     Flyout="{StaticResource ProjectListFlyout}" />
-                                                <controls:IconButton Icon="{StaticResource IconClose}"
-                                                                     Command="{Binding RemoveCommand}"
-                                                                     IsVisible="{Binding !Exists}"
-                                                                     Flyout="{StaticResource ProjectListFlyout}" />
-                                            </Panel>
-
-                                            <StackPanel Spacing="3"
-                                                        VerticalAlignment="Center">
-                                                <StackPanel.Styles>
-                                                    <Style Selector="TextBlock.nonexistent">
-                                                        <Setter Property="Opacity" Value="0.5" />
-                                                    </Style>
-                                                </StackPanel.Styles>
-                                                <TextBlock Text="{Binding Name}"
-                                                           Classes.nonexistent="{Binding !Exists}" />
-                                                <TextBlock Text="{Binding Uri.AbsolutePath}"
-                                                           FontSize="13"
-                                                           Classes.nonexistent="{Binding !Exists}"
-                                                           Foreground="{actipro:ThemeResource DefaultForegroundBrushDisabled}" />
-                                            </StackPanel>
-                                        </DockPanel>
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-                            </ListBox>
+                                     VerticalContentAlignment="Center"
+                                     Classes="has-clear-button"
+                                     Padding="5 12">
+                                <TextBox.InnerLeftContent>
+                                    <PathIcon Theme="{StaticResource IconFilter}" Margin="5 0" />
+                                </TextBox.InnerLeftContent>
+                                <TextBox.InnerRightContent>
+                                    <StackPanel Grid.Column="2"
+                                                IsVisible="{Binding $parent[components:ProjectList].ShowButtons}"
+                                                Orientation="Horizontal"
+                                                Spacing="10"
+                                                Margin="10 0">
+                                        <Button Command="{TemplateBinding CreateCommand}"
+                                                Theme="{actipro:ControlTheme ButtonSoft}"
+                                                Classes="accent"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Center"
+                                                Padding="2"
+                                                ToolTip.Tip="Create project">
+                                            <PathIcon Theme="{StaticResource IconAdd}"
+                                                      Foreground="{Binding $parent[Button].Foreground}"
+                                                      Height="20" Width="20" Padding="4" />
+                                        </Button>
+                                        <Button Command="{TemplateBinding OpenCommand}"
+                                                Theme="{actipro:ControlTheme ButtonSoft}"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Center"
+                                                Padding="2"
+                                                ToolTip.Tip="Open project">
+                                            <PathIcon Theme="{StaticResource IconFolderOutlined}"
+                                                      Foreground="{Binding $parent[Button].Foreground}"
+                                                      Height="20" Width="20" Padding="2" />
+                                        </Button>
+                                    </StackPanel>
+                                </TextBox.InnerRightContent>
+                            </TextBox>
                         </Border>
+
+                        <ListBox x:Name="ProjectList"
+                                 ItemsSource="{TemplateBinding Projects}"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 Padding="5">
+                            <ListBox.ItemContainerTheme>
+                                <ControlTheme TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemSimple}">
+                                    <Setter Property="Margin" Value="2" />
+                                    <Setter Property="CornerRadius" Value="5" />
+                                    <Setter Property="ContextFlyout" Value="{StaticResource ProjectMenu}" />
+                                </ControlTheme>
+                            </ListBox.ItemContainerTheme>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate x:DataType="observers:ProjectObserver">
+                                    <Grid ColumnDefinitions="Auto,*,Auto">
+                                        <Panel Grid.Column="0">
+                                            <PathIcon Theme="{StaticResource IconCubeOutlined}"
+                                                      Padding="5"
+                                                      IsVisible="{Binding Exists}"
+                                                      Foreground="{actipro:ThemeResource ControlForegroundBrushOutlineAccent}" />
+                                            <PathIcon Theme="{StaticResource IconExclamationOutlined}"
+                                                      Foreground="{actipro:ThemeResource ControlForegroundBrushOutlineDanger}"
+                                                      IsVisible="{Binding !Exists}"
+                                                      Padding="5"
+                                                      ToolTip.Tip="Project Not Found" />
+                                        </Panel>
+
+                                        <StackPanel Grid.Column="1" Spacing="2" Margin="10 0">
+                                            <StackPanel.Styles>
+                                                <Style Selector="TextBlock.nonexistent">
+                                                    <Setter Property="Opacity" Value="0.5" />
+                                                </Style>
+                                            </StackPanel.Styles>
+                                            <TextBlock Text="{Binding Name}"
+                                                       Classes.nonexistent="{Binding !Exists}" />
+                                            <TextBlock Text="{Binding Uri.LocalPath}"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       TextWrapping="NoWrap"
+                                                       FontSize="{actipro:ThemeResource DefaultFontSizeSmall}"
+                                                       Classes.nonexistent="{Binding !Exists}"
+                                                       Foreground="{actipro:ThemeResource DefaultForegroundBrushDisabled}" />
+                                        </StackPanel>
+
+                                        <Border Grid.Column="2" MinWidth="30">
+                                            <Panel IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}">
+                                                <Button properties:ButtonIcon.Theme="{StaticResource IconDotsVertical}"
+                                                        Theme="{StaticResource IconButton}"
+                                                        IsVisible="{Binding Exists}"
+                                                        Flyout="{StaticResource ProjectMenu}" />
+                                                <Button properties:ButtonIcon.Theme="{StaticResource IconClose}"
+                                                        Theme="{StaticResource IconButton}"
+                                                        Command="{Binding DeleteCommand}"
+                                                        IsVisible="{Binding !Exists}"
+                                                        Padding="10" />
+                                            </Panel>
+                                        </Border>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
                     </DockPanel>
                 </Border>
-
             </ControlTemplate>
         </Setter>
     </ControlTheme>

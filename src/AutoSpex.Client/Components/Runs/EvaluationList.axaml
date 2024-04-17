@@ -1,0 +1,47 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="using:AutoSpex.Client.Components">
+
+    <Design.PreviewWith>
+        <components:EvaluationList Width="1000" Height="600"
+                                   Evaluations="{x:Static components:DesignData.Evaluations}" />
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type components:EvaluationList}" TargetType="components:EvaluationList">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border>
+                    <DockPanel>
+                        <TextBox x:Name="FilterText"
+                                 DockPanel.Dock="Top"
+                                 Watermark="Filter results"
+                                 BorderThickness="0 0 0 1" CornerRadius="0"
+                                 BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                                 VerticalContentAlignment="Center"
+                                 FontSize="{a:ThemeResource DefaultFontSizeMedium}">
+                            <Interaction.Behaviors>
+                                <SelectAllOnGotFocusBehavior />
+                            </Interaction.Behaviors>
+                            <TextBox.InnerLeftContent>
+                                <ComboBox x:Name="ResultCombo"
+                                          Theme="{a:ControlTheme ComboBoxSoft}"
+                                          ItemsSource="{Binding ResultOptions, RelativeSource={RelativeSource TemplatedParent}}"
+                                          CornerRadius="0" />
+                            </TextBox.InnerLeftContent>
+                        </TextBox>
+
+                        <ListBox
+                            ItemsSource="{Binding EvaluationCollection, RelativeSource={RelativeSource TemplatedParent}}"
+                            ItemContainerTheme="{StaticResource ListBoxItemSubtle}"
+                            BorderThickness="0">
+                            <ListBox.ItemTemplate>
+                                <components:EvaluationTemplates />
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </DockPanel>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

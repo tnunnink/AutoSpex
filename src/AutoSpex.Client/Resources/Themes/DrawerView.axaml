@@ -85,7 +85,14 @@
                         <GridSplitter Grid.Column="1"
                                       IsEnabled="{TemplateBinding IsDrawerOpen}"
                                       Theme="{StaticResource GridSplitterHighlight}"
-                                      Width="1" />
+                                      Width="1">
+                            <!--<GridSplitter.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                    <Binding Path="IsDrawerOpen" RelativeSource="{RelativeSource TemplatedParent}" />
+                                    <Binding Path="!HideSplitterOnClose" RelativeSource="{RelativeSource TemplatedParent}" />
+                                </MultiBinding>
+                            </GridSplitter.IsVisible>-->
+                        </GridSplitter>
 
                         <Panel Grid.Column="2">
                             <ContentPresenter x:Name="PART_ContentPresenter"

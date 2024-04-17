@@ -1,6 +1,7 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
@@ -8,61 +9,47 @@ using AutoSpex.Persistence;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using FluentResults;
 using JetBrains.Annotations;
 
 namespace AutoSpex.Client.Observers;
 
 [PublicAPI]
-public partial class NodeObserver : Observer<Node>,
+public partial class NodeObserver : NamedObserver<Node>,
     IRecipient<Observer<Node>.Created>,
-    IRecipient<Observer<Node>.Deleted>,
-    IRecipient<Observer<Node>.Renamed>,
-    IRecipient<VariableObserver.NodeRequest>
+    IRecipient<Observer<Node>.Deleted>
 {
     public NodeObserver(Node node) : base(node)
     {
-        Name = node.Name;
-
         Nodes = new ObserverCollection<Node, NodeObserver>(
             () => Model.Nodes.Select(n => new NodeObserver(n)).ToList(),
             (_, n) => Model.AddNode(n),
-            (i, n) => Model.InsertNode(n, i),
+            (_, n) => Model.AddNode(n),
             (_, n) => Model.RemoveNode(n),
             () => Model.ClearNodes());
-
-        Variables = new ObserverCollection<Variable, VariableObserver>(
-            () => Model.Variables.Select(m => new VariableObserver(m)).ToList(),
-            (_, m) => Model.AddVariable(m),
-            (_, m) => Model.AddVariable(m),
-            (_, m) => Model.RemoveVariable(m));
-        Track(Variables);
-
-        if (node.Spec is not null)
-        {
-            Spec = new SpecObserver(node.Spec);
-            Track(Spec);
-        }
-
-        IsOrphaned = Model.NodeType != NodeType.Collection && Model.ParentId == Guid.Empty;
+        
+        Track(nameof(Name));
+        Track(nameof(Documentation));
     }
 
     public override Guid Id => Model.NodeId;
     public Guid ParentId => Model.ParentId;
     public NodeType NodeType => Model.NodeType;
     public string Path => Model.Path;
-
-    [Required]
-    [MaxLength(100)]
-    public string Name
+    
+    public override string Name
     {
         get => Model.Name;
-        set => SetProperty(Model.Name, value, Model, (s, v) => s.Name = v, true);
+        set => SetProperty(Model.Name, value, Model, (s, v) => s.Name = v);
+    }
+
+    public string Documentation
+    {
+        get => Model.Documentation;
+        set => SetProperty(Model.Documentation, value, Model, (s, v) => s.Documentation = v);
     }
 
     public ObserverCollection<Node, NodeObserver> Nodes { get; }
-    public ObserverCollection<Variable, VariableObserver> Variables { get; }
-
-    [ObservableProperty] private SpecObserver? _spec;
 
     [ObservableProperty] private bool _isVisible = true;
 
@@ -71,10 +58,11 @@ public partial class NodeObserver : Observer<Node>,
     [ObservableProperty] private bool _isSelected;
 
     [ObservableProperty] private bool _isEditing;
-
-    [ObservableProperty] private bool _isOrphaned;
+    
+    [ObservableProperty] private bool _isChecked = true;
 
     [ObservableProperty] private bool _isNew;
+    public IEnumerable<Node> CheckedSpecs => CheckedSpecNodes(this);
 
     #region Commands
 
@@ -137,31 +125,6 @@ public partial class NodeObserver : Observer<Node>,
         Messenger.Send(new Deleted(this));
     }
 
-    /// <inheritdoc />
-    protected override async Task Rename(string? name)
-    {
-        if (string.IsNullOrEmpty(name) || string.Equals(name, Name) || name.Length > 100) return;
-
-        var previous = Name;
-        Name = name;
-
-        if (IsOrphaned)
-        {
-            Messenger.Send(new Renamed(this));
-            return;
-        }
-
-        var result = await Mediator.Send(new RenameNode(this));
-
-        if (result.IsFailed)
-        {
-            Name = previous;
-            return;
-        }
-
-        Messenger.Send(new Renamed(this));
-    }
-
     [RelayCommand]
     private void Edit()
     {
@@ -209,34 +172,22 @@ public partial class NodeObserver : Observer<Node>,
         Messenger.UnregisterAll(this);
     }
 
-    public void Receive(Renamed message)
-    {
-        if (message.Observer is not NodeObserver node) return;
-        if (ReferenceEquals(this, node)) return;
-        if (Id != node.Id) return;
-
-        if (Name != node.Name)
-        {
-            Name = node.Name;
-            Messenger.Send(new Renamed(this));
-            return;
-        }
-
-        OnPropertyChanged(nameof(Name));
-    }
-
-    public void Receive(VariableObserver.NodeRequest message)
-    {
-        if (message.HasReceivedResponse) return;
-
-        if (Variables.Any(v => v.Id == message.VariableId))
-        {
-            message.Reply(this);
-        }
-    }
-
     #endregion
 
+    protected override Task<Result> RenameModel(string name) => Mediator.Send(new RenameNode(this));
     public static implicit operator NodeObserver(Node node) => new(node);
     public static implicit operator Node(NodeObserver observer) => observer.Model;
+    
+    private IEnumerable<Node> CheckedSpecNodes(NodeObserver node)
+    {
+        var nodes = new List<Node>();
+
+        if (node.NodeType == NodeType.Spec && node.IsChecked)
+            nodes.Add(node);
+        
+        foreach (var child in node.Nodes)
+            nodes.AddRange(CheckedSpecNodes(child));
+
+        return nodes;
+    }
 }

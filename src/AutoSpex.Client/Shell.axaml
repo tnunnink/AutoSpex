@@ -2,6 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
         xmlns:client="clr-namespace:AutoSpex.Client"
+        xmlns:components="clr-namespace:AutoSpex.Client.Components"
         x:Class="AutoSpex.Client.Shell"
         x:DataType="client:Shell"
         Width="1400" Height="800"
@@ -22,19 +23,10 @@
         <DockPanel>
             <!-- Title Bar -->
             <a:ChromedTitleBar DockPanel.Dock="Top" Height="40">
-                <a:ChromedTitleBar.Resources>
-                    <a:ComparisonConverter x:Key="RightContentMarginConverter">
-                        <a:ComparisonConverter.TrueResult>
-                            <Thickness>0,0,10,0</Thickness>
-                        </a:ComparisonConverter.TrueResult>
-                        <a:ComparisonConverter.FalseResult>
-                            <Thickness>0,0,0,0</Thickness>
-                        </a:ComparisonConverter.FalseResult>
-                    </a:ComparisonConverter>
-                </a:ChromedTitleBar.Resources>
 
                 <a:ChromedTitleBar.LeftContent>
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal"
+                                IsVisible="{Binding ProjectPageOpen}">
                         <Button
                             ContentTemplate="{a:GlyphTemplate Menu16}"
                             Theme="{a:ControlTheme TitleBarButton}" />
@@ -42,26 +34,23 @@
                             ContentTemplate="{a:GlyphTemplate Home16}"
                             Theme="{a:ControlTheme TitleBarButton}"
                             Command="{Binding NavigateHomeCommand}" />
-                        <Button
-                            ContentTemplate="{a:GlyphTemplate LeftArrow16}"
-                            Theme="{a:ControlTheme TitleBarButton}" />
-                        <Button
-                            ContentTemplate="{a:GlyphTemplate RightArrow16}"
-                            Theme="{a:ControlTheme TitleBarButton}" />
-
+                        <!--<components:ProjectSelector
+                            IsVisible="{Binding ProjectPageOpen}"
+                            Projects="{Binding Projects^, FallbackValue={x:Null}}" />-->
                     </StackPanel>
                 </a:ChromedTitleBar.LeftContent>
 
                 <a:ChromedTitleBar.RightContent>
-                    <StackPanel
-                        Margin="{Binding $parent[a:ChromedTitleBar].HasCaptionButtons, Converter={StaticResource RightContentMarginConverter}}"
-                        Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal">
                         <a:ToggleThemeButton
                             Theme="{a:ControlTheme TitleBarToggleThemeButton}"
+                            Padding="10"
                             ToolTip.Tip="Toggle Theme" />
                         <Button Theme="{a:ControlTheme TitleBarButton}"
+                                Padding="3"
                                 ToolTip.Tip="Settings">
-                            <PathIcon Theme="{StaticResource IconCogOutlined}" Opacity="0.9" />
+                            <PathIcon Theme="{StaticResource IconCogOutlined}"
+                                      Foreground="{Binding $parent[Button].Foreground}" />
                         </Button>
                     </StackPanel>
                 </a:ChromedTitleBar.RightContent>
@@ -77,7 +66,7 @@
                 </TransitioningContentControl>
             </Border>
         </DockPanel>
-        
+
         <Border x:Name="DialogShadow"
                 PointerPressed="DialogShadowPointerPressed"
                 Background="Black"

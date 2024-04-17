@@ -1,120 +1,95 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
                     xmlns:components="clr-namespace:AutoSpex.Client.Components"
                     xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+
     <Design.PreviewWith>
-        <components:SourceList Height="800" Width="400"
+        <components:SourceList Height="300" Width="300" 
                                Sources="{x:Static components:DesignData.Sources}" />
     </Design.PreviewWith>
 
     <ControlTheme x:Key="{x:Type components:SourceList}" TargetType="components:SourceList">
         <Setter Property="Template">
             <ControlTemplate>
-                <Border Background="{actipro:ThemeResource Container2BackgroundBrush}">
-                    <Grid RowDefinitions="Auto, Auto, *">
-                        <Border Grid.Row="0"
-                                MinHeight="42">
-                            <StackPanel VerticalAlignment="Center">
-                                <DockPanel Margin="10 5"
-                                           LastChildFill="False"
-                                           Height="30">
-                                    <StackPanel DockPanel.Dock="Left"
-                                                Orientation="Horizontal"
-                                                Spacing="5">
-                                        <Button Command="{TemplateBinding AddSourceCommand}"
-                                                Theme="{StaticResource IconButton}"
-                                                properties:ButtonIcon.Theme="{StaticResource IconAdd}"
-                                                Classes="accent"
-                                                ToolTip.Tip="Add Source" />
-                                    </StackPanel>
-
-                                    <StackPanel DockPanel.Dock="Right"
-                                                Orientation="Horizontal"
-                                                Spacing="2">
-                                        <Button
-                                            properties:ButtonIcon.Theme="{StaticResource IconDotsVertical}"
-                                            Theme="{StaticResource IconButton}"
-                                            ToolTip.Tip="Options" />
-                                    </StackPanel>
-                                </DockPanel>
-                                <TextBox x:Name="FilterText"
-                                         Theme="{actipro:ControlTheme TextBoxOutline}"
-                                         Watermark="Search sources"
-                                         Padding="7"
-                                         Background="Transparent"
-                                         BorderThickness="0 1"
-                                         BorderBrush="{actipro:ThemeResource Container2BorderBrush}"
-                                         CornerRadius="0"
-                                         VerticalContentAlignment="Center">
-                                    <TextBox.InnerLeftContent>
-                                        <PathIcon Theme="{StaticResource IconSearch}"
-                                                  VerticalAlignment="Center"
-                                                  Margin="10 0 5 0" />
-                                    </TextBox.InnerLeftContent>
-                                </TextBox>
-                            </StackPanel>
-                        </Border>
-
-                        <Border Grid.Row="2">
-                            <ListBox x:Name="SourceList"
-                                     ItemsSource="{Binding SourcesView, RelativeSource={RelativeSource TemplatedParent}}"
-                                     SelectedItems="{TemplateBinding SelectedSources}"
-                                     ItemContainerTheme="{StaticResource ListBoxItemSubtle}"
-                                     IsTextSearchEnabled="True"
-                                     SelectionMode="Multiple"
-                                     WrapSelection="True"
+                <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        Padding="{TemplateBinding Padding}"
+                        MinWidth="300">
+                    <DockPanel>
+                        <Border BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                                BorderThickness="0 0 0 1"
+                                DockPanel.Dock="Top">
+                            <TextBox x:Name="FilterText"
+                                     Watermark="Search sources"
                                      BorderThickness="0"
-                                     Background="Transparent">
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate x:DataType="observers:SourceObserver">
-                                        <components:NavigationItem Content="{Binding}"
-                                                                   ItemName="{Binding Name}"
-                                                                   IconTheme="{StaticResource IconSourceThemed}"
-                                                                   RenameCommand="{Binding RenameCommand}"
-                                                                   NavigateCommand="{Binding NavigateCommand}">
-                                            <components:NavigationItem.ContentTemplate>
-                                                <DataTemplate x:DataType="observers:SourceObserver">
-                                                    <StackPanel Orientation="Horizontal" Spacing="5">
-                                                        <TextBlock Text="{Binding Name}"
-                                                                   TextTrimming="CharacterEllipsis"
-                                                                   TextWrapping="NoWrap" />
-                                                        <TextBlock Text="{Binding TargetTypeFormatted}"
-                                                                   Foreground="{actipro:ThemeResource DefaultForegroundBrushDisabled}" />
-                                                    </StackPanel>
-                                                </DataTemplate>
-                                            </components:NavigationItem.ContentTemplate>
-                                            <components:NavigationItem.ContextFlyout>
-                                                <MenuFlyout x:DataType="observers:SourceObserver"
-                                                            ItemContainerTheme="{StaticResource ContextMenuItem}">
-                                                    <MenuItem Header="Open"
-                                                              Command="{Binding NavigateCommand}"
-                                                              InputGesture="Enter"
-                                                              IsEnabled="{Binding Converter={x:Static ObjectConverters.IsNotNull}}" />
-                                                    <MenuItem Header="Rename"
-                                                              InputGesture="Ctrl+E" />
-                                                    <MenuItem Header="Duplicate"
-                                                              Command="{Binding DuplicateCommand}"
-                                                              InputGesture="Ctrl+D" />
-                                                    <MenuItem Header="Delete"
-                                                              Command="{Binding $parent[components:SourceList].DeleteSources}"
-                                                              IsEnabled="{Binding $parent[components:SourceList].SelectedSources.Count}"
-                                                              InputGesture="Delete"
-                                                              Classes="danger" />
-                                                </MenuFlyout>
-                                            </components:NavigationItem.ContextFlyout>
-                                        </components:NavigationItem>
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-                                <ListBox.Styles>
-                                    <Style Selector="ScrollViewer">
-                                        <Setter Property="Theme" Value="{actipro:ControlTheme ScrollViewerOverlay}" />
-                                    </Style>
-                                </ListBox.Styles>
-                            </ListBox>
+                                     VerticalContentAlignment="Center"
+                                     Classes="has-clear-button"
+                                     Padding="5 10">
+                                <TextBox.InnerLeftContent>
+                                    <PathIcon Theme="{StaticResource IconFilter}" Margin="5 0" />
+                                </TextBox.InnerLeftContent>
+                            </TextBox>
                         </Border>
-                    </Grid>
+
+                        <ListBox x:Name="SourceList"
+                                 IsVisible="{Binding SourceCollection.Count, RelativeSource={RelativeSource TemplatedParent}}"
+                                 ItemsSource="{Binding SourceCollection, RelativeSource={RelativeSource TemplatedParent}}"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 Padding="5">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate x:DataType="observers:SourceObserver">
+                                    <Grid ColumnDefinitions="Auto,*,Auto">
+                                        <PathIcon Grid.Column="0" Theme="{StaticResource IconSourceThemed}" />
+                                        <TextBlock Grid.Column="1" Text="{Binding Name}" />
+                                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="3">
+                                            <Button Command="{Binding SelectCommand}"
+                                                    Theme="{StaticResource IconButtonSmall}"
+                                                    properties:ButtonIcon.Theme="{StaticResource IconCheckCircleFilled}"
+                                                    Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                                                    Classes.active="{Binding IsSelected}"
+                                                    ToolTip.Tip="Select source">
+                                                <Button.Styles>
+                                                    <Style Selector=".active /template/ PathIcon">
+                                                        <Setter Property="Foreground"
+                                                                Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+                                                    </Style>
+                                                </Button.Styles>
+                                                <Button.IsVisible>
+                                                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                                        <Binding Path="IsSelected" />
+                                                        <Binding Path="$parent[ListBoxItem].IsPointerOver" />
+                                                    </MultiBinding>
+                                                </Button.IsVisible>
+                                            </Button>
+                                            <Button
+                                                Command="{Binding $parent[components:RunNodeButton].RunCommand}"
+                                                CommandParameter="{Binding}"
+                                                Theme="{StaticResource IconButtonSmall}"
+                                                properties:ButtonIcon.Theme="{StaticResource IconPlayOutlined}"
+                                                Foreground="{a:ThemeResource ControlForegroundBrushOutlineSuccess}"
+                                                ToolTip.Tip="Run source" />
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                            <ListBox.Styles>
+                                <Style Selector="ListBoxItem">
+                                    <Setter Property="CornerRadius" Value="5" />
+                                    <Setter Property="Padding" Value="0 0 5 0" />
+                                    <Setter Property="Theme" Value="{StaticResource ListBoxItemSimple}" />
+                                </Style>
+                                <Style Selector="ScrollViewer">
+                                    <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
+                                    <Setter Property="VerticalScrollBarVisibility" Value="Disabled" />
+                                </Style>
+                            </ListBox.Styles>
+                        </ListBox>
+                    </DockPanel>
                 </Border>
             </ControlTemplate>
         </Setter>

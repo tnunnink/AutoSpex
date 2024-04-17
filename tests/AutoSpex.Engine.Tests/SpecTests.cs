@@ -56,7 +56,7 @@ public class SpecTests
     {
         var spec = new Spec();
         
-        spec.For(Element.Module);
+        spec.Query(Element.Module);
         spec.Where("Property", Operation.Any, new Criterion("Test", Operation.Contains, 123));
         spec.Verify("Value", Operation.In, 1, 2, 3, 4, 5);
 
@@ -66,26 +66,31 @@ public class SpecTests
     }
 
     [Test]
-    public async Task Run_DefaultElement_ShouldReturnNoResultsAndFailed()
+    public async Task Run_DefaultElement_ShouldReturnFailedDueToFailedCountVerification()
     {
         var spec = new Spec();
         var file = L5X.Load(Known.Test);
 
         var outcome = await spec.Run(file);
 
-        outcome.Should().NotBeNull();
         outcome.Result.Should().Be(ResultState.Failed);
     }
 
     [Test]
     public async Task Run_DefaultElementWithVerifyCountSetFalse_ShouldReturnPassed()
     {
-        var file = L5X.Load(Known.Test);
-        var spec = new Spec();
-        spec.Settings.VerifyCount = false;
+        var content = L5X.Load(Known.Test);
+        var spec = new Spec
+        {
+            Settings =
+            {
+                VerifyCount = false
+            }
+        };
 
-        var outcome = await spec.Run(file);
-
+        var outcome = await spec.Run(content);
+        
         outcome.Result.Should().Be(ResultState.Passed);
+        outcome.Verifications.Should().BeEmpty();
     }
 }

@@ -1,0 +1,9 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceInclude Source="TypeGroupTemplates.axaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <components:TypeGroupTemplate x:Key="TypeGroupTemplate" />
+</ResourceDictionary>

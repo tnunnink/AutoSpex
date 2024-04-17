@@ -24,7 +24,7 @@ public class KeyResourceConverter : IValueConverter
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         var entry = Map.FirstOrDefault(x => Equals(value, x.Value));
-        return entry != null 
+        return entry != null  
             ? Application.Current?.FindResource(entry.Resource)
             : AvaloniaProperty.UnsetValue;
     }

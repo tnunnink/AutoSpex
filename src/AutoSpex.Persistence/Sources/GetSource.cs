@@ -13,7 +13,7 @@ public record GetSource(Guid SourceId) : IDbQuery<Result<Source>>;
 internal class GetSourceHandler(IConnectionManager manager) : IRequestHandler<GetSource, Result<Source>>
 {
     private const string Query =
-        "SELECT SourceId, IsSelected, Name, Description, TargetType, TargetName, ExportedBy, ExportedOn, Content " +
+        "SELECT SourceId, IsSelected, Name, Documentation, TargetType, TargetName, ExportedBy, ExportedOn, Content " +
         "FROM Source WHERE SourceId = @SourceId";
 
     public async Task<Result<Source>> Handle(GetSource request, CancellationToken cancellationToken)

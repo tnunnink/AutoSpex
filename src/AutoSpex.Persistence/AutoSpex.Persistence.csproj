@@ -30,4 +30,9 @@
       <None Remove="AutoSpex.Persistence.csproj.DotSettings" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="Nodes\GetFullNode.cs" />
+      <Compile Remove="Nodes\SaveNode.cs" />
+    </ItemGroup>
+
 </Project>

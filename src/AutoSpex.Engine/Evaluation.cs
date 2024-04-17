@@ -5,51 +5,56 @@ namespace AutoSpex.Engine;
 [PublicAPI]
 public record Evaluation
 {
-    private Evaluation(ResultState result, string message)
+    private Evaluation(ResultState result, Criterion criterion, object? candidate, object[] args, object? actual)
     {
         Result = result;
-        Message = message;
+        CriterionId = criterion.CriterionId;
+        Message = $"{criterion.Property} {criterion.Operation.ShouldMessage}";
+        Candidate = candidate;
+        Expected = args;
+        Actual = actual;
     }
     
-    public ResultState Result { get; init; } = ResultState.None;
-    public string Message { get; init; } = "No Evaluation Available";
-
-    public static Evaluation Passed(Criterion criterion, string? type, object[]? args, object? actual)
+    private Evaluation(ResultState result, Criterion criterion, object? candidate, Exception exception)
     {
-        if (criterion is null)
-            throw new ArgumentNullException(nameof(criterion));
-
-        var reference = $"{type}.{criterion.Property}".Trim().Trim('.');
-        var result = $"Evaluation Passed for {reference}";
-        var expected = args is not null ? $" {string.Join(',', args)}." : string.Empty;
-        var message = $"{result}. Value {criterion.Operation.ShouldMessage}{expected} Found: {actual}";
-
-        return new Evaluation(ResultState.Passed, message);
+        Result = result;
+        CriterionId = criterion.CriterionId;
+        Message = $"{criterion.Property} {criterion.Operation.ShouldMessage}";
+        Candidate = candidate;
+        Expected = [];
+        Exception = exception;
     }
 
-    public static Evaluation Failed(Criterion criterion, string? type, object[]? args, object? actual)
+    public Guid CriterionId { get; }
+    public ResultState Result { get; } = ResultState.None;
+    public string Message { get; }
+    public object? Candidate { get; }
+    public object[] Expected { get; }
+    public object? Actual { get; }
+    public Exception? Exception { get; }
+
+    public static Evaluation Passed(Criterion criterion, object? candidate, object[] args, object? actual)
     {
         if (criterion is null)
             throw new ArgumentNullException(nameof(criterion));
 
-        var reference = $"{type}.{criterion.Property}".Trim().Trim('.');
-        var result = $"Evaluation Failed for {reference}";
-        var expected = args is not null ? $" {string.Join(',', args)}." : string.Empty;
-        var message = $"{result}. Value {criterion.Operation.ShouldMessage}{expected} Found: {actual}";
-
-        return new Evaluation(ResultState.Failed, message);
+        return new Evaluation(ResultState.Passed, criterion, candidate, args, actual);
     }
 
-    public static Evaluation Error(Criterion criterion, Exception exception, string? type)
+    public static Evaluation Failed(Criterion criterion, object? candidate, object[] args, object? actual)
     {
         if (criterion is null)
             throw new ArgumentNullException(nameof(criterion));
 
-        var reference = $"{type}.{criterion.Property}".Trim().Trim('.');
-        var result = $"Evaluation Error for {reference} using operation '{criterion.Operation}'";
-        var message = $"{result}. Exception: {exception.Message}.";
+        return new Evaluation(ResultState.Failed, criterion, candidate, args, actual);
+    }
 
-        return new Evaluation(ResultState.Error, message);
+    public static Evaluation Error(Criterion criterion, object? candidate, Exception exception)
+    {
+        if (criterion is null)
+            throw new ArgumentNullException(nameof(criterion));
+
+        return new Evaluation(ResultState.Error, criterion, candidate, exception);
     }
 
     public override string ToString() => Message;

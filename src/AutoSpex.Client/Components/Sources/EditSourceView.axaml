@@ -10,9 +10,7 @@
 
     <ControlTheme x:Key="{x:Type components:EditSourceView}" TargetType="components:EditSourceView"
                   x:DataType="observers:SourceObserver">
-
-        <Setter Property="Height" Value="400" />
-        <Setter Property="Width" Value="500" />
+        <Setter Property="MinWidth" Value="540" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Border Background="{TemplateBinding Background}"
@@ -20,63 +18,52 @@
                         BorderThickness="{TemplateBinding BorderThickness}"
                         Padding="{TemplateBinding Padding}"
                         Margin="{TemplateBinding Margin}">
-                    <StackPanel Spacing="10">
-                        <TextBox
-                            Text="{Binding Name}"
-                            Theme="{StaticResource TextBoxOutlineHighlight}"
-                            BorderBrush="{actipro:ThemeResource Container2BorderBrush}"
-                            VerticalContentAlignment="Center"
-                            UseFloatingWatermark="True"
-                            Watermark="Source name" />
-
-                        <TextBox
-                            Text="{Binding Description}"
-                            Theme="{StaticResource TextBoxOutlineHighlight}"
-                            BorderBrush="{actipro:ThemeResource Container2BorderBrush}"
-                            MinHeight="100"
-                            UseFloatingWatermark="True"
-                            Watermark="Source description" />
-
-                        <Border BorderBrush="{actipro:ThemeResource Container2BorderBrush}"
-                                CornerRadius="{actipro:ThemeResource EditCornerRadius}"
-                                BorderThickness="1"
-                                Padding="10">
+                    <Grid RowDefinitions="Auto,*">
+                        <Border Grid.Row="0" Margin="0 0 0 20">
                             <StackPanel Spacing="5">
-                                <Grid ColumnDefinitions="Auto,*,Auto">
-                                    <Label Content="Target Type"
-                                           Theme="{actipro:ControlTheme LabelFormControlLabel}" />
-                                    <TextBlock Grid.Column="2"
-                                               FontSize="{actipro:ThemeResource DefaultFontSizeSmall}"
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <TextBlock Text="{Binding TargetName}"
+                                               Classes="theme-text-heading accent" />
+                                    <TextBlock Text="{Binding TargetTypeFormatted}"
                                                Foreground="{actipro:ThemeResource DefaultForegroundBrushSecondary}"
-                                               Text="{Binding TargetType}" />
-                                </Grid>
-                                <Grid ColumnDefinitions="Auto,*,Auto">
-                                    <Label Content="Target Name"
-                                           Theme="{actipro:ControlTheme LabelFormControlLabel}" />
-                                    <TextBlock Grid.Column="2"
-                                               FontSize="{actipro:ThemeResource DefaultFontSizeSmall}"
-                                               Foreground="{actipro:ThemeResource DefaultForegroundBrushSecondary}"
-                                               Text="{Binding TargetName}" />
-                                </Grid>
-                                <Grid ColumnDefinitions="Auto,*,Auto">
-                                    <Label Content="Exported By"
-                                           Theme="{actipro:ControlTheme LabelFormControlLabel}" />
-                                    <TextBlock Grid.Column="2"
-                                               FontSize="{actipro:ThemeResource DefaultFontSizeSmall}"
-                                               Foreground="{actipro:ThemeResource DefaultForegroundBrushSecondary}"
-                                               Text="{Binding ExportedBy}" />
-                                </Grid>
-                                <Grid ColumnDefinitions="Auto,*,Auto">
-                                    <Label Content="Exported On"
-                                           Theme="{actipro:ControlTheme LabelFormControlLabel}" />
-                                    <TextBlock Grid.Column="2"
-                                               FontSize="{actipro:ThemeResource DefaultFontSizeSmall}"
-                                               Foreground="{actipro:ThemeResource DefaultForegroundBrushSecondary}"
-                                               Text="{Binding ExportedOn}" />
-                                </Grid>
+                                               Margin="0 4 0 0"/>
+                                </StackPanel>
+                                
+                                <StackPanel Orientation="Horizontal" Spacing="10" Margin="2">
+                                    <TextBlock Text="{Binding ExportedBy}"
+                                               Foreground="{actipro:ThemeResource DefaultForegroundBrushSecondary}" />
+                                    <Ellipse Height="5" Width="5"
+                                             Fill="{actipro:ThemeResource DefaultForegroundBrushDisabled}"
+                                             Opacity="0.7" Margin="0 2 0 0" />
+                                    <TextBlock Text="{Binding ExportedOn}"
+                                               Foreground="{actipro:ThemeResource DefaultForegroundBrushSecondary}" />
+                                    <Ellipse Height="5" Width="5"
+                                             Fill="{actipro:ThemeResource DefaultForegroundBrushDisabled}"
+                                             Opacity="0.7" Margin="0 2 0 0" />
+                                    <TextBlock Text="{Binding Size}"
+                                               Foreground="{actipro:ThemeResource DefaultForegroundBrushSecondary}" />
+                                </StackPanel>
                             </StackPanel>
                         </Border>
-                    </StackPanel>
+
+                        <StackPanel Grid.Row="1" Spacing="20">
+                            <TextBox
+                                Text="{Binding Name}"
+                                Theme="{StaticResource TextBoxOutlineHighlight}"
+                                BorderBrush="{actipro:ThemeResource Container2BorderBrush}"
+                                VerticalContentAlignment="Center"
+                                UseFloatingWatermark="True"
+                                Watermark="Source name" />
+
+                            <TextBox
+                                Text="{Binding Documentation}"
+                                Theme="{StaticResource TextBoxOutlineHighlight}"
+                                BorderBrush="{actipro:ThemeResource Container2BorderBrush}"
+                                MinHeight="100"
+                                UseFloatingWatermark="True"
+                                Watermark="Source description" />
+                        </StackPanel>
+                    </Grid>
                 </Border>
             </ControlTemplate>
         </Setter>

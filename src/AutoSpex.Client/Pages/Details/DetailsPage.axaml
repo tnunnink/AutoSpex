@@ -1,0 +1,17 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:components="clr-namespace:AutoSpex.Client.Components"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="500"
+             x:Class="AutoSpex.Client.Pages.DetailsPage"
+             x:DataType="pages:DetailsPageModel"
+             Background="{a:ThemeResource Container1BackgroundBrush}"
+             BorderThickness="0">
+
+    <components:DetailsContainer ItemsSource="{Binding Pages}"
+                                 SelectedItem="{Binding Selected}"
+                                 AddSpecCommand="{Binding CreateSpecCommand}"/>
+</UserControl>

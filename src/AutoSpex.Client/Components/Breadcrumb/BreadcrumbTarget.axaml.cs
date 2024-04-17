@@ -47,14 +47,14 @@ public class BreadcrumbTarget : TemplatedControl
         textBox.ClearSelection();
     }
 
-    private static void EntryKeyUp(object? sender, KeyEventArgs e)
+    private static async void EntryKeyUp(object? sender, KeyEventArgs e)
     {
         if (e.Source is not TextBox {DataContext: Breadcrumb breadcrumb} textBox) return;
         if (e.Key != Key.Escape && e.Key != Key.Enter) return;
         
         if (e.Key == Key.Enter)
         {
-            breadcrumb.RenameCommand.Execute(breadcrumb.Name);
+            await breadcrumb.RenameCommand.ExecuteAsync(textBox.Text);
             breadcrumb.InFocus = false;
         }
         

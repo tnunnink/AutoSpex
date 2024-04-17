@@ -1,0 +1,33 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:components="clr-namespace:AutoSpex.Client.Components"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             x:Class="AutoSpex.Client.Pages.AddSourcePage"
+             x:DataType="pages:AddSourcePageModel">
+
+    <controls:Prompt UseButtonPanel="{Binding Source, Converter={x:Static ObjectConverters.IsNotNull}}"
+                     Header="Add source file"
+                     Padding="20"
+                     HeaderIcon="{StaticResource IconSourceThemed}"
+                     CancelButtonTheme="{a:ControlTheme ButtonSoft}"
+                     CancelCommandParameter="{x:Null}"
+                     ActionButtonText="Add"
+                     ActionButtonTheme="{a:ControlTheme ButtonSolid}"
+                     ActionCommand="{Binding AddSourceCommand}"
+                     ActionCommandParameter="{Binding $parent[Window]}"
+                     Classes="accent">
+        <Panel>
+            <components:SelectSourceView
+                IsVisible="{Binding Source, Converter={x:Static ObjectConverters.IsNull}}"
+                Location="{Binding Location}"
+                PickFileCommand="{Binding SelectSourceCommand}"
+                DroppedFile="{Binding DroppedItem}" />
+            <components:EditSourceView
+                DataContext="{Binding Source}"
+                IsVisible="{Binding $parent[UserControl].((pages:AddSourcePageModel)DataContext).Source, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue={x:Null}}" />
+        </Panel>
+    </controls:Prompt>
+
+</UserControl>

@@ -23,7 +23,7 @@ public sealed class Prompter(Shell shell)
 
         return result;
     }
-    
+
     public async Task<TResult> Show<TResult>(Func<PageViewModel> factory)
     {
         var page = factory();
@@ -45,10 +45,16 @@ public static class PromptExtensions
         var control = new DeletePrompt {ItemName = name};
         return prompter.Show<bool?>(control);
     }
-    
+
     public static Task<string?> PromptSave(this Prompter prompter, string name)
+    {
+        var control = new SaveChangesPrompt {ItemName = name};
+        return prompter.Show<string?>(control);
+    }
+    
+    public static Task<bool?> PromptMigrate(this Prompter prompter, string name)
         {
-            var control = new SaveChangesPrompt {ItemName = name};
-            return prompter.Show<string?>(control);
+            var control = new MigratePrompt() {ProjectName = name};
+            return prompter.Show<bool?>(control);
         }
 }

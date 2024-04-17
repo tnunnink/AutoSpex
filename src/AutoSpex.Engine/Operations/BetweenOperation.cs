@@ -2,7 +2,7 @@
 
 public class BetweenOperation() : TernaryOperation("Between")
 {
-    public override string ShouldMessage => $"Should Be {Name}";
+    public override string ShouldMessage => $"should be {Name}";
     
     protected override bool Evaluate(object? input, object first, object second)
     {

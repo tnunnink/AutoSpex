@@ -1,0 +1,54 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:components="clr-namespace:AutoSpex.Client.Components"
+             xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
+             x:Class="AutoSpex.Client.Pages.RunPage"
+             x:DataType="pages:RunPageModel">
+
+    <Design.Width>1400</Design.Width>
+    <Design.Height>1000</Design.Height>
+
+    <DockPanel>
+        <!--Title Section-->
+        <Grid DockPanel.Dock="Top"
+              ColumnDefinitions="Auto,*,Auto"
+              Margin="10">
+
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5">
+                <PathIcon
+                    Theme="{Binding Node.NodeType.Name, Converter={StaticResource KeyToIconConverter}, FallbackValue={StaticResource IconCollectionThemed}}" />
+                <TextBlock Text="{Binding Node.Name, FallbackValue='Node Name'}"
+                           FontSize="{a:ThemeResource DefaultFontSizeLarge}"
+                           Foreground="{a:ThemeResource DefaultForegroundBrush}" />
+            </StackPanel>
+
+
+            <StackPanel Grid.Column="2"
+                        Orientation="Horizontal"
+                        Spacing="10"
+                        VerticalAlignment="Center">
+                <Button Content="Run Again"
+                        Theme="{a:ControlTheme ButtonSolid}"
+                        Classes="success" />
+            </StackPanel>
+        </Grid>
+
+        <StackPanel DockPanel.Dock="Top" Margin="15 0">
+            <TextBlock Text="{Binding Run.RanOnText, FallbackValue='Ran on Month Day at HH:mm:ss by tnunnink'}"
+                       Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+        </StackPanel>
+
+        <components:RunSummary DockPanel.Dock="Top" Margin="10"
+                               Result="{Binding Run.Result, FallbackValue={x:Null}}" />
+
+        <Panel>
+            <components:EvaluationList
+                
+                IsVisible="{Binding Node.NodeType, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:NodeType.Spec}}" />
+            
+        </Panel>
+
+    </DockPanel>
+</UserControl>

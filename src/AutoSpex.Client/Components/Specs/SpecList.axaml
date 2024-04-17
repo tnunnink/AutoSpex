@@ -1,0 +1,67 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="using:AutoSpex.Client.Components"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers">
+    <Design.PreviewWith>
+        <Border Padding="30">
+            <components:SpecList Height="300" Width="1000"
+                                 Specs="{x:Static components:DesignData.Specs}" />
+        </Border>
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type components:SpecList}" TargetType="components:SpecList">
+        <Setter Property="BorderBrush" Value="{a:ThemeResource Container1BorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="{a:ThemeResource ButtonCornerRadius}" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
+                    <StackPanel>
+                        <TextBox x:Name="FilterText"
+                                 Theme="{a:ControlTheme TextBoxSoft}"
+                                 Background="Transparent" BorderThickness="0 0 0 1" CornerRadius="0"
+                                 Watermark="Search for collection or folder"
+                                 Padding="0 10"
+                                 VerticalContentAlignment="Center">
+                            <TextBox.InnerLeftContent>
+                                <PathIcon Theme="{StaticResource IconFilter}"
+                                          Margin="5 0" />
+                            </TextBox.InnerLeftContent>
+                        </TextBox>
+
+                        <ListBox ItemsSource="{TemplateBinding Specs}"
+                                 BorderThickness="0"
+                                 SelectionMode="Multiple">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate x:DataType="observers:NodeObserver">
+                                    <Grid ColumnDefinitions="Auto, *, Auto">
+                                        <CheckBox Grid.Column="0" Classes="size-xs accent"
+                                                  Theme="{a:ControlTheme CheckBoxSolid}" />
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal"
+                                                    Spacing="2" Margin="4 0">
+                                            <PathIcon Theme="{StaticResource IconSpecThemed}" />
+                                            <TextBlock Text="{Binding Name}" />
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="2" Text="{Binding Path}"
+                                                   TextAlignment="Right"
+                                                   Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                            <ListBox.ItemContainerTheme>
+                                <ControlTheme TargetType="ListBoxItem" BasedOn="{a:ControlTheme ListBoxItem}"
+                                              x:DataType="observers:NodeObserver">
+                                    <Setter Property="Padding" Value="10 0" />
+                                </ControlTheme>
+                            </ListBox.ItemContainerTheme>
+                        </ListBox>
+                    </StackPanel>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

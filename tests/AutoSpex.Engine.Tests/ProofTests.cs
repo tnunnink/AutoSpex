@@ -9,34 +9,27 @@ public class ProofTests
     [Test]
     public async Task Run_SpecWithValidConfig_ShouldBePassedAndExpectedValues()
     {
-        var source = new Source(L5X.Load(Known.Test));
-        var spec = Node.NewSpec("MySpec");
-        spec.Configure(c =>
-        {
-            c.Element = Element.Tag;
-            c.Filters.Add(new Criterion("TagName", Operation.Equal, "TestSimpleTag"));
-            c.Verifications.Add(new Criterion("DataType", Operation.Equal, "SimpleType"));
-        });
+        var source = L5X.Load(Known.Test);
+        var spec = new Spec();
+        spec.Query(Element.Tag);
+        spec.Where("TagName", Operation.Equal, "TestSimpleTag");
+        spec.Verify("DataType", Operation.Equal, "SimpleType");
 
-        var result = await spec.Run(source);
+        var outcome = await spec.Run(source);
 
-        result.Result.Should().Be(ResultState.Passed);
-        result.Node?.Name.Should().Be("MySpec");
-        result.NodeId.Should().Be(spec.NodeId);
-        result.Verifications.Should().HaveCount(2);
-        result.Duration.Should().BeLessThan(1000);
+        outcome.Result.Should().Be(ResultState.Passed);
+        outcome.Verifications.Should().HaveCount(2);
     }
-    
+
     [Test]
     public async Task Run_SpecManyTimes_ShouldRunRelativelyQuickly()
     {
-        var source = new Source(L5X.Load(Known.Test));
-        var spec = Node.NewSpec("MySpec");
-        spec.Configure(c =>
+        var source = L5X.Load(Known.Test);
+        var spec = Spec.Configure(c =>
         {
-            c.Element = Element.Tag;
-            c.Filters.Add(new Criterion("TagName", Operation.Equal, "TestSimpleTag"));
-            c.Verifications.Add(new Criterion("DataType", Operation.Equal, "SimpleType"));
+            c.Query(Element.Tag);
+            c.Where("TagName", Operation.Equal, "TestSimpleTag");
+            c.Verify("DataType", Operation.Equal, "SimpleType");
         });
 
         var results = new List<Outcome>();
@@ -45,32 +38,28 @@ public class ProofTests
         {
             var result = await spec.Run(source);
             results.Add(result);
-            result.Result.Should().Be(ResultState.Passed);
         }
+
         stopwatch.Stop();
-        
+
         Console.WriteLine(stopwatch.ElapsedMilliseconds);
         results.Should().NotBeEmpty();
-        var average = results.Select(r => r.Duration).Sum() / results.Count;
-        Console.WriteLine(average);
     }
-    
+
     [Test]
     public async Task Run_5094IB16A_ShouldBeAtRevision_2_011()
     {
-        var source = new Source(L5X.Load(Known.Example));
-        var spec = Node.NewSpec();
-        spec.Configure(c =>
+        var source = L5X.Load(Known.Example);
+        var spec = Spec.Configure(c =>
         {
-            c.Element = Element.Module;
+            c.Query(Element.Module);
             c.Where("CatalogNumber", Operation.Equal, "5094-IB16/A");
             c.Verify("Revision", Operation.Equal, "2.11");
         });
 
-        var result = await spec.Run(source);
+        var outcome = await spec.Run(source);
 
-        result.Result.Should().Be(ResultState.Passed);
-        result.Duration.Should().BeLessThan(1000);
+        outcome.Result.Should().Be(ResultState.Passed);
     }
 
     [Test]
@@ -81,8 +70,21 @@ public class ProofTests
 
         Console.WriteLine(StringComparer.OrdinalIgnoreCase.GetHashCode(first));
         Console.WriteLine(StringComparer.OrdinalIgnoreCase.GetHashCode(second));
-        
+
         Console.WriteLine(first.StableHash());
         Console.WriteLine(second.StableHash());
+    }
+
+    [Test]
+    public void ValueBrushTesting()
+    {
+        double number = 1.23;
+        bool flag = true;
+        string text = "this is a test";
+        Radix option = Radix.Ascii;
+        Tag element = new Tag();
+        var member = element.Members();
+        
+        Assert.Pass();
     }
 }

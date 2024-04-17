@@ -16,7 +16,7 @@ public class ArgumentEntryTemplates : IDataTemplate
     {
         if (param is not ArgumentObserver argument) return default;
 
-        if (argument.Value is Criterion)
+        if (argument.Value is CriterionObserver)
         {
             return Templates[nameof(Criterion)].Build(param);
         }

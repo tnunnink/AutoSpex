@@ -41,24 +41,16 @@
                             <Border
                                 BorderThickness="1 0 0 0" Margin="0 5"
                                 BorderBrush="{a:ThemeResource Container1BorderBrush}" />
-                            <components:VariableNameEntry
-                                IsVisible="{Binding IsOverridden}"
-                                Text="{Binding Override}"
-                                Watermark="Enter override" />
-                            <Border
-                                IsVisible="{Binding IsOverridden}"
-                                BorderThickness="1 0 0 0" Margin="0 5"
-                                BorderBrush="{a:ThemeResource Container1BorderBrush}" />
                         </StackPanel>
 
                         <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="3">
-                            <ToggleButton IsChecked="{Binding IsOverridden}"
+                            <!--<ToggleButton IsChecked="{Binding IsOverridden}"
                                           properties:ButtonIcon.Theme="{StaticResource IconPencilOutlined}"
                                           Theme="{StaticResource IconToggleButton}"
                                           Classes="warning"
                                           Padding="8"
                                           ToolTip.Tip="Override value"
-                                          ToolTip.Placement="BottomEdgeAlignedRight" />
+                                          ToolTip.Placement="BottomEdgeAlignedRight" />-->
                             <Button Theme="{StaticResource IconButton}"
                                     properties:ButtonIcon.Theme="{StaticResource IconTrashOutlined}"
                                     Command="{TemplateBinding RemoveCommand, Mode=TwoWay}"

@@ -1,0 +1,40 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="using:AutoSpex.Client.Components"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
+
+    <Design.PreviewWith>
+        <components:MigratePrompt />
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type components:MigratePrompt}" TargetType="components:MigratePrompt">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <controls:Prompt Header="Migrate project?"
+                                 HeaderIcon="{StaticResource IconQuestionFilled}"
+                                 ActionButtonText="Migrate"
+                                 ActionButtonTheme="{actipro:ControlTheme ButtonSolid}"
+                                 ActionCommandParameter="{StaticResource True}"
+                                 CancelButtonTheme="{actipro:ControlTheme ButtonSoft}"
+                                 CancelCommandParameter="{StaticResource False}"
+                                 Classes="accent"
+                                 MaxWidth="500" Padding="20">
+                    <controls:Prompt.Content>
+                        <TextBlock TextWrapping="Wrap">
+                            <TextBlock.Inlines>
+                                <Run Text="The project" />
+                                <Run
+                                    Text="{Binding ProjectName, RelativeSource={RelativeSource TemplatedParent}, FallbackValue='Project Name'}"
+                                    FontWeight="SemiBold"
+                                    Foreground="{actipro:ThemeResource ControlForegroundBrushOutlineAccent}" />
+                                <Run
+                                    Text="requires migration to the latest schema in order to be compatible with this version of AutoSpex." />
+                            </TextBlock.Inlines>
+                        </TextBlock>
+                    </controls:Prompt.Content>
+                </controls:Prompt>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

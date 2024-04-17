@@ -61,7 +61,8 @@
                     <Grid ColumnDefinitions="Auto,*">
                         <PathIcon Grid.Column="0"
                                   Classes="icon-small"
-                                  Theme="{TemplateBinding IconTheme}" />
+                                  Theme="{TemplateBinding IconTheme}"
+                                  IsVisible="{Binding IconTheme, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ObjectConverters.IsNotNull}}" />
                         <Panel Grid.Column="1">
                             <ContentPresenter x:Name="PART_ContentPresenter"
                                               Content="{TemplateBinding Content}"

@@ -6,7 +6,6 @@ using System.Windows.Input;
 using AutoSpex.Client.Observers;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Primitives;
 using Avalonia.Data;
 using DynamicData;
@@ -14,33 +13,21 @@ using DynamicData.Binding;
 
 namespace AutoSpex.Client.Components;
 
-[TemplatePart("PART_CreateButton", typeof(Button))]
-[TemplatePart("PART_FilterText", typeof(TextBox))]
 public class ProjectList : ContentControl
 {
-    private ICommand? _createCommand;
-    private ICommand? _openCommand;
-    private ObservableCollection<ProjectObserver> _projectSource = [];
-    private TextBox? _textBox;
-    private readonly SourceCache<ProjectObserver, Uri> _cache = new(x => x.Uri);
-    private readonly ReadOnlyObservableCollection<ProjectObserver> _projects;
-
-    public ProjectList()
-    {
-        ProjectSourceProperty.Changed.AddClassHandler<ProjectList>((c, a) => c.OnProjectSourcePropertyChanged(a));
-
-        _cache.Connect()
-            .Sort(SortExpressionComparer<ProjectObserver>.Descending(t => t.OpenedOn))
-            .Bind(out _projects)
-            .Subscribe();
-    }
+    private const string PartFilterText = "FilterText";
+    private const string PartProjectList = "ProjectList";
 
     #region AvaloniaProperties
+
+    public static readonly StyledProperty<bool> ShowButtonsProperty =
+        AvaloniaProperty.Register<ProjectList, bool>(
+            nameof(ShowButtons));
 
     public static readonly DirectProperty<ProjectList, ICommand?> CreateCommandProperty =
         AvaloniaProperty.RegisterDirect<ProjectList, ICommand?>
             (nameof(CreateCommand), o => o.CreateCommand, (o, v) => o.CreateCommand = v);
-    
+
     public static readonly DirectProperty<ProjectList, ICommand?> OpenCommandProperty =
         AvaloniaProperty.RegisterDirect<ProjectList, ICommand?>
             (nameof(OpenCommand), o => o.OpenCommand, (o, v) => o.OpenCommand = v);
@@ -55,12 +42,35 @@ public class ProjectList : ContentControl
 
     #endregion
 
+    public ProjectList()
+    {
+        ProjectSourceProperty.Changed.AddClassHandler<ProjectList>((c, a) => c.OnProjectSourcePropertyChanged(a));
+
+        _cache.Connect()
+            .Sort(SortExpressionComparer<ProjectObserver>.Descending(t => t.OpenedOn))
+            .Bind(out _projects)
+            .Subscribe();
+    }
+
+    private ICommand? _createCommand;
+    private ICommand? _openCommand;
+    private ObservableCollection<ProjectObserver> _projectSource = [];
+    private TextBox? _textBox;
+    private readonly SourceCache<ProjectObserver, Uri> _cache = new(x => x.Uri);
+    private readonly ReadOnlyObservableCollection<ProjectObserver> _projects;
+
+    public bool ShowButtons
+    {
+        get => GetValue(ShowButtonsProperty);
+        set => SetValue(ShowButtonsProperty, value);
+    }
+
     public ICommand? CreateCommand
     {
         get => _createCommand;
         set => SetAndRaise(CreateCommandProperty, ref _createCommand, value);
     }
-    
+
     public ICommand? OpenCommand
     {
         get => _openCommand;
@@ -87,7 +97,7 @@ public class ProjectList : ContentControl
         if (_textBox is not null)
             _textBox.TextChanged -= OnFilterTextChanged;
 
-        _textBox = e.NameScope.Find("PART_FilterText") as TextBox;
+        _textBox = e.NameScope.Find(PartFilterText) as TextBox;
 
         if (_textBox is not null)
             _textBox.TextChanged += OnFilterTextChanged;
@@ -115,13 +125,13 @@ public class ProjectList : ContentControl
         {
             oldValue.CollectionChanged -= ProjectSourceCollectionChanged;
         }
-        
+
         if (args.NewValue is not ObservableCollection<ProjectObserver> projects) return;
         projects.CollectionChanged += ProjectSourceCollectionChanged;
         _cache.Clear();
         _cache.AddOrUpdate(projects);
     }
-    
+
     private void ProjectSourceCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
         if (e is {Action: NotifyCollectionChangedAction.Add, NewItems: not null})

@@ -15,20 +15,18 @@ internal class GetScopedVariablesHandler(IConnectionManager manager)
 {
     private const string GetVariables = """
                                         WITH Tree AS (
-                                            SELECT NodeId, ParentId, Depth
+                                            SELECT NodeId, ParentId
                                             FROM Node
                                             WHERE NodeId = @NodeId
-                                        
                                             UNION ALL
-                                        
-                                            SELECT n.NodeId, n.ParentId, n.Depth
+                                            SELECT n.NodeId, n.ParentId
                                             FROM Node n
                                                      INNER JOIN Tree t ON t.ParentId = n.NodeId)
 
-                                        SELECT VariableId, Name, Value
+                                        
+                                        SELECT v.VariableId, v.NodeId, v.Name, v.Type, v.Data, v.Description
                                         FROM Tree t
                                                  JOIN Variable v ON v.NodeId = t.NodeId
-                                        ORDER BY t.Depth DESC
                                         """;
 
     public async Task<Result<IEnumerable<Variable>>> Handle(GetScopedVariables request,

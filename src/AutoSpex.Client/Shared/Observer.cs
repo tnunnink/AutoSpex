@@ -50,21 +50,6 @@ public abstract partial class Observer<TModel> : TrackableViewModel, IEquatable<
     protected virtual Task Delete() => Task.FromResult(Messenger.Send(new Deleted(this)));
 
     /// <summary>
-    /// A command to perform a rename of the <see cref="Observer{TModel}"/> object in the database. Not all observers
-    /// may have a name property and that is fine, but this code is more to eliminate recreating commands and event
-    /// messages for every observer that supports this functionality.
-    /// </summary>
-    /// <param name="name">The new name to update the observer with.</param>
-    /// <returns>The <see cref="Task"/> representing the async function to perform.</returns>
-    /// <remarks>
-    /// Deriving classes are also expected to send the <see cref="Renamed"/> message to notify other observers
-    /// or pages that the object has been renamed so they can respond accordingly. Also note this command expects the new
-    /// name as the parameter to the command so it should be sent from the UI or when the command is invoked.
-    /// </remarks>
-    [RelayCommand]
-    protected virtual Task Rename(string? name) => Task.FromResult(Messenger.Send(new Renamed(this)));
-
-    /// <summary>
     /// A command to duplicate the <see cref="Observer{TModel}"/> object in the database and UI. The default
     /// implementation does nothing and not all observers may need this but it will be supported by more than one so
     /// this is to consolidate the code. 
@@ -105,6 +90,4 @@ public abstract partial class Observer<TModel> : TrackableViewModel, IEquatable<
     public record Created(Observer<TModel> Observer);
 
     public record Deleted(Observer<TModel> Observer);
-
-    public record Renamed(Observer<TModel> Observer);
 }

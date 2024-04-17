@@ -16,7 +16,7 @@ internal class UpdateSourceHandler(IConnectionManager manager) : IRequestHandler
         "UPDATE Source Set IsSelected = 0 WHERE SourceId <> @SourceId";
 
     private const string UpdateSource =
-        "UPDATE Source SET IsSelected = @IsSelected, Name = @Name, Description = @Description, " +
+        "UPDATE Source SET IsSelected = @IsSelected, Name = @Name, Documentation = @Documentation, " +
         "TargetType = @TargetType, TargetName = @TargetName, ExportedOn = @ExportedOn, " +
         "ExportedBy = @ExportedBy, Content = @Content " +
         "WHERE SourceId = @SourceId";

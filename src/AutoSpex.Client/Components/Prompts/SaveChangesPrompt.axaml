@@ -11,10 +11,10 @@
     <ControlTheme x:Key="{x:Type components:SaveChangesPrompt}" TargetType="components:SaveChangesPrompt">
         <Setter Property="Template">
             <ControlTemplate>
-                <controls:Prompt Header="Do you want to save chagnes?"
+                <controls:Prompt Header="Do you want to save changes?"
                                  HeaderIcon="{StaticResource IconWarningFilled}"
                                  ActionButtonText="Save"
-                                 ActionButtonTheme="{a:ControlTheme ButtonSoft}"
+                                 ActionButtonTheme="{a:ControlTheme ButtonSolid}"
                                  ActionCommandParameter="Save"
                                  CancelButtonTheme="{a:ControlTheme ButtonSoft}"
                                  CancelCommandParameter="Cancel"

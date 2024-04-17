@@ -12,7 +12,7 @@ public class SourceTests
         source.Should().NotBeNull();
         source.SourceId.Should().NotBeEmpty();
         source.Name.Should().Be(file.Info.TargetName);
-        source.Description.Should().Be(file.Controller.Description);
+        source.Documentation.Should().Be(file.Controller.Description);
         source.IsSelected.Should().BeFalse();
         source.TargetName.Should().Be(file.Info.TargetName);
         source.TargetType.Should().Be(file.Info.TargetType);

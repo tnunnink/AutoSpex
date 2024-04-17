@@ -112,8 +112,6 @@ public class ArgumentObserver : Observer<Argument>
             /*Criterion.Spec;*/
         }
 
-        
-
         Value = input;
     }
 

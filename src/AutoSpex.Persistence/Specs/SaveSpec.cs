@@ -7,20 +7,32 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record SaveSpec(Guid NodeId, Spec Spec) : IDbCommand<Result>;
+public record SaveSpec(Spec Spec) : IDbCommand<Result>;
 
 [UsedImplicitly]
 internal class SaveSpecHandler(IConnectionManager manager) : IRequestHandler<SaveSpec, Result>
 {
+    private const string HasNode = "SELECT COUNT(NodeId) FROM Node WHERE NodeId = @NodeId";
+
     private const string UpsertSpec =
-        "INSERT INTO Spec(NodeId, Specification) VALUES (@NodeId, @Specification) " +
+        "INSERT INTO Spec(SpecId, Specification) VALUES (@SpecId, @Specification) " +
         "ON CONFLICT DO UPDATE SET Specification = @Specification;";
 
     public async Task<Result> Handle(SaveSpec request, CancellationToken cancellationToken)
     {
+        if (request.Spec.SpecId == Guid.Empty)
+            return Result.Fail("Can not save spec with empty id.");
+
         using var connection = await manager.Connect(Database.Project, cancellationToken);
-        var record = new {request.NodeId, Specification = request.Spec.Serialize()};
+
+        //First check that the node exists so we don't get a SQL exception.
+        var exists = await connection.QuerySingleAsync<int>(HasNode, new {NodeId = request.Spec.SpecId});
+        if (exists == 0) return Result.Fail($"Node not found: {request.Spec.SpecId}");
+
+        //If so serialize the spec and upsert the data.
+        var record = new {request.Spec.SpecId, Specification = request.Spec.Serialize()};
         await connection.ExecuteAsync(UpsertSpec, record);
+
         return Result.Ok();
     }
 }

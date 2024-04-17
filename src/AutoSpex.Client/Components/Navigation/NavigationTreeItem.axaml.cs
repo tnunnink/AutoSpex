@@ -174,7 +174,6 @@ public class NavigationTreeItem : TreeViewItem
 
     private void HandleEnterKey(RoutedEventArgs e)
     {
-        Console.WriteLine("Item Enter");
         if (e.Source is TextBox textBox && IsEditing)
         {
             RenameCommand?.Execute(textBox.Text);

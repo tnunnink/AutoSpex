@@ -81,6 +81,10 @@
     <Style Selector="TextBlock">
         <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
+    
+    <Style Selector="Label">
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
 
     <Style Selector="TextBlock.caption">
         <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />

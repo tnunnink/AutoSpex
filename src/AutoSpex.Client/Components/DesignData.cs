@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using AutoSpex.Client.Observers;
@@ -53,6 +54,8 @@ public static class DesignData
 
     public static ObservableCollection<NodeObserver> Nodes = new(GenerateNodes().Select(n => new NodeObserver(n)));
 
+    public static ObservableCollection<NodeObserver> Specs = new(GenerateSpecs().Select(n => new NodeObserver(n)));
+
     public static VariableObserver VariableObserver = new DesignVariableObserver();
 
     public static Variable Variable = new("MyVar", "123");
@@ -95,10 +98,22 @@ public static class DesignData
             {Name = "Test Source 03"},
     ];
 
+    public static LogixComponent DataType = new DesignSourceObserver().Model.L5X.DataTypes.First();
+
     public static ObservableCollection<LogixElement> DataTypes = new(new DesignSourceObserver().Model.L5X.DataTypes);
 
     public static ObservableCollection<ElementObserver> Tags = new(new DesignSourceObserver().Model.L5X.Query<Tag>()
         .SelectMany(t => t.Members()).Select(x => new ElementObserver(x)));
+
+    public static LogixCode Rung = DesignRung();
+
+    private static LogixCode DesignRung()
+    {
+        var rung = new DesignSourceObserver().Model.L5X.Query<Rung>().First();
+        rung.Text = "XIC(Some_Tag_Name)[GRT(MyTag,1)NEQ(AnotherTag.Member,0)]MOV(0,OutputTag);";
+        rung.Comment = "This is a test rung that we are using to mock the look of the UI.";
+        return rung;
+    }
 
     public static ObservableCollection<ElementObserver> Rungs =
         new(new DesignSourceObserver().Model.L5X.Query<Rung>().Select(x => new ElementObserver(x)));
@@ -106,6 +121,8 @@ public static class DesignData
     public static string? RawData = new DesignSourceObserver().Model.L5X.Tags.FirstOrDefault()?.Serialize().ToString();
 
     public static LogixElement? Tag = new DesignSourceObserver().Model.L5X.Tags.FirstOrDefault();
+
+    public static LogixElement? Module = new DesignSourceObserver().Model.L5X.Modules.FirstOrDefault();
 
     public static ElementObserver TagObserver = new(Tag!);
 
@@ -117,6 +134,8 @@ public static class DesignData
     public static PropertyObserver MembersPropertyObserver => new(new DesignMembersProperty(),
         new ElementObserver(new Tag {Name = "MyTag", Value = new TIMER()}));
 
+    public static RunObserver Run => new(new Run(SpecNode, Source, Enumerable.Empty<Outcome>().ToList()));
+
     private static IEnumerable<Node> GenerateNodes()
     {
         var collection = Node.NewCollection();
@@ -127,6 +146,19 @@ public static class DesignData
         yield return Node.NewCollection();
     }
 
+    private static IEnumerable<Node> GenerateSpecs()
+    {
+        var collection = Node.NewCollection();
+        collection.AddSpec("Test Spec");
+        collection.AddSpec("Another Spec");
+        collection.AddSpec("A Spec with a longer name then most of the other specs that you'd want");
+        var folder = collection.AddFolder();
+        folder.AddSpec("Test Folder");
+        folder.AddSpec("Sub Spec");
+        folder.AddSpec("Contained Spec");
+        return collection.Specs();
+    }
+
     private static NodeObserver SpecNodeObserver()
     {
         var collection = Node.NewCollection();
@@ -134,6 +166,21 @@ public static class DesignData
         var spec = folder.AddSpec();
         return new NodeObserver(spec);
     }
+
+    public static EvaluationObserver PassedEvaluation = new(
+        Evaluation.Passed(new Criterion("DataType", Operation.Equal, "MyType"), new Tag() {Name = "Custom_Tag_Name"},
+            ["MyType"], "MyType"));
+
+    public static EvaluationObserver FailedEvaluation = new(
+        Evaluation.Failed(new Criterion("DataType", Operation.Contains, "Pump"),
+            new Tag() {Name = "MyProgram:Local_Tag_Name_01.Control.Value"}, ["Pump"], "ValveType"));
+
+    public static EvaluationObserver ErroredEvaluation = new(
+        Evaluation.Error(new Criterion("DataType", Operation.Equal, "MyType"), new Tag() {Name = "Custom_Tag_Name"},
+            new ArgumentException("Could not execute code due to this throw exception")));
+    
+    public static ObservableCollection<EvaluationObserver> Evaluations = 
+        new(new []{PassedEvaluation, FailedEvaluation, ErroredEvaluation});
 }
 
 public class TestPageModel : PageViewModel
@@ -142,7 +189,8 @@ public class TestPageModel : PageViewModel
     public override string Icon => "Folder";
 }
 
-public class DesignRealProjectObserver() : ProjectObserver(new Project(@"C:\Users\admin\Documents\Spex\Test.spex"));
+public class DesignRealProjectObserver()
+    : ProjectObserver(new Project(@"C:\Users\admin\Documents\Spex\New Project.spex"));
 
 public class DesignFakeProjectObserver() : ProjectObserver(new Project(@"C:\Users\admin\Documents\Spex\Fake.spex"));
 

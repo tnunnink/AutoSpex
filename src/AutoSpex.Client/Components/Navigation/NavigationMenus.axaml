@@ -15,7 +15,8 @@
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushSecondary}" />
         <Setter Property="CornerRadius" Value="5" />
-        <Setter Property="Margin" Value="7" />
+        <Setter Property="Width" Value="70" />
+        <Setter Property="Margin" Value="5" />
         <Setter Property="Padding" Value="5" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="Template">
@@ -76,8 +77,9 @@
     <ControlTheme x:Key="{x:Type controls:NavigationMenus}" TargetType="controls:NavigationMenus">
         <Setter Property="Template">
             <ControlTemplate>
-                <TabControl ItemsSource="{TemplateBinding Pages}"
-                            SelectedItem="{TemplateBinding SelectedPage}"
+                <TabControl x:Name="TabControl"
+                            ItemsSource="{TemplateBinding Pages}"
+                            SelectedItem="{TemplateBinding SelectedPage, Mode=TwoWay}"
                             Theme="{a:ControlTheme TabControlOutline}"
                             ItemContainerTheme="{StaticResource NavigationTabItem}"
                             Background="Transparent"

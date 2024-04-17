@@ -1,0 +1,51 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="using:AutoSpex.Client.Components">
+
+    <Design.PreviewWith>
+        <components:NodeOverview />
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type components:NodeOverview}" TargetType="components:NodeOverview">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <ScrollViewer>
+                    <Grid ColumnDefinitions="*,3*,*">
+                        <StackPanel Grid.Column="1" Margin="0 60" Spacing="10">
+                            <TextBox
+                                x:Name="NameEntry"
+                                Text="{Binding Node.Name, RelativeSource={RelativeSource TemplatedParent}, FallbackValue={x:Null}, Mode=OneWay}"
+                                Theme="{StaticResource TextBoxSubtle}"
+                                FontWeight="{a:ThemeResource HeadingFontWeightSmall}"
+                                FontSize="{a:ThemeResource HeadingFontSizeSmall}"
+                                Watermark="Enter a name"
+                                Height="40"
+                                VerticalContentAlignment="Center">
+                                <Interaction.Behaviors>
+                                    <SelectAllOnGotFocusBehavior />
+                                </Interaction.Behaviors>
+                                <TextBox.Styles>
+                                    <Style Selector="TextBox[Text=''] /template/ Border#border">
+                                        <Setter Property="BorderBrush" Value="{a:ThemeResource ControlForegroundBrushOutlineDanger}" />
+                                    </Style>
+                                </TextBox.Styles>
+                            </TextBox>
+                            <TextBox
+                                x:Name="DocumentationEntry"
+                                Text="{Binding Node.Documentation, RelativeSource={RelativeSource TemplatedParent}, FallbackValue={x:Null}}"
+                                Watermark="Help others with a complete description of this node"
+                                Theme="{StaticResource TextBoxSubtle}"
+                                VerticalContentAlignment="Top"
+                                TextWrapping="Wrap"
+                                Height="100" />
+                            <Border BorderBrush="{a:ThemeResource Container2BorderBrush}"
+                                    BorderThickness="0 0 0 1" />
+
+                        </StackPanel>
+                    </Grid>
+                </ScrollViewer>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

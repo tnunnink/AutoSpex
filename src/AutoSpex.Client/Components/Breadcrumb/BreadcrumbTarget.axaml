@@ -35,6 +35,7 @@
                                                      Value="True">
                                     <FocusControlAction TargetControl="NameEntry" />
                                 </DataTriggerBehavior>
+                                <SelectAllOnGotFocusBehavior />
                             </Interaction.Behaviors>
                         </TextBox>
                         <Button Content=">"

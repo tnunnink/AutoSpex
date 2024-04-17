@@ -1,15 +1,30 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui">
-    
-    <SolidColorBrush x:Key="{actipro:ThemeResourceKey FocusAdornerBorderBrush}" 
+
+    <SolidColorBrush x:Key="{actipro:ThemeResourceKey FocusAdornerBorderBrush}"
                      Color="{actipro:ThemeResource ButtonBackgroundBrushEmphasized}" />
+
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Light">
-           
+            <SolidColorBrush x:Key="TypeGroupForegroundBrushDefault" Color="#b0a4a4" />
+            <SolidColorBrush x:Key="TypeGroupForegroundBrushNumber" Color="#bc5f9d" />
+            <SolidColorBrush x:Key="TypeGroupForegroundBrushBoolean" Color="#1055d6" />
+            <SolidColorBrush x:Key="TypeGroupForegroundBrushText" Color="#0194a2" />
+            <SolidColorBrush x:Key="TypeGroupForegroundBrushEnum" Color="#6f9f22" />
+            <SolidColorBrush x:Key="TypeGroupForegroundBrushDate" Color="#bc5f9d" />
+            <SolidColorBrush x:Key="TypeGroupForegroundBrushCollection" Color="#9538ce" />
+            <SolidColorBrush x:Key="TypeGroupForegroundBrushElement" Color="#9d7842" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Dark">
-           
+            <SolidColorBrush x:Key="TypeGroupForegroundBrushDefault" Color="#6c6c6c" />
+            <SolidColorBrush x:Key="TypeGroupForegroundBrushNumber" Color="#e89ca7" />
+            <SolidColorBrush x:Key="TypeGroupForegroundBrushBoolean" Color="#688cd4" />
+            <SolidColorBrush x:Key="TypeGroupForegroundBrushText" Color="#66c3ce" />
+            <SolidColorBrush x:Key="TypeGroupForegroundBrushEnum" Color="#8db95d" />
+            <SolidColorBrush x:Key="TypeGroupForegroundBrushDate" Color="#e89ca7" />
+            <SolidColorBrush x:Key="TypeGroupForegroundBrushCollection" Color="#c19ef1" />
+            <SolidColorBrush x:Key="TypeGroupForegroundBrushElement" Color="#d5ad76" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
-    </ResourceDictionary>
+</ResourceDictionary>

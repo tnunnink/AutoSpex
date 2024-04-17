@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Windows.Input;
-using AutoSpex.Client.Observers;
-using AutoSpex.Client.Pages.Home;
-using AutoSpex.Client.Pages.Projects;
+using AutoSpex.Client.Pages;
 using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
 using Avalonia;
@@ -13,6 +11,7 @@ using Avalonia.Platform;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
+
 // ReSharper disable UnusedParameter.Local
 
 namespace AutoSpex.Client;
@@ -20,16 +19,15 @@ namespace AutoSpex.Client;
 [UsedImplicitly]
 public partial class Shell : Window, IRecipient<NavigationRequest>
 {
-    private readonly Navigator _navigator;
-
-    private bool _dialogOpen;
-    private PageViewModel? _currentPage;
-    private ICommand? _navigateHomeCommand;
-    private ICommand? _navigateProjectCommand;
+    #region AvaloniaProperties
 
     public static readonly DirectProperty<Shell, bool> DialogOpenProperty =
         AvaloniaProperty.RegisterDirect<Shell, bool>(
             nameof(DialogOpen), o => o.DialogOpen, (o, v) => o.DialogOpen = v);
+
+    public static readonly DirectProperty<Shell, bool> ProjectPageOpenProperty =
+        AvaloniaProperty.RegisterDirect<Shell, bool>(
+            nameof(ProjectPageOpen), o => o.ProjectPageOpen, (o, v) => o.ProjectPageOpen = v);
 
     public static readonly DirectProperty<Shell, PageViewModel?> CurrentPageProperty =
         AvaloniaProperty.RegisterDirect<Shell, PageViewModel?>(
@@ -39,27 +37,28 @@ public partial class Shell : Window, IRecipient<NavigationRequest>
         AvaloniaProperty.RegisterDirect<Shell, ICommand?>(
             nameof(NavigateHomeCommand), o => o.NavigateHomeCommand, (o, v) => o.NavigateHomeCommand = v);
 
-    public static readonly DirectProperty<Shell, ICommand?> NavigateProjectCommandProperty =
-        AvaloniaProperty.RegisterDirect<Shell, ICommand?>(
-            nameof(NavigateProjectCommand), o => o.NavigateProjectCommand, (o, v) => o.NavigateProjectCommand = v);
+    #endregion
+
+    private readonly Navigator? _navigator;
+    private bool _dialogOpen;
+    private bool _projectPageOpen;
+    private PageViewModel? _currentPage;
+    private ICommand? _navigateHomeCommand;
 
     public Shell()
     {
         InitializeComponent();
-
-        _navigator = new Navigator(WeakReferenceMessenger.Default);
     }
 
     public Shell(IMessenger messenger, Navigator navigator)
     {
         InitializeComponent();
-
-        _navigator = navigator;
         DataContext = this;
-        NavigateHomeCommand = new RelayCommand(NavigateHome);
-        NavigateProjectCommand = new RelayCommand<ProjectObserver?>(NavigateProject);
 
         messenger.RegisterAll(this);
+        _navigator = navigator;
+
+        NavigateHomeCommand = new AsyncRelayCommand(NavigateHome);
 
         //This is a work around to solve the window covering the task bar when maximizing while we are using custom title bar 
         this.GetPropertyChangedObservable(WindowStateProperty).AddClassHandler<Visual>((_, args) =>
@@ -95,16 +94,16 @@ public partial class Shell : Window, IRecipient<NavigationRequest>
         set => SetAndRaise(NavigateHomeCommandProperty, ref _navigateHomeCommand, value);
     }
 
-    public ICommand? NavigateProjectCommand
-    {
-        get => _navigateProjectCommand;
-        set => SetAndRaise(NavigateProjectCommandProperty, ref _navigateProjectCommand, value);
-    }
-
     public bool DialogOpen
     {
         get => _dialogOpen;
         set => SetAndRaise(DialogOpenProperty, ref _dialogOpen, value);
+    }
+
+    public bool ProjectPageOpen
+    {
+        get => _projectPageOpen;
+        set => SetAndRaise(ProjectPageOpenProperty, ref _projectPageOpen, value);
     }
 
     /// <summary>
@@ -115,27 +114,33 @@ public partial class Shell : Window, IRecipient<NavigationRequest>
         ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.SystemChrome;
     }
 
-    private void NavigateHome()
+    /// <summary>
+    /// Navigates the <see cref="HomePageModel"/> instance into the view of the application shell.
+    /// </summary>
+    private async Task NavigateHome()
     {
-        if (CurrentPage is not null && CurrentPage.Route.Equals("HomePageModel")) return;
-        _navigator.NavigateHome();
-    }
-
-    private void NavigateProject(ProjectObserver? project)
-    {
-        if (project is null) return;
-        if (CurrentPage is not null && CurrentPage.Route.Equals(project.Uri.LocalPath)) return;
-        _navigator.Navigate(project);
+        if (_navigator is null) return;
+        if (CurrentPage is not null && CurrentPage.Route.Equals(nameof(HomePageModel))) return;
+        await _navigator.NavigateHome();
     }
 
     public void Receive(NavigationRequest message)
     {
-        if (message.Page is HomePageModel or ProjectPageModel)
+        if (message.Page is not HomePageModel and not ProjectPageModel) return;
+        if (message.Action != NavigationAction.Open) return;
+        CurrentPage = message.Page;
+    }
+
+    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+    {
+        base.OnPropertyChanged(change);
+
+        if (change.Property == CurrentPageProperty)
         {
-            CurrentPage = message.Page;
+            ProjectPageOpen = change.GetNewValue<PageViewModel?>()?.Route.Equals(nameof(HomePageModel)) is false;
         }
     }
-    
+
     private void DialogShadowPointerPressed(object? sender, PointerPressedEventArgs e)
     {
         foreach (var window in OwnedWindows)

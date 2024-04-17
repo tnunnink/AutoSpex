@@ -11,7 +11,7 @@ public abstract class Operation(string name) : SmartEnum<Operation, string>(name
 {
     public abstract int NumberOfArguments { get; }
 
-    public virtual string ShouldMessage => $"Should {Name}:";
+    public virtual string ShouldMessage => $"should be {Name.ToLower()} to";
 
     /// <summary>
     /// Performs the operation on the input and provided values and returns the result.

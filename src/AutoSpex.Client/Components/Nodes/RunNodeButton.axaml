@@ -18,7 +18,9 @@
                 <SplitButton Command="{TemplateBinding RunCommand}"
                              CommandParameter="{Binding SelectedSource, RelativeSource={RelativeSource TemplatedParent}}"
                              Theme="{a:ControlTheme SplitButtonOutline}"
-                             Padding="{TemplateBinding Padding}"
+                             VerticalAlignment="Center"
+                             HorizontalAlignment="Center"
+                             Padding="4"
                              a:ThemeProperties.CopyClassesFrom="{Binding $parent[components:RunNodeButton]}">
                     <PathIcon Theme="{StaticResource IconPlayOutlined}"
                               Height="20" Width="20" Padding="3 4 3 3" Margin="5 0"

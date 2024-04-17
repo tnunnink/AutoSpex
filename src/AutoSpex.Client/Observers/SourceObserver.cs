@@ -1,29 +1,31 @@
 ﻿using System;
+using System.Text;
+using System.Threading.Tasks;
 using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using AutoSpex.Persistence;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using FluentResults;
 
 namespace AutoSpex.Client.Observers;
 
-public partial class SourceObserver(Source source) : Observer<Source>(source),
-    IRecipient<Observer<Source>.Renamed>,
+public partial class SourceObserver(Source source) : NamedObserver<Source>(source),
     IRecipient<SourceObserver.Selected>
 {
     public override Guid Id => Model.SourceId;
 
-    public string Name
+    public override string Name
     {
         get => Model.Name;
-        set => SetProperty(Model.Name, value, Model, (s, v) => s.Name = v, true);
+        set => SetProperty(Model.Name, value, Model, (s, v) => s.Name = v);
     }
 
-    public string Description
+    public string Documentation
     {
-        get => Model.Description;
-        set => SetProperty(Model.Description, value, Model, (s, v) => s.Description = v);
+        get => Model.Documentation;
+        set => SetProperty(Model.Documentation, value, Model, (m, s) => m.Documentation = s);
     }
 
     public bool IsSelected
@@ -37,6 +39,9 @@ public partial class SourceObserver(Source source) : Observer<Source>(source),
     public string TargetTypeFormatted => $"[{TargetType}]";
     public string ExportedBy => Model.ExportedBy;
     public DateTime ExportedOn => Model.ExportedOn;
+    /*public string Size => $"{(decimal) Encoding.Unicode.GetByteCount(Model.L5X.ToString()) / 1048576:F1} MB";*/
+
+    public string Size => $"{Model.L5X.ToString().Length * sizeof(char) / 1024:N0} KB";
 
     /// <inheritdoc />
     protected override async Task Delete()
@@ -51,25 +56,6 @@ public partial class SourceObserver(Source source) : Observer<Source>(source),
         Messenger.UnregisterAll(this);
     }
 
-    /// <inheritdoc />
-    protected override async Task Rename(string? name)
-    {
-        if (string.IsNullOrEmpty(name) || string.Equals(name, Name) || name.Length > 100) return;
-
-        var previous = Name;
-        Name = name;
-
-        var result = await Mediator.Send(new RenameSource(this));
-
-        if (result.IsFailed)
-        {
-            Name = previous;
-            return;
-        }
-
-        Messenger.Send(new Renamed(this));
-    }
-
     [RelayCommand]
     private void Select()
     {
@@ -77,27 +63,13 @@ public partial class SourceObserver(Source source) : Observer<Source>(source),
         Messenger.Send(new Selected(Id));
     }
 
-    /// <summary>
-    /// Updates the local <see cref="Name"/> property if the observer that changed represents the same observer as
-    /// this object has not yet updated it's name. This will allow all observer instance to sync their name property
-    /// once one is changed
-    /// </summary>
-    /// <param name="message">The message received representing the observer name change.</param>
-    public void Receive(Renamed message)
-    {
-        if (message.Observer is not SourceObserver source) return;
-        if (ReferenceEquals(this, source)) return;
-        if (source.Id != Id) return;
-        if (Name == source.Name) return;
-        Name = source.Name;
-        Messenger.Send(new Renamed(this));
-    }
-
     public void Receive(Selected message)
     {
         if (Id == message.SourceId) return;
         IsSelected = false;
     }
+
+    protected override Task<Result> RenameModel(string name) => Mediator.Send(new RenameSource(this));
 
     public static implicit operator Source(SourceObserver observer) => observer.Model;
     public static implicit operator SourceObserver(Source source) => new(source);

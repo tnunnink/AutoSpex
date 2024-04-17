@@ -28,13 +28,24 @@ public abstract class TrackableViewModel : ViewModelBase, ITrackable
     /// <summary>
     /// Accepts the changes made to the trackable view model and all its tracked view models.
     /// </summary>
-    public virtual void AcceptChanges()
+    public void AcceptChanges()
     {
         foreach (var trackable in _tracked)
             trackable.AcceptChanges();
 
         _changed.Clear();
 
+        OnPropertyChanged(nameof(IsChanged));
+    }
+    
+    /// <summary>
+    /// Accepts the changes to the specified property name. This will just remove the property from the internal
+    /// change collection.
+    /// </summary>
+    /// <param name="propertyName">The name of the property to clear from the change list.</param>
+    protected void AcceptChanges(string propertyName)
+    {
+        _changed.Remove(propertyName);
         OnPropertyChanged(nameof(IsChanged));
     }
 

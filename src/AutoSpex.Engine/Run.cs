@@ -1,47 +1,60 @@
 ﻿using JetBrains.Annotations;
+using Task = System.Threading.Tasks.Task;
 
 namespace AutoSpex.Engine;
 
 [PublicAPI]
-public record Run
+public class Run
 {
-    [UsedImplicitly]
-    private Run()
+    private readonly List<Outcome> _outcomes = [];
+
+    public Run()
     {
     }
 
-    public Run(Runner runner, Source source, ICollection<Outcome> outcomes)
+    public Run(Guid nodeId, Guid sourceId)
     {
-        if (runner is null) throw new ArgumentNullException(nameof(runner));
-        if (source is null) throw new ArgumentNullException(nameof(source));
-
-        RunnerId = runner.RunnerId;
-        Runner = runner.Name;
-        SourceId = source.SourceId;
-        Source = source.Name;
-        Result = outcomes.Max(r => r.Result);
-        Verified = outcomes.Count;
-        Passed = outcomes.Count(o => o.Result == ResultState.Passed);
-        Failed = outcomes.Count(o => o.Result == ResultState.Failed);
-        Errored = outcomes.Count(o => o.Result == ResultState.Error);
-        Duration = outcomes.Sum(o => o.Duration);
-        Average = Duration / Verified;
+        NodeId = nodeId;
+        SourceId
     }
 
     public Guid RunId { get; private set; } = Guid.NewGuid();
-    public Guid RunnerId { get; private set; } = Guid.Empty;
+    public Guid NodeId { get; private set; } = Guid.Empty;
     public Guid SourceId { get; private set; } = Guid.Empty;
-    public string Runner { get; private set; } = string.Empty;
-    public string Source { get; private set; } = string.Empty;
+    public string Name { get; set; } = "Run";
     public ResultState Result { get; private set; } = ResultState.None;
-
     public DateTime RanOn { get; private set; } = DateTime.Now;
-
     public string RanBy { get; private set; } = Environment.UserName;
-    public int Verified { get; private set; }
-    public int Passed { get; private set; }
-    public int Failed { get; private set; }
-    public int Errored { get; private set; }
-    public long Duration { get; private set; }
-    public long Average { get; private set; }
+    public IReadOnlyCollection<Outcome> Outcomes => _outcomes;
+
+
+    /// <summary>
+    /// Executes the runner with the given input source.
+    /// </summary>
+    /// <param name="specs"></param>
+    /// <param name="source"></param>
+    /// <param name="progress">The progress object for tracking the execution progress. (optional)</param>
+    /// <returns>The Run object that encapsulates the execution outcome.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when the input source is null.</exception>
+    public async Task Execute(IEnumerable<Spec> specs, Source source, IProgress<Outcome>? progress = default)
+    {
+        if (specs is null) throw new ArgumentNullException(nameof(specs));
+        if (source is null) throw new ArgumentNullException(nameof(source));
+
+        _outcomes.Clear();
+
+        var content = source.L5X;
+
+        foreach (var spec in specs)
+        {
+            var outcome = await spec.Run(content);
+            progress?.Report(outcome);
+            _outcomes.Add(outcome);
+        }
+
+        SourceId = source.SourceId;
+        Result = _outcomes.Count > 0 ? _outcomes.Max(r => r.Result) : ResultState.None;
+        RanOn = DateTime.Now;
+        RanBy = Environment.UserName;
+    }
 }

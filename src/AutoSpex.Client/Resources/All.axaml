@@ -1,9 +1,8 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:converters="clr-namespace:AutoSpex.Client.Resources.Converters"
-                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
                     xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
-                    xmlns:system="clr-namespace:System;assembly=System.Runtime">
+                    xmlns:system="clr-namespace:System;assembly=System.Runtime"
+                    xmlns:converters="clr-namespace:AutoSpex.Client.Resources.Converters">
     
     <ResourceDictionary.MergedDictionaries>
         <ResourceInclude Source="Icons.axaml" />
@@ -27,6 +26,7 @@
     <system:Boolean x:Key="True">True</system:Boolean>
     <system:Boolean x:Key="False">False</system:Boolean>
     
+    <converters:ElementXmlConverter x:Key="ElementXmlConverter" />
     <actipro:ComparisonConverter x:Key="EqualToConverter" Operator="EqualTo" />
     <actipro:ComparisonConverter x:Key="NotEqualToConverter" Operator="NotEqualTo" />
     <actipro:MathConverter x:Key="MathConverter" />

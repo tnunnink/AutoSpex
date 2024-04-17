@@ -1,37 +1,16 @@
-﻿using JetBrains.Annotations;
-using L5Sharp.Core;
+﻿namespace AutoSpex.Engine;
 
-namespace AutoSpex.Engine;
-
-[PublicAPI]
 public record Verification
 {
-    private Verification(ResultState result, object? candidate, params Evaluation[] evaluations)
+    private Verification(ResultState result, params Evaluation[] evaluations)
     {
         Result = result;
-        Type = candidate?.GetType().TypeIdentifier();
         Evaluations = evaluations ?? throw new ArgumentNullException(nameof(evaluations));
     }
 
     public ResultState Result { get; }
-    public string? Type { get; }
     public IReadOnlyCollection<Evaluation> Evaluations { get; }
-
-    public IEnumerable<string> Successes =>
-        Evaluations.Where(e => e.Result == ResultState.Passed).Select(e => e.Message);
-
-    public IEnumerable<string> Failures =>
-        Evaluations.Where(e => e.Result == ResultState.Failed).Select(e => e.Message);
-
-    public IEnumerable<string> Errors =>
-        Evaluations.Where(e => e.Result == ResultState.Error).Select(e => e.Message);
-
-    public static Verification For(object? candidate, Evaluation evaluation) =>
-        new(evaluation.Result, candidate, evaluation);
-
-    public static Verification All(object? candidate, Evaluation[] evaluations) =>
-        new(evaluations.Max(e => e.Result), candidate, evaluations);
-
-    public static Verification Any(object? candidate, Evaluation[] evaluations) =>
-        new(evaluations.Min(e => e.Result), candidate, evaluations);
+    public static Verification For(Evaluation evaluation) => new(evaluation.Result, evaluation);
+    public static Verification All(Evaluation[] evaluations) => new(evaluations.Max(e => e.Result), evaluations);
+    public static Verification Any(Evaluation[] evaluations) => new(evaluations.Min(e => e.Result), evaluations);
 }

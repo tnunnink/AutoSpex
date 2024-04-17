@@ -1,0 +1,39 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="using:AutoSpex.Client.Components">
+
+    <Design.PreviewWith>
+        <Border Padding="300">
+            <components:SourceSelector Sources="{x:Static components:DesignData.Sources}"/>
+        </Border>
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type components:SourceSelector}" TargetType="components:SourceSelector">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Button Theme="{a:ControlTheme TitleBarButton}"
+                        Padding="0">
+                    <Grid ColumnDefinitions="Auto,*,Auto">
+                        <PathIcon Grid.Column="0"
+                                  Theme="{StaticResource IconSourceThemed}"
+                                  Margin="5 0" />
+                        <TextBlock Grid.Column="1"
+                                   Text="Source Name" />
+                        <ContentPresenter Grid.Column="2" Margin="5 1 10 0"
+                                          ContentTemplate="{a:GlyphTemplate DropDownArrow16}" />
+                    </Grid>
+                    <Button.Flyout>
+                        <Flyout Placement="BottomEdgeAlignedLeft"
+                                ShowMode="TransientWithDismissOnPointerMoveAway"
+                                HorizontalOffset="-8">
+                            <components:SourceList
+                                CornerRadius="{a:ThemeResource PopupCornerRadius}"
+                                Sources="{Binding Sources, RelativeSource={RelativeSource TemplatedParent}}" />
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

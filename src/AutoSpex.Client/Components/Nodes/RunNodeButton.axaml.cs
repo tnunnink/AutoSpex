@@ -62,7 +62,11 @@ public class RunNodeButton : TemplatedControl
         base.OnPropertyChanged(change);
 
         if (change.Property == SourcesProperty)
-            UpdateSourceCollection(change.GetNewValue<ObservableCollection<SourceObserver>>());
+        {
+            var value = change.GetNewValue<ObservableCollection<SourceObserver>?>();
+            if (value is null) return;
+            UpdateSourceCollection(value);
+        }
     }
 
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)

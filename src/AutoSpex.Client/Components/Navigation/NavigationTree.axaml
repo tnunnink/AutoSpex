@@ -45,7 +45,7 @@
                     CornerRadius="{TemplateBinding CornerRadius}">
                     <Grid RowDefinitions="Auto, Auto, *">
                         <Border Grid.Row="0"
-                                Padding="5" Height="36"
+                                Padding="5" Height="40"
                                 BorderThickness="0 0 0 1"
                                 BorderBrush="{a:ThemeResource Container1BorderBrush}">
                             <Grid ColumnDefinitions="Auto,*,Auto">
@@ -57,31 +57,34 @@
                                         Theme="{StaticResource IconButton}"
                                         properties:ButtonIcon.Theme="{StaticResource IconAdd}"
                                         Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
+                                        IsVisible="{Binding AddCommand, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ObjectConverters.IsNotNull}} "
                                         ToolTip.Tip="{TemplateBinding AddToolTip}" />
                                     <ToggleButton
                                         IsChecked="{Binding IsSearchActive, RelativeSource={RelativeSource TemplatedParent}}"
                                         Theme="{StaticResource IconToggleButton}"
-                                        properties:ButtonIcon.Theme="{StaticResource IconSearch}"
-                                        ToolTip.Tip="Find (Ctrl+F)" />
+                                        properties:ButtonIcon.Theme="{StaticResource IconFilter}"
+                                        Padding="8"
+                                        ToolTip.Tip="Filter (Ctrl+F)" />
                                 </StackPanel>
 
                                 <StackPanel Grid.Column="2"
                                             Orientation="Horizontal"
                                             Spacing="2">
                                     <Button
-                                        Command="{Binding ExpandAllCommand, RelativeSource={RelativeSource TemplatedParent}}"
-                                        properties:ButtonIcon.Theme="{StaticResource IconChevronExpand}"
-                                        Theme="{StaticResource IconButton}"
-                                        ToolTip.Tip="Expand All" />
-                                    <Button
-                                        Command="{Binding CollapseAllCommand, RelativeSource={RelativeSource TemplatedParent}}"
-                                        properties:ButtonIcon.Theme="{StaticResource IconChevronCollapse}"
-                                        Theme="{StaticResource IconButton}"
-                                        ToolTip.Tip="Collapse All" />
-                                    <!--<Button
                                         properties:ButtonIcon.Theme="{StaticResource IconDotsVertical}"
                                         Theme="{StaticResource IconButton}"
-                                        ToolTip.Tip="Options" />-->
+                                        IsVisible="{Binding OptionsContent, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                        ToolTip.Tip="Options">
+                                        <Flyout Placement="BottomEdgeAlignedRight"
+                                                HorizontalOffset="8">
+                                            <ContentControl Content="{TemplateBinding OptionsContent}" />
+                                        </Flyout>
+                                    </Button>
+                                    <Button
+                                        Command="{Binding HideCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                                        properties:ButtonIcon.Theme="{StaticResource IconDash}"
+                                        Theme="{StaticResource IconButton}"
+                                        ToolTip.Tip="Hide" />
                                 </StackPanel>
                             </Grid>
                         </Border>
@@ -90,15 +93,15 @@
                                  IsVisible="{TemplateBinding IsSearchActive}"
                                  x:Name="SearchTextBox"
                                  Theme="{a:ControlTheme TextBoxOutline}"
-                                 Watermark="Search"
+                                 Watermark="Enter filter text"
                                  VerticalContentAlignment="Center"
                                  Padding="0 5"
                                  BorderThickness="0 0 0 1"
                                  BorderBrush="{a:ThemeResource Container2BorderBrush}"
                                  CornerRadius="0">
                             <TextBox.InnerLeftContent>
-                                <PathIcon Theme="{StaticResource IconSearch}"
-                                          VerticalAlignment="Center" Padding="9" Margin="5 0"
+                                <PathIcon Theme="{StaticResource IconFilter}"
+                                          VerticalAlignment="Center" Padding="8" Margin="3 0"
                                           Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
                             </TextBox.InnerLeftContent>
                         </TextBox>

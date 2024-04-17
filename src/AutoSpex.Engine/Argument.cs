@@ -45,7 +45,7 @@ public class Argument
     /// <summary>
     /// The friendly type name of the argument value.
     /// </summary>
-    public string Identifier => Type.TypeIdentifier();
+    public string Identifier => Type.CommonName();
 
     /// <summary>
     /// The <see cref="TypeGroup"/> to which this argument value belongs.
@@ -76,7 +76,7 @@ public class Argument
     public object ResolveAs(Type? type)
     {
         //If a variable was provided, take the inner variable value, otherwise take this value.
-        var value = Value is Variable variable ? variable.Value : Value;
+        var value = Value is Variable variable ? variable.ResolveValue() : Value;
 
         //If a criterion was provided, just return that. Nested arguments will get resolved here too.
         if (value is Criterion criterion)

@@ -14,7 +14,7 @@ internal class GetSelectedSourceHandler(IConnectionManager manager)
     : IRequestHandler<GetSelectedSource, Result<Source?>>
 {
     private const string Query =
-        "SELECT SourceId, IsSelected, Name, Description, TargetType, TargetName, ExportedOn, ExportedBy, Content " +
+        "SELECT SourceId, IsSelected, Name, Documentation, TargetType, TargetName, ExportedOn, ExportedBy, Content " +
         "FROM Source WHERE IsSelected = 1";
 
     public async Task<Result<Source?>> Handle(GetSelectedSource request, CancellationToken cancellationToken)
