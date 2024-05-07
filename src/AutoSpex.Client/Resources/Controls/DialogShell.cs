@@ -26,7 +26,7 @@ public class DialogShell : Window
         CanResize = false;
         ShowInTaskbar = false;
 
-        //This is a work around to solve the window covering the task bar when maximizing while we are using custom title bar 
+        //This is a work-around to solve the window covering the task bar when maximizing while we are using custom title bar 
         this.GetPropertyChangedObservable(WindowStateProperty).AddClassHandler<Visual>((_, args) =>
         {
             if (!OperatingSystem.IsWindows()) return;

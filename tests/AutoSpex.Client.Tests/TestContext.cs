@@ -23,7 +23,7 @@ public sealed class TestContext : IDisposable
 
     public readonly Uri TestProjectUri;
 
-    public const string TestL5X = @"C:\Users\admin\Documents\L5X\Example.L5X";
+    public const string TestL5X = @"C:\Users\tnunn\Documents\L5X\Example.L5X";
     public static T Resolve<T>() where T : class => Container.Resolve<T>();
 
     public void Dispose()

@@ -2,9 +2,9 @@
 
 namespace AutoSpex.Client.Pages;
 
-public partial class HistoryPage : UserControl
+public partial class RunsPage : UserControl
 {
-    public HistoryPage()
+    public RunsPage()
     {
         InitializeComponent();
     }

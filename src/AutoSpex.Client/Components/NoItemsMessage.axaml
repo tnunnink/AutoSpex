@@ -1,0 +1,46 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="using:AutoSpex.Client.Components">
+
+    <Design.PreviewWith>
+        <components:NoItemsMessage
+            HeadingText="No criteria defined"
+            MessageIcon="{StaticResource IconAdd}"
+            MessageText="add a new criteria to this spec." />
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type components:NoItemsMessage}" TargetType="components:NoItemsMessage">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <StackPanel VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Margin="20">
+                    <TextBlock
+                        Text="{TemplateBinding HeadingText}"
+                        Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                        FontWeight="SemiBold"
+                        HorizontalAlignment="Center" />
+
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Center">
+                        <TextBlock
+                            Text="Click the "
+                            Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                            TextAlignment="Center" />
+                        <PathIcon
+                            Theme="{TemplateBinding MessageIcon}"
+                            Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
+                            Height="20" Width="20" Padding="4" Margin="0 2 0 0" />
+                        <TextBlock Text="button to "
+                                   Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                                   TextAlignment="Center" />
+                        <TextBlock Text="{TemplateBinding MessageText}"
+                                   Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                                   TextAlignment="Center" />
+                    </StackPanel>
+                </StackPanel>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

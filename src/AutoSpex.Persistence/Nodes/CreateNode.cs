@@ -16,7 +16,8 @@ internal class CreateNodeHandler(IConnectionManager manager) : IRequestHandler<C
         "INSERT INTO Node (NodeId, ParentId, NodeType, Name, Documentation) " +
         "VALUES (@NodeId, @ParentId, @NodeType, @Name, @Documentation)";
 
-    private const string InsertSpec = "INSERT INTO Spec (SpecId, Specification) VALUES (@SpecId, @Specification)";
+    private const string InsertSpec =
+        "INSERT INTO Spec (SpecId, Element, Specification) VALUES (@SpecId, @Element, @Specification)";
 
     public async Task<Result> Handle(CreateNode request, CancellationToken cancellationToken)
     {
@@ -29,10 +30,10 @@ internal class CreateNodeHandler(IConnectionManager manager) : IRequestHandler<C
         if (request.Node.NodeType == NodeType.Spec)
         {
             var spec = new Spec(request.Node.NodeId);
-            var record = new {spec.SpecId, Specification = spec.Serialize()};
-            await connection.ExecuteAsync(InsertSpec, record, transaction); 
+            var record = new { spec.SpecId, spec.Element, Specification = spec.Serialize() };
+            await connection.ExecuteAsync(InsertSpec, record, transaction);
         }
-        
+
         transaction.Commit();
         return Result.Ok();
     }

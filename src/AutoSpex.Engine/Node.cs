@@ -27,8 +27,6 @@ public class Node : IEquatable<Node>
     public string Path => GetPath();
     public Node? Collection => GetCollection();
     public IEnumerable<Node> Nodes => _nodes;
-    
-    public Spec? Spec { get; set; }
 
     public static Node NewCollection(string? name = default)
     {

@@ -1,0 +1,43 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+
+    <Design.PreviewWith>
+        <StackPanel Margin="10" Spacing="10" Width="500" Height="1000">
+            <ListBox ItemsSource="{x:Static components:DesignData.DataTypeElements}"
+                     ItemTemplate="{DynamicResource ElementItem}"
+                     ItemContainerTheme="{StaticResource ListBoxItemSubtle}"
+                     BorderThickness="0" />
+        </StackPanel>
+    </Design.PreviewWith>
+
+
+    <DataTemplate x:Key="ElementItem" x:DataType="observers:ElementObserver">
+        <Grid ColumnDefinitions="Auto,*,Auto">
+            <PathIcon Grid.Column="0"
+                      Theme="{StaticResource IconSourceThemed}"
+                      Height="20" Width="20" Margin="0 1 7 0" Padding="3" />
+            <TextBlock Grid.Column="1"
+                       Text="{Binding}" />
+            <StackPanel Grid.Column="2"
+                        Orientation="Horizontal"
+                        Spacing="3" Margin="10 0 5 0">
+                <Button Theme="{StaticResource IconButtonSmall}"
+                        properties:ButtonIcon.Theme="{StaticResource IconBraces}"
+                        Classes="accent"
+                        ToolTip.Tip="Create Variable" />
+                <Button Theme="{StaticResource IconButtonSmall}"
+                        properties:ButtonIcon.Theme="{StaticResource IconCopyOutlined}"
+                        ToolTip.Tip="Copy Data" />
+                <StackPanel.IsVisible>
+                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                        <Binding Path="$parent[ListBoxItem].IsPointerOver" />
+                        <Binding Path="$parent[ListBoxItem].IsSelected" />
+                    </MultiBinding>
+                </StackPanel.IsVisible>
+            </StackPanel>
+        </Grid>
+    </DataTemplate>
+</ResourceDictionary>

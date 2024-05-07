@@ -7,8 +7,12 @@
                     xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
 
     <Design.PreviewWith>
-        <Border Padding="50">
-            <components:CriteriaListItem />
+        <Border Padding="50" MinWidth="1000">
+            <StackPanel>
+                <components:CriteriaListItem />
+                <components:CriteriaListItem />
+                <components:CriteriaListItem />
+            </StackPanel>
         </Border>
     </Design.PreviewWith>
 
@@ -16,45 +20,38 @@
                   x:DataType="observers:CriterionObserver">
         <Setter Property="Template">
             <ControlTemplate>
-                <Border Background="{actipro:ThemeResource Container1BackgroundBrush}"
-                        BorderBrush="{actipro:ThemeResource Container1BorderBrush}"
-                        BorderThickness="1" Padding="5" CornerRadius="5">
-                    <DockPanel LastChildFill="True">
-                        <!--Buttons-->
-                        <StackPanel DockPanel.Dock="Right"
-                                    Orientation="Horizontal"
-                                    Spacing="5"
-                                    Margin="5 0">
-                            <ToggleButton IsChecked="{Binding Invert}"
-                                          properties:ButtonIcon.Theme="{StaticResource IconExclamation}"
-                                          Theme="{StaticResource IconToggleButton}"
-                                          Classes="warning"
-                                          ToolTip.Tip="Invert"
-                                          ToolTip.Placement="BottomEdgeAlignedRight" />
-                            <ToggleButton IsChecked="{Binding !IsEnabled}"
-                                          properties:ButtonIcon.Theme="{StaticResource IconBanOutlined}"
-                                          Theme="{StaticResource IconToggleButton}"
-                                          Classes="danger"
-                                          ToolTip.Tip="Disable"
-                                          ToolTip.Placement="BottomEdgeAlignedRight" />
-                            <controls:IconButton Icon="{StaticResource IconTrashOutlined}"
-                                                 Padding="8"
-                                                 Command="{Binding RemoveCommand, RelativeSource={RelativeSource TemplatedParent}}"
-                                                 CommandParameter="{Binding $parent[components:CriteriaListItem].DataContext}"
-                                                 Foreground="{actipro:ThemeResource DefaultForegroundBrushTertiary}"
-                                                 ToolTip.Tip="Remove"
-                                                 ToolTip.Placement="BottomEdgeAlignedRight" />
-                        </StackPanel>
-                        <!--Entry-->
-                        <StackPanel Orientation="Horizontal">
-                            <CheckBox Theme="{actipro:ControlTheme CheckBoxSolid}"
-                                      IsChecked="{Binding IsChecked}"
-                                      Classes="size-xs accent"
-                                      Margin="10 0" Padding="0" />
-                            <components:CriterionEntry Criterion="{TemplateBinding DataContext}" />
-                        </StackPanel>
-                    </DockPanel>
-                </Border>
+                <DockPanel LastChildFill="True">
+                    <!--Buttons-->
+                    <StackPanel DockPanel.Dock="Right"
+                                Orientation="Horizontal"
+                                Spacing="5"
+                                Margin="5 0">
+                        <ToggleButton IsChecked="{Binding Invert}"
+                                      properties:ButtonIcon.Theme="{StaticResource IconExclamation}"
+                                      Theme="{StaticResource IconToggleButton}"
+                                      Classes="warning"
+                                      ToolTip.Tip="Invert"
+                                      ToolTip.Placement="BottomEdgeAlignedRight" />
+                        <ToggleButton IsChecked="{Binding !IsEnabled}"
+                                      properties:ButtonIcon.Theme="{StaticResource IconBanOutlined}"
+                                      Theme="{StaticResource IconToggleButton}"
+                                      Classes="danger"
+                                      ToolTip.Tip="Disable"
+                                      ToolTip.Placement="BottomEdgeAlignedRight" />
+                        <controls:IconButton Icon="{StaticResource IconTrashOutlined}"
+                                             Padding="8"
+                                             Command="{Binding RemoveCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                                             CommandParameter="{Binding $parent[components:CriteriaListItem].DataContext}"
+                                             Foreground="{actipro:ThemeResource DefaultForegroundBrushTertiary}"
+                                             ToolTip.Tip="Remove"
+                                             ToolTip.Placement="BottomEdgeAlignedRight" />
+                    </StackPanel>
+                    
+                    <!--Entry-->
+                    <StackPanel Orientation="Horizontal">
+                        <components:CriterionEntry Criterion="{TemplateBinding DataContext}" />
+                    </StackPanel>
+                </DockPanel>
             </ControlTemplate>
         </Setter>
     </ControlTheme>

@@ -2,7 +2,7 @@
 using System.Text.Json.Serialization;
 using L5Sharp.Core;
 
-namespace AutoSpex.Engine.Converters;
+namespace AutoSpex.Engine;
 
 public class JsonArgumentConverter : JsonConverter<Argument>
 {

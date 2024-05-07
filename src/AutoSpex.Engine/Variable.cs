@@ -171,7 +171,7 @@ public class Variable : IEquatable<Variable>
     /// Gets the strongly typed object override using the variable's current <see cref="OverrideData"/> and <see cref="Type"/>.
     /// </summary>
     private object? GetOverride() => OverrideData is not null ? ParseData(OverrideData, Type) : default;
-    
+
     /// <summary>
     /// Sets the <see cref="OverrideData"/> for the variable with the provided object value.
     /// </summary>
@@ -180,19 +180,23 @@ public class Variable : IEquatable<Variable>
     /// <summary>
     /// Gets an object value using the provided string data and specified type information.
     /// </summary>
-    private object ParseData(string data, Type type)
+    private static object ParseData(string data, Type type)
     {
         //If the type is a simple string just return the Data.
-        if (type == typeof(string)) return data;
+        if (type == typeof(string))
+            return data;
 
         //If this is a logix element or logix data type then we will deserialize it.
-        if (type == typeof(LogixElement)) return new XElement(data).Deserialize();
+        if (type.IsAssignableTo(typeof(LogixElement)))
+            return XElement.Parse(data).Deserialize();
 
-        //If L5Sharp can parse the type then we use it's parser.
-        if (type.IsParsable()) return data.Parse(type);
 
-        //Anything not parsable or known will just be text.
-        return data;
+        //If L5Sharp can parse the type then we use its parser.
+        return type.IsParsable()
+            ? data.Parse(type)
+            :
+            //Anything not parsable or known will just be text.
+            data;
     }
 
     /// <summary>

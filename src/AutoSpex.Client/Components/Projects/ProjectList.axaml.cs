@@ -1,146 +1,154 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
-using System.Windows.Input;
 using AutoSpex.Client.Observers;
+using AutoSpex.Client.Shared;
+using AutoSpex.Engine;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
-using Avalonia.Data;
-using DynamicData;
-using DynamicData.Binding;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 
 namespace AutoSpex.Client.Components;
 
 public class ProjectList : ContentControl
 {
-    private const string PartFilterText = "FilterText";
-    private const string PartProjectList = "ProjectList";
-
     #region AvaloniaProperties
 
-    public static readonly StyledProperty<bool> ShowButtonsProperty =
-        AvaloniaProperty.Register<ProjectList, bool>(
-            nameof(ShowButtons));
+    public static readonly DirectProperty<ProjectList, ObserverCollection<Project, ProjectObserver>>
+        ProjectSourceProperty =
+            AvaloniaProperty.RegisterDirect<ProjectList, ObserverCollection<Project, ProjectObserver>>
+                (nameof(ProjectSource), o => o.ProjectSource, (c, v) => c.ProjectSource = v);
 
-    public static readonly DirectProperty<ProjectList, ICommand?> CreateCommandProperty =
-        AvaloniaProperty.RegisterDirect<ProjectList, ICommand?>
-            (nameof(CreateCommand), o => o.CreateCommand, (o, v) => o.CreateCommand = v);
-
-    public static readonly DirectProperty<ProjectList, ICommand?> OpenCommandProperty =
-        AvaloniaProperty.RegisterDirect<ProjectList, ICommand?>
-            (nameof(OpenCommand), o => o.OpenCommand, (o, v) => o.OpenCommand = v);
-
-    public static readonly DirectProperty<ProjectList, ObservableCollection<ProjectObserver>> ProjectSourceProperty =
-        AvaloniaProperty.RegisterDirect<ProjectList, ObservableCollection<ProjectObserver>>
-            (nameof(ProjectSource), o => o.ProjectSource, (c, v) => c.ProjectSource = v);
-
-    public static readonly DirectProperty<ProjectList, ReadOnlyObservableCollection<ProjectObserver>> ProjectsProperty =
-        AvaloniaProperty.RegisterDirect<ProjectList, ReadOnlyObservableCollection<ProjectObserver>>
-            (nameof(Projects), o => o.Projects, defaultBindingMode: BindingMode.OneWayToSource);
+    public static readonly DirectProperty<ProjectList, string?> FilterTextProperty =
+        AvaloniaProperty.RegisterDirect<ProjectList, string?>(
+            nameof(FilterText), o => o.FilterText, (o, v) => o.FilterText = v);
 
     #endregion
 
-    public ProjectList()
-    {
-        ProjectSourceProperty.Changed.AddClassHandler<ProjectList>((c, a) => c.OnProjectSourcePropertyChanged(a));
+    private ObserverCollection<Project, ProjectObserver> _projectSource = [];
+    private string? _filterText;
 
-        _cache.Connect()
-            .Sort(SortExpressionComparer<ProjectObserver>.Descending(t => t.OpenedOn))
-            .Bind(out _projects)
-            .Subscribe();
+    static ProjectList()
+    {
+        PointerReleasedEvent.AddClassHandler<ProjectList>((_, a) => HandlePointerReleased(a),
+            RoutingStrategies.Bubble);
     }
 
-    private ICommand? _createCommand;
-    private ICommand? _openCommand;
-    private ObservableCollection<ProjectObserver> _projectSource = [];
-    private TextBox? _textBox;
-    private readonly SourceCache<ProjectObserver, Uri> _cache = new(x => x.Uri);
-    private readonly ReadOnlyObservableCollection<ProjectObserver> _projects;
-
-    public bool ShowButtons
-    {
-        get => GetValue(ShowButtonsProperty);
-        set => SetValue(ShowButtonsProperty, value);
-    }
-
-    public ICommand? CreateCommand
-    {
-        get => _createCommand;
-        set => SetAndRaise(CreateCommandProperty, ref _createCommand, value);
-    }
-
-    public ICommand? OpenCommand
-    {
-        get => _openCommand;
-        set => SetAndRaise(OpenCommandProperty, ref _openCommand, value);
-    }
-
-    public ObservableCollection<ProjectObserver> ProjectSource
+    public ObserverCollection<Project, ProjectObserver> ProjectSource
     {
         get => _projectSource;
         set => SetAndRaise(ProjectSourceProperty, ref _projectSource, value);
     }
 
-    public ReadOnlyObservableCollection<ProjectObserver> Projects => _projects;
-
+    public string? FilterText
+    {
+        get => _filterText;
+        set => SetAndRaise(FilterTextProperty, ref _filterText, value);
+    }
 
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
         base.OnApplyTemplate(e);
-        RegisterFilterTextChange(e);
+
+        UpdateRecent(ProjectSource);
+        UpdatePinned(ProjectSource);
     }
 
-    private void RegisterFilterTextChange(TemplateAppliedEventArgs e)
+    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
-        if (_textBox is not null)
-            _textBox.TextChanged -= OnFilterTextChanged;
+        base.OnPropertyChanged(change);
 
-        _textBox = e.NameScope.Find(PartFilterText) as TextBox;
+        if (change.Property == ProjectSourceProperty)
+            OnProjectSourceChanged(change);
 
-        if (_textBox is not null)
-            _textBox.TextChanged += OnFilterTextChanged;
+        if (change.Property == FilterTextProperty)
+            OnFilterTextChanged(change);
     }
 
-    private void OnFilterTextChanged(object? sender, TextChangedEventArgs? args)
-    {
-        var value = _textBox?.Text;
+    public ObservableCollection<ProjectObserver> RecentCollection { get; } = [];
 
-        _cache.Edit(innerList =>
+    public ObservableCollection<ProjectObserver> PinnedCollection { get; } = [];
+
+    private void OnFilterTextChanged(AvaloniaPropertyChangedEventArgs args)
+    {
+        var value = args.GetNewValue<string?>();
+
+        var filtered = string.IsNullOrEmpty(value)
+            ? ProjectSource.ToList()
+            : ProjectSource.Where(p => p.Name.Contains(value) || p.Directory.Contains(value)).ToList();
+
+        UpdateRecent(filtered);
+        UpdatePinned(filtered);
+    }
+
+    private void OnProjectSourceChanged(AvaloniaPropertyChangedEventArgs args)
+    {
+        if (args.OldValue is ObserverCollection<Project, ProjectObserver> old)
         {
-            innerList.Clear();
-
-            var filtered = string.IsNullOrEmpty(value)
-                ? ProjectSource
-                : ProjectSource.Where(p => p.Name.Contains(value) || p.Directory.Contains(value));
-
-            innerList.AddOrUpdate(filtered);
-        });
-    }
-
-    private void OnProjectSourcePropertyChanged(AvaloniaPropertyChangedEventArgs args)
-    {
-        if (args.OldValue is ObservableCollection<ProjectObserver> oldValue)
-        {
-            oldValue.CollectionChanged -= ProjectSourceCollectionChanged;
+            old.CollectionChanged -= ProjectSourceCollectionChanged;
+            old.ItemPropertyChanged -= HandleProjectPinChange;
         }
 
-        if (args.NewValue is not ObservableCollection<ProjectObserver> projects) return;
+        if (args.NewValue is not ObserverCollection<Project, ProjectObserver> projects) return;
+
         projects.CollectionChanged += ProjectSourceCollectionChanged;
-        _cache.Clear();
-        _cache.AddOrUpdate(projects);
+        projects.ItemPropertyChanged += HandleProjectPinChange;
+
+        UpdateRecent(projects);
+        UpdatePinned(projects);
     }
 
     private void ProjectSourceCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        if (e is {Action: NotifyCollectionChangedAction.Add, NewItems: not null})
+        UpdateRecent(ProjectSource);
+        UpdatePinned(ProjectSource);
+    }
+
+    private void HandleProjectPinChange(object? sender, PropertyChangedEventArgs e)
+    {
+        if (sender is not ProjectObserver project || e.PropertyName != nameof(ProjectObserver.Pinned)) return;
+
+        if (project.Pinned)
         {
-            _cache.AddOrUpdate(e.NewItems.OfType<ProjectObserver>());
+            PinnedCollection.Add(project);
             return;
         }
 
-        _cache.Clear();
-        _cache.AddOrUpdate(ProjectSource);
+        PinnedCollection.Remove(project);
+    }
+
+    private void UpdateRecent(IEnumerable<ProjectObserver>? projects)
+    {
+        RecentCollection.Clear();
+
+        if (projects is null) return;
+
+        foreach (var project in projects)
+        {
+            RecentCollection.Add(project);
+        }
+    }
+
+    private void UpdatePinned(IEnumerable<ProjectObserver>? projects)
+    {
+        PinnedCollection.Clear();
+
+        if (projects is null) return;
+
+        foreach (var project in projects.Where(p => p.Pinned))
+        {
+            PinnedCollection.Add(project);
+        }
+    }
+
+    private static async void HandlePointerReleased(PointerReleasedEventArgs args)
+    {
+        if (args.InitialPressMouseButton != MouseButton.Left) return;
+        if (args.Source is not Control { DataContext: ProjectObserver project }) return;
+        await project.Connect();
     }
 }

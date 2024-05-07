@@ -1,7 +1,6 @@
 ﻿using System.Text.Json;
 using Ardalis.SmartEnum.Dapper;
 using AutoSpex.Engine;
-using AutoSpex.Engine.Converters;
 using Dapper;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -27,6 +26,7 @@ public static class ServiceExtensions
 
         SqlMapper.AddTypeHandler(new SqlGuidHandler());
         SqlMapper.AddTypeHandler(new SqlTypeHandler());
+        SqlMapper.AddTypeHandler(new SqlUriHandler());
         SqlMapper.RemoveTypeMap(typeof(Guid));
         SqlMapper.RemoveTypeMap(typeof(Guid?));
         SqlMapper.AddTypeHandler(new SmartEnumByNameTypeHandler<Element, string>());

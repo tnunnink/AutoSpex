@@ -94,7 +94,7 @@ public sealed class Settings
     
     public bool AlwaysDiscardChanges
     {
-        get => GetSetting(bool.Parse);
+        get => GetSetting(s => s == "1");
         set => SetSetting(value);
     }
 
@@ -110,21 +110,6 @@ public sealed class Settings
     {
         update(App);
         await SaveSettingsAsync();
-    }
-
-    public void Add<T>(string setting, T value)
-    {
-        if (setting is null) throw new ArgumentNullException(nameof(setting));
-        if (value is null) throw new ArgumentNullException(nameof(value));
-
-        if (_cache.Value.ContainsKey(setting)) return;
-
-        var s = value.ToString() ?? throw new ArgumentException("Can not convert value to string");
-        _cache.Value[setting] = s;
-
-        using var connection = new SQLiteConnection(ConnectionString);
-        connection.Open();
-        connection.Execute(Upsert, new {Key = setting, Value = s});
     }
 
     private static void AddDefault(string setting, object value)

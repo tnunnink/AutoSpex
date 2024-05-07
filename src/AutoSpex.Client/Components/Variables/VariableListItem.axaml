@@ -8,59 +8,43 @@
     <Design.PreviewWith>
         <Border Padding="20">
             <components:VariableListItem DataContext="{x:Static components:DesignData.Variable}"
-                                         Width="800" />    
+                                         Width="800" />
         </Border>
-        
     </Design.PreviewWith>
 
     <ControlTheme x:Key="{x:Type components:VariableListItem}" TargetType="components:VariableListItem"
                   x:DataType="observers:VariableObserver">
         <Setter Property="Template">
             <ControlTemplate>
-                <Border Background="{a:ThemeResource Container1BackgroundBrush}"
-                        BorderBrush="{a:ThemeResource Container1BorderBrush}"
-                        BorderThickness="1" Padding="4" CornerRadius="5">
-                    <Grid ColumnDefinitions="Auto,*,Auto">
-                        <CheckBox
-                            Grid.Column="0"
-                            Theme="{a:ControlTheme CheckBoxSolid}"
-                            IsChecked="{Binding IsChecked}"
-                            Classes="size-xs accent"
-                            Margin="10 0" Padding="0" />
+                <Grid ColumnDefinitions="Auto,*,Auto">
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="5">
+                        <components:VariableNameEntry
+                            Watermark="Enter name"
+                            Text="{Binding Name}" />
+                        <Border
+                            BorderThickness="1 0 0 0" Margin="0 5"
+                            BorderBrush="{a:ThemeResource Container1BorderBrush}" />
+                        <components:VariableNameEntry
+                            Watermark="Enter value"
+                            Text="{Binding Group}" />
+                        <Border
+                            BorderThickness="1 0 0 0" Margin="0 5"
+                            BorderBrush="{a:ThemeResource Container1BorderBrush}" />
+                        <components:VariableNameEntry
+                            Watermark="Enter value"
+                            Text="{Binding Value}" />
+                    </StackPanel>
 
-                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="5">
-                            <components:VariableNameEntry
-                                Watermark="Enter name"
-                                Text="{Binding Name}" />
-                            <Border
-                                BorderThickness="1 0 0 0" Margin="0 5"
-                                BorderBrush="{a:ThemeResource Container1BorderBrush}" />
-                            <components:VariableNameEntry
-                                Watermark="Enter value"
-                                Text="{Binding Value}" />
-                            <Border
-                                BorderThickness="1 0 0 0" Margin="0 5"
-                                BorderBrush="{a:ThemeResource Container1BorderBrush}" />
-                        </StackPanel>
-
-                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="3">
-                            <!--<ToggleButton IsChecked="{Binding IsOverridden}"
-                                          properties:ButtonIcon.Theme="{StaticResource IconPencilOutlined}"
-                                          Theme="{StaticResource IconToggleButton}"
-                                          Classes="warning"
-                                          Padding="8"
-                                          ToolTip.Tip="Override value"
-                                          ToolTip.Placement="BottomEdgeAlignedRight" />-->
-                            <Button Theme="{StaticResource IconButton}"
-                                    properties:ButtonIcon.Theme="{StaticResource IconTrashOutlined}"
-                                    Command="{TemplateBinding RemoveCommand, Mode=TwoWay}"
-                                    CommandParameter="{Binding $parent[components:VariableListItem].DataContext}"
-                                    Padding="8"
-                                    ToolTip.Tip="Delete variable"
-                                    ToolTip.Placement="BottomEdgeAlignedRight" />
-                        </StackPanel>
-                    </Grid>
-                </Border>
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="3">
+                        <Button Theme="{StaticResource IconButton}"
+                                properties:ButtonIcon.Theme="{StaticResource IconTrashOutlined}"
+                                Command="{TemplateBinding RemoveCommand, Mode=TwoWay}"
+                                CommandParameter="{Binding $parent[components:VariableListItem].DataContext}"
+                                Padding="8"
+                                ToolTip.Tip="Delete variable"
+                                ToolTip.Placement="BottomEdgeAlignedRight" />
+                    </StackPanel>
+                </Grid>
             </ControlTemplate>
         </Setter>
     </ControlTheme>

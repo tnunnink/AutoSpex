@@ -5,37 +5,64 @@
                     xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine">
 
     <Design.PreviewWith>
-        <components:SpecSettings Height="500"/>
+        <Border Padding="30">
+            <components:SpecSettings Height="300" Width="600" />
+        </Border>
     </Design.PreviewWith>
 
     <ControlTheme x:Key="{x:Type components:SpecSettings}" TargetType="components:SpecSettings">
         <Setter Property="Template">
             <ControlTemplate>
-                <StackPanel>
-                    <components:SettingItem Label="Verify Count"
-                                            InfoText="If enabled will by default verify that the filtered elements for this spec satisfy the count criteria using the count following operation and value options.">
-                        <ToggleSwitch
-                            IsChecked="{Binding Spec.VerifyCount, RelativeSource={RelativeSource TemplatedParent}, FallbackValue={x:Null}}"
-                            Theme="{a:ControlTheme ToggleSwitchSolid}"
-                            Margin="10"
-                            VerticalAlignment="Center" HorizontalAlignment="Center"
-                            Classes="accent size-sm"
-                            OffContent="{x:Null}" OnContent="{x:Null}" />
-                    </components:SettingItem>
-                    <components:SettingItem Label="Count Operation"
-                                            InfoText="The operation used to evaluate the candidate element count. This only applies if Verify Candidate Count is enabled.">
-                        <ComboBox ItemsSource="{x:Static engine:Operation.List}"
-                                  SelectedItem="{Binding Spec.CountOperation, RelativeSource={RelativeSource TemplatedParent}, FallbackValue={x:Null}}"
-                                  Theme="{a:ControlTheme ComboBoxOutline}"
-                                  HorizontalAlignment="Center"
-                                  VerticalAlignment="Center"
-                                  Margin="10" PlaceholderText="Select Operation" />
-                    </components:SettingItem>
-                    <components:SettingItem Label="Count Value"
-                                            InfoText="The value used to evaluate the filtered element count. This only applies if Verify Candidate Count is enabled.">
+                <components:Section>
+                    <components:Section.Header>
+                        <Grid ColumnDefinitions="Auto,*,Auto">
+                            <StackPanel Spacing="2" HorizontalAlignment="Left" MaxWidth="500">
+                                <TextBlock
+                                    Text="Count Verification"
+                                    FontWeight="{a:ThemeResource HeadingFontWeightMedium}"
+                                    Classes="theme-text-heading size-xs" />
+                                <TextBlock
+                                    Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                                    TextWrapping="Wrap"
+                                    Text="Verify filtered candidate count for this specification?" />
+                            </StackPanel>
 
-                    </components:SettingItem>
-                </StackPanel>
+                            <ToggleSwitch
+                                x:Name="VerifyCountToggle"
+                                Grid.Column="2"
+                                IsChecked="{Binding Spec.VerifyCount, RelativeSource={RelativeSource TemplatedParent}, FallbackValue={x:Null}}"
+                                Theme="{a:ControlTheme ToggleSwitchSolid}"
+                                Margin="10"
+                                VerticalAlignment="Center" HorizontalAlignment="Center"
+                                Classes="accent size-sm"
+                                OffContent="{x:Null}" OnContent="{x:Null}" />
+                        </Grid>
+                    </components:Section.Header>
+
+                    <StackPanel IsVisible="{Binding #VerifyCountToggle.IsChecked}">
+                        <components:SettingItem
+                            Label="Operation"
+                            InfoText="The operation used to evaluate the candidate count.">
+                            <ComboBox ItemsSource="{x:Static engine:Operation.List}"
+                                      SelectedItem="{Binding Spec.CountOperation, RelativeSource={RelativeSource TemplatedParent}, FallbackValue={x:Null}}"
+                                      Theme="{a:ControlTheme ComboBoxOutline}"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      Margin="10 0"
+                                      PlaceholderText="Select Operation" />
+                        </components:SettingItem>
+
+                        <components:SettingItem
+                            BorderThickness="0"
+                            Label="Value"
+                            InfoText="The value used to evaluate the candidate count.">
+                            <NumericUpDown VerticalAlignment="Center"
+                                           Value="{Binding Spec.CountValue, RelativeSource={RelativeSource TemplatedParent}, FallbackValue={x:Null}}"
+                                           FormatString="0"
+                                           Margin="10 0"/>
+                        </components:SettingItem>
+                    </StackPanel>
+                </components:Section>
             </ControlTemplate>
         </Setter>
     </ControlTheme>

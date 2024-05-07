@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace AutoSpex.Engine.Converters;
+namespace AutoSpex.Engine;
 
 public class JsonTypeConverter : JsonConverter<Type>
 {

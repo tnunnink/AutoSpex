@@ -1,12 +1,10 @@
 ﻿using System;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Messaging;
 
 namespace AutoSpex.Client.Observers;
 
-public partial class VariableObserver : Observer<Variable>
+public class VariableObserver : Observer<Variable>
 {
     public VariableObserver(Variable model) : base(model)
     {
@@ -18,8 +16,6 @@ public partial class VariableObserver : Observer<Variable>
     public Guid NodeId => Model.NodeId;
     public TypeGroup Group => Model.Group;
     public string Formatted => Model.Formatted;
-
-    [ObservableProperty] private bool _isChecked;
 
     public string Name
     {
@@ -39,11 +35,4 @@ public partial class VariableObserver : Observer<Variable>
     }
 
     public override string ToString() => Model.ToString();
-
-    partial void OnIsCheckedChanged(bool value)
-    {
-        Messenger.Send(new Checked(this));
-    }
-
-    public record Checked(VariableObserver Variable);
 }

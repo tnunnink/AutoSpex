@@ -45,8 +45,7 @@
                                              Watermark="Filter elements"
                                              BorderThickness="0">
                                         <TextBox.InnerLeftContent>
-                                            <PathIcon Theme="{StaticResource IconSearch}"
-                                                      Height="20" Width="20" Padding="3"
+                                            <PathIcon Theme="{StaticResource IconFilter}"
                                                       Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
                                         </TextBox.InnerLeftContent>
                                     </TextBox>

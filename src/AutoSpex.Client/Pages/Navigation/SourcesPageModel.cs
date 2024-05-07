@@ -13,11 +13,12 @@ using SourceObserver = AutoSpex.Client.Observers.SourceObserver;
 namespace AutoSpex.Client.Pages;
 
 [UsedImplicitly]
-public partial class SourcesPageModel : PageViewModel, 
+public partial class SourcesPageModel(string project) : PageViewModel, 
     IRecipient<SourceObserver.Created>,
     IRecipient<SourceObserver.Deleted>,
     IRecipient<SourceRequest>
 {
+    public override string Route => $"{project}/Sources";
     public override string Title => "Sources";
     public override string Icon => "Sources";
 

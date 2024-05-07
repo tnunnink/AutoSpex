@@ -77,8 +77,7 @@ public class ConnectionManager : IConnectionManager
     private Result EnsureCreated(Database database)
     {
         var dataSource = GetDataSource(database);
-        if (File.Exists(dataSource)) return Result.Ok();
-        return Migrate(database);
+        return File.Exists(dataSource) ? Result.Ok() : Migrate(database);
     }
 
     private ServiceProvider BuildServiceProvider(Database database)

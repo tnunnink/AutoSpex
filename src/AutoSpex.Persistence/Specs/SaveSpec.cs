@@ -15,8 +15,8 @@ internal class SaveSpecHandler(IConnectionManager manager) : IRequestHandler<Sav
     private const string HasNode = "SELECT COUNT(NodeId) FROM Node WHERE NodeId = @NodeId";
 
     private const string UpsertSpec =
-        "INSERT INTO Spec(SpecId, Specification) VALUES (@SpecId, @Specification) " +
-        "ON CONFLICT DO UPDATE SET Specification = @Specification;";
+        "INSERT INTO Spec(SpecId, Element, Specification) VALUES (@SpecId, @Element, @Specification) " +
+        "ON CONFLICT DO UPDATE SET Element = @Element, Specification = @Specification;";
 
     public async Task<Result> Handle(SaveSpec request, CancellationToken cancellationToken)
     {
@@ -25,12 +25,12 @@ internal class SaveSpecHandler(IConnectionManager manager) : IRequestHandler<Sav
 
         using var connection = await manager.Connect(Database.Project, cancellationToken);
 
-        //First check that the node exists so we don't get a SQL exception.
-        var exists = await connection.QuerySingleAsync<int>(HasNode, new {NodeId = request.Spec.SpecId});
+        //First check that the node exists, so we don't get a SQL exception.
+        var exists = await connection.QuerySingleAsync<int>(HasNode, new { NodeId = request.Spec.SpecId });
         if (exists == 0) return Result.Fail($"Node not found: {request.Spec.SpecId}");
 
         //If so serialize the spec and upsert the data.
-        var record = new {request.Spec.SpecId, Specification = request.Spec.Serialize()};
+        var record = new { request.Spec.SpecId, request.Spec.Element, Specification = request.Spec.Serialize() };
         await connection.ExecuteAsync(UpsertSpec, record);
 
         return Result.Ok();

@@ -5,7 +5,7 @@
                     xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
 
     <Design.PreviewWith>
-        <components:MigratePrompt />
+        <components:MigratePrompt ProjectName="MyProject"/>
     </Design.PreviewWith>
 
     <ControlTheme x:Key="{x:Type components:MigratePrompt}" TargetType="components:MigratePrompt">
@@ -21,17 +21,23 @@
                                  Classes="accent"
                                  MaxWidth="500" Padding="20">
                     <controls:Prompt.Content>
-                        <TextBlock TextWrapping="Wrap">
-                            <TextBlock.Inlines>
-                                <Run Text="The project" />
-                                <Run
-                                    Text="{Binding ProjectName, RelativeSource={RelativeSource TemplatedParent}, FallbackValue='Project Name'}"
-                                    FontWeight="SemiBold"
-                                    Foreground="{actipro:ThemeResource ControlForegroundBrushOutlineAccent}" />
-                                <Run
-                                    Text="requires migration to the latest schema in order to be compatible with this version of AutoSpex." />
-                            </TextBlock.Inlines>
-                        </TextBlock>
+                        <StackPanel Spacing="10">
+                            <TextBlock TextWrapping="Wrap">
+                                <TextBlock.Inlines>
+                                    <Run Text="The project" />
+                                    <Run
+                                        Text="{Binding ProjectName, RelativeSource={RelativeSource TemplatedParent}, FallbackValue='Project Name'}"
+                                        FontWeight="SemiBold"
+                                        Foreground="{actipro:ThemeResource ControlForegroundBrushOutlineAccent}" />
+                                    <Run
+                                        Text="requires migration to the latest schema in order to be compatible with this version of AutoSpex." />
+                                </TextBlock.Inlines>
+                            </TextBlock>
+                            
+                            <TextBlock TextWrapping="Wrap"
+                                       Foreground="{actipro:ThemeResource DefaultForegroundBrushTertiary}"
+                                Text="Prior to migration, this project will be backed up. If migration fails, the project will be restored to the original copy to avoid loss of data." />
+                        </StackPanel>
                     </controls:Prompt.Content>
                 </controls:Prompt>
             </ControlTemplate>

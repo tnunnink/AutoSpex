@@ -1,7 +1,7 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.IO;
 using AutoSpex.Client.Observers;
+using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
 using AutoSpex.Client.Validation;
 using AutoSpex.Engine;
@@ -45,9 +45,12 @@ public partial class CreateProjectPageModel : PageViewModel
         if (string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(Location)) return;
 
         var path = Path.Combine(Location, $"{Name}{Constant.SpexExtension}");
-
-        if (!Uri.TryCreate(path, UriKind.Absolute, out var uri)) return; //todo prompt user.
-        if (File.Exists(uri.LocalPath)) return; //todo prompt user.
+        
+        if (File.Exists(path))
+        {
+            await Prompter.PromptError("File already exists", "The file already exists man. Pick another...");
+            return;
+        }
 
         var project = new Project(path);
         var result = await Mediator.Send(new CreateProject(project));

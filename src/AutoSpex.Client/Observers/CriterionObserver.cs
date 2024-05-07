@@ -29,8 +29,6 @@ public partial class CriterionObserver : Observer<Criterion>, IRecipient<Argumen
     public override Guid Id => Model.CriterionId;
     public SpecObserver? Spec => RequestSpec();
 
-    [ObservableProperty] private bool _isChecked;
-
     [ObservableProperty] private bool _isEnabled = true;
 
     [ObservableProperty] private bool _isResolved;
@@ -59,6 +57,8 @@ public partial class CriterionObserver : Observer<Criterion>, IRecipient<Argumen
 
     public ObserverCollection<Argument, ArgumentObserver> Arguments { get; }
 
+    public string ArgumentText => string.Join(',', Arguments);
+
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
         base.OnPropertyChanged(e);
@@ -81,6 +81,7 @@ public partial class CriterionObserver : Observer<Criterion>, IRecipient<Argumen
             return;
 
         Property = Type?.Property(PropertyName);
+        
         IsResolved = Property is not null;
     }
 
@@ -104,7 +105,7 @@ public partial class CriterionObserver : Observer<Criterion>, IRecipient<Argumen
     }
 
     /// <summary>
-    /// Implicit conversion operator from a <see cref="CriterionObserver"/> instance to a <see cref="Criterion"/> instance.
+    /// Implicit conversion operator from an <see cref="CriterionObserver"/> instance to a <see cref="Criterion"/> instance.
     /// This enables an <see cref="CriterionObserver"/> to be used wherever a <see cref="Criterion"/> is expected.
     /// </summary>
     /// <param name="observer">An instance of the <see cref="CriterionObserver"/> class.</param>
@@ -128,8 +129,7 @@ public partial class CriterionObserver : Observer<Criterion>, IRecipient<Argumen
     private SpecObserver? RequestSpec()
     {
         var request = Messenger.Send(new SpecRequest(Id));
-        if (!request.HasReceivedResponse) return default;
-        return request.Response;
+        return request.HasReceivedResponse ? request.Response : default;
     }
 
     /// <summary>

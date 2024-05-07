@@ -26,10 +26,10 @@ internal class OpenProjectHandler(IConnectionManager manager) : IRequestHandler<
         var project = request.Project;
         project.OpenedOn = DateTime.Now;
         
-        var connection = await manager.Connect(Database.App, cancellationToken);
-        await connection.ExecuteAsync(Update, new {Path = project.Uri.LocalPath, project.OpenedOn, project.Summary});
+        using var connection = await manager.Connect(Database.App, cancellationToken);
+        await connection.ExecuteAsync(Update, new {Path = project.Path.LocalPath, project.OpenedOn});
         
-        manager.Register(Database.Project, project.Uri.LocalPath);
+        manager.Register(Database.Project, project.Path.LocalPath);
         
         return Result.Ok();
     }

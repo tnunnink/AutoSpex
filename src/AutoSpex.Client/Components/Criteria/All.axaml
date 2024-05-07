@@ -3,6 +3,7 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceInclude Source="CriteriaList.axaml" />
         <ResourceInclude Source="CriteriaListItem.axaml" />
+        <ResourceInclude Source="CriterionTemplates.axaml" />
         <ResourceInclude Source="CriterionEntry.axaml" />
         <ResourceInclude Source="PropertyEntry.axaml" />
         <ResourceInclude Source="PropertyFlyout.axaml" />

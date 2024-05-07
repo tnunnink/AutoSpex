@@ -2,9 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:components="using:AutoSpex.Client.Components"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
-                    xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
-                    xmlns:system="clr-namespace:System;assembly=System.Runtime"
-                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
 
     <Design.PreviewWith>
@@ -33,16 +31,19 @@
 
                         <Border
                             BorderThickness="1 0 0 0"
-                            BorderBrush="{actipro:ThemeResource Container1BorderBrush}"
+                            BorderBrush="{a:ThemeResource Container1BorderBrush}"
                             Margin="5" />
 
                         <components:OperationEntry
+                            IsVisible="{Binding Criterion.Property, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ObjectConverters.IsNotNull}}"
                             Operation="{Binding Criterion.Operation, RelativeSource={RelativeSource TemplatedParent}}"
                             Property="{Binding Criterion.Property, RelativeSource={RelativeSource TemplatedParent}}" />
 
-                        <Border BorderThickness="1 0 0 0"
-                                BorderBrush="{actipro:ThemeResource Container1BorderBrush}"
-                                Margin="5" />
+                        <Border
+                            BorderThickness="1 0 0 0"
+                            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                            Margin="5"
+                            IsVisible="{Binding Criterion.Property, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ObjectConverters.IsNotNull}}" />
 
                         <ItemsControl
                             ItemsSource="{Binding Criterion.Arguments, RelativeSource={RelativeSource TemplatedParent}}">
@@ -58,7 +59,7 @@
                                         <StackPanel Orientation="Horizontal">
                                             <components:ArgumentEntry Argument="{Binding }" />
                                             <Border BorderThickness="1 0 0 0"
-                                                    BorderBrush="{actipro:ThemeResource Container1BorderBrush}"
+                                                    BorderBrush="{a:ThemeResource Container1BorderBrush}"
                                                     Margin="5" />
                                         </StackPanel>
                                     </DataTemplate>

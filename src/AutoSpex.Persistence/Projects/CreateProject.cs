@@ -13,14 +13,15 @@ public record CreateProject(Project Project) : IDbCommand<Result>;
 internal class CreateProjectHandler(IConnectionManager manager)
     : IRequestHandler<CreateProject, Result>
 {
-    private const string Create = "INSERT INTO Project(Path, OpenedOn) VALUES(@Path, @OpenedOn)";
+    private const string Create = 
+        "INSERT INTO Project(Path, OpenedOn) VALUES(@Path, @OpenedOn) ON CONFLICT DO UPDATE SET OpenedOn = @OpenedOn";
 
     public async Task<Result> Handle(CreateProject request, CancellationToken cancellationToken)
     {
         var project = request.Project;
         
         //Configures the project as the default for the manager.
-        manager.Register(Database.Project, project.Uri.LocalPath);
+        manager.Register(Database.Project, project.Path.LocalPath);
 
         //This will create and migrate the project to the current version.
         var migration = manager.Migrate(Database.Project);
@@ -31,7 +32,7 @@ internal class CreateProjectHandler(IConnectionManager manager)
 
         project.OpenedOn = DateTime.Now;
         using var connection = await manager.Connect(Database.App, cancellationToken);
-        await connection.ExecuteAsync(Create, new {Path = project.Uri.LocalPath, project.OpenedOn});
+        await connection.ExecuteAsync(Create, new {Path = project.Path.LocalPath, project.OpenedOn});
         
         return Result.Ok();
     }

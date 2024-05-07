@@ -9,79 +9,68 @@
     <Design.Height>1000</Design.Height>
     <Design.Width>1400</Design.Width>
 
-    <Grid ColumnDefinitions="300, *">
-
-        <Border Grid.Column="0"
+    <Grid RowDefinitions="Auto, *">
+        <Border Grid.Row="0"
                 Background="{a:ThemeResource Container2BackgroundBrush}"
                 Padding="10">
-            <Grid RowDefinitions="Auto,Auto,Auto,Auto,*" Margin="10">
+            <Grid ColumnDefinitions="*,*,*">
 
-                <!--Header-->
-                <StackPanel Grid.Row="0" Spacing="20">
-                    <StackPanel Orientation="Vertical"
-                                HorizontalAlignment="Center">
-                        <Image Source="../Resources/Images/inspect-code.png"
-                               Height="60" />
-                        <TextBlock Text="AutoSpex"
-                                   Classes="theme-text-heading"
-                                   Padding="10" />
-                    </StackPanel>
-
-                    <StackPanel Spacing="5">
-                        <TextBlock Text="Automated PLC Verification"
-                                   Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
-                                   Classes="theme-text-heading size-xs" />
-                        <TextBlock
-                            Text="Build and run collections of PLC specifications to automate you quality check workflow."
-                            Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
-                            Classes="theme-text-body size-sm"
-                            TextWrapping="Wrap" />
-                    </StackPanel>
+                <StackPanel Grid.Column="0"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center"
+                            Spacing="10">
+                    <PathIcon Theme="{StaticResource IconPlug}"
+                              Padding="4" />
+                    <TextBlock Text="Connect to a spex project"
+                               Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
                 </StackPanel>
 
-                <!--Divider-->
-                <Border Grid.Row="1"
-                        BorderThickness="0 0 0 1"
-                        BorderBrush="{a:ThemeResource Container2BorderBrush}"
-                        Margin="0 20" />
+                <TextBox x:Name="FilterText"
+                         Grid.Column="1"
+                         Watermark="Filter projects"
+                         Theme="{a:ControlTheme TextBoxSoft}"
+                         VerticalContentAlignment="Center"
+                         Classes="has-clear-button">
+                    <TextBox.InnerLeftContent>
+                        <PathIcon Theme="{StaticResource IconFilter}" Margin="5 0" />
+                    </TextBox.InnerLeftContent>
+                </TextBox>
 
-                <!--Buttons-->
-                <StackPanel Grid.Row="2" Spacing="20">
-                    <StackPanel Spacing="5">
-                        <TextBlock Text="Launch Project"
-                                   Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
-                                   Classes="theme-text-heading size-xs" />
-                        <TextBlock
-                            Text="Start by creating a new project or opening an existing one from disc."
-                            Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
-                            Classes="theme-text-body size-sm"
-                            TextWrapping="Wrap" />
-                    </StackPanel>
-
-                    <StackPanel Spacing="10" Margin="10">
-                        <Button Command="{Binding CreateProjectCommand}"
-                                Content="New Project"
-                                Padding="8"
-                                Theme="{a:ControlTheme ButtonSolid}"
-                                Classes="accent" />
-                        <Button Command="{Binding OpenProjectCommand}"
-                                Content="Open Project"
-                                Padding="8"
-                                Theme="{a:ControlTheme ButtonSolid}" />
-                    </StackPanel>
+                <StackPanel Grid.Column="2"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Right"
+                            Spacing="10">
+                    <Button Command="{Binding CreateProjectCommand}"
+                            Content="New Project"
+                            Theme="{a:ControlTheme ButtonSolid}"
+                            Classes="accent" />
+                    <Button Command="{Binding OpenProjectCommand}"
+                            Content="Open Project"
+                            Theme="{a:ControlTheme ButtonSoft}" />
                 </StackPanel>
-
-                <!--Divider-->
-                <Border Grid.Row="3"
-                        BorderThickness="0 0 0 1"
-                        BorderBrush="{a:ThemeResource Container2BorderBrush}"
-                        Margin="0 20" />
             </Grid>
         </Border>
 
-        <components:ProjectList
-            Grid.Column="1"
-            ProjectSource="{Binding Projects}"
-            ShowButtons="False" />
+        <Panel Grid.Row="1">
+            <components:ProjectList
+                Margin="10"
+                FilterText="{Binding #FilterText.Text}"
+                ProjectSource="{Binding Projects}" />
+            <!--<ListBox ItemsSource="{Binding Projects}"
+                     ItemTemplate="{StaticResource ProjectItemTemplate}"
+                     IsVisible="{Binding Projects.Count}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Padding="5">
+                <ListBox.ItemContainerTheme>
+                    <ControlTheme TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemSimple}">
+                        <Setter Property="Margin" Value="2" />
+                        <Setter Property="CornerRadius" Value="5" />
+                        <Setter Property="ContextFlyout" Value="{StaticResource ProjectMenu}" />
+                    </ControlTheme>
+                </ListBox.ItemContainerTheme>
+            </ListBox>-->
+        </Panel>
     </Grid>
 </UserControl>

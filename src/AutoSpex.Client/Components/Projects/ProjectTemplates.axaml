@@ -1,0 +1,63 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+
+    <Design.PreviewWith>
+        <StackPanel Margin="10" Spacing="10" MinWidth="600">
+            <ContentControl Content="{x:Static components:DesignData.RealProject}"
+                            ContentTemplate="{DynamicResource ProjectItemTemplate}" />
+            <ContentControl Content="{x:Static components:DesignData.FakeProject}"
+                            ContentTemplate="{DynamicResource ProjectItemTemplate}" />
+        </StackPanel>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="ProjectItemTemplate"
+                  x:DataType="observers:ProjectObserver">
+        <Grid ColumnDefinitions="Auto,*,Auto">
+            <Panel Grid.Column="0">
+                <PathIcon Theme="{StaticResource IconCubeOutlined}"
+                          Padding="5"
+                          IsVisible="{Binding Exists}"
+                          Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+                <PathIcon Theme="{StaticResource IconExclamationOutlined}"
+                          Foreground="{a:ThemeResource ControlForegroundBrushOutlineDanger}"
+                          IsVisible="{Binding !Exists}"
+                          Padding="5"
+                          ToolTip.Tip="Project Not Found" />
+            </Panel>
+
+            <StackPanel Grid.Column="1" Spacing="2" Margin="10 0">
+                <StackPanel.Styles>
+                    <Style Selector="TextBlock.nonexistent">
+                        <Setter Property="Opacity" Value="0.5" />
+                    </Style>
+                </StackPanel.Styles>
+                <TextBlock Text="{Binding Name}"
+                           Classes.nonexistent="{Binding !Exists}" />
+                <TextBlock Text="{Binding Uri.LocalPath}"
+                           TextTrimming="CharacterEllipsis"
+                           TextWrapping="NoWrap"
+                           FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                           Classes.nonexistent="{Binding !Exists}"
+                           Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+            </StackPanel>
+
+            <Border Grid.Column="2" MinWidth="30">
+                <Panel IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}">
+                    <Button properties:ButtonIcon.Theme="{StaticResource IconDotsVertical}"
+                            Theme="{StaticResource IconButton}"
+                            IsVisible="{Binding Exists}"
+                            Flyout="{StaticResource ProjectMenu}" />
+                    <Button properties:ButtonIcon.Theme="{StaticResource IconClose}"
+                            Theme="{StaticResource IconButton}"
+                            Command="{Binding DeleteCommand}"
+                            IsVisible="{Binding !Exists}"
+                            Padding="10" />
+                </Panel>
+            </Border>
+        </Grid>
+    </DataTemplate>
+</ResourceDictionary>

@@ -7,17 +7,17 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record GetRun(Guid RunnerId) : IDbCommand<Result<Runner>>;
+public record GetRun(Guid RunId) : IDbCommand<Result<Run>>;
 
 [UsedImplicitly]
-internal class GetRunHandler(IConnectionManager manager) : IRequestHandler<GetRun, Result<Runner>>
+internal class GetRunHandler(IConnectionManager manager) : IRequestHandler<GetRun, Result<Run>>
 {
-    private const string GetRunner = "SELECT RunnerId, SourceId, Name FROM Runner WHERE RunnerId = @RunnerId";
+    private const string GetRun = "SELECT RunId, NodeId, SourceId, Name FROM Run WHERE RunId = @RunId";
 
-    public async Task<Result<Runner>> Handle(GetRun request, CancellationToken cancellationToken)
+    public async Task<Result<Run>> Handle(GetRun request, CancellationToken cancellationToken)
     {
         using var connection = await manager.Connect(Database.Project, cancellationToken);
-        var runner = await connection.QuerySingleOrDefaultAsync<Runner>(GetRunner, new {request.RunnerId});
-        return runner is not null ? Result.Ok(runner) : Result.Fail($"Runner not found: '{request.RunnerId}'");
+        var runner = await connection.QuerySingleOrDefaultAsync<Run>(GetRun, new {request.RunId});
+        return runner is not null ? Result.Ok(runner) : Result.Fail($"Runner not found: '{request.RunId}'");
     }
 }

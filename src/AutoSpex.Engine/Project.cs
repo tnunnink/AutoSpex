@@ -1,13 +1,18 @@
-﻿namespace AutoSpex.Engine;
+﻿using JetBrains.Annotations;
+
+namespace AutoSpex.Engine;
 
 public class Project
 {
-    private readonly FileInfo _file;
-
+    [UsedImplicitly]
+    private Project()
+    {
+        Path = default!;
+    }
+    
     public Project(Uri path)
     {
-        Uri = path ?? throw new ArgumentNullException(nameof(path));
-        _file = new FileInfo(Uri.LocalPath);
+        Path = path ?? throw new ArgumentNullException(nameof(path));
     }
 
     public Project(string path)
@@ -15,25 +20,24 @@ public class Project
         if (string.IsNullOrEmpty(path))
             throw new ArgumentException("Can not create Project with null or empty path.");
 
-        Uri = new Uri(path);
-        _file = new FileInfo(Uri.LocalPath);
+        Path = new Uri(path);
     }
 
     // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Local populated via dapper ORM
-    public Uri Uri { get; }
-    public string Summary { get; set; } = string.Empty;
+    public Uri Path { get; private set; }
     public DateTime OpenedOn { get; set; }
-    public string Name => Path.GetFileNameWithoutExtension(Uri.LocalPath);
-    public string Directory => Path.GetDirectoryName(Uri.LocalPath) ?? string.Empty;
-    public bool Exists => _file.Exists;
-    public string ConnectionString => $"Data Source={Uri.LocalPath};Pooling=false;";
+    public bool Pinned { get; set; }
+    public string Name => System.IO.Path.GetFileNameWithoutExtension(Path.LocalPath);
+    public string Directory => System.IO.Path.GetDirectoryName(Path.LocalPath) ?? string.Empty;
+    public bool Exists => File.Exists(Path.LocalPath);
+    public string ConnectionString => $"Data Source={Path.LocalPath};Pooling=false;";
 
     public FileSystemWatcher CreateWatcher()
     {
         var watcher = new FileSystemWatcher(Directory);
         watcher.EnableRaisingEvents = true;
         watcher.IncludeSubdirectories = false;
-        watcher.Filter = Name;
+        watcher.Filter = System.IO.Path.GetFileName(Path.LocalPath);
         return watcher;
     }
 }

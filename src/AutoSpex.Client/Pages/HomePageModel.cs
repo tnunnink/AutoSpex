@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Linq;
 using AutoSpex.Client.Observers;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
+using AutoSpex.Persistence;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
@@ -10,19 +10,18 @@ using JetBrains.Annotations;
 namespace AutoSpex.Client.Pages;
 
 [UsedImplicitly]
-public partial class HomePageModel : PageViewModel
+public partial class HomePageModel : PageViewModel,
+    IRecipient<ProjectObserver.Created>,
+    IRecipient<ProjectObserver.Deleted>
 {
-    public override string Route => nameof(HomePageModel);
-    public ObservableCollection<ProjectObserver> Projects { get; } = [];
-    
+    public override string Route => "Home";
+    public ObserverCollection<Project, ProjectObserver> Projects { get; } = [];
+
     public override async Task Load()
     {
-        var projects = await Manager.GetProjects();
-
-        foreach (var project in projects)
-        {
-            Projects.Add(project);
-        }
+        var result = await Mediator.Send(new ListProjects());
+        if (result.IsFailed) return;
+        Projects.AddRange(result.Value.Select(v => new ProjectObserver(v)));
     }
 
     [RelayCommand]
@@ -30,7 +29,7 @@ public partial class HomePageModel : PageViewModel
     {
         var project = await Prompter.Show<ProjectObserver?>(() => new CreateProjectPageModel());
         if (project is null) return;
-        await Manager.OpenProject(project);
+        await project.Connect();
     }
 
     [RelayCommand]
@@ -38,7 +37,22 @@ public partial class HomePageModel : PageViewModel
     {
         var path = await Shell.StorageProvider.SelectProjectUri();
         if (path is null) return;
+        
         var project = new ProjectObserver(new Project(path));
-        await Manager.OpenProject(project);
+        await project.Connect();
+        
+        Projects.Add(project);
+    }
+    
+    public void Receive(Observer<Project>.Created message)
+    {
+        if (message.Observer is not ProjectObserver project) return;
+        Projects.Add(project);
+    }
+
+    public void Receive(Observer<Project>.Deleted message)
+    {
+        if (message.Observer is not ProjectObserver project) return;
+        Projects.Remove(project);
     }
 }

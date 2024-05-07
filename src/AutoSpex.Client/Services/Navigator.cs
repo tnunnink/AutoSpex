@@ -41,20 +41,34 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
     /// </summary>
     /// <param name="action">The optional navigation action to perform.</param>
     /// <typeparam name="TPage">The page view model type to navigate.</typeparam>
-    /// <returns>The Task representing the async function with the page view model result.</returns>
-    public Task<TPage> Navigate<TPage>(NavigationAction action = NavigationAction.Replace) where TPage : PageViewModel
+    /// <returns>The page that was created and navigated.</returns>
+    public Task<TPage> Navigate<TPage>(NavigationAction action = NavigationAction.Open) where TPage : PageViewModel
     {
         return OpenPage(Container.Resolve<TPage>);
     }
 
-    public Task<TPage> Navigate<TPage>(Func<TPage> factory, NavigationAction action = NavigationAction.Replace)
+    /// <summary>
+    /// Performs navigation of the page type specified in the provided factory.
+    /// </summary>
+    /// <param name="factory">The function that creates the page to navigate.</param>
+    /// <param name="action">The optional navigation action to perform.</param>
+    /// <typeparam name="TPage">The page view model type to navigate.</typeparam>
+    /// <returns>The page that was created and navigated.</returns>
+    public Task<TPage> Navigate<TPage>(Func<TPage> factory, NavigationAction action = NavigationAction.Open)
         where TPage : PageViewModel
     {
         return OpenPage(factory);
     }
 
-    public Task<PageViewModel> Navigate<TObserver>(TObserver observer,
-        NavigationAction action = NavigationAction.Replace)
+    /// <summary>
+    /// Performs navigation to a page mapping the provided observer. This service will map internally the page
+    /// corresponding to the provided observer.
+    /// </summary>
+    /// <param name="observer">The observer type to navigate.</param>
+    /// <param name="action">The optional navigation action to perform.</param>
+    /// <typeparam name="TObserver">The page view model type to navigate.</typeparam>
+    /// <returns>The page that was created and navigated.</returns>
+    public Task<PageViewModel> Navigate<TObserver>(TObserver observer, NavigationAction action = NavigationAction.Open)
         where TObserver : ITrackable
     {
         return OpenPage(GetPageResolver(observer), action);
@@ -84,7 +98,7 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
     /// instance if found (allowing the created instance to be garbage collected). It will then create the
     /// <see cref="NavigationRequest"/> message and send that out. The owning pages responsible for displaying this
     /// page should receive and render the page. Once rendered this service will await the Activation/Loading of the
-    /// page to initialize it's state. Finally it will clean up inactive pages from memory and then return the active
+    /// page to initialize it's state. Finally, it will clean up inactive pages from memory and then return the active
     /// page to the caller of the navigation request.
     /// </summary>
     private async Task<TPage> OpenPage<TPage>(Func<TPage> factory, NavigationAction action = NavigationAction.Open)
@@ -123,7 +137,7 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
 
         if (!_openPages.TryAdd(page.Route, page))
         {
-            page = (TPage) _openPages[page.Route];
+            page = (TPage)_openPages[page.Route];
         }
 
         return page;

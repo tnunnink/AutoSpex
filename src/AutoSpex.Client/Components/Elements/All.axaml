@@ -3,6 +3,7 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceInclude Source="ElementSelector.axaml" />
         <ResourceInclude Source="ElementList.axaml" />
+        <ResourceInclude Source="ElementTemplates.axaml" />
         <ResourceInclude Source="PropertyTree.axaml" />
         <ResourceInclude Source="PropertyItem.axaml" />
         <ResourceInclude Source="LogixTemplates.axaml" />

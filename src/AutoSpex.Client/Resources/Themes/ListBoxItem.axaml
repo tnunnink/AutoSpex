@@ -10,6 +10,13 @@
                     <ListBoxItem Content="Item 2" />
                     <ListBoxItem Content="Item 3" />
                 </ListBox>
+                
+                <ListBox Height="100" Width="100"
+                         ItemContainerTheme="{DynamicResource ListBoxItemSection}">
+                    <ListBoxItem Content="Item 1" />
+                    <ListBoxItem Content="Item 2" />
+                    <ListBoxItem Content="Item 3" />
+                </ListBox>
 
                 <ListBox Height="100" Width="100"
                          ItemContainerTheme="{DynamicResource ListBoxItemSubtle}">
@@ -44,6 +51,28 @@
         </Style>
         <Style Selector="^:selected:disabled /template/ ContentPresenter#PART_ContentPresenter">
             <Setter Property="Foreground" Value="{a:ThemeResource ListItemForegroundBrushSelectedDisabled}" />
+        </Style>
+    </ControlTheme>
+
+    <!-- SectionListItem -->
+    <ControlTheme x:Key="ListBoxItemSection" TargetType="ListBoxItem" BasedOn="{a:ControlTheme ListBoxItem}">
+        <Setter Property="BorderThickness" Value="0 0 0 1" />
+        <Setter Property="BorderBrush" Value="{a:ThemeResource Container1BorderBrush}" />
+        <Setter Property="Padding" Value="4" />
+
+        <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{a:ThemeResource Container2BackgroundBrush}" />
+        </Style>
+        <Style Selector="^:selected /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{a:ThemeResource Container2BackgroundBrush}" />
+            <Setter Property="TextElement.Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+
+            <Style Selector="^:focus-within">
+                <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftPointerOver}" />
+            </Style>
+        </Style>
+        <Style Selector="^:nth-last-child(-n+1)">
+            <Setter Property="BorderThickness" Value="0" />
         </Style>
     </ControlTheme>
 

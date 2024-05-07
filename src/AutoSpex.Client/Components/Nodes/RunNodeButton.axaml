@@ -6,7 +6,7 @@
                     xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
 
     <Design.PreviewWith>
-        <Border Padding="300">
+        <Border Padding="20">
             <components:RunNodeButton />
         </Border>
 
@@ -23,8 +23,17 @@
                              Padding="4"
                              a:ThemeProperties.CopyClassesFrom="{Binding $parent[components:RunNodeButton]}">
                     <PathIcon Theme="{StaticResource IconPlayOutlined}"
-                              Height="20" Width="20" Padding="3 4 3 3" Margin="5 0"
-                              Foreground="{a:ThemeResource ControlForegroundBrushSoftSuccess}" />
+                              Height="20" Width="20" Padding="3 3 3 3" Margin="2 0" />
+                    <SplitButton.Styles>
+                        <Style Selector=":disabled">
+                            <Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
+                                <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushOutline}" />
+                            </Style>
+                            <Style Selector="^ PathIcon">
+                                <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                            </Style>
+                        </Style>
+                    </SplitButton.Styles>
                     <SplitButton.Flyout>
                         <Flyout Placement="BottomEdgeAlignedRight"
                                 HorizontalOffset="8">
@@ -131,5 +140,9 @@
                 </SplitButton>
             </ControlTemplate>
         </Setter>
+
+        <Style Selector="^ /template/ PathIcon[IsEnabled=True]">
+            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftSuccess}" />
+        </Style>
     </ControlTheme>
 </ResourceDictionary>

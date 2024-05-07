@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:components="clr-namespace:AutoSpex.Client.Components"
              x:Class="AutoSpex.Client.Pages.SourcePage"
              x:DataType="pages:SourcePageModel">
 
@@ -10,8 +11,6 @@
 
     <DockPanel>
         <Border DockPanel.Dock="Top"
-                BorderThickness="0 0 0 1"
-                BorderBrush="{actipro:ThemeResource Container1BorderBrush}"
                 Padding="10">
             <Grid ColumnDefinitions="Auto,*,Auto">
                 <TextBox x:Name="NameEntry"
@@ -42,10 +41,19 @@
                     Padding="0">
             <TabControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal" Margin="10 0" />
+                    <StackPanel Orientation="Horizontal" Margin="20 0" />
                 </ItemsPanelTemplate>
             </TabControl.ItemsPanel>
-            <TabItem Header="Overview">
+            <TabItem Header="Content">
+                <components:ContentViewer  Margin="30"/>
+            </TabItem>
+            <TabItem Header="Variables">
+
+            </TabItem>
+            <TabItem Header="Runs">
+
+            </TabItem>
+            <TabItem Header="Info">
                 <StackPanel Spacing="5" Margin="50">
                     <StackPanel Orientation="Horizontal" Spacing="10">
                         <TextBlock Text="{Binding Source.TargetName}"
@@ -78,12 +86,6 @@
                         MinHeight="100"
                         Watermark="Add documentation to thie source file here" />
                 </StackPanel>
-            </TabItem>
-            <TabItem Header="Query">
-
-            </TabItem>
-            <TabItem Header="Variables">
-
             </TabItem>
         </TabControl>
     </DockPanel>

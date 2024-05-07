@@ -8,6 +8,7 @@
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
         <LangVersion>12</LangVersion>
+        <ApplicationIcon>Resources\Images\logo.ico</ApplicationIcon>
     </PropertyGroup>
 
     <!--<Choose>
@@ -218,10 +219,6 @@
         <DependentUpon>ProjectList.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
-      <Compile Update="Components\Projects\ProjectSelector.axaml.cs">
-        <DependentUpon>ProjectSelect.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
       <Compile Update="Components\Criterion\PropertyEntry.axaml.cs">
         <DependentUpon>PropertyEntry.axaml</DependentUpon>
         <SubType>Code</SubType>
@@ -334,13 +331,10 @@
       <None Remove="Resources\Images\icons8-clipboard-64 (1).png" />
       <None Remove="Resources\Images\icons8-clipboard-64 (2).png" />
       <None Remove="Resources\Images\icons8-inspection-96 (2).png" />
-      <None Remove="Resources\Images\logo.png" />
-      <AvaloniaResource Include="Resources\Images\logo.png" />
       <AvaloniaXaml Remove="Features\Specifications\Resources\CollectionContextMenu.axaml" />
       <None Remove="Resources\Images\Icons\link.svg" />
       <AvaloniaXaml Remove="Resources\Controls\SplitGrid.axaml" />
       <None Remove="Resources\Images\icons8-inspection-96 (4).png" />
-      <AvaloniaResource Include="Resources\Images\logo_new.png" />
       <AvaloniaXaml Remove="ShellView.axaml" />
       <None Remove="Resources\Images\icons8-true-false-96.png" />
       <None Remove="Resources\Images\inspect-code.png" />
@@ -348,6 +342,15 @@
       <AvaloniaXaml Remove="Resources\Icons\FilledIcons.axaml" />
       <AvaloniaXaml Remove="Resources\Icons\OutlinedIcons.axaml" />
       <AvaloniaXaml Remove="Resources\Icons\RegularIcons.axaml" />
+      <None Remove="Resources\Images\logo_simple.png" />
+      <None Remove="Resources\Images\logo.png" />
+      <AvaloniaResource Include="Resources\Images\logo.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </AvaloniaResource>
+      <None Remove="Resources\Images\logo.ico" />
+      <AvaloniaResource Include="Resources\Images\logo.ico">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </AvaloniaResource>
     </ItemGroup>
 
     <ItemGroup>
@@ -360,6 +363,7 @@
       <UpToDateCheckInput Remove="Resources\Styles\TextBoxStyles.axaml" />
       <UpToDateCheckInput Remove="Pages\Runs\RunListPage.axaml" />
       <UpToDateCheckInput Remove="Pages\Runs\RunPage.axaml" />
+      <UpToDateCheckInput Remove="Pages\Sources\QueryPage.axaml" />
     </ItemGroup>
 
     <ItemGroup>

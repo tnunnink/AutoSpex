@@ -1,0 +1,41 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+    <Design.PreviewWith>
+        <StackPanel Spacing="10" Background="{a:ThemeResource Container3BackgroundBrush}">
+            <ItemsControl ItemsSource="{x:Static components:DesignData.Criteria}"
+                          ItemTemplate="{DynamicResource CriterionPill}"
+                          Margin="10">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" Spacing="5" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </StackPanel>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="CriterionPill" x:DataType="observers:CriterionObserver">
+        <Button Theme="{a:ControlTheme ButtonSoft}"
+                BorderThickness="1" CornerRadius="20" Padding="3">
+            <StackPanel Orientation="Horizontal" Spacing="5">
+                <PathIcon Theme="{StaticResource IconFilter}"
+                          Height="20" Width="20" Padding="3" />
+                <TextBlock Text="{Binding PropertyName}"
+                           TextTrimming="CharacterEllipsis"
+                           Foreground="{a:ThemeResource ControlForegroundBrushSoftAccent}" />
+                <Button Theme="{StaticResource IconButtonSmall}"
+                        properties:ButtonIcon.Theme="{StaticResource IconClose}"
+                        Padding="11" CornerRadius="10" />
+            </StackPanel>
+            <Button.Flyout>
+                <Flyout Placement="BottomEdgeAlignedLeft">
+                    
+                </Flyout>
+            </Button.Flyout>
+        </Button>
+    </DataTemplate>
+</ResourceDictionary>

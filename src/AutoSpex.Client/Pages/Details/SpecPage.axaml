@@ -5,7 +5,6 @@
              xmlns:components="clr-namespace:AutoSpex.Client.Components"
              xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
              xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
-             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
              x:Class="AutoSpex.Client.Pages.SpecPage"
              x:DataType="pages:SpecPageModel">
 
@@ -13,9 +12,7 @@
     <Design.Height>1000</Design.Height>
 
     <DockPanel>
-        <Border DockPanel.Dock="Top" Padding="10"
-                BorderThickness="0 0 0 1"
-                BorderBrush="{a:ThemeResource Container1BorderBrush}">
+        <Border DockPanel.Dock="Top" Padding="10">
             <Grid ColumnDefinitions="Auto,*,Auto">
 
                 <components:BreadcrumbControl
@@ -28,11 +25,6 @@
                     Grid.Column="2"
                     Orientation="Horizontal"
                     Spacing="10">
-
-                    <components:ElementSelector
-                        IsVisible="{Binding Spec, Converter={x:Static ObjectConverters.IsNotNull}}"
-                        Element="{Binding Spec.Element, FallbackValue={x:Static engine:Element.Default}}"
-                        Classes="soft" />
 
                     <components:RunNodeButton Sources="{Binding Sources}"
                                               RunCommand="{Binding RunCommand}" />
@@ -58,26 +50,42 @@
                     Padding="0">
             <TabControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal" />
+                    <StackPanel Orientation="Horizontal" Margin="10 0" />
                 </ItemsPanelTemplate>
             </TabControl.ItemsPanel>
-            <TabItem Header="Verify">
-                <components:CriteriaList
-                    Criteria="{Binding Spec.Verifications, FallbackValue={x:Null}}"
-                    Element="{Binding Spec.Element, FallbackValue={x:Static engine:Element.Default}}"
-                    Inclusion="{Binding Spec.VerificationInclusion, FallbackValue={x:Null}}" />
-            </TabItem>
-            <TabItem Header="Filters">
-                <components:CriteriaList
-                    Criteria="{Binding Spec.Filters, FallbackValue={x:Null}}"
-                    Element="{Binding Spec.Element, FallbackValue={x:Static engine:Element.Default}}"
-                    Inclusion="{Binding Spec.FilterInclusion, FallbackValue={x:Null}}" />
+            <TabItem Header="Criteria">
+                <StackPanel Margin="30" Spacing="30">
+                    <components:SpecQuery
+                        Heading="Query"
+                        InfoText="Configure what data this specification will query."
+                        Spec="{Binding Spec}" />
+                    <components:CriteriaList
+                        Heading="Filters"
+                        InfoText="Add criteria to select only specific candidates for verification."
+                        Criteria="{Binding Spec.Filters, FallbackValue={x:Null}}"
+                        Element="{Binding Spec.Element, FallbackValue={x:Static engine:Element.Default}}"
+                        Inclusion="{Binding Spec.FilterInclusion, FallbackValue={x:Null}}" />
+                    <components:CriteriaList
+                        Heading="Verifications"
+                        InfoText="Add criteria to define what this specification is verifying."
+                        Criteria="{Binding Spec.Verifications, FallbackValue={x:Null}}"
+                        Element="{Binding Spec.Element, FallbackValue={x:Static engine:Element.Default}}"
+                        Inclusion="{Binding Spec.VerificationInclusion, FallbackValue={x:Null}}" />
+                </StackPanel>
             </TabItem>
             <TabItem Header="Variables">
-                <components:VariableList Variables="{Binding Variables}" />
+                <components:VariableList
+                    Margin="30"
+                    Variables="{Binding Variables}" />
             </TabItem>
             <TabItem Header="Settings">
-                <components:SpecSettings Spec="{Binding Spec}" />
+                <ScrollViewer>
+                    <StackPanel Spacing="30" Margin="30">
+                        <components:SpecSettings Spec="{Binding Spec}" />
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+            <TabItem Header="Runs">
             </TabItem>
         </TabControl>
     </DockPanel>

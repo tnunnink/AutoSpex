@@ -13,9 +13,9 @@ public partial class PropertyObserver(Property model, ElementObserver element) :
 {
     /// <summary>
     /// The root <see cref="ElementObserver"/> object representing the staring point or origin type. As we navigate
-    /// down the type hierarchy, this will get passed down so we can get the value of the current property using the
+    /// down the type hierarchy, this will get passed down, so we can get the value of the current property using the
     /// element's <see cref="LogixElement"/> instance. When we get to a collection property, these reset to the inner
-    /// collection element type so we can continue to navigate down the type hierarchy.
+    /// collection element type, so we can continue to navigate down the type hierarchy.
     /// </summary>
     private readonly ElementObserver _element = element ?? throw new ArgumentNullException(nameof(element));
 
@@ -30,7 +30,7 @@ public partial class PropertyObserver(Property model, ElementObserver element) :
     public string Type => $"{{{Model.Identifier}}}";
 
     /// <summary>
-    /// The <see cref="TypeGroup"/> the property value belongs to.
+    /// The <see cref="TypeGroup"/> this property value belongs to.
     /// </summary>
     public TypeGroup Group => Model.Group;
 
@@ -50,7 +50,7 @@ public partial class PropertyObserver(Property model, ElementObserver element) :
         if (value is null) return "null";
         if (Model.Group == TypeGroup.Text) return $"\"{value}\"";
         if (Model.Group == TypeGroup.Collection && value is IEnumerable enumerable)
-            return $"Count =";
+            return $"Count = {enumerable.Cast<object>().Count()}";
         if (Model.Group == TypeGroup.Enum && value is LogixEnum logixEnum) return $"{logixEnum.Name}";
         return value.ToString() ?? "null";
     }
@@ -79,7 +79,7 @@ public partial class PropertyObserver(Property model, ElementObserver element) :
     /// </summary>
     private IEnumerable<PropertyObserver> GetProperties()
     {
-        //For collections we need to create pseudo properties since they can not be retrieved statically from the type
+        //For collections, we need to create pseudo properties since they can not be retrieved statically from the type
         //information. We need access to the actual instance object in order to get the items of the collection, but will
         //want to present those as "properties" in the UI from which the user can continue to drill down from.
         if (Model.Group == TypeGroup.Collection)

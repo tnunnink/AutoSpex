@@ -2,198 +2,50 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:components="using:AutoSpex.Client.Components"
-                    xmlns:core="clr-namespace:L5Sharp.Core;assembly=L5Sharp.Core"
                     xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
 
     <Design.PreviewWith>
-        <components:ElementList Height="500" Width="500"
-                                ElementSource="{x:Static components:DesignData.DataTypes}" />
+        <components:ElementList Height="500" Width="800"
+                                Elements="{x:Static components:DesignData.DataTypeElements}" />
     </Design.PreviewWith>
-    
-    <!--ElementList-->
+
     <ControlTheme x:Key="{x:Type components:ElementList}" TargetType="components:ElementList">
-        <ControlTheme.Resources>
-            <!--ElementListItem-->
-            <ControlTheme x:Key="ElementListItem" TargetType="ListBoxItem">
-                <Setter Property="Background" Value="{a:ThemeResource Container1BackgroundBrush}" />
-                <Setter Property="BorderBrush" Value="Transparent" />
-                <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeSmall}" />
-                <Setter Property="Padding" Value="5" />
-                <Setter Property="BorderThickness" Value="3 0 0 0" />
-                <Setter Property="CornerRadius" Value="2" />
-                <Setter Property="Height" Value="30" />
-                <Setter Property="Template">
-                    <ControlTemplate>
-                        <Border x:Name="border"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="{TemplateBinding CornerRadius}"
-                                Padding="{TemplateBinding Padding}">
-                            <Grid ColumnDefinitions="Auto,*,Auto">
-
-                                <PathIcon Grid.Column="0"
-                                          x:Name="ItemIcon"
-                                          Theme="{StaticResource IconSourceThemed}"
-                                          Height="20" Width="20" Margin="0 1 7 0"
-                                          Padding="3" />
-
-                                <ContentControl Grid.Column="1"
-                                                Content="{TemplateBinding Content}"
-                                                ContentTemplate="{TemplateBinding ContentTemplate}">
-
-                                </ContentControl>
-
-                                <Border Grid.Column="2"
-                                        Background="{Binding #border.Background}"
-                                        Padding="5 0">
-                                    <StackPanel Spacing="3" Orientation="Horizontal">
-                                        <Button Theme="{StaticResource IconButtonSmall}"
-                                                properties:ButtonIcon.Theme="{StaticResource IconBraces}"
-                                                Classes="accent"
-                                                ToolTip.Tip="Create Variable" />
-                                        <!--<Button Theme="{StaticResource IconButtonSmall}"
-                                                properties:ButtonIcon.Theme="{StaticResource IconCopyOutlined}"
-                                                Classes="accent"
-                                                ToolTip.Tip="Copy Data" />-->
-                                    </StackPanel>
-                                    <Border.IsVisible>
-                                        <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                                            <Binding Path="$parent[ListBoxItem].IsPointerOver" />
-                                            <Binding Path="$parent[ListBoxItem].IsSelected" />
-                                        </MultiBinding>
-                                    </Border.IsVisible>
-                                </Border>
-                            </Grid>
-                        </Border>
-                    </ControlTemplate>
-                </Setter>
-
-                <Style Selector="^:empty /template/ ToggleButton">
-                    <Setter Property="IsVisible" Value="False" />
-                </Style>
-                <Style Selector="^:pointerover /template/ Border#border">
-                    <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftPointerOver}" />
-                    <Setter Property="BorderBrush" Value="{a:ThemeResource Container4BorderBrush}" />
-                </Style>
-                <Style Selector="^:pressed /template/ Border#border">
-                    <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftPointerOver}" />
-                </Style>
-                <Style Selector="^:disabled /template/ Border#border">
-                    <Setter Property="TextElement.Foreground" Value="{a:ThemeResource ListItemForegroundBrushDisabled}" />
-                </Style>
-                <Style Selector="^:selected">
-                    <Style Selector="^ /template/ Border#border">
-                        <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftPointerOver}" />
-                        <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBackgroundBrushSolidAccent}" />
-                        <Setter Property="TextElement.Foreground"
-                                Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
-                    </Style>
-
-                    <Style Selector="^ /template/ PathIcon">
-                        <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
-                    </Style>
-                </Style>
-
-                <Style Selector="^:selected:pointerover /template/ Border#border">
-                    <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftPointerOver}" />
-                </Style>
-                <Style Selector="^:selected:pressed /template/ Border#border">
-                    <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftPointerOver}" />
-                </Style>
-                <Style Selector="^:selected:disabled /template/ Border#border">
-                    <Setter Property="TextElement.Foreground"
-                            Value="{a:ThemeResource ListItemForegroundBrushSelectedDisabled}" />
-                </Style>
-            </ControlTheme>
-        </ControlTheme.Resources>
         <Setter Property="Template">
             <ControlTemplate>
-                <Border Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding CornerRadius}"
-                        Padding="{TemplateBinding Padding}">
-                    <Grid RowDefinitions="Auto,*">
-                        <Border BorderThickness="0 0 0 1"
-                                BorderBrush="{a:ThemeResource Container2BorderBrush}"
-                                Height="40">
-                            <Grid ColumnDefinitions="*,Auto">
-                                <StackPanel Grid.Column="1"
-                                            Margin="5 0"
-                                            Orientation="Horizontal"
-                                            Spacing="3">
-                                    <Button properties:ButtonIcon.Theme="{StaticResource IconDotsVertical}"
-                                            Theme="{StaticResource IconButton}" Padding="9"
-                                            ToolTip.Tip="Options" />
-                                </StackPanel>
-                            </Grid>
-                        </Border>
 
-                        <Panel Grid.Row="1">
-                            
-                            <ListBox x:Name="ResultList"
-                                     ItemsSource="{Binding ElementSource, RelativeSource={RelativeSource TemplatedParent}}"
-                                     SelectedItem="{Binding SelectedElement, RelativeSource={RelativeSource TemplatedParent}}"
-                                     HorizontalAlignment="Stretch"
-                                     ItemContainerTheme="{StaticResource ElementListItem}"
-                                     BorderThickness="0"
-                                     IsVisible="{Binding ElementSource.Count, RelativeSource={RelativeSource TemplatedParent}, FallbackValue=0}"
-                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                                <ListBox.DataTemplates>
-                                    <DataTemplate x:DataType="core:Tag">
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="{Binding TagName}" />
-                                            <TextBlock Text="{Binding Description}"
-                                                       TextTrimming="CharacterEllipsis"
-                                                       TextWrapping="NoWrap"
-                                                       ToolTip.Tip="{Binding Description}"
-                                                       Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
-                                                       Margin="10 0" />
-                                        </StackPanel>
-                                    </DataTemplate>
-                                    <DataTemplate x:DataType="core:DataTypeMember">
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="{Binding Name}"
-                                                       Margin="5 0" />
-                                            <TextBlock Text="{Binding Description}"
-                                                       TextTrimming="CharacterEllipsis"
-                                                       TextWrapping="NoWrap"
-                                                       ToolTip.Tip="{Binding Description}"
-                                                       Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
-                                        </StackPanel>
-                                    </DataTemplate>
-                                    <DataTemplate x:DataType="core:LogixCode">
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock>
-                                                <TextBlock.Inlines>
-                                                    <Run Text="{Binding Container}" />
-                                                    <Run Text=">"
-                                                         Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
-                                                    <Run Text="{Binding Routine.Name, FallbackValue='No Routine'}" />
-                                                    <Run Text=">"
-                                                         Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
-                                                    <Run Text="{Binding Location}" />
-                                                </TextBlock.Inlines>
-                                            </TextBlock>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                    <DataTemplate x:DataType="core:LogixComponent">
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="{Binding Name}" />
-                                            <TextBlock Text="{Binding Description}"
-                                                       TextTrimming="CharacterEllipsis"
-                                                       TextWrapping="NoWrap"
-                                                       ToolTip.Tip="{Binding Description}"
-                                                       Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
-                                                       Margin="10 0" />
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </ListBox.DataTemplates>
-                            </ListBox>
-                        </Panel>
+                <Panel>
+                    <Grid ColumnDefinitions="0.5*,Auto,*">
+
+                        <ListBox ItemsSource="{Binding Elements, RelativeSource={RelativeSource TemplatedParent}}"
+                                 SelectedItem="{Binding SelectedElement, RelativeSource={RelativeSource TemplatedParent}}"
+                                 ItemTemplate="{StaticResource ElementItem}"
+                                 IsVisible="{Binding Elements.Count, RelativeSource={RelativeSource TemplatedParent}, FallbackValue=0}"
+                                 BorderThickness="0" CornerRadius="0 0 0 5" ClipToBounds="True">
+                            <ListBox.ItemContainerTheme>
+                                <ControlTheme TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemSubtle}">
+                                    <Setter Property="Padding" Value="5 5 15 5" />
+                                </ControlTheme>
+                            </ListBox.ItemContainerTheme>
+                            <ListBox.Styles>
+                                <Style Selector="ScrollViewer">
+                                    <Setter Property="Theme" Value="{a:ControlTheme ScrollViewerOverlay}" />
+                                    <Setter Property="HorizontalScrollBarVisibility" Value="Auto" />
+                                </Style>
+                            </ListBox.Styles>
+                        </ListBox>
+
+                        <GridSplitter
+                            Grid.Column="1"
+                            Theme="{StaticResource GridSplitterHighlight}"
+                            Width="1" Margin="0 3" />
+
+                        <components:PropertyTree
+                            Grid.Column="2"
+                            SourceElement="{Binding SelectedElement, RelativeSource={RelativeSource TemplatedParent}}" />
                     </Grid>
-                </Border>
+                </Panel>
+
+
             </ControlTemplate>
         </Setter>
     </ControlTheme>

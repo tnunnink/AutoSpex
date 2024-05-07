@@ -17,7 +17,7 @@ public class ProjectTests
         var project = new Project(new Uri(@"C:\Users\admin\Documents\Spex\MyProject.db"));
 
         project.Name.Should().Be("MyProject");
-        project.Uri.Should().Be(@"C:\Users\admin\Documents\Spex\MyProject.db");
+        project.Path.Should().Be(@"C:\Users\admin\Documents\Spex\MyProject.db");
         project.Directory.Should().Be(@"C:\Users\admin\Documents\Spex");
         project.Exists.Should().BeFalse();
         project.ConnectionString.Should().NotBeEmpty();

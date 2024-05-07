@@ -25,12 +25,11 @@
                                      Watermark="Filter properties"
                                      VerticalContentAlignment="Center"
                                      FontSize="{a:ThemeResource DefaultFontSizeSmall}"
-                                     Padding="5 0">
+                                     Padding="5">
                                 <TextBox.InnerLeftContent>
-                                    <PathIcon Theme="{StaticResource IconSearch}"
-                                              Height="20" Width="20"
+                                    <PathIcon Theme="{StaticResource IconFilter}"
                                               Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
-                                              Padding="3" Margin="5 0" />
+                                              Margin="5 0" />
                                 </TextBox.InnerLeftContent>
                             </TextBox>
 

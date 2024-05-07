@@ -11,11 +11,24 @@ using JetBrains.Annotations;
 namespace AutoSpex.Client.Pages;
 
 [UsedImplicitly]
-public partial class DetailsPageModel : PageViewModel, IRecipient<NavigationRequest>
+public partial class DetailsPageModel(string project) : PageViewModel, IRecipient<NavigationRequest>
 {
+    public override string Route => $"{project}/Details";
+    public override bool IsChanged => Pages.Any(p => p.IsChanged);
+    
     [ObservableProperty] private ObservableCollection<DetailPageModel> _pages = [];
 
     [ObservableProperty] private PageViewModel? _selected;
+
+    protected override void OnDeactivated()
+    {
+        foreach (var page in Pages.ToList())
+        {
+            Navigator.Close(page);
+        }
+        
+        base.OnDeactivated();
+    }
 
     [RelayCommand]
     private async Task CreateSpec()

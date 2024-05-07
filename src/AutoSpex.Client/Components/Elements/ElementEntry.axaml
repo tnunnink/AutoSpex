@@ -3,7 +3,8 @@
                     xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:components="using:AutoSpex.Client.Components"
                     xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
-                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
 
     <Design.PreviewWith>
         <Border Padding="300">
@@ -44,10 +45,14 @@
                         <StackPanel Grid.Column="2"
                                     Orientation="Horizontal"
                                     VerticalAlignment="Center" Margin="5 0" Spacing="4">
-                            <controls:IconButton Icon="{StaticResource IconClose}" 
-                                                 CornerRadius="10" Height="20" Width="20" Padding="11"/>
-                            <controls:IconButton Icon="{StaticResource IconQuestion}" 
-                                                 CornerRadius="10" Height="20" Width="20" Padding="11"/>
+                            <Button properties:ButtonIcon.Theme="{StaticResource IconClose}"
+                                    Theme="{StaticResource IconButtonSmall}"
+                                    Padding="10"/>
+                            <Button properties:ButtonIcon.Theme="{StaticResource IconFilter}"
+                                    Theme="{StaticResource IconButtonSmall}" 
+                                    Padding="8"/>
+                            <Button properties:ButtonIcon.Theme="{StaticResource IconFloppyOutlined}"
+                                    Theme="{StaticResource IconButtonSmall}" />
                         </StackPanel>
                     </Grid>
                 </Border>

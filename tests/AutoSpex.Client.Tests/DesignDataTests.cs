@@ -23,4 +23,12 @@ public class DesignDataTests
         var test = DesignData.Sources;
         test.Should().NotBeEmpty();
     }
+
+    [Test]
+    public void DesignSpecsCollection()
+    {
+        using var context = new TestContext();
+        var collection = DesignData.Specs;
+        collection.Should().NotBeEmpty();
+    }
 }

@@ -51,7 +51,7 @@ public class GetNodeVariablesTests
         var mediator = context.Resolve<IMediator>();
         var node = Node.NewCollection();
         await mediator.Send(new CreateNode(node));
-        var tag = new Tag() {Name = "Test", Value = 100};
+        var tag = new Tag {Name = "Test", Value = 100};
         var variable = new Variable(node.NodeId, "TagVariable", tag, "This is a logix component test");
         await mediator.Send(new SaveVariables(new[] {variable}));
 
@@ -63,6 +63,7 @@ public class GetNodeVariablesTests
         result.Value.Should().AllSatisfy(v => v.NodeId.Should().Be(node.NodeId));
         result.Value.Should().AllSatisfy(v => v.Name.Should().Contain("TagVariable"));
         result.Value.Should().AllSatisfy(v => v.Type.Should().Be(typeof(Tag)));
+        result.Value.Should().AllSatisfy(v => v.Value.Should().BeOfType<Tag>());
         result.Value.Should().AllSatisfy(v => v.Value.Should().BeEquivalentTo(tag));
         result.Value.Should().AllSatisfy(v => v.Data.Should().Be(tag.Serialize().ToString()));
         result.Value.Should().AllSatisfy(v => v.Description.Should().Be("This is a logix component test"));

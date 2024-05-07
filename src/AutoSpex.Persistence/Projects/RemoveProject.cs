@@ -22,7 +22,7 @@ internal class RemoveProjectHandler(IConnectionManager manager) : IRequestHandle
     {
         var project = request.Project;
         var connection = await manager.Connect(Database.App, cancellationToken);
-        var affected = await connection.ExecuteAsync(Command, new {Path = project.Uri.LocalPath});
+        var affected = await connection.ExecuteAsync(Command, new {Path = project.Path.LocalPath});
         return Result.Ok().WithSuccess($"Removed {affected} project(s) from application store.");
     }
 }

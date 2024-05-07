@@ -17,13 +17,11 @@ internal class GetSpecsForHandler(IConnectionManager manager) : IRequestHandler<
                                              (SELECT NodeId, ParentId, NodeType, Name
                                               FROM Node
                                               WHERE NodeId = @NodeId
-                                    
                                               UNION ALL
-                                    
                                               SELECT n.NodeId, n.ParentId, n.NodeType, n.Name
                                               FROM Node n
                                                        INNER JOIN Tree t ON n.ParentId = t.NodeId)
-                                    SELECT s.SpecId, s.Specification
+                                    SELECT s.SpecId, t.Name, s.Specification
                                     FROM Tree t
                                     JOIN Spec s on s.SpecId = t.NodeId;
                                     """;
@@ -39,7 +37,7 @@ internal class GetSpecsForHandler(IConnectionManager manager) : IRequestHandler<
         foreach (var result in results)
         {
             var config = Spec.Deserialize(result.Specification);
-            var spec = new Spec(result.SpecId);
+            var spec = new Spec(result.SpecId, result.Name);
             spec.Configure(config);
             specs.Add(spec);
         }

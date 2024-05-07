@@ -2,11 +2,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
         xmlns:client="clr-namespace:AutoSpex.Client"
-        xmlns:components="clr-namespace:AutoSpex.Client.Components"
         x:Class="AutoSpex.Client.Shell"
         x:DataType="client:Shell"
-        Width="1400" Height="800"
+        Width="1000" Height="800"
         WindowState="Normal"
+        Icon="Resources/Images/logo.ico"
         WindowStartupLocation="CenterScreen"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaChromeHints="SystemChrome"
@@ -23,25 +23,20 @@
         <DockPanel>
             <!-- Title Bar -->
             <a:ChromedTitleBar DockPanel.Dock="Top" Height="40">
-
                 <a:ChromedTitleBar.LeftContent>
-                    <StackPanel Orientation="Horizontal"
-                                IsVisible="{Binding ProjectPageOpen}">
-                        <Button
-                            ContentTemplate="{a:GlyphTemplate Menu16}"
-                            Theme="{a:ControlTheme TitleBarButton}" />
-                        <Button
-                            ContentTemplate="{a:GlyphTemplate Home16}"
-                            Theme="{a:ControlTheme TitleBarButton}"
-                            Command="{Binding NavigateHomeCommand}" />
-                        <!--<components:ProjectSelector
-                            IsVisible="{Binding ProjectPageOpen}"
-                            Projects="{Binding Projects^, FallbackValue={x:Null}}" />-->
-                    </StackPanel>
+                    <Button
+                        Theme="{a:ControlTheme TitleBarButton}"
+                        Command="{Binding NavigateHomeCommand}">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Image Source="../Resources/Images/logo.png"
+                                   Height="22" Width="22" />
+                            <TextBlock Text="AutoSpex" Classes="theme-text-heading size-xs" />
+                        </StackPanel>
+                    </Button>
                 </a:ChromedTitleBar.LeftContent>
 
                 <a:ChromedTitleBar.RightContent>
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" Margin="5 0">
                         <a:ToggleThemeButton
                             Theme="{a:ControlTheme TitleBarToggleThemeButton}"
                             Padding="10"

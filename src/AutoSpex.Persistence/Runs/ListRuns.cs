@@ -7,7 +7,7 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 /// <summary>
-/// Returns all <see cref="Runner"/> with the id and name properties populated for showing selectable list of runners.
+/// Returns all <see cref="Run"/> with the id and name properties populated for showing selectable list of runners.
 /// </summary>
 [PublicAPI]
 public record ListRuns : IDbQuery<Result<IEnumerable<Run>>>;
@@ -20,7 +20,7 @@ internal class ListRunHandler(IConnectionManager manager) : IRequestHandler<List
     public async Task<Result<IEnumerable<Run>>> Handle(ListRuns request, CancellationToken cancellationToken)
     {
         using var connection = await manager.Connect(Database.Project, cancellationToken);
-        var runners = await connection.QueryAsync<Run>(ListRuns);
-        return Result.Ok(runners);
+        var runs = await connection.QueryAsync<Run>(ListRuns);
+        return Result.Ok(runs);
     }
 }

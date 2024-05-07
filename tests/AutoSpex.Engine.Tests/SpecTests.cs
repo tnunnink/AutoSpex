@@ -91,6 +91,6 @@ public class SpecTests
         var outcome = await spec.Run(content);
         
         outcome.Result.Should().Be(ResultState.Passed);
-        outcome.Verifications.Should().BeEmpty();
+        outcome.Evaluations.Should().BeEmpty();
     }
 }

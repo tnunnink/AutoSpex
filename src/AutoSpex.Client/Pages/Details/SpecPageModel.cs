@@ -48,7 +48,7 @@ public partial class SpecPageModel(NodeObserver node) : NodePageModel(node)
     protected override async Task Run(SourceObserver? source)
     {
         source ??= Sources.Single(s => s.IsSelected);
-        var run = new Run(Node, source);
+        var run = new Run(Node.Id, source.Id);
         var page = await Navigator.Navigate(() => new RunPageModel(run));
         var specs = Node.CheckedSpecs;
         await page.ExecuteCommand.ExecuteAsync(null);

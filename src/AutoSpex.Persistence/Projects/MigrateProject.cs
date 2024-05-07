@@ -25,7 +25,7 @@ internal class MigrateProjectHandler(IConnectionManager manager) : IRequestHandl
         {
             var project = request.Project;
 
-            var backup = File.Exists(project.Uri.LocalPath) ? Backup(project.Uri.LocalPath) : default;
+            var backup = File.Exists(project.Path.LocalPath) ? Backup(project.Path.LocalPath) : default;
             if (backup is not null && backup.IsFailed)
             {
                 var backupFailure = Result
@@ -42,7 +42,7 @@ internal class MigrateProjectHandler(IConnectionManager manager) : IRequestHandl
             }
             catch (Exception e)
             {
-                var restore = backup is not null ? RestoreBackup(backup.Value, project.Uri.LocalPath) : default;
+                var restore = backup is not null ? RestoreBackup(backup.Value, project.Path.LocalPath) : default;
                 if (restore is not null && restore.IsFailed)
                 {
                     return new Error(

@@ -13,7 +13,7 @@
     <controls:DrawerView x:Name="StatusBarDrawer"
                          DrawerPlacement="Bottom"
                          DrawerClosedLength="30"
-                         IsDrawerOpen="False">
+                         IsDrawerOpen="{Binding IsStatusDrawerOpen}">
         <controls:DrawerView.Drawer>
             <Grid RowDefinitions="30,Auto">
                 <Border Grid.Row="0"
@@ -22,17 +22,26 @@
                         BorderThickness="{actipro:ThemeResource StatusBarBorderThickness}"
                         TextElement.Foreground="{actipro:ThemeResource StatusBarForegroundBrush}">
                     <Grid ColumnDefinitions="Auto,*,Auto">
-                        <Border Grid.Row="0">
-                            <StackPanel Orientation="Horizontal" Spacing="5">
-                                <PathIcon Theme="{StaticResource IconCheckOutlined}"
-                                          Foreground="{actipro:ThemeResource ControlForegroundBrushOutlineSuccess}" />
-                                <TextBlock Text="{Binding Project.Name}" />
-                            </StackPanel>
+                        <Border Grid.Row="0" Padding="0">
+                            <Button Theme="{actipro:ControlTheme ButtonSubtle}">
+                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                    <PathIcon Theme="{StaticResource IconProjectThemed}" />
+                                    <TextBlock Text="{Binding Project.Name}" />
+                                </StackPanel>
+                                <Button.Flyout>
+                                    <Flyout Placement="TopEdgeAlignedLeft"
+                                            ShowMode="TransientWithDismissOnPointerMoveAway"
+                                            VerticalOffset="5">
+                                        <components:ProjectDetails DataContext="{Binding Project}" />
+                                    </Flyout>
+                                </Button.Flyout>
+                            </Button>
+
                         </Border>
                     </Grid>
                 </Border>
                 <Border Grid.Row="1"
-                        IsVisible="{Binding #StatusBarDrawer.IsDrawerOpen}">
+                        IsVisible="{Binding IsStatusDrawerOpen}">
                     <TextBlock Text="This is the status bar content shit" />
                 </Border>
             </Grid>

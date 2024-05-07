@@ -25,10 +25,6 @@ public partial class Shell : Window, IRecipient<NavigationRequest>
         AvaloniaProperty.RegisterDirect<Shell, bool>(
             nameof(DialogOpen), o => o.DialogOpen, (o, v) => o.DialogOpen = v);
 
-    public static readonly DirectProperty<Shell, bool> ProjectPageOpenProperty =
-        AvaloniaProperty.RegisterDirect<Shell, bool>(
-            nameof(ProjectPageOpen), o => o.ProjectPageOpen, (o, v) => o.ProjectPageOpen = v);
-
     public static readonly DirectProperty<Shell, PageViewModel?> CurrentPageProperty =
         AvaloniaProperty.RegisterDirect<Shell, PageViewModel?>(
             nameof(CurrentPage), o => o.CurrentPage, (o, v) => o.CurrentPage = v);
@@ -41,7 +37,6 @@ public partial class Shell : Window, IRecipient<NavigationRequest>
 
     private readonly Navigator? _navigator;
     private bool _dialogOpen;
-    private bool _projectPageOpen;
     private PageViewModel? _currentPage;
     private ICommand? _navigateHomeCommand;
 
@@ -60,7 +55,7 @@ public partial class Shell : Window, IRecipient<NavigationRequest>
 
         NavigateHomeCommand = new AsyncRelayCommand(NavigateHome);
 
-        //This is a work around to solve the window covering the task bar when maximizing while we are using custom title bar 
+        //This is a workaround to solve the window covering the task bar when maximizing while we are using custom title bar 
         this.GetPropertyChangedObservable(WindowStateProperty).AddClassHandler<Visual>((_, args) =>
         {
             if (!OperatingSystem.IsWindows()) return;
@@ -100,12 +95,6 @@ public partial class Shell : Window, IRecipient<NavigationRequest>
         set => SetAndRaise(DialogOpenProperty, ref _dialogOpen, value);
     }
 
-    public bool ProjectPageOpen
-    {
-        get => _projectPageOpen;
-        set => SetAndRaise(ProjectPageOpenProperty, ref _projectPageOpen, value);
-    }
-
     /// <summary>
     /// This is to override the Chrome hints that Actipro is configuring so that we can get a window drop shadow.
     /// </summary>
@@ -128,17 +117,11 @@ public partial class Shell : Window, IRecipient<NavigationRequest>
     {
         if (message.Page is not HomePageModel and not ProjectPageModel) return;
         if (message.Action != NavigationAction.Open) return;
+        
+        if (CurrentPage is not null)
+            _navigator?.Close(CurrentPage);
+            
         CurrentPage = message.Page;
-    }
-
-    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
-    {
-        base.OnPropertyChanged(change);
-
-        if (change.Property == CurrentPageProperty)
-        {
-            ProjectPageOpen = change.GetNewValue<PageViewModel?>()?.Route.Equals(nameof(HomePageModel)) is false;
-        }
     }
 
     private void DialogShadowPointerPressed(object? sender, PointerPressedEventArgs e)

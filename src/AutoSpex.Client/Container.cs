@@ -48,7 +48,6 @@ public class Container
         registry.RegisterNavigator();
         registry.RegisterNotifier();
         registry.RegisterPrompter();
-        registry.RegisterManager();
         registry.RegisterPages();
 
         var container = new Lamar.Container(registry);
@@ -101,11 +100,6 @@ internal static class RegistrationExtensions
     internal static void RegisterPrompter(this ServiceRegistry registry)
     {
         registry.For<Prompter>().Use<Prompter>().Singleton();
-    }
-
-    internal static void RegisterManager(this ServiceRegistry registry)
-    {
-        registry.For<Manager>().Use<Manager>().Singleton();
     }
 
     internal static void RegisterPages(this ServiceRegistry registry)

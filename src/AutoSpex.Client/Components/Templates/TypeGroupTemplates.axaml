@@ -3,9 +3,7 @@
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:core="clr-namespace:L5Sharp.Core;assembly=L5Sharp.Core"
                     xmlns:system="clr-namespace:System;assembly=System.Runtime"
-                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
-                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
-                    xmlns:primitives="clr-namespace:ActiproSoftware.UI.Avalonia.Controls.Primitives;assembly=ActiproSoftware.Avalonia.Shared">
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
 
     <system:Double x:Key="TestDouble">1.234</system:Double>
 

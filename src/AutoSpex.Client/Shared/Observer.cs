@@ -32,7 +32,7 @@ public abstract partial class Observer<TModel> : TrackableViewModel, IEquatable<
 
     /// <summary>
     /// A <see cref="Guid"/> that uniquely identifies this observer. This should be the same for each instance wrapping
-    /// the same underlying model. By default this just creates a new <see cref="Guid"/> but deriving classes will
+    /// the same underlying model. By default, this just creates a new <see cref="Guid"/> but deriving classes will
     /// implement to point to the correct model id. 
     /// </summary>
     public virtual Guid Id { get; } = Guid.NewGuid();

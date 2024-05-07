@@ -52,7 +52,7 @@ public abstract class TrackableViewModel : ViewModelBase, ITrackable
     /// <summary>
     /// Refreshes all bindings to the derived observer object. This could be used if changes are made to the model
     /// internally without the observer knowing (data refresh or domain level logic/events) It should signify a reset or
-    /// sync between the the model and observer and therefore UI. 
+    /// sync between the model and observer and therefore UI. 
     /// </summary>
     public virtual void Refresh()
     {

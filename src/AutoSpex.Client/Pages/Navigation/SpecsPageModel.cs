@@ -12,11 +12,12 @@ using JetBrains.Annotations;
 namespace AutoSpex.Client.Pages;
 
 [UsedImplicitly]
-public partial class SpecsPageModel : PageViewModel, IRecipient<NodeObserver.Deleted>
+public partial class SpecsPageModel(string project) : PageViewModel, IRecipient<NodeObserver.Deleted>
 {
     public ObservableCollection<NodeObserver> Collections { get; } = [];
     public ObservableCollection<NodeObserver> SelectedNodes { get; } = [];
 
+    public override string Route => $"{project}/Specs";
     public override string Title => "Specs";
     public override string Icon => "Specs";
 

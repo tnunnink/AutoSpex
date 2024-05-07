@@ -12,7 +12,12 @@ public record GetSpecsIn(IEnumerable<Guid> SpecIds) : IDbQuery<Result<IEnumerabl
 [UsedImplicitly]
 internal class GetSpecsInHandler(IConnectionManager manager) : IRequestHandler<GetSpecsIn, Result<IEnumerable<Spec>>>
 {
-    private const string GetSpecs = "SELECT SpecId, Specification FROM Spec WHERE SpecId IN @Ids";
+    private const string GetSpecs = """
+                                    SELECT SpecId, n.Name as Name, Specification 
+                                    FROM Spec s
+                                    JOIN Node n on n.NodeId = s.SpecId
+                                    WHERE SpecId IN @Ids
+                                    """;
     
     public async Task<Result<IEnumerable<Spec>>> Handle(GetSpecsIn request, CancellationToken cancellationToken)
     {
@@ -25,7 +30,7 @@ internal class GetSpecsInHandler(IConnectionManager manager) : IRequestHandler<G
         foreach (var result in results)
         {
             var config = Spec.Deserialize(result.Specification);
-            var spec = new Spec(result.SpecId);
+            var spec = new Spec(result.SpecId, result.Name);
             spec.Configure(config);
             specs.Add(spec);
         }

@@ -20,6 +20,7 @@ public class MP10000 : AutoReversingMigration
 
         Create.Table("Spec")
             .WithColumn("SpecId").AsString().PrimaryKey().ForeignKey("Node", "NodeId").OnDeleteOrUpdate(Rule.Cascade)
+            .WithColumn("Element").AsString().NotNullable()
             .WithColumn("Specification").AsString().NotNullable();
         
         Create.Table("Variable")

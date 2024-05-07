@@ -42,7 +42,7 @@ public class GeneralTests
     {
         var result = Element.Selectable.ToList();
 
-        result.Should().HaveCount(16);
+        result.Should().HaveCount(15);
     }
 
     [Test]

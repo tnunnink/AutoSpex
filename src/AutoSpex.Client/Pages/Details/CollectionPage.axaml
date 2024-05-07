@@ -11,17 +11,13 @@
     <Design.Height>1000</Design.Height>
 
     <DockPanel>
-        <Border DockPanel.Dock="Top" Padding="10"
-                BorderThickness="0 0 0 1"
-                BorderBrush="{a:ThemeResource Container1BorderBrush}">
+        <Border DockPanel.Dock="Top" Padding="10">
             <Grid ColumnDefinitions="Auto,*,Auto">
-
                 <components:BreadcrumbControl
                     Grid.Column="0"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center"
                     Breadcrumb="{Binding Breadcrumb}" />
-
                 <StackPanel
                     Grid.Column="2"
                     Orientation="Horizontal"
@@ -29,7 +25,8 @@
 
                     <components:RunNodeButton />
 
-                    <components:SaveNodeButton SaveCommand="{Binding SaveCommand}" />
+                    <components:SaveNodeButton
+                        SaveCommand="{Binding SaveCommand}" />
 
                     <Button Theme="{StaticResource IconButton}"
                             Height="30" Width="30"
@@ -50,19 +47,23 @@
                     Padding="0">
             <TabControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal" />
+                    <StackPanel Orientation="Horizontal" Margin="10 0" />
                 </ItemsPanelTemplate>
             </TabControl.ItemsPanel>
             <TabItem Header="Specs">
-                <components:SpecList Specs="{Binding Specs}" Margin="20" />
+                <components:SpecList
+                    Margin="30"
+                    Specs="{Binding Specs}" />
             </TabItem>
             <TabItem Header="Variables">
-                <components:VariableList Variables="{Binding Variables}" />
+                <components:VariableList
+                    Margin="30"
+                    Variables="{Binding Variables}" />
             </TabItem>
             <TabItem Header="Runs">
 
             </TabItem>
-            <TabItem Header="Change Log">
+            <TabItem Header="Log">
 
             </TabItem>
         </TabControl>

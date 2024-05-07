@@ -5,43 +5,49 @@
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
                     x:DataType="observers:ProjectObserver">
   <Design.PreviewWith>
-    <Border Padding="100">
+    <Border Padding="200">
       <StackPanel Spacing="50">
-        <Button ContextFlyout="{DynamicResource ProjectMenu}" Content="Test" />
+        <Button Flyout="{DynamicResource ProjectMenu}" Content="Test" />
       </StackPanel>
     </Border>
   </Design.PreviewWith>
 
   <MenuFlyout x:Key="ProjectMenu">
+    <MenuItem Header="Connect"
+              Icon="{StaticResource IconPlug}"
+              Command="{Binding ConnectCommand}"
+              IsEnabled="{Binding Exists}"
+              Theme="{StaticResource ContextMenuItem}" />
+    <MenuItem Header="Pin"
+              Icon="{StaticResource IconPinOutlined}"
+              Command="{Binding PinCommand}"
+              IsEnabled="{Binding !Pinned}"
+              IsVisible="{Binding !Pinned}"
+              Theme="{StaticResource ContextMenuItem}" />
+    <MenuItem Header="Unpin"
+              Icon="{StaticResource IconPinOutlined}"
+              Command="{Binding UnpinCommand}"
+              IsEnabled="{Binding Pinned}"
+              IsVisible="{Binding Pinned}"
+              Theme="{StaticResource ContextMenuItem}" />
+    <Separator />
     
-    <MenuItem Header="Open"
-              Command="{Binding OpenCommand}"
-              IsEnabled="{Binding Exists}">
-      <MenuItem.Icon>
-        <PathIcon Theme="{StaticResource IconLaunchOutlined}" />
-      </MenuItem.Icon>
-    </MenuItem>
-
     <MenuItem Header="Show In Explorer"
+              Icon="{StaticResource IconFolderOutlinedAlt}"
               Command="{Binding LocateCommand}"
-              IsEnabled="{Binding Exists}">
-      <MenuItem.Icon>
-        <PathIcon Theme="{StaticResource IconFolderOutlined}" />
-      </MenuItem.Icon>
-    </MenuItem>
-
+              IsEnabled="{Binding Exists}"
+              Theme="{StaticResource ContextMenuItem}" />
     <MenuItem Header="Copy Path"
-              Command="{Binding CopyPathCommand}">
-      <MenuItem.Icon>
-        <PathIcon Theme="{StaticResource IconCopyOutlined}" />
-      </MenuItem.Icon>
-    </MenuItem>
+              Icon="{StaticResource IconCopyOutlined}"
+              Command="{Binding CopyPathCommand}"
+              IsEnabled="{Binding Exists}"
+              Theme="{StaticResource ContextMenuItem}" />
+    
+    <Separator />
     
     <MenuItem Header="Remove"
-              Command="{Binding DeleteCommand}">
-      <MenuItem.Icon>
-        <PathIcon Theme="{StaticResource IconClose}" />
-      </MenuItem.Icon>
-    </MenuItem>
+              Icon="{StaticResource IconTrashOutlined}"
+              Command="{Binding DeleteCommand}"
+              Theme="{StaticResource ContextMenuItem}" />
   </MenuFlyout>
 </ResourceDictionary>

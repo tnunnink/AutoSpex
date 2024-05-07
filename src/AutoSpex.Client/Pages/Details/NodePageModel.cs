@@ -18,7 +18,8 @@ namespace AutoSpex.Client.Pages;
 
 public abstract partial class NodePageModel : DetailPageModel,
     IRecipient<NodeObserver.Renamed>,
-    IRecipient<NodeObserver.Deleted>
+    IRecipient<NodeObserver.Deleted>,
+    IRecipient<VariableObserver.Deleted>
 {
     /// <inheritdoc/>
     protected NodePageModel(Node node)
@@ -83,7 +84,13 @@ public abstract partial class NodePageModel : DetailPageModel,
         if (message.Observer.Id != Node.Id) return;
         OnPropertyChanged(nameof(Title));
     }
-    
+
+    public void Receive(Observer<Variable>.Deleted message)
+    {
+        if (message.Observer is not VariableObserver variable || !Variables.Contains(variable)) return;
+        Variables.Remove(variable);
+    }
+
     /// <summary>
     /// Sends a notification to the UI that the node was saved successfully.
     /// </summary>
@@ -105,7 +112,7 @@ public abstract partial class NodePageModel : DetailPageModel,
         Variables.Refresh(result.Value.Select(v => new VariableObserver(v)));
         Track(Variables);
     }
-    
+
     /// <summary>
     /// Get all collection sources for display in the run button. Since all sources are loaded in the navigation tree
     /// we can send this request without having get it again from the database. 

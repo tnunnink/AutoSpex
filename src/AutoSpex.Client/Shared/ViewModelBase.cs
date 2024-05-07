@@ -21,7 +21,6 @@ public abstract partial class ViewModelBase : ObservableValidator
     protected readonly Navigator Navigator = Container.Resolve<Navigator>();
     protected readonly Notifier Notifier = Container.Resolve<Notifier>();
     protected readonly Prompter Prompter = Container.Resolve<Prompter>();
-    protected readonly Manager Manager = Container.Resolve<Manager>();
 
     /// <summary>
     /// A command to request navigation of the this view model into the view of the application.

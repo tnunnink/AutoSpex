@@ -24,7 +24,10 @@ public static class DesignData
         new TestPageModel()
     ];
 
-    public static readonly ObservableCollection<ProjectObserver> Projects =
+    public static ProjectObserver RealProject = new DesignRealProjectObserver();
+    public static ProjectObserver FakeProject = new DesignFakeProjectObserver();
+
+    public static readonly ObserverCollection<Project, ProjectObserver> Projects =
     [
         new DesignRealProjectObserver(),
         new DesignFakeProjectObserver(),
@@ -86,21 +89,25 @@ public static class DesignData
     public static ObservableCollection<Argument> RadixOptions =>
         new(LogixEnum.Options<Radix>().Select(e => new Argument(e)));
 
-    public static SourceObserver Source = new(new Source(L5X.Load(@"C:\Users\admin\Documents\L5X\Test.L5X")));
+    //todo should we get something better than pointing to local disc
+    public static SourceObserver Source = new(new Source(L5X.Load(@"C:\Users\tnunn\Documents\L5X\Test.L5X")));
 
     public static ObservableCollection<SourceObserver> Sources =
     [
-        new SourceObserver(new Source(L5X.Load(@"C:\Users\admin\Documents\L5X\Test.L5X")))
-            {Name = "Test Source 01"},
-        new SourceObserver(new Source(L5X.Load(@"C:\Users\admin\Documents\L5X\Test.L5X")))
-            {Name = "Test Source 02", IsSelected = true},
-        new SourceObserver(new Source(L5X.Load(@"C:\Users\admin\Documents\L5X\Test.L5X")))
-            {Name = "Test Source 03"},
+        new SourceObserver(new Source(L5X.Load(@"C:\Users\tnunn\Documents\L5X\Test.L5X")))
+            { Name = "Test Source 01" },
+        new SourceObserver(new Source(L5X.Load(@"C:\Users\tnunn\Documents\L5X\Test.L5X")))
+            { Name = "Test Source 02", IsSelected = true },
+        new SourceObserver(new Source(L5X.Load(@"C:\Users\tnunn\Documents\L5X\Test.L5X")))
+            { Name = "Test Source 03" },
     ];
 
     public static LogixComponent DataType = new DesignSourceObserver().Model.L5X.DataTypes.First();
 
     public static ObservableCollection<LogixElement> DataTypes = new(new DesignSourceObserver().Model.L5X.DataTypes);
+
+    public static ObservableCollection<ElementObserver> DataTypeElements =
+        new(new DesignSourceObserver().Model.L5X.DataTypes.Select(t => new ElementObserver(t)));
 
     public static ObservableCollection<ElementObserver> Tags = new(new DesignSourceObserver().Model.L5X.Query<Tag>()
         .SelectMany(t => t.Members()).Select(x => new ElementObserver(x)));
@@ -129,12 +136,12 @@ public static class DesignData
     public static PropertyObserver RadixPropertyObserver => new DesignRadixPropertyObserver();
 
     public static PropertyObserver TagNamePropertyObserver => new(new DesignTextProperty(),
-        new ElementObserver(new Tag {Name = "MyTag"}));
+        new ElementObserver(new Tag { Name = "MyTag" }));
 
     public static PropertyObserver MembersPropertyObserver => new(new DesignMembersProperty(),
-        new ElementObserver(new Tag {Name = "MyTag", Value = new TIMER()}));
+        new ElementObserver(new Tag { Name = "MyTag", Value = new TIMER() }));
 
-    public static RunObserver Run => new(new Run(SpecNode, Source, Enumerable.Empty<Outcome>().ToList()));
+    public static RunObserver Run => new(new Run());
 
     private static IEnumerable<Node> GenerateNodes()
     {
@@ -168,19 +175,19 @@ public static class DesignData
     }
 
     public static EvaluationObserver PassedEvaluation = new(
-        Evaluation.Passed(new Criterion("DataType", Operation.Equal, "MyType"), new Tag() {Name = "Custom_Tag_Name"},
+        Evaluation.Passed(new Criterion("DataType", Operation.Equal, "MyType"), new Tag() { Name = "Custom_Tag_Name" },
             ["MyType"], "MyType"));
 
     public static EvaluationObserver FailedEvaluation = new(
         Evaluation.Failed(new Criterion("DataType", Operation.Contains, "Pump"),
-            new Tag() {Name = "MyProgram:Local_Tag_Name_01.Control.Value"}, ["Pump"], "ValveType"));
+            new Tag() { Name = "MyProgram:Local_Tag_Name_01.Control.Value" }, ["Pump"], "ValveType"));
 
     public static EvaluationObserver ErroredEvaluation = new(
-        Evaluation.Error(new Criterion("DataType", Operation.Equal, "MyType"), new Tag() {Name = "Custom_Tag_Name"},
+        Evaluation.Error(new Criterion("DataType", Operation.Equal, "MyType"), new Tag() { Name = "Custom_Tag_Name" },
             new ArgumentException("Could not execute code due to this throw exception")));
-    
-    public static ObservableCollection<EvaluationObserver> Evaluations = 
-        new(new []{PassedEvaluation, FailedEvaluation, ErroredEvaluation});
+
+    public static ObservableCollection<EvaluationObserver> Evaluations =
+        new(new[] { PassedEvaluation, FailedEvaluation, ErroredEvaluation });
 }
 
 public class TestPageModel : PageViewModel
@@ -190,9 +197,9 @@ public class TestPageModel : PageViewModel
 }
 
 public class DesignRealProjectObserver()
-    : ProjectObserver(new Project(@"C:\Users\admin\Documents\Spex\New Project.spex"));
+    : ProjectObserver(new Project(@"C:\Users\tnunn\Documents\Spex\New Project.spex"));
 
-public class DesignFakeProjectObserver() : ProjectObserver(new Project(@"C:\Users\admin\Documents\Spex\Fake.spex"));
+public class DesignFakeProjectObserver() : ProjectObserver(new Project(@"C:\Users\tnunn\Documents\Spex\Fake.spex"));
 
 public class DesignParentBreadcrumb() : Breadcrumb(Node.NewCollection(), CrumbType.Parent);
 
@@ -200,7 +207,12 @@ public class DesignTargetBreadcrumb() : Breadcrumb(Node.NewSpec(), CrumbType.Tar
 
 public class DesignPathBreadcrumb() : Breadcrumb(Node.NewCollection().AddFolder().AddSpec(), CrumbType.Target);
 
-public class DesignCriterionObserver() : CriterionObserver(new Criterion(), Element.Tag.Type);
+public class DesignCriterionObserver() : CriterionObserver(new Criterion
+{
+    Property = "Name",
+    Operation = Operation.Equal,
+    Arguments = ["Test"]
+}, Element.Tag.Type);
 
 public class DesignArgumentObserver() : ArgumentObserver(new Argument("Literal Text Value"));
 
@@ -216,4 +228,4 @@ public class DesignRadixPropertyObserver()
 public class DesignVariableObserver() : VariableObserver(new Variable("MyVar", "123"));
 
 public class DesignSourceObserver()
-    : SourceObserver(new Source(L5X.Load(@"C:\Users\admin\Documents\L5X\Test.L5X")));
+    : SourceObserver(new Source(L5X.Load(@"C:\Users\tnunn\Documents\L5X\Test.L5X")));

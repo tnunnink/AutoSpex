@@ -24,7 +24,6 @@
                            Foreground="{a:ThemeResource DefaultForegroundBrush}" />
             </StackPanel>
 
-
             <StackPanel Grid.Column="2"
                         Orientation="Horizontal"
                         Spacing="10"

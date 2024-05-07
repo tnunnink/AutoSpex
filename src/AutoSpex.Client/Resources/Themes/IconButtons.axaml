@@ -13,7 +13,7 @@
                         Classes="accent" />
                 <Button Theme="{DynamicResource IconButton}"
                         properties:ButtonIcon.Theme="{StaticResource IconClose}"
-                        Padding="10"
+                        Padding="9"
                         Classes="danger" />
                 <Button Theme="{DynamicResource IconButton}"
                         properties:ButtonIcon.Theme="{StaticResource IconExclamation}"
@@ -150,7 +150,7 @@
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="Height" Value="26" />
         <Setter Property="Width" Value="26" />
-        <Setter Property="Padding" Value="9" />
+        <Setter Property="Padding" Value="8" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Border x:Name="border"
@@ -170,12 +170,12 @@
         </Setter>
 
         <Style Selector="^:pointerover /template/ Border#border">
-            <Setter Property="Background" Value="{actipro:ThemeResource ButtonBackgroundBrushSubtlePointerOver}" />
-            <Setter Property="BorderBrush" Value="{actipro:ThemeResource ButtonBackgroundBrushSubtlePointerOver}" />
+            <Setter Property="Background" Value="{actipro:ThemeResource ButtonBackgroundBrushSoftPointerOver}" />
+            <Setter Property="BorderBrush" Value="{actipro:ThemeResource ButtonBackgroundBrushSoftPointerOver}" />
         </Style>
         <Style Selector="^:pressed /template/ Border#border">
-            <Setter Property="Background" Value="{actipro:ThemeResource ButtonBackgroundBrushSubtlePressed}" />
-            <Setter Property="BorderBrush" Value="{actipro:ThemeResource ButtonBackgroundBrushSubtlePressed}" />
+            <Setter Property="Background" Value="{actipro:ThemeResource ButtonBackgroundBrushSoftPressed}" />
+            <Setter Property="BorderBrush" Value="{actipro:ThemeResource ButtonBackgroundBrushSoftPressed}" />
         </Style>
         <Style Selector="^:disabled /template/ PathIcon">
             <Setter Property="Foreground" Value="{actipro:ThemeResource ButtonForegroundBrushDisabled}" />

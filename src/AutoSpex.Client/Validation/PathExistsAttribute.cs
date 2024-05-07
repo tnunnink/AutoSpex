@@ -5,8 +5,7 @@ using System.IO;
 namespace AutoSpex.Client.Validation;
 
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
-public class PathExistsAttribute(PathType pathType = PathType.Either)
-    : ValidationAttribute
+public class PathExistsAttribute(PathType pathType = PathType.Either) : ValidationAttribute
 {
     protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
     {

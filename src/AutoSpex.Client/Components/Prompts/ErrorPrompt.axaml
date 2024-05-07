@@ -1,0 +1,37 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="using:AutoSpex.Client.Components"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
+
+    <Design.PreviewWith>
+        <components:ErrorPrompt Title="An error has occurred"
+                                ErrorContent="This is the content of the error message to the user to let them know what iw going on"/>
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type components:ErrorPrompt}" TargetType="components:ErrorPrompt">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <controls:Prompt Header="{TemplateBinding Title}"
+                                 HeaderIcon="{StaticResource IconErrorFilled}"
+                                 UseActionButton="False"
+                                 CancelButtonText="Okay"
+                                 CancelButtonTheme="{a:ControlTheme ButtonSoft}"
+                                 CancelCommandParameter="{StaticResource False}"
+                                 Classes="danger"
+                                 MinWidth="300" MaxWidth="500" Padding="20">
+                    <controls:Prompt.Content>
+                        <StackPanel Spacing="10">
+                            <ContentPresenter Content="{TemplateBinding ErrorContent}" />
+                            <Expander Header="Error Details"
+                                      IsVisible="{Binding Exception, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ObjectConverters.IsNotNull}}">
+                                <SelectableTextBlock
+                                    Text="{Binding Exception.Message, RelativeSource={RelativeSource TemplatedParent}, FallbackValue={x:Null}}" />
+                            </Expander>
+                        </StackPanel>
+                    </controls:Prompt.Content>
+                </controls:Prompt>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

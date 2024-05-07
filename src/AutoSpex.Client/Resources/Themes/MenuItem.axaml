@@ -21,10 +21,10 @@
                 <MenuFlyout>
                     <MenuItem Theme="{DynamicResource ContextMenuItem}"
                               Header="Delete Item" />
-                    <MenuItem Icon="{StaticResource IconAdd}"
+                    <MenuItem Icon="{StaticResource IconCopyOutlined}"
                               Theme="{DynamicResource ContextMenuItem}"
                               Header="Add Item" />
-                    <MenuItem Icon="{StaticResource IconPlayOutlined}"
+                    <MenuItem Icon="{StaticResource IconPinOutlined}"
                               Theme="{DynamicResource ContextMenuItem}"
                               Header="Play Item"
                               InputGesture="Shift+R" />

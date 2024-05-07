@@ -13,8 +13,8 @@
                 <StackPanel VerticalAlignment="Center"
                             HorizontalAlignment="Center"
                             Spacing="10">
-                    <Image Source="../../Resources/Images/inspect-code.png"
-                           Height="60" Width="60" Opacity="0.5" Margin="20" />
+                    <Image Source="../../Resources/Images/logo.png"
+                           Height="60" Width="60" Margin="20" />
 
                     <StackPanel Spacing="10">
                         <TextBlock Text="Create or add new item:"
@@ -54,7 +54,7 @@
                             <Button Theme="{a:ControlTheme ButtonSubtle}"
                                     Command="{TemplateBinding AddRunnerCommand, Mode=TwoWay}"
                                     ToolTip.Tip="New Runner">
-                                <PathIcon Theme="{StaticResource IconRunnerThemed}" />
+                                <PathIcon Theme="{StaticResource IconRunThemed}" />
                             </Button>
                         </StackPanel>
                     </StackPanel>

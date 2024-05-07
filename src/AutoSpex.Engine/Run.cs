@@ -1,4 +1,5 @@
 ﻿using JetBrains.Annotations;
+using L5Sharp.Core;
 using Task = System.Threading.Tasks.Task;
 
 namespace AutoSpex.Engine;
@@ -6,8 +7,6 @@ namespace AutoSpex.Engine;
 [PublicAPI]
 public class Run
 {
-    private readonly List<Outcome> _outcomes = [];
-
     public Run()
     {
     }
@@ -15,7 +14,7 @@ public class Run
     public Run(Guid nodeId, Guid sourceId)
     {
         NodeId = nodeId;
-        SourceId
+        SourceId = sourceId;
     }
 
     public Guid RunId { get; private set; } = Guid.NewGuid();
@@ -25,35 +24,31 @@ public class Run
     public ResultState Result { get; private set; } = ResultState.None;
     public DateTime RanOn { get; private set; } = DateTime.Now;
     public string RanBy { get; private set; } = Environment.UserName;
-    public IReadOnlyCollection<Outcome> Outcomes => _outcomes;
-
+    public List<Outcome> Outcomes { get; } = [];
 
     /// <summary>
     /// Executes the runner with the given input source.
     /// </summary>
     /// <param name="specs"></param>
-    /// <param name="source"></param>
+    /// <param name="content"></param>
     /// <param name="progress">The progress object for tracking the execution progress. (optional)</param>
     /// <returns>The Run object that encapsulates the execution outcome.</returns>
     /// <exception cref="InvalidOperationException">Thrown when the input source is null.</exception>
-    public async Task Execute(IEnumerable<Spec> specs, Source source, IProgress<Outcome>? progress = default)
+    public async Task Execute(IEnumerable<Spec> specs, L5X content, IProgress<Outcome>? progress = default)
     {
         if (specs is null) throw new ArgumentNullException(nameof(specs));
-        if (source is null) throw new ArgumentNullException(nameof(source));
+        if (content is null) throw new ArgumentNullException(nameof(content));
 
-        _outcomes.Clear();
-
-        var content = source.L5X;
+        Outcomes.Clear();
 
         foreach (var spec in specs)
         {
             var outcome = await spec.Run(content);
             progress?.Report(outcome);
-            _outcomes.Add(outcome);
+            Outcomes.Add(outcome);
         }
-
-        SourceId = source.SourceId;
-        Result = _outcomes.Count > 0 ? _outcomes.Max(r => r.Result) : ResultState.None;
+        
+        Result = Outcomes.Count > 0 ? Outcomes.Max(r => r.Result) : ResultState.None;
         RanOn = DateTime.Now;
         RanBy = Environment.UserName;
     }

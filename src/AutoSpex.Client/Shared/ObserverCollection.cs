@@ -48,10 +48,11 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
 
         Attach(this);
     }
-
+    
     public bool IsChanged => _changed || this.Any(o => o.IsChanged);
     public bool IsRefreshing { get; private set; }
-
+    public event PropertyChangedEventHandler? ItemPropertyChanged;
+    
     public void AcceptChanges()
     {
         _changed = false;
@@ -154,8 +155,8 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
 
     private void Attach(TObserver observer)
     {
-        observer.PropertyChanged -= ItemPropertyChanged;
-        observer.PropertyChanged += ItemPropertyChanged;
+        observer.PropertyChanged -= OnObserverPropertyChanged;
+        observer.PropertyChanged += OnObserverPropertyChanged;
     }
 
     private void Detach(IEnumerable<TObserver> observers)
@@ -166,12 +167,25 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
 
     private void Detach(TObserver observer)
     {
-        observer.PropertyChanged -= ItemPropertyChanged;
+        observer.PropertyChanged -= OnObserverPropertyChanged;
     }
 
-    private void ItemPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    private void OnObserverPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (sender is not TObserver || e.PropertyName != nameof(IsChanged)) return;
-        OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsChanged)));
+        if (sender is not TObserver observer) return;
+        
+        //Raise that an item property changed.
+        RaiseItemPropertyChanged(observer, e);
+
+        //Propagate the IsChanged property change up the object graph.
+        if (e.PropertyName == nameof(IsChanged))
+        {
+            OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsChanged)));    
+        }
+    }
+
+    private void RaiseItemPropertyChanged(TObserver item, PropertyChangedEventArgs e)
+    {
+        ItemPropertyChanged?.Invoke(item, e);
     }
 }

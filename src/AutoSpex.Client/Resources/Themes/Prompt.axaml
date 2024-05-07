@@ -36,7 +36,7 @@
 
     <actipro:ThicknessConverter x:Key="HeaderThicknessConverter" Filter="Left, Top" BaseThickness="0,0,5,5" />
 
-    <!--Base Dialog-->
+    <!--Base Prompt-->
     <ControlTheme x:Key="{x:Type controls:Prompt}" TargetType="controls:Prompt">
         <Setter Property="Background" Value="{actipro:ThemeResource PopupBackgroundBrush}" />
         <Setter Property="BorderBrush" Value="{actipro:ThemeResource PopupBorderBrush}" />
@@ -48,8 +48,7 @@
         <Setter Property="Padding" Value="10" />
         <Setter Property="Template">
             <ControlTemplate>
-                <actipro:ShadowChrome Elevation="22"
-                                      Margin="{Binding $self.ShadowThickness}">
+                <actipro:ShadowChrome Elevation="22">
                     <Border BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             Background="{TemplateBinding Background}"
@@ -123,6 +122,7 @@
                                                 CommandParameter="{TemplateBinding CancelCommandParameter}"
                                                 MinWidth="80" />
                                         <Button x:Name="ActionButton"
+                                                IsVisible="{TemplateBinding UseActionButton}"
                                                 Content="{TemplateBinding ActionButtonText}"
                                                 Theme="{TemplateBinding ActionButtonTheme}"
                                                 Command="{TemplateBinding ActionCommand}"

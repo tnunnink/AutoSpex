@@ -18,7 +18,7 @@ public class ProofTests
         var outcome = await spec.Run(source);
 
         outcome.Result.Should().Be(ResultState.Passed);
-        outcome.Verifications.Should().HaveCount(2);
+        outcome.Evaluations.Should().HaveCount(2);
     }
 
     [Test]

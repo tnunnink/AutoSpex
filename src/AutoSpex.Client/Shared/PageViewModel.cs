@@ -11,7 +11,7 @@ public abstract partial class PageViewModel : TrackableViewModel, IEquatable<Pag
 {
     /// <summary>
     /// A resource identifier that identifies this page relative to any other. The default implementation is this
-    /// type name but derived classes can override to indicate how a given object should be identified.
+    /// type name but derived classes can override to indicate how a given page should be identified.
     /// </summary>
     public virtual string Route => GetType().Name;
 

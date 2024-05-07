@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Text.Json;
-using AutoSpex.Engine.Converters;
 using JetBrains.Annotations;
 using L5Sharp.Core;
 using Task = System.Threading.Tasks.Task;
@@ -14,9 +13,11 @@ public class Spec()
     /// Creates a new <see cref="Spec"/> with the provided node id.
     /// </summary>
     /// <param name="nodeId">The <see cref="Guid"/> representing the owning node for this spec config.</param>
-    public Spec(Guid nodeId) : this()
+    /// <param name="name">The <see cref="string"/> name of the owning node for this spec config.</param>
+    public Spec(Guid nodeId, string? name = default) : this()
     {
         SpecId = nodeId;
+        Name = name ?? string.Empty;
     }
 
     /// <summary>
@@ -24,9 +25,18 @@ public class Spec()
     /// </summary>
     /// <remarks>
     /// This is actually the same as the owning node's NodeId since any given spec should belong to a node.
-    /// If this objects is created as a orphaned spec then this id will be <see cref="Guid.Empty"/>.
+    /// If this objects is created as an orphaned spec then this id will be <see cref="Guid.Empty"/>.
     /// </remarks>
-    public Guid SpecId { get; private set; }
+    public Guid SpecId { get; private set; } = Guid.Empty;
+
+    /// <summary>
+    /// The name of the spec. 
+    /// </summary>
+    /// <remarks>
+    /// This is actually the same as the owning node's Name since any given spec should belong to a node.
+    /// If this objects is created as an orphaned spec then this id will be <see cref="String.Empty"/>.
+    /// </remarks>
+    public string Name { get; private set; } = string.Empty;
 
     /// <summary>
     /// The target <see cref="Engine.Element"/> this spec represents. This is the Logix type that we are validating.
@@ -95,9 +105,10 @@ public class Spec()
     /// Runs the Spec on the given L5X content and returns the outcome.
     /// </summary>
     /// <param name="content">The L5X content to run the Spec on.</param>
+    /// <param name="token"></param>
     /// <returns>The outcome of the Spec run.</returns>
     /// <exception cref="ArgumentNullException">Thrown when the content parameter is null.</exception>
-    public Task<Outcome> Run(L5X content)
+    public Task<Outcome> Run(L5X content, CancellationToken token = default)
     {
         if (content is null)
             throw new ArgumentNullException(nameof(content));
@@ -111,9 +122,13 @@ public class Spec()
 
             //1.Query content
             var elements = Element.Query(content);
+            
+            token.ThrowIfCancellationRequested();
 
             //2.Filter content
             var filtered = elements.Where(Filter).ToList();
+            
+            token.ThrowIfCancellationRequested();
 
             //3.Evaluate count (if configured)
             if (Settings.VerifyCount)
@@ -124,8 +139,8 @@ public class Spec()
             
             stopwatch.Stop();
 
-            return new Outcome(SpecId, verifications, stopwatch.ElapsedMilliseconds);
-        });
+            return new Outcome(this, verifications, stopwatch.ElapsedMilliseconds);
+        }, token);
     }
 
     /// <summary>
