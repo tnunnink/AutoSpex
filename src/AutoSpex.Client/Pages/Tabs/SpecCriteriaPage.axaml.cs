@@ -2,9 +2,9 @@
 
 namespace AutoSpex.Client.Pages;
 
-public partial class FolderPage : UserControl
+public partial class SpecCriteriaPage : UserControl
 {
-    public FolderPage()
+    public SpecCriteriaPage()
     {
         InitializeComponent();
     }

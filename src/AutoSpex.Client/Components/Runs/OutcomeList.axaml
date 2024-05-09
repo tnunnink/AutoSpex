@@ -1,0 +1,80 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="using:AutoSpex.Client.Components"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+
+    <Design.PreviewWith>
+        <Border Padding="30" Height="300" Width="800">
+            <components:OutcomeList Outcomes="{x:Static components:DesignData.Outcomes}"/>
+        </Border>
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type components:OutcomeList}" TargetType="components:OutcomeList">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <components:Section>
+                    <components:Section.Header>
+                        <Grid>
+                            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal"
+                                        Spacing="10" Margin="5 0">
+                                <TextBlock Text="Outcomes"
+                                           FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
+                            </StackPanel>
+
+                            <TextBox x:Name="FilterText"
+                                     Theme="{a:ControlTheme TextBoxOutline}"
+                                     BorderThickness="0"
+                                     Watermark="Filter results"
+                                     VerticalContentAlignment="Center" HorizontalAlignment="Center"
+                                     Width="300" Padding="0">
+                                <TextBox.InnerLeftContent>
+                                    <PathIcon Theme="{StaticResource IconFilter}"
+                                              Margin="5 0" />
+                                </TextBox.InnerLeftContent>
+                            </TextBox>
+
+                            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" VerticalAlignment="Center"
+                                        Spacing="5">
+                                <Button properties:ButtonIcon.Theme="{StaticResource IconDotsVertical}"
+                                        Theme="{StaticResource IconButton}">
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </components:Section.Header>
+
+                    <controls:DrawerView DrawerPlacement="Right"
+                                         DrawerClosedLength="30"
+                                         IsDrawerOpen="True">
+
+                        <ListBox
+                            ItemsSource="{Binding Outcomes, RelativeSource={RelativeSource TemplatedParent}}"
+                            ItemContainerTheme="{StaticResource ListBoxItemSubtle}"
+                            ItemTemplate="{StaticResource OutcomeItem}"
+                            BorderThickness="0" CornerRadius="0 0 0 5" ClipToBounds="True">
+                        </ListBox>
+
+                        <controls:DrawerView.Drawer>
+                            <StackPanel Orientation="Horizontal">
+                                <Border Width="30"
+                                        Background="{a:ThemeResource Container2BackgroundBrush}"
+                                        BorderThickness="0">
+                                </Border>
+
+                                <ListBox
+                                    ItemsSource="{Binding Evaluations, RelativeSource={RelativeSource TemplatedParent}}"
+                                    ItemContainerTheme="{StaticResource ListBoxItemSubtle}"
+                                    BorderThickness="0">
+                                    <ListBox.ItemTemplate>
+                                        <components:EvaluationTemplates />
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </StackPanel>
+                        </controls:DrawerView.Drawer>
+                    </controls:DrawerView>
+                </components:Section>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

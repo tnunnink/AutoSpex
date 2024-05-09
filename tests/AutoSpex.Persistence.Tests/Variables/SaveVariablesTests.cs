@@ -1,6 +1,4 @@
-﻿using AutoSpex.Persistence.Variables;
-
-namespace AutoSpex.Persistence.Tests.Variables;
+﻿namespace AutoSpex.Persistence.Tests.Variables;
 
 [TestFixture]
 public class SaveVariablesTests

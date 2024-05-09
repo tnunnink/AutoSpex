@@ -12,29 +12,24 @@ public record CreateSource(Source Source) : IDbCommand<Result>;
 [UsedImplicitly]
 internal class CreateSourceHandler(IConnectionManager manager) : IRequestHandler<CreateSource, Result>
 {
-    private const string UnselectSources = 
+    private const string UnselectSources =
         "UPDATE Source Set IsSelected = 0 WHERE SourceId <> @SourceId";
-    
-    private const string InsertSource =
-        "INSERT INTO Source (SourceId, IsSelected, Name, Documentation, TargetType, TargetName, ExportedBy, ExportedOn, Content)" +
-        " VALUES (@SourceId, @IsSelected, @Name, @Documentation, @TargetType, @TargetName, @ExportedBy, @ExportedOn, @Content)";
 
-    /*private const string InsertValues =
-        "INSERT INTO SourceValue(SourceId, Hash, Value) VALUES (@SourceId, @Hash, @Value)";*/
+    private const string InsertSource =
+        """
+        INSERT INTO Source (SourceId, IsSelected, Name, Documentation, TargetType, TargetName, ExportedBy, ExportedOn, Content)
+        VALUES (@SourceId, @IsSelected, @Name, @Documentation, @TargetType, @TargetName, @ExportedBy, @ExportedOn, @Content)
+        """;
 
     public async Task<Result> Handle(CreateSource request, CancellationToken cancellationToken)
     {
         using var connection = await manager.Connect(Database.Project, cancellationToken);
         using var transaction = connection.BeginTransaction();
-        
-        //If the source to add is to be selected then reset all other sources first.
-        if (request.Source.IsSelected)
-        {
-            await connection.ExecuteAsync(UnselectSources, new {request.Source.SourceId}, transaction);
-        }
-        
+
+        //We will always just default the new source as the "selected" source, meaning unselect the others before inserting.
+        await connection.ExecuteAsync(UnselectSources, new { request.Source.SourceId }, transaction);
         await connection.ExecuteAsync(InsertSource, request.Source, transaction);
-        
+
         transaction.Commit();
         return Result.Ok();
     }

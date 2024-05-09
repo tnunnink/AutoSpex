@@ -4,7 +4,7 @@ using FluentResults;
 using JetBrains.Annotations;
 using MediatR;
 
-namespace AutoSpex.Persistence.Variables;
+namespace AutoSpex.Persistence;
 
 /// <summary>
 /// Gets all variables defined for the provided set of node id's.

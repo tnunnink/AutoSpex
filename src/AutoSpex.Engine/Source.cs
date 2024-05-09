@@ -33,8 +33,8 @@ public class Source
     }
 
     public Guid SourceId { get; private init; } = Guid.NewGuid();
-    public bool IsSelected { get; set; }
     public string Name { get; set; } = string.Empty;
+    public bool IsSelected { get; set; }
     public string Documentation { get; set; } = string.Empty;
     public string TargetType { get; private set; } = string.Empty;
     public string TargetName { get; private set; } = string.Empty;

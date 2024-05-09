@@ -1,4 +1,7 @@
-﻿using JetBrains.Annotations;
+﻿using System.Diagnostics;
+using JetBrains.Annotations;
+using L5Sharp.Core;
+using Task = System.Threading.Tasks.Task;
 
 namespace AutoSpex.Engine;
 
@@ -9,44 +12,62 @@ namespace AutoSpex.Engine;
 public class Outcome
 {
     /// <summary>
-    /// Creates an empty <see cref="Outcome"/> containing the provided spec id.
+    /// Creates an empty outcome.
     /// </summary>
-    /// <param name="specId">The <see cref="Guid"/> of the spec this outcome represents.</param>
-    /// <remarks>
-    /// A <see cref="Outcome"/> has a one-to-one relationship with a spec node. Allowing instantiated outcomes
-    /// with just the spec id will allow us to pass in default outcomes to be used to know which specs to run.
-    /// </remarks>
-    public Outcome(Guid specId)
+    private Outcome()
     {
-    }
-    
-    /// <summary>
-    /// Creates a new <see cref="Outcome"/> instance for the provided spec id and resulting collection of verifications.
-    /// </summary>
-    /// <param name="spec">The <see cref="Spec"/> that produced this outcome.</param>
-    /// <param name="verifications">The collection of <see cref="Verification"/> that resulted from running the spec.</param>
-    /// <param name="duration">The duration in milliseconds it took to run the spec.</param>
-    public Outcome(Spec spec, ICollection<Verification> verifications, long duration = 0)
-    {
-        SpecId = spec.SpecId;
-        SpecName = spec.Name;
-        Duration = duration;
-        Result = verifications.Count > 0 ? verifications.Max(v => v.Result) : ResultState.Passed;
-        Total = verifications.Count;
-        Passed = verifications.Count(v => v.Result == ResultState.Passed);
-        Failed = verifications.Count(v => v.Result == ResultState.Failed);
-        Errored = verifications.Count(v => v.Result == ResultState.Error);
-        Evaluations = verifications.SelectMany(v => v.Evaluations).ToList();
+        Spec = default!;
     }
 
-    public Guid OutcomeId { get; } = Guid.NewGuid();
-    public Guid SpecId { get; } = Guid.Empty;
-    public string SpecName { get; } = string.Empty;
-    public ResultState Result { get; } = ResultState.None;
-    public long Duration { get; }
-    public int Total { get; }
-    public int Passed { get; }
-    public int Failed { get; }
-    public int Errored { get; }
+    public Outcome(Spec spec)
+    {
+        Spec = spec ?? throw new ArgumentNullException(nameof(spec));
+    }
+
+    public Guid OutcomeId { get; private set; } = Guid.NewGuid();
+    public Guid SpecId => Spec.SpecId;
+    public Spec Spec { get; private set; }
+    public ResultState Result { get; private set; } = ResultState.None;
+    public long Duration { get; private set; }
     public List<Evaluation> Evaluations { get; } = [];
+
+    /// <summary>
+    /// Processes this outcome using the configured spec and provided source content.
+    /// </summary>
+    /// <param name="content">The L5X to run against.</param>
+    public async Task Process(L5X content)
+    {
+        if (Spec is null) throw new InvalidOperationException("");
+        if (content is null) throw new ArgumentNullException(nameof(content));
+
+        if (Evaluations.Count > 0) Evaluations.Clear();
+
+        var stopwatch = Stopwatch.StartNew();
+        var verifications = (await Spec.Run(content)).ToList();
+        stopwatch.Stop();
+
+        Result = verifications.Count > 0 ? verifications.Max(r => r.Result) : ResultState.None;
+        Duration = stopwatch.ElapsedMilliseconds;
+        Evaluations.AddRange(verifications.SelectMany(v => v.Evaluations));
+    }
+
+    /// <summary>
+    /// Resets the result, duration and evaluations to the default state. This is used prior to running again.
+    /// </summary>
+    public void Reset()
+    {
+        Result = ResultState.None;
+        Duration = 0;
+        Evaluations.Clear();
+    }
+
+    /// <summary>
+    /// Updates the <see cref="Spec"/> associated with the <see cref="Outcome"/>.
+    /// </summary>
+    /// <param name="spec">The new <see cref="Spec"/> to be associated with the <see cref="Outcome"/>.</param>
+    /// <exception cref="ArgumentNullException">Thrown when the provided <paramref name="spec"/> is null.</exception>
+    public void Update(Spec spec)
+    {
+        Spec = spec ?? throw new ArgumentNullException(nameof(spec));
+    }
 }

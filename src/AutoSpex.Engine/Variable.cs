@@ -64,10 +64,26 @@ public class Variable : IEquatable<Variable>
     public string Name { get; set; } = "Variable";
 
     /// <summary>
+    /// The type of the variable value. This is persisted, so we know how to materialize the object value to a strongly
+    /// typed object.
+    /// </summary>
+    public Type Type { get; private set; } = typeof(string);
+
+    /// <summary>
+    /// The raw string data representing the value of the variable. This is what is persisted and ultimately what
+    /// <see cref="Value"/> is after being parsed using the defined type.
+    /// </summary>
+    /// <remarks>
+    /// By default, this will be an empty string making it a simple text type variable in which the user can
+    /// assign a value. However, this can also be an inner variable for which to chain to another value.
+    /// </remarks>
+    public string Data { get; private set; } = string.Empty;
+
+    /// <summary>
     /// The object value of the <see cref="Variable"/>.
     /// </summary>
     /// <remarks>
-    /// By default this will be an empty string making it a simple text type variable in which the user can
+    /// By default, this will be an empty string making it a simple text type variable in which the user can
     /// assign a value. However, this can also be a complex object like a LogixElement or LogixEnum value.
     /// </remarks>
     public object Value
@@ -75,16 +91,6 @@ public class Variable : IEquatable<Variable>
         get => GetValue();
         set => SetValue(value);
     }
-
-    /// <summary>
-    /// The raw string data representing the value of the variable. This is what is persisted and ultimately what
-    /// <see cref="Value"/> is after being parsed using the defined type.
-    /// </summary>
-    /// <remarks>
-    /// By default this will be an empty string making it a simple text type variable in which the user can
-    /// assign a value. However, this can also be an inner variable for which to chain to another value.
-    /// </remarks>
-    public string Data { get; private set; } = string.Empty;
 
     /// <summary>
     /// A summary of what the variable represents or is used for.
@@ -112,12 +118,6 @@ public class Variable : IEquatable<Variable>
     public string? OverrideData { get; private set; }
 
     /// <summary>
-    /// The type of the variable value. This is persisted so we know how to materialize the object value to a strongly
-    /// typed object.
-    /// </summary>
-    public Type Type { get; private set; } = typeof(string);
-
-    /// <summary>
     /// The type group which the variable value belongs.
     /// </summary>
     public TypeGroup Group => TypeGroup.FromType(Type);
@@ -142,8 +142,7 @@ public class Variable : IEquatable<Variable>
     public bool Equals(Variable? other)
     {
         if (ReferenceEquals(null, other)) return false;
-        if (ReferenceEquals(this, other)) return true;
-        return VariableId.Equals(other.VariableId);
+        return ReferenceEquals(this, other) || VariableId.Equals(other.VariableId);
     }
 
     /// <inheritdoc />
@@ -151,7 +150,6 @@ public class Variable : IEquatable<Variable>
 
     /// <inheritdoc />
     public override int GetHashCode() => VariableId.GetHashCode();
-
 
     /// <summary>
     /// Gets the strongly typed object value using the variable's current <see cref="Data"/> and <see cref="Type"/>.
@@ -186,21 +184,16 @@ public class Variable : IEquatable<Variable>
         if (type == typeof(string))
             return data;
 
-        //If this is a logix element or logix data type then we will deserialize it.
+        //If this is a logix element type, then we will deserialize it.
         if (type.IsAssignableTo(typeof(LogixElement)))
             return XElement.Parse(data).Deserialize();
 
-
-        //If L5Sharp can parse the type then we use its parser.
-        return type.IsParsable()
-            ? data.Parse(type)
-            :
-            //Anything not parsable or known will just be text.
-            data;
+        //If L5Sharp can parse the type then we use its parser. Anything not parsable or known will just be text.
+        return type.IsParsable() ? data.Parse(type) : data;
     }
 
     /// <summary>
-    /// Converts an input object to the storable/persistable string value which we will know how to convert back to the
+    /// Converts an input object to the storable string value which we will know how to convert back to the
     /// strongly typed object.
     /// </summary>
     private static string StringifyData(object? value)

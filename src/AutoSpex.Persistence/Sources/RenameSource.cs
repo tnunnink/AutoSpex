@@ -12,13 +12,12 @@ public record RenameSource(Source Source) : IDbCommand<Result>;
 [UsedImplicitly]
 internal class RenameSourceHandler(IConnectionManager manager) : IRequestHandler<RenameSource, Result>
 {
-    private const string Command = "UPDATE Source SET Name = @Name WHERE SourceId = @SourceId";
-
+    private const string RenameSource = "UPDATE Source SET Name = @Name WHERE SourceId = @SourceId";
 
     public async Task<Result> Handle(RenameSource request, CancellationToken cancellationToken)
     {
         var connection = await manager.Connect(Database.Project, cancellationToken);
-        var updated = await connection.ExecuteAsync(Command, request.Source);
+        var updated = await connection.ExecuteAsync(RenameSource, request.Source);
         return Result.OkIf(updated == 1, $"Source not found: '{request.Source.SourceId}'");
     }
 }

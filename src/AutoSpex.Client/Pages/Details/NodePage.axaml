@@ -4,8 +4,9 @@
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
              xmlns:components="clr-namespace:AutoSpex.Client.Components"
              xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
-             x:Class="AutoSpex.Client.Pages.CollectionPage"
-             x:DataType="pages:CollectionPageModel">
+             xmlns:shared="clr-namespace:AutoSpex.Client.Shared"
+             x:Class="AutoSpex.Client.Pages.NodePage"
+             x:DataType="pages:NodePageModel">
 
     <Design.Width>1400</Design.Width>
     <Design.Height>1000</Design.Height>
@@ -13,20 +14,22 @@
     <DockPanel>
         <Border DockPanel.Dock="Top" Padding="10">
             <Grid ColumnDefinitions="Auto,*,Auto">
+
                 <components:BreadcrumbControl
                     Grid.Column="0"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center"
                     Breadcrumb="{Binding Breadcrumb}" />
+
                 <StackPanel
                     Grid.Column="2"
                     Orientation="Horizontal"
                     Spacing="10">
 
-                    <components:RunNodeButton />
+                    <components:RunNodeButton Sources="{Binding Sources}"
+                                              RunCommand="{Binding RunCommand}" />
 
-                    <components:SaveNodeButton
-                        SaveCommand="{Binding SaveCommand}" />
+                    <components:SaveNodeButton SaveCommand="{Binding SaveCommand}" />
 
                     <Button Theme="{StaticResource IconButton}"
                             Height="30" Width="30"
@@ -41,31 +44,27 @@
             </Grid>
         </Border>
 
-        <TabControl ItemContainerTheme="{StaticResource TabItemStandard}"
-                    BorderThickness="0 1 0 0"
+        <TabControl ItemsSource="{Binding Tabs}"
+                    SelectedItem="{Binding SelectedTab}"
+                    ItemContainerTheme="{StaticResource TabItemStandard}"
+                    SelectedValue="{Binding SelectedTab}"
                     BorderBrush="{a:ThemeResource Container1BorderBrush}"
-                    Padding="0">
+                    Padding="0" BorderThickness="0 1 0 0">
             <TabControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal" Margin="10 0" />
                 </ItemsPanelTemplate>
             </TabControl.ItemsPanel>
-            <TabItem Header="Specs">
-                <components:SpecList
-                    Margin="30"
-                    Specs="{Binding Specs}" />
-            </TabItem>
-            <TabItem Header="Variables">
-                <components:VariableList
-                    Margin="30"
-                    Variables="{Binding Variables}" />
-            </TabItem>
-            <TabItem Header="Runs">
-
-            </TabItem>
-            <TabItem Header="Log">
-
-            </TabItem>
+            <TabControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Title}" />
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+            <TabControl.ContentTemplate>
+                <DataTemplate x:DataType="shared:PageViewModel">
+                    <ContentControl Content="{Binding}" Margin="30" />
+                </DataTemplate>
+            </TabControl.ContentTemplate>
         </TabControl>
     </DockPanel>
 </UserControl>

@@ -32,5 +32,12 @@
       <jdbc-url>jdbc:sqlite:$USER_HOME$/Documents/Spex/New Project.spex</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="project.db" uuid="7b053889-fb70-41a6-9e06-248b4bfd508b">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/../tests/AutoSpex.Persistence.Tests/bin/Debug/net7.0/project.db</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

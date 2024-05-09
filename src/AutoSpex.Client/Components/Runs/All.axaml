@@ -3,6 +3,8 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceInclude Source="ResultPill.axaml" />
         <ResourceInclude Source="RunSummary.axaml" />
+        <ResourceInclude Source="OutcomeList.axaml" />
+        <ResourceInclude Source="OutcomeTemplate.axaml" />
         <ResourceInclude Source="EvaluationTemplates.axaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

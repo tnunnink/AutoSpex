@@ -12,147 +12,117 @@
     </Design.PreviewWith>
 
     <ControlTheme x:Key="{x:Type components:SpecList}" TargetType="components:SpecList">
-        <Setter Property="Padding" Value="10" />
         <Setter Property="Template">
             <ControlTemplate>
-                <Border BorderBrush="{a:ThemeResource Container1BorderBrush}"
-                        BorderThickness="1" CornerRadius="5">
-                    <Grid RowDefinitions="Auto,Auto">
-                        <Border Grid.Row="0"
-                                Background="{a:ThemeResource Container3BackgroundBrush}"
-                                Padding="5"
-                                CornerRadius="5 5 0 0">
-                            <Grid ColumnDefinitions="Auto,*,Auto">
-                                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10" Margin="5 0 10 0">
-                                    <CheckBox
-                                        x:Name="CheckAll"
-                                        Classes="size-xs accent"
-                                        Theme="{a:ControlTheme CheckBoxSolid}" />
+                <components:Section>
+                    <components:Section.Header>
+                        <Grid ColumnDefinitions="Auto,*,Auto">
+                            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10" Margin="5 0 10 0">
+                                <CheckBox
+                                    x:Name="CheckAll"
+                                    Classes="size-xs accent"
+                                    Theme="{a:ControlTheme CheckBoxSolid}" />
 
-                                    <TextBlock
-                                        Text="Specs"
-                                        FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
-
-                                    <PathIcon
-                                        Theme="{StaticResource IconInfoOutline}"
-                                        Margin="0 1 0 0"
-                                        ToolTip.Tip="" />
-                                </StackPanel>
-
-                                <TextBox x:Name="FilterText"
-                                         Grid.Column="1"
-                                         Theme="{a:ControlTheme TextBoxSoft}"
-                                         Watermark="Filter specs"
-                                         VerticalContentAlignment="Center" HorizontalAlignment="Center"
-                                         Width="300" Height="30"
-                                         Padding="0 5">
-                                    <TextBox.InnerLeftContent>
-                                        <PathIcon Theme="{StaticResource IconFilter}"
-                                                  Margin="5 0" />
-                                    </TextBox.InnerLeftContent>
-                                </TextBox>
-
-                                <StackPanel Grid.Column="2"
-                                            Orientation="Horizontal"
-                                            VerticalAlignment="Center"
-                                            Spacing="5">
-                                    <Button properties:ButtonIcon.Theme="{StaticResource IconAdd}"
-                                            Theme="{StaticResource IconButton}"
-                                            Command="{Binding AddCommand, RelativeSource={RelativeSource TemplatedParent}}"
-                                            Classes="accent"
-                                            ToolTip.Tip="Add Criteria" />
-                                    <Button properties:ButtonIcon.Theme="{StaticResource IconTrashOutlined}"
-                                            Theme="{StaticResource IconButton}"
-                                            Command="{Binding RemoveCommand, RelativeSource={RelativeSource TemplatedParent}}"
-                                            ToolTip.Tip="Delete Selected" />
-                                    <Button properties:ButtonIcon.Theme="{StaticResource IconCopyOutlined}"
-                                            Theme="{StaticResource IconButton}"
-                                            Command="{Binding CopyCommand, RelativeSource={RelativeSource TemplatedParent}}"
-                                            ToolTip.Tip="Copy Selected" />
-                                    <Button properties:ButtonIcon.Theme="{StaticResource IconDotsVertical}"
-                                            Theme="{StaticResource IconButton}">
-
-                                    </Button>
-                                </StackPanel>
-                            </Grid>
-                        </Border>
-
-                        <Panel Grid.Row="1">
-                            <!--No Criteria View-->
-                            <StackPanel DockPanel.Dock="Top"
-                                        IsVisible="{Binding !Specs.Count, RelativeSource={RelativeSource TemplatedParent}}"
-                                        VerticalAlignment="Center"
-                                        HorizontalAlignment="Center"
-                                        Margin="20">
                                 <TextBlock
-                                    Text="No criteria defined"
-                                    Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
-                                    FontWeight="SemiBold"
-                                    HorizontalAlignment="Center" />
+                                    Text="Specs"
+                                    FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
 
-                                <StackPanel Orientation="Horizontal"
-                                            HorizontalAlignment="Center">
-                                    <TextBlock
-                                        Text="Click the "
-                                        Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
-                                        TextAlignment="Center" />
-                                    <PathIcon
-                                        Theme="{StaticResource IconAdd}"
-                                        Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
-                                        Height="20" Width="20" Padding="4" Margin="0 2 0 0" />
-                                    <TextBlock Text=" button to add a new criteria to this spec."
-                                               Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
-                                               TextAlignment="Center" />
-                                </StackPanel>
+                                <PathIcon
+                                    Theme="{StaticResource IconInfoOutline}"
+                                    Margin="0 1 0 0"
+                                    ToolTip.Tip="" />
                             </StackPanel>
 
+                            <TextBox x:Name="FilterText"
+                                     Grid.Column="1"
+                                     Theme="{a:ControlTheme TextBoxSoft}"
+                                     Watermark="Filter specs"
+                                     VerticalContentAlignment="Center" HorizontalAlignment="Center"
+                                     Width="300" Height="30"
+                                     Padding="0 5">
+                                <TextBox.InnerLeftContent>
+                                    <PathIcon Theme="{StaticResource IconFilter}"
+                                              Margin="5 0" />
+                                </TextBox.InnerLeftContent>
+                            </TextBox>
 
-                            <ListBox ItemsSource="{TemplateBinding Specs}"
-                                     IsVisible="{Binding Specs.Count, RelativeSource={RelativeSource TemplatedParent}, FallbackValue=0}"
-                                     SelectionMode="Multiple"
-                                     ClipToBounds="True"
-                                     BorderThickness="0" CornerRadius="5"
-                                     Background="Transparent">
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate x:DataType="observers:NodeObserver">
-                                        <Grid ColumnDefinitions="Auto, *, Auto">
-                                            <CheckBox
-                                                Grid.Column="0"
-                                                Classes="size-xs accent"
-                                                Theme="{a:ControlTheme CheckBoxSolid}"
-                                                IsChecked="{Binding IsChecked}" />
-                                            <StackPanel
-                                                Grid.Column="1"
-                                                Orientation="Horizontal"
-                                                Spacing="2" Margin="4 0">
-                                                <PathIcon Theme="{StaticResource IconSpecThemed}" />
-                                                <TextBlock Text="{Binding Name}" />
-                                            </StackPanel>
-                                            
-                                            <Panel Grid.Column="2">
-                                                <TextBlock
-                                                    Text="{Binding Path}"
-                                                    IsVisible="{Binding !$parent[ListBoxItem].IsPointerOver}"
-                                                    TextAlignment="Right"
-                                                    Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
-                                                <Button Theme="{StaticResource IconButtonSmall}" 
-                                                        properties:ButtonIcon.Theme="{StaticResource IconLaunchOutlined}"
-                                                        IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}"/>
-                                            </Panel>
-                                        </Grid>
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-                                <ListBox.ItemContainerTheme>
-                                    <ControlTheme TargetType="ListBoxItem"
-                                                  BasedOn="{StaticResource ListBoxItemSection}"
-                                                  x:DataType="observers:NodeObserver">
-                                        <Setter Property="Padding" Value="10 2" />
-                                    </ControlTheme>
-                                </ListBox.ItemContainerTheme>
-                            </ListBox>
-                        </Panel>
-                    </Grid>
-                </Border>
+                            <StackPanel Grid.Column="2"
+                                        Orientation="Horizontal"
+                                        VerticalAlignment="Center"
+                                        Spacing="5">
+                                <Button properties:ButtonIcon.Theme="{StaticResource IconAdd}"
+                                        Theme="{StaticResource IconButton}"
+                                        Command="{Binding AddCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                                        Classes="accent"
+                                        ToolTip.Tip="Add Criteria" />
+                                <Button properties:ButtonIcon.Theme="{StaticResource IconTrashOutlined}"
+                                        Theme="{StaticResource IconButton}"
+                                        Command="{Binding RemoveCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                                        ToolTip.Tip="Delete Selected" />
+                                <Button properties:ButtonIcon.Theme="{StaticResource IconCopyOutlined}"
+                                        Theme="{StaticResource IconButton}"
+                                        Command="{Binding CopyCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                                        ToolTip.Tip="Copy Selected" />
+                                <Button properties:ButtonIcon.Theme="{StaticResource IconDotsVertical}"
+                                        Theme="{StaticResource IconButton}">
+
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </components:Section.Header>
+
+                    <Panel>
+                        <components:NoItemsMessage
+                            HeadingText="No specs defined"
+                            MessageIcon="{StaticResource IconAdd}"
+                            MessageText="add a new criteria to this spec."
+                            IsVisible="{Binding !Specs.Count, RelativeSource={RelativeSource TemplatedParent}}" />
+
+                        <ListBox ItemsSource="{TemplateBinding Specs}"
+                                 IsVisible="{Binding Specs.Count, RelativeSource={RelativeSource TemplatedParent}, FallbackValue=0}"
+                                 SelectionMode="Multiple"
+                                 ClipToBounds="True"
+                                 BorderThickness="0" CornerRadius="5"
+                                 Background="Transparent">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate x:DataType="observers:NodeObserver">
+                                    <Grid ColumnDefinitions="Auto, *, Auto">
+                                        <CheckBox
+                                            Grid.Column="0"
+                                            Classes="size-xs accent"
+                                            Theme="{a:ControlTheme CheckBoxSolid}"
+                                            IsChecked="{Binding IsChecked}" />
+                                        <StackPanel
+                                            Grid.Column="1"
+                                            Orientation="Horizontal"
+                                            Spacing="2" Margin="4 0">
+                                            <PathIcon Theme="{StaticResource IconSpecThemed}" />
+                                            <TextBlock Text="{Binding Name}" />
+                                        </StackPanel>
+
+                                        <Panel Grid.Column="2">
+                                            <TextBlock
+                                                Text="{Binding Path}"
+                                                IsVisible="{Binding !$parent[ListBoxItem].IsPointerOver}"
+                                                TextAlignment="Right"
+                                                Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                                            <Button Theme="{StaticResource IconButtonSmall}"
+                                                    properties:ButtonIcon.Theme="{StaticResource IconLaunchOutlined}"
+                                                    IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}" />
+                                        </Panel>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                            <ListBox.ItemContainerTheme>
+                                <ControlTheme TargetType="ListBoxItem"
+                                              BasedOn="{StaticResource ListBoxItemSection}"
+                                              x:DataType="observers:NodeObserver">
+                                    <Setter Property="Padding" Value="10 2" />
+                                </ControlTheme>
+                            </ListBox.ItemContainerTheme>
+                        </ListBox>
+                    </Panel>
+                </components:Section>
             </ControlTemplate>
         </Setter>
     </ControlTheme>

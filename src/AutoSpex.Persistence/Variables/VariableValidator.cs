@@ -1,7 +1,7 @@
 ﻿using AutoSpex.Engine;
 using FluentValidation;
 
-namespace AutoSpex.Persistence.Variables;
+namespace AutoSpex.Persistence;
 
 public class VariableValidator : AbstractValidator<Variable>
 {

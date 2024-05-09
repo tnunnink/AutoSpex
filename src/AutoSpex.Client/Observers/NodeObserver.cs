@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoSpex.Client.Pages;
 using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
@@ -27,7 +29,7 @@ public partial class NodeObserver : NamedObserver<Node>,
             (_, n) => Model.AddNode(n),
             (_, n) => Model.RemoveNode(n),
             () => Model.ClearNodes());
-        
+
         Track(nameof(Name));
         Track(nameof(Documentation));
     }
@@ -36,7 +38,7 @@ public partial class NodeObserver : NamedObserver<Node>,
     public Guid ParentId => Model.ParentId;
     public NodeType NodeType => Model.NodeType;
     public string Path => Model.Path;
-    
+
     public override string Name
     {
         get => Model.Name;
@@ -50,6 +52,7 @@ public partial class NodeObserver : NamedObserver<Node>,
     }
 
     public ObserverCollection<Node, NodeObserver> Nodes { get; }
+    public ObservableCollection<NodeObserver> Specs => new(Model.Specs().Select(s => new NodeObserver(s)));
 
     [ObservableProperty] private bool _isVisible = true;
 
@@ -58,18 +61,20 @@ public partial class NodeObserver : NamedObserver<Node>,
     [ObservableProperty] private bool _isSelected;
 
     [ObservableProperty] private bool _isEditing;
-    
+
     [ObservableProperty] private bool _isChecked = true;
 
     [ObservableProperty] private bool _isNew;
     public IEnumerable<Node> CheckedSpecs => CheckedSpecNodes(this);
+    public static implicit operator NodeObserver(Node node) => new(node);
+    public static implicit operator Node(NodeObserver observer) => observer.Model;
 
     #region Commands
 
     [RelayCommand]
     private async Task AddFolder()
     {
-        var node = new NodeObserver(Node.NewFolder()) {IsNew = true};
+        var node = new NodeObserver(Node.NewFolder()) { IsNew = true };
         Nodes.Add(node);
 
         var result = await Mediator.Send(new CreateNode(node));
@@ -94,7 +99,7 @@ public partial class NodeObserver : NamedObserver<Node>,
     [RelayCommand]
     private async Task AddSpec()
     {
-        var node = new NodeObserver(Node.NewSpec()) {IsNew = true};
+        var node = new NodeObserver(Node.NewSpec()) { IsNew = true };
         Nodes.Add(node);
 
         var result = await Mediator.Send(new CreateNode(node));
@@ -120,8 +125,8 @@ public partial class NodeObserver : NamedObserver<Node>,
         var result = await Mediator.Send(new DeleteNode(Id));
         if (result.IsFailed) return;
 
-        //We don't have access to the actual parent observer only the underlying model object. Therefore we will rely
-        //on messages send to be handles by the parent and remove this node form it's Nodes collection.
+        //We don't have access to the actual parent observer only the underlying model object. Therefore, we will rely
+        //on messages send to be handles by the parent and remove this node form its Nodes collection.
         Messenger.Send(new Deleted(this));
     }
 
@@ -174,20 +179,32 @@ public partial class NodeObserver : NamedObserver<Node>,
 
     #endregion
 
+    /// <inheritdoc />
+    protected override async Task Navigate()
+    {
+        var load = await Mediator.Send(new GetNode(Id));
+        if (load.IsFailed) return;
+        await Navigator.Navigate(() => new NodePageModel(new NodeObserver(load.Value)));
+    }
+
     protected override Task<Result> RenameModel(string name) => Mediator.Send(new RenameNode(this));
-    public static implicit operator NodeObserver(Node node) => new(node);
-    public static implicit operator Node(NodeObserver observer) => observer.Model;
-    
-    private IEnumerable<Node> CheckedSpecNodes(NodeObserver node)
+
+
+    private static IEnumerable<Node> CheckedSpecNodes(NodeObserver node)
     {
         var nodes = new List<Node>();
 
         if (node.NodeType == NodeType.Spec && node.IsChecked)
             nodes.Add(node);
-        
+
         foreach (var child in node.Nodes)
             nodes.AddRange(CheckedSpecNodes(child));
 
         return nodes;
+    }
+
+    partial void OnIsCheckedChanged(bool value)
+    {
+        OnPropertyChanged(nameof(CheckedSpecs));
     }
 }

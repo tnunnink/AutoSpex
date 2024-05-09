@@ -20,22 +20,21 @@ public partial class SourcePageModel : DetailPageModel,
     IRecipient<SourceObserver.Deleted>,
     IRecipient<SourceObserver.Renamed>
 {
-    private readonly Guid _sourceId;
     private CancellationTokenSource? _cancellation;
 
     /// <inheritdoc/>
-    public SourcePageModel(Guid sourceId)
+    public SourcePageModel(SourceObserver source)
     {
-        _sourceId = sourceId;
+        Source = source;
     }
 
-    public override string Route => $"Source/{_sourceId}";
-    public override string Title => Source?.Name ?? "Not Found";
+    public override string Route => $"Source/{Source.Id}";
+    public override string Title => Source.Name;
     public override string Icon => "Source";
 
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))]
-    private SourceObserver? _source;
-    
+    private SourceObserver _source;
+
     [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(SearchCommand))]
     private Element _element = Element.Default;
 
@@ -64,7 +63,7 @@ public partial class SourcePageModel : DetailPageModel,
 
     public override async Task Load()
     {
-        var result = await Mediator.Send(new GetSource(_sourceId));
+        var result = await Mediator.Send(new GetSource(Source.Id));
         if (result.IsFailed) return;
 
         Source = new SourceObserver(result.Value);
@@ -72,22 +71,22 @@ public partial class SourcePageModel : DetailPageModel,
 
     public void Receive(Observer<Source>.Deleted message)
     {
-        if (message.Observer.Id != _sourceId) return;
+        if (message.Observer.Id != Source.Id) return;
         ForceClose();
     }
 
     public void Receive(NamedObserver<Source>.Renamed message)
     {
         if (message.Observer is not SourceObserver source) return;
-        if (source.Id != _sourceId) return;
+        if (source.Id != Source.Id) return;
         OnPropertyChanged(nameof(Title));
     }
-    
+
     /// <summary>
     /// Execute the current source search and populate the <see cref="Results"/> collection with the returned elements.
     /// This method will update the UI so we can know we are searching. It will also initialize the cancellation token
     /// so the user can cancel the search if it takes too long. The only process intensive searched right now are tags
-    /// but we will working on fixing that hopefully.
+    /// but we will work on fixing that hopefully.
     /// </summary>
     [RelayCommand(CanExecute = nameof(CanSearch))]
     private async Task Search()

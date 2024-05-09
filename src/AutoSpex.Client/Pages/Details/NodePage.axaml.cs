@@ -4,9 +4,9 @@ using Avalonia.Markup.Xaml;
 
 namespace AutoSpex.Client.Pages;
 
-public partial class CollectionPage : UserControl
+public partial class NodePage : UserControl
 {
-    public CollectionPage()
+    public NodePage()
     {
         InitializeComponent();
     }

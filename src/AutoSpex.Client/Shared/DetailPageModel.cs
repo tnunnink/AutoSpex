@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.Threading.Tasks;
 using AutoSpex.Client.Services;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
 using FluentResults;
 using MediatR;
 
@@ -27,7 +22,7 @@ public abstract partial class DetailPageModel : PageViewModel
     protected virtual Task<Result> Save() => Task.FromResult(Result.Ok());
 
     /// <summary>
-    /// Indicates whether the page can be saved or not. By default this looks at whether there are changes using the
+    /// Indicates whether the page can be saved or not. By default, this looks at whether there are changes using the
     /// <see cref="TrackableViewModel.IsChanged"/> property. Derived classes can override this implementation as needed.
     /// </summary>
     /// <returns><c>true</c> if the page can be saved, Otherwise, <c>false</c>.</returns>
@@ -39,7 +34,7 @@ public abstract partial class DetailPageModel : PageViewModel
     /// <returns>The <see cref="Task"/> which can await the flag indicating whether the page was closed or not.</returns>
     /// <remarks>
     /// This will first check for changes, and if any exists and the AlwaysDiscardChanges is not enabled, will
-    /// prompt the user whether or not they want to save, cancel, or discard changes. If the select an option which results
+    /// prompt the user whether they want to save, cancel, or discard changes. If they select an option which results
     /// in the page closing, this method will return <c>true</c>, otherwise it will return <c>false</c>.
     /// </remarks>
     /// 

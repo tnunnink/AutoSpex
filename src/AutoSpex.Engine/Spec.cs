@@ -100,7 +100,7 @@ public class Spec()
         options.Converters.Add(new JsonTypeConverter());
         return JsonSerializer.Serialize(this, options);
     }
-
+    
     /// <summary>
     /// Runs the Spec on the given L5X content and returns the outcome.
     /// </summary>
@@ -108,16 +108,13 @@ public class Spec()
     /// <param name="token"></param>
     /// <returns>The outcome of the Spec run.</returns>
     /// <exception cref="ArgumentNullException">Thrown when the content parameter is null.</exception>
-    public Task<Outcome> Run(L5X content, CancellationToken token = default)
+    public Task<IEnumerable<Verification>> Run(L5X content, CancellationToken token = default)
     {
         if (content is null)
             throw new ArgumentNullException(nameof(content));
 
         return Task.Run(() =>
         {
-            //Time the process for diagnostics
-            var stopwatch = Stopwatch.StartNew();
-            
             var verifications = new List<Verification>();
 
             //1.Query content
@@ -136,10 +133,8 @@ public class Spec()
 
             //4.Verify candidates
             verifications.AddRange(filtered.Select(Verify));
-            
-            stopwatch.Stop();
 
-            return new Outcome(this, verifications, stopwatch.ElapsedMilliseconds);
+            return verifications.AsEnumerable();
         }, token);
     }
 

@@ -6,6 +6,7 @@ namespace AutoSpex.Engine;
 public class Node : IEquatable<Node>
 {
     private readonly List<Node> _nodes = [];
+    private readonly Dictionary<string, Variable> _variables = [];
 
     private Node()
     {
@@ -27,6 +28,7 @@ public class Node : IEquatable<Node>
     public string Path => GetPath();
     public Node? Collection => GetCollection();
     public IEnumerable<Node> Nodes => _nodes;
+    public IEnumerable<Variable> Variables => _variables.Values;
 
     public static Node NewCollection(string? name = default)
     {
@@ -194,9 +196,22 @@ public class Node : IEquatable<Node>
             nodes.Add(this);
 
         nodes.AddRange(_nodes.SelectMany(n => n.Specs()));
+
         return nodes;
     }
 
+    public void AddVariable(string name, object? value = default, string? description = default)
+    {
+        if (string.IsNullOrEmpty(name))
+            throw new ArgumentException("Can not add variable with empty name");
+        
+        _variables.TryAdd(name, new Variable(name, value, description));
+    }
+
+    /// <summary>
+    /// Gets the collection node that contains this node.
+    /// </summary>
+    /// <returns>A <see cref="Node"/> of type <see cref="NodeType.Collection"/>.</returns>
     private Node? GetCollection()
     {
         var current = this;
@@ -209,6 +224,10 @@ public class Node : IEquatable<Node>
         return current;
     }
 
+    /// <summary>
+    /// Gets the path of the current node by concatenating the names of its ancestors.
+    /// </summary>
+    /// <returns>The path of the current node as a string.</returns>
     private string GetPath()
     {
         var path = string.Empty;
@@ -228,13 +247,11 @@ public class Node : IEquatable<Node>
     public bool Equals(Node? other)
     {
         if (ReferenceEquals(null, other)) return false;
-        if (ReferenceEquals(this, other)) return true;
-        return NodeId.Equals(other.NodeId);
+        return ReferenceEquals(this, other) || NodeId.Equals(other.NodeId);
     }
 
     public override bool Equals(object? obj) => obj is Node other && other.NodeId == NodeId;
     public override int GetHashCode() => NodeId.GetHashCode();
-
     public static bool operator ==(Node? left, Node? right) => Equals(left, right);
     public static bool operator !=(Node? left, Node? right) => !Equals(left, right);
 }

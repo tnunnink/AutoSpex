@@ -3,7 +3,6 @@
                     xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:components="using:AutoSpex.Client.Components"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
-                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
                     xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
 
     <Design.PreviewWith>
@@ -38,15 +37,16 @@
                                       Classes="danger"
                                       ToolTip.Tip="Disable"
                                       ToolTip.Placement="BottomEdgeAlignedRight" />
-                        <controls:IconButton Icon="{StaticResource IconTrashOutlined}"
-                                             Padding="8"
-                                             Command="{Binding RemoveCommand, RelativeSource={RelativeSource TemplatedParent}}"
-                                             CommandParameter="{Binding $parent[components:CriteriaListItem].DataContext}"
-                                             Foreground="{actipro:ThemeResource DefaultForegroundBrushTertiary}"
-                                             ToolTip.Tip="Remove"
-                                             ToolTip.Placement="BottomEdgeAlignedRight" />
+                        <Button properties:ButtonIcon.Theme="{StaticResource IconTrashOutlined}"
+                                Theme="{StaticResource IconButton}"
+                                Padding="8"
+                                Command="{Binding RemoveCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                                CommandParameter="{Binding $parent[components:CriteriaListItem].DataContext}"
+                                Foreground="{actipro:ThemeResource DefaultForegroundBrushTertiary}"
+                                ToolTip.Tip="Remove"
+                                ToolTip.Placement="BottomEdgeAlignedRight" />
                     </StackPanel>
-                    
+
                     <!--Entry-->
                     <StackPanel Orientation="Horizontal">
                         <components:CriterionEntry Criterion="{TemplateBinding DataContext}" />

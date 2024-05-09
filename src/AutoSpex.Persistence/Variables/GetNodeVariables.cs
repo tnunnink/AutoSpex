@@ -4,7 +4,7 @@ using FluentResults;
 using JetBrains.Annotations;
 using MediatR;
 
-namespace AutoSpex.Persistence.Variables;
+namespace AutoSpex.Persistence;
 
 [PublicAPI]
 public record GetNodeVariables(Guid NodeId) : IDbQuery<Result<IEnumerable<Variable>>>;

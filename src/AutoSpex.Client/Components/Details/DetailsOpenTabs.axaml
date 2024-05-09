@@ -3,7 +3,8 @@
                     xmlns:components="using:AutoSpex.Client.Components"
                     xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:shared="clr-namespace:AutoSpex.Client.Shared"
-                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
     <Design.PreviewWith>
         <components:DetailsOpenTabs OpenTabsSource="{x:Static components:DesignData.Pages}" />
     </Design.PreviewWith>
@@ -57,13 +58,13 @@
                                                        FontSize="{actipro:ThemeResource DefaultFontSizeSmall}"
                                                        TextTrimming="CharacterEllipsis"
                                                        ToolTip.Tip="{Binding Title}" />
-                                            <controls:IconButton Grid.Column="2"
-                                                                 IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}"
-                                                                 Icon="{StaticResource IconClose}"
-                                                                 Command="{Binding $parent[components:DetailsOpenTabs].CloseTabCommand}"
-                                                                 CommandParameter="{Binding}"
-                                                                 CornerRadius="10"
-                                                                 Height="20" Width="20" Padding="11"/>
+                                            <Button Grid.Column="2"
+                                                    IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}"
+                                                    properties:ButtonIcon.Theme="{StaticResource IconClose}"
+                                                    Theme="{StaticResource IconButtonSmall}"
+                                                    Command="{Binding $parent[components:DetailsOpenTabs].CloseTabCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    CornerRadius="10" Height="20" Width="20" Padding="11" />
                                         </Grid>
                                     </Button>
                                 </DataTemplate>

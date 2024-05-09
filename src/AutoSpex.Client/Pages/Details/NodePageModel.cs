@@ -2,27 +2,30 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoSpex.Client.Messages;
 using AutoSpex.Client.Observers;
+using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using AutoSpex.Persistence;
-using AutoSpex.Persistence.Variables;
 using Avalonia.Controls.Notifications;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FluentResults;
 
 namespace AutoSpex.Client.Pages;
 
-public abstract partial class NodePageModel : DetailPageModel,
+public partial class NodePageModel : DetailPageModel,
+    IRecipient<NavigationRequest>,
     IRecipient<NodeObserver.Renamed>,
     IRecipient<NodeObserver.Deleted>,
     IRecipient<VariableObserver.Deleted>
 {
     /// <inheritdoc/>
-    protected NodePageModel(Node node)
+    public NodePageModel(NodeObserver node)
     {
         Node = node;
         Breadcrumb = new Breadcrumb(Node, CrumbType.Target);
@@ -31,21 +34,53 @@ public abstract partial class NodePageModel : DetailPageModel,
     public override string Route => $"Node/{Node.Id}";
     public override string Title => Node.Name;
     public override string Icon => Node.NodeType.Name;
-    protected NodeObserver Node { get; }
+    public NodeObserver Node { get; }
     public Breadcrumb Breadcrumb { get; }
     public ObserverCollection<Variable, VariableObserver> Variables { get; } = [];
+    [ObservableProperty] private SpecObserver? _spec;
     public ObservableCollection<SourceObserver> Sources => new(RequestSources());
+
+    public ObservableCollection<PageViewModel> Tabs { get; } = [];
+    [ObservableProperty] private PageViewModel? _selectedTab;
 
     public override async Task Load()
     {
         await LoadVariables(Node.Id);
+        await LoadSpec();
+        SaveCommand.NotifyCanExecuteChanged();
+
+        await NavigateTabs();
+    }
+
+    private async Task NavigateTabs()
+    {
+        if (Node.NodeType != NodeType.Spec)
+            await Navigator.Navigate(() => new SpecListPageModel(Node));
+
+        if (Node.NodeType == NodeType.Spec && Spec is not null)
+            await Navigator.Navigate(() => new SpecCriteriaPageModel(Spec));
+
+        await Navigator.Navigate(() => new NodeVariablesPageModel(Node));
+
+        if (Node.NodeType == NodeType.Spec && Spec is not null)
+            await Navigator.Navigate(() => new SpecSettingsPageModel(Spec));
+
+        await Navigator.Navigate(() => new NodeRunsPageModel(Node));
+        await Navigator.Navigate(() => new NodeInfoPageModel(Node));
     }
 
     protected override async Task<Result> Save()
     {
         var nodeResult = await Mediator.Send(new UpdateNode(Node));
         var variablesResult = await Mediator.Send(new SaveVariables(Variables.Select(v => v.Model)));
-        return Result.Merge(nodeResult, variablesResult);
+        var specResult = Spec is not null ? await Mediator.Send(new SaveSpec(Spec)) : Result.Ok();
+
+        var result = Result.Merge(nodeResult, variablesResult, specResult);
+        if (result.IsFailed) return result;
+
+        NotifySaveSuccess();
+        AcceptChanges();
+        return result;
     }
 
     [RelayCommand]
@@ -63,9 +98,42 @@ public abstract partial class NodePageModel : DetailPageModel,
     }
 
     [RelayCommand(CanExecute = nameof(CanRun))]
-    protected virtual Task Run(SourceObserver? source) => Task.CompletedTask;
+    private async Task Run(SourceObserver? source)
+    {
+        //If a source is not provided then use the selected. 
+        source ??= Sources.SingleOrDefault(s => s.IsSelected);
 
-    protected bool CanRun() => Sources.Any(s => s.IsSelected);
+        //Load all spec configs with variables resolved. 
+        var specs = await LoadSpecs(CancellationToken.None);
+
+        //Create the run object
+        var run = new Run(source?.Model);
+        run.AddSpecs(specs);
+
+        //todo we will set the RunOnLoad here eventually.
+        await Navigator.Navigate(new RunObserver(run));
+    }
+
+    private bool CanRun() => Sources.Any();
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    public void Receive(NavigationRequest message)
+    {
+        if (!message.Page.Route.StartsWith(Route)) return;
+        
+        // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
+        switch (message.Action)
+        {
+            case NavigationAction.Open:
+                Tabs.Add(message.Page);
+                break;
+            case NavigationAction.Close:
+                Tabs.Remove(message.Page);
+                break;
+        }
+    }
 
     /// <summary>
     /// Close this detail page if the node was deleted.
@@ -94,7 +162,7 @@ public abstract partial class NodePageModel : DetailPageModel,
     /// <summary>
     /// Sends a notification to the UI that the node was saved successfully.
     /// </summary>
-    protected void NotifySaveSuccess()
+    private void NotifySaveSuccess()
     {
         var title = $"{Node.NodeType} Saved";
         var message = $"{Node.Name} was saved successfully @ {DateTime.Now.ToShortTimeString()}";
@@ -114,6 +182,36 @@ public abstract partial class NodePageModel : DetailPageModel,
     }
 
     /// <summary>
+    /// Loads the spec configuration for this node if this is a spec node and not a collection or folder.
+    /// </summary>
+    private async Task LoadSpec()
+    {
+        if (Node.NodeType != NodeType.Spec) return;
+
+        var result = await Mediator.Send(new GetSpec(Node.Id));
+        if (result.IsFailed) return;
+
+        Spec = new SpecObserver(result.Value);
+        Track(Spec);
+    }
+
+    /// <summary>
+    /// Load all specification configurations that are checked to run for this node page.
+    /// Also, resolveS all required variables for the specs.
+    /// This will ensure we have all the data necessary to perform the run and update the user interface.
+    /// </summary>
+    private async Task<IEnumerable<Spec>> LoadSpecs(CancellationToken token)
+    {
+        var ids = Node.CheckedSpecs.Select(s => s.NodeId);
+
+        var load = await Mediator.Send(new GetSpecsIn(ids), token);
+        if (load.IsFailed) return Enumerable.Empty<Spec>();
+
+        await Mediator.Send(new ResolveVariables(load.Value), token);
+        return load.Value;
+    }
+
+    /// <summary>
     /// Get all collection sources for display in the run button. Since all sources are loaded in the navigation tree
     /// we can send this request without having get it again from the database. 
     /// </summary>
@@ -121,7 +219,6 @@ public abstract partial class NodePageModel : DetailPageModel,
     {
         var request = new SourceRequest();
         Messenger.Send(request);
-        if (!request.HasReceivedResponse) return Enumerable.Empty<SourceObserver>();
-        return request.Response;
+        return request.HasReceivedResponse ? request.Response : Enumerable.Empty<SourceObserver>();
     }
 }

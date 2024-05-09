@@ -1,5 +1,4 @@
-﻿using AutoSpex.Persistence.Variables;
-using L5Sharp.Core;
+﻿using L5Sharp.Core;
 using Task = System.Threading.Tasks.Task;
 
 namespace AutoSpex.Persistence.Tests.Variables;

@@ -1,0 +1,27 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:components="clr-namespace:AutoSpex.Client.Components"
+             xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
+             x:Class="AutoSpex.Client.Pages.SpecCriteriaPage"
+             x:DataType="pages:SpecCriteriaPageModel">
+
+    <StackPanel Spacing="30">
+        <components:SpecQuery
+            Heading="Query"
+            InfoText="Configure what data this specification will query."
+            Spec="{Binding Spec}" />
+        <components:CriteriaList
+            Heading="Filters"
+            InfoText="Add criteria to select only specific candidates for verification."
+            Criteria="{Binding Spec.Filters, FallbackValue={x:Null}}"
+            Element="{Binding Spec.Element, FallbackValue={x:Static engine:Element.Default}}"
+            Inclusion="{Binding Spec.FilterInclusion, FallbackValue={x:Null}}" />
+        <components:CriteriaList
+            Heading="Verifications"
+            InfoText="Add criteria to define what this specification is verifying."
+            Criteria="{Binding Spec.Verifications, FallbackValue={x:Null}}"
+            Element="{Binding Spec.Element, FallbackValue={x:Static engine:Element.Default}}"
+            Inclusion="{Binding Spec.VerificationInclusion, FallbackValue={x:Null}}" />
+    </StackPanel>
+</UserControl>

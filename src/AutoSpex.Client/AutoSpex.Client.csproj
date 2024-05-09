@@ -303,10 +303,6 @@
         <DependentUpon>CreateProjectPage.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
-      <Compile Update="Components\Runs\EvaluationList.axaml.cs">
-        <DependentUpon>ResultsPanel.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
     </ItemGroup>
 
     <ItemGroup>

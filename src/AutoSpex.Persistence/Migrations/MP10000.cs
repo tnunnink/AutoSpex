@@ -37,8 +37,8 @@ public class MP10000 : AutoReversingMigration
 
         Create.Table("Source")
             .WithColumn("SourceId").AsString().PrimaryKey()
-            .WithColumn("IsSelected").AsBoolean().NotNullable()
             .WithColumn("Name").AsString().NotNullable().Unique()
+            .WithColumn("IsSelected").AsBoolean().NotNullable().WithDefaultValue(1)
             .WithColumn("Documentation").AsString().Nullable()
             .WithColumn("TargetType").AsString().Nullable()
             .WithColumn("TargetName").AsString().Nullable()
@@ -57,7 +57,6 @@ public class MP10000 : AutoReversingMigration
 
         Create.Table("Run")
             .WithColumn("RunId").AsString().PrimaryKey()
-            .WithColumn("NodeId").AsString().NotNullable().ForeignKey("Node", "NodeId").OnDelete(Rule.Cascade)
             .WithColumn("SourceId").AsString().NotNullable().ForeignKey("Source", "SourceId").OnDelete(Rule.Cascade)
             .WithColumn("Name").AsString().NotNullable()
             .WithColumn("Result").AsString().NotNullable()
@@ -67,13 +66,9 @@ public class MP10000 : AutoReversingMigration
         Create.Table("Outcome")
             .WithColumn("OutcomeId").AsString().PrimaryKey()
             .WithColumn("RunId").AsString().NotNullable().ForeignKey("Run", "RunId").OnDelete(Rule.Cascade)
-            .WithColumn("SpecId").AsString().NotNullable().ForeignKey("Spec", "SpecId").OnDelete(Rule.Cascade)
+            .WithColumn("NodeId").AsString().NotNullable().ForeignKey("Node", "NodeId").OnDelete(Rule.Cascade)
             .WithColumn("Result").AsString().NotNullable()
             .WithColumn("Duration").AsInt32().NotNullable()
-            .WithColumn("Total").AsInt32().NotNullable()
-            .WithColumn("Passed").AsInt32().NotNullable()
-            .WithColumn("Failed").AsInt32().NotNullable()
-            .WithColumn("Errored").AsInt32().NotNullable()
             .WithColumn("Evaluations").AsString();
 
         /*Create.Table("ChangeLog")

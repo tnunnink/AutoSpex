@@ -1,0 +1,36 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers">
+
+    <Design.PreviewWith>
+        <Border Background="{a:ThemeResource Container1BackgroundBrush}"
+                Width="800" Height="200" Padding="30">
+            <StackPanel>
+                <ListBoxItem Theme="{StaticResource ListBoxItemSubtle}"
+                             Content="{x:Static components:DesignData.OutcomePassed}"
+                             ContentTemplate="{DynamicResource OutcomeItem}" />
+                <ListBoxItem Theme="{StaticResource ListBoxItemSubtle}"
+                             Content="{x:Static components:DesignData.OutcomeFailed}"
+                             ContentTemplate="{DynamicResource OutcomeItem}" />
+                <ListBoxItem Theme="{StaticResource ListBoxItemSubtle}"
+                             Content="{x:Static components:DesignData.OutcomeErrored}"
+                             ContentTemplate="{DynamicResource OutcomeItem}" />
+            </StackPanel>
+        </Border>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="OutcomeItem" DataType="observers:OutcomeObserver">
+        <Grid ColumnDefinitions="Auto,*,Auto">
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5">
+                <PathIcon Theme="{Binding Result, Converter={StaticResource ResultStateToIconConverter}}" />
+                <TextBlock Text="{Binding SpecName}" />
+                <TextBlock Text="{Binding Duration}" Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+            </StackPanel>
+            <StackPanel Grid.Column="2">
+                
+            </StackPanel>
+        </Grid>
+    </DataTemplate>
+</ResourceDictionary>

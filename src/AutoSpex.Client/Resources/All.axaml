@@ -10,7 +10,6 @@
         <ResourceInclude Source="Themes/ListBoxItem.axaml" />
         <ResourceInclude Source="Themes/TextBox.axaml" />
         <ResourceInclude Source="Themes/TabItem.axaml" />
-        <ResourceInclude Source="Themes/IconButton.axaml" />
         <ResourceInclude Source="Themes/IconButtons.axaml" />
         <ResourceInclude Source="Themes/TreeViewItem.axaml" />
         <ResourceInclude Source="Themes/MenuItem.axaml" />

@@ -55,7 +55,7 @@ public class SpecTests
     public void FluentBuild_WhenCalled_ShouldUpdateAsExpected()
     {
         var spec = new Spec();
-        
+
         spec.Query(Element.Module);
         spec.Where("Property", Operation.Any, new Criterion("Test", Operation.Contains, 123));
         spec.Verify("Value", Operation.In, 1, 2, 3, 4, 5);
@@ -71,9 +71,9 @@ public class SpecTests
         var spec = new Spec();
         var file = L5X.Load(Known.Test);
 
-        var outcome = await spec.Run(file);
+        var verifications = await spec.Run(file);
 
-        outcome.Result.Should().Be(ResultState.Failed);
+        verifications.Max(r => r.Result).Should().Be(ResultState.Failed);
     }
 
     [Test]
@@ -88,9 +88,9 @@ public class SpecTests
             }
         };
 
-        var outcome = await spec.Run(content);
-        
-        outcome.Result.Should().Be(ResultState.Passed);
-        outcome.Evaluations.Should().BeEmpty();
+        var verifications = (await spec.Run(content)).ToList();
+
+        verifications.Max(r => r.Result).Should().Be(ResultState.Failed);
+        verifications.SelectMany(v => v.Evaluations).Should().BeEmpty();
     }
 }

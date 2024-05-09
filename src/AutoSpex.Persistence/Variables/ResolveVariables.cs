@@ -4,7 +4,7 @@ using FluentResults;
 using JetBrains.Annotations;
 using MediatR;
 
-namespace AutoSpex.Persistence.Variables;
+namespace AutoSpex.Persistence;
 
 [PublicAPI]
 public record ResolveVariables(IEnumerable<Spec> Specs) : IDbCommand<Result>;
@@ -46,7 +46,7 @@ internal class ResolveVariablesHandler(IConnectionManager manager) : IRequestHan
             splitOn: "VariableId");
 
         //Iterate the spec objects provided in the request and perform the lookup for matching variables.
-        //If found, update the spec varaible's value to "resolve" it to the current persisted state.
+        //If found, update the spec variable's value to "resolve" it to the current persisted state.
         foreach (var spec in request.Specs)
         {
             if (!lookup.TryGetValue(spec.SpecId, out var variables)) continue;

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
-using AutoSpex.Persistence.Variables;
+using AutoSpex.Persistence;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 

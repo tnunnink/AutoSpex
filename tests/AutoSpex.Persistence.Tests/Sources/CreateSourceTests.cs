@@ -24,36 +24,38 @@ public class CreateSourceTests
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
         var source = new Source(L5X.Load(Known.Test));
-        
+
         await mediator.Send(new CreateSource(source));
-        
+
         var result = await mediator.Send(new GetSource(source.SourceId));
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().BeEquivalentTo(source, c => c.Excluding(s => s.L5X));
     }
 
     [Test]
-    public async Task CreateSource_WithSelectedTrue_ShouldReturnSuccess()
+    public async Task CreateSource_ValidSource_ShouldBeSelectedByDefault()
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-        var source = new Source(L5X.Load(Known.Test)) {IsSelected = true};
+        var source = new Source(L5X.Load(Known.Test));
+        source.IsSelected.Should().BeFalse();
 
-        var result = await mediator.Send(new CreateSource(source));
+        await mediator.Send(new CreateSource(source));
 
-        result.IsSuccess.Should().BeTrue();
+        var result = await mediator.Send(new GetSource(source.SourceId));
+        result.Value.IsSelected.Should().BeTrue();
     }
-    
+
     [Test]
-    public async Task CreateSource_MultipleSourcesWithSelected_ShouldOverrideOtherSelectedSources()
+    public async Task CreateSource_MultipleSources_ShouldOverrideOtherSelectedSourcesAndSelectLastSource()
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
         var content = L5X.Load(Known.Test);
-        var source1 = new Source(content) {Name = "TestSource1", IsSelected = true};
-        var source2 = new Source(content) {Name = "TestSource2", IsSelected = true};
-        var source3 = new Source(content) {Name = "TestSource3", IsSelected = true};
-        
+        var source1 = new Source(content) { Name = "TestSource1" };
+        var source2 = new Source(content) { Name = "TestSource2" };
+        var source3 = new Source(content) { Name = "TestSource3" };
+
         await mediator.Send(new CreateSource(source1));
         await mediator.Send(new CreateSource(source2));
         await mediator.Send(new CreateSource(source3));
@@ -64,6 +66,6 @@ public class CreateSourceTests
         var list = result.Value.ToList();
         list[0].IsSelected.Should().BeFalse();
         list[1].IsSelected.Should().BeFalse();
-        list[2].IsSelected.Should().BeFalse();
+        list[2].IsSelected.Should().BeTrue();
     }
 }

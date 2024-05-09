@@ -188,6 +188,23 @@ public static class DesignData
 
     public static ObservableCollection<EvaluationObserver> Evaluations =
         new(new[] { PassedEvaluation, FailedEvaluation, ErroredEvaluation });
+
+    public static OutcomeObserver OutcomePassed = new(new Outcome(new Spec(Guid.Empty, "Spec That Passed")))
+    {
+        Result = ResultState.Passed, Evaluations = { PassedEvaluation, PassedEvaluation, PassedEvaluation }
+    };
+
+    public static OutcomeObserver OutcomeFailed = new(new Outcome(new Spec(Guid.Empty, "Spec That Failed")))
+    {
+        Result = ResultState.Failed, Evaluations = { PassedEvaluation, PassedEvaluation, FailedEvaluation }
+    };
+
+    public static OutcomeObserver OutcomeErrored = new(new Outcome(new Spec(Guid.Empty, "Spec That Erroed")))
+    {
+        Result = ResultState.Error, Evaluations = { PassedEvaluation, ErroredEvaluation, FailedEvaluation }
+    };
+
+    public static ObservableCollection<OutcomeObserver> Outcomes = [OutcomePassed, OutcomeFailed, OutcomeErrored];
 }
 
 public class TestPageModel : PageViewModel

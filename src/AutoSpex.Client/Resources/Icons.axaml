@@ -1,10 +1,11 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
-                    xmlns:converters="clr-namespace:AutoSpex.Client.Resources.Converters">
+                    xmlns:converters="clr-namespace:AutoSpex.Client.Resources.Converters"
+                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine">
 
     <Design.PreviewWith>
-        <WrapPanel Orientation="Horizontal" Width="800" Margin="5">
+        <WrapPanel Orientation="Horizontal" Width="800" Height="500" Margin="5">
             <WrapPanel.Styles>
                 <Styles>
                     <Style Selector="PathIcon">
@@ -44,6 +45,8 @@
             <PathIcon Theme="{DynamicResource IconCardList}" />
             <PathIcon Theme="{DynamicResource IconLaunchOutlined}" />
             <PathIcon Theme="{DynamicResource IconCogOutlined}" />
+            <PathIcon Theme="{DynamicResource IconCircle}" />
+            <PathIcon Theme="{DynamicResource IconCircleHalfFill}" />
             <PathIcon Theme="{DynamicResource IconExclamationOutlined}" />
             <PathIcon Theme="{DynamicResource IconHistoryOutlined}" />
             <PathIcon Theme="{DynamicResource IconBanOutlined}" />
@@ -91,6 +94,11 @@
             <PathIcon Theme="{DynamicResource IconSpecThemed}" />
             <PathIcon Theme="{DynamicResource IconSourceThemed}" />
             <PathIcon Theme="{DynamicResource IconRunThemed}" />
+            <PathIcon Theme="{DynamicResource IconNoneThemed}" />
+            <PathIcon Theme="{DynamicResource IconPendingThemed}" />
+            <PathIcon Theme="{DynamicResource IconPassedThemed}" />
+            <PathIcon Theme="{DynamicResource IconFailedThemed}" />
+            <PathIcon Theme="{DynamicResource IconErrorThemed}" />
         </WrapPanel>
     </Design.PreviewWith>
 
@@ -103,10 +111,19 @@
         <converters:ValueResourceKey Value="Folder" Resource="IconFolderThemed" />
         <converters:ValueResourceKey Value="Spec" Resource="IconSpecThemed" />
         <converters:ValueResourceKey Value="Source" Resource="IconSourceThemed" />
+        <converters:ValueResourceKey Value="Run" Resource="IconRunThemed" />
         <converters:ValueResourceKey Value="Filters" Resource="IconFilterFilled" />
         <converters:ValueResourceKey Value="Verifications" Resource="IconCheckCircleFilled" />
         <converters:ValueResourceKey Value="Info" Resource="IconInfoOutline" />
         <converters:ValueResourceKey Value="IconQuestion" Resource="IconQuestion" />
+    </converters:KeyResourceConverter>
+    
+    <converters:KeyResourceConverter x:Key="ResultStateToIconConverter">
+        <converters:ValueResourceKey Value="{x:Static engine:ResultState.None}" Resource="IconNoneThemed" />
+        <converters:ValueResourceKey Value="{x:Static engine:ResultState.Pending}" Resource="IconRunningThemed" />
+        <converters:ValueResourceKey Value="{x:Static engine:ResultState.Passed}" Resource="IconPassedThemed" />
+        <converters:ValueResourceKey Value="{x:Static engine:ResultState.Failed}" Resource="IconFailedThemed" />
+        <converters:ValueResourceKey Value="{x:Static engine:ResultState.Error}" Resource="IconErrorThemed" />
     </converters:KeyResourceConverter>
 
     <ResourceDictionary.ThemeDictionaries>
@@ -469,6 +486,18 @@
             </GeometryGroup>
         </Setter>
     </ControlTheme>
+    
+    <ControlTheme x:Key="IconCircle" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
+        <Setter Property="Data">
+            <StreamGeometry>M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16</StreamGeometry>
+        </Setter>
+    </ControlTheme>
+    
+    <ControlTheme x:Key="IconCircleHalfFill" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
+        <Setter Property="Data">
+            <StreamGeometry>M8 15A7 7 0 1 0 8 1zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16</StreamGeometry>
+        </Setter>
+    </ControlTheme>
 
     <ControlTheme x:Key="IconCogOutlined" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
         <Setter Property="Data">
@@ -478,7 +507,7 @@
             </GeometryGroup>
         </Setter>
     </ControlTheme>
-
+    
     <ControlTheme x:Key="IconCopyOutlined" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
         <Setter Property="Data">
             <StreamGeometry>M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z</StreamGeometry>
@@ -704,5 +733,23 @@
 
     <ControlTheme x:Key="IconVariableThemed" TargetType="PathIcon" BasedOn="{StaticResource IconBraces}">
         <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushOutlineAccent}" />
+    </ControlTheme>
+    
+    <ControlTheme x:Key="IconNoneThemed" TargetType="PathIcon" BasedOn="{StaticResource IconCircle}" />
+    
+    <ControlTheme x:Key="IconPendingThemed" TargetType="PathIcon" BasedOn="{StaticResource IconCircleHalfFill}">
+        <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushOutlineAccent}" />
+    </ControlTheme>
+    
+    <ControlTheme x:Key="IconPassedThemed" TargetType="PathIcon" BasedOn="{StaticResource IconCheck}">
+        <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushOutlineSuccess}" />
+    </ControlTheme>
+    
+    <ControlTheme x:Key="IconFailedThemed" TargetType="PathIcon" BasedOn="{StaticResource IconDashOutlined}">
+        <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushOutlineDanger}" />
+    </ControlTheme>
+    
+    <ControlTheme x:Key="IconErrorThemed" TargetType="PathIcon" BasedOn="{StaticResource IconExclamationOutlined}">
+        <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushOutlineWarning}" />
     </ControlTheme>
 </ResourceDictionary>

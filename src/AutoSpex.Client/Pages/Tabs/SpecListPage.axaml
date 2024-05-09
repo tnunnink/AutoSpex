@@ -1,0 +1,10 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:components="clr-namespace:AutoSpex.Client.Components"
+             x:Class="AutoSpex.Client.Pages.SpecListPage"
+             x:DataType="pages:SpecListPageModel">
+
+    <components:SpecList Specs="{Binding Node.Specs}"
+                         AddCommand="{Binding Node.AddSpecCommand}" />
+</UserControl>

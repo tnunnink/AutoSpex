@@ -2,10 +2,10 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:components="using:AutoSpex.Client.Components"
-                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
 
     <Design.PreviewWith>
-        <Border Padding="20 20 20 300">
+        <Border Padding="20" BorderThickness="1" BorderBrush="{actipro:ThemeResource Container1BorderBrush}">
             <StackPanel Orientation="Horizontal">
                 <components:DetailsTab Theme="{DynamicResource DetailsTab}"
                                        Icon="{StaticResource IconFolderOutlinedAlt}"
@@ -52,21 +52,21 @@
                 <MenuItem Header="-" />
                 <MenuItem Header="Close Other Tabs"
                           Command="{Binding $parent[components:DetailsContainer].CloseOtherTabsCommand}"
-                          CommandParameter="{Binding $parent[components:DetailsTab].DataContext}"/>
+                          CommandParameter="{Binding $parent[components:DetailsTab].DataContext}" />
                 <MenuItem Header="Close Tabs to Right"
                           Command="{Binding $parent[components:DetailsContainer].CloseRightTabsCommand}"
-                          CommandParameter="{Binding $parent[components:DetailsTab].DataContext}"/>
+                          CommandParameter="{Binding $parent[components:DetailsTab].DataContext}" />
                 <MenuItem Header="Close Tabs to Left"
                           Command="{Binding $parent[components:DetailsContainer].CloseLeftTabsCommand}"
-                          CommandParameter="{Binding $parent[components:DetailsTab].DataContext}"/>
+                          CommandParameter="{Binding $parent[components:DetailsTab].DataContext}" />
                 <MenuItem Header="-" />
-                <MenuItem Header="Force Close Tab" 
+                <MenuItem Header="Force Close Tab"
                           InputGesture="Alt+W"
                           Command="{Binding $parent[components:DetailsContainer].ForceCloseTabCommand}"
-                          CommandParameter="{Binding $parent[components:DetailsTab].DataContext}"/>
+                          CommandParameter="{Binding $parent[components:DetailsTab].DataContext}" />
                 <MenuItem Header="Force Close Tabs"
                           InputGesture="Alt+Shift+W"
-                          Command="{Binding $parent[components:DetailsContainer].ForceCloseAllTabsCommand}"/>
+                          Command="{Binding $parent[components:DetailsContainer].ForceCloseAllTabsCommand}" />
             </MenuFlyout>
         </Setter>
 
@@ -98,15 +98,15 @@
                                            Margin="7 0"
                                            Padding="0 0 0 1" />
                                 <Border Grid.Column="2" Height="20" Width="20">
-                                    <controls:IconButton
+                                    <Button
                                         x:Name="close"
-                                        Icon="{StaticResource IconClose}"
+                                        properties:ButtonIcon.Theme="{StaticResource IconClose}"
+                                        Theme="{StaticResource IconButtonSmall}"
                                         IsVisible="False"
                                         Command="{Binding $parent[components:DetailsContainer].CloseTabCommand}"
                                         CommandParameter="{TemplateBinding DataContext}"
                                         HotKey="Ctrl+W"
-                                        CornerRadius="10"
-                                        Height="20" Width="20" Padding="11" />
+                                        CornerRadius="10" Height="20" Width="20" Padding="11" />
                                 </Border>
                             </Grid>
                         </Border>
@@ -136,7 +136,7 @@
                     Value="{actipro:ThemeResource ControlForegroundBrushSoftWarning}" />
         </Style>
 
-        <Style Selector="^:pointerover /template/ controls|IconButton#close">
+        <Style Selector="^:pointerover /template/ Button#close">
             <Setter Property="IsVisible" Value="True" />
         </Style>
 

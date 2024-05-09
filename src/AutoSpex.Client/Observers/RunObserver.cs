@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using AutoSpex.Persistence;
-using AutoSpex.Persistence.Variables;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FluentResults;
@@ -15,19 +12,29 @@ using L5Sharp.Core;
 
 namespace AutoSpex.Client.Observers;
 
-public partial class RunObserver(Run model) : NamedObserver<Run>(model)
+public partial class RunObserver : NamedObserver<Run>
 {
-    private readonly List<Spec> _specs = [];
-    private L5X? _content;
     private CancellationTokenSource? _cancellation;
-    
-    public RunObserver() : this(new Run())
+
+    /// <inheritdoc/>
+    public RunObserver(Run model) : base(model)
     {
+        Outcomes = new ObserverCollection<Outcome, OutcomeObserver>(
+            () => Model.Outcomes.Select(n => new OutcomeObserver(n)).ToList(),
+            (_, m) => Model.AddOutcome(m),
+            (_, m) => Model.AddOutcome(m),
+            (_, m) => Model.Remove(m.OutcomeId),
+            () => Model.Clear());
+
+        Total = Model.Outcomes.Count();
+        Passed = Model.Outcomes.Count(o => o.Result == ResultState.Passed);
+        Failed = Model.Outcomes.Count(o => o.Result == ResultState.Failed);
+        Errored = Model.Outcomes.Count(o => o.Result == ResultState.Error);
+        Duration = Model.Outcomes.Sum(o => o.Duration);
+        Average = Ran > 0 ? Duration / Ran : 0;
     }
-    
+
     public override Guid Id => Model.RunId;
-    public Guid NodeId => Model.NodeId;
-    public Guid SourceId => Model.SourceId;
 
     public override string Name
     {
@@ -35,88 +42,123 @@ public partial class RunObserver(Run model) : NamedObserver<Run>(model)
         set => SetProperty(Model.Name, value, Model, (s, v) => s.Name = v);
     }
 
-    public ObservableCollection<Outcome> Outcomes { get; } = [];
-    
+    public SourceObserver? Source => Model.Source is not null ? new SourceObserver(Model.Source) : default;
     public ResultState Result => Model.Result;
-    public string RanOnText => $"Ran on {Model.RanOn:G} by {Model.RanBy}";
+    public string LastRan => $"Ran on {Model.RanOn:G} by {Model.RanBy}";
+    public ObserverCollection<Outcome, OutcomeObserver> Outcomes { get; }
 
+    [ObservableProperty] private bool _runOnLoad;
     [ObservableProperty] private bool _running;
-    
     [ObservableProperty] private int _total;
-    
-    /*public int Ran => Model.Outcomes.Count;
-    public int Passed => Model.Outcomes.Count(o => o.Result == ResultState.Passed);
-    public int Failed => Model.Outcomes.Count(o => o.Result == ResultState.Failed);
-    public int Errored => Model.Outcomes.Count(o => o.Result == ResultState.Error);
-    public long Duration => Model.Outcomes.Sum(o => o.Duration);
-    public long Average => Duration / Ran;*/
-    
-    protected override Task<Result> RenameModel(string name) => Mediator.Send(new RenameRun(this));
+    [ObservableProperty] private int _ran;
+    [ObservableProperty] private int _passed;
+    [ObservableProperty] private int _failed;
+    [ObservableProperty] private int _errored;
+    [ObservableProperty] private long _duration;
+    [ObservableProperty] private long _average;
+
     public static implicit operator Run(RunObserver observer) => observer.Model;
     public static implicit operator RunObserver(Run model) => new(model);
 
-    
-    [RelayCommand]
-    private async Task Execute()
+    protected override Task<Result> RenameModel(string name) => Mediator.Send(new RenameRun(this));
+
+    protected override async Task Navigate()
     {
-        if (_specs.Count == 0) return;
-        if (_content is null) return;
-        
+        //Load full run to navigate into details.
+        var load = await Mediator.Send(new GetRun(Id));
+        if (load.IsFailed) return;
+        await Navigator.Navigate(new RunObserver(load.Value));
+    }
+
+    [RelayCommand(CanExecute = nameof(CanExecute))]
+    public async Task Execute()
+    {
+        if (Model.SourceId == Guid.Empty) return;
+
         //Indicate a run to the UI
         _cancellation = new CancellationTokenSource();
+        Ran = 0;
         Running = true;
 
-        //Reload all specs, source content, and variables prior to each run.
-        await LoadSpecs(_cancellation.Token);
-        await LoadContent(_cancellation.Token);
-        await LoadVariables(_cancellation.Token);
-        
+        var content = await LoadContent(_cancellation.Token);
+        if (content.IsFailed) return;
+
         //Configure a progress tracker which will receive outcomes as they are completed.
         var progress = new Progress<Outcome>();
-        progress.ProgressChanged += PostOutcome;
+        progress.ProgressChanged += OnOutcomesProcessed;
 
         //Execute the run
-        await Model.Execute(_specs, _content, progress);
-        
+        await ExecuteRun(content.Value, progress);
+
         //Reset
         Running = false;
     }
 
-    [RelayCommand]
-    private Task Cancel()
+    private bool CanExecute() => Model.SourceId != Guid.Empty && Outcomes.Any();
+
+    [RelayCommand(CanExecute = nameof(CanCancel))]
+    private void Cancel()
     {
-        throw new NotImplementedException();
+        _cancellation?.Cancel();
+    }
+
+    private bool CanCancel() => Running;
+
+    /// <summary>
+    /// Load the source content for this run from the database.
+    /// </summary>
+    private async Task<Result<L5X>> LoadContent(CancellationToken token)
+    {
+        var result = await Mediator.Send(new GetSourceContent(Model.SourceId), token);
+        return result.IsFailed ? result : result.Value;
     }
 
     /// <summary>
-    /// Loads the specifications associated with the run.
+    /// Executes this run using the provided specs and L5X content.
     /// </summary>
-    private async Task LoadSpecs(CancellationToken token)
+    /// <param name="content">The L5X content to run the specs against.</param>
+    /// <param name="progress">The progress object for tracking the execution progress. (optional)</param>
+    /// <returns>The Run object that encapsulates the execution outcome.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when the input source is null.</exception>
+    /// <remarks>
+    /// Any spec that is not already added to the run will be skipped. Only specs that are configured via
+    /// <see cref="Outcomes"/> will be processed. 
+    /// </remarks>
+    private async Task ExecuteRun(L5X content, IProgress<Outcome>? progress = default)
     {
-        _specs.Clear();
-        
-        var ids = Model.Outcomes.Select(x => x.SpecId);
-        var result = await Mediator.Send(new GetSpecsIn(ids), token);
-        if (result.IsFailed) return;
-        
-        _specs.AddRange(result.Value);
-        Total = _specs.Count;
-    }
-    
-    private async Task LoadContent(CancellationToken token)
-    {
-        var result = await Mediator.Send(new GetSourceContent(Model.SourceId), token);
-        if (result.IsFailed) return;
-        _content = result.Value;
+        foreach (var outcome in Outcomes)
+        {
+            await outcome.Process(content);
+            progress?.Report(outcome.Model);
+        }
+
+        Model.UpdateResult();
+        Refresh();
     }
 
-    private Task LoadVariables(CancellationToken token)
+    /// <summary>
+    /// Updates the user interface by incrementing counts, duration, and average after each outcome is run.
+    /// </summary>
+    private void OnOutcomesProcessed(object? sender, Outcome outcome)
     {
-        return Mediator.Send(new ResolveVariables(_specs), token);
-    }
-    
-    private void PostOutcome(object? sender, Outcome outcome)
-    {
-        Outcomes.Add(outcome);
+        Ran++;
+
+        // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
+        // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
+        switch (outcome.Result)
+        {
+            case ResultState.Passed:
+                Passed++;
+                break;
+            case ResultState.Failed:
+                Failed++;
+                break;
+            case ResultState.Error:
+                Errored++;
+                break;
+        }
+
+        Duration += outcome.Duration;
+        Average = Ran > 0 ? Duration / Ran : 0;
     }
 }

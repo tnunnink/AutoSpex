@@ -15,10 +15,10 @@ public class ProofTests
         spec.Where("TagName", Operation.Equal, "TestSimpleTag");
         spec.Verify("DataType", Operation.Equal, "SimpleType");
 
-        var outcome = await spec.Run(source);
+        var verifications = (await spec.Run(source)).ToList();
 
-        outcome.Result.Should().Be(ResultState.Passed);
-        outcome.Evaluations.Should().HaveCount(2);
+        verifications.Should().AllSatisfy(v => v.Result.Should().Be(ResultState.Passed));
+        verifications.SelectMany(v => v.Evaluations).Should().HaveCount(2);
     }
 
     [Test]
@@ -32,12 +32,12 @@ public class ProofTests
             c.Verify("DataType", Operation.Equal, "SimpleType");
         });
 
-        var results = new List<Outcome>();
+        var results = new List<Verification>();
         var stopwatch = Stopwatch.StartNew();
         for (var i = 0; i < 100; i++)
         {
-            var result = await spec.Run(source);
-            results.Add(result);
+            var verifications = await spec.Run(source);
+            results.AddRange(verifications);
         }
 
         stopwatch.Stop();
@@ -56,10 +56,10 @@ public class ProofTests
             c.Where("CatalogNumber", Operation.Equal, "5094-IB16/A");
             c.Verify("Revision", Operation.Equal, "2.11");
         });
+        
+        var verifications = (await spec.Run(source)).ToList();
 
-        var outcome = await spec.Run(source);
-
-        outcome.Result.Should().Be(ResultState.Passed);
+        verifications.Max(r => r.Result).Should().Be(ResultState.Passed);
     }
 
     [Test]
