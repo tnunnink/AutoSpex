@@ -26,9 +26,6 @@
                                 CornerRadius="{TemplateBinding CornerRadius}"
                                 Content="{Binding Element.Name, RelativeSource={RelativeSource TemplatedParent}}">
                     <DropDownButton.Styles>
-                        <Style Selector="DropDownButton /template/ ContentPresenter#glyph">
-                            <Setter Property="Padding" Value="0 1 0 0" />
-                        </Style>
                         <Style Selector=":disabled /template/ Border#border">
                             <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushOutline}" />
                         </Style>

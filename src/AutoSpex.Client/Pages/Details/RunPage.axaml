@@ -9,36 +9,27 @@
     <Design.Width>1400</Design.Width>
     <Design.Height>1000</Design.Height>
 
-    <Grid RowDefinitions="Auto,*" Margin="20">
-        <StackPanel Spacing="10">
-            <Grid ColumnDefinitions="Auto,*,Auto">
-                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5">
-                    <PathIcon Theme="{StaticResource IconRunThemed}" />
-                    <TextBlock Text="{Binding Run.Name}"
-                               FontSize="{a:ThemeResource DefaultFontSizeLarge}"
-                               Foreground="{a:ThemeResource DefaultForegroundBrush}" />
+    <DockPanel>
+        <Border DockPanel.Dock="Top" Padding="10">
+            <components:NodeHeader
+                Node="{Binding Node}"
+                RunCommand="{Binding RunCommand}"
+                SaveCommand="{Binding SaveCommand}"/>
+        </Border>
+
+        <Grid RowDefinitions="Auto,*" Margin="20">
+            <StackPanel Spacing="10">
+                <StackPanel DockPanel.Dock="Top" Margin="10 0">
+                    <TextBlock Text="{Binding Run.LastRan, FallbackValue='Ran on Month Day at HH:mm:ss by tnunnink'}"
+                               Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
                 </StackPanel>
 
-                <StackPanel Grid.Column="2"
-                            Orientation="Horizontal"
-                            Spacing="10"
-                            VerticalAlignment="Center">
-                    <Button Content="Run Again"
-                            Theme="{a:ControlTheme ButtonSolid}"
-                            Classes="success" />
-                </StackPanel>
-            </Grid>
-
-            <StackPanel DockPanel.Dock="Top" Margin="10 0">
-                <TextBlock Text="{Binding Run.LastRan, FallbackValue='Ran on Month Day at HH:mm:ss by tnunnink'}"
-                           Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                <components:RunSummary DockPanel.Dock="Top"
+                                       Result="{Binding Run.Result, FallbackValue={x:Null}}" />
             </StackPanel>
 
-            <components:RunSummary DockPanel.Dock="Top"
-                                   Result="{Binding Run.Result, FallbackValue={x:Null}}" />
-        </StackPanel>
-
-        <components:OutcomeList Grid.Row="1" Margin="0 20 0 0"
-                                Outcomes="{Binding Run.Outcomes}" />
-    </Grid>
+            <components:OutcomeList Grid.Row="1" Margin="0 20 0 0"
+                                    Outcomes="{Binding Run.Outcomes}" />
+        </Grid>
+    </DockPanel>
 </UserControl>

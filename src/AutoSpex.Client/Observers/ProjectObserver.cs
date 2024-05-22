@@ -11,15 +11,16 @@ namespace AutoSpex.Client.Observers;
 
 public partial class ProjectObserver : Observer<Project>
 {
-    private readonly FileSystemWatcher _projectWater;
+    private readonly FileSystemWatcher? _projectWatcher;
 
     /// <inheritdoc/>
     public ProjectObserver(Project project) : base(project)
     {
-        _projectWater = project.CreateWatcher();
-        _projectWater.Renamed += OnProjectRenamed;
-        _projectWater.Deleted += OnProjectDeleted;
-        _projectWater.Created += OnProjectCreated;
+        _projectWatcher = project.CreateWatcher();
+        if (_projectWatcher is null) return;
+        _projectWatcher.Renamed += OnProjectRenamed;
+        _projectWatcher.Deleted += OnProjectDeleted;
+        _projectWatcher.Created += OnProjectCreated;
     }
 
     public Uri Uri => Model.Path;
@@ -35,8 +36,42 @@ public partial class ProjectObserver : Observer<Project>
         set => SetProperty(Model.Pinned, value, Model, (p, v) => p.Pinned = v);
     }
 
-    [RelayCommand]
-    public Task Connect() => ConnectProject();
+    [RelayCommand(CanExecute = nameof(CanConnect))]
+    public async Task Connect()
+    {
+        if (!Exists) return;
+        
+        var action = await Mediator.Send(new EvaluateProject(Model));
+        if (action.IsFailed)
+        {
+            //todo prompt user here and return
+            /*return Result.Fail(
+                                $"Failed to evaluate the current version of the project '{project.Name}'. " +
+                                $"Make sure this is a valid Spex project file and that the file exists locally.")
+                            .WithErrors(action.Errors);*/
+        }
+
+        if (action.Value == ProjectAction.MigrationRequired)
+        {
+            await HandleMigrationRequired(Model);
+        }
+
+        if (action.Value == ProjectAction.UpdateRequired)
+        {
+            //todo handle
+        }
+
+        if (action.Value == ProjectAction.UpdateSuggested)
+        {
+            //todo handle
+        }
+
+        var result = await Mediator.Send(new OpenProject(Model));
+        if (result.IsFailed) return;
+        await Navigator.Navigate(this);
+    }
+
+    public bool CanConnect() => Exists;
 
     [RelayCommand]
     private Task Locate() => Shell.StorageProvider.ShowInExplorer(Directory);
@@ -73,42 +108,11 @@ public partial class ProjectObserver : Observer<Project>
     protected override void OnDeactivated()
     {
         base.OnDeactivated();
-        _projectWater.Renamed -= OnProjectRenamed;
-        _projectWater.Deleted -= OnProjectDeleted;
-        _projectWater.Created -= OnProjectDeleted;
-    }
 
-    private async Task ConnectProject()
-    {
-        var action = await Mediator.Send(new EvaluateProject(Model));
-
-        if (action.IsFailed)
-        {
-            //todo prompt user here and return
-            /*return Result.Fail(
-                                $"Failed to evaluate the current version of the project '{project.Name}'. " +
-                                $"Make sure this is a valid Spex project file and that the file exists locally.")
-                            .WithErrors(action.Errors);*/
-        }
-
-        if (action.Value == ProjectAction.MigrationRequired)
-        {
-            await HandleMigrationRequired(Model);
-        }
-
-        if (action.Value == ProjectAction.UpdateRequired)
-        {
-            //todo handle
-        }
-
-        if (action.Value == ProjectAction.UpdateSuggested)
-        {
-            //todo handle
-        }
-
-        var result = await Mediator.Send(new OpenProject(Model));
-        if (result.IsFailed) return;
-        await Navigator.Navigate(this);
+        if (_projectWatcher is null) return;
+        _projectWatcher.Renamed -= OnProjectRenamed;
+        _projectWatcher.Deleted -= OnProjectDeleted;
+        _projectWatcher.Created -= OnProjectDeleted;
     }
 
     private async Task HandleMigrationRequired(Project project)

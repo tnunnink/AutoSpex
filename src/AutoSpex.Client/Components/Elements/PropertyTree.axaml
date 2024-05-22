@@ -15,30 +15,30 @@
                 <Grid RowDefinitions="Auto,*">
                     <Border Background="{a:ThemeResource Container1BackgroundBrush}"
                             BorderBrush="{a:ThemeResource Container2BorderBrush}"
-                            BorderThickness="0 0 0 1"
-                            Height="40">
+                            BorderThickness="0 0 0 1" Padding="5">
                         <Grid ColumnDefinitions="*,Auto">
                             <TextBox x:Name="FilterText"
                                      Grid.Column="0"
                                      BorderThickness="0"
                                      Background="Transparent"
-                                     Watermark="Filter properties"
+                                     Watermark="Search content"
                                      VerticalContentAlignment="Center"
                                      FontSize="{a:ThemeResource DefaultFontSizeSmall}"
                                      Padding="5">
                                 <TextBox.InnerLeftContent>
                                     <PathIcon Theme="{StaticResource IconFilter}"
-                                              Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
-                                              Margin="5 0" />
+                                              Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
                                 </TextBox.InnerLeftContent>
                             </TextBox>
 
                             <StackPanel Grid.Column="1"
-                                        Margin="5 0"
                                         Orientation="Horizontal"
-                                        Spacing="5">
-                                <Button properties:ButtonIcon.Theme="{StaticResource IconDotsVertical}"
-                                        Theme="{StaticResource IconButton}" Padding="9"
+                                        Spacing="5" Margin="5 0">
+                                <Button properties:ButtonIcon.Theme="{StaticResource IconListNested}"
+                                        Theme="{StaticResource IconButton}" Padding="7"
+                                        ToolTip.Tip="Options" />
+                                <Button properties:ButtonIcon.Theme="{StaticResource IconXml}"
+                                        Theme="{StaticResource IconButton}"
                                         ToolTip.Tip="Options" />
                             </StackPanel>
                         </Grid>

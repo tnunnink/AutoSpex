@@ -1,0 +1,23 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="AutoSpex.Client.Pages.UserControl1">
+
+    <Design.Width>500</Design.Width>
+    <Design.Height>500</Design.Height>
+
+    <Border BorderBrush="Red" BorderThickness="1" Margin="10"
+            MaxWidth="200" MaxHeight="200">
+        <StackPanel Orientation="Vertical" Spacing="10" MaxHeight="200" MaxWidth="200"
+                    ClipToBounds="True">
+            <TextBlock Text="This is some text" TextTrimming="CharacterEllipsis" />
+            <TextBlock Text="This is some text" TextTrimming="CharacterEllipsis" />
+            <TextBlock Text="This is some text" TextTrimming="CharacterEllipsis" />
+            <TextBlock Text="This is some text" TextTrimming="CharacterEllipsis" />
+            <TextBlock Text="This is some text" TextTrimming="CharacterEllipsis" />
+            <TextBlock Text="This is some text" TextTrimming="CharacterEllipsis" />
+            <TextBlock Text="This is some text" TextTrimming="CharacterEllipsis" />
+            <TextBlock Text="This is some text" TextTrimming="CharacterEllipsis" />
+            <TextBlock Text="This is some text" TextTrimming="CharacterEllipsis" />
+        </StackPanel>
+    </Border>
+</UserControl>

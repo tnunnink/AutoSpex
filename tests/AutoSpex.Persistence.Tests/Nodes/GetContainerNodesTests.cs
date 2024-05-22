@@ -9,7 +9,7 @@ public class GetContainerNodesTests
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
 
-        var result = await mediator.Send(new GetContainerNodes());
+        var result = await mediator.Send(new GetContainerNodes(NodeType.Spec));
 
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().BeEmpty();
@@ -20,11 +20,11 @@ public class GetContainerNodesTests
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-        await mediator.Send(new CreateNode(Node.NewCollection()));
-        await mediator.Send(new CreateNode(Node.NewFolder()));
+        await mediator.Send(new CreateNode(Node.NewContainer(), NodeType.Spec));
+        await mediator.Send(new CreateNode(Node.NewContainer(), NodeType.Spec));
         await mediator.Send(new CreateNode(Node.NewSpec()));
 
-        var result = await mediator.Send(new GetContainerNodes());
+        var result = await mediator.Send(new GetContainerNodes(NodeType.Spec));
 
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().HaveCount(2);
@@ -35,15 +35,15 @@ public class GetContainerNodesTests
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-        var collection = Node.NewCollection();
-        await mediator.Send(new CreateNode(collection));
-        await mediator.Send(new CreateNode(collection.AddFolder()));
+        var collection = Node.NewContainer();
+        await mediator.Send(new CreateNode(collection, NodeType.Spec));
+        await mediator.Send(new CreateNode(collection.AddContainer(), NodeType.Spec));
         await mediator.Send(new CreateNode(collection.AddSpec()));
 
-        var result = await mediator.Send(new GetContainerNodes());
+        var result = await mediator.Send(new GetContainerNodes(NodeType.Spec));
 
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().HaveCount(2);
-        result.Value.First().NodeType.Should().Be(NodeType.Collection);
+        result.Value.First().Type.Should().Be(NodeType.Container);
     }
 }

@@ -34,8 +34,8 @@ public class RunnerTests
     [Test]
     public void AddNode_CollectionWithChildNodes_ShouldHaveExpectedCount()
     {
-        var collection = Node.NewCollection();
-        var folder = collection.AddFolder();
+        var collection = Node.NewContainer();
+        var folder = collection.AddContainer();
         folder.AddSpec();
         folder.AddSpec();
         folder.AddSpec();
@@ -64,8 +64,8 @@ public class RunnerTests
     public void AddNode_ManyDifferentNodes_ShouldHaveExpectedOutcomesCount()
     {
         var runner = new Runner();
-        var collection = Node.NewCollection();
-        var folder = collection.AddFolder();
+        var collection = Node.NewContainer();
+        var folder = collection.AddContainer();
         var first = folder.AddSpec();
         var second = folder.AddSpec();
         var third = folder.AddSpec();

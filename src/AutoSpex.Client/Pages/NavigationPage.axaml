@@ -1,0 +1,25 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:components="clr-namespace:AutoSpex.Client.Components"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+             x:Class="AutoSpex.Client.Pages.NavigationPage"
+             x:DataType="pages:NavigationPageModel">
+
+    <Design.Height>800</Design.Height>
+    <Design.Width>300</Design.Width>
+
+    <components:NavigationTree ItemsSource="{Binding Nodes}"
+                               SelectedItems="{Binding SelectedNodes}"
+                               Feature="{Binding Feature}"
+                               AddContainerCommand="{Binding AddContainerCommand}"
+                               AddItemCommand="{Binding AddItemCommand}"
+                               SelectionMode="Multiple">
+        <components:NavigationTree.ItemTemplate>
+            <TreeDataTemplate x:DataType="observers:NodeObserver"
+                              ItemsSource="{Binding Nodes}">
+                <TextBlock Text="{Binding Name}" />
+            </TreeDataTemplate>
+        </components:NavigationTree.ItemTemplate>
+    </components:NavigationTree>
+</UserControl>

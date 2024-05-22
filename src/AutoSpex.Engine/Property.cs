@@ -3,7 +3,7 @@
 namespace AutoSpex.Engine;
 
 /// <summary>
-/// A representation of a class property which can be navigated to from our logix or build in .NET types. This class
+/// A representation of a class property which can be navigated to from our logix or built in .NET types. This class
 /// contains all the functionality we need for our object graph navigation as well as type information and getter functions
 /// which will be used in criteria for getting the values to evaluate filters and verifications.
 /// </summary>
@@ -12,9 +12,9 @@ public class Property : IEquatable<Property>
     private const char Separator = '.';
 
     /// <summary>
-    /// Holds compiled property getter functions so we don't have to recreate them each time we need to get a property.
+    /// Holds compiled property getter functions, so we don't have to recreate them each time we need to get a property.
     /// This will improve the overall performance when we go to run many criterion for many specifications.
-    /// These are cached as the are accessed. We can't be greedy and create them ahead of time because of the recursive nature
+    /// These are cached as they are accessed. We can't be greedy and create them ahead of time because of the recursive nature
     /// of the type graph and these being static types, we could cause overflow exceptions. 
     /// </summary>
     private static readonly Dictionary<Property, Func<object?, object?>> Cache = new();
@@ -83,7 +83,7 @@ public class Property : IEquatable<Property>
     public string Identifier => Type.CommonName();
 
     /// <summary>
-    /// The <see cref="TypeGroup"/> to which this property's return type belongs.
+    /// The <see cref="TypeGroup"/> two which this property's return type belongs.
     /// </summary>
     public TypeGroup Group => TypeGroup.FromType(Type);
 

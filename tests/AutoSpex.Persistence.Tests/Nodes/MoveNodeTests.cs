@@ -10,12 +10,12 @@ public class MoveNodeTests
         var mediator = context.Resolve<IMediator>();
         
         //seed some nodes
-        var collection = Node.NewCollection();
+        var collection = Node.NewContainer();
         await mediator.Send(new CreateNode(collection));
-        await mediator.Send(new CreateNode(collection.AddFolder()));
-        var destination = collection.AddFolder();
+        await mediator.Send(new CreateNode(collection.AddContainer()));
+        var destination = collection.AddContainer();
         await mediator.Send(new CreateNode(destination));
-        await mediator.Send(new CreateNode(collection.AddFolder()));
+        await mediator.Send(new CreateNode(collection.AddContainer()));
         var target = collection.AddSpec(); //store target for move
         await mediator.Send(new CreateNode(target));
         await mediator.Send(new CreateNode(collection.AddSpec()));

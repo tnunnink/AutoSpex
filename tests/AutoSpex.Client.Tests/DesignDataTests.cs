@@ -9,14 +9,6 @@ namespace AutoSpex.Client.Tests;
 public class DesignDataTests
 {
     [Test]
-    public void DesignDataBreadcrumb()
-    {
-        using var context = new TestContext();
-        var test = new Breadcrumb(Node.NewCollection().AddFolder().AddSpec(), CrumbType.Target);
-        test.Items.ToList().Should().NotBeEmpty();
-    }
-    
-    [Test]
     public void DesignDataSources()
     {
         using var context = new TestContext();

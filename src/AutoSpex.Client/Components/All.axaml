@@ -8,14 +8,12 @@
         <ResourceInclude Source="Navigation/All.axaml" />
         <ResourceInclude Source="Elements/All.axaml" />
         <ResourceInclude Source="Nodes/All.axaml" />
-        <ResourceInclude Source="Breadcrumb/All.axaml" />
         <ResourceInclude Source="Details/All.axaml" />
         <ResourceInclude Source="Projects/All.axaml" />
         <ResourceInclude Source="Prompts/All.axaml" />
         <ResourceInclude Source="Runs/All.axaml" />
         <ResourceInclude Source="Sources/All.axaml" />
         <ResourceInclude Source="Specs/All.axaml" />
-        <ResourceInclude Source="Templates/All.axaml" />
         <ResourceInclude Source="Criteria/All.axaml" />
         <ResourceInclude Source="Variables/All.axaml" />
     </ResourceDictionary.MergedDictionaries>

@@ -8,6 +8,7 @@ public class JsonArgumentConverter : JsonConverter<Argument>
 {
     public override Argument? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
+        Guid id = default;
         Type? type = default;
         object? value = default;
 
@@ -20,6 +21,9 @@ public class JsonArgumentConverter : JsonConverter<Argument>
 
             switch (propertyName)
             {
+                case nameof(Argument.ArgumentId):
+                    id = JsonSerializer.Deserialize<Guid>(ref reader, options);
+                    break;
                 case nameof(Argument.Type):
                     type = JsonSerializer.Deserialize<Type>(ref reader, options);
                     break;
@@ -42,19 +46,20 @@ public class JsonArgumentConverter : JsonConverter<Argument>
                     break;
             }
         }
-
-        if (type is null)
-            throw new JsonException("Conversion failed to deserialize Type property for Argument");
+        
+        if (id == default)
+            throw new JsonException("Conversion failed to deserialize Id property for Argument");
         
         if (value is null)
             throw new JsonException("Conversion failed to deserialize Value property for Argument");
         
-        return new Argument(value);
+        return new Argument(id, value);
     }
 
     public override void Write(Utf8JsonWriter writer, Argument value, JsonSerializerOptions options)
     {
         writer.WriteStartObject();
+        writer.WriteString(nameof(Argument.ArgumentId), value.ArgumentId);
         writer.WriteString(nameof(Argument.Type), value.Type.FullName);
 
         if (value.Type == typeof(Variable) || value.Type == typeof(Criterion))

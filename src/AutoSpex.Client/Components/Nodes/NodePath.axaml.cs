@@ -60,6 +60,6 @@ public class NodePath : TemplatedControl
         var parents = node.Model.Ancestors().Select(a => a.Name);
         Parents.AddRange(parents);
         Target = node.Name;
-        NodeType = node.NodeType.Name;
+        NodeType = node.Type.Name;
     }
 }

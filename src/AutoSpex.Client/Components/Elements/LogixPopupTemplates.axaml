@@ -1,0 +1,182 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:core="clr-namespace:L5Sharp.Core;assembly=L5Sharp.Core"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+
+    <Design.PreviewWith>
+        <StackPanel Spacing="10" Margin="50">
+            <Border BorderBrush="{a:ThemeResource PopupBorderBrush}"
+                    BorderThickness="{a:ThemeResource PopupBorderThickness}"
+                    CornerRadius="{a:ThemeResource PopupCornerRadius}"
+                    Padding="{a:ThemeResource PopupPadding}">
+                <ContentControl
+                    Margin="{a:ThemeResource PopupMargin}"
+                    Content="{x:Static components:DesignData.Tag}"
+                    ContentTemplate="{DynamicResource TagPopupTemplate}" />
+            </Border>
+            <Border BorderBrush="{a:ThemeResource PopupBorderBrush}"
+                    BorderThickness="{a:ThemeResource PopupBorderThickness}"
+                    CornerRadius="{a:ThemeResource PopupCornerRadius}"
+                    Padding="{a:ThemeResource PopupPadding}">
+                <ContentControl
+                    Margin="{a:ThemeResource PopupMargin}"
+                    Content="{x:Static components:DesignData.Rung}"
+                    ContentTemplate="{DynamicResource RungPopupTemplate}" />
+            </Border>
+            <Border BorderBrush="{a:ThemeResource PopupBorderBrush}"
+                    BorderThickness="{a:ThemeResource PopupBorderThickness}"
+                    CornerRadius="{a:ThemeResource PopupCornerRadius}"
+                    Padding="{a:ThemeResource PopupPadding}">
+                <ContentControl
+                    Margin="{a:ThemeResource PopupMargin}"
+                    Content="{x:Static components:DesignData.Module}"
+                    ContentTemplate="{DynamicResource ModulePopupTemplate}" />
+            </Border>
+
+            <!--<Button Content="{x:Static components:DesignData.Tag}"
+                    ContentTemplate="{DynamicResource TagTemplate}"
+                    Theme="{a:ControlTheme ButtonLink}" />-->
+            <!--<Button Content="{x:Static components:DesignData.DataType}"
+                    ContentTemplate="{DynamicResource LogixComponentTemplate}"
+                    Theme="{a:ControlTheme ButtonLink}" />-->
+        </StackPanel>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="TagPopupTemplate" x:DataType="core:Tag">
+        <Grid RowDefinitions="Auto,*,Auto">
+            <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Margin="5 3 5 5">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5">
+                    <TextBlock Text="{Binding TagName}"
+                               FontWeight="{a:ThemeResource HeadingFontWeightSmall}"
+                               Foreground="{DynamicResource TypeGroupForegroundBrushElement}" />
+                    <TextBlock Text="in" Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                    <TextBlock Text="{Binding Container}"
+                               Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}" />
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="[" Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                        <TextBlock Text="{Binding DataType}"
+                                   Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}" />
+                        <TextBlock Text="]" Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                    </StackPanel>
+
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                    <ToggleButton x:Name="XmlToggle"
+                                  Theme="{StaticResource IconToggleButton}"
+                                  properties:ButtonIcon.Theme="{StaticResource IconXml}"
+                                  Classes="accent" />
+                </StackPanel>
+            </Grid>
+
+            <Border Grid.Row="2"
+                    BorderBrush="{a:ThemeResource Container2BorderBrush}"
+                    BorderThickness="0 1 0 0"
+                    Padding="5">
+                <ScrollViewer HorizontalScrollBarVisibility="Auto">
+                    <Panel>
+                        <TextBlock Text="{}"
+                                   IsVisible="{Binding !#XmlToggle.IsChecked}"
+                                   TextWrapping="WrapWithOverflow"
+                                   Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                        <TextBlock Text="{Binding Description}"
+                                   IsVisible="{Binding !#XmlToggle.IsChecked}"
+                                   TextWrapping="WrapWithOverflow"
+                                   Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                        <SelectableTextBlock Text="{Binding Converter={StaticResource ElementXmlConverter}}"
+                                             IsVisible="{Binding #XmlToggle.IsChecked}"
+                                             Foreground="{DynamicResource TypeGroupForegroundBrushText}" />
+                    </Panel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+    </DataTemplate>
+
+
+    <DataTemplate x:Key="RungPopupTemplate" x:DataType="core:Rung">
+        <Grid RowDefinitions="Auto,*,Auto">
+            <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Margin="5 3 5 5">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5">
+                    <TextBlock Text="{Binding Location}"
+                               FontWeight="{a:ThemeResource HeadingFontWeightSmall}"
+                               Foreground="{DynamicResource TypeGroupForegroundBrushElement}" />
+                    <TextBlock Text="in" Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                    <TextBlock Text="{Binding Container}"
+                               Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}" />
+                    <TextBlock Text=">" Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                    <TextBlock Text="{Binding Routine.Name, FallbackValue={x:Null}}"
+                               Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}" />
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                    <a:CopyButton Theme="{a:ControlTheme CopyButtonSubtle}"
+                                  CopyText="{Binding Text}"
+                                  Classes="accent" />
+                </StackPanel>
+            </Grid>
+
+
+            <TextBlock Grid.Row="1" Text="{Binding Text}"
+                       FontFamily="{a:ThemeResource CodeFontFamily}"
+                       FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                       TextWrapping="Wrap"
+                       Padding="5 10" />
+            <Border Grid.Row="2"
+                    BorderBrush="{a:ThemeResource Container2BorderBrush}"
+                    BorderThickness="0 1 0 0"
+                    Padding="5">
+                <TextBlock Text="{Binding Comment}"
+                           Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+            </Border>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ModulePopupTemplate" x:DataType="core:Module">
+        <Grid RowDefinitions="Auto,*,Auto">
+            <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Margin="5 3 5 5">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5">
+                    <TextBlock Text="{Binding Name}"
+                               FontWeight="{a:ThemeResource HeadingFontWeightSmall}"
+                               Foreground="{DynamicResource TypeGroupForegroundBrushElement}" />
+                    <TextBlock Text="{Binding CatalogNumber}"
+                               Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}" />
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="[" Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                        <TextBlock Text="{Binding Revision}"
+                                   Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}" />
+                        <TextBlock Text="]" Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                    <ToggleButton x:Name="XmlToggle"
+                                  Theme="{StaticResource IconToggleButton}"
+                                  properties:ButtonIcon.Theme="{StaticResource IconXml}"
+                                  Classes="accent" />
+                </StackPanel>
+            </Grid>
+
+            <Border Grid.Row="2"
+                    BorderBrush="{a:ThemeResource Container2BorderBrush}"
+                    BorderThickness="0 1 0 0"
+                    Padding="5">
+                <ScrollViewer HorizontalScrollBarVisibility="Auto">
+                    <Panel>
+                        <Panel IsVisible="{Binding !#XmlToggle.IsChecked}">
+                            <TextBlock Text="No description"
+                                       IsVisible="{Binding Description, Converter={x:Static StringConverters.IsNullOrEmpty}}"
+                                       FontStyle="Italic"
+                                       Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                            <TextBlock Text="{Binding Description}"
+                                       IsVisible="{Binding Description, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                                       Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
+                                       TextWrapping="WrapWithOverflow" />
+                        </Panel>
+                        <SelectableTextBlock Text="{Binding Converter={StaticResource ElementXmlConverter}}"
+                                             IsVisible="{Binding #XmlToggle.IsChecked}"
+                                             Foreground="{DynamicResource TypeGroupForegroundBrushText}" />
+                    </Panel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+    </DataTemplate>
+</ResourceDictionary>

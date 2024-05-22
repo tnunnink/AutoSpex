@@ -53,7 +53,7 @@
                     </components:Section.Header>
 
                     <Panel>
-                        <components:NoItemsMessage HeadingText="No variables defined"
+                        <components:NoItemsMessage HeaderText="No variables defined"
                                                    MessageIcon="{StaticResource IconAdd}"
                                                    MessageText="add a new variable to this node."
                                                    IsVisible="{Binding !Variables.Count, RelativeSource={RelativeSource TemplatedParent}}"

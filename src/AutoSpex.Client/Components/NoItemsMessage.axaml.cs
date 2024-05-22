@@ -7,22 +7,36 @@ namespace AutoSpex.Client.Components;
 
 public class NoItemsMessage : TemplatedControl
 {
-    public static readonly StyledProperty<string> HeadingTextProperty =
+    public static readonly StyledProperty<ControlTheme> HeaderIconProperty =
+        AvaloniaProperty.Register<NoItemsMessage, ControlTheme>(
+            nameof(HeaderIcon));
+
+    public static readonly StyledProperty<string> HeaderTextProperty =
         AvaloniaProperty.Register<NoItemsMessage, string>(
-            nameof(HeadingText));
+            nameof(HeaderText));
 
     public static readonly StyledProperty<ControlTheme> MessageIconProperty =
         AvaloniaProperty.Register<NoItemsMessage, ControlTheme>(
             nameof(MessageIcon));
-    
+
     public static readonly StyledProperty<string> MessageTextProperty =
         AvaloniaProperty.Register<NoItemsMessage, string>(
             nameof(MessageText));
 
-    public string HeadingText
+    public static readonly StyledProperty<string?> CustomMessageProperty =
+        AvaloniaProperty.Register<NoItemsMessage, string?>(
+            nameof(CustomMessage));
+
+    public ControlTheme HeaderIcon
     {
-        get => GetValue(HeadingTextProperty);
-        set => SetValue(HeadingTextProperty, value);
+        get => GetValue(HeaderIconProperty);
+        set => SetValue(HeaderIconProperty, value);
+    }
+
+    public string HeaderText
+    {
+        get => GetValue(HeaderTextProperty);
+        set => SetValue(HeaderTextProperty, value);
     }
 
     public ControlTheme MessageIcon
@@ -30,10 +44,16 @@ public class NoItemsMessage : TemplatedControl
         get => GetValue(MessageIconProperty);
         set => SetValue(MessageIconProperty, value);
     }
-    
+
     public string MessageText
     {
         get => GetValue(MessageTextProperty);
         set => SetValue(MessageTextProperty, value);
+    }
+
+    public string? CustomMessage
+    {
+        get => GetValue(CustomMessageProperty);
+        set => SetValue(CustomMessageProperty, value);
     }
 }

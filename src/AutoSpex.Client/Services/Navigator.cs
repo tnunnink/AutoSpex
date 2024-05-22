@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoSpex.Client.Observers;
 using AutoSpex.Client.Pages;
 using AutoSpex.Client.Shared;
+using AutoSpex.Engine;
 using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
 
@@ -163,9 +164,10 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
         return observer switch
         {
             ProjectObserver project => () => new ProjectPageModel(project),
-            NodeObserver node => () => new NodePageModel(node),
-            SourceObserver source => () => new SourcePageModel(source),
-            RunObserver run => () => new RunPageModel(run),
+            NodeObserver node when node.Type == NodeType.Container => () => new ContainerPageModel(node),
+            NodeObserver node when node.Type == NodeType.Spec => () => new SpecPageModel(node),
+            NodeObserver node when node.Type == NodeType.Source => () => new SourcePageModel(node),
+            NodeObserver node when node.Type == NodeType.Run => () => new RunPageModel(node),
             _ => throw new NotSupportedException($"The observer type {observer.GetType()} does not support navigation")
         };
     }

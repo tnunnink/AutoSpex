@@ -5,6 +5,9 @@
              xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
              x:Class="AutoSpex.Client.Pages.SpecCriteriaPage"
              x:DataType="pages:SpecCriteriaPageModel">
+    
+    <Design.Height>800</Design.Height>
+    <Design.Width>1200</Design.Width>
 
     <StackPanel Spacing="30">
         <components:SpecQuery

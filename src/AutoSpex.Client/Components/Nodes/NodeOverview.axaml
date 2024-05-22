@@ -31,14 +31,14 @@
                                     </Style>
                                 </TextBox.Styles>
                             </TextBox>
-                            <TextBox
+                            <!--<TextBox
                                 x:Name="DocumentationEntry"
                                 Text="{Binding Node.Documentation, RelativeSource={RelativeSource TemplatedParent}, FallbackValue={x:Null}}"
                                 Watermark="Help others with a complete description of this node"
                                 Theme="{StaticResource TextBoxSubtle}"
                                 VerticalContentAlignment="Top"
                                 TextWrapping="Wrap"
-                                Height="100" />
+                                Height="100" />-->
                             <Border BorderBrush="{a:ThemeResource Container2BorderBrush}"
                                     BorderThickness="0 0 0 1" />
 

@@ -4,7 +4,7 @@
 public class DeleteNodeTests
 {
     [Test]
-    public async Task Send_NonExistingNode_ShouldReturnSuccess()
+    public async Task DeleteNode_NonExistingNode_ShouldReturnSuccess()
     {
         var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
@@ -15,15 +15,62 @@ public class DeleteNodeTests
     }
     
     [Test]
-    public async Task Send_ExistingNode_ShouldReturnSuccess()
+    public async Task DeleteNode_ContainerNode_ShouldReturnSuccess()
     {
         var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-        var node = Node.NewCollection();
+        var node = Node.NewContainer();
+        await mediator.Send(new CreateNode(node, NodeType.Spec));
+
+        var deleted = await mediator.Send(new DeleteNode(node.NodeId));
+
+        deleted.IsSuccess.Should().BeTrue();
+        var get = await mediator.Send(new GetNode(node.NodeId));
+        get.IsFailed.Should().BeTrue();
+    }
+    
+    [Test]
+    public async Task DeleteNode_SpecNode_ShouldReturnSuccess()
+    {
+        var context = new TestContext();
+        var mediator = context.Resolve<IMediator>();
+        var node = Node.NewSpec();
         await mediator.Send(new CreateNode(node));
 
-        var result = await mediator.Send(new DeleteNode(node.NodeId));
+        var deleted = await mediator.Send(new DeleteNode(node.NodeId));
 
-        result.IsSuccess.Should().BeTrue();
+        deleted.IsSuccess.Should().BeTrue();
+        var get = await mediator.Send(new GetNode(node.NodeId));
+        get.IsFailed.Should().BeTrue();
+    }
+    
+    [Test]
+    public async Task DeleteNode_SourceNode_ShouldReturnSuccess()
+    {
+        var context = new TestContext();
+        var mediator = context.Resolve<IMediator>();
+        var node = Node.NewSource();
+        await mediator.Send(new CreateNode(node));
+
+        var deleted = await mediator.Send(new DeleteNode(node.NodeId));
+
+        deleted.IsSuccess.Should().BeTrue();
+        var get = await mediator.Send(new GetNode(node.NodeId));
+        get.IsFailed.Should().BeTrue();
+    }
+    
+    [Test]
+    public async Task DeleteNode_RunNode_ShouldReturnSuccess()
+    {
+        var context = new TestContext();
+        var mediator = context.Resolve<IMediator>();
+        var node = Node.NewRun();
+        await mediator.Send(new CreateNode(node));
+
+        var deleted = await mediator.Send(new DeleteNode(node.NodeId));
+
+        deleted.IsSuccess.Should().BeTrue();
+        var get = await mediator.Send(new GetNode(node.NodeId));
+        get.IsFailed.Should().BeTrue();
     }
 }

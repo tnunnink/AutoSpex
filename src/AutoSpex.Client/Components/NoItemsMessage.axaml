@@ -5,7 +5,8 @@
 
     <Design.PreviewWith>
         <components:NoItemsMessage
-            HeadingText="No criteria defined"
+            HeaderIcon="{StaticResource IconSpecThemed}"
+            HeaderText="No criteria defined"
             MessageIcon="{StaticResource IconAdd}"
             MessageText="add a new criteria to this spec." />
     </Design.PreviewWith>
@@ -13,17 +14,20 @@
     <ControlTheme x:Key="{x:Type components:NoItemsMessage}" TargetType="components:NoItemsMessage">
         <Setter Property="Template">
             <ControlTemplate>
-                <StackPanel VerticalAlignment="Center"
-                            HorizontalAlignment="Center"
-                            Margin="20">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="20" Spacing="3">
+
+                    <PathIcon Theme="{TemplateBinding HeaderIcon}"
+                              Padding="0" Margin="0 5"
+                              IsVisible="{Binding HeaderIcon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
                     <TextBlock
-                        Text="{TemplateBinding HeadingText}"
+                        Text="{TemplateBinding HeaderText}"
                         Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
                         FontWeight="SemiBold"
                         HorizontalAlignment="Center" />
 
-                    <StackPanel Orientation="Horizontal"
-                                HorizontalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
+                                IsVisible="{Binding CustomMessage, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static StringConverters.IsNullOrEmpty}}">
                         <TextBlock
                             Text="Click the "
                             Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
@@ -36,6 +40,13 @@
                                    Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
                                    TextAlignment="Center" />
                         <TextBlock Text="{TemplateBinding MessageText}"
+                                   Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                                   TextAlignment="Center" />
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
+                                IsVisible="{Binding CustomMessage, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                        <TextBlock Text="{TemplateBinding CustomMessage}"
                                    Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
                                    TextAlignment="Center" />
                     </StackPanel>

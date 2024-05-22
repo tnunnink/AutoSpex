@@ -7,7 +7,7 @@
 
     <Design.PreviewWith>
         <components:DetailsContainer Height="600" Width="600"
-                                     ItemsSource="{x:Static components:DesignData.Pages}" />
+                                     ItemsSource="{x:Static components:DesignData.Tabs}" />
     </Design.PreviewWith>
 
     <ControlTheme x:Key="{x:Type components:DetailsContainer}" TargetType="components:DetailsContainer">
@@ -15,7 +15,7 @@
         <Setter Property="BorderBrush" Value="{actipro:ThemeResource Container1BorderBrush}" />
 
         <Setter Property="ItemContainerTheme">
-            <ControlTheme TargetType="components:DetailsTab"
+            <ControlTheme TargetType="components:DetailTab"
                           x:DataType="shared:PageViewModel"
                           BasedOn="{StaticResource DetailsTab}">
                 <Setter Property="Title" Value="{Binding Title}" />
@@ -28,7 +28,7 @@
             <ControlTemplate>
                 <DockPanel>
                     <Grid DockPanel.Dock="Top"
-                          MinHeight="40"
+                          Height="40"
                           ColumnDefinitions="*,Auto">
                         <ScrollViewer Grid.Column="0"
                                       Classes="theme-scroll-overlay"
@@ -51,8 +51,7 @@
                                     <Button.Flyout>
                                         <Flyout Placement="BottomEdgeAlignedRight"
                                                 VerticalOffset="3" HorizontalOffset="5">
-                                            <components:DetailsOpenTabs OpenTabsSource="{TemplateBinding ItemsSource}"
-                                                                        CloseTabCommand="{Binding $parent[components:DetailsContainer].CloseTabCommand}" />
+                                            <components:DetailTabList Tabs="{TemplateBinding ItemsSource}" />
                                         </Flyout>
                                     </Button.Flyout>
                                 </Button>
@@ -105,7 +104,7 @@
                                 AddCollectionCommand="{TemplateBinding AddCollectionCommand, Mode=TwoWay}"
                                 AddSpecCommand="{TemplateBinding AddSpecCommand, Mode=TwoWay}"
                                 AddSourceCommand="{TemplateBinding AddSourceCommand, Mode=TwoWay}"
-                                AddRunnerCommand="{TemplateBinding AddRunnerCommand, Mode=TwoWay}"/>
+                                AddRunnerCommand="{TemplateBinding AddRunnerCommand, Mode=TwoWay}" />
                         </Panel>
                     </Border>
                 </DockPanel>

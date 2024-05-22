@@ -4,27 +4,57 @@
 public class CreateNodeTests
 {
     [Test]
-    public async Task CreateNode_CollectionNode_ShouldBeSuccess()
+    public async Task CreateNode_ContainerNodeNoType_ShouldBeFailed()
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-        var node = Node.NewCollection("MyCollection");
+        var node = Node.NewContainer("Test");
 
         var result = await mediator.Send(new CreateNode(node));
         
-        result.IsSuccess.Should().BeTrue();
+        result.IsFailed.Should().BeTrue();
     }
     
     [Test]
-    public async Task CreateNode_FolderNode_ShouldBeSuccess()
+    public async Task CreateNode_ContainerNodeWithTypeSpec_ShouldBeSuccess()
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-        var node = Node.NewFolder();
+        var node = Node.NewContainer("Test");
 
-        var result = await mediator.Send(new CreateNode(node));
+        var result = await mediator.Send(new CreateNode(node, NodeType.Spec));
         
         result.IsSuccess.Should().BeTrue();
+        node.Parent.Should().NotBeNull();
+        node.ParentId.Should().NotBeEmpty();
+    }
+    
+    [Test]
+    public async Task CreateNode_ContainerNodeWithTypeSource_ShouldBeSuccess()
+    {
+        using var context = new TestContext();
+        var mediator = context.Resolve<IMediator>();
+        var node = Node.NewContainer("Test");
+
+        var result = await mediator.Send(new CreateNode(node, NodeType.Source));
+        
+        result.IsSuccess.Should().BeTrue();
+        node.Parent.Should().NotBeNull();
+        node.ParentId.Should().NotBeEmpty();
+    }
+    
+    [Test]
+    public async Task CreateNode_ContainerNodeWithTypeRun_ShouldBeSuccess()
+    {
+        using var context = new TestContext();
+        var mediator = context.Resolve<IMediator>();
+        var node = Node.NewContainer("Test");
+
+        var result = await mediator.Send(new CreateNode(node, NodeType.Run));
+        
+        result.IsSuccess.Should().BeTrue();
+        node.Parent.Should().NotBeNull();
+        node.ParentId.Should().NotBeEmpty();
     }
 
     [Test]
@@ -38,39 +68,44 @@ public class CreateNodeTests
 
         result.IsSuccess.Should().BeTrue();
     }
-
+    
     [Test]
-    public async Task CreateNodeMultipleNodes_ShouldBeSuccess()
+    public async Task CreateNode_SourceNode_ShouldBeSuccess()
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-        var collection = Node.NewCollection();
-        var folder = collection.AddFolder();
-        var spec = folder.AddSpec();
+        var node = Node.NewSource("MySource");
+        
+        var result = await mediator.Send(new CreateNode(node));
 
-        var collectionResult = await mediator.Send(new CreateNode(collection));
-        collectionResult.IsSuccess.Should().BeTrue();
-        
-        var folderResult = await mediator.Send(new CreateNode(folder));
-        folderResult.IsSuccess.Should().BeTrue();
-        
-        var specResult = await mediator.Send(new CreateNode(spec));
-        specResult.IsSuccess.Should().BeTrue();
+        result.IsSuccess.Should().BeTrue();
     }
     
     [Test]
-    public async Task CreateNode_MultipleNodes_ShouldBeBeEquivalentToSeeded()
+    public async Task CreateNode_RunNode_ShouldBeSuccess()
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-        var collection = Node.NewCollection();
-        var folder = collection.AddFolder();
+        var node = Node.NewRun("MyRun");
+        
+        var result = await mediator.Send(new CreateNode(node));
+
+        result.IsSuccess.Should().BeTrue();
+    }
+
+    [Test]
+    public async Task CreateNode_MultipleNodes_ShouldBeSuccess()
+    {
+        using var context = new TestContext();
+        var mediator = context.Resolve<IMediator>();
+        var collection = Node.NewContainer();
+        var folder = collection.AddContainer();
         var spec = folder.AddSpec();
 
-        var collectionResult = await mediator.Send(new CreateNode(collection));
+        var collectionResult = await mediator.Send(new CreateNode(collection, NodeType.Spec));
         collectionResult.IsSuccess.Should().BeTrue();
         
-        var folderResult = await mediator.Send(new CreateNode(folder));
+        var folderResult = await mediator.Send(new CreateNode(folder, NodeType.Spec));
         folderResult.IsSuccess.Should().BeTrue();
         
         var specResult = await mediator.Send(new CreateNode(spec));

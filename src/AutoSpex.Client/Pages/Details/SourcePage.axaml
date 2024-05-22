@@ -1,7 +1,8 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:shared="clr-namespace:AutoSpex.Client.Shared"
              xmlns:components="clr-namespace:AutoSpex.Client.Components"
              x:Class="AutoSpex.Client.Pages.SourcePage"
              x:DataType="pages:SourcePageModel">
@@ -10,83 +11,37 @@
     <Design.Height>1000</Design.Height>
 
     <DockPanel>
-        <Border DockPanel.Dock="Top"
-                Padding="10">
-            <Grid ColumnDefinitions="Auto,*,Auto">
-                <TextBox x:Name="NameEntry"
-                         Text="{Binding Source.Name, FallbackValue='Source Name'}"
-                         Classes="subtle"
-                         Focusable="True"
-                         FontSize="{actipro:ThemeResource DefaultFontSizeSmall}"
-                         Padding="0 6 5 5">
-                    <TextBox.InnerLeftContent>
-                        <PathIcon
-                            Theme="{StaticResource IconSourceThemed}"
-                            Height="20" Width="20" Padding="2" Margin="5 0" />
-                    </TextBox.InnerLeftContent>
-                    <Interaction.Behaviors>
-                        <!--<DataTriggerBehavior Binding="{Binding}"
-                                             ComparisonCondition="Equal"
-                                             Value="True">
-                            <FocusControlAction TargetControl="NameEntry" />
-                        </DataTriggerBehavior>-->
-                    </Interaction.Behaviors>
-                </TextBox>
-            </Grid>
+        <Border DockPanel.Dock="Top" Padding="10">
+            <components:NodeHeader
+                Node="{Binding Node}"
+                RunCommand="{Binding RunCommand}"
+                SaveCommand="{Binding SaveCommand}" />
         </Border>
 
-        <TabControl ItemContainerTheme="{StaticResource TabItemStandard}"
-                    BorderThickness="0 1 0 0"
-                    BorderBrush="{actipro:ThemeResource Container1BorderBrush}"
-                    Padding="0">
+        <TabControl
+            ItemsSource="{Binding Tabs}"
+            SelectedItem="{Binding Tab}"
+            ItemContainerTheme="{StaticResource TabItemStandard}"
+            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+            Padding="0" BorderThickness="0 1 0 0">
+
             <TabControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal" Margin="20 0" />
+                    <StackPanel Orientation="Horizontal" Margin="10 0" />
                 </ItemsPanelTemplate>
             </TabControl.ItemsPanel>
-            <TabItem Header="Content">
-                <components:ContentViewer  Margin="30"/>
-            </TabItem>
-            <TabItem Header="Variables">
 
-            </TabItem>
-            <TabItem Header="Runs">
+            <TabControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Title}" />
+                </DataTemplate>
+            </TabControl.ItemTemplate>
 
-            </TabItem>
-            <TabItem Header="Info">
-                <StackPanel Spacing="5" Margin="50">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <TextBlock Text="{Binding Source.TargetName}"
-                                   Classes="theme-text-heading accent" />
-                        <TextBlock Text="{Binding Source.TargetTypeFormatted}"
-                                   Foreground="{actipro:ThemeResource DefaultForegroundBrushSecondary}"
-                                   Margin="0 4 0 0" />
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal" Spacing="10" Margin="2">
-                        <TextBlock Text="{Binding Source.ExportedBy}"
-                                   Foreground="{actipro:ThemeResource DefaultForegroundBrushSecondary}" />
-                        <Ellipse Height="5" Width="5"
-                                 Fill="{actipro:ThemeResource DefaultForegroundBrushDisabled}"
-                                 Opacity="0.7" Margin="0 2 0 0" />
-                        <TextBlock Text="{Binding Source.ExportedOn}"
-                                   Foreground="{actipro:ThemeResource DefaultForegroundBrushSecondary}" />
-                        <Ellipse Height="5" Width="5"
-                                 Fill="{actipro:ThemeResource DefaultForegroundBrushDisabled}"
-                                 Opacity="0.7" Margin="0 2 0 0" />
-                        <TextBlock Text="{Binding Source.Size}"
-                                   Foreground="{actipro:ThemeResource DefaultForegroundBrushSecondary}" />
-                    </StackPanel>
-
-                    <TextBox
-                        Text="{Binding Source.Documentation}"
-                        Theme="{StaticResource TextBoxSubtle}"
-                        BorderThickness="0"
-                        VerticalContentAlignment="Top"
-                        MinHeight="100"
-                        Watermark="Add documentation to thie source file here" />
-                </StackPanel>
-            </TabItem>
+            <TabControl.ContentTemplate>
+                <DataTemplate x:DataType="shared:PageViewModel">
+                    <ContentControl Content="{Binding}" />
+                </DataTemplate>
+            </TabControl.ContentTemplate>
         </TabControl>
     </DockPanel>
 </UserControl>

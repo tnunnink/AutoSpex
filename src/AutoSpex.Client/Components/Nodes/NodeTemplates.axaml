@@ -1,0 +1,107 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+
+    <Design.PreviewWith>
+        <ContentControl Content="{x:Static components:DesignData.SpecNode}"
+                        ContentTemplate="{DynamicResource Breadcrumb}"
+                        Padding="10" />
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="BreadcrumbParentNode" x:DataType="observers:NodeObserver">
+        <StackPanel Orientation="Horizontal">
+            <Button Content="{Binding Name}"
+                    Command="{Binding NavigateCommand}"
+                    Theme="{a:ControlTheme ButtonSubtle}"
+                    Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                    TextElement.FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                    Padding="5" />
+            <Button Content=">"
+                    Theme="{a:ControlTheme ButtonSubtle}"
+                    Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                    TextElement.FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                    Padding="2 0 2 2">
+                <Button.Flyout>
+                    <Flyout Placement="BottomEdgeAlignedLeft"
+                            HorizontalOffset="5">
+                        <components:BreadcrumbMenu Nodes="{Binding Nodes}" />
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
+        </StackPanel>
+    </DataTemplate>
+
+    <DataTemplate x:Key="BreadcrumbTargetNode" x:DataType="observers:NodeObserver">
+        <StackPanel 
+            x:Name="Panel"
+            Orientation="Horizontal"
+            Focusable="True">
+            <TextBox x:Name="NameEntry"
+                     Text="{Binding Name, Mode=OneWay}"
+                     Classes="subtle"
+                     FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                     Padding="0 6 5 5" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <TextBox.InnerLeftContent>
+                    <PathIcon
+                        Theme="{Binding Type.Name, Converter={StaticResource KeyToIconConverter}}"
+                        Classes="icon-small"
+                        Margin="3 0" />
+                </TextBox.InnerLeftContent>
+                <Interaction.Behaviors>
+                    <SelectAllOnGotFocusBehavior />
+                    <ExecuteCommandOnKeyUpBehavior
+                        Key="Enter"
+                        Command="{Binding RenameCommand}"
+                        CommandParameter="{Binding #NameEntry.Text}"
+                        FocusControl="Panel"/>
+                    <ExecuteCommandOnKeyUpBehavior
+                        Key="Escape"
+                        Command="{Binding ResetNameCommand}"
+                        FocusControl="Panel"/>
+                    <DataTriggerBehavior
+                        Binding="{Binding IsNew}"
+                        ComparisonCondition="Equal"
+                        Value="True">
+                        <FocusControlAction TargetControl="NameEntry" />
+                    </DataTriggerBehavior>
+                </Interaction.Behaviors>
+            </TextBox>
+            <Button Content=">"
+                    IsVisible="{Binding Nodes.Count}"
+                    Theme="{a:ControlTheme ButtonSubtle}"
+                    Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                    TextElement.FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                    Padding="2 0 2 2">
+                <Button.Flyout>
+                    <Flyout Placement="BottomEdgeAlignedLeft"
+                            HorizontalOffset="5">
+                        <components:BreadcrumbMenu Nodes="{Binding Nodes}" />
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
+        </StackPanel>
+    </DataTemplate>
+
+    <DataTemplate x:Key="Breadcrumb" x:DataType="observers:NodeObserver">
+        <Border>
+            <StackPanel Orientation="Horizontal">
+                <!--Parents-->
+                <ItemsControl ItemsSource="{Binding Crumbs}"
+                              ItemTemplate="{StaticResource BreadcrumbParentNode}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+                <!--Target-->
+                <ContentControl
+                    Content="{Binding}"
+                    ContentTemplate="{StaticResource BreadcrumbTargetNode}" />
+            </StackPanel>
+        </Border>
+    </DataTemplate>
+
+</ResourceDictionary>

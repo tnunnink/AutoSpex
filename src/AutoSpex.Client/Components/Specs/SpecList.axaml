@@ -73,7 +73,7 @@
 
                     <Panel>
                         <components:NoItemsMessage
-                            HeadingText="No specs defined"
+                            HeaderText="No specs defined"
                             MessageIcon="{StaticResource IconAdd}"
                             MessageText="add a new criteria to this spec."
                             IsVisible="{Binding !Specs.Count, RelativeSource={RelativeSource TemplatedParent}}" />

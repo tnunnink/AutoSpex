@@ -26,16 +26,16 @@ public abstract partial class Observer<TModel> : TrackableViewModel, IEquatable<
     }
 
     /// <summary>
-    /// The underlying model object that is being wrapped by the observer.
-    /// </summary>
-    public TModel Model { get; }
-
-    /// <summary>
     /// A <see cref="Guid"/> that uniquely identifies this observer. This should be the same for each instance wrapping
     /// the same underlying model. By default, this just creates a new <see cref="Guid"/> but deriving classes will
     /// implement to point to the correct model id. 
     /// </summary>
     public virtual Guid Id { get; } = Guid.NewGuid();
+
+    /// <summary>
+    /// The underlying model object that is being wrapped by the observer.
+    /// </summary>
+    public TModel Model { get; }
 
     /// <summary>
     /// A command to issue deletion of this <see cref="Observer{TModel}"/> object from the database.
@@ -66,10 +66,7 @@ public abstract partial class Observer<TModel> : TrackableViewModel, IEquatable<
     protected virtual Task Export() => Task.CompletedTask;
 
     /// <inheritdoc />
-    protected override async Task Navigate()
-    {
-        await Navigator.Navigate(this);
-    }
+    protected override Task Navigate() => Navigator.Navigate(this);
 
     public bool Equals(Observer<TModel>? other)
     {
@@ -86,7 +83,7 @@ public abstract partial class Observer<TModel> : TrackableViewModel, IEquatable<
     public override int GetHashCode() => Id.GetHashCode();
     public static bool operator ==(Observer<TModel> first, Observer<TModel> second) => Equals(first, second);
     public static bool operator !=(Observer<TModel> first, Observer<TModel> second) => !Equals(first, second);
-    
+
     public record Created(Observer<TModel> Observer);
 
     public record Deleted(Observer<TModel> Observer);

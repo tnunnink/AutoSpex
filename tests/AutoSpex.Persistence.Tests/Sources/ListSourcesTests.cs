@@ -24,9 +24,9 @@ public class ListSourcesTests
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
         var content = L5X.Load(Known.Test);
-        var source1 = new Source(content) {Name = "TestSource1", IsSelected = true};
-        var source2 = new Source(content) {Name = "TestSource2", IsSelected = true};
-        var source3 = new Source(content) {Name = "TestSource3", IsSelected = true};
+        var source1 = new Source(content) {Name = "TestSource1"};
+        var source2 = new Source(content) {Name = "TestSource2"};
+        var source3 = new Source(content) {Name = "TestSource3"};
         await mediator.Send(new CreateSource(source1));
         await mediator.Send(new CreateSource(source2));
         await mediator.Send(new CreateSource(source3));

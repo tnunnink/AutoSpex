@@ -32,8 +32,9 @@ public class Project
     public bool Exists => File.Exists(Path.LocalPath);
     public string ConnectionString => $"Data Source={Path.LocalPath};Pooling=false;";
 
-    public FileSystemWatcher CreateWatcher()
+    public FileSystemWatcher? CreateWatcher()
     {
+        if (!Exists) return null;
         var watcher = new FileSystemWatcher(Directory);
         watcher.EnableRaisingEvents = true;
         watcher.IncludeSubdirectories = false;

@@ -57,7 +57,7 @@ public class ArgumentEntry : TemplatedControl
     {
         if (_inputText is null) return;
 
-        _inputText.Text = Argument?.Formatted ?? string.Empty;
+        _inputText.Text = string.Empty;
         _inputText.Focus();
         _inputText.SelectAll();
         _inputText.CaretIndex = _inputText.Text?.Length ?? 0;

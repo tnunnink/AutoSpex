@@ -14,8 +14,10 @@ internal class GetSourceHandler(IConnectionManager manager) : IRequestHandler<Ge
 {
     private const string GetSource =
         """
-        SELECT SourceId, IsSelected, Name, Documentation, TargetType, TargetName, ExportedBy, ExportedOn
-        FROM Source WHERE SourceId = @SourceId
+        SELECT SourceId, Name, TargetType, TargetName, ExportedBy, ExportedOn, Content
+        FROM Source S 
+        JOIN Node N ON N.NodeId = S.SourceId
+        WHERE SourceId = @SourceId
         """;
 
     public async Task<Result<Source>> Handle(GetSource request, CancellationToken cancellationToken)

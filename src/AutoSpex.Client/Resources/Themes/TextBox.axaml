@@ -30,9 +30,122 @@
                          Text="This is the value"
                          Watermark="Label"
                          MinWidth="100" />
+                <TextBox Theme="{DynamicResource TextBoxSimple}"
+                         Watermark="Filter"
+                         MinWidth="100" />
             </StackPanel>
         </Border>
     </Design.PreviewWith>
+
+    <!-- TextBoxSimple -->
+    <ControlTheme x:Key="TextBoxSimple" TargetType="TextBox">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="Foreground" Value="{a:ThemeResource EditForegroundBrush}" />
+        <Setter Property="CaretBrush" Value="{a:ThemeResource EditForegroundBrush}" />
+        <Setter Property="SelectionBrush" Value="{a:ThemeResource EditSelectionBackgroundBrush}" />
+        <Setter Property="SelectionForegroundBrush" Value="{a:ThemeResource EditSelectionForegroundBrush}" />
+        <Setter Property="BorderThickness" Value="{a:ThemeResource ButtonBorderThickness}" />
+        <Setter Property="CornerRadius" Value="{a:ThemeResource ButtonCornerRadius}" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Padding" Value="{a:ThemeResource ButtonPadding}" />
+        <Setter Property="(Interaction.Behaviors)">
+            <BehaviorCollectionTemplate>
+                <BehaviorCollection>
+                    <SelectAllOnGotFocusBehavior />
+                </BehaviorCollection>
+            </BehaviorCollectionTemplate>
+        </Setter>
+
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border
+                    x:Name="border"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="{TemplateBinding CornerRadius}"
+                    TemplatedControl.IsTemplateFocusTarget="True">
+
+                    <Grid
+                        ColumnDefinitions="Auto,*,Auto"
+                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                        a:BorderChildClipConverter.ClipToContainingBorder="True">
+
+                        <ContentPresenter
+                            Grid.Column="0"
+                            Content="{TemplateBinding InnerLeftContent}"
+                            IsVisible="{TemplateBinding InnerLeftContent, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
+                        <Panel Grid.Column="1"
+                               Margin="{TemplateBinding Padding}">
+                            <TextBlock
+                                x:Name="watermark"
+                                FontStyle="Italic"
+                                Opacity="{DynamicResource {a:ThemeResourceKey EditWatermarkOpacity}}"
+                                Text="{TemplateBinding Watermark}"
+                                TextAlignment="{TemplateBinding TextAlignment}"
+                                TextWrapping="{TemplateBinding TextWrapping}">
+                                <TextBlock.IsVisible>
+                                    <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                        <Binding Path="!UseFloatingWatermark"
+                                                 RelativeSource="{RelativeSource TemplatedParent}" />
+                                        <Binding Path="Text"
+                                                 RelativeSource="{RelativeSource TemplatedParent}"
+                                                 Converter="{x:Static StringConverters.IsNullOrEmpty}" />
+                                    </MultiBinding>
+                                </TextBlock.IsVisible>
+                                <TextBlock.Transitions>
+                                    <Transitions>
+                                        <DoubleTransition Property="Opacity"
+                                                          Duration="{a:AnimationSetting SubtleAnimationDuration}" />
+                                    </Transitions>
+                                </TextBlock.Transitions>
+                            </TextBlock>
+
+                            <TextPresenter
+                                x:Name="PART_TextPresenter"
+                                Margin="0 1 0 0"
+                                CaretBrush="{TemplateBinding CaretBrush}"
+                                CaretIndex="{TemplateBinding CaretIndex}"
+                                LineHeight="{TemplateBinding LineHeight}"
+                                LetterSpacing="{TemplateBinding LetterSpacing}"
+                                PasswordChar="{TemplateBinding PasswordChar}"
+                                RevealPassword="{TemplateBinding RevealPassword}"
+                                SelectionBrush="{TemplateBinding SelectionBrush}"
+                                SelectionEnd="{TemplateBinding SelectionEnd}"
+                                SelectionForegroundBrush="{TemplateBinding SelectionForegroundBrush}"
+                                SelectionStart="{TemplateBinding SelectionStart}"
+                                Text="{TemplateBinding Text, Mode=TwoWay}"
+                                TextAlignment="{TemplateBinding TextAlignment}"
+                                TextWrapping="{TemplateBinding TextWrapping}">
+                            </TextPresenter>
+                        </Panel>
+
+                        <ContentPresenter
+                            Grid.Column="2"
+                            Content="{TemplateBinding InnerRightContent}"
+                            IsVisible="{TemplateBinding InnerRightContent, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                    </Grid>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^[IsReadOnly=True] /template/ Border#border">
+            <Setter Property="TextElement.Foreground" Value="{a:ThemeResource EditForegroundBrushReadOnly}" />
+        </Style>
+        <Style Selector="^:disabled /template/ Border#border">
+            <Setter Property="Background" Value="{a:ThemeResource EditBackgroundBrushSoftDisabled}" />
+            <Setter Property="BorderBrush" Value="{a:ThemeResource EditBackgroundBrushSoftDisabled}" />
+            <Setter Property="TextElement.Foreground" Value="{a:ThemeResource EditForegroundBrushDisabled}" />
+        </Style>
+        <!--<Style Selector="^:pointerover /template/ Border#border">
+            <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftPointerOver}" />
+            <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBackgroundBrushSoftPointerOver}" />
+        </Style>-->
+    </ControlTheme>
 
     <!-- TextBoxSubtle -->
     <ControlTheme x:Key="TextBoxSubtle" TargetType="TextBox">
@@ -148,7 +261,7 @@
                 </DockPanel>
             </ControlTemplate>
         </Setter>
-        
+
         <Style Selector="^[IsReadOnly=True] /template/ Border#border">
             <Setter Property="TextElement.Foreground" Value="{a:ThemeResource EditForegroundBrushReadOnly}" />
         </Style>

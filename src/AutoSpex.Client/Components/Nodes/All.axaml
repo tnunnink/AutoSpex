@@ -2,11 +2,10 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <ResourceDictionary.MergedDictionaries>
         <ResourceInclude Source="NodeHeader.axaml" />
-        <ResourceInclude Source="NodeOverview.axaml" />
         <ResourceInclude Source="NodePath.axaml" />
-        <ResourceInclude Source="NodeContextMenus.axaml" />
+        <ResourceInclude Source="NodeMenu.axaml" />
+        <ResourceInclude Source="NodeTemplates.axaml" />
+        <ResourceInclude Source="BreadcrumbMenu.axaml" />
         <ResourceInclude Source="NodeNotFound.axaml" />
-        <ResourceInclude Source="SaveNodeButton.axaml" />
-        <ResourceInclude Source="RunNodeButton.axaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

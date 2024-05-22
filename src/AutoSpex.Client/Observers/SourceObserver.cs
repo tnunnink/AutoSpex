@@ -1,78 +1,79 @@
 ﻿using System;
-using System.Text;
-using System.Threading.Tasks;
-using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
-using AutoSpex.Persistence;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using FluentResults;
+using L5Sharp.Core;
 
 namespace AutoSpex.Client.Observers;
 
-public partial class SourceObserver(Source source) : NamedObserver<Source>(source),
-    IRecipient<SourceObserver.Selected>
+public partial class SourceObserver : Observer<Source>
 {
+    public SourceObserver(Source source) : base(source)
+    {
+        Track(nameof(TargetName));
+        Track(nameof(TargetType));
+        Track(nameof(ExportedBy));
+        Track(nameof(ExportedOn));
+    }
+
     public override Guid Id => Model.SourceId;
-
-    public override string Name
-    {
-        get => Model.Name;
-        set => SetProperty(Model.Name, value, Model, (s, v) => s.Name = v);
-    }
-
-    public string Documentation
-    {
-        get => Model.Documentation;
-        set => SetProperty(Model.Documentation, value, Model, (m, s) => m.Documentation = s);
-    }
-
-    public bool IsSelected
-    {
-        get => Model.IsSelected;
-        set => SetProperty(Model.IsSelected, value, Model, (s, v) => s.IsSelected = v);
-    }
-
+    public string Name => Model.Name;
+    public bool HasContent => !string.IsNullOrEmpty(Model.Content);
     public string TargetName => Model.TargetName;
     public string TargetType => Model.TargetType;
-    public string TargetTypeFormatted => $"[{TargetType}]";
     public string ExportedBy => Model.ExportedBy;
     public DateTime ExportedOn => Model.ExportedOn;
-    /*public string Size => $"{(decimal) Encoding.Unicode.GetByteCount(Model.L5X.ToString()) / 1048576:F1} MB";*/
+    public string Size => $"{ComputeSize():N0} KB";
+    public string Compressed => $"{ComputeCompressedSize():N0} KB";
+    public static SourceObserver Empty(Guid id = default) => new(new Source(id));
 
-    public string Size => $"{Model.L5X.ToString().Length * sizeof(char) / 1024:N0} KB";
-
-    /// <inheritdoc />
-    protected override async Task Delete()
+    /// <summary>
+    /// Updates the content of the Source with the specified L5X data and applies optional scrubbing.
+    /// </summary>
+    /// <param name="content">The L5X data to update the Source with.</param>
+    /// <param name="scrub">A flag indicating whether to apply scrubbing during the update.</param>
+    /// <exception cref="ArgumentNullException">Thrown when the content parameter is null.</exception>
+    public void Update(L5X content, bool scrub)
     {
-        var delete = await Prompter.PromptDelete(Name);
-        if (delete is not true) return;
+        if (content is null)
+            throw new ArgumentNullException(nameof(content));
 
-        var result = await Mediator.Send(new DeleteSource(Id));
-        if (result.IsFailed) return;
+        Model.Update(content, scrub);
 
-        Messenger.Send(new Deleted(this));
-        Messenger.UnregisterAll(this);
+        //Will trigger property change event for all source properties to notify the UI.
+        Refresh();
+        Messenger.Send(new Updated(this));
     }
 
     [RelayCommand]
-    private void Select()
+    private Task Search()
     {
-        IsSelected = true;
-        Messenger.Send(new Selected(Id));
+        throw new NotImplementedException();
     }
 
-    public void Receive(Selected message)
+    private decimal ComputeSize()
     {
-        if (Id == message.SourceId) return;
-        IsSelected = false;
+        if (!HasContent) return 0;
+        var data = Model.L5X.ToString();
+        var bytes = System.Text.Encoding.UTF8.GetByteCount(data);
+        return (decimal)bytes / 1024;
     }
 
-    protected override Task<Result> RenameModel(string name) => Mediator.Send(new RenameSource(this));
+    private decimal ComputeCompressedSize()
+    {
+        if (!HasContent) return 0;
+        var data = Model.Content;
+        var bytes = System.Text.Encoding.UTF8.GetByteCount(data);
+        return (decimal)bytes / 1024;
+    }
 
     public static implicit operator Source(SourceObserver observer) => observer.Model;
     public static implicit operator SourceObserver(Source source) => new(source);
 
-    public record Selected(Guid SourceId);
+    /// <summary>
+    /// A message send when this source object has its content updated. 
+    /// </summary>
+    /// <param name="Source">The updated <see cref="SourceObserver"/></param>
+    public record Updated(SourceObserver Source);
 }

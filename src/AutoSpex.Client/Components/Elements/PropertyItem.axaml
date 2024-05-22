@@ -3,8 +3,7 @@
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:components="using:AutoSpex.Client.Components"
                     xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
-                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
-                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine">
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers">
 
     <Design.PreviewWith>
         <StackPanel Margin="10">
@@ -46,34 +45,8 @@
                                        Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
                             <TextBlock Text="{Binding Type}"
                                        Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
-                            <TextBlock Text="{Binding FormattedValue}"
-                                       TextTrimming="CharacterEllipsis"
-                                       TextWrapping="NoWrap"
-                                       MaxHeight="30"
-                                       Classes.warning="{Binding FormattedValue, Converter={StaticResource EqualToConverter}, ConverterParameter='null'}"
-                                       Classes.enum="{Binding Group, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:TypeGroup.Enum}}"
-                                       Classes.text="{Binding Group, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:TypeGroup.Text}}"
-                                       Classes.number="{Binding Group, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:TypeGroup.Number}}"
-                                       Classes.bool="{Binding Group, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:TypeGroup.Number}}"
-                                       Classes.collection="{Binding Group, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:TypeGroup.Collection}}">
-                                <TextBlock.Styles>
-                                    <Style Selector="TextBlock.enum">
-                                        <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
-                                    </Style>
-                                    <Style Selector="TextBlock.text">
-                                        <Setter Property="Foreground" Value="LightSeaGreen" />
-                                    </Style>
-                                    <Style Selector="TextBlock.bool">
-                                        <Setter Property="Foreground" Value="LightBlue" />
-                                    </Style>
-                                    <Style Selector="TextBlock.number">
-                                        <Setter Property="Foreground" Value="LightBlue" />
-                                    </Style>
-                                    <Style Selector="TextBlock.collection">
-                                        <Setter Property="Foreground" Value="LightSteelBlue" />
-                                    </Style>
-                                </TextBlock.Styles>
-                            </TextBlock>
+                            <ContentControl Content="{Binding Value}"
+                                            ContentTemplate="{StaticResource ValueTemplates}" />
                         </StackPanel>
 
                         <Border Grid.Column="1"

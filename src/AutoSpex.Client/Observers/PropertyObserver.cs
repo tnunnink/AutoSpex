@@ -90,6 +90,7 @@ public partial class PropertyObserver(Property model, ElementObserver element) :
         //If we "started over" in a collection so this property represents a new nested LogixElement type, forward this
         //call to the element instance's Properties which will allow us to get nested properties correctly and use the
         //corresponding getter expressions to retrieve the values.
+        // ReSharper disable once ConvertIfStatementToReturnStatement
         if (Model.Origin == Model.Type)
         {
             return _element.Properties;

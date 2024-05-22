@@ -24,7 +24,7 @@ public class NodeObserverTests
     [Test]
     public void New_ValidModel_ShouldNotBeNull()
     {
-        var node = Node.NewCollection("Test");
+        var node = Node.NewContainer("Test");
         
         var observer = new NodeObserver(node);
 

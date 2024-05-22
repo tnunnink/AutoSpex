@@ -1,0 +1,146 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:components="clr-namespace:AutoSpex.Client.Components"
+             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             x:Class="AutoSpex.Client.Pages.SourceContentPage"
+             x:DataType="pages:SourceContentPageModel">
+
+    <Design.Height>500</Design.Height>
+    <Design.Width>1200</Design.Width>
+
+    <Panel Margin="20">
+        <StackPanel Spacing="10"
+                    VerticalAlignment="Center" HorizontalAlignment="Center"
+                    IsVisible="{Binding !Source.HasContent}">
+            <PathIcon Theme="{StaticResource IconSourceThemed}" Padding="0" />
+            <TextBlock Text="No content found"
+                       TextAlignment="Center"
+                       Classes="theme-text-heading" />
+            <TextBlock
+                Text="In order to use a source, you must first select an L5X file to load into this project. Click the Load Content button to select a file."
+                Classes="theme-text-body size-sm"
+                Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                TextAlignment="Center"
+                TextWrapping="Wrap"
+                MaxWidth="450" />
+            <Button Content="Load Content"
+                    Command="{Binding LoadContentCommand}"
+                    Theme="{a:ControlTheme ButtonSubtle}"
+                    HorizontalAlignment="Center"
+                    Classes="accent" />
+        </StackPanel>
+
+        <components:Section IsVisible="{Binding Source.HasContent}">
+            <components:Section.Header>
+                <Grid ColumnDefinitions="Auto,*,Auto">
+
+                    <components:ElementSelector
+                        Grid.Column="0"
+                        BorderThickness="0"
+                        Element="{Binding Element}"
+                        FlyoutPlacement="BottomEdgeAlignedLeft" />
+
+                    <TextBox Grid.Column="1"
+                             Text="{Binding Filter}"
+                             Watermark="Enter search text to filter data"
+                             BorderThickness="0" Background="Transparent" Margin="10 0"
+                             VerticalContentAlignment="Center" />
+
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="2">
+                        <Button
+                            Command="{Binding SearchContentCommand}"
+                            properties:ButtonIcon.Theme="{StaticResource IconSearch}"
+                            Theme="{StaticResource IconButton}"
+                            Padding="7 8 7 8"
+                            Classes="accent" HotKey="Enter" ToolTip.Tip="Search" />
+                        <Button
+                            properties:ButtonIcon.Theme="{StaticResource IconClose}"
+                            Theme="{StaticResource IconButton}"
+                            Padding="10"
+                            ToolTip.Tip="Clear" />
+
+                        <Border BorderBrush="{a:ThemeResource Container4BorderBrush}"
+                                BorderThickness="1 0 0 0" Margin="5" />
+
+                        <ItemsControl ItemsSource="{Binding Filters}"
+                                      ItemTemplate="{StaticResource CriterionPill}"
+                                      IsVisible="{Binding Filters.Count}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" Spacing="5" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
+
+                        <Button
+                            properties:ButtonIcon.Theme="{StaticResource IconAdd}"
+                            Theme="{StaticResource IconButton}"
+                            Classes="accent"
+                            ToolTip.Tip="Add Filter" />
+
+                        <Border BorderBrush="{a:ThemeResource Container4BorderBrush}"
+                                BorderThickness="1 0 0 0" Margin="5" />
+
+                        <ToggleButton Theme="{StaticResource IconButton}"
+                                      IsChecked="{Binding IsDrawerOpen}"
+                                      properties:ButtonIcon.Theme="{StaticResource IconLayoutSidebarInsert}"
+                                      ToolTip.Tip="Property Tree" />
+                        <Button Theme="{StaticResource IconButton}"
+                                properties:ButtonIcon.Theme="{StaticResource IconDotsVertical}"
+                                Padding="9"
+                                ToolTip.Tip="Options" />
+                    </StackPanel>
+                </Grid>
+            </components:Section.Header>
+
+            <controls:DrawerView
+                x:Name="DrawerView"
+                IsDrawerOpen="{Binding IsDrawerOpen}"
+                DrawerPlacement="Right"
+                DrawerClosedLength="0"
+                DrawerOpenLength="{Binding #DrawerView.Bounds.Width, Converter={StaticResource MathConverter}, ConverterParameter='x/2'}">
+                <Panel>
+                    <components:NoItemsMessage
+                        HeaderIcon="{StaticResource IconSourceThemed}"
+                        HeaderText="No elements found"
+                        CustomMessage="Use the search bar to select and filter elements within this source."
+                        IsVisible="{Binding !Elements.Count}" />
+
+                    <ListBox ItemsSource="{Binding Elements}"
+                             SelectedItem="{Binding SelectedElement}"
+                             IsVisible="{Binding Elements.Count}"
+                             ItemTemplate="{StaticResource ElementItemTemplate}"
+                             BorderThickness="0" CornerRadius="0 0 5 5" ClipToBounds="True"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <ListBox.ItemContainerTheme>
+                            <ControlTheme TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemSubtle}">
+                                <Setter Property="Padding" Value="5" />
+                            </ControlTheme>
+                        </ListBox.ItemContainerTheme>
+                        <ListBox.Styles>
+                            <Style Selector="ScrollViewer">
+                                <Setter Property="Theme" Value="{a:ControlTheme ScrollViewerOverlay}" />
+                            </Style>
+                        </ListBox.Styles>
+                    </ListBox>
+                </Panel>
+
+                <controls:DrawerView.Drawer>
+                    <Panel>
+                        <components:NoItemsMessage
+                            HeaderText="No elements selected"
+                            CustomMessage="Element properties will show up here when selected."
+                            IsVisible="{Binding SelectedElement, Converter={x:Static ObjectConverters.IsNull}}" />
+                        <components:PropertyTree
+                            SourceElement="{Binding SelectedElement}"
+                            IsVisible="{Binding SelectedElement, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                    </Panel>
+                </controls:DrawerView.Drawer>
+            </controls:DrawerView>
+        </components:Section>
+    </Panel>
+</UserControl>

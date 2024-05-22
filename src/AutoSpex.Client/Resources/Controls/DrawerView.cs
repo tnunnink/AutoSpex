@@ -57,59 +57,66 @@ public class DrawerView : ContentControl
         AvaloniaProperty.Register<DrawerView, DrawerViewPlacement>(nameof(DrawerPlacement),
             defaultValue: DrawerViewPlacement.Left);
 
-    public static readonly StyledProperty<bool> HideSplitterOnCloseProperty =
-        AvaloniaProperty.Register<DrawerView, bool>(
-            nameof(HideSplitterOnClose));
-
     public static readonly StyledProperty<object?> DrawerProperty =
         AvaloniaProperty.Register<DrawerView, object?>(nameof(Drawer));
 
     public static readonly StyledProperty<IDataTemplate> DrawerTemplateProperty =
         AvaloniaProperty.Register<DrawerView, IDataTemplate>(nameof(DrawerTemplate));
 
+    /// <summary>
+    /// A bit that indicates and controls whether the drawer panel is open or closed.
+    /// </summary>
     public bool IsDrawerOpen
     {
         get => GetValue(IsDrawerOpenProperty);
         set => SetValue(IsDrawerOpenProperty, value);
     }
 
+    /// <summary>
+    /// The default length (height or width) of the drawer panel when the drawer is opened.
+    /// This is only th initial open length. Once the grid is moved by the user it will remain at that position until
+    /// the control is re-rendered.
+    /// </summary>
     public double DrawerOpenLength
     {
         get => GetValue(DrawerOpenLengthProperty);
         set => SetValue(DrawerOpenLengthProperty, value);
     }
 
+    /// <summary>
+    /// The length (height or width) of the drawer panel when the drawer is closed.
+    /// </summary>
     public double DrawerClosedLength
     {
         get => GetValue(DrawerClosedLengthProperty);
         set => SetValue(DrawerClosedLengthProperty, value);
     }
-    
+
+    /// <summary>
+    /// A maximum length (height or width) of the drawer panel when open.
+    /// </summary>
     public double DrawerMaxLength
     {
         get => GetValue(DrawerMaxLengthProperty);
         set => SetValue(DrawerMaxLengthProperty, value);
     }
 
+    /// <summary>
+    /// The actual computed grid length of the drawer panel.
+    /// </summary>
     public GridLength DrawerGridLength
     {
         get => _drawerGridLength;
         set => SetAndRaise(DrawerGridLengthProperty, ref _drawerGridLength, value);
     }
 
+    /// <summary>
+    /// Where the expandable drawer panel is placed in the control (left, top, right, bottom).
+    /// </summary>
     public DrawerViewPlacement DrawerPlacement
     {
         get => GetValue(DrawerPlacementProperty);
         set => SetValue(DrawerPlacementProperty, value);
-    }
-    
-    /// <summary>
-    /// When true will hide the grid splitter boder when the drawer is closed. Default is false.
-    /// </summary>
-    public bool HideSplitterOnClose
-    {
-        get => GetValue(HideSplitterOnCloseProperty);
-        set => SetValue(HideSplitterOnCloseProperty, value);
     }
 
     /// <summary>
@@ -147,15 +154,13 @@ public class DrawerView : ContentControl
     {
         base.OnApplyTemplate(e);
         RegisterDrawerPart(e);
-        
-        
     }
 
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnAttachedToVisualTree(e);
 
-        // :left and :right style triggers contain the template so we need to do this as
+        // left and right style triggers contain the template, so we need to do this as
         // soon as we're attached so the template applies. The other visual states can
         // be updated after the template applies
         UpdateVisualStateForPanePlacementProperty(DrawerPlacement);
@@ -169,10 +174,10 @@ public class DrawerView : ContentControl
 
         if (change.Property == IsDrawerOpenProperty)
             UpdateVisualStateForDrawerOpen(change.GetNewValue<bool>());
-        
+
         if (change.Property == DrawerProperty)
             UpdateVisualStateForDrawer(change);
-        
+
         if (change.Property == DrawerPlacementProperty)
             UpdateVisualStateForPanePlacementProperty(change.GetNewValue<DrawerViewPlacement>());
     }
@@ -193,13 +198,13 @@ public class DrawerView : ContentControl
         {
             DrawerOpenLength = e.NewSize.Width;
         }
-        
+
         if (DrawerPlacement is DrawerViewPlacement.Top or DrawerViewPlacement.Bottom)
         {
-            DrawerOpenLength = e.NewSize.Height; 
+            DrawerOpenLength = e.NewSize.Height;
         }
     }
-    
+
     private void UpdateVisualStateForDrawerOpen(bool isOpen)
     {
         if (isOpen)
@@ -215,7 +220,7 @@ public class DrawerView : ContentControl
             PseudoClasses.Remove(ClassOpen);
         }
     }
-    
+
     private void UpdateVisualStateForDrawer(AvaloniaPropertyChangedEventArgs change)
     {
         if (change.OldValue is ILogical oldChild)
@@ -228,7 +233,7 @@ public class DrawerView : ContentControl
             LogicalChildren.Add(newChild);
         }
     }
-    
+
     private void UpdateVisualStateForPanePlacementProperty(DrawerViewPlacement newValue)
     {
         if (!string.IsNullOrEmpty(_lastPlacement)) PseudoClasses.Remove(_lastPlacement);

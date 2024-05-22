@@ -17,10 +17,10 @@ namespace AutoSpex.Engine;
 public abstract class Element : SmartEnum<Element, string>
 {
     /// <summary>
-    /// The name of the self referential property for the elements.
+    /// The name of the self-referential property for the elements.
     /// </summary>
     private const string ThisProperty = "This";
-    
+
     /// <summary>
     /// Holds "custom" properties, or properties we attach to the element and provide a custom function to retrieve
     /// it's value. This would allow derived classes to add properties or make method calls show up as a property as needed. 
@@ -43,12 +43,13 @@ public abstract class Element : SmartEnum<Element, string>
     public IEnumerable<Property> Properties => Type.Properties();
     public IEnumerable<Property> CustomProperties => _customProperties;
     public Property This => _customProperties.Single(p => p.Name == ThisProperty);
-    public virtual Func<L5X, IEnumerable<object>> Query => file => file.Query(Type);
+    public virtual Func<L5X, IEnumerable<LogixElement>> Query => file => file.Query(Type);
     public Func<L5X, string, object?> Lookup => (file, name) => file.Find(new ComponentKey(Type.Name, name));
     public bool IsComponent => Type.IsAssignableTo(typeof(LogixComponent));
     protected virtual bool IsSelectable => IsComponent;
     public static IEnumerable<Element> Components => List.Where(e => e.IsComponent);
     public static IEnumerable<Element> Selectable => List.Where(e => e.IsSelectable);
+    public virtual IEnumerable<string> DisplayProperties { get; } = [];
 
     public static readonly Element Default = new DefaultElement();
 
@@ -131,15 +132,28 @@ public abstract class Element : SmartEnum<Element, string>
         public ControllerElement() : base(typeof(Controller))
         {
         }
+
+        public override IEnumerable<string> DisplayProperties =>
+        [
+            L5XName.ProcessorType,
+            L5XName.Revision,
+            L5XName.LastModifiedDate
+        ];
     }
 
     private class DataTypeElement : Element
     {
         public DataTypeElement() : base(typeof(DataType))
         {
-            Register<IEnumerable<LogixComponent>>("Dependencies", x => ((DataType) x!).Dependencies());
-            Register<IEnumerable<CrossReference>>("References", x => ((DataType) x!).References());
+            Register<IEnumerable<LogixComponent>>("Dependencies", x => ((DataType)x!).Dependencies());
+            Register<IEnumerable<CrossReference>>("References", x => ((DataType)x!).References());
         }
+
+        public override IEnumerable<string> DisplayProperties =>
+        [
+            L5XName.Family,
+            L5XName.Class
+        ];
     }
 
     private class AddOnInstructionElement : Element
@@ -147,6 +161,14 @@ public abstract class Element : SmartEnum<Element, string>
         public AddOnInstructionElement() : base(typeof(AddOnInstruction))
         {
         }
+
+        public override IEnumerable<string> DisplayProperties =>
+        [
+            L5XName.Revision,
+            L5XName.Vendor,
+            L5XName.CreatedBy,
+            L5XName.CreatedDate
+        ];
     }
 
     private class ModuleElement : Element
@@ -154,17 +176,32 @@ public abstract class Element : SmartEnum<Element, string>
         public ModuleElement() : base(typeof(Module))
         {
         }
+
+        public override IEnumerable<string> DisplayProperties =>
+        [
+            L5XName.CatalogNumber,
+            L5XName.Revision,
+            L5XName.ParentModule,
+            L5XName.Slot,
+            "IP",
+        ];
     }
 
     private class TagElement : Element
     {
         public TagElement() : base(typeof(Tag))
         {
-            Register<IEnumerable<Tag>>("Members", x => ((Tag) x!).Members());
+            Register<IEnumerable<Tag>>("Members", x => ((Tag)x!).Members());
         }
 
-        public override Func<L5X, IEnumerable<object>> Query => 
-            x => x.Query<Tag>().SelectMany(t => t.Members()).Where(t => !t.TagName.Member.All(char.IsDigit));
+        public override Func<L5X, IEnumerable<LogixElement>> Query => x => x.Query<Tag>().SelectMany(t => t.Members());
+
+        public override IEnumerable<string> DisplayProperties =>
+        [
+            "Container",
+            L5XName.DataType,
+            L5XName.Value
+        ];
     }
 
     private class ProgramElement : Element
@@ -172,6 +209,13 @@ public abstract class Element : SmartEnum<Element, string>
         public ProgramElement() : base(typeof(Program))
         {
         }
+
+        public override IEnumerable<string> DisplayProperties =>
+        [
+            L5XName.Type,
+            L5XName.MainRoutineName,
+            L5XName.UseAsFolder
+        ];
     }
 
     private class RoutineElement : Element
@@ -179,6 +223,13 @@ public abstract class Element : SmartEnum<Element, string>
         public RoutineElement() : base(typeof(Routine))
         {
         }
+
+        public override IEnumerable<string> DisplayProperties =>
+        [
+            L5XName.Type,
+            L5XName.Scope,
+            "Container",
+        ];
     }
 
     private class TaskElement : Element
@@ -186,6 +237,13 @@ public abstract class Element : SmartEnum<Element, string>
         public TaskElement() : base(typeof(Task))
         {
         }
+
+        public override IEnumerable<string> DisplayProperties =>
+        [
+            L5XName.Type,
+            L5XName.Priority,
+            L5XName.Rate
+        ];
     }
 
     private class TrendElement : Element
@@ -193,6 +251,13 @@ public abstract class Element : SmartEnum<Element, string>
         public TrendElement() : base(typeof(Trend))
         {
         }
+
+        public override IEnumerable<string> DisplayProperties =>
+        [
+            L5XName.SamplePeriod,
+            L5XName.NumberOfCaptures,
+            L5XName.CaptureSizeType
+        ];
     }
 
     private class WatchListElement : Element
@@ -209,6 +274,12 @@ public abstract class Element : SmartEnum<Element, string>
         }
 
         protected override bool IsSelectable => true;
+
+        public override IEnumerable<string> DisplayProperties =>
+        [
+            L5XName.Type,
+            L5XName.Operand
+        ];
     }
 
     private class CommunicationsElement : Element
@@ -231,6 +302,14 @@ public abstract class Element : SmartEnum<Element, string>
         {
         }
 
+        public override IEnumerable<string> DisplayProperties =>
+        [
+            L5XName.DataType,
+            L5XName.Dimension,
+            L5XName.Radix,
+            L5XName.ExternalAccess
+        ];
+
         protected override bool IsSelectable => true;
     }
 
@@ -248,6 +327,15 @@ public abstract class Element : SmartEnum<Element, string>
         public ParameterElement() : base(typeof(Parameter))
         {
         }
+
+        public override IEnumerable<string> DisplayProperties =>
+        [
+            L5XName.Usage,
+            L5XName.DataType,
+            L5XName.Dimension,
+            L5XName.Radix,
+            L5XName.ExternalAccess
+        ];
 
         protected override bool IsSelectable => true;
     }
@@ -285,6 +373,13 @@ public abstract class Element : SmartEnum<Element, string>
         public RungElement() : base(typeof(Rung))
         {
         }
+
+        public override IEnumerable<string> DisplayProperties =>
+        [
+            "Container",
+            L5XName.Routine,
+            L5XName.Text
+        ];
 
         protected override bool IsSelectable => true;
     }

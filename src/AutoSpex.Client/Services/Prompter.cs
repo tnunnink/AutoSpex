@@ -36,6 +36,17 @@ public sealed class Prompter(Shell shell)
 
         return result;
     }
+
+    public async Task Show(Func<PageViewModel> factory)
+    {
+        var page = factory();
+        var dialog = new DialogShell { Content = page };
+        await page.Load();
+
+        shell.DialogOpen = true;
+        await dialog.ShowDialog(shell);
+        shell.DialogOpen = false;
+    }
 }
 
 public static class PromptExtensions
@@ -47,9 +58,15 @@ public static class PromptExtensions
         return prompter.Show<bool?>(control);
     }
 
-    public static Task<bool?> PromptDelete(this Prompter prompter, string name)
+    public static Task<bool?> PromptDeleteItem(this Prompter prompter, string name)
     {
-        var control = new DeletePrompt { ItemName = name };
+        var control = new DeletePrompt { Title = $"Delete {name}?", Message = name };
+        return prompter.Show<bool?>(control);
+    }
+
+    public static Task<bool?> PromptDeleteItems(this Prompter prompter, string message)
+    {
+        var control = new DeletePrompt { Title = "Delete items?", Message = message };
         return prompter.Show<bool?>(control);
     }
 

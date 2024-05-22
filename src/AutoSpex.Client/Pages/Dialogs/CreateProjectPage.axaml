@@ -9,7 +9,7 @@
 
     <controls:Prompt UseButtonPanel="True"
                      Header="Create new project"
-                     HeaderIcon="{StaticResource IconCubeOutlined}"
+                     HeaderIcon="{StaticResource IconProjectThemed}"
                      MinWidth="500" Padding="20"
                      CancelButtonTheme="{a:ControlTheme ButtonSoft}"
                      CancelCommandParameter="{x:Null}"

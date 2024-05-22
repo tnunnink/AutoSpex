@@ -1,13 +1,11 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
-using CommunityToolkit.Mvvm.Messaging;
 
 namespace AutoSpex.Client.Observers;
 
-public class SpecObserver : Observer<Spec>, IRecipient<CriterionObserver.SpecRequest>
+public class SpecObserver : Observer<Spec>
 {
     public SpecObserver(Spec model) : base(model)
     {
@@ -75,18 +73,4 @@ public class SpecObserver : Observer<Spec>, IRecipient<CriterionObserver.SpecReq
     public static SpecObserver Empty => new(new Spec());
     public static implicit operator SpecObserver(Spec model) => new(model);
     public static implicit operator Spec(SpecObserver observer) => observer.Model;
-
-    /// <summary>
-    /// Handles the spec request message sent be a child criterion. If this spec contains the criterion id provided
-    /// in the message and has not been responded to, then reply with this spec instance as the parent.
-    /// </summary>
-    public void Receive(CriterionObserver.SpecRequest message)
-    {
-        if (message.HasReceivedResponse) return;
-
-        if (Filters.Any(x => x.Id == message.CriterionId) || Verifications.Any(x => x.Id == message.CriterionId))
-        {
-            message.Reply(this);
-        }
-    }
 }

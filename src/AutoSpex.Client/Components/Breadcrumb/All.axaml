@@ -1,9 +1,0 @@
-﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <ResourceDictionary.MergedDictionaries>
-        <ResourceInclude Source="BreadcrumbControl.axaml" />
-        <ResourceInclude Source="BreadcrumbParent.axaml" />
-        <ResourceInclude Source="BreadcrumbTarget.axaml" />
-        <ResourceInclude Source="BreadcrumbMenu.axaml" />
-    </ResourceDictionary.MergedDictionaries>
-</ResourceDictionary>

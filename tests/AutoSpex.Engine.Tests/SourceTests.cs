@@ -11,16 +11,15 @@ public class SourceTests
 
         source.Should().NotBeNull();
         source.SourceId.Should().NotBeEmpty();
-        source.Name.Should().Be(file.Info.TargetName);
-        source.Documentation.Should().Be(file.Controller.Description);
-        source.IsSelected.Should().BeFalse();
         source.TargetName.Should().Be(file.Info.TargetName);
         source.TargetType.Should().Be(file.Info.TargetType);
         source.ExportedBy.Should().Be(file.Info.Owner);
         source.ExportedOn.Should().Be(file.Info.ExportDate);
-
         source.Content.Should().NotBeEmpty();
         source.L5X.Should().NotBeNull();
+        source.L5X.Serialize().Attribute("SourceId")?.Value.Should().Be(source.SourceId.ToString());
+        source.L5X.Serialize().Descendants(L5XName.Data)
+            .Where(e => e.Attribute(L5XName.Format)?.Value == DataFormat.L5K).Should().BeEmpty();
     }
 
     [Test]
@@ -30,38 +29,26 @@ public class SourceTests
         var source = new Source(test);
 
         var example = L5X.Load(Known.Example);
-        source.Update(example);
+        source.Update(example, true);
 
         source.TargetName.Should().Be(example.Info.TargetName);
         source.TargetType.Should().Be(example.Info.TargetType);
         source.ExportedBy.Should().Be(example.Info.Owner);
         source.ExportedOn.Should().Be(example.Info.ExportDate);
+        source.Content.Should().NotBeEmpty();
+        source.L5X.Should().NotBeNull();
+        source.L5X.Serialize().Attribute("SourceId")?.Value.Should().Be(source.SourceId.ToString());
+        source.L5X.Serialize().Descendants(L5XName.Data)
+            .Where(e => e.Attribute(L5XName.Format)?.Value == DataFormat.L5K).Should().BeEmpty();
     }
 
     [Test]
-    public void GetValueTable_WhenCalled_ShouldNotBeEmpty()
+    public void SaveScrubbedSourceToSeeSizeDifferenceOnDisc()
     {
         var test = L5X.Load(Known.Test);
+        
         var source = new Source(test);
 
-        var values = source.GetDistinctValues().ToList();
-
-        values.Should().NotBeEmpty();
-
-        var filtered = values.Where(v => v.StartsWith("Ch4")).ToList();
-        filtered.Should().NotBeEmpty();
-    }
-
-    [Test]
-    public void IsItPossibleToFilterByWhatIsParsableToAGivenType()
-    {
-        var test = L5X.Load(Known.Test);
-        var source = new Source(test);
-
-        var values = source.GetDistinctValues().ToList();
-
-        var typed = values.Where(v => v.TryParse(typeof(bool)) is not null);
-
-        typed.Should().NotBeEmpty();
+        source.L5X.Save(@"C:\Users\tnunn\Documents\L5X\Test_Scrubbed.L5X");
     }
 }

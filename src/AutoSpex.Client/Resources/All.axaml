@@ -8,6 +8,7 @@
         <ResourceInclude Source="Icons.axaml" />
         <ResourceInclude Source="Brushes.axaml" />
         <ResourceInclude Source="Themes/ListBoxItem.axaml" />
+        <ResourceInclude Source="Themes/ComboBox.axaml" />
         <ResourceInclude Source="Themes/TextBox.axaml" />
         <ResourceInclude Source="Themes/TabItem.axaml" />
         <ResourceInclude Source="Themes/IconButtons.axaml" />

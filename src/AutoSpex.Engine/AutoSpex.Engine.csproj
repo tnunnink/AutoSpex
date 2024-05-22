@@ -10,7 +10,8 @@
     <ItemGroup>
       <PackageReference Include="Ardalis.SmartEnum" Version="7.0.0" />
       <PackageReference Include="Ardalis.SmartEnum.SystemTextJson" Version="7.0.0" />
-      <PackageReference Include="L5Sharp" Version="2.0.0" />
+      <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
+      <PackageReference Include="L5Sharp" Version="2.3.2" />
       <PackageReference Include="Serialize.Linq" Version="3.0.148" />
     </ItemGroup>
 

@@ -15,6 +15,7 @@ public class ValueObserver(object model) : Observer<object>(model)
     /// 
     /// </summary>
     public string Text => Model.ToText();
+    
     public Type Type => Model.GetType();
     public string TypeName => Model.GetType().CommonName();
     public TypeGroup Group => TypeGroup.FromType(Type);

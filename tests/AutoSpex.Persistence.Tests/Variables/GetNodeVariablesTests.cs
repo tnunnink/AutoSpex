@@ -23,7 +23,7 @@ public class GetNodeVariablesTests
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-        var node = Node.NewCollection();
+        var node = Node.NewContainer();
         await mediator.Send(new CreateNode(node));
         var var01 = new Variable(node.NodeId, "Var01", "Test", "This is a test");
         var var02 = new Variable(node.NodeId, "Var02", "Test", "This is a test");
@@ -48,7 +48,7 @@ public class GetNodeVariablesTests
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-        var node = Node.NewCollection();
+        var node = Node.NewContainer();
         await mediator.Send(new CreateNode(node));
         var tag = new Tag {Name = "Test", Value = 100};
         var variable = new Variable(node.NodeId, "TagVariable", tag, "This is a logix component test");

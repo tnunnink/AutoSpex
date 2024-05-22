@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
 using AutoSpex.Client.Pages;
 using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
@@ -11,15 +10,18 @@ using AutoSpex.Persistence;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using FluentResults;
+using CommunityToolkit.Mvvm.Messaging.Messages;
 using JetBrains.Annotations;
 
 namespace AutoSpex.Client.Observers;
 
 [PublicAPI]
-public partial class NodeObserver : NamedObserver<Node>,
+public partial class NodeObserver : Observer<Node>,
     IRecipient<Observer<Node>.Created>,
-    IRecipient<Observer<Node>.Deleted>
+    IRecipient<Observer<Node>.Deleted>,
+    IRecipient<NodeObserver.Renamed>,
+    IRecipient<NodeObserver.Moved>,
+    IRecipient<NodeObserver.GetSelected>
 {
     public NodeObserver(Node node) : base(node)
     {
@@ -31,28 +33,23 @@ public partial class NodeObserver : NamedObserver<Node>,
             () => Model.ClearNodes());
 
         Track(nameof(Name));
-        Track(nameof(Documentation));
     }
 
     public override Guid Id => Model.NodeId;
     public Guid ParentId => Model.ParentId;
-    public NodeType NodeType => Model.NodeType;
+    public NodeObserver? Parent => Model.Parent is not null ? new NodeObserver(Model.Parent) : default;
+    public NodeType Type => Model.Type;
+    public NodeType Feature => Model.Feature;
     public string Path => Model.Path;
 
-    public override string Name
+    public string Name
     {
         get => Model.Name;
         set => SetProperty(Model.Name, value, Model, (s, v) => s.Name = v);
     }
 
-    public string Documentation
-    {
-        get => Model.Documentation;
-        set => SetProperty(Model.Documentation, value, Model, (s, v) => s.Documentation = v);
-    }
-
     public ObserverCollection<Node, NodeObserver> Nodes { get; }
-    public ObservableCollection<NodeObserver> Specs => new(Model.Specs().Select(s => new NodeObserver(s)));
+    public ObservableCollection<NodeObserver> Crumbs => new(Model.Ancestors().Select(n => new NodeObserver(n)));
 
     [ObservableProperty] private bool _isVisible = true;
 
@@ -65,41 +62,27 @@ public partial class NodeObserver : NamedObserver<Node>,
     [ObservableProperty] private bool _isChecked = true;
 
     [ObservableProperty] private bool _isNew;
-    public IEnumerable<Node> CheckedSpecs => CheckedSpecNodes(this);
+
     public static implicit operator NodeObserver(Node node) => new(node);
     public static implicit operator Node(NodeObserver observer) => observer.Model;
 
     #region Commands
 
     [RelayCommand]
-    private async Task AddFolder()
-    {
-        var node = new NodeObserver(Node.NewFolder()) { IsNew = true };
-        Nodes.Add(node);
+    private Task AddContainer() => AddNode(new NodeObserver(Node.NewContainer()) { IsNew = true });
 
-        var result = await Mediator.Send(new CreateNode(node));
-
-        if (result.IsFailed)
-        {
-            Nodes.Remove(node);
-            return;
-        }
-
-        IsExpanded = true;
-        IsSelected = false;
-        node.IsSelected = true;
-        await Navigator.Navigate(node);
-    }
-
-    /// <summary>
-    /// This command creates a new default spec node and adds it to the current node as a child. It will send the command
-    /// to the database to create the new node and upon success we will navigate to this node in the tree and details
-    /// by expanding, selecting, and sending the navigation request.
-    /// </summary>
     [RelayCommand]
-    private async Task AddSpec()
+    private Task AddSpec() => AddNode(new NodeObserver(Node.NewSpec()) { IsNew = true });
+
+    [RelayCommand]
+    private Task AddSource() => AddNode(new NodeObserver(Node.NewSource()) { IsNew = true });
+
+    [RelayCommand]
+    private Task AddRun() => AddNode(new NodeObserver(Node.NewRun()) { IsNew = true });
+
+    private async Task AddNode(NodeObserver node)
     {
-        var node = new NodeObserver(Node.NewSpec()) { IsNew = true };
+        //Add before sending request because this sets the parent correctly.
         Nodes.Add(node);
 
         var result = await Mediator.Send(new CreateNode(node));
@@ -110,24 +93,96 @@ public partial class NodeObserver : NamedObserver<Node>,
             return;
         }
 
-        IsExpanded = true;
-        IsSelected = false;
-        node.IsSelected = true;
+        Nodes.Sort(n => n.Name, StringComparer.OrdinalIgnoreCase);
         await Navigator.Navigate(node);
     }
 
     /// <inheritdoc />
     protected override async Task Delete()
     {
-        var delete = await Prompter.PromptDelete(Name);
+        var delete = await Prompter.PromptDeleteItem(Name);
         if (delete is not true) return;
 
         var result = await Mediator.Send(new DeleteNode(Id));
         if (result.IsFailed) return;
 
-        //We don't have access to the actual parent observer only the underlying model object. Therefore, we will rely
-        //on messages send to be handles by the parent and remove this node form its Nodes collection.
         Messenger.Send(new Deleted(this));
+    }
+
+    [RelayCommand]
+    private async Task DeleteSelected()
+    {
+        if (!IsSelected) return;
+
+        var selected = Messenger.Send(new GetSelected()).Responses;
+
+        if (selected.Count == 1)
+        {
+            var delete = await Prompter.PromptDeleteItem(Name);
+            if (delete is not true) return;
+        }
+        else
+        {
+            var delete = await Prompter.PromptDeleteItems($"{selected.Count.ToString()} selected items");
+            if (delete is not true) return;
+        }
+
+        var result = await Mediator.Send(new DeleteNodes(selected.Select(n => n.Id)));
+        if (result.IsFailed) return;
+
+        foreach (var deleted in selected)
+            Messenger.Send(new Deleted(deleted));
+    }
+
+    [RelayCommand]
+    private async Task Rename(string? name)
+    {
+        if (string.IsNullOrEmpty(name) || name.Length > 100) return;
+
+        Name = name;
+        var rename = await Mediator.Send(new RenameNode(this));
+        if (rename.IsFailed) return;
+
+        IsEditing = false;
+        IsNew = false;
+        AcceptChanges(nameof(Name));
+        Messenger.Send(new Renamed(this));
+    }
+
+    [RelayCommand]
+    private void ResetName()
+    {
+        IsEditing = false;
+        OnPropertyChanged(nameof(Name));
+    }
+
+    [RelayCommand]
+    private async Task Move(IList<NodeObserver> nodes)
+    {
+        var result = await Mediator.Send(new MoveNodes(nodes.Select(n => n.Model), Id));
+        if (result.IsFailed) return;
+
+        Nodes.AddRange(nodes);
+
+        foreach (var node in nodes)
+            Messenger.Send(new Moved(node));
+    }
+
+    [RelayCommand]
+    private async Task MoveSelected()
+    {
+        var selected = Messenger.Send(new GetSelected()).Responses;
+
+        var parent = await Prompter.Show<NodeObserver?>(() => new SelectContainerPageModel(Feature));
+        if (parent is null) return;
+
+        var result = await Mediator.Send(new MoveNodes(selected.Select(n => n.Model), parent.Id));
+        if (result.IsFailed) return;
+
+        parent.Nodes.AddRange(selected);
+
+        foreach (var node in selected)
+            Messenger.Send(new Moved(node));
     }
 
     [RelayCommand]
@@ -136,75 +191,134 @@ public partial class NodeObserver : NamedObserver<Node>,
         IsEditing = true;
     }
 
+    [RelayCommand]
+    private void Run()
+    {
+        /*var run = new RunObserver(new Run());
+        run.Outcomes.Add(new OutcomeObserver(new Outcome()));*/
+    }
+
     #endregion
 
     #region MessageHandlers
 
+    /// <summary>
+    /// Will handle the creation of a node. Parent nodes need to ensure the object is added if it belongs as a child.
+    /// Also, this is where we want to sort the children to ensure proper ordering.
+    /// </summary>
     public void Receive(Created message)
     {
         if (message.Observer is not NodeObserver node) return;
 
-        //If I am the parent of the created node then make sure it is added to my Nodes
-        if (Id == node.ParentId && Nodes.All(n => n.Id != node.Id))
-        {
-            // This will also add to the underlying model object which is fine because
-            // we assume the node was added to a different model somewhere.
-            Nodes.Add(node);
-        }
+        if (Id != node.ParentId) return;
+        if (Nodes.Any(n => n.Id == node.Id)) return;
+
+        Nodes.Add(node);
+        Nodes.Sort(n => n.Name, StringComparer.OrdinalIgnoreCase);
     }
 
     /// <summary>
     /// Will handle the removal of the node and/or child nodes as based on which observer object is received.
+    /// If the delete node is a child to this node then we want it remove to update the underlying model object.
+    /// We also want to propagate deleted messages to children to ensure the UI responds correctly.
     /// </summary>
-    /// <param name="message">The message that an observer has been deleted.</param>
     public void Receive(Deleted message)
     {
         if (message.Observer is not NodeObserver node) return;
 
-        //If the deleted node is my child then remove if from nodes and return.
-        //This will in turn remove it from the model object as well.
         if (Nodes.Any(n => n.Id == node.Id))
         {
             Nodes.Remove(node);
             return;
         }
 
-        //If the deleted node is me then send messages for all the child nodes and clear the collection.
-        //We need to send messages for children in case they are in use by other pages.
-        //Doing in the message handler will all it to be propagated.
         if (Id != node.Id) return;
         Nodes.ToList().ForEach(n => Messenger.Send(new Deleted(n)));
         Messenger.UnregisterAll(this);
     }
 
+    /// <summary>
+    /// Handles the observer renamed message by updating this object's name if it is not the sender of the
+    /// message. If this object is updated then it in turn sends a renamed message.
+    /// </summary>
+    public void Receive(Renamed message)
+    {
+        var node = message.Node;
+
+        //If I am the parent to the renamed node then sort my children to ensure proper ordering.
+        if (Id == node.ParentId)
+        {
+            Nodes.Sort(n => n.Name, StringComparer.OrdinalIgnoreCase);
+            return;
+        }
+
+        //If this is the same instance or not the changed node then return.
+        if (ReferenceEquals(this, node)) return;
+        if (Id != node.Id) return;
+
+        //Otherwise make sure the name is synced. 
+        if (Name != node.Name)
+        {
+            Name = node.Name;
+            return;
+        }
+
+        //Notify property change regardless to update the UI.
+        OnPropertyChanged(nameof(Name));
+    }
+
+    /// <summary>
+    /// Handles the observer moved message by removing from the old parent and adding to the new parent if the sent
+    /// node is a child of the old or new node.
+    /// </summary>
+    public void Receive(Moved message)
+    {
+        if (Nodes.Contains(message.Node) && Id != message.Node.ParentId)
+            Nodes.Remove(message.Node);
+
+        if (!Nodes.Contains(message.Node) && Id == message.Node.ParentId)
+            Nodes.Add(message.Node);
+    }
+
+    /// <summary>
+    /// Handles the <see cref="GetSelected"/> request message sent from a node. If this is a selected node then
+    /// and the responses does not container it, reply with this node object. IsSelected is assumed to be used by the
+    /// main navigation tree of the application.
+    /// </summary>
+    public void Receive(GetSelected message)
+    {
+        if (!IsSelected) return;
+        if (message.Responses.Contains(this)) return;
+        message.Reply(this);
+    }
+
     #endregion
 
-    /// <inheritdoc />
-    protected override async Task Navigate()
+    /// <summary>
+    /// This will force the editing mode to end when the item loses selection.
+    /// </summary>
+    partial void OnIsSelectedChanged(bool value)
     {
-        var load = await Mediator.Send(new GetNode(Id));
-        if (load.IsFailed) return;
-        await Navigator.Navigate(() => new NodePageModel(new NodeObserver(load.Value)));
+        if (IsEditing && !value)
+        {
+            IsEditing = false;
+        }
     }
 
-    protected override Task<Result> RenameModel(string name) => Mediator.Send(new RenameNode(this));
+    /// <summary>
+    /// A message to be sent when the <see cref="NodeObserver"/> name changes so that other node instance can respond and
+    /// update their local value and in turn refresh the UI.
+    /// </summary>
+    public record Renamed(NodeObserver Node);
 
+    /// <summary>
+    /// A message to be sent when the <see cref="NodeObserver"/> is moved to a different parent container. This is so that
+    /// other node instances can respond by removing the moved node from its node children.
+    /// </summary>
+    public record Moved(NodeObserver Node);
 
-    private static IEnumerable<Node> CheckedSpecNodes(NodeObserver node)
-    {
-        var nodes = new List<Node>();
-
-        if (node.NodeType == NodeType.Spec && node.IsChecked)
-            nodes.Add(node);
-
-        foreach (var child in node.Nodes)
-            nodes.AddRange(CheckedSpecNodes(child));
-
-        return nodes;
-    }
-
-    partial void OnIsCheckedChanged(bool value)
-    {
-        OnPropertyChanged(nameof(CheckedSpecs));
-    }
+    /// <summary>
+    /// A request message that will return all selected <see cref="NodeObserver"/> instance to the requesting node. 
+    /// </summary>
+    public class GetSelected : CollectionRequestMessage<NodeObserver>;
 }

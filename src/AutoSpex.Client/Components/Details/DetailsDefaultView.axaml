@@ -37,11 +37,6 @@
                             </StackPanel.Styles>
 
                             <Button Theme="{a:ControlTheme ButtonSubtle}"
-                                    Command="{TemplateBinding AddCollectionCommand, Mode=TwoWay}"
-                                    ToolTip.Tip="New Collection">
-                                <PathIcon Theme="{StaticResource IconCollectionThemed}" />
-                            </Button>
-                            <Button Theme="{a:ControlTheme ButtonSubtle}"
                                     Command="{TemplateBinding AddSpecCommand, Mode=TwoWay}"
                                     ToolTip.Tip="New Spec">
                                 <PathIcon Theme="{StaticResource IconSpecThemed}" />

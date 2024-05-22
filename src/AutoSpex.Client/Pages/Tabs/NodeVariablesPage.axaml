@@ -4,8 +4,7 @@
              xmlns:components="clr-namespace:AutoSpex.Client.Components"
              x:Class="AutoSpex.Client.Pages.NodeVariablesPage"
              x:DataType="pages:NodeVariablesPageModel">
-    
+
     <components:VariableList
-        Margin="30"
         Variables="{Binding Variables}" />
 </UserControl>

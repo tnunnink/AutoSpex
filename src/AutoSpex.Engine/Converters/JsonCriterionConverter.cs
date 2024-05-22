@@ -7,7 +7,11 @@ public class JsonCriterionConverter : JsonConverter<Criterion>
 {
     public override Criterion Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        var criterion = new Criterion();
+        var id = Guid.Empty;
+        var property = string.Empty;
+        var operation = Operation.None;
+        var arguments = new List<Argument>();
+        var invert = false;
         
         while (reader.Read() && reader.TokenType != JsonTokenType.EndObject)
         {
@@ -18,37 +22,40 @@ public class JsonCriterionConverter : JsonConverter<Criterion>
             
             switch (propertyName)
             {
+                case nameof(Criterion.CriterionId):
+                    id = JsonSerializer.Deserialize<Guid>(ref reader, options);
+                    break;
                 case nameof(Criterion.Property):
-                    criterion.Property = reader.GetString();
+                    property = reader.GetString();
                     break;
                 case nameof(Criterion.Operation):
-                    var operation = Operation.FromName(reader.GetString());
-                    criterion.Operation = operation;
+                    operation = Operation.FromName(reader.GetString());
                     break;
                 case nameof(Criterion.Arguments):
                     var args = JsonSerializer.Deserialize<Argument[]>(ref reader, options);
                     if (args is null) break;
-                    criterion.Arguments = [..args];
+                    arguments = [..args];
                     break;
                 case nameof(Criterion.Invert):
-                    criterion.Invert = reader.GetBoolean();
+                    invert = reader.GetBoolean();
                     break;
             }
         }
 
-        return criterion;
+        return new Criterion(id, property, operation, arguments.ToArray(), invert);
     }
 
     public override void Write(Utf8JsonWriter writer, Criterion value, JsonSerializerOptions options)
     {
         writer.WriteStartObject();
+        writer.WriteString(nameof(Criterion.CriterionId), value.CriterionId);
         
         if (value.Property != null)
         {
             writer.WriteString(nameof(Criterion.Property), value.Property);
         }
 
-        writer.WriteString(nameof(Criterion.Operation), value.Operation.Name);
+        writer.WriteString(nameof(Criterion.Operation), value.Operation?.Name);
 
         writer.WritePropertyName(nameof(Criterion.Arguments));
         JsonSerializer.Serialize(writer, value.Arguments.ToArray(), options);

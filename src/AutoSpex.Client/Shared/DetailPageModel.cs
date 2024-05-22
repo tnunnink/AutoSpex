@@ -19,7 +19,7 @@ public abstract partial class DetailPageModel : PageViewModel
     /// this as needed. Each derived class can await the base implementation to get the result before processing further.
     /// </remarks>
     [RelayCommand(CanExecute = nameof(CanSave))]
-    protected virtual Task<Result> Save() => Task.FromResult(Result.Ok());
+    protected virtual Task Save() => Task.CompletedTask;
 
     /// <summary>
     /// Indicates whether the page can be saved or not. By default, this looks at whether there are changes using the

@@ -7,7 +7,7 @@ namespace AutoSpex.Persistence.Tests.Sources;
 public class CreateSourceTests
 {
     [Test]
-    public async Task CreateSource_ValidSource_ShouldReturnSuccess()
+    public async Task CreateSource_ValidSourceNoParent_ShouldReturnSuccess()
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
@@ -19,53 +19,44 @@ public class CreateSourceTests
     }
 
     [Test]
-    public async Task CreateSource_ValidSource_GetSourceShouldReturnExpected()
+    public async Task CreateSource_ValidSourceNoParent_GetSourceShouldBeExpected()
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-        var source = new Source(L5X.Load(Known.Test));
+        var expected = new Source(L5X.Load(Known.Test));
 
-        await mediator.Send(new CreateSource(source));
+        await mediator.Send(new CreateSource(expected));
 
-        var result = await mediator.Send(new GetSource(source.SourceId));
+        var result = await mediator.Send(new GetSource(expected.SourceId));
         result.IsSuccess.Should().BeTrue();
-        result.Value.Should().BeEquivalentTo(source, c => c.Excluding(s => s.L5X));
+        result.Value.Should().BeEquivalentTo(expected, o => o.Excluding(s => s.L5X));
     }
 
     [Test]
-    public async Task CreateSource_ValidSource_ShouldBeSelectedByDefault()
+    public async Task CreateSource_ValidSourceWithParentNode_ShouldReturnSuccess()
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
+        var node = Node.NewContainer("SourceContainer");
+        await mediator.Send(new CreateNode(node, NodeType.Source));
         var source = new Source(L5X.Load(Known.Test));
-        source.IsSelected.Should().BeFalse();
 
-        await mediator.Send(new CreateSource(source));
+        var result = await mediator.Send(new CreateSource(source, node.NodeId));
 
-        var result = await mediator.Send(new GetSource(source.SourceId));
-        result.Value.IsSelected.Should().BeTrue();
+        result.IsSuccess.Should().BeTrue();
     }
 
     [Test]
-    public async Task CreateSource_MultipleSources_ShouldOverrideOtherSelectedSourcesAndSelectLastSource()
+    public async Task CreateSource_ConflictingSourceId_ShouldReturnFailure()
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-        var content = L5X.Load(Known.Test);
-        var source1 = new Source(content) { Name = "TestSource1" };
-        var source2 = new Source(content) { Name = "TestSource2" };
-        var source3 = new Source(content) { Name = "TestSource3" };
+        var node = Node.NewSource("TestSource");
+        await mediator.Send(new CreateNode(node));
 
-        await mediator.Send(new CreateSource(source1));
-        await mediator.Send(new CreateSource(source2));
-        await mediator.Send(new CreateSource(source3));
+        var source = new Source(node.NodeId);
 
-        var result = await mediator.Send(new ListSources());
-
-        result.Value.Should().HaveCount(3);
-        var list = result.Value.ToList();
-        list[0].IsSelected.Should().BeFalse();
-        list[1].IsSelected.Should().BeFalse();
-        list[2].IsSelected.Should().BeTrue();
+        var result = await mediator.Send(new CreateSource(source));
+        result.IsFailed.Should().BeTrue();
     }
 }

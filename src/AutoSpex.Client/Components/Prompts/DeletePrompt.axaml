@@ -5,7 +5,11 @@
                     xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
 
     <Design.PreviewWith>
-        <components:DeletePrompt ItemName="MySpec" />
+        <StackPanel Spacing="20">
+            <components:DeletePrompt Title="Delete MySpec?" Message="MySpec" />
+            <components:DeletePrompt Title="Delete Content?" Message="6 Items" />
+        </StackPanel>
+        
     </Design.PreviewWith>
 
     <ControlTheme x:Key="{x:Type components:DeletePrompt}" TargetType="components:DeletePrompt">
@@ -24,11 +28,11 @@
                         <TextBlock TextWrapping="Wrap">
                             <TextBlock.Inlines>
                                 <Run Text="Are you sure you wan to delete" />
-                                <Run Text="{TemplateBinding ItemName}"
+                                <Run Text="{TemplateBinding Message}"
                                      FontWeight="SemiBold"
                                      Foreground="{actipro:ThemeResource ControlForegroundBrushOutlineAccent}" />
                                 <Run Text="from this project?" />
-                                <Run Text="It will not be recoverable after deletion." />
+                                <Run Text="This content will not be recoverable after deletion." />
                             </TextBlock.Inlines>
                         </TextBlock>
                     </controls:Prompt.Content>
@@ -36,4 +40,5 @@
             </ControlTemplate>
         </Setter>
     </ControlTheme>
+    
 </ResourceDictionary>

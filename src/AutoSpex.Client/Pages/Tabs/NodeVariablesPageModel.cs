@@ -1,15 +1,23 @@
-﻿using AutoSpex.Client.Observers;
+﻿using System.Linq;
+using AutoSpex.Client.Observers;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
+using AutoSpex.Persistence;
 using JetBrains.Annotations;
 
 namespace AutoSpex.Client.Pages;
 
-[UsedImplicitly]
-public class NodeVariablesPageModel(NodeObserver node) : PageViewModel
+public class NodeVariablesPageModel(NodeObserver node) : DetailPageModel
 {
-    public override string Route => $"Node/{Node.Id}/{Title}";
+    public override string Route => $"{node.Type}/{node.Id}/{Title}";
     public override string Title => "Variables";
-    public NodeObserver Node { get; } = node;
     public ObserverCollection<Variable, VariableObserver> Variables { get; } = [];
+
+    public override async Task Load()
+    {
+        var result = await Mediator.Send(new GetNodeVariables(node.Id));
+        if (result.IsFailed) return;
+        Variables.Refresh(result.Value.Select(v => new VariableObserver(v)));
+        Track(Variables);
+    }
 }

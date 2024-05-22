@@ -1,0 +1,75 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:components="using:AutoSpex.Client.Components"
+                    xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:shared="clr-namespace:AutoSpex.Client.Shared"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+
+    <Design.PreviewWith>
+        <components:DetailTabList Tabs="{x:Static components:DesignData.Tabs}" />
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type components:DetailTabList}" TargetType="components:DetailTabList">
+        <Setter Property="Width" Value="300"></Setter>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid RowDefinitions="Auto,*" Margin="5">
+                    <TextBox Grid.Row="0"
+                             Text="{TemplateBinding FilterText, Mode=TwoWay}"
+                             Watermark="Filter Tabs"
+                             Theme="{actipro:ControlTheme TextBoxOutline}"
+                             BorderThickness="0 0 0 1"
+                             CornerRadius="0"
+                             BorderBrush="{actipro:ThemeResource Container1BorderBrush}"
+                             Padding="10 7" />
+
+                    <Panel Grid.Row="1">
+                        <TextBlock Text="No open tabs"
+                                   Foreground="{actipro:ThemeResource DefaultForegroundBrushDisabled}"
+                                   IsVisible="{Binding !TabCollection.Count, RelativeSource={RelativeSource TemplatedParent}}"
+                                   Padding="10" />
+                        <ListBox x:Name="PART_ListBox"
+                                 ItemsSource="{Binding TabCollection, RelativeSource={RelativeSource TemplatedParent}}"
+                                 IsVisible="{Binding TabCollection.Count, RelativeSource={RelativeSource TemplatedParent}}"
+                                 Padding="5"
+                                 BorderThickness="0"
+                                 Background="Transparent"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                            <ListBox.ItemContainerTheme>
+                                <ControlTheme TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemSimple}">
+                                    <Setter Property="Padding" Value="5 0 " />
+                                    <Setter Property="CornerRadius" Value="5" />
+                                </ControlTheme>
+                            </ListBox.ItemContainerTheme>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate x:DataType="shared:DetailPageModel">
+                                    <Button Command="{Binding NavigateCommand}"
+                                            Theme="{actipro:ControlTheme ButtonInvisible}"
+                                            HorizontalContentAlignment="Stretch"
+                                            MaxWidth="300">
+                                        <Grid ColumnDefinitions="Auto,*,Auto">
+                                            <PathIcon Grid.Column="0"
+                                                      Theme="{Binding Icon, Converter={StaticResource KeyToIconConverter}}" />
+                                            <TextBlock Grid.Column="1"
+                                                       Text="{Binding Title}"
+                                                       Margin="0 0 30 0"
+                                                       FontSize="{actipro:ThemeResource DefaultFontSizeSmall}"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       ToolTip.Tip="{Binding Title}" />
+                                            <Button Grid.Column="2"
+                                                    IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}"
+                                                    properties:ButtonIcon.Theme="{StaticResource IconClose}"
+                                                    Theme="{StaticResource IconButtonSmall}"
+                                                    Command="{Binding CloseCommand}"
+                                                    CornerRadius="10" Height="20" Width="20" Padding="11" />
+                                        </Grid>
+                                    </Button>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Panel>
+                </Grid>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

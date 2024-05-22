@@ -5,34 +5,23 @@ namespace AutoSpex.Client.Components;
 
 public class DeletePrompt : TemplatedControl
 {
-    public static readonly StyledProperty<string?> ItemNameProperty =
+    public static readonly StyledProperty<string?> TitleProperty =
         AvaloniaProperty.Register<DeletePrompt, string?>(
-            nameof(ItemName));
+            nameof(Title));
 
-    public string? ItemName
-    {
-        get => GetValue(ItemNameProperty);
-        set => SetValue(ItemNameProperty, value);
-    }
-
-    public static readonly DirectProperty<DeletePrompt, string?> TitleProperty =
-        AvaloniaProperty.RegisterDirect<DeletePrompt, string?>(
-            nameof(Title), o => o.Title, (o, v) => o.Title = v);
-
-    private string? _title;
+    public static readonly StyledProperty<string?> MessageProperty =
+        AvaloniaProperty.Register<DeletePrompt, string?>(
+            nameof(Message));
 
     public string? Title
     {
-        get => _title;
-        set => SetAndRaise(TitleProperty, ref _title, value);
+        get => GetValue(TitleProperty);
+        set => SetValue(TitleProperty, value);
     }
 
-    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+    public string? Message
     {
-        base.OnPropertyChanged(change);
-        if (change.Property == ItemNameProperty)
-        {
-            Title = $"Delete {ItemName}?";
-        }
+        get => GetValue(MessageProperty);
+        set => SetValue(MessageProperty, value);
     }
 }

@@ -15,8 +15,9 @@ internal class ListSourcesHandler(IConnectionManager manager)
 {
     private const string ListSources =
         """
-        SELECT SourceId, Name, IsSelected, TargetType, TargetName, ExportedOn, ExportedBy
-        FROM Source
+        SELECT SourceId, Name, TargetType, TargetName, ExportedOn, ExportedBy
+        FROM Source S 
+        JOIN Node N on N.NodeId == S.SourceId
         """;
 
     public async Task<Result<IEnumerable<Source>>> Handle(ListSources request, CancellationToken cancellationToken)

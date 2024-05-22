@@ -90,7 +90,7 @@ public abstract class TrackableViewModel : ViewModelBase, ITrackable
     /// </summary>
     /// <param name="trackable">The child <see cref="ITrackable"/> to forget.</param>
     /// <exception cref="ArgumentNullException"><paramref name="trackable"/> is null.</exception>
-    protected void Forget(ITrackable trackable)
+    public void Forget(ITrackable trackable)
     {
         ArgumentNullException.ThrowIfNull(trackable);
         var removed = _tracked.Remove(trackable);
@@ -113,7 +113,7 @@ public abstract class TrackableViewModel : ViewModelBase, ITrackable
 
     /// <summary>
     /// We can override the base changed method to avoid wiring up an event handler. This calls the base implementation
-    /// and then adds the property to the changed list if it is note ignored, not empty, null, or not IsChanged itself.
+    /// and then adds the property to the changed list if it is not ignored, not empty, null, or not IsChanged itself.
     /// </summary>
     /// <param name="e">The property changed event args.</param>
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
@@ -126,11 +126,17 @@ public abstract class TrackableViewModel : ViewModelBase, ITrackable
 
         _changed.Add(e.PropertyName);
         OnPropertyChanged(nameof(IsChanged));
+        OnIsChanged(IsChanged);
+    }
+
+    protected virtual void OnIsChanged(bool value)
+    {
     }
 
     private void OnTrackedModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName != nameof(IsChanged)) return;
         OnPropertyChanged(nameof(IsChanged));
+        OnIsChanged(IsChanged);
     }
 }

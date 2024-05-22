@@ -10,7 +10,7 @@
                     <ListBoxItem Content="Item 2" />
                     <ListBoxItem Content="Item 3" />
                 </ListBox>
-                
+
                 <ListBox Height="100" Width="100"
                          ItemContainerTheme="{DynamicResource ListBoxItemSection}">
                     <ListBoxItem Content="Item 1" />
@@ -24,12 +24,20 @@
                     <ListBoxItem Content="Item 2" />
                     <ListBoxItem Content="Item 3" />
                 </ListBox>
+
+                <ListBox Height="100" Width="100"
+                         ItemContainerTheme="{DynamicResource ListBoxItemAction}">
+                    <ListBoxItem Content="Item 1" />
+                    <ListBoxItem Content="Item 2" />
+                    <ListBoxItem Content="Item 3" />
+                </ListBox>
             </StackPanel>
 
         </Border>
     </Design.PreviewWith>
 
     <ControlTheme x:Key="ListBoxItemSimple" TargetType="ListBoxItem" BasedOn="{a:ControlTheme ListBoxItem}">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
             <Setter Property="Background" Value="{a:ThemeResource ListItemBackgroundBrushPointerOver}" />
         </Style>
@@ -106,7 +114,7 @@
         <Setter Property="Padding" Value="0" />
 
         <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftPointerOver}" />
+            <Setter Property="Background" Value="{a:ThemeResource ListItemBackgroundBrushPointerOver}" />
             <Setter Property="BorderBrush" Value="{a:ThemeResource Container4BorderBrush}" />
         </Style>
         <Style Selector="^:disabled /template/ ContentPresenter#PART_ContentPresenter">
@@ -114,12 +122,12 @@
             <Setter Property="Opacity" Value="{a:ThemeResource EditWatermarkOpacity}" />
         </Style>
         <Style Selector="^:selected /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftDisabled}" />
+            <Setter Property="Background" Value="{a:ThemeResource ListItemBackgroundBrushPointerOver}" />
             <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBackgroundBrushSolidAccent}" />
             <Setter Property="TextElement.Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
 
             <Style Selector="^:focus-within">
-                <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftPointerOver}" />
+                <Setter Property="Background" Value="{a:ThemeResource ListItemBackgroundBrushPointerOver}" />
             </Style>
         </Style>
     </ControlTheme>

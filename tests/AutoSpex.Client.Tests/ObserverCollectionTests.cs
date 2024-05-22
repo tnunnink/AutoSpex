@@ -14,14 +14,14 @@ public class ObserverCollectionTests
     {
         var list = new List<Node>
         {
-            Node.NewCollection(),
-            Node.NewCollection(),
-            Node.NewCollection(),
+            Node.NewContainer(),
+            Node.NewContainer(),
+            Node.NewContainer(),
         };
 
         var collection = new ObserverCollection<Node, NodeObserver>(list, n => new NodeObserver(n));
 
-        collection.Add(new NodeObserver(Node.NewCollection("Test")));
+        collection.Add(new NodeObserver(Node.NewContainer("Test")));
 
         collection.Should().HaveCount(4);
         list.Should().HaveCount(4);
@@ -32,9 +32,9 @@ public class ObserverCollectionTests
     {
         var list = new List<Node>
         {
-            Node.NewCollection(),
-            Node.NewCollection(),
-            Node.NewCollection(),
+            Node.NewContainer(),
+            Node.NewContainer(),
+            Node.NewContainer(),
         };
 
         var collection = new ObserverCollection<Node, NodeObserver>(list.ToList(), m => new NodeObserver(m));

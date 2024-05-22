@@ -490,8 +490,8 @@
         </Setter>
 
         <Style Selector="^:pointerover /template/ Border#Border">
-            <Setter Property="Background" Value="{actipro:ThemeResource ButtonBackgroundBrushSubtlePointerOver}" />
-            <Setter Property="BorderBrush" Value="{actipro:ThemeResource ButtonBackgroundBrushSubtlePointerOver}" />
+            <Setter Property="Background" Value="{actipro:ThemeResource ButtonBackgroundBrushSoftPointerOver}" />
+            <Setter Property="BorderBrush" Value="{actipro:ThemeResource ButtonBackgroundBrushSoftPointerOver}" />
         </Style>
 
         <Style Selector="^:not(:unchecked)">

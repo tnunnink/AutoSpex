@@ -1,4 +1,5 @@
 ﻿using L5Sharp.Core;
+// ReSharper disable ConvertIfStatementToReturnStatement
 
 namespace AutoSpex.Engine;
 
@@ -19,6 +20,17 @@ public class Argument
     /// <exception cref="ArgumentNullException"><paramref name="value"/> is null.</exception>
     public Argument(object value)
     {
+        Value = value ?? throw new ArgumentNullException(nameof(value), "Can not set argument to null value");
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="argumentId"></param>
+    /// <param name="value"></param>
+    public Argument(Guid argumentId, object value)
+    {
+        ArgumentId = argumentId;
         Value = value ?? throw new ArgumentNullException(nameof(value), "Can not set argument to null value");
     }
 
@@ -48,7 +60,7 @@ public class Argument
     public string Identifier => Type.CommonName();
 
     /// <summary>
-    /// The <see cref="TypeGroup"/> to which this argument value belongs.
+    /// The <see cref="TypeGroup"/> which this argument value belongs to.
     /// </summary>
     public TypeGroup Group => TypeGroup.FromType(Type);
 
@@ -69,7 +81,7 @@ public class Argument
     /// <returns>An object value of the specified type.</returns>
     /// <remarks>
     /// This method if detect <see cref="Variable"/> type and use the inner value first. If <see cref="Value"/>
-    /// is actually a <see cref="Criterion"/> it will return that regardless of provided type. If type is null we
+    /// is actually a<see cref="Criterion"/>  will return that regardless of provided type. If type is null we
     /// will return whatever value we have. And finally this method will attempt to parse the value if it is a string
     /// and the specified type is something other than a string type.
     /// </remarks>
@@ -86,15 +98,15 @@ public class Argument
         //return what we have. This may result in an error but this will tell the user something is wrong.
         if (type is null) return value;
 
-        //If this is is not a string or we are simply trying to resolve it as one, just return that.
+        //If this is not a string, or we are simply trying to resolve it as one, just return that.
         if (value is not string text || type == typeof(string)) return value;
 
         //If not parsable by L5Sharp then just return.
         if (!type.IsParsable()) return value;
 
         //Otherwise we want to attempt to parse the string to the specified typed value if possible in order
-        //to use that types defined equality overrides. This is using a built in method from L5Sharp which
-        //knows how to parse it's types (as well as primitive types).
+        //to use that types defined equality overrides. This is using a built-in method from L5Sharp which
+        //knows how to parse its types (as well as primitive types).
         var parsed = text.TryParse(type);
         if (parsed is not null) return parsed;
 

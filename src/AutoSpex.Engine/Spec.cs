@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Text.Json;
+﻿using System.Text.Json;
 using JetBrains.Annotations;
 using L5Sharp.Core;
 using Task = System.Threading.Tasks.Task;
@@ -27,7 +26,7 @@ public class Spec()
     /// This is actually the same as the owning node's NodeId since any given spec should belong to a node.
     /// If this objects is created as an orphaned spec then this id will be <see cref="Guid.Empty"/>.
     /// </remarks>
-    public Guid SpecId { get; private set; } = Guid.Empty;
+    public Guid SpecId { get; private set; } = Guid.NewGuid();
 
     /// <summary>
     /// The name of the spec. 

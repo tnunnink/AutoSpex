@@ -10,7 +10,7 @@ namespace AutoSpex.Engine;
 /// it will be called, which makes it more flexible or reusable for any candidate object, as long as it is configured accordingly.
 /// I chose to avoid a generic type parameter since most of these will be defined at runtime and not compile time.
 /// This class relies on <see cref="Operation"/> to perform the <see cref="Evaluate"/> of the candidate object.
-/// This allow us to avoid having to build a complex expression tree for each criterion, and instead use a single
+/// This allows us to avoid having to build a complex expression tree for each criterion, and instead use a single
 /// method call which handles the logic for each operation. However, we can implicitly convert this to a predicate expression
 /// using the local <see cref="Evaluate"/> method call so that this in theory could be used to build up a more complex
 /// expression tree.
@@ -34,14 +34,32 @@ public class Criterion
     public Criterion(string? property, Operation operation, params Argument[] arguments)
     {
         Property = property;
-        Operation = operation ?? throw new ArgumentNullException(nameof(operation));
+        Operation = operation;
         Arguments = arguments.ToList();
     }
 
     public Criterion(Operation operation, params Argument[] arguments)
     {
-        Operation = operation ?? throw new ArgumentNullException(nameof(operation));
+        Operation = operation;
         Arguments = arguments.ToList();
+    }
+
+    /// <summary>
+    /// Creates a new <see cref="Criterion"/> with the provided arguments.
+    /// </summary>
+    /// <param name="criterionId">The id of the criterion.</param>
+    /// <param name="property"></param>
+    /// <param name="operation"></param>
+    /// <param name="arguments"></param>
+    /// <param name="invert"></param>
+    /// <exception cref="ArgumentNullException"></exception>
+    public Criterion(Guid criterionId, string? property, Operation operation, Argument[] arguments, bool invert)
+    {
+        CriterionId = criterionId;
+        Property = property;
+        Operation = operation;
+        Arguments = [..arguments];
+        Invert = invert;
     }
 
     /// <summary>
@@ -59,12 +77,12 @@ public class Criterion
     /// <summary>
     /// The operation the evaluation will execute on the input and argument values.
     /// </summary>
-    public Operation Operation { get; set; } = Operation.None;
+    public Operation? Operation { get; set; } = Operation.None;
 
     /// <summary>
     /// The collection of argument values required for the operation to execute.
     /// </summary>
-    public List<Argument> Arguments { get; set; } = [];
+    public List<Argument> Arguments { get; init; } = [];
 
     /// <summary>
     /// A flag to invert the result of the operation.
@@ -78,6 +96,7 @@ public class Criterion
     /// <returns>An Evaluation object indicating the result of the evaluation.</returns>
     public Evaluation Evaluate(object? candidate)
     {
+        var operation = Operation ?? Operation.None;
         var type = candidate?.GetType();
         var property = type?.Property(Property);
         var getter = property?.Getter();
@@ -87,7 +106,7 @@ public class Criterion
             var value = getter is not null ? getter(candidate) : candidate;
             var valueType = value?.GetType();
             var args = Arguments.Select(a => a.ResolveAs(valueType)).ToArray();
-            var result = !Invert ? Operation.Execute(value, args) : !Operation.Execute(value, args);
+            var result = !Invert ? operation.Execute(value, args) : !operation.Execute(value, args);
 
             return result
                 ? Evaluation.Passed(this, candidate, args, value)
@@ -119,7 +138,7 @@ public class Criterion
     private Expression<Func<object?, bool>> ToExpression()
     {
         var parameter = Expression.Parameter(typeof(object), "x");
-        Func<object, bool> func = x => (bool) Evaluate(x);
+        Func<object, bool> func = x => (bool)Evaluate(x);
         var call = Expression.Call(Expression.Constant(func.Target), func.Method, parameter);
         return Expression.Lambda<Func<object?, bool>>(call, parameter);
     }

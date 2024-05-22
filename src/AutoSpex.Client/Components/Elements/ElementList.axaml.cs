@@ -1,35 +1,87 @@
-﻿using System.Collections.ObjectModel;
-using AutoSpex.Client.Observers;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using AutoSpex.Client.Shared;
+using AutoSpex.Engine;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Data;
-using L5Sharp.Core;
+using Avalonia.Input;
+using Avalonia.LogicalTree;
 
 namespace AutoSpex.Client.Components;
 
 public class ElementList : TemplatedControl
 {
-    public static readonly DirectProperty<ElementList, ObservableCollection<ElementObserver>> ElementsProperty =
-        AvaloniaProperty.RegisterDirect<ElementList, ObservableCollection<ElementObserver>>(
-            nameof(Elements), o => o.Elements, (o, v) => o.Elements = v, unsetValue: []);
+    #region Properties
 
-    public static readonly DirectProperty<ElementList, ElementObserver?> SelectedElementProperty =
-        AvaloniaProperty.RegisterDirect<ElementList, ElementObserver?>(
-            nameof(SelectedElement), o => o.SelectedElement, (o, v) => o.SelectedElement = v,
-            defaultBindingMode: BindingMode.TwoWay);
-    
-    private ObservableCollection<ElementObserver> _elements = [];
-    private ElementObserver? _selectedElement;
+    public static readonly DirectProperty<ElementList, Element> ElementProperty =
+        AvaloniaProperty.RegisterDirect<ElementList, Element>(
+            nameof(Element), o => o.Element, (o, v) => o.Element = v,
+            defaultBindingMode: BindingMode.TwoWay,
+            unsetValue: Element.Default);
 
-    public ObservableCollection<ElementObserver> Elements
+    public static readonly DirectProperty<ElementList, string?> FilterTextProperty =
+        AvaloniaProperty.RegisterDirect<ElementList, string?>(
+            nameof(FilterText), o => o.FilterText, (o, v) => o.FilterText = v);
+
+    #endregion
+
+    private Element _element = Element.Default;
+    private string? _filterText;
+
+    public Element Element
     {
-        get => _elements;
-        set => SetAndRaise(ElementsProperty, ref _elements, value);
+        get => _element;
+        set => SetAndRaise(ElementProperty, ref _element, value);
     }
 
-    public ElementObserver? SelectedElement
+    public string? FilterText
     {
-        get => _selectedElement;
-        set => SetAndRaise(SelectedElementProperty, ref _selectedElement, value);
+        get => _filterText;
+        set => SetAndRaise(FilterTextProperty, ref _filterText, value);
+    }
+
+    protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
+    {
+        base.OnApplyTemplate(e);
+        UpdateElements();
+    }
+
+    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+    {
+        base.OnPropertyChanged(change);
+
+        if (change.Property == FilterTextProperty)
+            UpdateElements(change.GetNewValue<string?>());
+    }
+
+    public ObservableCollection<Element> Elements { get; } = new(Element.Selectable);
+
+    protected override void OnPointerReleased(PointerReleasedEventArgs e)
+    {
+        base.OnPointerReleased(e);
+
+        if (e is not
+            {
+                Source: Control { DataContext: Element element } control, InitialPressMouseButton: MouseButton.Left
+            }) return;
+
+        e.Handled = true;
+        Element = element;
+        var popup = control.FindLogicalAncestorOfType<Popup>();
+        popup?.Close();
+    }
+
+    private void UpdateElements(string? filter = default)
+    {
+        var elements = Element.Selectable.Where(e => FilterElement(e, filter)).OrderBy(x => x.Name);
+        Elements.Refresh(elements);
+    }
+
+    private static bool FilterElement(Element element, string? filter)
+    {
+        return string.IsNullOrEmpty(filter) || element.Name.Contains(filter, StringComparison.OrdinalIgnoreCase);
     }
 }

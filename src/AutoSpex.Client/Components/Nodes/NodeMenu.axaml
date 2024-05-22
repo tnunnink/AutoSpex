@@ -1,0 +1,91 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine">
+
+    <Design.PreviewWith>
+        <Button Flyout="{DynamicResource NodeMenu}" Margin="200" Content="Test" />
+    </Design.PreviewWith>
+
+    <MenuFlyout x:Key="NodeMenu" x:DataType="observers:NodeObserver"
+                ItemContainerTheme="{StaticResource ContextMenuItem}">
+        <MenuItem Header="Add Container"
+                  Icon="{StaticResource IconContainerThemed}"
+                  Command="{Binding AddContainerCommand}"
+                  CommandParameter="{Binding}"
+                  IsVisible="{Binding Type, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:NodeType.Container}}"
+                  IsEnabled="{Binding Converter={x:Static ObjectConverters.IsNotNull}}"
+                  InputGesture="Ctrl+Shift+N" />
+        <MenuItem Header="Add Spec"
+                  Icon="{StaticResource IconSpecThemed}"
+                  Command="{Binding AddSpecCommand}"
+                  CommandParameter="{Binding}"
+                  IsEnabled="{Binding Converter={x:Static ObjectConverters.IsNotNull}}"
+                  InputGesture="Shift+N">
+            <MenuItem.IsVisible>
+                <MultiBinding Converter="{x:Static BoolConverters.And}">
+                    <Binding Path="Feature" Converter="{StaticResource EqualToConverter}"
+                             ConverterParameter="{x:Static engine:NodeType.Spec}" />
+                    <Binding Path="Type" Converter="{StaticResource EqualToConverter}"
+                             ConverterParameter="{x:Static engine:NodeType.Container}" />
+                </MultiBinding>
+            </MenuItem.IsVisible>
+        </MenuItem>
+        <MenuItem Header="Add Source"
+                  Icon="{StaticResource IconSourceThemed}"
+                  Command="{Binding AddSourceCommand}"
+                  CommandParameter="{Binding}"
+                  IsEnabled="{Binding Converter={x:Static ObjectConverters.IsNotNull}}"
+                  InputGesture="Ctrl+N">
+            <MenuItem.IsVisible>
+                <MultiBinding Converter="{x:Static BoolConverters.And}">
+                    <Binding Path="Feature" Converter="{StaticResource EqualToConverter}"
+                             ConverterParameter="{x:Static engine:NodeType.Source}" />
+                    <Binding Path="Type" Converter="{StaticResource EqualToConverter}"
+                             ConverterParameter="{x:Static engine:NodeType.Container}" />
+                </MultiBinding>
+            </MenuItem.IsVisible>
+        </MenuItem>
+        <MenuItem Header="Add Run"
+                  Icon="{StaticResource IconRunThemed}"
+                  Command="{Binding AddRunCommand}"
+                  CommandParameter="{Binding}"
+                  IsEnabled="{Binding Converter={x:Static ObjectConverters.IsNotNull}}"
+                  InputGesture="Ctrl+N">
+            <MenuItem.IsVisible>
+                <MultiBinding Converter="{x:Static BoolConverters.And}">
+                    <Binding Path="Feature" Converter="{StaticResource EqualToConverter}"
+                             ConverterParameter="{x:Static engine:NodeType.Run}" />
+                    <Binding Path="Type" Converter="{StaticResource EqualToConverter}"
+                             ConverterParameter="{x:Static engine:NodeType.Container}" />
+                </MultiBinding>
+            </MenuItem.IsVisible>
+        </MenuItem>
+
+        <Separator
+            IsVisible="{Binding Type, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:NodeType.Container}}" />
+
+        <MenuItem Header="Run"
+                  Icon="{StaticResource IconPlayOutlined}"
+                  Classes="success" />
+        <Separator />
+
+        <MenuItem Header="Open"
+                  Command="{Binding NavigateCommand}" />
+        <MenuItem Header="Rename"
+                  Icon="{StaticResource IconPenOutlined}"
+                  Command="{Binding EditCommand}"
+                  InputGesture="Ctrl+E" />
+        <MenuItem Header="Duplicate"
+                  Icon="{StaticResource IconCopyOutlined}"
+                  Command="{Binding DuplicateCommand}"
+                  InputGesture="Ctrl+D" />
+        <MenuItem Header="Move"
+                  Command="{Binding MoveSelectedCommand}" />
+        <MenuItem Header="Delete"
+                  Icon="{StaticResource IconTrashOutlined}"
+                  Command="{Binding DeleteSelectedCommand}"
+                  InputGesture="Delete"
+                  Classes="danger" />
+    </MenuFlyout>
+</ResourceDictionary>

@@ -71,7 +71,6 @@ public class ElementSelector : TemplatedControl
 
     public ObservableCollection<Element> Elements { get; } = new(Element.Selectable);
 
-
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
         base.OnApplyTemplate(e);

@@ -10,7 +10,7 @@ namespace AutoSpex.Engine;
 
 public static class Extensions
 {
-    //These are properties that I don't want to show up for the user because the are not really useful and are confusing.
+    //These are properties that I don't want to show up for the user because they are not really useful and are confusing.
     private static readonly List<string> PropertyExclusions = ["L5X", "IsAttached", "L5XType", "Length"];
 
     /// <summary>
@@ -85,7 +85,7 @@ public static class Extensions
     /// <returns>A type representing this type if not generic, or the inner generic argument type if it is.</returns>
     /// <remarks>
     /// This is so that collections or other generics we can get the inner type to pass down to nested
-    /// criterion objects so they know which properties to resolve.
+    /// criterion objects, so they know which properties to resolve.
     /// </remarks>
     public static Type SelfOrInnerType(this Type type)
     {
@@ -161,7 +161,7 @@ public static class Extensions
         var group = TypeGroup.FromType(type);
 
         if (group == TypeGroup.Boolean)
-            return new object[] {true, false};
+            return new object[] { true, false };
 
         if (type.IsEnum)
             return Enum.GetNames(type);
@@ -262,6 +262,18 @@ public static class Extensions
 
             return hash1 + hash2 * 1566083941;
         }
+    }
+    
+    
+    /// <summary>
+    /// Just determines if this and another string are equal using the ordinal ignore case comparer.
+    /// </summary>
+    /// <param name="input">This string text.</param>
+    /// <param name="text">The other string to compare against.</param>
+    /// <returns>true if equal, otherwise, false.</returns>
+    public static bool ContainsText(this string input, string text)
+    {
+        return input.Contains(text, StringComparison.OrdinalIgnoreCase);
     }
 
     private static bool IsEnumerable(this Type type)

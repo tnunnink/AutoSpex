@@ -18,10 +18,9 @@
                   x:DataType="observers:ProjectObserver">
         <Grid ColumnDefinitions="Auto,*,Auto">
             <Panel Grid.Column="0">
-                <PathIcon Theme="{StaticResource IconCubeOutlined}"
+                <PathIcon Theme="{StaticResource IconProjectThemed}"
                           Padding="5"
-                          IsVisible="{Binding Exists}"
-                          Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+                          IsVisible="{Binding Exists}" />
                 <PathIcon Theme="{StaticResource IconExclamationOutlined}"
                           Foreground="{a:ThemeResource ControlForegroundBrushOutlineDanger}"
                           IsVisible="{Binding !Exists}"

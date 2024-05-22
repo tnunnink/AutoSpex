@@ -5,6 +5,7 @@ using System.Linq;
 using AutoSpex.Client.Observers;
 using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
+using AutoSpex.Engine;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
@@ -29,13 +30,13 @@ public partial class ProjectPageModel(ProjectObserver project) : PageViewModel, 
 
     [ObservableProperty] private bool _isNavigationOpen = true;
     
-    [ObservableProperty] private bool _isStatusDrawerOpen = false;
+    [ObservableProperty] private bool _isStatusDrawerOpen;
 
     public override async Task Load()
     {
-        await Navigator.Navigate(() => new SpecsPageModel(Route));
-        await Navigator.Navigate(() => new SourcesPageModel(Route));
-        await Navigator.Navigate(() => new RunsPageModel(Route));
+        await Navigator.Navigate(() => new NavigationPageModel(Route, NodeType.Spec));
+        await Navigator.Navigate(() => new NavigationPageModel(Route, NodeType.Source));
+        await Navigator.Navigate(() => new NavigationPageModel(Route, NodeType.Run));
         await Navigator.Navigate(() => new DetailsPageModel(Route));
     }
 
@@ -79,7 +80,7 @@ public partial class ProjectPageModel(ProjectObserver project) : PageViewModel, 
     {
         switch (message.Page)
         {
-            case SpecsPageModel or SourcesPageModel or RunsPageModel:
+            case NavigationPageModel:
             {
                 if (!Menus.Contains(message.Page))
                     Menus.Add(message.Page);
@@ -96,7 +97,7 @@ public partial class ProjectPageModel(ProjectObserver project) : PageViewModel, 
     {
         switch (message.Page)
         {
-            case SpecsPageModel or SourcesPageModel or RunsPageModel:
+            case NavigationPageModel:
             {
                 Menus.Remove(message.Page);
                 break;
@@ -110,6 +111,7 @@ public partial class ProjectPageModel(ProjectObserver project) : PageViewModel, 
     private void RegisterWatcher()
     {
         _projectWatcher = Project.Model.CreateWatcher();
+        if (_projectWatcher is null) return;
         _projectWatcher.Deleted += ProjectDeleted;
         _projectWatcher.Renamed += ProjectRenamed;
         _projectWatcher.Changed += ProjectChanged;

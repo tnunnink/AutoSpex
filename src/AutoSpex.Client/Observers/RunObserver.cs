@@ -12,7 +12,7 @@ using L5Sharp.Core;
 
 namespace AutoSpex.Client.Observers;
 
-public partial class RunObserver : NamedObserver<Run>
+public partial class RunObserver : Observer<Run>
 {
     private CancellationTokenSource? _cancellation;
 
@@ -36,7 +36,7 @@ public partial class RunObserver : NamedObserver<Run>
 
     public override Guid Id => Model.RunId;
 
-    public override string Name
+    public string Name
     {
         get => Model.Name;
         set => SetProperty(Model.Name, value, Model, (s, v) => s.Name = v);
@@ -59,8 +59,6 @@ public partial class RunObserver : NamedObserver<Run>
 
     public static implicit operator Run(RunObserver observer) => observer.Model;
     public static implicit operator RunObserver(Run model) => new(model);
-
-    protected override Task<Result> RenameModel(string name) => Mediator.Send(new RenameRun(this));
 
     protected override async Task Navigate()
     {

@@ -14,6 +14,16 @@ namespace AutoSpex.Client.Components;
 [PublicAPI]
 public static class DesignData
 {
+    public static readonly ObservableCollection<DetailPageModel> Tabs =
+    [
+        new TestDetailPageModel(),
+        new TestDetailPageModel(),
+        new TestDetailPageModel(),
+        new TestDetailPageModel(),
+        new TestDetailPageModel(),
+        new TestDetailPageModel()
+    ];
+
     public static readonly ObservableCollection<PageViewModel> Pages =
     [
         new TestPageModel(),
@@ -39,16 +49,6 @@ public static class DesignData
         new DesignCriterionObserver(),
         new DesignCriterionObserver(),
         new DesignCriterionObserver()
-    ];
-
-    public static readonly Breadcrumb ParentBreadcrumb = new DesignParentBreadcrumb();
-    public static readonly Breadcrumb TargetBreadcrumb = new DesignTargetBreadcrumb();
-    public static readonly Breadcrumb PathBreadcrumb = new DesignPathBreadcrumb();
-
-    public static readonly ObservableCollection<Breadcrumb> Breadcrumbs =
-    [
-        new DesignParentBreadcrumb(),
-        new DesignTargetBreadcrumb()
     ];
 
     public static Property Property = new DesignRadixProperty();
@@ -90,16 +90,16 @@ public static class DesignData
         new(LogixEnum.Options<Radix>().Select(e => new Argument(e)));
 
     //todo should we get something better than pointing to local disc
+    public static L5X Content = L5X.Load(@"C:\Users\tnunn\Documents\L5X\Test.L5X");
+
+    //todo should we get something better than pointing to local disc
     public static SourceObserver Source = new(new Source(L5X.Load(@"C:\Users\tnunn\Documents\L5X\Test.L5X")));
 
     public static ObservableCollection<SourceObserver> Sources =
     [
-        new SourceObserver(new Source(L5X.Load(@"C:\Users\tnunn\Documents\L5X\Test.L5X")))
-            { Name = "Test Source 01" },
-        new SourceObserver(new Source(L5X.Load(@"C:\Users\tnunn\Documents\L5X\Test.L5X")))
-            { Name = "Test Source 02", IsSelected = true },
-        new SourceObserver(new Source(L5X.Load(@"C:\Users\tnunn\Documents\L5X\Test.L5X")))
-            { Name = "Test Source 03" },
+        new SourceObserver(new Source(L5X.Load(@"C:\Users\tnunn\Documents\L5X\Test.L5X"))),
+        new SourceObserver(new Source(L5X.Load(@"C:\Users\tnunn\Documents\L5X\Test.L5X"))),
+        new SourceObserver(new Source(L5X.Load(@"C:\Users\tnunn\Documents\L5X\Test.L5X"))),
     ];
 
     public static LogixComponent DataType = new DesignSourceObserver().Model.L5X.DataTypes.First();
@@ -110,7 +110,7 @@ public static class DesignData
         new(new DesignSourceObserver().Model.L5X.DataTypes.Select(t => new ElementObserver(t)));
 
     public static ObservableCollection<ElementObserver> Tags = new(new DesignSourceObserver().Model.L5X.Query<Tag>()
-        .SelectMany(t => t.Members()).Select(x => new ElementObserver(x)));
+        .Where(t => t.Description is not null).SelectMany(t => t.Members()).Select(x => new ElementObserver(x)));
 
     public static LogixCode Rung = DesignRung();
 
@@ -127,9 +127,11 @@ public static class DesignData
 
     public static string? RawData = new DesignSourceObserver().Model.L5X.Tags.FirstOrDefault()?.Serialize().ToString();
 
-    public static LogixElement? Tag = new DesignSourceObserver().Model.L5X.Tags.FirstOrDefault();
+    public static LogixElement? Tag = new DesignSourceObserver().Model.L5X.Tags.Find("TestSimpleTag");
 
-    public static LogixElement? Module = new DesignSourceObserver().Model.L5X.Modules.FirstOrDefault();
+    public static LogixElement? Module = new DesignSourceObserver().Model.L5X.Modules.Find("RackIO");
+
+    public static LogixElement? Program = new DesignSourceObserver().Model.L5X.Programs.Find("MainProgram");
 
     public static ElementObserver TagObserver = new(Tag!);
 
@@ -145,21 +147,21 @@ public static class DesignData
 
     private static IEnumerable<Node> GenerateNodes()
     {
-        var collection = Node.NewCollection();
-        var folder = collection.AddFolder();
+        var collection = Node.NewContainer();
+        var folder = collection.AddContainer();
         collection.AddSpec();
         folder.AddSpec();
         yield return collection;
-        yield return Node.NewCollection();
+        yield return Node.NewContainer();
     }
 
     private static IEnumerable<Node> GenerateSpecs()
     {
-        var collection = Node.NewCollection();
+        var collection = Node.NewContainer();
         collection.AddSpec("Test Spec");
         collection.AddSpec("Another Spec");
         collection.AddSpec("A Spec with a longer name then most of the other specs that you'd want");
-        var folder = collection.AddFolder();
+        var folder = collection.AddContainer();
         folder.AddSpec("Test Folder");
         folder.AddSpec("Sub Spec");
         folder.AddSpec("Contained Spec");
@@ -168,8 +170,8 @@ public static class DesignData
 
     private static NodeObserver SpecNodeObserver()
     {
-        var collection = Node.NewCollection();
-        var folder = collection.AddFolder();
+        var collection = Node.NewContainer();
+        var folder = collection.AddContainer();
         var spec = folder.AddSpec();
         return new NodeObserver(spec);
     }
@@ -210,19 +212,19 @@ public static class DesignData
 public class TestPageModel : PageViewModel
 {
     public override string Title => "Test Page";
-    public override string Icon => "Folder";
+    public override string Icon => "Container";
+}
+
+public class TestDetailPageModel : DetailPageModel
+{
+    public override string Title => "Details Page";
+    public override string Icon => "Container";
 }
 
 public class DesignRealProjectObserver()
     : ProjectObserver(new Project(@"C:\Users\tnunn\Documents\Spex\New Project.spex"));
 
 public class DesignFakeProjectObserver() : ProjectObserver(new Project(@"C:\Users\tnunn\Documents\Spex\Fake.spex"));
-
-public class DesignParentBreadcrumb() : Breadcrumb(Node.NewCollection(), CrumbType.Parent);
-
-public class DesignTargetBreadcrumb() : Breadcrumb(Node.NewSpec(), CrumbType.Target);
-
-public class DesignPathBreadcrumb() : Breadcrumb(Node.NewCollection().AddFolder().AddSpec(), CrumbType.Target);
 
 public class DesignCriterionObserver() : CriterionObserver(new Criterion
 {

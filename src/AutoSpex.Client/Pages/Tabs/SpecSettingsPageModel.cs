@@ -7,7 +7,7 @@ namespace AutoSpex.Client.Pages;
 [UsedImplicitly]
 public class SpecSettingsPageModel(SpecObserver spec) : PageViewModel
 {
-    public override string Route => $"Node/{Spec.Id}/{Title}";
+    public override string Route => $"Spec/{Spec.Id}/{Title}";
     public override string Title => "Settings";
     public SpecObserver Spec { get; } = spec;
 }

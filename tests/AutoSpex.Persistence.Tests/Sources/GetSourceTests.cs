@@ -19,7 +19,7 @@ public class GetSourceTests
     }
     
     [Test]
-    public async Task Send_ValidSourceExists_ShouldReturnEquivalent()
+    public async Task GetSource_ValidSourceExists_ShouldReturnEquivalent()
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
@@ -33,7 +33,7 @@ public class GetSourceTests
     }
     
     [Test]
-    public async Task Send_ValidSourceExists_ShouldHaveNullContent()
+    public async Task GetSource_ValidSourceExists_ShouldHaveNonNullContent()
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
@@ -43,7 +43,25 @@ public class GetSourceTests
         var result = await mediator.Send(new GetSource(source.SourceId));
 
         result.IsSuccess.Should().BeTrue();
-        result.Value.Content.Should().BeNull();
-        result.Value.L5X.Should().BeNull();
+        result.Value.Content.Should().NotBeNull();
+        result.Value.L5X.Should().NotBeNull();
     }
+    [Test]
+    public async Task GetSource_NoContentSource_ShouldHaveNullContent()
+    {
+        using var context = new TestContext();
+        var mediator = context.Resolve<IMediator>();
+        var source = new Source();
+        await mediator.Send(new CreateSource(source));
+        
+        var result = await mediator.Send(new GetSource(source.SourceId));
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value.TargetName.Should().BeNullOrEmpty();
+        result.Value.TargetType.Should().BeNullOrEmpty();
+        result.Value.ExportedBy.Should().BeNullOrEmpty();
+        result.Value.ExportedOn.Should().BeWithin(TimeSpan.FromSeconds(1));
+        result.Value.Content.Should().BeNullOrEmpty();
+    }
+    
 }

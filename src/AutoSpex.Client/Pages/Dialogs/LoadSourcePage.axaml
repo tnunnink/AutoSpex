@@ -1,0 +1,29 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:components="clr-namespace:AutoSpex.Client.Components"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             x:Class="AutoSpex.Client.Pages.LoadSourcePage"
+             x:DataType="pages:LoadSourcePageModel">
+
+    <controls:Prompt UseButtonPanel="{Binding Content, Converter={x:Static ObjectConverters.IsNotNull}}"
+                     Header="Load source file"
+                     Padding="20"
+                     HeaderIcon="{StaticResource IconSourceThemed}"
+                     CancelButtonTheme="{a:ControlTheme ButtonSoft}"
+                     CancelCommandParameter="{x:Null}"
+                     ActionButtonText="Load"
+                     ActionButtonTheme="{a:ControlTheme ButtonSolid}"
+                     ActionCommand="{Binding LoadSourceCommand}"
+                     ActionCommandParameter="{Binding $parent[Window]}"
+                     Classes="accent">
+        <Panel>
+            <components:SourceLoader
+                Content="{Binding Content}"
+                ScrubData="{Binding ScrubData}"
+                UpdateVariables="{Binding UpdateVariables}" />
+        </Panel>
+    </controls:Prompt>
+
+</UserControl>

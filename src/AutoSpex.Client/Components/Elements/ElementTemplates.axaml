@@ -1,43 +1,118 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
                     xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
                     xmlns:components="clr-namespace:AutoSpex.Client.Components">
 
     <Design.PreviewWith>
-        <StackPanel Margin="10" Spacing="10" Width="500" Height="1000">
-            <ListBox ItemsSource="{x:Static components:DesignData.DataTypeElements}"
-                     ItemTemplate="{DynamicResource ElementItem}"
-                     ItemContainerTheme="{StaticResource ListBoxItemSubtle}"
-                     BorderThickness="0" />
+        <StackPanel Margin="10" Spacing="10" Width="500" Height="400">
+            <ListBox ItemsSource="{x:Static components:DesignData.Tags}"
+                     ItemTemplate="{DynamicResource ElementItemTemplate}"
+                     ItemContainerTheme="{StaticResource ListBoxItemSimple}"
+                     BorderThickness="0"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
         </StackPanel>
     </Design.PreviewWith>
 
-
-    <DataTemplate x:Key="ElementItem" x:DataType="observers:ElementObserver">
+    <DataTemplate x:Key="ElementItemTemplate" x:DataType="observers:ElementObserver">
         <Grid ColumnDefinitions="Auto,*,Auto">
+            <Grid.Styles>
+                <Style Selector="TextBlock">
+                    <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeSmall}" />
+                </Style>
+            </Grid.Styles>
+
             <PathIcon Grid.Column="0"
                       Theme="{StaticResource IconSourceThemed}"
                       Height="20" Width="20" Margin="0 1 7 0" Padding="3" />
-            <TextBlock Grid.Column="1"
-                       Text="{Binding}" />
-            <StackPanel Grid.Column="2"
-                        Orientation="Horizontal"
-                        Spacing="3" Margin="10 0 5 0">
-                <Button Theme="{StaticResource IconButtonSmall}"
-                        properties:ButtonIcon.Theme="{StaticResource IconBraces}"
-                        Classes="accent"
-                        ToolTip.Tip="Create Variable" />
-                <Button Theme="{StaticResource IconButtonSmall}"
+
+            <StackPanel Grid.Column="1" Spacing="10"
+                        Orientation="Horizontal" HorizontalAlignment="Left"
+                        ClipToBounds="True">
+                <TextBlock
+                    Text="{Binding Name}"
+                    FontFamily="{a:ThemeResource CodeFontFamily}"
+                    Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+
+                <ItemsControl ItemsSource="{Binding DisplayProperties}">
+                    <ItemsControl.Styles>
+                        <Style Selector="TextBlock">
+                            <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushSecondary}" />
+                        </Style>
+                    </ItemsControl.Styles>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" Spacing="10" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="observers:PropertyObserver">
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <Border
+                                    IsVisible="{Binding Value, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                    BorderThickness="1 0 0 0"
+                                    BorderBrush="{a:ThemeResource Container2BorderBrush}"
+                                    Margin="0 4" />
+                                <TextBlock
+                                    Text="{Binding Value}"
+                                    IsVisible="{Binding Value, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                    ToolTip.Tip="{Binding Name}"
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="NoWrap">
+                                </TextBlock>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <Border
+                    BorderThickness="1 0 0 0"
+                    BorderBrush="{a:ThemeResource Container2BorderBrush}"
+                    Margin="0 4" />
+                <Panel>
+                    <TextBlock
+                        Text="{Binding Description}"
+                        IsVisible="{Binding Description, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                        Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
+                        TextTrimming="CharacterEllipsis"
+                        TextWrapping="NoWrap"
+                        MaxLines="1" />
+                    <TextBlock
+                        Text="No description"
+                        IsVisible="{Binding Description, Converter={x:Static StringConverters.IsNullOrEmpty}}"
+                        Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                        FontStyle="Italic" />
+                </Panel>
+            </StackPanel>
+
+            <Border Grid.Column="2"
+                    Background="{Binding $parent[ListBoxItem].Background}"
+                    Padding="5 0">
+                <StackPanel Orientation="Horizontal" Spacing="3">
+                    <Button
+                        Command="{Binding ViewElementCommand}"
+                        Theme="{StaticResource IconButtonSmall}"
+                        properties:ButtonIcon.Theme="{StaticResource IconBinocularsFilled}"
+                        ToolTip.Tip="View" />
+                    <Button
+                        Command="{Binding CopyElementCommand}"
+                        Theme="{StaticResource IconButtonSmall}"
                         properties:ButtonIcon.Theme="{StaticResource IconCopyOutlined}"
-                        ToolTip.Tip="Copy Data" />
-                <StackPanel.IsVisible>
+                        ToolTip.Tip="Copy" />
+                    <Button
+                        Command="{Binding CreateVariableCommand}"
+                        Theme="{StaticResource IconButtonSmall}"
+                        properties:ButtonIcon.Theme="{StaticResource IconBraces}"
+                        ToolTip.Tip="Create Variable" />
+                </StackPanel>
+                <Border.IsVisible>
                     <MultiBinding Converter="{x:Static BoolConverters.Or}">
                         <Binding Path="$parent[ListBoxItem].IsPointerOver" />
                         <Binding Path="$parent[ListBoxItem].IsSelected" />
                     </MultiBinding>
-                </StackPanel.IsVisible>
-            </StackPanel>
+                </Border.IsVisible>
+            </Border>
         </Grid>
     </DataTemplate>
 </ResourceDictionary>

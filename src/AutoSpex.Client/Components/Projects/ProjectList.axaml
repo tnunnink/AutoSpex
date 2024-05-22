@@ -4,9 +4,14 @@
                     xmlns:components="using:AutoSpex.Client.Components">
 
     <Design.PreviewWith>
-        <components:ProjectList Height="600" Width="600"
-                                CornerRadius="5" BorderThickness="1"
-                                ProjectSource="{x:Static components:DesignData.Projects}" />
+        <StackPanel Spacing="20">
+            <components:ProjectList
+                CornerRadius="5" BorderThickness="1" />
+            <components:ProjectList Height="600" Width="600"
+                                    CornerRadius="5" BorderThickness="1"
+                                    ProjectSource="{x:Static components:DesignData.Projects}" />
+        </StackPanel>
+
     </Design.PreviewWith>
 
     <ControlTheme x:Key="{x:Type components:ProjectList}" TargetType="components:ProjectList">
@@ -24,9 +29,8 @@
                         <StackPanel
                             IsVisible="{Binding !ProjectSource.Count, RelativeSource={RelativeSource TemplatedParent}}"
                             VerticalAlignment="Center" HorizontalAlignment="Center">
-                            <PathIcon Theme="{StaticResource IconCubeOutlined}"
-                                      Padding="0" Margin="10" Height="50" Width="50"
-                                      Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+                            <PathIcon Theme="{StaticResource IconProjectThemed}"
+                                      Padding="0" Margin="10" Height="50" Width="50" />
                             <TextBlock Text="No recent projects"
                                        Classes="theme-text-heading size"
                                        Margin="5"

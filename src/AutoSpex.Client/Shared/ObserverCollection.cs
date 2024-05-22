@@ -96,6 +96,14 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
         OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsRefreshing)));
     }
 
+    public void Sort<TField>(Func<TObserver, TField> selector, IComparer<TField>? comparer)
+    {
+        var sorted = this.OrderBy(selector, comparer).ToList();
+        
+        for (var i = 0; i < sorted.Count; i++)
+            Move(IndexOf(sorted[i]), i);
+    }
+
     protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
     {
         base.OnCollectionChanged(e);
@@ -187,5 +195,26 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
     private void RaiseItemPropertyChanged(TObserver item, PropertyChangedEventArgs e)
     {
         ItemPropertyChanged?.Invoke(item, e);
+    }
+}
+
+public static class ObservableCollectionExtensions
+{
+    public static void AddRange<T>(this ObservableCollection<T> collection, IEnumerable<T> items)
+    {
+        foreach (var item in items)
+        {
+            collection.Add(item);
+        }
+    }
+    
+    public static void Refresh<T>(this ObservableCollection<T> collection, IEnumerable<T> items)
+    {
+        collection.Clear();
+        
+        foreach (var item in items)
+        {
+            collection.Add(item);
+        }
     }
 }

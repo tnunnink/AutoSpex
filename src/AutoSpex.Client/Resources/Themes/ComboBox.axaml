@@ -1,0 +1,95 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:primitives="clr-namespace:ActiproSoftware.UI.Avalonia.Controls.Primitives;assembly=ActiproSoftware.Avalonia.Shared">
+
+
+    <!-- ComboBoxBase -->
+    <ControlTheme x:Key="ComboBoxTheme" TargetType="ComboBox">
+        <Setter Property="BorderThickness" Value="{a:ThemeResource ButtonBorderThickness}" />
+        <Setter Property="CornerRadius" Value="{a:ThemeResource ButtonCornerRadius}" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="Padding" Value="{a:ThemeResource EditPadding}" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="a:ThemeProperties.ScrollBarHasLineButtons"
+                Value="{a:ThemeResource ScrollBarHasLineButtons}" />
+
+        <Setter Property="Template">
+            <ControlTemplate>
+
+                <DataValidationErrors>
+                    <Border
+                        x:Name="border"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
+                        <a:MeasureAdjuster VerticalRoundMode="CeilingToEven">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock
+                                    x:Name="placeholder"
+                                    Margin="{TemplateBinding Padding}"
+                                    FontStyle="Italic"
+                                    Foreground="{TemplateBinding PlaceholderForeground}"
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    IsVisible="{TemplateBinding SelectionBoxItem, Converter={x:Static ObjectConverters.IsNull}}"
+                                    Opacity="{DynamicResource {a:ThemeResourceKey EditWatermarkOpacity}}"
+                                    Text="{TemplateBinding PlaceholderText}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                                    <TextBlock.Transitions>
+                                        <Transitions>
+                                            <DoubleTransition Property="Opacity"
+                                                              Duration="{a:AnimationSetting SubtleAnimationDuration}" />
+                                        </Transitions>
+                                    </TextBlock.Transitions>
+                                </TextBlock>
+
+                                <ContentPresenter
+                                    x:Name="content"
+                                    Margin="{TemplateBinding Padding}"
+                                    Content="{TemplateBinding SelectionBoxItem}"
+                                    ContentTemplate="{TemplateBinding ItemTemplate}"
+                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+
+                                <ContentPresenter
+                                    x:Name="glyph"
+                                    Grid.Column="1"
+                                    Margin="{a:ScaledThickness '0.6,0'}"
+                                    ContentTemplate="{a:GlyphTemplate DropDownArrow16}" />
+
+                                <primitives:ChromedPopup
+                                    x:Name="PART_Popup"
+                                    InheritsTransform="True"
+                                    IsLightDismissEnabled="True"
+                                    IsOpen="{TemplateBinding IsDropDownOpen, Mode=TwoWay}"
+                                    MaxChildHeight="{TemplateBinding MaxDropDownHeight}"
+                                    PlacementTarget="{Binding #border}">
+                                    <ScrollViewer
+                                        HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                                        VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                                        a:ThemeProperties.CopyClassesFilter="theme-scroll-.*"
+                                        a:ThemeProperties.CopyClassesFrom="{TemplateBinding}"
+                                        a:ThemeProperties.ScrollBarHasLineButtons="{TemplateBinding a:ThemeProperties.ScrollBarHasLineButtons}">
+                                        <ItemsPresenter x:Name="PART_ItemsPresenter"
+                                                        ItemsPanel="{TemplateBinding ItemsPanel}" />
+                                    </ScrollViewer>
+                                </primitives:ChromedPopup>
+                            </Grid>
+                        </a:MeasureAdjuster>
+                    </Border>
+                </DataValidationErrors>
+
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^ /template/ primitives|ChromedPopup#PART_Popup">
+            <Setter Property="Placement" Value="BottomEdgeAlignedLeft" />
+            <Setter Property="MinChildWidth" Value="150" />
+        </Style>
+        <Style Selector="^:focus-within /template/ TextBlock#placeholder">
+            <Setter Property="Opacity" Value="{DynamicResource {a:ThemeResourceKey EditWatermarkOpacityFocused}}" />
+        </Style>
+    </ControlTheme>
+</ResourceDictionary>

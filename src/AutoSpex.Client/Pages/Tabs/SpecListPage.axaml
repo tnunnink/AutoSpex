@@ -5,6 +5,6 @@
              x:Class="AutoSpex.Client.Pages.SpecListPage"
              x:DataType="pages:SpecListPageModel">
 
-    <components:SpecList Specs="{Binding Node.Specs}"
-                         AddCommand="{Binding Node.AddSpecCommand}" />
+    <!--<components:SpecList Specs="{Binding Node.Specs}"
+                         AddCommand="{Binding Node.AddSpecCommand}" />-->
 </UserControl>

@@ -58,7 +58,6 @@ public class DetailsContainer : TabControl
         AvaloniaProperty.RegisterDirect<DetailsContainer, ICommand?>(
             nameof(AddRunnerCommand), o => o.AddRunnerCommand, (o, v) => o.AddRunnerCommand = v);
 
-
     public ObservableCollection<DetailPageModel> PagesSource => (ItemsSource as ObservableCollection<DetailPageModel>)!;
 
     public ICommand? AddCommand
@@ -107,7 +106,7 @@ public class DetailsContainer : TabControl
 
     protected override Control CreateContainerForItemOverride(object? item, int index, object? recycleKey)
     {
-        return new DetailsTab();
+        return new DetailTab();
     }
 
     private async Task CloseTab(DetailPageModel? page)
