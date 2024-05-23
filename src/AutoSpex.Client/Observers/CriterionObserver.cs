@@ -97,6 +97,8 @@ public partial class CriterionObserver : Observer<Criterion>
         Arguments.Add(new ArgumentObserver(new Argument(new Criterion())));
     }
 
+    public static CriterionObserver ForType(Type type) => new(new Criterion(), type);
+
     /// <summary>
     /// Implicit conversion operator from an <see cref="CriterionObserver"/> instance to a <see cref="Criterion"/> instance.
     /// This enables an <see cref="CriterionObserver"/> to be used wherever a <see cref="Criterion"/> is expected.

@@ -4,8 +4,7 @@
         <ResourceInclude Source="ElementList.axaml" />
         <ResourceInclude Source="ElementSelector.axaml" />
         <ResourceInclude Source="ElementTemplates.axaml" />
+        <ResourceInclude Source="PropertyTemplates.axaml" />
         <ResourceInclude Source="PropertyTree.axaml" />
-        <ResourceInclude Source="PropertyItem.axaml" />
-        <ResourceInclude Source="ValueTemplates.axaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

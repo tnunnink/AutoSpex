@@ -5,6 +5,7 @@
         <ResourceInclude Source="SettingItem.axaml" />
         <ResourceInclude Source="Section.axaml" />
         <ResourceInclude Source="NoItemsMessage.axaml" />
+        <ResourceInclude Source="ValueTemplates.axaml" />
         <ResourceInclude Source="Navigation/All.axaml" />
         <ResourceInclude Source="Elements/All.axaml" />
         <ResourceInclude Source="Nodes/All.axaml" />

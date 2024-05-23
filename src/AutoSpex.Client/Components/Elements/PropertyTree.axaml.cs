@@ -1,89 +1,79 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
 using AutoSpex.Client.Observers;
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Data;
 using JasperFx.Core;
-using TextBox = Avalonia.Controls.TextBox;
 
 namespace AutoSpex.Client.Components;
 
 public class PropertyTree : TemplatedControl
 {
+    #region Properties
+
+    public static readonly DirectProperty<PropertyTree, string?> FilterTextProperty =
+        AvaloniaProperty.RegisterDirect<PropertyTree, string?>(
+            nameof(FilterText), o => o.FilterText, (o, v) => o.FilterText = v,
+            defaultBindingMode: BindingMode.TwoWay);
+
     public static readonly DirectProperty<PropertyTree, ElementObserver?> SourceElementProperty =
         AvaloniaProperty.RegisterDirect<PropertyTree, ElementObserver?>(
             nameof(SourceElement), o => o.SourceElement, (o, v) => o.SourceElement = v);
 
-    private readonly List<PropertyObserver> _properties = [];
+    #endregion
+
     private ElementObserver? _sourceElement;
-    private TextBox? _filterText;
+    private string? _filterText;
 
     public ElementObserver? SourceElement
     {
         get => _sourceElement;
         set => SetAndRaise(SourceElementProperty, ref _sourceElement, value);
     }
-    
+
+    public string? FilterText
+    {
+        get => _filterText;
+        set => SetAndRaise(FilterTextProperty, ref _filterText, value);
+    }
+
     public ObservableCollection<PropertyObserver> Properties { get; } = [];
+
+    protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
+    {
+        base.OnApplyTemplate(e);
+
+        if (SourceElement is not null)
+            HandleElementChange(SourceElement);
+    }
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
 
         if (change.Property == SourceElementProperty)
-            HandleElementChange(change.GetNewValue<ElementObserver>());
-    }
+            HandleElementChange(change.GetNewValue<ElementObserver?>());
 
-    protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
-    {
-        base.OnApplyTemplate(e);
-        RegisterFilterText(e);
-
-        if (SourceElement is not null)
-            HandleElementChange(SourceElement);
-    }
-
-    private void RegisterFilterText(TemplateAppliedEventArgs args)
-    {
-        if (_filterText is not null) _filterText.TextChanged -= FilterTextChanged;
-        _filterText = args.NameScope.Find<TextBox>("FilterText");
-        if (_filterText is null) return;
-        _filterText.TextChanged += FilterTextChanged;
-    }
-
-    private void FilterTextChanged(object? sender, TextChangedEventArgs e)
-    {
-        if (e.Source is not TextBox textBox) return;
-        UpdateProperties(textBox.Text);
+        if (change.Property == FilterTextProperty)
+            UpdateProperties(change.GetNewValue<string?>());
     }
 
     private void HandleElementChange(ElementObserver? observer)
     {
+        Properties.Clear();
         if (observer is null) return;
-
-        _properties.Clear();
-        _properties.AddRange(observer.Properties);
-        
-        UpdateProperties(_filterText?.Text);
+        Properties.AddRange(observer.Properties);
     }
-    
+
     private void UpdateProperties(string? filter)
     {
         Properties.Clear();
-        var filtered = _properties.Where(p => FilterProperty(p, filter));
-        Properties.AddRange(filtered);
-    }
 
-    private static bool FilterProperty(PropertyObserver property, string? text)
-    {
-        if (string.IsNullOrEmpty(text)) return true;
+        var properties =
+            SourceElement?.Properties.SelectMany(p => p.FindProperties(filter)) ??
+            Enumerable.Empty<PropertyObserver>();
 
-        if (property.Name.Contains(text)) return true;
-        if (property.Type.Contains(text)) return true;
-        if (property.Value?.ToString()?.Contains(text) is true) return true;
-        
-        return false;
+        Properties.AddRange(properties);
     }
 }

@@ -23,6 +23,7 @@
                 <Grid>
                     <Button x:Name="ButtonRoot"
                             Content="{Binding Argument.Value, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, FallbackValue={x:Null}}"
+                            ContentTemplate="{StaticResource ValueTemplates}"
                             Theme="{actipro:ControlTheme ButtonSoft}"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
@@ -30,11 +31,6 @@
                             FontSize="{actipro:ThemeResource DefaultFontSizeSmall}"
                             FontFamily="{actipro:ThemeResource CodeFontFamily}"
                             MinHeight="30" MaxWidth="400">
-                        <Button.DataTemplates>
-                            <StaticResource ResourceKey="ArgumentTextTemplate" />
-                            <StaticResource ResourceKey="ArgumentEnumTemplate" />
-                            <StaticResource ResourceKey="ArgumentVariableTemplate" />
-                        </Button.DataTemplates>
 
                         <Button.Flyout>
                             <Flyout

@@ -16,11 +16,14 @@ public partial class ElementObserver(LogixElement model) : Observer<LogixElement
     public string Name => DetermineName();
     public string? Description => DetermineDescription();
     public Element Element => Element.FromName(Model.GetType().Name);
-    public IEnumerable<PropertyObserver> Properties => Element.Properties.Select(p => new PropertyObserver(p, this));
+
+    public IEnumerable<PropertyObserver> Properties =>
+        Element.Properties.Where(p => p.Name != "This").Select(p => new PropertyObserver(p, this));
+
     public ICollection<PropertyObserver> DisplayProperties => GetDisplayProperties();
     public int PropertyCount => DisplayProperties.Count + 2;
 
-    
+
     [RelayCommand]
     private void ViewElement() => Messenger.Send(new View(this));
 

@@ -3,46 +3,37 @@
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:core="clr-namespace:L5Sharp.Core;assembly=L5Sharp.Core"
                     xmlns:system="clr-namespace:System;assembly=System.Runtime"
-                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:collections="clr-namespace:System.Collections;assembly=System.Runtime">
 
     <system:Double x:Key="TestDouble">1.234</system:Double>
     <system:Int32 x:Key="TestInteger">34567</system:Int32>
 
     <Design.PreviewWith>
         <StackPanel Spacing="10" Margin="50">
-            <Button Content="{x:Null}"
-                    ContentTemplate="{DynamicResource ValueTemplates}"
-                    Theme="{a:ControlTheme ButtonLink}" />
-            <Button Content="{StaticResource True}"
-                    ContentTemplate="{DynamicResource ValueTemplates}"
-                    Theme="{a:ControlTheme ButtonLink}" />
-            <Button Content="{StaticResource TestDouble}"
-                    ContentTemplate="{DynamicResource ValueTemplates}"
-                    Theme="{a:ControlTheme ButtonLink}" />
-            <Button Content="{StaticResource TestInteger}"
-                    ContentTemplate="{DynamicResource ValueTemplates}"
-                    Theme="{a:ControlTheme ButtonLink}" />
-            <Button Content="Something"
-                    ContentTemplate="{DynamicResource ValueTemplates}"
-                    Theme="{a:ControlTheme ButtonLink}"
-                    MaxWidth="200" />
-            <Button Content="{x:Static core:Radix.Decimal}"
-                    ContentTemplate="{DynamicResource ValueTemplates}"
-                    Theme="{a:ControlTheme ButtonLink}" />
-            <Button Content="{x:Static components:DesignData.DataType}"
-                    ContentTemplate="{DynamicResource ValueTemplates}"
-                    Theme="{a:ControlTheme ButtonLink}" />
-            <Button Content="{x:Static components:DesignData.Rung}"
-                    ContentTemplate="{DynamicResource ValueTemplates}"
-                    Theme="{a:ControlTheme ButtonLink}" />
-            <Button Content="{x:Static components:DesignData.Rung}"
-                    ContentTemplate="{DynamicResource ValueTemplates}"
-                    Theme="{a:ControlTheme ButtonLink}" />
-            <Button Content="{x:Static components:DesignData.Tag}"
-                    ContentTemplate="{DynamicResource ValueTemplates}"
-                    Theme="{a:ControlTheme ButtonLink}" />
-            <!--<Button Content="{x:Static components:DesignData.VariableObserver}"
-                    ContentTemplate="{DynamicResource ArgumentVariableTemplate}" />-->
+            <StackPanel.Styles>
+                <Style Selector="Button">
+                    <Setter Property="Theme" Value="{a:ControlTheme ButtonSubtle}" />
+                    <Setter Property="ContentTemplate" Value="{DynamicResource ValueTemplates}" />
+                </Style>
+            </StackPanel.Styles>
+            <Button Content="{x:Null}" />
+            <Button Content="{StaticResource True}" />
+            <Button Content="{StaticResource TestDouble}" />
+            <Button Content="{StaticResource TestInteger}" />
+            <Button Content="{x:Static components:DesignData.BoolValue}" />
+            <Button Content="{x:Static components:DesignData.SintValue}" />
+            <Button Content="{x:Static components:DesignData.IntValue}" />
+            <Button Content="{x:Static components:DesignData.DintValue}" />
+            <Button Content="{x:Static components:DesignData.LintValue}" />
+            <Button Content="Something" />
+            <Button Content="{x:Static core:Radix.Decimal}" />
+            <Button Content="{x:Static components:DesignData.DataType}" />
+            <Button Content="{x:Static components:DesignData.Rung}" />
+            <Button Content="{x:Static components:DesignData.Rung}" />
+            <Button Content="{x:Static components:DesignData.Tag}" />
+            <Button Content="{x:Static components:DesignData.VariableObserver}" />
         </StackPanel>
     </Design.PreviewWith>
 
@@ -65,6 +56,30 @@
         <DataTemplate DataType="system:ValueType">
             <TextBlock
                 Text="{Binding}"
+                Foreground="{DynamicResource TypeGroupForegroundBrushNumber}"
+                TextTrimming="CharacterEllipsis">
+            </TextBlock>
+        </DataTemplate>
+
+        <DataTemplate DataType="core:AtomicData">
+            <TextBlock
+                Text="{Binding}"
+                Foreground="{DynamicResource TypeGroupForegroundBrushNumber}"
+                TextTrimming="CharacterEllipsis">
+            </TextBlock>
+        </DataTemplate>
+
+        <DataTemplate DataType="core:Dimensions">
+            <Panel Margin="0 1 0 0">
+                <TextBlock
+                    Text="{Binding}"
+                    Foreground="{DynamicResource TypeGroupForegroundBrushNumber}" />
+            </Panel>
+        </DataTemplate>
+
+        <DataTemplate DataType="core:StructureData">
+            <TextBlock
+                Text="{Binding Name}"
                 Foreground="{DynamicResource TypeGroupForegroundBrushNumber}"
                 TextTrimming="CharacterEllipsis">
             </TextBlock>
@@ -109,7 +124,7 @@
                 </StackPanel>
             </Border>
         </DataTemplate>
-        
+
         <DataTemplate DataType="core:NeutralText">
             <Border x:Name="Root">
                 <StackPanel Orientation="Horizontal">
@@ -130,18 +145,30 @@
             </Border>
         </DataTemplate>
 
+        <DataTemplate DataType="core:Revision">
+            <Panel Margin="0 1 0 0">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock
+                        Text="&quot;" Padding="0"
+                        Foreground="{DynamicResource TypeGroupForegroundBrushText}" />
+                    <TextBlock
+                        Text="{Binding}"
+                        Foreground="{DynamicResource TypeGroupForegroundBrushText}"
+                        IsVisible="{Binding Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                        TextTrimming="CharacterEllipsis"
+                        ToolTip.Tip="{Binding}">
+                    </TextBlock>
+                    <TextBlock
+                        Text="&quot;" Padding="0"
+                        Foreground="{DynamicResource TypeGroupForegroundBrushText}" />
+                </StackPanel>
+            </Panel>
+        </DataTemplate>
+
         <DataTemplate DataType="system:DateTime">
             <Panel Margin="0 1 0 0">
                 <TextBlock Text="{Binding }"
                            Foreground="{DynamicResource TypeGroupForegroundBrushDate}" />
-            </Panel>
-        </DataTemplate>
-
-        <DataTemplate DataType="core:Dimensions">
-            <Panel Margin="0 1 0 0">
-                <TextBlock
-                    Text="{Binding}"
-                    Foreground="{DynamicResource TypeGroupForegroundBrushNumber}" />
             </Panel>
         </DataTemplate>
 
@@ -169,6 +196,12 @@
                         <TextBlock Text="{Binding Description}" />
                     </StackPanel>
                 </ToolTip.Tip>
+            </TextBlock>
+        </DataTemplate>
+        
+        <DataTemplate DataType="collections:ICollection">
+            <TextBlock Text="{Binding Count}"
+                       Foreground="{DynamicResource TypeGroupForegroundBrushElement}">
             </TextBlock>
         </DataTemplate>
 
@@ -209,7 +242,7 @@
         <DataTemplate DataType="core:Rung">
             <TextBlock Grid.Row="0"
                        Text="{Binding Location}"
-                       Foreground="{DynamicResource TypeGroupForegroundBrushElement}">
+                       Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}">
                 <ToolTip.Tip>
                     <Grid RowDefinitions="Auto,*,Auto">
                         <TextBlock Grid.Row="0">
@@ -263,6 +296,39 @@
                     </StackPanel>
                 </ToolTip.Tip>
             </TextBlock>
+        </DataTemplate>
+
+        <DataTemplate DataType="observers:VariableObserver">
+            <Panel >
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock
+                        Text="{}{" Padding="0 0 0 1"
+                        Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+                    <TextBlock
+                        Text="{Binding Name}"
+                        Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
+                        IsVisible="{Binding Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                        TextTrimming="CharacterEllipsis"
+                        ToolTip.Tip="{Binding}">
+                    </TextBlock>
+                    <TextBlock
+                        Text="{}}" Padding="0 0 0 1"
+                        Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+                </StackPanel>
+                <!--<TextBlock
+                    Text="{Binding Formatted}"
+                    Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
+                    TextTrimming="CharacterEllipsis" />-->
+                <ToolTip.Tip>
+                    <Border>
+                        <StackPanel>
+                            <!--<TextBlock Text="{Binding Model.ScopeName, FallbackValue='Undefined'}" />-->
+                            <TextBlock Text="{Binding Name}" />
+                            <TextBlock Text="{Binding Value}" />
+                        </StackPanel>
+                    </Border>
+                </ToolTip.Tip>
+            </Panel>
         </DataTemplate>
     </a:TypedDataTemplateSelector>
 </ResourceDictionary>

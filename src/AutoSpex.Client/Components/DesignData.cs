@@ -176,6 +176,12 @@ public static class DesignData
         return new NodeObserver(spec);
     }
 
+    public static BOOL BoolValue = new(true);
+    public static SINT SintValue = new(12);
+    public static INT IntValue = new(123);
+    public static DINT DintValue = new(123123);
+    public static LINT LintValue = new(123123123);
+
     public static EvaluationObserver PassedEvaluation = new(
         Evaluation.Passed(new Criterion("DataType", Operation.Equal, "MyType"), new Tag() { Name = "Custom_Tag_Name" },
             ["MyType"], "MyType"));

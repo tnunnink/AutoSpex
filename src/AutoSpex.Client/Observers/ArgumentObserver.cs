@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using AutoSpex.Persistence;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 // ReSharper disable TailRecursiveCall
 
@@ -13,19 +14,22 @@ namespace AutoSpex.Client.Observers;
 /// <summary>
 /// A observer wrapper over the <see cref="Engine.Argument"/> class for a parent criterion object.
 /// </summary>
-public class ArgumentObserver : Observer<Argument>
+public partial class ArgumentObserver : Observer<Argument>
 {
     /// <summary>
     /// Creates a new <see cref="ArgumentObserver"/> wrapping the provided <see cref="Argument"/>.
     /// </summary>
     /// <param name="model">The <see cref="Argument"/> object to wrap.</param>
-    public ArgumentObserver(Argument model) : base(model)
+    /// <param name="type"></param>
+    public ArgumentObserver(Argument model, Type? type = default) : base(model)
     {
+        Type = type;
         Track(nameof(Value));
     }
 
     public override Guid Id => Model.ArgumentId;
-    public Property? Property => GetOwningProperty();
+
+    [ObservableProperty] private Type? _type;
 
     /// <summary>
     /// The value of the argument which represents the data in which the criterion will evaluate against. This
@@ -43,23 +47,34 @@ public class ArgumentObserver : Observer<Argument>
     /// <returns>A new <see cref="ArgumentObserver"/> object.</returns>
     public static ArgumentObserver Empty => new(Argument.Empty);
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    public static ArgumentObserver ForType(Type type) => new(Argument.Empty, type);
+
     /// <inheritdoc />
     public override string ToString() => Model.Formatted;
 
     /// <summary>
-    /// Executes the code to retrieve possible suggestion values based on the current argument's parent criterion
-    /// property, scoped variables, and active source data, and returns a collection of values wrapped in
-    /// <see cref="Argument"/> objects and filtered based on the provided input text.
+    /// Executes the code to retrieve possible suggestion values based on the current argument's type,
+    /// scoped variables, and returns a collection of values wrapped in <see cref="ArgumentObserver"/> objects
+    /// and filtered based on the provided input text.
     /// </summary>
     public async Task<IEnumerable<ArgumentObserver>> GetSuggestions(string? filter = default)
     {
-        return Enumerable.Empty<ArgumentObserver>();
+        var suggestions = await RequestSuggestions();
+
+        return !string.IsNullOrEmpty(filter)
+            ? suggestions.Where(s => s.Value.ToString()?.ContainsText(filter) is true)
+            : suggestions;
     }
 
     /// <summary>
     /// Since the user will enter text input as the argument, we need to take that and resolve the actual type it represents
     /// depending on what was entered. If the user input a variable format meaning the text starts and ends with a bracket,
-    /// then we need to find the matching variable object, assign it to the <see cref="Value"/> and determine if it is valid.
+    /// then we need to find the matching variable object, assign it to <see cref="Value"/> and determine if it is valid.
     /// If the user input a value matching an existing option for the criterion property (bool/enum), then we can...
     /// </summary>
     /// <param name="input"></param>
@@ -73,10 +88,15 @@ public class ArgumentObserver : Observer<Argument>
 
         if (input.StartsWith('{') && input.EndsWith('}'))
         {
-            /*Criterion.Spec;*/
+            Value = GetVariable(input);
         }
 
         Value = input;
+    }
+
+    private Task<VariableObserver> GetVariable(string name)
+    {
+        throw new NotImplementedException();
     }
 
     /// <summary>
@@ -89,7 +109,7 @@ public class ArgumentObserver : Observer<Argument>
     {
         return Model.Value switch
         {
-            Criterion criterion => new CriterionObserver(criterion, Property?.Type),
+            Criterion criterion => new CriterionObserver(criterion, Type),
             Variable variable => new VariableObserver(variable),
             _ => Model.Value
         };
@@ -161,14 +181,9 @@ public class ArgumentObserver : Observer<Argument>
     /// </summary>
     private IEnumerable<ArgumentObserver> GetOptions()
     {
-        var property = Property;
-        if (property is null) return Enumerable.Empty<ArgumentObserver>();
-        return property.Options.Select(x => new ArgumentObserver(new Argument(x)));
-    }
-
-    private Property? GetOwningProperty()
-    {
-        var request = new PropertyRequest();
+        return Type is not null
+            ? Type.GetOptions().Select(x => new ArgumentObserver(new Argument(x), Type))
+            : Enumerable.Empty<ArgumentObserver>();
     }
 
     public static implicit operator Argument(ArgumentObserver observer) => observer.Model;

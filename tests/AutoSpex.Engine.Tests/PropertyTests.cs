@@ -56,4 +56,12 @@ public class PropertyTests
     {
         
     }
+
+    [Test]
+    public void NestedCustomProperties_WhenCalled_ShouldWork()
+    {
+        var properties = Element.DataType.Properties;
+        
+        
+    }
 }

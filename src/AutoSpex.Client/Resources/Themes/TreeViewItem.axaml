@@ -24,7 +24,7 @@
     <ControlTheme x:Key="TreeViewItemSubtle" TargetType="TreeViewItem" BasedOn="{a:ControlTheme TreeViewItem}">
         <Setter Property="BorderThickness" Value="3 0 0 0" />
         <Setter Property="BorderBrush" Value="Transparent" />
-        <Setter Property="Padding" Value="0" />
+        <Setter Property="Padding" Value="5" />
         <Setter Property="FocusAdorner" Value="{x:Null}" />
 
         <Style Selector="^:empty /template/ ToggleButton">
@@ -32,7 +32,7 @@
         </Style>
 
         <Style Selector="^:pointerover /template/ Border#border:pointerover">
-            <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftPointerOver}" />
+            <Setter Property="Background" Value="{a:ThemeResource ListItemBackgroundBrushPointerOver}" />
             <Setter Property="BorderBrush" Value="{a:ThemeResource Container4BorderBrush}" />
         </Style>
         <Style Selector="^:disabled /template/ Border#border">
@@ -40,40 +40,13 @@
             <Setter Property="Opacity" Value="{a:ThemeResource EditWatermarkOpacity}" />
         </Style>
         <Style Selector="^:selected /template/ Border#border">
-            <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftDisabled}" />
+            <Setter Property="Background" Value="{a:ThemeResource ListItemBackgroundBrushPointerOver}" />
             <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBackgroundBrushSolidAccent}" />
             <Setter Property="TextElement.Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
 
             <Style Selector="^:focus-within">
-                <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftPointerOver}" />
+                <Setter Property="Background" Value="{a:ThemeResource ListItemBackgroundBrushPointerOver}" />
             </Style>
         </Style>
-
-
-        <!--<Style Selector="^:pointerover /template/ Border#border:pointerover">
-            <Setter Property="Background" Value="{markup:ThemeResource ListItemBackgroundBrushPointerOver}" />
-            <Setter Property="BorderBrush" Value="{markup:ThemeResource Container4BorderBrush}" />
-        </Style>
-        <Style Selector="^:pressed /template/ Border#border:pointerover">
-            <Setter Property="Background" Value="{markup:ThemeResource ListItemBackgroundBrushPressed}" />
-        </Style>
-        <Style Selector="^:disabled /template/ Border#border">
-            <Setter Property="TextElement.Foreground" Value="{markup:ThemeResource ListItemForegroundBrushDisabled}" />
-        </Style>
-        <Style Selector="^:selected /template/ Border#border">
-            <Setter Property="Background" Value="{markup:ThemeResource ListItemBackgroundBrushPointerOver}" />
-            <Setter Property="BorderBrush" Value="{markup:ThemeResource ControlBackgroundBrushSolidAccent}" />
-            <Setter Property="TextElement.Foreground" Value="{markup:ThemeResource ListItemForegroundBrushSelected}" />
-        </Style>
-        <Style Selector="^:selected:pointerover /template/ Border#border:pointerover">
-            <Setter Property="Background" Value="{markup:ThemeResource ListItemBackgroundBrushPointerOver}" />
-        </Style>
-        <Style Selector="^:selected:pressed /template/ Border#border:pointerover">
-            <Setter Property="Background" Value="{markup:ThemeResource ListItemBackgroundBrushPointerOver}" />
-        </Style>
-        <Style Selector="^:selected:disabled /template/ Border#border">
-            <Setter Property="TextElement.Foreground"
-                    Value="{markup:ThemeResource ListItemForegroundBrushSelectedDisabled}" />
-        </Style>-->
     </ControlTheme>
 </ResourceDictionary>

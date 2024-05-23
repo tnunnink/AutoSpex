@@ -28,12 +28,12 @@ public partial class SourceContentPageModel(NodeObserver node) : PageViewModel,
 
     [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(SearchContentCommand))]
     private Element _element = Element.Default;
-    
-    public ObservableCollection<CriterionObserver> Filters { get; } = [];
+
     public ObservableCollection<ElementObserver> Elements { get; } = [];
 
     [ObservableProperty] private ElementObserver? _selectedElement;
-
+    public ObservableCollection<CriterionObserver> Filters { get; } = [];
+    [ObservableProperty] private Inclusion _filterInclusion = Inclusion.All;
 
     public void Receive(ElementObserver.View message)
     {
@@ -97,11 +97,13 @@ public partial class SourceContentPageModel(NodeObserver node) : PageViewModel,
         }, token);
     }
 
-    [RelayCommand]
+    /*[RelayCommand(CanExecute = nameof(CanAddFilter))]
     private async Task AddFilter()
     {
         var criterion = await Prompter.Show<CriterionObserver?>(() => new FilterEntryPageModel(Element));
         if (criterion is null) return;
         Filters.Add(criterion);
     }
+
+    private bool CanAddFilter() => Element != Element.Default;*/
 }

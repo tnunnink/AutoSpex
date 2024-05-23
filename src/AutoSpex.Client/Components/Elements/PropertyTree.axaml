@@ -1,66 +1,63 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
-                    xmlns:components="using:AutoSpex.Client.Components"
-                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
-                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers">
+                    xmlns:components="using:AutoSpex.Client.Components">
 
     <Design.PreviewWith>
-        <components:PropertyTree Width="500" SourceElement="{x:Static components:DesignData.TagObserver}" />
+        <components:PropertyTree Width="500" Height="400"
+                                 SourceElement="{x:Static components:DesignData.TagObserver}" />
     </Design.PreviewWith>
 
     <ControlTheme x:Key="{x:Type components:PropertyTree}" TargetType="components:PropertyTree">
         <Setter Property="Template">
             <ControlTemplate>
                 <Grid RowDefinitions="Auto,*">
-                    <Border Background="{a:ThemeResource Container1BackgroundBrush}"
-                            BorderBrush="{a:ThemeResource Container2BorderBrush}"
-                            BorderThickness="0 0 0 1" Padding="5">
-                        <Grid ColumnDefinitions="*,Auto">
-                            <TextBox x:Name="FilterText"
-                                     Grid.Column="0"
-                                     BorderThickness="0"
-                                     Background="Transparent"
-                                     Watermark="Search content"
-                                     VerticalContentAlignment="Center"
-                                     FontSize="{a:ThemeResource DefaultFontSizeSmall}"
-                                     Padding="5">
-                                <TextBox.InnerLeftContent>
-                                    <PathIcon Theme="{StaticResource IconFilter}"
-                                              Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
-                                </TextBox.InnerLeftContent>
-                            </TextBox>
+                    <TextBox Grid.Column="0"
+                             Text="{Binding FilterText, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                             BorderThickness="0 0 0 1" BorderBrush="{a:ThemeResource Container2BorderBrush}"
+                             CornerRadius="0"
+                             Watermark="Filter content"
+                             VerticalContentAlignment="Center"
+                             FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                             Padding="5 7">
+                        <TextBox.InnerLeftContent>
+                            <PathIcon Theme="{StaticResource IconFilter}"
+                                      Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                        </TextBox.InnerLeftContent>
+                    </TextBox>
 
-                            <StackPanel Grid.Column="1"
-                                        Orientation="Horizontal"
-                                        Spacing="5" Margin="5 0">
-                                <Button properties:ButtonIcon.Theme="{StaticResource IconListNested}"
-                                        Theme="{StaticResource IconButton}" Padding="7"
-                                        ToolTip.Tip="Options" />
-                                <Button properties:ButtonIcon.Theme="{StaticResource IconXml}"
-                                        Theme="{StaticResource IconButton}"
-                                        ToolTip.Tip="Options" />
-                            </StackPanel>
-                        </Grid>
-                    </Border>
-
-                    <TreeView Grid.Row="1"
-                              BorderThickness="0"
-                              ItemsSource="{Binding Properties, RelativeSource={RelativeSource TemplatedParent}}"
-                              ScrollViewer.VerticalScrollBarVisibility="Visible"
-                              ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                        <TreeView.ItemTemplate>
-                            <TreeDataTemplate x:DataType="observers:PropertyObserver"
-                                              ItemsSource="{Binding Properties}">
-                                <components:PropertyItem DataContext="{Binding}" />
-                            </TreeDataTemplate>
-                        </TreeView.ItemTemplate>
-                        <TreeView.ItemContainerTheme>
-                            <ControlTheme TargetType="TreeViewItem" BasedOn="{StaticResource TreeViewItemSubtle}">
-                                <Setter Property="Padding" Value="0" />
-                            </ControlTheme>
-                        </TreeView.ItemContainerTheme>
-                    </TreeView>
+                    <Panel Grid.Row="1">
+                        <TreeView
+                            IsVisible="{Binding FilterText, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static StringConverters.IsNullOrEmpty}}"
+                            ItemsSource="{Binding Properties, RelativeSource={RelativeSource TemplatedParent}}"
+                            ItemTemplate="{StaticResource PropertyTreeViewItem}"
+                            BorderThickness="0"
+                            ScrollViewer.VerticalScrollBarVisibility="Visible"
+                            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                            Classes="theme-scroll-overlay">
+                            <TreeView.ItemContainerTheme>
+                                <ControlTheme TargetType="TreeViewItem" BasedOn="{StaticResource TreeViewItemSubtle}">
+                                    <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeSmall}" />
+                                    <Setter Property="Padding" Value="0" />
+                                </ControlTheme>
+                            </TreeView.ItemContainerTheme>
+                        </TreeView>
+                        <ListBox
+                            IsVisible="{Binding FilterText, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                            ItemsSource="{Binding Properties, RelativeSource={RelativeSource TemplatedParent}}"
+                            ItemTemplate="{StaticResource PropertyListItem}"
+                            BorderThickness="0"
+                            ScrollViewer.VerticalScrollBarVisibility="Visible"
+                            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                            Classes="theme-scroll-overlay">
+                            <ListBox.ItemContainerTheme>
+                                <ControlTheme TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemSubtle}">
+                                    <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeSmall}" />
+                                    <Setter Property="Padding" Value="0" />
+                                </ControlTheme>
+                            </ListBox.ItemContainerTheme>
+                        </ListBox>
+                    </Panel>
                 </Grid>
             </ControlTemplate>
         </Setter>

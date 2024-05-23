@@ -39,9 +39,11 @@ public static class Extensions
 
         if (!Element.TryFromName(type.Name, out var element)) return properties;
 
-        var custom = element.CustomProperties
-            .Select(c => new Property(origin, $"{parent?.Path}.{c.Name}".Trim('.'), c.Type));
-        properties.AddRange(custom);
+        foreach (var cp in element.CustomProperties)
+        {
+            var custom = new Property(origin, $"{parent?.Path}.{cp.Name}".Trim('.'), cp.Type, cp.Getter());
+            properties.Add(custom);
+        }
 
         return properties;
     }

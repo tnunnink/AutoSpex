@@ -21,11 +21,6 @@ public class ArgumentEntryTemplates : IDataTemplate
             return Templates[nameof(Criterion)].Build(param);
         }
 
-        if (argument.Criterion is not null && argument.Criterion.Operation == Operation.In)
-        {
-            return Templates[nameof(Operation.In)].Build(param);
-        }
-
         return Templates["Default"].Build(param);
     }
 
