@@ -41,7 +41,7 @@ public static class Extensions
 
         foreach (var cp in element.CustomProperties)
         {
-            var custom = new Property(origin, $"{parent?.Path}.{cp.Name}".Trim('.'), cp.Type, cp.Getter());
+            var custom = new Property(origin, $"{parent?.Path}.{cp.Name}".Trim('.'), cp.Type);
             properties.Add(custom);
         }
 
@@ -154,7 +154,7 @@ public static class Extensions
     /// <summary>
     /// Given a type returns a collection of possible values. This is meant primarily for enumeration types so that we
     /// can provide the user with a selectable set of options for a given enum value. This however will also return
-    /// true/false for boolean type and and empty collection for anything else (numbers, string, collections, complex objects).
+    /// true/false for boolean type and empty collection for anything else (numbers, string, collections, complex objects).
     /// </summary>
     /// <param name="type">The type for which to determine the options.</param>
     /// <returns>A collection of typed value options for the specified type if found. Otherwise, and empty collection.</returns>
@@ -168,10 +168,7 @@ public static class Extensions
         if (type.IsEnum)
             return Enum.GetNames(type);
 
-        if (typeof(LogixEnum).IsAssignableFrom(type))
-            return LogixEnum.Options(type);
-
-        return Enumerable.Empty<object>();
+        return typeof(LogixEnum).IsAssignableFrom(type) ? LogixEnum.Options(type) : Enumerable.Empty<object>();
     }
 
     /// <summary>
@@ -242,31 +239,6 @@ public static class Extensions
         return Encoding.Unicode.GetString(mso.ToArray());
     }
 
-    /// <summary>
-    /// Returns a stable process independent hash of a string value so we can store distinct L5X values for lookup
-    /// later.
-    /// </summary>
-    /// <remarks>Taken from https://stackoverflow.com/questions/5154970/how-do-i-create-a-hashcode-in-net-c-for-a-string-that-is-safe-to-store-in-a?noredirect=1&lq=1</remarks>
-    public static int StableHash(this string str)
-    {
-        unchecked
-        {
-            var hash1 = 5381;
-            var hash2 = hash1;
-
-            for (var i = 0; i < str.Length && str[i] != '\0'; i += 2)
-            {
-                hash1 = ((hash1 << 5) + hash1) ^ str[i];
-                if (i == str.Length - 1 || str[i + 1] == '\0')
-                    break;
-                hash2 = ((hash2 << 5) + hash2) ^ str[i + 1];
-            }
-
-            return hash1 + hash2 * 1566083941;
-        }
-    }
-    
-    
     /// <summary>
     /// Just determines if this and another string are equal using the ordinal ignore case comparer.
     /// </summary>

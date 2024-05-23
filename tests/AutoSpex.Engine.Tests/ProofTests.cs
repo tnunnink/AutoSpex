@@ -56,35 +56,9 @@ public class ProofTests
             c.Where("CatalogNumber", Operation.Equal, "5094-IB16/A");
             c.Verify("Revision", Operation.Equal, "2.11");
         });
-        
+
         var verifications = (await spec.Run(source)).ToList();
 
         verifications.Max(r => r.Result).Should().Be(ResultState.Passed);
-    }
-
-    [Test]
-    public void Hashing()
-    {
-        var first = "Decimal";
-        var second = "DECIMAL";
-
-        Console.WriteLine(StringComparer.OrdinalIgnoreCase.GetHashCode(first));
-        Console.WriteLine(StringComparer.OrdinalIgnoreCase.GetHashCode(second));
-
-        Console.WriteLine(first.StableHash());
-        Console.WriteLine(second.StableHash());
-    }
-
-    [Test]
-    public void ValueBrushTesting()
-    {
-        double number = 1.23;
-        bool flag = true;
-        string text = "this is a test";
-        Radix option = Radix.Ascii;
-        Tag element = new Tag();
-        var member = element.Members();
-        
-        Assert.Pass();
     }
 }

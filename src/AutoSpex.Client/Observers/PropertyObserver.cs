@@ -112,18 +112,9 @@ public partial class PropertyObserver(Property model, ElementObserver element) :
             return GetCollectionProperties();
         }
 
-        //If we "started over" in a collection so this property represents a new nested LogixElement type, forward this
-        //call to the element instance's Properties which will allow us to get nested properties correctly and use the
-        //corresponding getter expressions to retrieve the values.
-        // ReSharper disable once ConvertIfStatementToReturnStatement
-        if (Model.Origin == Model.Type)
-        {
-            return _element.Properties;
-        }
-
         //If this is a normal property then just return the sub properties wrapped in the observer and pass
         //down the root Element.
-        return Model.Properties.Where(p => p.Name != "This").Select(p => new PropertyObserver(p, _element));
+        return Model.Properties.Select(p => new PropertyObserver(p, _element));
     }
 
     /// <summary>
@@ -143,12 +134,9 @@ public partial class PropertyObserver(Property model, ElementObserver element) :
         {
             //The path is the current property path plus the array index.
             var path = $"{Model.Path}[{index}]";
-            //If the collection item is an inner child element, pass that in as the new element for the property
-            //so from the child pseudo property we can continue to navigate down the tree.
-            var element = item is LogixElement child ? new ElementObserver(child) : _element;
             //Pass in the custom getter which is just pointer to the item of the collection.
-            var property = new Property(element.Element.Type, path, item.GetType(), _ => item);
-            var observer = new PropertyObserver(property, element);
+            var property = new Property(_element.Element.Type, path, item.GetType(), _ => item);
+            var observer = new PropertyObserver(property, _element);
 
             properties.Add(observer);
             index++;

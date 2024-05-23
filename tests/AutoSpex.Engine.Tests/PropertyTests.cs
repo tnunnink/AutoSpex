@@ -58,10 +58,42 @@ public class PropertyTests
     }
 
     [Test]
-    public void NestedCustomProperties_WhenCalled_ShouldWork()
+    public void Getter_PseudoCollectionItemProperty_ShouldNotBeNullAndReturnExpectedValue()
     {
-        var properties = Element.DataType.Properties;
-        
-        
+        var itemProperty = new Property(Element.DataType.Type, "Members[1]", typeof(DataTypeMember));
+
+        var instance = new DataType("Test");
+        instance.Members.Add(new DataTypeMember{Name = "Child1", DataType = "DINT"});
+        instance.Members.Add(new DataTypeMember{Name = "Child2", DataType = "BOOL"});
+        instance.Members.Add(new DataTypeMember{Name = "Child3", DataType = "TIMER"});
+
+
+        var getter = itemProperty.Getter();
+        getter.Should().NotBeNull();
+
+        var value = getter(instance);
+        value.Should().NotBeNull();
+        value.Should().BeOfType<DataTypeMember>();
+        value.As<DataTypeMember>().Name.Should().Be("Child2");
+        value.As<DataTypeMember>().DataType.Should().Be("BOOL");
+    }
+    
+    [Test]
+    public void Getter_NestedCollectionItemProperty_ShouldNotBeNullAndReturnExpectedValue()
+    {
+        var instance = new DataType("Test");
+        instance.Members.Add(new DataTypeMember{Name = "Child1", DataType = "DINT"});
+        instance.Members.Add(new DataTypeMember{Name = "Child2", DataType = "BOOL"});
+        instance.Members.Add(new DataTypeMember{Name = "Child3", DataType = "TIMER"});
+        var itemProperty = new Property(Element.DataType.Type, "Members[1].Name", typeof(string));
+
+
+        var getter = itemProperty.Getter();
+        getter.Should().NotBeNull();
+
+        var value = getter(instance);
+        value.Should().NotBeNull();
+        value.Should().BeOfType<string>();
+        value.Should().Be("Child2");
     }
 }

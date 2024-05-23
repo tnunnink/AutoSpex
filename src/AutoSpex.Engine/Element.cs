@@ -23,7 +23,7 @@ public abstract class Element : SmartEnum<Element, string>
 
     /// <summary>
     /// Holds "custom" properties, or properties we attach to the element and provide a custom function to retrieve
-    /// it's value. This would allow derived classes to add properties or make method calls show up as a property as needed. 
+    /// its value. This would allow derived classes to add properties or make method calls show up as a property as needed. 
     /// </summary>
     private readonly List<Property> _customProperties = [];
 

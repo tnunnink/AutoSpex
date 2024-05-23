@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using System.Text.RegularExpressions;
 
 namespace AutoSpex.Engine;
 
@@ -7,7 +8,7 @@ namespace AutoSpex.Engine;
 /// contains all the functionality we need for our object graph navigation as well as type information and getter functions
 /// which will be used in criteria for getting the values to evaluate filters and verifications.
 /// </summary>
-public class Property : IEquatable<Property>
+public partial class Property : IEquatable<Property>
 {
     private const char Separator = '.';
 
@@ -116,12 +117,13 @@ public class Property : IEquatable<Property>
         if (ReferenceEquals(this, other)) return true;
         return Origin == other.Origin && Path == other.Path;
     }
-    
+
     /// <summary>
     /// Determines if two <see cref="Property"/> objects are equal. We are using the <see cref="Origin"/> and <see cref="Path"/>
     /// to indicate if one property is the "same" as another, since properties on different type could have same name or path.
     /// </summary>
     public override bool Equals(object? obj) => obj is Property other && other.Origin == Origin && other.Path == Path;
+
     public override int GetHashCode() => HashCode.Combine(Origin, Path);
     public override string ToString() => Path;
 
@@ -156,30 +158,35 @@ public class Property : IEquatable<Property>
     /// </summary>
     /// <param name="parameter">The current member access expression for the type.</param>
     /// <param name="path">The current property name to create member access to.</param>
-    /// <returns>An <see cref="Expression{TDelegate}"/> that represents member access to a immediate or nested/complex
+    /// <returns>A <see cref="Expression{TDelegate}"/> that represents member access to a immediate or nested/complex
     /// member property or field, with corresponding conditional null checks for each member level.</returns>
     private static Expression GetMember(Expression parameter, string path)
     {
-        //todo no going to support this for now since we have a way to access collection elements externally by passing in custom getter,
-        //  but I wonder if it is feasible to include collection index getters as they are also properties technically.
+        //Trim '.' characters in case they are present.
+        path = path.Trim(Separator);
 
-        /*if (path.StartsWith('[') && path.EndsWith(']'))
-        {
-            var number = path.Substring(1, path.Length - 2).Trim();
-            if (int.TryParse(number, out var index))
-                return Expression.TypeAs(Expression.Property(parameter, "Item", Expression.Constant(index)), typeof(object));
+        //Extract the first member name of the property path. Strip off the array brackets if they are present (we just want the number).
+        var match = FirstMemberPattern().Match(path);
+        if (!match.Success) return parameter;
+        var member = match.Value;
+        var name = member.StartsWith("[") && member.EndsWith("]") ? member[1..^1] : member;
 
-            throw new ArgumentException($"Invalid array index: {number}");
-        }*/
-
-        if (!path.Contains(Separator))
-            return Expression.TypeAs(Expression.PropertyOrField(parameter, path), typeof(object));
-
-        var separator = path.IndexOf(Separator);
-        var member = Expression.PropertyOrField(parameter, path[..separator]);
-        var notNull = Expression.NotEqual(member, Expression.Constant(null));
-        return Expression.Condition(notNull, GetMember(member, path[(separator + 1)..]), Expression.Constant(null),
+        //If this member is the last. Return its getter and be done.
+        if (path == member)
+            return Expression.TypeAs(GenerateGetter(parameter, name), typeof(object));
+        
+        //Otherwise generate the member getter along with a null check and continue to recurse down the path. 
+        var getter = GenerateGetter(parameter, name);
+        var notNull = Expression.NotEqual(getter, Expression.Constant(null));
+        return Expression.Condition(notNull, GetMember(getter, path[member.Length..]), Expression.Constant(null),
             typeof(object));
+    }
+
+    private static Expression GenerateGetter(Expression parameter, string name)
+    {
+        return int.TryParse(name, out var index)
+            ? Expression.Property(parameter, "Item", Expression.Constant(index))
+            : Expression.PropertyOrField(parameter, name);
     }
 
     /// <summary>
@@ -192,4 +199,7 @@ public class Property : IEquatable<Property>
         return function.Method.DeclaringType is not null &&
                function.Method.DeclaringType.Assembly == typeof(Property).Assembly;
     }
+
+    [GeneratedRegex(@"^[^.[]+|^\[\d+\]")]
+    private static partial Regex FirstMemberPattern();
 }
