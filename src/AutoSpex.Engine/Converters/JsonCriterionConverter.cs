@@ -8,22 +8,26 @@ public class JsonCriterionConverter : JsonConverter<Criterion>
     public override Criterion Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         var id = Guid.Empty;
+        var type = typeof(object);
         var property = string.Empty;
         var operation = Operation.None;
         var arguments = new List<Argument>();
         var invert = false;
-        
+
         while (reader.Read() && reader.TokenType != JsonTokenType.EndObject)
         {
             if (reader.TokenType != JsonTokenType.PropertyName) continue;
 
             var propertyName = reader.GetString();
             reader.Read();
-            
+
             switch (propertyName)
             {
                 case nameof(Criterion.CriterionId):
                     id = JsonSerializer.Deserialize<Guid>(ref reader, options);
+                    break;
+                case nameof(Criterion.Type):
+                    type = JsonSerializer.Deserialize<Type>(ref reader, options);
                     break;
                 case nameof(Criterion.Property):
                     property = reader.GetString();
@@ -42,24 +46,27 @@ public class JsonCriterionConverter : JsonConverter<Criterion>
             }
         }
 
-        return new Criterion(id, property, operation, arguments.ToArray(), invert);
+        // ReSharper disable once UseObjectOrCollectionInitializer
+        return new Criterion(id, type, property, operation, invert, arguments.ToArray());
     }
 
     public override void Write(Utf8JsonWriter writer, Criterion value, JsonSerializerOptions options)
     {
         writer.WriteStartObject();
         writer.WriteString(nameof(Criterion.CriterionId), value.CriterionId);
-        
-        if (value.Property != null)
-        {
-            writer.WriteString(nameof(Criterion.Property), value.Property);
-        }
 
-        writer.WriteString(nameof(Criterion.Operation), value.Operation?.Name);
+        if (value.Type is not null)
+            writer.WriteString(nameof(Criterion.Type), value.Type.FullName);
+
+        if (value.Property is not null)
+            writer.WriteString(nameof(Criterion.Property), value.Property);
+
+        if (value.Operation is not null)
+            writer.WriteString(nameof(Criterion.Operation), value.Operation.Name);
 
         writer.WritePropertyName(nameof(Criterion.Arguments));
         JsonSerializer.Serialize(writer, value.Arguments.ToArray(), options);
-        
+
         writer.WriteBoolean(nameof(Criterion.Invert), value.Invert);
 
         writer.WriteEndObject();

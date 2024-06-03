@@ -12,9 +12,9 @@
             <SolidColorBrush x:Key="TypeGroupForegroundBrushBoolean" Color="#1055d6" />
             <SolidColorBrush x:Key="TypeGroupForegroundBrushText" Color="#0194a2" />
             <SolidColorBrush x:Key="TypeGroupForegroundBrushEnum" Color="#9d7842" />
-            <SolidColorBrush x:Key="TypeGroupForegroundBrushDate" Color="#bc5f9d" />
+            <SolidColorBrush x:Key="TypeGroupForegroundBrushDate" Color="#9538ce" />
             <SolidColorBrush x:Key="TypeGroupForegroundBrushCollection" Color="#6f9f22" />
-            <SolidColorBrush x:Key="TypeGroupForegroundBrushElement" Color="#9538ce" />
+            <SolidColorBrush x:Key="TypeGroupForegroundBrushElement" Color="#6f9f22" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Dark">
             <SolidColorBrush x:Key="TypeGroupForegroundBrushDefault" Color="#6c6c6c" />
@@ -22,9 +22,10 @@
             <SolidColorBrush x:Key="TypeGroupForegroundBrushBoolean" Color="#688cd4" />
             <SolidColorBrush x:Key="TypeGroupForegroundBrushText" Color="#66c3ce" />
             <SolidColorBrush x:Key="TypeGroupForegroundBrushEnum" Color="#d5ad76" />
-            <SolidColorBrush x:Key="TypeGroupForegroundBrushDate" Color="#e89ca7" />
-            <SolidColorBrush x:Key="TypeGroupForegroundBrushCollection" Color="#8db95d" />
-            <SolidColorBrush x:Key="TypeGroupForegroundBrushElement" Color="#c19ef1" />
+            <!--<SolidColorBrush x:Key="TypeGroupForegroundBrushEnum" Color="#d5ad76" />-->
+            <SolidColorBrush x:Key="TypeGroupForegroundBrushDate" Color="#c08ffe" />
+            <SolidColorBrush x:Key="TypeGroupForegroundBrushCollection" Color="#6ec362" />
+            <SolidColorBrush x:Key="TypeGroupForegroundBrushElement" Color="#38c998" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 </ResourceDictionary>

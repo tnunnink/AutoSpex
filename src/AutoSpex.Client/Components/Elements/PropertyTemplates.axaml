@@ -80,23 +80,18 @@
 
     <DataTemplate x:Key="PropertyListItem" x:DataType="observers:PropertyObserver">
         <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center" MinHeight="30">
-            <StackPanel Grid.Column="0" Spacing="5">
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="5" ClipToBounds="True">
-                    <TextBlock
-                        Text="{Binding Name}" />
-                    <TextBlock
-                        Text="="
-                        Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
-                    <TextBlock
-                        Text="{Binding Type}"
-                        Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
-                    <ContentControl
-                        Content="{Binding Value}"
-                        ContentTemplate="{StaticResource ValueTemplates}" />
-                </StackPanel>
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5" ClipToBounds="True">
                 <TextBlock
-                    Text="{Binding Path}"
+                    Text="{Binding Path}" />
+                <TextBlock
+                    Text="="
+                    Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                <TextBlock
+                    Text="{Binding Type}"
                     Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                <ContentControl
+                    Content="{Binding Value}"
+                    ContentTemplate="{StaticResource ValueTemplates}" />
             </StackPanel>
 
             <Border Grid.Column="1"

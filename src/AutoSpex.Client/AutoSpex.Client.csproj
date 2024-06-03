@@ -219,10 +219,6 @@
         <DependentUpon>CriteriaList.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
-      <Compile Update="Components\Criteria\ArgumentEntry.axaml.cs">
-        <DependentUpon>ArgumentEntry.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
       <Compile Update="Components\Nodes\NodeNotFound.axaml.cs">
         <DependentUpon>NodeNotFound.axaml</DependentUpon>
         <SubType>Code</SubType>

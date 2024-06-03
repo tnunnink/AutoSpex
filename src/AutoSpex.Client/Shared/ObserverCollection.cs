@@ -17,7 +17,7 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
     private readonly Action<int, TModel>? _insert;
     private readonly Action<int, TModel>? _remove;
     private readonly Action? _clear;
-    
+
     public ObserverCollection()
     {
         _refresh = () => Enumerable.Empty<TObserver>().ToList();
@@ -48,11 +48,13 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
 
         Attach(this);
     }
-    
+
     public bool IsChanged => _changed || this.Any(o => o.IsChanged);
     public bool IsRefreshing { get; private set; }
+    public bool HasErrors => this.Any(o => o.IsErrored);
     public event PropertyChangedEventHandler? ItemPropertyChanged;
-    
+    public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
+
     public void AcceptChanges()
     {
         _changed = false;
@@ -99,9 +101,14 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
     public void Sort<TField>(Func<TObserver, TField> selector, IComparer<TField>? comparer)
     {
         var sorted = this.OrderBy(selector, comparer).ToList();
-        
+
         for (var i = 0; i < sorted.Count; i++)
             Move(IndexOf(sorted[i]), i);
+    }
+
+    public IEnumerable GetErrors(string? propertyName)
+    {
+        return this.SelectMany(o => o.GetErrors(propertyName));
     }
 
     protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
@@ -165,6 +172,9 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
     {
         observer.PropertyChanged -= OnObserverPropertyChanged;
         observer.PropertyChanged += OnObserverPropertyChanged;
+
+        observer.ErrorsChanged -= OnObserverErrorsChanged;
+        observer.ErrorsChanged += OnObserverErrorsChanged;
     }
 
     private void Detach(IEnumerable<TObserver> observers)
@@ -176,25 +186,30 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
     private void Detach(TObserver observer)
     {
         observer.PropertyChanged -= OnObserverPropertyChanged;
+        observer.ErrorsChanged -= OnObserverErrorsChanged;
     }
 
     private void OnObserverPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (sender is not TObserver observer) return;
-        
+
         //Raise that an item property changed.
-        RaiseItemPropertyChanged(observer, e);
+        ItemPropertyChanged?.Invoke(observer, e);
 
         //Propagate the IsChanged property change up the object graph.
         if (e.PropertyName == nameof(IsChanged))
         {
-            OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsChanged)));    
+            OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsChanged)));
         }
     }
 
-    private void RaiseItemPropertyChanged(TObserver item, PropertyChangedEventArgs e)
+    private void OnObserverErrorsChanged(object? sender, DataErrorsChangedEventArgs e)
     {
-        ItemPropertyChanged?.Invoke(item, e);
+        if (sender is not TObserver observer) return;
+        
+        //Raise that an item property changed.
+        ErrorsChanged?.Invoke(observer, e);
+        OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasErrors)));
     }
 }
 
@@ -207,11 +222,11 @@ public static class ObservableCollectionExtensions
             collection.Add(item);
         }
     }
-    
+
     public static void Refresh<T>(this ObservableCollection<T> collection, IEnumerable<T> items)
     {
         collection.Clear();
-        
+
         foreach (var item in items)
         {
             collection.Add(item);

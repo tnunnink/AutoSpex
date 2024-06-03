@@ -11,32 +11,56 @@
     <system:Int32 x:Key="TestInteger">34567</system:Int32>
 
     <Design.PreviewWith>
-        <StackPanel Spacing="10" Margin="50">
-            <StackPanel.Styles>
-                <Style Selector="Button">
-                    <Setter Property="Theme" Value="{a:ControlTheme ButtonSubtle}" />
-                    <Setter Property="ContentTemplate" Value="{DynamicResource ValueTemplates}" />
-                </Style>
-            </StackPanel.Styles>
-            <Button Content="{x:Null}" />
-            <Button Content="{StaticResource True}" />
-            <Button Content="{StaticResource TestDouble}" />
-            <Button Content="{StaticResource TestInteger}" />
-            <Button Content="{x:Static components:DesignData.BoolValue}" />
-            <Button Content="{x:Static components:DesignData.SintValue}" />
-            <Button Content="{x:Static components:DesignData.IntValue}" />
-            <Button Content="{x:Static components:DesignData.DintValue}" />
-            <Button Content="{x:Static components:DesignData.LintValue}" />
-            <Button Content="Something" />
-            <Button Content="{x:Static core:Radix.Decimal}" />
-            <Button Content="{x:Static components:DesignData.DataType}" />
-            <Button Content="{x:Static components:DesignData.Rung}" />
-            <Button Content="{x:Static components:DesignData.Rung}" />
-            <Button Content="{x:Static components:DesignData.Tag}" />
-            <Button Content="{x:Static components:DesignData.VariableObserver}" />
+        <StackPanel>
+            <StackPanel Spacing="10" Margin="50">
+                <StackPanel.Styles>
+                    <Style Selector="Button">
+                        <Setter Property="Theme" Value="{a:ControlTheme ButtonSubtle}" />
+                        <Setter Property="ContentTemplate" Value="{DynamicResource ValueTemplates}" />
+                    </Style>
+                </StackPanel.Styles>
+                <Button Content="{x:Null}" />
+                <Button Content="{StaticResource True}" />
+                <Button Content="{StaticResource TestDouble}" />
+                <Button Content="{StaticResource TestInteger}" />
+                <Button Content="{x:Static components:DesignData.BoolValue}" />
+                <Button Content="{x:Static components:DesignData.SintValue}" />
+                <Button Content="{x:Static components:DesignData.IntValue}" />
+                <Button Content="{x:Static components:DesignData.DintValue}" />
+                <Button Content="{x:Static components:DesignData.LintValue}" />
+                <Button Content="Something" />
+                <Button Content="{x:Static core:Radix.Decimal}" />
+                <Button Content="{x:Static components:DesignData.DataType}" />
+                <Button Content="{x:Static components:DesignData.Rung}" />
+                <Button Content="{x:Static components:DesignData.Rung}" />
+                <Button Content="{x:Static components:DesignData.Tag}" />
+                <Button Content="{x:Static components:DesignData.VariableObserver}" />
+            </StackPanel>
+            <StackPanel Margin="50" Width="300">
+                <ListBoxItem Content="{x:Static components:DesignData.BooleanValueObserver}"
+                             ContentTemplate="{DynamicResource ValueItemTemplate}" />
+                <ListBoxItem Content="{x:Static components:DesignData.RadixValueObserver}"
+                             ContentTemplate="{DynamicResource ValueItemTemplate}" />
+            </StackPanel>
         </StackPanel>
     </Design.PreviewWith>
 
+    <DataTemplate x:Key="ValueItemTemplate" x:DataType="observers:ValueObserver">
+        <Grid ColumnDefinitions="30,*,Auto">
+            <PathIcon
+                Grid.Column="0"
+                Theme="{Binding Group, Converter={StaticResource TypeGroupSmallToIconConverter}}"
+                Margin="0 0 10 0"/>
+            <TextBlock
+                Grid.Column="1"
+                Text="{Binding Text}" />
+            <TextBlock
+                Grid.Column="2"
+                Text="{Binding Type}"
+                Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                Margin="40 0 10 0" />
+        </Grid>
+    </DataTemplate>
 
     <a:TypedDataTemplateSelector x:Key="ValueTemplates">
 
@@ -198,7 +222,7 @@
                 </ToolTip.Tip>
             </TextBlock>
         </DataTemplate>
-        
+
         <DataTemplate DataType="collections:ICollection">
             <TextBlock Text="{Binding Count}"
                        Foreground="{DynamicResource TypeGroupForegroundBrushElement}">
@@ -299,7 +323,7 @@
         </DataTemplate>
 
         <DataTemplate DataType="observers:VariableObserver">
-            <Panel >
+            <Panel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock
                         Text="{}{" Padding="0 0 0 1"

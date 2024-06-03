@@ -1,5 +1,4 @@
-﻿using System.Xml.Linq;
-using L5Sharp.Core;
+﻿using L5Sharp.Core;
 
 namespace AutoSpex.Engine;
 
@@ -11,20 +10,35 @@ public class Variable : IEquatable<Variable>
 {
     private const char VariableStart = '{';
     private const char VariableEnd = '}';
+    private Type _type = typeof(object);
 
     /// <summary>
     /// Creates a new <see cref="Variable"/> with default empty values.
     /// </summary>
     public Variable()
     {
+        Value = TypeGroup.Text.DefaultValue;
     }
 
     /// <summary>
-    /// Creates a new <see cref="Variable"/> assigned to the provided node id.
+    /// Creates a new <see cref="Variable"/> with the provided type group.
     /// </summary>
-    public Variable(Guid nodeId)
+    /// <param name="group">The <see cref="TypeGroup"/> of the variable.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="group"/> is <c>null</c>.</exception>
+    public Variable(TypeGroup group)
     {
-        NodeId = nodeId;
+        if (group is null)
+            throw new ArgumentNullException(nameof(group));
+
+        if (group.DefaultValue is not null)
+        {
+            //This will also Type and in turn set Group
+            Value = group.DefaultValue;
+            return;
+        }
+
+        //This will also set Group.
+        Type = group.DefaultType;
     }
 
     /// <summary>
@@ -32,20 +46,13 @@ public class Variable : IEquatable<Variable>
     /// </summary>
     /// <param name="name">The name of the variable.</param>
     /// <param name="value">The value of the variable.</param>
-    /// <param name="description">The optional description of the variable.</param>
-    public Variable(string name, object? value = default, string? description = default)
+    public Variable(string name, object? value = default)
     {
-        Name = name;
-        Value = value ?? string.Empty;
-        Description = description ?? string.Empty;
-    }
+        if (string.IsNullOrEmpty(name))
+            throw new ArgumentException("Can not create variable with null or empty name.");
 
-    public Variable(Guid nodeId, string name, object? value = default, string? description = default)
-    {
-        NodeId = nodeId;
         Name = name;
-        Value = value ?? string.Empty;
-        Description = description ?? string.Empty;
+        Value = value;
     }
 
     /// <summary>
@@ -54,20 +61,58 @@ public class Variable : IEquatable<Variable>
     public Guid VariableId { get; init; } = Guid.NewGuid();
 
     /// <summary>
-    /// The node id that defines this <see cref="Variable"/> object.
-    /// </summary>
-    public Guid NodeId { get; private set; } = Guid.Empty;
-
-    /// <summary>
     /// The string name used to identify the <see cref="Variable"/>.
     /// </summary>
-    public string Name { get; set; } = "Variable";
+    public string Name { get; set; } = string.Empty;
+
+    /// <summary>
+    /// The qualified path representing the node this variable belongs to.
+    /// </summary>
+    public string Path { get; private set; } = string.Empty;
+
+    /// <summary>
+    /// Represents a scoped reference to a <see cref="Variable"/> object.
+    /// </summary>
+    public string ScopedReference => string.Concat(VariableStart, Name, VariableEnd);
+
+    /// <summary>
+    /// Represents the absolute reference of a <see cref="Variable"/> object.
+    /// </summary>
+    /// <remarks>
+    /// The absolute reference is the full path of a variable, including its name and the path of its parent object, if any.
+    /// It is used to uniquely identify a variable within a system.
+    /// </remarks>
+    public string AbsoluteReference =>
+        string.IsNullOrEmpty(Path) ? ScopedReference : string.Concat(VariableStart, Path, ".", Name, VariableEnd);
 
     /// <summary>
     /// The type of the variable value. This is persisted, so we know how to materialize the object value to a strongly
-    /// typed object.
+    /// typed object at runtime, which will allow us to pass in strongly typed values for criteria evaluation.
+    /// Whenever we set type, we will also set the <see cref="Group"/> to match the type group for this variable.
     /// </summary>
-    public Type Type { get; private set; } = typeof(string);
+    public Type Type
+    {
+        get => _type;
+        private set
+        {
+            _type = value;
+            Group = TypeGroup.FromType(value);
+        }
+    }
+
+    /// <summary>
+    /// The <see cref="TypeGroup"/> which the variable value belongs.
+    /// </summary>
+    public TypeGroup Group { get; private set; } = TypeGroup.Default;
+
+    /// <summary>
+    /// The object value of the <see cref="Variable"/>.
+    /// </summary>
+    public object? Value
+    {
+        get => GetValue();
+        set => SetValue(value);
+    }
 
     /// <summary>
     /// The raw string data representing the value of the variable. This is what is persisted and ultimately what
@@ -77,66 +122,15 @@ public class Variable : IEquatable<Variable>
     /// By default, this will be an empty string making it a simple text type variable in which the user can
     /// assign a value. However, this can also be an inner variable for which to chain to another value.
     /// </remarks>
-    public string Data { get; private set; } = string.Empty;
+    public string? Data { get; private set; }
 
     /// <summary>
-    /// The object value of the <see cref="Variable"/>.
+    /// Gets or sets the description of the <see cref="Variable"/> object.
     /// </summary>
-    /// <remarks>
-    /// By default, this will be an empty string making it a simple text type variable in which the user can
-    /// assign a value. However, this can also be a complex object like a LogixElement or LogixEnum value.
-    /// </remarks>
-    public object Value
-    {
-        get => GetValue();
-        set => SetValue(value);
-    }
-
-    /// <summary>
-    /// A summary of what the variable represents or is used for.
-    /// </summary>
-    public string Description { get; set; } = string.Empty;
-
-    /// <summary>
-    /// The object override value for the <see cref="Variable"/>.
-    /// </summary>
-    /// <remarks>
-    /// The user can "override" variable values to test different value or change them depending on the use within a Runner.
-    /// This value is persisted in a different table but attached here. We will use <see cref="ResolveValue"/> to determine
-    /// which value to use for a given criterion/spec. This value is null by default (meaning no override).
-    /// </remarks>
-    public object? Override
-    {
-        get => GetOverride();
-        set => SetOverride(value);
-    }
-
-    /// <summary>
-    /// The raw string data representing the override value for the variable if set. This is persisted same
-    /// as <see cref="Data"/> and will be parsed using the same get/set methods to retrieve the actual object value.
-    /// </summary>
-    public string? OverrideData { get; private set; }
-
-    /// <summary>
-    /// The type group which the variable value belongs.
-    /// </summary>
-    public TypeGroup Group => TypeGroup.FromType(Type);
-
-    /// <summary>
-    /// A formatted representation of the variable name which is wrapping the name in braces. This is how the user
-    /// references variables using the brace syntax.
-    /// </summary>
-    public string Formatted => $"{VariableStart}{Name}{VariableEnd}";
+    public string? Description { get; set; }
 
     /// <inheritdoc />
-    public override string ToString() => Formatted;
-
-    /// <summary>
-    /// Returns the final value of the <see cref="Variable"/> object, which is either the override value of the actual
-    /// assigned value of the variable.
-    /// </summary>
-    /// <returns>An object representing the referenced value of the variable.</returns>
-    public object ResolveValue() => Override ?? Value;
+    public override string ToString() => Name;
 
     /// <inheritdoc />
     public bool Equals(Variable? other)
@@ -152,60 +146,53 @@ public class Variable : IEquatable<Variable>
     public override int GetHashCode() => VariableId.GetHashCode();
 
     /// <summary>
-    /// Gets the strongly typed object value using the variable's current <see cref="Data"/> and <see cref="Type"/>.
+    /// Updates the variable <see cref="Group"/> that the value represents.
     /// </summary>
-    private object GetValue() => ParseData(Data, Type);
-
-    /// <summary>
-    /// Sets the <see cref="Data"/> and <see cref="Type"/> of the variable with the provided object value.
-    /// </summary>
-    private void SetValue(object? value)
+    /// <param name="group">A <see cref="TypeGroup"/> type.</param>
+    public void ChangeType(TypeGroup group)
     {
-        Data = StringifyData(value);
-        Type = value?.GetType() ?? typeof(string);
+        if (group is null)
+            throw new ArgumentNullException(nameof(group));
+
+        Type = group.DefaultType;
+        Value = group.DefaultValue;
     }
-
-    /// <summary>
-    /// Gets the strongly typed object override using the variable's current <see cref="OverrideData"/> and <see cref="Type"/>.
-    /// </summary>
-    private object? GetOverride() => OverrideData is not null ? ParseData(OverrideData, Type) : default;
-
-    /// <summary>
-    /// Sets the <see cref="OverrideData"/> for the variable with the provided object value.
-    /// </summary>
-    private void SetOverride(object? value) => OverrideData = StringifyData(value);
 
     /// <summary>
     /// Gets an object value using the provided string data and specified type information.
     /// </summary>
-    private static object ParseData(string data, Type type)
+    private object? GetValue()
     {
-        //If the type is a simple string just return the Data.
-        if (type == typeof(string))
-            return data;
+        if (Data is null || Type == typeof(object)) return default;
 
-        //If this is a logix element type, then we will deserialize it.
-        if (type.IsAssignableTo(typeof(LogixElement)))
-            return XElement.Parse(data).Deserialize();
+        if (Type == typeof(string))
+            return Data;
 
-        //If L5Sharp can parse the type then we use its parser. Anything not parsable or known will just be text.
-        return type.IsParsable() ? data.Parse(type) : data;
+        return Type.IsParsable() ? Data.TryParse(Type) : null;
     }
 
     /// <summary>
-    /// Converts an input object to the storable string value which we will know how to convert back to the
-    /// strongly typed object.
+    /// Converts an input object to the storable string  and assigns to <see cref="Data "/>,
+    /// which we will know how to convert back to the strongly typed object when retrieving from the database.
     /// </summary>
-    private static string StringifyData(object? value)
+    private void SetValue(object? value)
     {
-        return value switch
+        //Only update type if the provided value is not null.
+        //We want to maintain the specified target type unless the user provides a new valid type.
+        if (value is not null)
         {
-            null => string.Empty,
+            Type = value.GetType();
+        }
+
+        //todo handling collections that are not LogixContainer
+        Data = value switch
+        {
+            null => null,
             string v => v,
-            LogixElement v => v.Serialize().ToString(),
             LogixEnum v => v.Name,
-            ValueType v => v.ToString()!,
-            _ => throw new NotSupportedException($"Value {value.GetType()} is not a supported variable value type.")
+            AtomicData v => v.ToString(),
+            LogixElement v => v.Serialize().ToString(),
+            _ => value.ToString()
         };
     }
 }

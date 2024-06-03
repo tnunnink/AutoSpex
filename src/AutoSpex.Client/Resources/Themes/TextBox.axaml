@@ -160,13 +160,6 @@
         <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Padding" Value="{a:ThemeResource ButtonPadding}" />
-        <Setter Property="(Interaction.Behaviors)">
-            <BehaviorCollectionTemplate>
-                <BehaviorCollection>
-                    <SelectAllOnGotFocusBehavior />
-                </BehaviorCollection>
-            </BehaviorCollectionTemplate>
-        </Setter>
 
         <Setter Property="Template">
             <ControlTemplate>

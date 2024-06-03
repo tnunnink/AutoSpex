@@ -1,0 +1,154 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+                    xmlns:primitives="clr-namespace:ActiproSoftware.UI.Avalonia.Controls.Primitives;assembly=ActiproSoftware.Avalonia.Shared"
+                    xmlns:system="clr-namespace:System;assembly=System.Runtime"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+
+
+    <Design.PreviewWith>
+        <Border Padding="30" Height="400" Width="400">
+            <StackPanel Spacing="10">
+                <controls:Entry Watermark="Enter value" />
+                <controls:Entry Watermark="Enter value" Value="This is a test" />
+                <controls:Entry Watermark="Enter value" Value="Test"
+                                IsEmpty="{Binding $self.Value, Converter={StaticResource EqualToConverter}, ConverterParameter='Test'}" />
+                <controls:Entry Watermark="Enter value" Value="Testing"
+                                IsEmpty="{Binding $self.Value, Converter={StaticResource EqualToConverter}, ConverterParameter='Test'}" />
+            </StackPanel>
+        </Border>
+    </Design.PreviewWith>
+
+    <!-- Entry -->
+    <ControlTheme x:Key="{x:Type controls:Entry}" TargetType="controls:Entry">
+        <Setter Property="FontFamily" Value="{a:ThemeResource CodeFontFamily}" />
+        <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeSmall}" />
+        <Setter Property="MaxDropDownHeight" Value="300" />
+        <Setter Property="MinDropDownWidth" Value="300" />
+        <Setter Property="MaxDropDownWidth" Value="400" />
+        <Setter Property="IsEmpty" Value="{Binding $self.Value, Converter={x:Static ObjectConverters.IsNull}}" />
+
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid x:Name="PART_LayoutRoot">
+                    <Button
+                        x:Name="PART_Button"
+                        Theme="{a:ControlTheme ButtonSubtle}"
+                        Classes.danger="{TemplateBinding (DataValidationErrors.HasErrors)}"
+                        HorizontalContentAlignment="Left">
+                        <Panel>
+                            <TextBlock
+                                Text="{TemplateBinding Watermark}"
+                                IsVisible="{Binding IsEmpty, RelativeSource={RelativeSource TemplatedParent}}"
+                                Opacity="{a:ThemeResource EditWatermarkOpacity}"
+                                FontStyle="Italic"
+                                Margin="0 1 0 0" />
+                            <ContentPresenter
+                                x:Name="PART_ContentPresenter"
+                                Content="{Binding Value, RelativeSource={RelativeSource TemplatedParent}}"
+                                ContentTemplate="{Binding ValueTemplate, RelativeSource={RelativeSource TemplatedParent}}"
+                                Margin="0 1 0 0" />
+                        </Panel>
+                    </Button>
+
+                    <primitives:ChromedPopup
+                        x:Name="PART_Popup"
+                        InheritsTransform="True"
+                        IsLightDismissEnabled="True"
+                        IsOpen="{TemplateBinding IsDropDownOpen, Mode=TwoWay}"
+                        MaxChildHeight="{TemplateBinding MaxDropDownHeight}"
+                        MaxChildWidth="{TemplateBinding MaxDropDownWidth}"
+                        MinChildWidth="{TemplateBinding MinDropDownWidth}"
+                        PlacementTarget="{Binding #PART_Button}"
+                        Placement="BottomEdgeAlignedLeft"
+                        VerticalOffset="{Binding #PART_Button.Bounds.Height, Converter={StaticResource MathConverter}, ConverterParameter='(x * -1) -4'}"
+                        BorderThickness="2">
+
+                        <Grid RowDefinitions="Auto,Auto,*">
+                            <TextBox
+                                x:Name="PART_TextBox"
+                                Grid.Row="0"
+                                Text="{TemplateBinding Text, Mode=TwoWay}"
+                                Watermark="{TemplateBinding Watermark}"
+                                Theme="{a:ControlTheme TextBoxOutline}"
+                                BorderThickness="0"
+                                Margin="0 1 0 0"
+                                CornerRadius="0 0 4 4"
+                                MinHeight="30"
+                                FontFamily="{TemplateBinding FontFamily}"
+                                FontSize="{TemplateBinding FontSize}"
+                                VerticalContentAlignment="Center"
+                                a:ThemeProperties.CopyClassesFrom="{TemplateBinding}"
+                                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                                <TextBox.InnerRightContent>
+                                    <Button Theme="{StaticResource IconButtonSmall}"
+                                            properties:ButtonIcon.Theme="{StaticResource IconChevronExpand}"
+                                            Margin="5 0" CornerRadius="10" />
+                                </TextBox.InnerRightContent>
+                                <Interaction.Behaviors>
+                                    <FocusOnAttachedToVisualTreeBehavior />
+                                    <SelectAllOnGotFocusBehavior />
+                                </Interaction.Behaviors>
+                            </TextBox>
+
+                            <ItemsControl
+                                Grid.Row="1"
+                                ItemsSource="{TemplateBinding (DataValidationErrors.Errors)}"
+                                IsVisible="{TemplateBinding (DataValidationErrors.HasErrors)}"
+                                Background="{a:ThemeResource ControlBackgroundBrushSoftDangerDisabled}"
+                                Padding="5" CornerRadius="0 0 4 4">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="system:Object">
+                                        <StackPanel Orientation="Horizontal" Spacing="5" ClipToBounds="True">
+                                            <PathIcon
+                                                Theme="{StaticResource IconExclamationOutlined}"
+                                                Foreground="{a:ThemeResource ControlForegroundBrushSoftDanger}" />
+                                            <TextBlock
+                                                Text="{Binding }"
+                                                Foreground="{a:ThemeResource ControlForegroundBrushSoftDanger}"
+                                                TextWrapping="NoWrap"
+                                                TextTrimming="CharacterEllipsis"
+                                                Margin="5 0" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <ListBox
+                                x:Name="PART_ListBox"
+                                Grid.Row="2"
+                                IsVisible="{Binding Suggestions.Count, RelativeSource={RelativeSource TemplatedParent}}"
+                                ItemsSource="{Binding Suggestions, RelativeSource={RelativeSource TemplatedParent}}"
+                                ItemTemplate="{TemplateBinding ItemTemplate}"
+                                MaxHeight="{TemplateBinding MaxDropDownHeight}"
+                                MinWidth="{TemplateBinding MinDropDownWidth}"
+                                Background="{a:ThemeResource Container2BackgroundBrush}"
+                                CornerRadius="0 0 4 4"
+                                BorderThickness="0 1 0 0"
+                                BorderBrush="{a:ThemeResource PopupBorderBrush}"
+                                ClipToBounds="True"
+                                Classes="theme-scroll-overlay" />
+                        </Grid>
+                    </primitives:ChromedPopup>
+                </Grid>
+            </ControlTemplate>
+        </Setter>
+
+        <!--For whatever reason, controlling the content presenter IsVisible has issues showing the value after getting set. Using Opacity works-->
+        <Style Selector="^:empty /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Opacity" Value="0" />
+        </Style>
+        <Style Selector="^ /template/ primitives|ChromedPopup#PART_Popup">
+            <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBackgroundBrushEmphasizedAccent}" />
+        </Style>
+        <Style Selector="^[(DataValidationErrors.HasErrors)=True] /template/ primitives|ChromedPopup#PART_Popup">
+            <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBackgroundBrushEmphasizedDanger}" />
+        </Style>
+        <Style Selector="^[(DataValidationErrors.HasErrors)=True] /template/ Button#PART_Button">
+            <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSubtleDangerPointerOver}" />
+            <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBackgroundBrushSubtleDangerPointerOver}" />
+        </Style>
+    </ControlTheme>
+</ResourceDictionary>

@@ -4,6 +4,14 @@
 public class TypeGroupTests
 {
     [Test]
+    public void Selectable_WhenCalled_ShouldNotBeEmpty()
+    {
+        var groups = TypeGroup.Selectable;
+
+        groups.Should().NotBeEmpty();
+    }
+    
+    [Test]
     public void FromType_bool_ShouldBeBoolean()
     {
         var group = TypeGroup.FromType(typeof(bool));

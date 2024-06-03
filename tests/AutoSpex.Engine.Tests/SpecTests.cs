@@ -77,7 +77,7 @@ public class SpecTests
     }
 
     [Test]
-    public async Task Run_DefaultElementWithVerifyCountSetFalse_ShouldReturnPassed()
+    public async Task Run_DefaultElementWithVerifyCountSetFalse_ShouldReturnNoEvaluations()
     {
         var content = L5X.Load(Known.Test);
         var spec = new Spec
@@ -90,7 +90,6 @@ public class SpecTests
 
         var verifications = (await spec.Run(content)).ToList();
 
-        verifications.Max(r => r.Result).Should().Be(ResultState.Failed);
-        verifications.SelectMany(v => v.Evaluations).Should().BeEmpty();
+        verifications.Should().BeEmpty();
     }
 }

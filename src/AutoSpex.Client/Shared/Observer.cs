@@ -51,7 +51,7 @@ public abstract partial class Observer<TModel> : TrackableViewModel, IEquatable<
 
     /// <summary>
     /// A command to duplicate the <see cref="Observer{TModel}"/> object in the database and UI. The default
-    /// implementation does nothing and not all observers may need this but it will be supported by more than one so
+    /// implementation does nothing and not all observers may need this, but it will be supported by more than one so
     /// this is to consolidate the code. 
     /// </summary>
     /// <returns>The <see cref="Task"/> representing the async function to perform.</returns>

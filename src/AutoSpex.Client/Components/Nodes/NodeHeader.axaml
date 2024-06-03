@@ -23,7 +23,7 @@
                     <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10">
 
                         <Button x:Name="RunButton"
-                                Command="{TemplateBinding RunCommand}"
+                                Command="{Binding RunCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                 Theme="{a:ControlTheme ButtonOutline}"
                                 Height="30" Width="30">
                             <PathIcon Theme="{StaticResource IconPlayOutlined}"
@@ -47,7 +47,7 @@
                         </Button>
 
                         <Button x:Name="SaveButton"
-                                Command="{TemplateBinding SaveCommand}"
+                                Command="{Binding SaveCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                 Theme="{a:ControlTheme ButtonOutline}"
                                 Height="30" Width="30">
                             <PathIcon Theme="{StaticResource IconFloppyOutlined}"

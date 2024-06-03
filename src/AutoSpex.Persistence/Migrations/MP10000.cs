@@ -51,22 +51,12 @@ public class MP10000 : AutoReversingMigration
             .WithColumn("NodeId").AsString().NotNullable().ForeignKey("Node", "NodeId").OnDelete(Rule.Cascade)
             .WithColumn("Name").AsString().NotNullable()
             .WithColumn("Type").AsString().NotNullable()
-            .WithColumn("Data").AsString().NotNullable()
+            .WithColumn("Data").AsString().Nullable()
             .WithColumn("Description").AsString().Nullable();
 
         Create.UniqueConstraint("Unique_Variable_NodeId_Name")
             .OnTable("Variable")
             .Columns("NodeId", "Name");
-
-        Create.Table("Override")
-            .WithColumn("SourceId").AsString().NotNullable().ForeignKey("Source", "SourceId").OnDelete(Rule.Cascade)
-            .WithColumn("VariableId").AsString().NotNullable().ForeignKey("Variable", "VariableId")
-            .OnDelete(Rule.Cascade)
-            .WithColumn("Data").AsString().NotNullable();
-
-        Create.UniqueConstraint("Unique_Override_Source_Variable")
-            .OnTable("Override")
-            .Columns("SourceId", "VariableId");
 
         Create.Table("ChangeLog")
             .WithColumn("ChangeId").AsString().PrimaryKey()

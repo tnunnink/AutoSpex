@@ -61,7 +61,7 @@ public class GeneralTests
 
         result.Should().NotBeNull();
         result?.Name.Should().Be("This");
-        result?.Path.Should().Be("This");
+        result?.Path.Should().BeEmpty();
         result?.Type.Should().Be(typeof(Tag));
         result?.Group.Should().Be(TypeGroup.Element);
         result?.Origin.Should().Be(typeof(Tag));

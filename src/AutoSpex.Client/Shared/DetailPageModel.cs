@@ -19,14 +19,14 @@ public abstract partial class DetailPageModel : PageViewModel
     /// this as needed. Each derived class can await the base implementation to get the result before processing further.
     /// </remarks>
     [RelayCommand(CanExecute = nameof(CanSave))]
-    protected virtual Task Save() => Task.CompletedTask;
+    public virtual Task<Result> Save() => Task.FromResult(Result.Ok());
 
     /// <summary>
     /// Indicates whether the page can be saved or not. By default, this looks at whether there are changes using the
     /// <see cref="TrackableViewModel.IsChanged"/> property. Derived classes can override this implementation as needed.
     /// </summary>
     /// <returns><c>true</c> if the page can be saved, Otherwise, <c>false</c>.</returns>
-    protected virtual bool CanSave() => IsChanged && !HasErrors;
+    public bool CanSave() => IsChanged && !IsErrored;
 
     /// <summary>
     /// A command to close the current detail page.
@@ -78,7 +78,7 @@ public abstract partial class DetailPageModel : PageViewModel
     {
         base.OnPropertyChanged(e);
 
-        if (e.PropertyName == nameof(IsChanged))
+        if (e.PropertyName is nameof(IsChanged) or nameof(IsErrored))
             SaveCommand.NotifyCanExecuteChanged();
     }
 }

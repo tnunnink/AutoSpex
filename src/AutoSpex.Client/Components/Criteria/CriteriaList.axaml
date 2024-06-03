@@ -2,7 +2,6 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:components="using:AutoSpex.Client.Components"
-                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
                     xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
                     xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
 
@@ -19,107 +18,77 @@
     <ControlTheme x:Key="{x:Type components:CriteriaList}" TargetType="components:CriteriaList">
         <Setter Property="Template">
             <ControlTemplate>
-                <Border BorderBrush="{a:ThemeResource Container1BorderBrush}"
-                        BorderThickness="1"
-                        CornerRadius="5">
-                    <Grid RowDefinitions="Auto,Auto">
-                        <Border Grid.Row="0"
-                                Background="{a:ThemeResource Container3BackgroundBrush}"
-                                Padding="5"
-                                CornerRadius="5 5 0 0">
-                            <Grid ColumnDefinitions="Auto,*,Auto">
-                                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10" Margin="10 0">
-                                    <TextBlock Text="{TemplateBinding Heading}"
-                                               FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
-                                    <PathIcon Theme="{StaticResource IconInfoOutline}"
-                                              Margin="0 1 0 0"
-                                              ToolTip.Tip="{TemplateBinding InfoText}" />
-
-                                    <Border BorderThickness="1 0 0 0"
-                                            BorderBrush="{a:ThemeResource Container3BorderBrush}"
-                                            Margin="2 5" />
-
-                                    <components:InclusionSwitch
-                                        Inclusion="{Binding Inclusion, RelativeSource={RelativeSource TemplatedParent}}"
-                                        BorderThickness="0"
-                                        VerticalAlignment="Center"
-                                        Padding="4"
-                                        Background="{a:ThemeResource ControlBackgroundBrushSoft}" />
-                                </StackPanel>
-
-                                <StackPanel Grid.Column="2"
-                                            Orientation="Horizontal"
-                                            VerticalAlignment="Center"
-                                            Spacing="5">
-                                    <Button properties:ButtonIcon.Theme="{StaticResource IconAdd}"
-                                            Theme="{StaticResource IconButton}"
-                                            Command="{Binding AddCriterionCommand, RelativeSource={RelativeSource TemplatedParent}}"
-                                            Classes="accent"
-                                            ToolTip.Tip="Add Criteria" />
-                                    <Button properties:ButtonIcon.Theme="{StaticResource IconTrashOutlined}"
-                                            Theme="{StaticResource IconButton}"
-                                            Command="{Binding RemoveSelectedCommand, RelativeSource={RelativeSource TemplatedParent}}"
-                                            ToolTip.Tip="Delete Selected" />
-                                    <Button properties:ButtonIcon.Theme="{StaticResource IconCopyOutlined}"
-                                            Theme="{StaticResource IconButton}"
-                                            Command="{Binding CopySelectedCommand, RelativeSource={RelativeSource TemplatedParent}}"
-                                            ToolTip.Tip="Copy Selected" />
-                                    <Button properties:ButtonIcon.Theme="{StaticResource IconDotsVertical}"
-                                            Theme="{StaticResource IconButton}">
-
-                                    </Button>
-                                </StackPanel>
-                            </Grid>
-                        </Border>
-
-                        <Panel Grid.Row="1">
-                            <!--No Criteria View-->
-                            <StackPanel DockPanel.Dock="Top"
-                                        IsVisible="{Binding !Criteria.Count, RelativeSource={RelativeSource TemplatedParent}}"
-                                        VerticalAlignment="Center"
-                                        HorizontalAlignment="Center"
-                                        Margin="20">
+                <components:Section>
+                    <components:Section.Header>
+                        <Grid ColumnDefinitions="Auto,*,Auto">
+                            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10" Margin="10 0">
                                 <TextBlock
-                                    Text="No criteria defined"
-                                    Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
-                                    FontWeight="SemiBold"
-                                    HorizontalAlignment="Center" />
+                                    Text="{TemplateBinding Heading}"
+                                    FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
+                                <PathIcon
+                                    Theme="{StaticResource IconInfoOutline}"
+                                    Margin="0 1 0 0"
+                                    ToolTip.Tip="{TemplateBinding InfoText}" />
 
-                                <StackPanel Orientation="Horizontal"
-                                            HorizontalAlignment="Center">
-                                    <TextBlock
-                                        Text="Click the "
-                                        Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
-                                        TextAlignment="Center" />
-                                    <PathIcon
-                                        Theme="{StaticResource IconAdd}"
-                                        Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
-                                        Height="20" Width="20" Padding="4" Margin="0 2 0 0" />
-                                    <TextBlock Text=" button to add a new criteria to this spec."
-                                               Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
-                                               TextAlignment="Center" />
-                                </StackPanel>
+                                <Border BorderThickness="1 0 0 0"
+                                        BorderBrush="{a:ThemeResource Container3BorderBrush}"
+                                        Margin="2 5" />
+
+                                <components:InclusionSwitch
+                                    Inclusion="{Binding Inclusion, RelativeSource={RelativeSource TemplatedParent}}"
+                                    BorderThickness="0"
+                                    VerticalAlignment="Center"
+                                    Padding="4"
+                                    Background="{a:ThemeResource ControlBackgroundBrushSoft}" />
                             </StackPanel>
 
-                            <!--Criteria List-->
-                            <ListBox ItemsSource="{TemplateBinding Criteria}"
-                                     SelectedItems="{Binding SelectedCriteria, RelativeSource={RelativeSource TemplatedParent}}"
-                                     ItemContainerTheme="{StaticResource ListBoxItemSection}"
-                                     IsVisible="{Binding Criteria.Count, RelativeSource={RelativeSource TemplatedParent}, FallbackValue=0}"
-                                     SelectionMode="Multiple"
-                                     ClipToBounds="True"
-                                     BorderThickness="0" CornerRadius="5"
-                                     Background="Transparent">
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate x:DataType="observers:CriterionObserver">
-                                        <components:CriteriaListItem
-                                            RemoveCommand="{Binding $parent[components:CriteriaList].RemoveCriterionCommand}" />
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-                            </ListBox>
-                        </Panel>
-                    </Grid>
-                </Border>
+                            <StackPanel Grid.Column="2"
+                                        Orientation="Horizontal"
+                                        VerticalAlignment="Center"
+                                        Spacing="5">
+                                <Button properties:ButtonIcon.Theme="{StaticResource IconAdd}"
+                                        Theme="{StaticResource IconButton}"
+                                        Command="{Binding AddCriterionCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                                        Classes="accent"
+                                        ToolTip.Tip="Add Criteria" />
+                                <Button properties:ButtonIcon.Theme="{StaticResource IconTrashOutlined}"
+                                        Theme="{StaticResource IconButton}"
+                                        Command="{Binding RemoveSelectedCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                                        ToolTip.Tip="Delete Selected" />
+                                <Button properties:ButtonIcon.Theme="{StaticResource IconCopyOutlined}"
+                                        Theme="{StaticResource IconButton}"
+                                        Command="{Binding CopySelectedCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                                        ToolTip.Tip="Copy Selected" />
+                                <Button properties:ButtonIcon.Theme="{StaticResource IconDotsVertical}"
+                                        Theme="{StaticResource IconButton}">
+
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </components:Section.Header>
+
+                    <Panel>
+                        <components:NoItemsMessage
+                            DockPanel.Dock="Top"
+                            IsVisible="{Binding !Criteria.Count, RelativeSource={RelativeSource TemplatedParent}}"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            HeaderText="No criteria found"
+                            MessageText="add a new criteria to this spec."
+                            MessageIcon="{StaticResource IconAdd}" />
+
+                        <ListBox
+                            ItemsSource="{TemplateBinding Criteria}"
+                            SelectedItems="{Binding SelectedCriteria, RelativeSource={RelativeSource TemplatedParent}}"
+                            ItemTemplate="{StaticResource CriterionItem}"
+                            ItemContainerTheme="{StaticResource ListBoxItemSection}"
+                            IsVisible="{Binding Criteria.Count, RelativeSource={RelativeSource TemplatedParent}, FallbackValue=0}"
+                            SelectionMode="Multiple"
+                            ClipToBounds="True"
+                            BorderThickness="0" CornerRadius="5"
+                            Background="Transparent" />
+                    </Panel>
+                </components:Section>
             </ControlTemplate>
         </Setter>
     </ControlTheme>

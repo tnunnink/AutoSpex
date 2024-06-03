@@ -72,7 +72,6 @@ public class Source
     private static void SeedId(ILogixSerializable content, Guid id)
     {
         var root = content.Serialize();
-
         root.Add(new XAttribute(nameof(SourceId), id.ToString()));
     }
 }

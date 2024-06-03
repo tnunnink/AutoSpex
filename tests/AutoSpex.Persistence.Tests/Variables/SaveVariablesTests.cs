@@ -8,9 +8,9 @@ public class SaveVariablesTests
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-        var variable = new Variable("Var01", "Test", "This is a test");
+        var variable = new Variable("Var01", "Test");
 
-        var result = await mediator.Send(new SaveVariables(new[] {variable}));
+        var result = await mediator.Send(new SaveVariables(Guid.NewGuid(), new[] { variable }));
 
         result.IsFailed.Should().BeTrue();
     }
@@ -21,23 +21,23 @@ public class SaveVariablesTests
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
         var node = Node.NewContainer();
-        var variable = new Variable(node.NodeId, "Var01", "Test", "This is a test");
+        var variable = new Variable("Var01", "Test");
 
-        var result = await mediator.Send(new SaveVariables([variable]));
+        var result = await mediator.Send(new SaveVariables(node.NodeId, [variable]));
 
         result.IsFailed.Should().BeTrue();
     }
-    
+
     [Test]
     public async Task SaveVariables_SingleVariableAssignedToExistingNode_ShouldReturnSuccess()
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
         var node = Node.NewContainer();
-        await mediator.Send(new CreateNode(node));
-        var variable = new Variable(node.NodeId, "Var01", "Test", "This is a test");
+        await mediator.Send(new CreateNode(node, NodeType.Spec));
+        var variable = new Variable("Var01", "Test");
 
-        var result = await mediator.Send(new SaveVariables([variable]));
+        var result = await mediator.Send(new SaveVariables(node.NodeId, [variable]));
 
         result.IsSuccess.Should().BeTrue();
     }
@@ -48,31 +48,36 @@ public class SaveVariablesTests
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
         var node = Node.NewContainer();
-        await mediator.Send(new CreateNode(node));
-        var var02 = new Variable(node.NodeId, "Var02", "Test", "This is a test");
-        var var01 = new Variable(node.NodeId, "Var01", "Test", "This is a test");
-        var var03 = new Variable(node.NodeId, "Var03", "Test", "This is a test");
+        await mediator.Send(new CreateNode(node, NodeType.Spec));
+        var var02 = new Variable("Var02", "Test");
+        var var01 = new Variable("Var01", "Test");
+        var var03 = new Variable("Var03", "Test");
 
-        var result = await mediator.Send(new SaveVariables(new[] {var01, var02, var03}));
+        var result = await mediator.Send(new SaveVariables(node.NodeId, new[] { var01, var02, var03 }));
 
         result.IsSuccess.Should().BeTrue();
     }
-    
+
     [Test]
     public async Task SaveVariables_ManyVariableAssignedManyNodes_ShouldReturnSuccess()
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-        var collection = Node.NewContainer();
-        var folder = collection.AddContainer();
-        await mediator.Send(new CreateNode(collection));
-        await mediator.Send(new CreateNode(folder));
-        var var01 = new Variable(collection.NodeId, "Var01");
-        var var02 = new Variable(folder.NodeId, "Var01");
-        var var03 = new Variable(folder.NodeId, "Var02");
 
-        var result = await mediator.Send(new SaveVariables(new[] {var01, var02, var03}));
+        var container = Node.NewContainer();
+        await mediator.Send(new CreateNode(container, NodeType.Spec));
 
-        result.IsSuccess.Should().BeTrue();
+        var folder = container.AddContainer();
+        await mediator.Send(new CreateNode(folder, NodeType.Spec));
+
+        var var01 = new Variable("Var01", "Test");
+        var var02 = new Variable("Var01", "Test");
+        var var03 = new Variable("Var02", "Test");
+
+        var result1 = await mediator.Send(new SaveVariables(container.NodeId, [var01]));
+        result1.IsSuccess.Should().BeTrue();
+        
+        var result2 = await mediator.Send(new SaveVariables(folder.NodeId, [var02, var03]));
+        result2.IsSuccess.Should().BeTrue();
     }
 }

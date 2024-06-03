@@ -70,10 +70,11 @@ public class PropertyTree : TemplatedControl
     {
         Properties.Clear();
 
-        var properties =
-            SourceElement?.Properties.SelectMany(p => p.FindProperties(filter)) ??
-            Enumerable.Empty<PropertyObserver>();
+        var properties = string.IsNullOrEmpty(filter)
+            ? SourceElement?.Properties
+            : SourceElement?.Properties.SelectMany(p => p.FindProperties(filter));
 
-        Properties.AddRange(properties);
+        if (properties is null) return;
+        Properties.AddRange(properties );
     }
 }

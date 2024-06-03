@@ -10,12 +10,10 @@ public class SpecObserver : Observer<Spec>
     public SpecObserver(Spec model) : base(model)
     {
         Filters = new ObserverCollection<Criterion, CriterionObserver>(
-            Model.Filters,
-            m => new CriterionObserver(m, Model.Element.Type));
+            Model.Filters, m => new CriterionObserver(m));
 
         Verifications = new ObserverCollection<Criterion, CriterionObserver>(
-            Model.Verifications,
-            m => new CriterionObserver(m, Model.Element.Type));
+            Model.Verifications, m => new CriterionObserver(m));
 
         Track(nameof(Element));
         Track(nameof(VerifyCount));
@@ -70,7 +68,7 @@ public class SpecObserver : Observer<Spec>
     public ObserverCollection<Criterion, CriterionObserver> Filters { get; }
     public ObserverCollection<Criterion, CriterionObserver> Verifications { get; }
 
-    public static SpecObserver Empty => new(new Spec());
+    public static SpecObserver Empty => new(new Spec(Guid.Empty));
     public static implicit operator SpecObserver(Spec model) => new(model);
     public static implicit operator Spec(SpecObserver observer) => observer.Model;
 }

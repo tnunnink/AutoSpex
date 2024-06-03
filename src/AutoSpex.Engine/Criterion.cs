@@ -25,37 +25,27 @@ public class Criterion
     }
 
     /// <summary>
-    /// Creates a new <see cref="Criterion"/> with the provided arguments.
+    /// Creates a new default <see cref="Criterion"/> instance with the provided parent element type.
     /// </summary>
-    /// <param name="property">The name of the property for which to retrieve the the value from the candidate.</param>
-    /// <param name="operation">The operation to perform when evaluating.</param>
-    /// <param name="arguments">The set of <see cref="Argument"/> values to use when evaluating.</param>
-    /// <exception cref="ArgumentNullException"><paramref name="operation"/> is null.</exception>
-    public Criterion(string? property, Operation operation, params Argument[] arguments)
+    public Criterion(Type type)
     {
-        Property = property;
-        Operation = operation;
-        Arguments = arguments.ToList();
-    }
-
-    public Criterion(Operation operation, params Argument[] arguments)
-    {
-        Operation = operation;
-        Arguments = arguments.ToList();
+        Type = type;
     }
 
     /// <summary>
     /// Creates a new <see cref="Criterion"/> with the provided arguments.
     /// </summary>
-    /// <param name="criterionId">The id of the criterion.</param>
-    /// <param name="property"></param>
-    /// <param name="operation"></param>
-    /// <param name="arguments"></param>
-    /// <param name="invert"></param>
-    /// <exception cref="ArgumentNullException"></exception>
-    public Criterion(Guid criterionId, string? property, Operation operation, Argument[] arguments, bool invert)
+    /// <param name="criterionId">The id of the cri</param>
+    /// <param name="type">The type this criterion is configured for.</param>
+    /// <param name="property">The name of the property for which to retrieve the the value from the candidate.</param>
+    /// <param name="operation">The operation to perform when evaluating.</param>
+    /// <param name="invert">Wether to invert the condition of the evaluation to false=pass (i.e. NOT).</param>
+    /// <param name="arguments">The set of <see cref="Argument"/> values to use when evaluating.</param>
+    public Criterion(Guid criterionId, Type? type = default,
+        string? property = default, Operation? operation = default, bool invert = false, params Argument[] arguments)
     {
         CriterionId = criterionId;
+        Type = type;
         Property = property;
         Operation = operation;
         Arguments = [..arguments];
@@ -63,9 +53,39 @@ public class Criterion
     }
 
     /// <summary>
+    /// Creates a new <see cref="Criterion"/> with the provided arguments.
+    /// </summary>
+    /// <param name="property">The name of the property for which to retrieve the the value from the candidate.</param>
+    /// <param name="operation">The operation to perform when evaluating.</param>
+    /// <param name="arguments">The set of <see cref="Argument"/> values to use when evaluating.</param>
+    public Criterion(string? property, Operation operation, params Argument[] arguments)
+    {
+        Property = property;
+        Operation = operation;
+        Arguments = arguments.ToList();
+    }
+
+    /// <summary>
+    /// Creates a new <see cref="Criterion"/> with the provided arguments.
+    /// </summary>
+    /// <param name="operation">The operation to perform when evaluating.</param>
+    /// <param name="arguments">The set of <see cref="Argument"/> values to use when evaluating.</param>
+    public Criterion(Operation operation, params Argument[] arguments)
+    {
+        Operation = operation;
+        Arguments = arguments.ToList();
+    }
+
+    /// <summary>
     /// A <see cref="Guid"/> that uniquely identifies this object.
     /// </summary>
     public Guid CriterionId { get; } = Guid.NewGuid();
+
+    /// <summary>
+    /// The type this criterion represents. This is not used when evaluation is called, but
+    /// is here to allow this data to be passed along with the object, so we know which properties can be resolved for this criterion. 
+    /// </summary>
+    public Type? Type { get; } = typeof(object);
 
     /// <summary>
     /// The property name of the provided object which will be the target or input value of the evaluation. If null or
@@ -77,7 +97,7 @@ public class Criterion
     /// <summary>
     /// The operation the evaluation will execute on the input and argument values.
     /// </summary>
-    public Operation? Operation { get; set; } = Operation.None;
+    public Operation? Operation { get; set; }
 
     /// <summary>
     /// The collection of argument values required for the operation to execute.
@@ -98,8 +118,8 @@ public class Criterion
     {
         var operation = Operation ?? Operation.None;
         var type = candidate?.GetType();
-        var property = type?.Property(Property);
-        var getter = property?.Getter();
+        var getter = Engine.Property.Getter(type, Property);
+        //var property = type?.Property(Property);
 
         try
         {

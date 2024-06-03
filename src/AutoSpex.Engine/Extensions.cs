@@ -27,24 +27,21 @@ public static class Extensions
     /// </remarks>
     public static IEnumerable<Property> Properties(this Type type, Property? parent = default)
     {
-        var origin = parent is not null ? parent.Origin : type;
+        parent ??= Engine.Property.This(type);
+        var properties = new List<Property>();
 
-        var predefined = type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+        var predefined = type
+            .GetProperties(BindingFlags.Public | BindingFlags.Instance)
             .Where(p => p.GetIndexParameters().Length == 0 && !PropertyExclusions.Contains(p.Name));
 
-        var properties = (from property in predefined
-            let path = $"{parent?.Path}.{property.Name}".Trim('.')
-            let propertyType = property.PropertyType
-            select new Property(origin, path, propertyType)).ToList();
-
-        if (!Element.TryFromName(type.Name, out var element)) return properties;
-
-        foreach (var cp in element.CustomProperties)
+        foreach (var prop in predefined)
         {
-            var custom = new Property(origin, $"{parent?.Path}.{cp.Name}".Trim('.'), cp.Type);
-            properties.Add(custom);
+            var property = new Property(prop.Name, prop.PropertyType, parent);
+            properties.Add(property);
         }
 
+        if (!Element.TryFromName(type.Name, out var element)) return properties;
+        properties.AddRange(element.CustomProperties);
         return properties;
     }
 
@@ -59,14 +56,13 @@ public static class Extensions
     /// <see cref="Element"/> and <see cref="Property"/> make use of this extension to retrieve child property objects.
     /// This extension will check if the type is an Element type and if so also search the defined custom properties.
     /// </remarks>
-    public static Property? Property(this Type type, string? path)
+    public static Property? Property(this Type type, string? path, Property? parent = default)
     {
         if (path is null) return default;
 
-        var element = Element.List.SingleOrDefault(e => e.Type == type);
-
         Property? property = null;
-        var properties = element is not null ? element.Properties.ToList() : type.Properties().ToList();
+        parent ??= Engine.Property.This(type);
+        var properties = type.Properties(parent).ToList();
 
         while (!string.IsNullOrEmpty(path) && properties.Count > 0)
         {
@@ -141,13 +137,14 @@ public static class Extensions
 
         return candidate switch
         {
-            Tag tag => tag.Scope == Scope.Program ? $"{tag.Container}.{tag.TagName}" : $"{tag.TagName}",
+            bool b => b.ToString().ToLowerInvariant(),
+            Tag tag => tag.TagName,
             DataTypeMember member => member.Name,
             Parameter parameter => parameter.Name,
-            LogixCode code => $"{code.Container}>{code.Routine?.Name}>{code.Location}",
+            LogixCode code => code.Location,
             LogixComponent component => component.Name,
             LogixEnum enumeration => enumeration.Name,
-            _ => TypeGroup.FromType(candidate.GetType()).Name
+            _ => candidate.ToString() ?? string.Empty
         };
     }
 
@@ -248,6 +245,11 @@ public static class Extensions
     public static bool ContainsText(this string input, string text)
     {
         return input.Contains(text, StringComparison.OrdinalIgnoreCase);
+    }
+
+    public static bool PassesFilter(this string input, string? text)
+    {
+        return string.IsNullOrEmpty(text) || input.Contains(text, StringComparison.OrdinalIgnoreCase);
     }
 
     private static bool IsEnumerable(this Type type)

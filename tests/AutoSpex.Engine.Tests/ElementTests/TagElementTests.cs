@@ -24,7 +24,7 @@ public class TagElementTests
     }
     
     [Test]
-    public void This_WhenCalled_ShouldNotBeExpectedType()
+    public void This_WhenCalled_ShouldExpectedValues()
     {
         var element = Element.Tag;
 
@@ -33,7 +33,7 @@ public class TagElementTests
         result.Origin.Should().Be(typeof(Tag));
         result.Type.Should().Be(typeof(Tag));
         result.Name.Should().Be("This");
-        result.Path.Should().Be("This");
+        result.Path.Should().BeEmpty();
         result.Group.Should().Be(TypeGroup.Element);
         result.Identifier.Should().Be("Tag");
         result.Options.Should().BeEmpty();

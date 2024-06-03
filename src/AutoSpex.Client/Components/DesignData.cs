@@ -44,6 +44,48 @@ public static class DesignData
         new DesignRealProjectObserver()
     ];
 
+    public static readonly CriterionObserver BoolCriterion = new(new Criterion(Element.Tag.Type)
+    {
+        Property = "Constant",
+        Operation = Operation.IsTrue
+    });
+
+    public static readonly CriterionObserver NumberCriterion = new(new Criterion(Element.Tag.Type)
+    {
+        Property = "Dimensions",
+        Operation = Operation.GreaterThanOrEqual,
+        Arguments = [new Argument(10)]
+    });
+
+    public static readonly CriterionObserver TextCriterion = new(new Criterion(Element.Tag.Type)
+    {
+        Property = "Name",
+        Operation = Operation.Equal,
+        Arguments = ["Test"]
+    });
+
+    public static readonly CriterionObserver EnumCriterion = new(new Criterion(Element.Tag.Type)
+    {
+        Property = "Radix",
+        Operation = Operation.Equal,
+        Arguments = [new Argument(Radix.Binary)]
+    });
+
+    public static readonly CriterionObserver InnerCriterion = new(new Criterion(Element.Tag.Type)
+    {
+        Property = "Members",
+        Operation = Operation.Any,
+        Arguments =
+        [
+            new Argument(new Criterion(Element.Tag.Type)
+            {
+                Property = "TagName",
+                Operation = Operation.Like,
+                Arguments = [new Argument("%MemberName")]
+            })
+        ]
+    });
+
     public static readonly ObservableCollection<CriterionObserver> Criteria =
     [
         new DesignCriterionObserver(),
@@ -59,6 +101,13 @@ public static class DesignData
 
     public static ObservableCollection<NodeObserver> Specs = new(GenerateSpecs().Select(n => new NodeObserver(n)));
 
+    public static SpecObserver SpecObserver =
+        new(Spec.Configure(c =>
+            c.Query(Element.Tag)
+                .Where("TagName", Operation.Contains, "TestTag")
+                .Verify("Value", Operation.Equal, 123)
+        ));
+
     public static VariableObserver VariableObserver = new DesignVariableObserver();
 
     public static Variable Variable = new("MyVar", "123");
@@ -72,7 +121,7 @@ public static class DesignData
         new DesignVariableObserver()
     ];
 
-    public static ArgumentObserver EmptyArgument = new(Argument.Empty);
+    public static ArgumentObserver EmptyArgument = new(Argument.Default(typeof(string)));
 
     public static ArgumentObserver TextArgument = new(new Argument("Literal Text Value"));
 
@@ -182,6 +231,9 @@ public static class DesignData
     public static DINT DintValue = new(123123);
     public static LINT LintValue = new(123123123);
 
+    public static ValueObserver BooleanValueObserver = new(true);
+    public static ValueObserver RadixValueObserver = new(Radix.Float);
+
     public static EvaluationObserver PassedEvaluation = new(
         Evaluation.Passed(new Criterion("DataType", Operation.Equal, "MyType"), new Tag() { Name = "Custom_Tag_Name" },
             ["MyType"], "MyType"));
@@ -232,20 +284,20 @@ public class DesignRealProjectObserver()
 
 public class DesignFakeProjectObserver() : ProjectObserver(new Project(@"C:\Users\tnunn\Documents\Spex\Fake.spex"));
 
-public class DesignCriterionObserver() : CriterionObserver(new Criterion
+public class DesignCriterionObserver() : CriterionObserver(new Criterion(Element.Tag.Type)
 {
     Property = "Name",
     Operation = Operation.Equal,
     Arguments = ["Test"]
-}, Element.Tag.Type);
+});
 
 public class DesignArgumentObserver() : ArgumentObserver(new Argument("Literal Text Value"));
 
-public class DesignRadixProperty() : Property(typeof(Tag), "Radix", typeof(Radix));
+public class DesignRadixProperty() : Property("Radix", typeof(Radix), Element.Tag.This);
 
-public class DesignTextProperty() : Property(typeof(Tag), "TagName", typeof(TagName));
+public class DesignTextProperty() : Property("TagName", typeof(TagName), Element.Tag.This);
 
-public class DesignMembersProperty() : Property(typeof(Tag), "Members", typeof(IEnumerable<Tag>));
+public class DesignMembersProperty() : Property("Members", typeof(IEnumerable<Tag>), Element.Tag.This);
 
 public class DesignRadixPropertyObserver()
     : PropertyObserver(new DesignRadixProperty(), new ElementObserver(new Tag()));

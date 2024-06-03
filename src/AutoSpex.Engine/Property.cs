@@ -1,5 +1,4 @@
 ﻿using System.Linq.Expressions;
-using System.Text.RegularExpressions;
 
 namespace AutoSpex.Engine;
 
@@ -8,7 +7,7 @@ namespace AutoSpex.Engine;
 /// contains all the functionality we need for our object graph navigation as well as type information and getter functions
 /// which will be used in criteria for getting the values to evaluate filters and verifications.
 /// </summary>
-public partial class Property : IEquatable<Property>
+public class Property : IEquatable<Property>
 {
     private const char Separator = '.';
 
@@ -18,7 +17,7 @@ public partial class Property : IEquatable<Property>
     /// These are cached as they are accessed. We can't be greedy and create them ahead of time because of the recursive nature
     /// of the type graph and these being static types, we could cause overflow exceptions. 
     /// </summary>
-    private static readonly Dictionary<Property, Func<object?, object?>> Cache = new();
+    private static readonly Dictionary<string, Func<object?, object?>> Cache = new();
 
     /// <summary>
     /// A custom getter function for this property which will be used instead of trying to create a getter expression
@@ -29,44 +28,44 @@ public partial class Property : IEquatable<Property>
     private readonly Func<object?, object?>? _getter;
 
     /// <summary>
-    /// Creates a new <see cref="Property"/> given the originating type, path, return type, and optional custom getter.
+    /// Creates a new <see cref="Property"/> given the name, type, and optional parent and custom getter.
     /// </summary>
-    /// <param name="origin">The type from which this property originates.</param>
-    /// <param name="path">The path name to this immediate or nested child property.</param>
-    /// <param name="type">The return type of the property.</param>
-    /// <param name="getter">An optional custom getter that tells us how to get the value for the property given and
-    /// instance of the origin object.</param>
-    /// <exception cref="ArgumentException"><paramref name="path"/> is null or empty.</exception>
-    /// <exception cref="ArgumentNullException"><paramref name="origin"/> or <paramref name="type"/> is null.</exception>
-    public Property(Type origin, string path, Type type, Func<object?, object?>? getter = default)
+    /// <param name="name">The name to the property.</param>
+    /// <param name="type">The type of the property.</param>
+    /// <param name="parent">The parent property of this property. If null this property should represent the root property.</param>
+    /// <param name="getter">An optional custom getter that tells us how to get the value for this property given an instance of the parent object.</param>
+    /// <exception cref="ArgumentException"><paramref name="name"/> is null or empty.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="type"/> is null.</exception>
+    public Property(string name, Type type, Property? parent = default, Func<object?, object?>? getter = default)
     {
-        if (string.IsNullOrEmpty(path))
+        if (string.IsNullOrEmpty(name))
             throw new ArgumentException("Name can not be null or empty to initialize a property.");
 
-        Origin = origin ?? throw new ArgumentNullException(nameof(origin));
-        Path = path;
+        Name = name;
         Type = type ?? throw new ArgumentNullException(nameof(type));
-
-        if (getter is null) return;
-
-        if (CanCache(getter))
-        {
-            Cache.TryAdd(this, getter);
-            return;
-        }
-
+        Parent = parent;
         _getter = getter;
     }
 
     /// <summary>
-    /// The root or originating type to which this property belongs.
+    /// The string that uniquely identifies this property using the origin type and property path.
     /// </summary>
-    public Type Origin { get; }
+    public string Key => string.Concat(Origin, ".", Path);
 
     /// <summary>
-    /// The full dot down path to this property from the origin type.
+    /// The root or originating property to which this property belongs.
     /// </summary>
-    public string Path { get; }
+    public Type Origin => GetOriginType();
+
+    /// <summary>
+    /// The parent property to which this property belongs. If null then this is the "root" of the type graph.
+    /// </summary>
+    public Property? Parent { get; }
+
+    /// <summary>
+    /// The full dot down path to this property from the origin.
+    /// </summary>
+    public string Path => GetPath();
 
     /// <summary>
     /// The return type of this property.
@@ -76,7 +75,7 @@ public partial class Property : IEquatable<Property>
     /// <summary>
     /// The member name of this property.
     /// </summary>
-    public string Name => Path[(Path.LastIndexOf(Separator) + 1)..];
+    public string Name { get; }
 
     /// <summary>
     /// A friendly type identifier for the property. This can be used to display in the client UI.
@@ -99,11 +98,71 @@ public partial class Property : IEquatable<Property>
     public IEnumerable<Property> Properties => Type.Properties(this);
 
     /// <summary>
-    /// Returns the value getter for the property which can be used to retrieve the property value from an instance of the
-    /// origin type.
+    /// 
     /// </summary>
-    /// <returns>A <see cref="Func{TResult}"/> taking an instance object and returning this property value.</returns>
-    public Func<object?, object?> Getter() => Getter(Origin, Path);
+    public Type[] TypeGraph => GetTypeGraph().ToArray();
+
+    /// <summary>
+    /// If this property type is a generic type with a single generic parameter argument, this will return the inner
+    /// generic parameter type. Otherwise, it will return the same type as <see cref="Type"/>. This is useful for collections
+    /// where we want to know what the types of the items in the collection.
+    /// </summary>
+    public Type InnerType => Type.SelfOrInnerType();
+
+    /// <summary>
+    /// Creates a default self-referential property called "This" with a null parent, which can be used as a root
+    /// property for all sub properties of the provided type. This is need with how <see cref="Property"/> is designed
+    /// to get values, since it needs some root pseudo property as the origin of the type graph.
+    /// </summary>
+    /// <param name="type">The <see cref="System.Type"/> of the property.</param>
+    /// <returns>A <see cref="Property"/> with the provided type named "This" and a null parent.</returns>
+    public static Property This(Type type) => new(nameof(This), type, null, x => x);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="origin"></param>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    public static Func<object?, object?>? Getter(Type? origin, string? path)
+    {
+        var key = string.Concat(origin, ".", path);
+        if (Cache.TryGetValue(key, out var getter)) return getter;
+
+        var property = origin?.Property(path);
+        if (property is null) return default;
+        return x => property.GetValue(x);
+    }
+
+    /// <summary>
+    /// Gets the value of this <see cref="Property"/> given an instance representing the origin type this
+    /// property belongs to.
+    /// </summary>
+    /// <param name="origin">The origin object instance for which to get the property value of.</param>
+    /// <returns>A object representing the value of this property relative to the provided origin.</returns>
+    /// <remarks>
+    /// This is primary means though how we will get values from our element objet and use those to execute
+    /// criterion for filtering and verification.
+    /// </remarks>
+    public object? GetValue(object? origin)
+    {
+        if (origin is null) return null;
+
+        if (Origin != origin.GetType())
+            throw new ArgumentException(
+                $"The provided origin {origin.GetType()} does not match this property's origin {Origin}");
+
+        //If we are at the root either use a custom getter or just return the origin object.
+        //This marks the start of the traversal back down the tree.
+        if (Parent is null) return _getter is not null ? _getter(origin) : origin;
+
+        //Will recurse up the tree and back down calling each getter on the way until we have our parent object.
+        var parent = Parent.GetValue(origin);
+
+        //Use our local getter function (custom or expression) and the parent object to get the value of this property.
+        var getter = GetGetter();
+        return getter(parent);
+    }
 
     /// <summary>
     /// Determines if two <see cref="Property"/> objects are equal. We are using the <see cref="Origin"/> and <see cref="Path"/>
@@ -115,91 +174,129 @@ public partial class Property : IEquatable<Property>
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        return Origin == other.Origin && Path == other.Path;
+        return Key == other.Key;
     }
 
     /// <summary>
     /// Determines if two <see cref="Property"/> objects are equal. We are using the <see cref="Origin"/> and <see cref="Path"/>
     /// to indicate if one property is the "same" as another, since properties on different type could have same name or path.
     /// </summary>
-    public override bool Equals(object? obj) => obj is Property other && other.Origin == Origin && other.Path == Path;
+    public override bool Equals(object? obj) => obj is Property other && string.Equals(Key, other.Key);
 
-    public override int GetHashCode() => HashCode.Combine(Origin, Path);
+    /// <inheritdoc />
+    public override int GetHashCode() => Key.GetHashCode();
+
+    /// <inheritdoc />
     public override string ToString() => Path;
 
     /// <summary>
-    /// Creates the getter expression for this property and caches the result for the next call.
-    /// This will help improve performance as we run many evaluations (getters) for many specs.
+    /// Retrieves the getter function for this property, which will either be the custom getter, cached expression,
+    /// or the expression function we built using the inforation of this class. This getter function will return the value
+    /// of this property provided the parent object instance. As getters are created we are caching them so that we can
+    /// reuse them and not have to recreate each time we ask for a property value (which will be a lot as each spec is run)
     /// </summary>
-    private Func<object?, object?> Getter(Type origin, string path)
+    private Func<object?, object?> GetGetter()
     {
-        //If we already have a cached getter function for this property then return that instead of creating it again.
-        if (Cache.TryGetValue(this, out var cached)) return cached;
-
-        //If there is a custom getter that was not cached then return that instead of generating and expression.
+        //Always defer to the provided custom getter as the override to building an expression tree.
         if (_getter is not null) return _getter;
 
-        //Generate the property getter expression and compile the result.
-        var parameter = Expression.Parameter(typeof(object), "x");
-        var converted = Expression.TypeAs(parameter, origin);
-        var member = GetMember(converted, path);
+        //If we have a cached getter function for this property then return that instead of creating it again.
+        if (Cache.TryGetValue(Key, out var cached)) return cached;
 
-        var getter = Expression.Lambda<Func<object?, object?>>(member, parameter).Compile();
+        //Build the property expression and compile it.
+        var type = Parent is not null ? Parent.Type : Type;
+        var getter = BuildGetterExpression(type, Name);
 
-        //Cache this getter for future calls to this property for other instance objects to improve performance.
-        Cache.Add(this, getter);
+        //Cache this getter for future or static calls to this property for other instance objects to improve performance.
+        Cache.Add(Key, getter);
         return getter;
     }
 
     /// <summary>
-    /// Recursively gets the member expression for the provided property name. This will also add null checks for
-    /// each nested member to prevent null reference exceptions, and to allow null to be propagated through the
-    /// member expression and returns to the operation's evaluation method.
+    /// Builds a getter expression and returns the compiled function which can be executed to get the value of this
+    /// property given its parent object instance. This expression uses a null check condition to prevent null reference
+    /// exceptions when accessing the child property.
     /// </summary>
-    /// <param name="parameter">The current member access expression for the type.</param>
-    /// <param name="path">The current property name to create member access to.</param>
-    /// <returns>A <see cref="Expression{TDelegate}"/> that represents member access to a immediate or nested/complex
-    /// member property or field, with corresponding conditional null checks for each member level.</returns>
-    private static Expression GetMember(Expression parameter, string path)
+    private static Func<object?, object?> BuildGetterExpression(Type parent, string name)
     {
-        //Trim '.' characters in case they are present.
-        path = path.Trim(Separator);
-
-        //Extract the first member name of the property path. Strip off the array brackets if they are present (we just want the number).
-        var match = FirstMemberPattern().Match(path);
-        if (!match.Success) return parameter;
-        var member = match.Value;
-        var name = member.StartsWith("[") && member.EndsWith("]") ? member[1..^1] : member;
-
-        //If this member is the last. Return its getter and be done.
-        if (path == member)
-            return Expression.TypeAs(GenerateGetter(parameter, name), typeof(object));
-        
-        //Otherwise generate the member getter along with a null check and continue to recurse down the path. 
-        var getter = GenerateGetter(parameter, name);
-        var notNull = Expression.NotEqual(getter, Expression.Constant(null));
-        return Expression.Condition(notNull, GetMember(getter, path[member.Length..]), Expression.Constant(null),
-            typeof(object));
+        var parameter = Expression.Parameter(typeof(object), "x");
+        var converted = Expression.TypeAs(parameter, parent);
+        var member = Expression.TypeAs(BuildPropertyExpression(converted, name), typeof(object));
+        var notNull = Expression.NotEqual(converted, Expression.Constant(null));
+        var condition = Expression.Condition(notNull, member, Expression.Constant(null), typeof(object));
+        var getter = Expression.Lambda<Func<object?, object?>>(condition, parameter).Compile();
+        return getter;
     }
 
-    private static Expression GenerateGetter(Expression parameter, string name)
+    /// <summary>
+    /// Builds a property getter expression for the provided name and parameter. This supports collection index properties
+    /// as well as normal named properties.
+    /// </summary>
+    private static Expression BuildPropertyExpression(Expression parameter, string name)
     {
+        //Strip off the array brackets if they are present (we just want the number).
+        name = name.StartsWith("[") && name.EndsWith("]") ? name[1..^1] : name;
+
         return int.TryParse(name, out var index)
             ? Expression.Property(parameter, "Item", Expression.Constant(index))
             : Expression.PropertyOrField(parameter, name);
     }
 
     /// <summary>
-    /// Determines if the provided <see cref="Func{TResult}"/> is a delegate type that we can cache to our internal static
-    /// getter function collection. This is to avoid external type getters from being inadvertently cached. We only want to
-    /// cache known element type getters for types declared in this assembly.
+    /// Gets the originating type of this property instance by traversing the object hierarchy until it reaches the root
+    /// property (property with no parent).
     /// </summary>
-    private static bool CanCache(Func<object?, object?> function)
+    private Type GetOriginType()
     {
-        return function.Method.DeclaringType is not null &&
-               function.Method.DeclaringType.Assembly == typeof(Property).Assembly;
+        var current = this;
+
+        while (current.Parent is not null)
+        {
+            current = current.Parent;
+        }
+
+        return current.Type;
     }
 
-    [GeneratedRegex(@"^[^.[]+|^\[\d+\]")]
-    private static partial Regex FirstMemberPattern();
+    /// <summary>
+    /// Retrieves the path of the current <see cref="Property"/> object by combining the names of all the properties
+    /// in the hierarchy leading up to it.
+    /// </summary>
+    private string GetPath()
+    {
+        var path = string.Empty;
+
+        var current = this;
+
+        while (current.Parent is not null)
+        {
+            path = CombineMembers(current.Name, path);
+            current = current.Parent;
+        }
+
+        return path;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    private IEnumerable<Type> GetTypeGraph()
+    {
+        if (Parent is null) return [Type];
+        var types = new List<Type>();
+        types.AddRange(Parent.GetTypeGraph());
+        types.Add(Type);
+        return types;
+    }
+
+    /// <summary>
+    /// Combines two string values representing members to form a fully qualified path.
+    /// </summary>
+    /// <param name="left">The left member to combine.</param>
+    /// <param name="right">The right member to combine.</param>
+    /// <returns>A string representing the combined path of the left and right members.</returns>
+    private static string CombineMembers(string left, string right)
+    {
+        return right.StartsWith('[') ? $"{left}{right}" : $"{left}.{right}".Trim(Separator);
+    }
 }

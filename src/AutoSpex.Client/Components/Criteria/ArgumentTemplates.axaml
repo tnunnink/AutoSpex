@@ -1,0 +1,43 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+
+    <Design.PreviewWith>
+        <Border Padding="20" Height="300" Width="600">
+            <StackPanel Spacing="10" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <ContentControl Content="{x:Static components:DesignData.EmptyArgument}"
+                                ContentTemplate="{DynamicResource ArgumentEntry}" />
+                <ContentControl Content="{x:Static components:DesignData.EnumArgument}"
+                                ContentTemplate="{DynamicResource ArgumentEntry}" />
+                <ContentControl Content="{x:Static components:DesignData.TextArgument}"
+                                ContentTemplate="{DynamicResource ArgumentEntry}" />
+                <ContentControl Content="{x:Static components:DesignData.VariableArgument}"
+                                ContentTemplate="{DynamicResource ArgumentEntry}" />
+            </StackPanel>
+        </Border>
+    </Design.PreviewWith>
+
+
+    <DataTemplate x:Key="ArgumentEntry" x:DataType="observers:ArgumentObserver">
+        <StackPanel Orientation="Horizontal">
+            <controls:Entry
+                Value="{Binding Value, Mode=OneWay, FallbackValue={x:Null}}"
+                ValueTemplate="{StaticResource ValueTemplates}"
+                ItemTemplate="{StaticResource ValueTemplates}"
+                Watermark="Enter value"
+                Populate="{Binding Suggestions}"
+                Selector="{Binding Selector}"
+                Commit="{Binding Commit}">
+                <controls:Entry.IsEmpty>
+                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                        <Binding Path="Value" Converter="{x:Static ObjectConverters.IsNull}" />
+                        <Binding Path="Value" Converter="{x:Static StringConverters.IsNullOrEmpty}" />
+                    </MultiBinding>
+                </controls:Entry.IsEmpty>
+            </controls:Entry>
+        </StackPanel>
+    </DataTemplate>
+</ResourceDictionary>

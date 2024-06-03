@@ -1,16 +1,23 @@
 ﻿using L5Sharp.Core;
+
 // ReSharper disable ConvertIfStatementToReturnStatement
 
 namespace AutoSpex.Engine;
 
-public class Argument
+public class Argument : IEquatable<Argument>
 {
     /// <summary>
     /// Creates a new <see cref="Argument"/> with the empty string default value.
     /// </summary>
     public Argument()
     {
+        Type = typeof(string);
         Value = string.Empty;
+    }
+
+    public Argument(Type type)
+    {
+        Type = type ?? throw new ArgumentNullException(nameof(type));
     }
 
     /// <summary>
@@ -21,6 +28,7 @@ public class Argument
     public Argument(object value)
     {
         Value = value ?? throw new ArgumentNullException(nameof(value), "Can not set argument to null value");
+        Type = value.GetType();
     }
 
     /// <summary>
@@ -32,6 +40,7 @@ public class Argument
     {
         ArgumentId = argumentId;
         Value = value ?? throw new ArgumentNullException(nameof(value), "Can not set argument to null value");
+        Type = value.GetType();
     }
 
     /// <summary>
@@ -40,19 +49,14 @@ public class Argument
     public Guid ArgumentId { get; } = Guid.NewGuid();
 
     /// <summary>
+    /// The type of the argument's value.
+    /// </summary>
+    public Type Type { get; }
+
+    /// <summary>
     /// The value of the argument.
     /// </summary>
     public object Value { get; private set; }
-
-    /// <summary>
-    /// The type of the argument value.
-    /// </summary>
-    public Type Type => Value.GetType();
-
-    /// <summary>
-    /// A formatted string value for the argument value.
-    /// </summary>
-    public string Formatted => FormattedValue();
 
     /// <summary>
     /// The friendly type name of the argument value.
@@ -88,7 +92,11 @@ public class Argument
     public object ResolveAs(Type? type)
     {
         //If a variable was provided, take the inner variable value, otherwise take this value.
-        var value = Value is Variable variable ? variable.ResolveValue() : Value;
+        var value = Value is Variable variable ? variable.Value : Value;
+
+        // ReSharper disable once ConvertIfStatementToSwitchStatement
+        if (value is null)
+            throw new ArgumentException($"Can not resolve the null argument value as type {type}");
 
         //If a criterion was provided, just return that. Nested arguments will get resolved here too.
         if (value is Criterion criterion)
@@ -114,22 +122,30 @@ public class Argument
         return value;
     }
 
-    public override string ToString() => FormattedValue();
-
-    private string FormattedValue()
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    public static Argument Default(Type type)
     {
-        return Value switch
-        {
-            Variable variable => variable.Formatted,
-            Criterion criterion =>
-                $"({criterion.Property} {criterion.Operation} {string.Join(',', criterion.Arguments)})",
-            LogixEnum enumeration => enumeration.Name,
-            LogixComponent component => component.Key.ToString(),
-            _ => Value.ToString() ?? string.Empty
-        };
+        var group = TypeGroup.FromType(type);
+        return new Argument(group.DefaultValue ?? string.Empty);
     }
 
-    public static Argument Empty => new();
+    /// <inheritdoc />
+    public bool Equals(Argument? other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        return ReferenceEquals(this, other) || ArgumentId.Equals(other.ArgumentId);
+    }
+
+    /// <inheritdoc />
+    public override bool Equals(object? obj) => obj is Argument other && Equals(other);
+
+    /// <inheritdoc />
+    public override int GetHashCode() => ArgumentId.GetHashCode();
+
     public static implicit operator Argument(ValueType value) => new(value);
     public static implicit operator Argument(string value) => new(value);
     public static implicit operator Argument(DateTime value) => new(value);

@@ -128,7 +128,7 @@ public class Spec()
 
             //3.Evaluate count (if configured)
             if (Settings.VerifyCount)
-                verifications.Add(Verify(filtered));
+                verifications.Add(VerifyCount(filtered));
 
             //4.Verify candidates
             verifications.AddRange(filtered.Select(Verify));
@@ -253,7 +253,7 @@ public class Spec()
     /// </summary>
     /// <param name="candidates">The collection of candidate object that passed the filter step.</param>
     /// <returns>A <see cref="Verification"/> representing the result of the range criterion.</returns>
-    private Verification Verify(ICollection<object> candidates)
+    private Verification VerifyCount(ICollection<LogixElement> candidates)
     {
         var criterion = new Criterion(Settings.CountOperation, Settings.CountValue);
         var evaluation = criterion.Evaluate(candidates.Count);

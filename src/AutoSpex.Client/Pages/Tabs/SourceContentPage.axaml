@@ -7,12 +7,13 @@
              xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
              xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
              x:Class="AutoSpex.Client.Pages.SourceContentPage"
-             x:DataType="pages:SourceContentPageModel">
+             x:DataType="pages:SourceContentPageModel"
+             Padding="20">
 
     <Design.Height>500</Design.Height>
     <Design.Width>1200</Design.Width>
 
-    <Panel Margin="20">
+    <Panel>
         <StackPanel Spacing="10"
                     VerticalAlignment="Center" HorizontalAlignment="Center"
                     IsVisible="{Binding !Source.HasContent}">
@@ -48,11 +49,21 @@
                 <components:Section.Header>
                     <Grid ColumnDefinitions="Auto,*,Auto">
 
-                        <components:ElementSelector
+                        <DropDownButton
                             Grid.Column="0"
                             BorderThickness="0"
-                            Element="{Binding Element}"
-                            FlyoutPlacement="BottomEdgeAlignedLeft" />
+                            MinWidth="100"
+                            Theme="{a:ControlTheme DropDownButtonSubtle}"
+                            Classes.accent="{Binding Element, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Element.Default}}"
+                            Classes.warning="{Binding Element, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:Element.Default}}"
+                            Content="{Binding Element}">
+                            <DropDownButton.Flyout>
+                                <Flyout Placement="BottomEdgeAlignedLeft"
+                                        HorizontalOffset="-8">
+                                    <components:ElementList Element="{Binding Element}" />
+                                </Flyout>
+                            </DropDownButton.Flyout>
+                        </DropDownButton>
 
                         <TextBox Grid.Column="1"
                                  Text="{Binding Filter}"
@@ -80,13 +91,33 @@
                                             HorizontalOffset="8">
                                         <components:CriteriaList
                                             Heading="Filters"
-                                            InfoText=""
+                                            InfoText="Add criteria to filter elements from this L5X file."
                                             Element="{Binding Element}"
                                             Criteria="{Binding Filters}"
-                                            Inclusion="{Binding FilterInclusion}" />
+                                            Inclusion="{Binding FilterInclusion}"
+                                            MinWidth="400"/>
                                     </Flyout>
                                 </Button.Flyout>
                             </Button>
+
+                            <Border BorderThickness="1 0 0 0" Margin="5"
+                                    BorderBrush="{a:ThemeResource Container2BorderBrush}" />
+
+                            <StackPanel Orientation="Horizontal" Spacing="5"
+                                        HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Button Theme="{StaticResource IconButtonSmall}"
+                                        properties:ButtonIcon.Theme="{StaticResource IconChevronLeft}" />
+                                <Button Theme="{a:ControlTheme ButtonSoft}"
+                                        Padding="5"
+                                        FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                                        Content="1" />
+                                <Button Theme="{StaticResource IconButtonSmall}"
+                                        properties:ButtonIcon.Theme="{StaticResource IconChevronRight}" />
+                            </StackPanel>
+
+                            <Border BorderThickness="1 0 0 0" Margin="5"
+                                    BorderBrush="{a:ThemeResource Container2BorderBrush}" />
+
                             <ToggleButton
                                 Theme="{StaticResource IconButton}"
                                 properties:ButtonIcon.Theme="{StaticResource IconLayoutSidebarInsert}"
@@ -96,6 +127,7 @@
                         </StackPanel>
                     </Grid>
                 </components:Section.Header>
+
 
                 <controls:DrawerView
                     x:Name="DrawerView"

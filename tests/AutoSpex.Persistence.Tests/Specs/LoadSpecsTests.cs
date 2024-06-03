@@ -42,8 +42,8 @@ public class LoadSpecsTests
         var node = Node.NewSpec();
         await mediator.Send(new CreateNode(node));
         //Create variable to reference node
-        var variable = new Variable(node.NodeId, "MyVar", "SomeValue");
-        await mediator.Send(new SaveVariables([variable]));
+        var variable = new Variable("MyVar", "SomeValue");
+        await mediator.Send(new SaveVariables(node.NodeId, [variable]));
         //Create spec that uses variable
         var spec = new Spec(node.NodeId, node.Name);
         spec.Query(Element.Tag);
@@ -52,7 +52,7 @@ public class LoadSpecsTests
         await mediator.Send(new SaveSpec(spec));
         //Update the variable value to ensure the resolving works
         variable.Value = "MostRecentValue";
-        await mediator.Send(new SaveVariables([variable]));
+        await mediator.Send(new SaveVariables(node.NodeId, [variable]));
 
         //Finally...
         var result = await mediator.Send(new LoadSpecs([node.NodeId]));

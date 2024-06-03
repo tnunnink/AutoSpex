@@ -9,10 +9,11 @@ namespace AutoSpex.Client.Shared;
 /// A marker interface to allow me to pass instance of <see cref="Observer{TModel}"/> around with knowledge that it
 /// implements these interfaces.
 /// </summary>
-public interface ITrackable : INotifyPropertyChanged, IChangeTracking;
+public interface ITrackable : INotifyPropertyChanged, IChangeTracking, INotifyDataErrorInfo;
 
 /// <summary>
-/// 
+/// A base view model that implements tracking of the child properties and objects and provides functionality to indicate
+/// to the UI that changes exists for this view model.
 /// </summary>
 public abstract class TrackableViewModel : ViewModelBase, ITrackable
 {
@@ -24,6 +25,11 @@ public abstract class TrackableViewModel : ViewModelBase, ITrackable
     /// Indicates that there are changes made to the state of the view model that need to be persisted or saved.
     /// </summary>
     public virtual bool IsChanged => _changed.Count > 0 || _tracked.Any(t => t.IsChanged);
+    
+    /// <summary>
+    /// Indicates that this view model or any of its tracked view models have errors present.
+    /// </summary>
+    public virtual bool IsErrored => HasErrors || _tracked.Any(t => t.HasErrors);
 
     /// <summary>
     /// Accepts the changes made to the trackable view model and all its tracked view models.
@@ -81,6 +87,7 @@ public abstract class TrackableViewModel : ViewModelBase, ITrackable
         ArgumentNullException.ThrowIfNull(trackable);
         _tracked.Add(trackable);
         trackable.PropertyChanged += OnTrackedModelPropertyChanged;
+        trackable.ErrorsChanged += OnTrackedModelErrorsChanged;
     }
 
     /// <summary>
@@ -90,12 +97,13 @@ public abstract class TrackableViewModel : ViewModelBase, ITrackable
     /// </summary>
     /// <param name="trackable">The child <see cref="ITrackable"/> to forget.</param>
     /// <exception cref="ArgumentNullException"><paramref name="trackable"/> is null.</exception>
-    public void Forget(ITrackable trackable)
+    protected void Forget(ITrackable trackable)
     {
         ArgumentNullException.ThrowIfNull(trackable);
         var removed = _tracked.Remove(trackable);
         if (!removed) return;
         trackable.PropertyChanged -= OnTrackedModelPropertyChanged;
+        trackable.ErrorsChanged -= OnTrackedModelErrorsChanged;
     }
 
     /// <inheritdoc />
@@ -106,6 +114,7 @@ public abstract class TrackableViewModel : ViewModelBase, ITrackable
         foreach (var tracked in _tracked)
         {
             tracked.PropertyChanged -= OnTrackedModelPropertyChanged;
+            tracked.ErrorsChanged -= OnTrackedModelErrorsChanged;
         }
 
         _tracked.Clear();
@@ -120,23 +129,39 @@ public abstract class TrackableViewModel : ViewModelBase, ITrackable
     {
         base.OnPropertyChanged(e);
 
-        if (string.IsNullOrEmpty(e.PropertyName)
-            || !_tracking.Contains(e.PropertyName)
-            || e.PropertyName == nameof(IsChanged)) return;
+        if (string.IsNullOrEmpty(e.PropertyName)) return;
+        
+        switch (e.PropertyName)
+        {
+            case nameof(IsChanged) or nameof(IsErrored):
+                return;
+            case nameof(HasErrors):
+                OnPropertyChanged(nameof(IsErrored));
+                return;
+        }
 
+        if (!_tracking.Contains(e.PropertyName)) return;
         _changed.Add(e.PropertyName);
-        OnPropertyChanged(nameof(IsChanged));
-        OnIsChanged(IsChanged);
+        OnPropertyChanged(nameof(IsChanged));  
     }
-
-    protected virtual void OnIsChanged(bool value)
-    {
-    }
-
+    
+    /// <summary>
+    /// Forwards the tracked model property changed event up the chain to notify this observer the <see cref="IsChanged"/>
+    /// has changed.
+    /// </summary>
     private void OnTrackedModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName != nameof(IsChanged)) return;
         OnPropertyChanged(nameof(IsChanged));
-        OnIsChanged(IsChanged);
+    }
+    
+    /// <summary>
+    /// Forwards the tracked model errors changed event up the chain to notify this observer the <see cref="IsErrored"/>
+    /// has changed.
+    /// </summary>
+    private void OnTrackedModelErrorsChanged(object? sender, DataErrorsChangedEventArgs e)
+    {
+        Console.WriteLine($"{GetType()} ErrorsChanged from {sender}");
+        OnPropertyChanged(nameof(IsErrored));
     }
 }

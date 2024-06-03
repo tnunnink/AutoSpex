@@ -18,7 +18,7 @@
             <ControlTemplate>
                 <DockPanel Height="300" Width="300">
                     <TextBox DockPanel.Dock="Top"
-                             Text="{TemplateBinding FilterText}"
+                             Text="{TemplateBinding FilterText, Mode=TwoWay}"
                              Watermark="Filter elements"
                              CornerRadius="5 5 0 0"
                              BorderThickness="0 0 0 1"
@@ -33,6 +33,7 @@
 
                     <ListBox x:Name="ElementList"
                              ItemsSource="{Binding Elements, RelativeSource={RelativeSource TemplatedParent}}"
+                             SelectedItem="{Binding Element, RelativeSource={RelativeSource TemplatedParent}}"
                              BorderThickness="0"
                              Background="Transparent"
                              Padding="5">

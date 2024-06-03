@@ -17,11 +17,6 @@ namespace AutoSpex.Engine;
 public abstract class Element : SmartEnum<Element, string>
 {
     /// <summary>
-    /// The name of the self-referential property for the elements.
-    /// </summary>
-    private const string ThisProperty = "This";
-
-    /// <summary>
     /// Holds "custom" properties, or properties we attach to the element and provide a custom function to retrieve
     /// its value. This would allow derived classes to add properties or make method calls show up as a property as needed. 
     /// </summary>
@@ -40,9 +35,9 @@ public abstract class Element : SmartEnum<Element, string>
     }
 
     public Type Type { get; }
-    public IEnumerable<Property> Properties => Type.Properties();
+    public IEnumerable<Property> Properties => Type.Properties(This);
     public IEnumerable<Property> CustomProperties => _customProperties;
-    public Property This => _customProperties.Single(p => p.Name == ThisProperty);
+    public Property This => _customProperties.Single(p => p.Name == nameof(This));
     public virtual Func<L5X, IEnumerable<LogixElement>> Query => file => file.Query(Type);
     public Func<L5X, string, object?> Lookup => (file, name) => file.Find(new ComponentKey(Type.Name, name));
     public bool IsComponent => Type.IsAssignableTo(typeof(LogixComponent));
@@ -93,7 +88,7 @@ public abstract class Element : SmartEnum<Element, string>
     /// </summary>
     /// <param name="path">The path to the desired property, separated by dots.</param>
     /// <returns>The <see cref="Property"/> object representing the specified property if found, otherwise, <c>null</c>.</returns>
-    public Property? Property(string? path) => Type.Property(path);
+    public Property? Property(string? path) => Type.Property(path, This);
 
     /// <summary>
     /// Registers a custom property for the element type using the provided property name and getter function.
@@ -105,7 +100,7 @@ public abstract class Element : SmartEnum<Element, string>
     /// that the method takes no arguments, but is a convenient way to provide some additional properties without changing the base API.</remarks>
     private void Register<T>(string name, Func<object?, object?> getter)
     {
-        var property = new Property(Type, name, typeof(T), getter);
+        var property = new Property(name, typeof(T), This, getter);
         _customProperties.Add(property);
     }
 
@@ -116,8 +111,7 @@ public abstract class Element : SmartEnum<Element, string>
     /// </summary>
     private void RegisterThis()
     {
-        var property = new Property(Type, ThisProperty, Type, x => x);
-        _customProperties.Add(property);
+        _customProperties.Add(Engine.Property.This(Type));
     }
 
     private class DefaultElement : Element
@@ -145,8 +139,8 @@ public abstract class Element : SmartEnum<Element, string>
     {
         public DataTypeElement() : base(typeof(DataType))
         {
-            Register<IEnumerable<LogixComponent>>("Dependencies", x => ((DataType)x!).Dependencies());
-            Register<IEnumerable<CrossReference>>("References", x => ((DataType)x!).References());
+            Register<IList<LogixComponent>>("Dependencies", x => ((DataType)x!).Dependencies().ToList());
+            /*Register<IList<CrossReference>>("References", x => ((DataType)x!).References().ToList());*/
         }
 
         public override IEnumerable<string> DisplayProperties =>
@@ -191,7 +185,7 @@ public abstract class Element : SmartEnum<Element, string>
     {
         public TagElement() : base(typeof(Tag))
         {
-            Register<IEnumerable<Tag>>("Members", x => ((Tag)x!).Members());
+            Register<IList<Tag>>("Members", x => ((Tag)x!).Members().ToList()); 
         }
 
         public override Func<L5X, IEnumerable<LogixElement>> Query => x => x.Query<Tag>().SelectMany(t => t.Members());

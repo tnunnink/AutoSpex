@@ -9,7 +9,7 @@ public record Evaluation
     {
         Result = result;
         CriterionId = criterion.CriterionId;
-        Message = $"{criterion.Property} {criterion.Operation.ShouldMessage}";
+        Message = string.Join(" ", criterion.Property, criterion.Operation?.ShouldMessage);
         Candidate = candidate;
         Expected = args;
         Actual = actual;
@@ -19,7 +19,7 @@ public record Evaluation
     {
         Result = result;
         CriterionId = criterion.CriterionId;
-        Message = $"{criterion.Property} {criterion.Operation.ShouldMessage}";
+        Message = string.Join(" ", criterion.Property, criterion.Operation?.ShouldMessage);
         Candidate = candidate;
         Expected = [];
         Exception = exception;

@@ -15,7 +15,7 @@
             <components:NodeHeader
                 Node="{Binding Node}"
                 RunCommand="{Binding RunCommand}"
-                SaveCommand="{Binding SaveCommand}"/>
+                SaveCommand="{Binding SaveCommand}" />
         </Border>
 
         <TabControl
@@ -39,7 +39,7 @@
 
             <TabControl.ContentTemplate>
                 <DataTemplate x:DataType="shared:PageViewModel">
-                    <ContentControl Content="{Binding}" Margin="30" />
+                    <ContentControl Content="{Binding}" />
                 </DataTemplate>
             </TabControl.ContentTemplate>
         </TabControl>

@@ -39,7 +39,7 @@ public class CriterionConceptTests
     }
 
     [Test]
-    public void Evaluate_InvalidOperationForPropertyType_ShouldHaveErrorEvaluation()
+    public void Evaluate_InvalidOperationForPropertyType_ShouldHaveFailedEvaluation()
     {
         var tag = new Tag {Name = "Test"};
 

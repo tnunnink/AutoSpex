@@ -17,6 +17,8 @@
         <ResourceInclude Source="Themes/DrawerView.axaml" />
         <ResourceInclude Source="Themes/GridSplitter.axaml" />
         <ResourceInclude Source="Themes/Prompt.axaml" />
+        <ResourceInclude Source="Themes/SuggestionEntry.axaml" />
+        <ResourceInclude Source="Themes/Entry.axaml" />
         <ResourceInclude Source="Themes/DataGrid.axaml" />
         <ResourceInclude Source="Themes/DataGridCell.axaml" />
         <ResourceInclude Source="Themes/DataGridRow.axaml" />

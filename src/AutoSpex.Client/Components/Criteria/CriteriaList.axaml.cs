@@ -104,20 +104,15 @@ public class CriteriaList : TemplatedControl
         base.OnPropertyChanged(change);
 
         if (change.Property == ElementProperty)
-            HandleElementChanged(change);
-    }
-
-    private void HandleElementChanged(AvaloniaPropertyChangedEventArgs change)
-    {
-        var element = change.GetNewValue<Element>();
-        UpdateCriteriaElement(element);
-        AddCriterionCommand?.NotifyCanExecuteChanged();
+        {
+            AddCriterionCommand?.NotifyCanExecuteChanged();
+        }
     }
 
     private void AddCriterion()
     {
         if (Criteria is null || Element is null) return;
-        var criterion = new CriterionObserver(new Criterion(), Element.Type);
+        var criterion = new CriterionObserver(new Criterion(Element.Type));
         Criteria.Add(criterion);
     }
 
@@ -186,14 +181,6 @@ public class CriteriaList : TemplatedControl
 
         foreach (var criterion in criteria)
             Criteria.Add(criterion);
-    }
-
-    private void UpdateCriteriaElement(Element? element)
-    {
-        if (Criteria is null || element is null) return;
-
-        foreach (var criterion in Criteria)
-            criterion.Type = element.Type;
     }
 
     private bool HasSelected() => SelectedCriteria.Count > 0;

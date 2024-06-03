@@ -23,7 +23,7 @@ public abstract partial class ViewModelBase : ObservableValidator
     protected readonly Prompter Prompter = Container.Resolve<Prompter>();
 
     /// <summary>
-    /// A command to request navigation of the this view model into the view of the application.
+    /// A command to request navigation of the view model into the view of the application.
     /// </summary>
     /// <returns>The <see cref="Task"/> representing the async navigation request.</returns>
     /// <remarks>Deriving classes will implement this using the internal <see cref="Navigator"/> service.</remarks>

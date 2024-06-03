@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading;
 using AutoSpex.Client.Observers;
 using AutoSpex.Client.Shared;
@@ -11,7 +12,7 @@ using CommunityToolkit.Mvvm.Messaging;
 
 namespace AutoSpex.Client.Pages;
 
-public partial class SourceContentPageModel(NodeObserver node) : PageViewModel,
+public partial class SourceContentPageModel(NodeObserver node) : DetailPageModel,
     IRecipient<ElementObserver.View>,
     IRecipient<CriterionObserver.Deleted>
 {
@@ -23,6 +24,8 @@ public partial class SourceContentPageModel(NodeObserver node) : PageViewModel,
     [ObservableProperty] private string? _filter = string.Empty;
 
     [ObservableProperty] private bool _searching;
+
+    [ObservableProperty] private int _pageSize = 1000;
 
     [ObservableProperty] private bool _isDrawerOpen;
 
@@ -78,32 +81,43 @@ public partial class SourceContentPageModel(NodeObserver node) : PageViewModel,
 
     private Task ExecuteSearch(CancellationToken token)
     {
+        var page = PageSize;
+        var filters = Filters.Select(f => f.Model).ToList();
+        var inclusion = FilterInclusion;
         var filter = Filter;
         var elements = Element.Query(Source.Model.L5X);
 
         return Task.Run(() =>
         {
+            var number = 0;
             foreach (var element in elements)
             {
-                if (token.IsCancellationRequested) break;
+                if (token.IsCancellationRequested || number > page) break;
 
+                var include = inclusion == Inclusion.All
+                    ? filters.All(f => f.Evaluate(element))
+                    : filters.Any(f => f.Evaluate(element));
+                if (!include) continue;
+
+                var pass = string.IsNullOrEmpty(filter) || element.Serialize().ToString().ContainsText(filter);
+                if (!pass) continue;
+                
                 var observer = new ElementObserver(element);
-
-                var passed = string.IsNullOrEmpty(filter) || element.Serialize().ToString().ContainsText(filter);
-                if (!passed) continue;
-
                 Dispatcher.UIThread.Post(() => Elements.Add(observer));
+                number++;
             }
         }, token);
     }
 
-    /*[RelayCommand(CanExecute = nameof(CanAddFilter))]
-    private async Task AddFilter()
+    /// <summary>
+    /// Reset the search when the selected element changes.
+    /// </summary>
+    /// <param name="value"></param>
+    // ReSharper disable once UnusedParameterInPartialMethod
+    partial void OnElementChanged(Element value)
     {
-        var criterion = await Prompter.Show<CriterionObserver?>(() => new FilterEntryPageModel(Element));
-        if (criterion is null) return;
-        Filters.Add(criterion);
+        Filters.Clear();
+        Filter = string.Empty;
+        Elements.Clear();
     }
-
-    private bool CanAddFilter() => Element != Element.Default;*/
 }

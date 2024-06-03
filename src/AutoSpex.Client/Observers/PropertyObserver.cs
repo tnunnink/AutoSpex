@@ -35,7 +35,7 @@ public partial class PropertyObserver(Property model, ElementObserver element) :
     /// <summary>
     /// The value of the property retrieved from the instance help within <see cref="_element"/>. 
     /// </summary>
-    public object? Value => Model.Getter()(_element.Model);
+    public object? Value => Model.GetValue(_element.Model);
 
     /// <summary>
     /// Represents the path of the current <see cref="Property"/> object.
@@ -107,6 +107,7 @@ public partial class PropertyObserver(Property model, ElementObserver element) :
         //For collections, we need to create pseudo properties since they can not be retrieved statically from the type
         //information. We need access to the actual instance object in order to get the items of the collection, but will
         //want to present those as "properties" in the UI from which the user can continue to drill down from.
+        // ReSharper disable once ConvertIfStatementToReturnStatement
         if (Model.Group == TypeGroup.Collection)
         {
             return GetCollectionProperties();
@@ -114,7 +115,9 @@ public partial class PropertyObserver(Property model, ElementObserver element) :
 
         //If this is a normal property then just return the sub properties wrapped in the observer and pass
         //down the root Element.
-        return Model.Properties.Select(p => new PropertyObserver(p, _element));
+        return Model.Properties
+            .Where(p => p.Type != _element.Element.Type && p.Name != "This") //No self referencing types please. Just confusing to look at.
+            .Select(p => new PropertyObserver(p, _element));
     }
 
     /// <summary>
@@ -123,21 +126,18 @@ public partial class PropertyObserver(Property model, ElementObserver element) :
     private IEnumerable<PropertyObserver> GetCollectionProperties()
     {
         //Get the collection instance and if not an IEnumerable return empty properties.
-        var value = Model.Getter()(_element.Model);
+        var value = Model.GetValue(_element.Model);
         if (value is not IEnumerable enumerable) return Enumerable.Empty<PropertyObserver>();
 
         var properties = new List<PropertyObserver>();
 
-        //For each child create a new pseudo property.
+        //For each child create a new pseudo collection item property.
         var index = 0;
         foreach (var item in enumerable)
         {
-            //The path is the current property path plus the array index.
-            var path = $"{Model.Path}[{index}]";
-            //Pass in the custom getter which is just pointer to the item of the collection.
-            var property = new Property(_element.Element.Type, path, item.GetType(), _ => item);
+            var name = $"[{index}]";
+            var property = new Property(name, item.GetType(), Model);
             var observer = new PropertyObserver(property, _element);
-
             properties.Add(observer);
             index++;
         }

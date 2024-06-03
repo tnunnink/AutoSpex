@@ -30,18 +30,15 @@ public abstract partial class PageViewModel : TrackableViewModel, IEquatable<Pag
     /// required content.
     /// </summary>
     /// <returns>The <see cref="Task"/> for loading the data.</returns>
-    /// <remarks>Since most pages will needed to perform some initialization by sending a request to fetch data via
+    /// <remarks>Since most pages will need to perform some initialization by sending a request to fetch data via
     /// our <see cref="Mediator"/> we will provide this command by default with no implementation. Deriving pages can
     /// implement this load <see cref="RelayCommand"/> which will be awaited as the pages are navigated to using out
     /// application navigator service.
     /// </remarks>
     [RelayCommand]
     public virtual Task Load() => Task.CompletedTask;
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <returns></returns>
+    
+    /// <inheritdoc />
     protected override Task Navigate() => Navigator.Navigate(() => this);
 
     /// <inheritdoc />
