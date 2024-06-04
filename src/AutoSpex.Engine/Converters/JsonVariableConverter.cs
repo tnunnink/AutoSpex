@@ -37,19 +37,14 @@ public class JsonVariableConverter : JsonConverter<Variable>
     {
         writer.WriteStartObject();
         writer.WriteString(nameof(Variable.Name), value.Name);
-        writer.WriteString(nameof(Variable.Type), value.Type.FullName);
-        
-        //We will either serialize an inner variable or just write the string representation of the value.
-        if (value.Type == typeof(Variable))
-        {
-            writer.WritePropertyName(nameof(Variable.Value));
-            JsonSerializer.Serialize(writer, value.Value, value.Type, options);
-        }
-        else
-        {
-            writer.WriteString(nameof(Variable.Value), value.Value.ToString());
-        }
-        
+        writer.WriteString(nameof(Variable.Group), value.Group.Name);
+
+        if (value.Type is not null)
+            writer.WriteString(nameof(Variable.Type), value.Type.FullName);
+
+        if (value.Data is not null)
+            writer.WriteString(nameof(Variable.Data), value.Data);
+
         writer.WriteEndObject();
     }
 }

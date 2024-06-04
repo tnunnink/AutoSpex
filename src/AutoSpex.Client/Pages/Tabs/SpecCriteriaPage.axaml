@@ -1,40 +1,41 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
              xmlns:components="clr-namespace:AutoSpex.Client.Components"
              xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
              x:Class="AutoSpex.Client.Pages.SpecCriteriaPage"
-             x:DataType="pages:SpecCriteriaPageModel"
-             Padding="20">
+             x:DataType="pages:SpecCriteriaPageModel">
 
     <Design.Height>800</Design.Height>
     <Design.Width>1200</Design.Width>
 
-    <StackPanel Spacing="30">
+    <ScrollViewer Theme="{a:ControlTheme ScrollViewerOverlay}">
+        <StackPanel Spacing="30" Margin="20">
+            <ContentControl
+                Content="{Binding Spec}"
+                ContentTemplate="{StaticResource SpecQuery}" />
 
-        <ContentControl
-            Content="{Binding Spec}"
-            ContentTemplate="{StaticResource SpecQuery}" />
+            <components:CriteriaList
+                Heading="Filters"
+                InfoText="Add criteria to select only specific candidates for verification."
+                IsVisible="{Binding Spec.Element, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Element.Default}}"
+                Criteria="{Binding Spec.Filters, FallbackValue={x:Null}}"
+                Element="{Binding Spec.Element, FallbackValue={x:Static engine:Element.Default}}"
+                Inclusion="{Binding Spec.FilterInclusion, FallbackValue={x:Null}}" />
 
-        <components:CriteriaList
-            Heading="Filters"
-            InfoText="Add criteria to select only specific candidates for verification."
-            IsVisible="{Binding Spec.Element, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Element.Default}}"
-            Criteria="{Binding Spec.Filters, FallbackValue={x:Null}}"
-            Element="{Binding Spec.Element, FallbackValue={x:Static engine:Element.Default}}"
-            Inclusion="{Binding Spec.FilterInclusion, FallbackValue={x:Null}}" />
+            <components:CriteriaList
+                Heading="Verifications"
+                InfoText="Add criteria to define what this specification is verifying."
+                IsVisible="{Binding Spec.Element, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Element.Default}}"
+                Criteria="{Binding Spec.Verifications, FallbackValue={x:Null}}"
+                Element="{Binding Spec.Element, FallbackValue={x:Static engine:Element.Default}}"
+                Inclusion="{Binding Spec.VerificationInclusion, FallbackValue={x:Null}}" />
 
-        <components:CriteriaList
-            Heading="Verifications"
-            InfoText="Add criteria to define what this specification is verifying."
-            IsVisible="{Binding Spec.Element, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Element.Default}}"
-            Criteria="{Binding Spec.Verifications, FallbackValue={x:Null}}"
-            Element="{Binding Spec.Element, FallbackValue={x:Static engine:Element.Default}}"
-            Inclusion="{Binding Spec.VerificationInclusion, FallbackValue={x:Null}}" />
-
-        <ContentControl
-            Content="{Binding Spec}"
-            ContentTemplate="{StaticResource SpecSettings}"
-            IsVisible="{Binding Spec.Element, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Element.Default}}" />
-    </StackPanel>
+            <ContentControl
+                Content="{Binding Spec}"
+                ContentTemplate="{StaticResource SpecSettings}"
+                IsVisible="{Binding Spec.Element, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Element.Default}}" />
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>

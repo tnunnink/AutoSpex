@@ -45,23 +45,6 @@
         </StackPanel>
     </Design.PreviewWith>
 
-    <DataTemplate x:Key="ValueItemTemplate" x:DataType="observers:ValueObserver">
-        <Grid ColumnDefinitions="30,*,Auto">
-            <PathIcon
-                Grid.Column="0"
-                Theme="{Binding Group, Converter={StaticResource TypeGroupSmallToIconConverter}}"
-                Margin="0 0 10 0"/>
-            <TextBlock
-                Grid.Column="1"
-                Text="{Binding Text}" />
-            <TextBlock
-                Grid.Column="2"
-                Text="{Binding Type}"
-                Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
-                Margin="40 0 10 0" />
-        </Grid>
-    </DataTemplate>
-
     <a:TypedDataTemplateSelector x:Key="ValueTemplates">
 
         <a:TypedDataTemplateSelector.DefaultTemplate>
@@ -266,7 +249,7 @@
         <DataTemplate DataType="core:Rung">
             <TextBlock Grid.Row="0"
                        Text="{Binding Location}"
-                       Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}">
+                       Foreground="{DynamicResource TypeGroupForegroundBrushElement}">
                 <ToolTip.Tip>
                     <Grid RowDefinitions="Auto,*,Auto">
                         <TextBlock Grid.Row="0">
@@ -332,27 +315,36 @@
                         Text="{Binding Name}"
                         Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
                         IsVisible="{Binding Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-                        TextTrimming="CharacterEllipsis"
-                        ToolTip.Tip="{Binding}">
+                        TextTrimming="CharacterEllipsis">
                     </TextBlock>
                     <TextBlock
                         Text="{}}" Padding="0 0 0 1"
                         Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
                 </StackPanel>
-                <!--<TextBlock
-                    Text="{Binding Formatted}"
-                    Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
-                    TextTrimming="CharacterEllipsis" />-->
                 <ToolTip.Tip>
-                    <Border>
-                        <StackPanel>
-                            <!--<TextBlock Text="{Binding Model.ScopeName, FallbackValue='Undefined'}" />-->
-                            <TextBlock Text="{Binding Name}" />
-                            <TextBlock Text="{Binding Value}" />
-                        </StackPanel>
-                    </Border>
+                    <DockPanel>
+
+                    </DockPanel>
                 </ToolTip.Tip>
             </Panel>
         </DataTemplate>
     </a:TypedDataTemplateSelector>
+
+    <DataTemplate x:Key="ValueItemTemplate" x:DataType="observers:ValueObserver">
+        <Grid ColumnDefinitions="30,*,Auto">
+            <PathIcon
+                Grid.Column="0"
+                Theme="{Binding Group, Converter={StaticResource TypeGroupSmallToIconConverter}}"
+                Margin="0 0 10 0" />
+            <ContentControl
+                Grid.Column="1"
+                Content="{Binding Model}"
+                ContentTemplate="{StaticResource ValueTemplates}" />
+            <TextBlock
+                Grid.Column="2"
+                Text="{Binding Type}"
+                Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                Margin="40 0 10 0" />
+        </Grid>
+    </DataTemplate>
 </ResourceDictionary>

@@ -133,8 +133,6 @@ public static class Extensions
     /// </summary>
     public static string ToText(this object? candidate)
     {
-        if (candidate is null) return "null";
-
         return candidate switch
         {
             bool b => b.ToString().ToLowerInvariant(),
@@ -144,7 +142,7 @@ public static class Extensions
             LogixCode code => code.Location,
             LogixComponent component => component.Name,
             LogixEnum enumeration => enumeration.Name,
-            _ => candidate.ToString() ?? string.Empty
+            _ => candidate?.ToString() ?? string.Empty
         };
     }
 

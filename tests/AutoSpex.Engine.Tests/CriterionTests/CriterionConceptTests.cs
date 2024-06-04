@@ -12,7 +12,7 @@ public class CriterionConceptTests
 
         criterion.Should().NotBeNull();
         criterion.Property.Should().BeEmpty();
-        criterion.Operation.Should().Be(Operation.None);
+        criterion.Operation.Should().BeNull();
         criterion.Arguments.Should().BeEmpty();
     }
 
@@ -126,8 +126,8 @@ public class CriterionConceptTests
     [Test]
     public void VariableArgument_LogixTypeFloatEquals_ShouldRunCorrectly()
     {
-        var tag = new Tag {Name = "TestTag", Value = 1.23454321f};
-        var variable = new Variable("Value", "1.23454321");
+        var tag = new Tag {Name = "TestTag", Value = 1.2345f};
+        var variable = new Variable("Value", 1.2345f);
         var criterion = new Criterion("Value", Operation.Equal, variable);
         
         var eval = criterion.Evaluate(tag);

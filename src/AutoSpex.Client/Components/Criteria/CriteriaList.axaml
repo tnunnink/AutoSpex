@@ -86,7 +86,8 @@
                             SelectionMode="Multiple"
                             ClipToBounds="True"
                             BorderThickness="0" CornerRadius="5"
-                            Background="Transparent" />
+                            Background="Transparent"
+                            ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
                     </Panel>
                 </components:Section>
             </ControlTemplate>

@@ -85,7 +85,7 @@ public partial class NodeVariablesPageModel : DetailPageModel,
     public void Receive(VariableObserver.GetNames message)
     {
         if (message.Variable.Node?.Id != _node.Id) return;
-        var names = Variables.Where(v => v.Id != message.Variable.Id && v.Name is not null).Select(v => v.Name!);
+        var names = Variables.Where(v => v.Id != message.Variable.Id).Select(v => v.Name);
         message.Reply(names);
     }
 

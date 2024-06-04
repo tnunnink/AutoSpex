@@ -87,9 +87,8 @@
                 <controls:Entry
                     Value="{Binding Operation.Name, Mode=OneWay, FallbackValue={x:Null}}"
                     Watermark="Select operation"
-                    Selector="{Binding OperationSelector}"
-                    Populate="{Binding OperationGetter}"
-                    Commit="{Binding OperationCommiter}"
+                    Populate="{Binding PopulateOperations}"
+                    Commit="{Binding CommitOperation}"
                     IsVisible="{Binding Property, Converter={x:Static ObjectConverters.IsNotNull}}">
                     <controls:Entry.ItemTemplate>
                         <DataTemplate x:DataType="engine:Operation">
@@ -128,11 +127,7 @@
                                 <StackPanel Orientation="Horizontal" IsVisible="{Binding !IsCriterion}">
                                     <ContentControl
                                         Content="{Binding}"
-                                        ContentTemplate="{StaticResource ArgumentEntry}" />
-                                    <Button
-                                        Theme="{StaticResource IconButton}"
-                                        properties:ButtonIcon.Theme="{StaticResource IconAdd}"
-                                        IsVisible="{Binding $parent[ItemsControl].((observers:CriterionObserver)DataContext).Operation, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:Operation.In}, FallbackValue={x:False}}" />
+                                        ContentTemplate="{StaticResource ArgumentDefaultEntry}" />
                                     <Border
                                         BorderThickness="1 0 0 0"
                                         BorderBrush="{a:ThemeResource Container1BorderBrush}"

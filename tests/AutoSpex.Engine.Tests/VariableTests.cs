@@ -15,11 +15,11 @@ public class VariableTests
         variable.Path.Should().BeEmpty();
         variable.ScopedReference.Should().Be("{}");
         variable.AbsoluteReference.Should().Be("{}");
-        variable.Type.Should().Be(typeof(string));
         variable.Group.Should().Be(TypeGroup.Text);
+        variable.Type.Should().Be(typeof(string));
         variable.Value.Should().Be(string.Empty);
         variable.Data.Should().Be(string.Empty);
-        variable.Description.Should().BeEmpty();
+        variable.Description.Should().BeNull();
     }
 
     [Test]
@@ -33,7 +33,7 @@ public class VariableTests
         variable.Value.Should().Be(false);
         variable.Data.Should().Be("False");
     }
-    
+
     [Test]
     public void New_TypeGroupNumber_ShouldHaveExpectedValues()
     {
@@ -45,7 +45,7 @@ public class VariableTests
         variable.Value.Should().Be(0);
         variable.Data.Should().Be("0");
     }
-    
+
     [Test]
     public void New_TypeGroupText_ShouldHaveExpectedValues()
     {
@@ -57,7 +57,7 @@ public class VariableTests
         variable.Value.Should().Be("");
         variable.Data.Should().Be("");
     }
-    
+
     [Test]
     public void New_TypeGroupDate_ShouldHaveExpectedValues()
     {
@@ -70,41 +70,42 @@ public class VariableTests
         // ReSharper disable once SpecifyACultureInStringConversionExplicitly
         variable.Data.Should().Be(DateTime.Today.ToString());
     }
-    
+
     [Test]
     public void New_TypeGroupEnum_ShouldHaveExpectedValues()
     {
         var variable = new Variable(TypeGroup.Enum);
 
         variable.VariableId.Should().NotBeEmpty();
-        variable.Type.Should().Be(typeof(LogixEnum));
         variable.Group.Should().Be(TypeGroup.Enum);
+        variable.Type.Should().BeNull();
         variable.Value.Should().BeNull();
         variable.Data.Should().BeNull();
     }
-    
+
     [Test]
     public void New_TypeGroupElement_ShouldHaveExpectedValues()
     {
         var variable = new Variable(TypeGroup.Element);
 
         variable.VariableId.Should().NotBeEmpty();
-        variable.Type.Should().Be(typeof(LogixElement));
         variable.Group.Should().Be(TypeGroup.Element);
+        variable.Type.Should().BeNull();
         variable.Value.Should().BeNull();
         variable.Data.Should().BeNull();
     }
-    
+
     [Test]
     public void New_TypeGroupCollection_ShouldHaveExpectedValues()
     {
         var variable = new Variable(TypeGroup.Collection);
 
         variable.VariableId.Should().NotBeEmpty();
-        variable.Type.Should().Be(typeof(List<object>));
         variable.Group.Should().Be(TypeGroup.Collection);
-        //variable.Value.Should().Be(Enumerable.Empty<object>().ToList());
-        //variable.Data.Should().BeNull();
+        variable.Type.Should().Be(typeof(List<object>));
+        //todo we need to work out collection. How is it serialized and parsed?
+        /*variable.Value.Should().Be(new List<object>());
+        variable.Data.Should().NotBeEmpty();*/
     }
 
     [Test]
@@ -123,7 +124,7 @@ public class VariableTests
     }
 
     [Test]
-    public void Value_SetToNull_ShouldBeExpected()
+    public void Value_SetToNull_ShouldAllBeNull()
     {
         var variable = new Variable("MyVar", "TestValue");
 
@@ -131,8 +132,7 @@ public class VariableTests
 
         variable.Value.Should().BeNull();
         variable.Data.Should().BeNull();
-        variable.Type.Should().Be(typeof(string));
-        variable.Group.Should().Be(TypeGroup.Text);
+        variable.Type.Should().BeNull();
     }
 
     [Test]
@@ -145,7 +145,6 @@ public class VariableTests
         variable.Value.Should().Be("Something");
         variable.Type.Should().Be(typeof(string));
         variable.Data.Should().Be("Something");
-        variable.Group.Should().Be(TypeGroup.Text);
     }
 
     [Test]
@@ -158,7 +157,6 @@ public class VariableTests
         variable.Value.Should().Be(123);
         variable.Type.Should().Be(typeof(int));
         variable.Data.Should().Be("123");
-        variable.Group.Should().Be(TypeGroup.Number);
     }
 
     [Test]
@@ -171,7 +169,6 @@ public class VariableTests
         variable.Value.Should().Be(1.23);
         variable.Type.Should().Be(typeof(double));
         variable.Data.Should().Be("1.23");
-        variable.Group.Should().Be(TypeGroup.Number);
     }
 
     [Test]
@@ -184,9 +181,8 @@ public class VariableTests
         variable.Value.Should().Be(true);
         variable.Type.Should().Be(typeof(bool));
         variable.Data.Should().Be("True");
-        variable.Group.Should().Be(TypeGroup.Boolean);
     }
-    
+
     [Test]
     public void Value_SetToDint_ShouldBeExpected()
     {
@@ -197,7 +193,6 @@ public class VariableTests
         variable.Value.Should().Be(123);
         variable.Type.Should().Be(typeof(DINT));
         variable.Data.Should().Be("123");
-        variable.Group.Should().Be(TypeGroup.Number);
     }
 
     [Test]
@@ -210,7 +205,6 @@ public class VariableTests
         variable.Value.Should().Be(1.23f);
         variable.Type.Should().Be(typeof(REAL));
         variable.Data.Should().Be("1.23");
-        variable.Group.Should().Be(TypeGroup.Number);
     }
 
     [Test]
@@ -223,7 +217,6 @@ public class VariableTests
         variable.Value.Should().Be(true);
         variable.Type.Should().Be(typeof(BOOL));
         variable.Data.Should().Be("1");
-        variable.Group.Should().Be(TypeGroup.Boolean);
     }
 
     [Test]
@@ -236,7 +229,6 @@ public class VariableTests
         variable.Value.Should().Be(ExternalAccess.None);
         variable.Type.Should().Be(typeof(ExternalAccess));
         variable.Data.Should().Be("None");
-        variable.Group.Should().Be(TypeGroup.Enum);
     }
 
     [Test]
@@ -249,7 +241,6 @@ public class VariableTests
         variable.Value.Should().Be(Radix.Ascii);
         variable.Type.Should().Be(Radix.Ascii.GetType());
         variable.Data.Should().Be("Ascii");
-        variable.Group.Should().Be(TypeGroup.Enum);
     }
 
     [Test]
@@ -264,6 +255,5 @@ public class VariableTests
         variable.Value.Should().BeEquivalentTo(tag);
         variable.Data.Should().Be(tag.Serialize().ToString());
         variable.Type.Should().Be(typeof(Tag));
-        variable.Group.Should().Be(TypeGroup.Element);
     }
 }

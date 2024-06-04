@@ -129,6 +129,7 @@
             <PathIcon Theme="{DynamicResource IconEnumSmallThemed}" />
             <PathIcon Theme="{DynamicResource IconElementSmallThemed}" />
             <PathIcon Theme="{DynamicResource IconCollectionSmallThemed}" />
+            <PathIcon Theme="{DynamicResource IconVariableSmallThemed}" />
             <actipro:ToggleThemeButton Height="30" Width="30" />
         </WrapPanel>
     </Design.PreviewWith>
@@ -166,6 +167,7 @@
         <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Enum}" Resource="IconEnumThemed" />
         <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Element}" Resource="IconElementThemed" />
         <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Collection}" Resource="IconCollectionThemed" />
+        <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Variable}" Resource="IconVariableThemed" />
     </converters:KeyResourceConverter>
 
     <converters:KeyResourceConverter x:Key="TypeGroupSmallToIconConverter">
@@ -175,8 +177,8 @@
         <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Date}" Resource="IconDateSmallThemed" />
         <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Enum}" Resource="IconEnumSmallThemed" />
         <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Element}" Resource="IconElementSmallThemed" />
-        <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Collection}"
-                                     Resource="IconCollectionSmallThemed" />
+        <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Collection}" Resource="IconCollectionSmallThemed" />
+        <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Variable}" Resource="IconVariableSmallThemed" />
     </converters:KeyResourceConverter>
 
     <ControlTheme x:Key="IconBase" TargetType="PathIcon">
@@ -932,8 +934,7 @@
         <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushEnum}" />
     </ControlTheme>
     <ControlTheme x:Key="IconElementThemed" TargetType="PathIcon" BasedOn="{StaticResource IconCubeOutlined}">
-        <!--<Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushElement}" />-->
-        <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushOutlineAccent}" />
+        <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushElement}" />
     </ControlTheme>
     <ControlTheme x:Key="IconCollectionThemed" TargetType="PathIcon" BasedOn="{StaticResource IconBoxes}">
         <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushCollection}" />
@@ -981,21 +982,10 @@
         <Setter Property="Width" Value="20" />
         <Setter Property="Padding" Value="3" />
     </ControlTheme>
-
-    <ResourceDictionary.ThemeDictionaries>
-        <ResourceDictionary x:Key="Light">
-            <SolidColorBrush x:Key="IconForegroundBrushDefault" Color="#5c637b" />
-            <SolidColorBrush x:Key='IconForegroundBrushProject'>#924ae6</SolidColorBrush>
-            <SolidColorBrush x:Key='IconForegroundBrushContainer'>#b7b7c8</SolidColorBrush>
-            <SolidColorBrush x:Key='IconForegroundBrushSpec'>#4073d8</SolidColorBrush>
-            <SolidColorBrush x:Key='IconForegroundBrushSource'>#ce665e</SolidColorBrush>
-        </ResourceDictionary>
-        <ResourceDictionary x:Key="Dark">
-            <SolidColorBrush x:Key="IconForegroundBrushDefault" Color="#b1beed" />
-            <SolidColorBrush x:Key='IconForegroundBrushProject'>#b67cff</SolidColorBrush>
-            <SolidColorBrush x:Key='IconForegroundBrushContainer'>#5c6470</SolidColorBrush>
-            <SolidColorBrush x:Key='IconForegroundBrushSpec'>#6e9eff</SolidColorBrush>
-            <SolidColorBrush x:Key='IconForegroundBrushSource'>#ff9073</SolidColorBrush>
-        </ResourceDictionary>
-    </ResourceDictionary.ThemeDictionaries>
+    <ControlTheme x:Key="IconVariableSmallThemed" TargetType="PathIcon" BasedOn="{StaticResource IconBraces}">
+        <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushOutlineAccent}" />
+        <Setter Property="Height" Value="20" />
+        <Setter Property="Width" Value="20" />
+        <Setter Property="Padding" Value="3" />
+    </ControlTheme>
 </ResourceDictionary>

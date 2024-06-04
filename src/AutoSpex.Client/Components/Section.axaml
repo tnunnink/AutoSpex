@@ -14,7 +14,7 @@
     </Design.PreviewWith>
 
     <ControlTheme x:Key="{x:Type components:Section}" TargetType="components:Section">
-        <Setter Property="Padding" Value="5" />
+        <Setter Property="Padding" Value="10 5" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Border BorderBrush="{a:ThemeResource Container1BorderBrush}"

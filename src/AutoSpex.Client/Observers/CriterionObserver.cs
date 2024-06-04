@@ -28,6 +28,8 @@ public partial class CriterionObserver : Observer<Criterion>
 
     public override Guid Id => Model.CriterionId;
 
+    [ObservableProperty] private bool _isEnabled = true;
+
     public string? PropertyName
     {
         get => Model.Property;
@@ -36,9 +38,6 @@ public partial class CriterionObserver : Observer<Criterion>
 
     [ObservableProperty] [NotifyDataErrorInfo] [Required]
     private Property? _property;
-
-    public Action<object?> PropertyCommiter => CommitProperty;
-    public Func<string?, CancellationToken, Task<IEnumerable<object>>> PropertyGetter => GetProperties;
 
     /// <summary>
     /// The <see cref="Engine.Operation"/> to execute for the criterion. This property wraps the underlying model.
@@ -50,10 +49,6 @@ public partial class CriterionObserver : Observer<Criterion>
         set => SetProperty(Model.Operation, value, Model, (c, o) => c.Operation = o, true);
     }
 
-    public Func<object?, string> OperationSelector => SelectOperation;
-    public Action<object?> OperationCommiter => CommitOperation;
-    public Func<string?, CancellationToken, Task<IEnumerable<object>>> OperationGetter => GetOperations;
-
     public ObserverCollection<Argument, ArgumentObserver> Arguments { get; }
 
     public bool Invert
@@ -62,7 +57,10 @@ public partial class CriterionObserver : Observer<Criterion>
         set => SetProperty(Model.Invert, value, Model, (c, v) => c.Invert = v);
     }
 
-    [ObservableProperty] private bool _isEnabled = true;
+    public Action<object?> PropertyCommiter => UpdateProperty;
+    public Func<string?, CancellationToken, Task<IEnumerable<object>>> PropertyGetter => GetProperties;
+    public Action<object?> CommitOperation => UpdateOperation;
+    public Func<string?, CancellationToken, Task<IEnumerable<object>>> PopulateOperations => GetOperations;
 
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
@@ -86,7 +84,7 @@ public partial class CriterionObserver : Observer<Criterion>
     private Task<IEnumerable<object>> GetProperties(string? filter, CancellationToken token)
     {
         var type = Model.Type;
-        
+
         if (type is null)
             return Task.FromResult(Enumerable.Empty<object>());
 
@@ -108,9 +106,9 @@ public partial class CriterionObserver : Observer<Criterion>
         return Task.FromResult(filtered);
     }
 
-    private void CommitProperty(object? obj)
+    private void UpdateProperty(object? value)
     {
-        switch (obj)
+        switch (value)
         {
             case Property property:
                 PropertyName = property.Path;
@@ -135,24 +133,12 @@ public partial class CriterionObserver : Observer<Criterion>
     }
 
     /// <summary>
-    /// Selects the correct text to display in the operation entry control given a strongly typed object.
-    /// </summary>
-    private static string SelectOperation(object? item)
-    {
-        return item switch
-        {
-            Operation x => x.Name,
-            _ => item?.ToString() ?? string.Empty
-        };
-    }
-
-    /// <summary>
     /// Updates the criterion <see cref="Operation"/> based on the provided value type. If the user provides text we
     /// can try to parse it but if not then we need to set to null.
     /// </summary>
-    private void CommitOperation(object? obj)
+    private void UpdateOperation(object? value)
     {
-        switch (obj)
+        switch (value)
         {
             case Operation operation:
                 Operation = operation;
@@ -192,15 +178,20 @@ public partial class CriterionObserver : Observer<Criterion>
             Arguments.Add(new ArgumentObserver(this));
         }
 
-        // ReSharper disable once InvertIf
-        if (Operation is CollectionOperation)
-        {
-            var innerType = Property?.Type.SelfOrInnerType() ?? typeof(object);
-            Arguments.Add(new ArgumentObserver(new Argument(new Criterion(innerType)), this));
-        }
-
         if (Operation == Operation.In)
         {
+            Arguments.Add(new ArgumentObserver(this));
+            return;
         }
+
+        if (Operation == Operation.Count)
+        {
+            Arguments.Add(new ArgumentObserver(this));
+            return;
+        }
+
+        if (Operation is not CollectionOperation) return;
+        var innerType = Property?.Type.SelfOrInnerType() ?? typeof(object);
+        Arguments.Add(new ArgumentObserver(new Argument(new Criterion(innerType)), this));
     }
 }

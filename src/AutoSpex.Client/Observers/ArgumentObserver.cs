@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using AutoSpex.Persistence;
-using L5Sharp.Core;
 using Argument = AutoSpex.Engine.Argument;
 
 // ReSharper disable TailRecursiveCall
@@ -49,104 +46,37 @@ public class ArgumentObserver : Observer<Argument>
     public bool IsCriterion => Model.Value is Criterion;
 
     /// <summary>
-    /// 
-    /// </summary>
-    public bool AllowsAdding => _criterion?.Operation == Operation.In;
-
-    /// <summary>
     /// The value of the argument which represents the data in which the criterion will evaluate against. This
     /// is ultimately the persisted value.
     /// </summary>
-    [Required]
     public object? Value
     {
         get => GetValue();
-        set => SetProperty(Model.Value, value, Model, SetValue, true);
+        set => SetProperty(Model.Value, value, Model, SetValue);
     }
+
+    /// <summary>
+    /// The action that commits the provided object to the argument's <see cref="Value"/>.
+    /// </summary>
+    public Action<object?> Commit => UpdateValue;
+
+    /// <summary>
+    /// The function that selects the text value for the current value object of the argument.
+    /// </summary>
+    public Func<object?, string> Selector => x => x.ToText();
 
     /// <summary>
     /// The function that retrieves a collection of object values that are suggestions to the entry control.
     /// </summary>
     public Func<string?, CancellationToken, Task<IEnumerable<object>>> Suggestions => GetSuggestions;
 
-    /// <summary>
-    /// The function that selects the text value for the current value object of the argument.
-    /// </summary>
-    public Func<object?, string> Selector => SelectText;
-
-    /// <summary>
-    /// The action that commits the provided object to the argument's <see cref="Value"/>.
-    /// </summary>
-    public Action<object?> Commit => CommitValue;
-
-
     public static implicit operator Argument(ArgumentObserver observer) => observer.Model;
-
-
-    /// <summary>
-    /// Selects the text to present to the entry when the user updates the value or the popup is launched.
-    /// We are using a custom selector since we can enter so many different values here.
-    /// </summary>
-    private static string SelectText(object? item)
-    {
-        return item switch
-        {
-            string x => x,
-            LogixEnum x => x.Name,
-            VariableObserver x => x.ScopedReference,
-            LogixComponent x => x.Name,
-            _ => item?.ToString() ?? string.Empty
-        };
-    }
-
-    /// <summary>
-    /// Executes the code to retrieve possible suggestion values based on the current argument's type and scope,
-    /// and returns a collection of values which are filtered based on the provided input text.
-    /// </summary>
-    private async Task<IEnumerable<object>> GetSuggestions(string? filter, CancellationToken token)
-    {
-        var suggestions = new List<object>();
-
-        var options = GetOptions(filter);
-        suggestions.AddRange(options);
-
-        var variables = await GetScopedVariables(filter, token);
-        suggestions.AddRange(variables);
-
-        return suggestions;
-    }
-
-    /// <summary>
-    /// Query the database for variables that are in scope of this argument. These are variables that belong to or are
-    /// inherited by the parent spec object. Therefore, we first request the parent spec and the use it's id to fetch
-    /// variable objects as suggestions to plug into the argument value for the user.
-    /// </summary>
-    private async Task<IEnumerable<object>> GetScopedVariables(string? filter, CancellationToken token)
-    {
-        var result = await Mediator.Send(new GetScopedVariables(Id), token);
-
-        return result.IsSuccess
-            ? result.Value.Select(v => new VariableObserver(v)).Where(v => v.ScopedReference.PassesFilter(filter))
-            : Enumerable.Empty<ArgumentObserver>();
-    }
-
-    /// <summary>
-    /// Gets potential option values for the parent criterion property which are potential values to the argument input. 
-    /// </summary>
-    private IEnumerable<object> GetOptions(string? filter)
-    {
-        var type = _criterion?.Property?.Type;
-
-        return type is not null
-            ? type.GetOptions().Where(x => x.ToString()?.PassesFilter(filter) is true)
-            : Enumerable.Empty<ArgumentObserver>();
-    }
 
     /// <summary>
     /// We need some special wrapping of the child values for Argument. It can be a nested criterion or variable, and
     /// if so we need to wrap those in observers. If not we can just return the simple value.
     /// </summary>
-    private object GetValue()
+    private object? GetValue()
     {
         return Model.Value switch
         {
@@ -162,29 +92,12 @@ public class ArgumentObserver : Observer<Argument>
     /// </summary>
     private static void SetValue(Argument argument, object? value)
     {
-        switch (value)
+        argument.Value = value switch
         {
-            case null:
-                break;
-            case Argument other:
-                SetValue(argument, other.Value);
-                break;
-            case CriterionObserver criterion:
-                argument.SetValue(criterion.Model);
-                break;
-            case Criterion criterion:
-                argument.SetValue(criterion);
-                break;
-            case VariableObserver variable:
-                argument.SetValue(variable.Model);
-                break;
-            case Variable variable:
-                argument.SetValue(variable);
-                break;
-            default:
-                argument.SetValue(value);
-                break;
-        }
+            CriterionObserver criterion => criterion.Model,
+            VariableObserver variable => variable.Model,
+            _ => value
+        };
     }
 
     /// <summary>
@@ -192,17 +105,20 @@ public class ArgumentObserver : Observer<Argument>
     /// If user enters simple text we would like to parse it as the strong type to let our data templates work.
     /// If user enters a complex object then it was selected from the suggestions, and we can just use that.
     /// </summary>
-    private void CommitValue(object? value)
+    private async void UpdateValue(object? value)
     {
-        var type = _criterion?.Property?.Type;
+        var group = _criterion?.Property?.Group;
 
         switch (value)
         {
-            case null:
-                Value = string.Empty;
+            case string text when text.StartsWith('{') && text.EndsWith('}'):
+                Value = await GetVariable(text) ?? text;
                 return;
-            case string text:
-                Value = ResolveValue(text, type);
+            case string text when group?.TryParse(text, out var parsed) is true && parsed is not null:
+                Value = parsed;
+                return;
+            case ValueObserver observer:
+                Value = observer.Model;
                 return;
             default:
                 Value = value;
@@ -211,37 +127,61 @@ public class ArgumentObserver : Observer<Argument>
     }
 
     /// <summary>
-    /// Since the user will enter text input as the argument, we need to take that and resolve the actual typed
-    /// value it represents.
+    /// Queries the database for a variable in scope with the specified name and returns it, or null if not found.
     /// </summary>
-    private object ResolveValue(string value, Type? type)
+    private async Task<object?> GetVariable(string name)
     {
-        //1. Null or empty should just return an empty string to default the UI.
-        if (string.IsNullOrEmpty(value)) return string.Empty;
-
-        //2. Text starting and ending with brackets should refer to a variable which we need to try and find.
-        if (value.StartsWith('{') && value.EndsWith('}'))
-        {
-            return GetVariable(value[1..^1]);
-        }
-
-        //3. If our parent criterion has no type info or the target type is string, just return the string.
-        if (type is null || type == typeof(string)) return value;
-
-        //4. Otherwise, we rely on our LogixParser to do the work and if it can't we return the string.
-        //todo this would be cool if part of the parsing
-        if (type.IsAssignableTo(typeof(LogixElement)))
-        {
-            return XElement.Parse(value).Deserialize();
-        }
-
-        var parsed = type.IsParsable() ? value.TryParse(type) : default;
-        return parsed ?? value;
+        name = name.TrimStart('{').TrimEnd('}');
+        var result = await Mediator.Send(new GetScopedVariable(Id, name));
+        return result.IsSuccess ? new VariableObserver(result.Value) : default;
     }
 
-    private Task<VariableObserver> GetVariable(string name)
+    /// <summary>
+    /// Executes the code to retrieve possible suggestion values based on the current argument's type and scope,
+    /// and returns a collection of values which are filtered based on the provided input text.
+    /// </summary>
+    private async Task<IEnumerable<object>> GetSuggestions(string? filter, CancellationToken token)
     {
-        //todo query the database for the variable with this name in the scope of this argument.
-        return Task.FromResult(new VariableObserver(new Variable(name)));
+        var suggestions = new List<object>();
+
+        suggestions.AddRange(GetOptions(filter));
+
+        var variables = await GetScopedVariables(filter, token);
+        suggestions.AddRange(variables);
+
+        return suggestions;
+    }
+
+    /// <summary>
+    /// Query the database for variables that are in scope of this argument. These are variables that belong to or are
+    /// inherited by the parent spec object. Therefore, we first request the parent spec and the use it's id to fetch
+    /// variable objects as suggestions to plug into the argument value for the user.
+    /// </summary>
+    private async Task<IEnumerable<ValueObserver>> GetScopedVariables(string? filter, CancellationToken token)
+    {
+        var result = await Mediator.Send(new GetScopedVariables(Id), token);
+
+        return result.IsSuccess
+            ? result.Value.Select(v => new ValueObserver(new VariableObserver(v))).Where(v => v.Passes(filter))
+            : Enumerable.Empty<ValueObserver>();
+    }
+
+    /// <summary>
+    /// Gets potential option values for the parent criterion property which are potential values to the argument input. 
+    /// </summary>
+    private IEnumerable<ValueObserver> GetOptions(string? filter)
+    {
+        var type = _criterion?.Property?.Type;
+        var group = _criterion?.Property?.Group;
+
+        if (type is null)
+            return Enumerable.Empty<ValueObserver>();
+
+        if (group == TypeGroup.Boolean)
+            return type.GetOptions().Select(x => new ValueObserver(x));
+
+        return group == TypeGroup.Enum
+            ? type.GetOptions().Select(x => new ValueObserver(x)).Where(v => v.Passes(filter))
+            : Enumerable.Empty<ValueObserver>();
     }
 }

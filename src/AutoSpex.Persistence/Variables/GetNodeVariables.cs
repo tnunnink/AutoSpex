@@ -15,7 +15,7 @@ internal class GetNodeVariablesHandler(IConnectionManager manager)
 {
     private const string GetVariables =
         """
-        SELECT VariableId, NodeId, Name, Type, Data, Description
+        SELECT [VariableId], [NodeId], [Name], [Group], [Type], [Data], [Description]
         FROM Variable
         WHERE NodeId = @NodeId;
         """;

@@ -121,7 +121,7 @@ public static class DesignData
         new DesignVariableObserver()
     ];
 
-    public static ArgumentObserver EmptyArgument = new(Argument.Default(typeof(string)));
+    public static ArgumentObserver EmptyArgument = new(new Argument(string.Empty));
 
     public static ArgumentObserver TextArgument = new(new Argument("Literal Text Value"));
 

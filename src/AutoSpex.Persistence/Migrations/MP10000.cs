@@ -50,7 +50,8 @@ public class MP10000 : AutoReversingMigration
             .WithColumn("VariableId").AsString().PrimaryKey()
             .WithColumn("NodeId").AsString().NotNullable().ForeignKey("Node", "NodeId").OnDelete(Rule.Cascade)
             .WithColumn("Name").AsString().NotNullable()
-            .WithColumn("Type").AsString().NotNullable()
+            .WithColumn("Group").AsString().NotNullable()
+            .WithColumn("Type").AsString().Nullable()
             .WithColumn("Data").AsString().Nullable()
             .WithColumn("Description").AsString().Nullable();
 

@@ -11,6 +11,8 @@ namespace AutoSpex.Client.Components;
 public class ArgumentTemplateSelector : IDataTemplate
 {
     [Content] [UsedImplicitly] public Dictionary<string, IDataTemplate> Templates { get; } = new();
+    
+    public IDataTemplate? ArgumentTemplate { get; set; }
 
     public Control? Build(object? param)
     {

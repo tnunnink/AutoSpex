@@ -10,14 +10,13 @@ public class Variable : IEquatable<Variable>
 {
     private const char VariableStart = '{';
     private const char VariableEnd = '}';
-    private Type _type = typeof(object);
 
     /// <summary>
     /// Creates a new <see cref="Variable"/> with default empty values.
     /// </summary>
     public Variable()
     {
-        Value = TypeGroup.Text.DefaultValue;
+        ChangeGroup(TypeGroup.Text);
     }
 
     /// <summary>
@@ -27,18 +26,7 @@ public class Variable : IEquatable<Variable>
     /// <exception cref="ArgumentNullException"><paramref name="group"/> is <c>null</c>.</exception>
     public Variable(TypeGroup group)
     {
-        if (group is null)
-            throw new ArgumentNullException(nameof(group));
-
-        if (group.DefaultValue is not null)
-        {
-            //This will also Type and in turn set Group
-            Value = group.DefaultValue;
-            return;
-        }
-
-        //This will also set Group.
-        Type = group.DefaultType;
+        ChangeGroup(group);
     }
 
     /// <summary>
@@ -52,6 +40,8 @@ public class Variable : IEquatable<Variable>
             throw new ArgumentException("Can not create variable with null or empty name.");
 
         Name = name;
+        Group = TypeGroup.FromType(value?.GetType());
+        Type = value?.GetType() ?? Group.DefaultType;
         Value = value;
     }
 
@@ -86,24 +76,15 @@ public class Variable : IEquatable<Variable>
         string.IsNullOrEmpty(Path) ? ScopedReference : string.Concat(VariableStart, Path, ".", Name, VariableEnd);
 
     /// <summary>
-    /// The type of the variable value. This is persisted, so we know how to materialize the object value to a strongly
-    /// typed object at runtime, which will allow us to pass in strongly typed values for criteria evaluation.
-    /// Whenever we set type, we will also set the <see cref="Group"/> to match the type group for this variable.
-    /// </summary>
-    public Type Type
-    {
-        get => _type;
-        private set
-        {
-            _type = value;
-            Group = TypeGroup.FromType(value);
-        }
-    }
-
-    /// <summary>
     /// The <see cref="TypeGroup"/> which the variable value belongs.
     /// </summary>
     public TypeGroup Group { get; private set; } = TypeGroup.Default;
+
+    /// <summary>
+    /// The type of the variable value. This is persisted, so we know how to materialize the object value to a strongly
+    /// typed object at runtime, which will allow us to pass in strongly typed values for criteria evaluation.
+    /// </summary>
+    public Type? Type { get; private set; } = typeof(object);
 
     /// <summary>
     /// The object value of the <see cref="Variable"/>.
@@ -118,10 +99,6 @@ public class Variable : IEquatable<Variable>
     /// The raw string data representing the value of the variable. This is what is persisted and ultimately what
     /// <see cref="Value"/> is after being parsed using the defined type.
     /// </summary>
-    /// <remarks>
-    /// By default, this will be an empty string making it a simple text type variable in which the user can
-    /// assign a value. However, this can also be an inner variable for which to chain to another value.
-    /// </remarks>
     public string? Data { get; private set; }
 
     /// <summary>
@@ -130,7 +107,7 @@ public class Variable : IEquatable<Variable>
     public string? Description { get; set; }
 
     /// <inheritdoc />
-    public override string ToString() => Name;
+    public override string ToString() => ScopedReference;
 
     /// <inheritdoc />
     public bool Equals(Variable? other)
@@ -149,12 +126,10 @@ public class Variable : IEquatable<Variable>
     /// Updates the variable <see cref="Group"/> that the value represents.
     /// </summary>
     /// <param name="group">A <see cref="TypeGroup"/> type.</param>
-    public void ChangeType(TypeGroup group)
+    /// <remarks>This also resets <see cref="Value"/> and <see cref="Type"/> based on the default value for the provided group.</remarks>
+    public void ChangeGroup(TypeGroup group)
     {
-        if (group is null)
-            throw new ArgumentNullException(nameof(group));
-
-        Type = group.DefaultType;
+        Group = group ?? throw new ArgumentNullException(nameof(group));
         Value = group.DefaultValue;
     }
 
@@ -163,27 +138,20 @@ public class Variable : IEquatable<Variable>
     /// </summary>
     private object? GetValue()
     {
-        if (Data is null || Type == typeof(object)) return default;
+        if (Data is null || Type is null)
+            return default;
 
-        if (Type == typeof(string))
-            return Data;
-
+        //Technically out LogixParser can handle all the types we care about.
         return Type.IsParsable() ? Data.TryParse(Type) : null;
     }
 
     /// <summary>
-    /// Converts an input object to the storable string  and assigns to <see cref="Data "/>,
+    /// Converts an input object to the storable string  and assigns to <see cref="Data"/>,
     /// which we will know how to convert back to the strongly typed object when retrieving from the database.
     /// </summary>
     private void SetValue(object? value)
     {
-        //Only update type if the provided value is not null.
-        //We want to maintain the specified target type unless the user provides a new valid type.
-        if (value is not null)
-        {
-            Type = value.GetType();
-        }
-
+        Type = value?.GetType();
         //todo handling collections that are not LogixContainer
         Data = value switch
         {

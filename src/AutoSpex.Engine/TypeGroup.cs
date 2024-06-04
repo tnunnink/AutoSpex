@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Net;
+﻿using System.Net;
 using System.Xml;
 using System.Xml.Linq;
 using Ardalis.SmartEnum;
@@ -204,7 +203,10 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
 
         public override bool TryParse(string text, out object? value)
         {
-            throw new NotImplementedException();
+            //if we don't know the type the user input, all we can do is get the first matching name. 
+            var match = LogixEnum.Options().SelectMany(e => e.Value).FirstOrDefault(x => x.Name == text);
+            value = match;
+            return value is not null;
         }
     }
 

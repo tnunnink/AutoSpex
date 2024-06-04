@@ -32,5 +32,6 @@ public static class ServiceExtensions
         SqlMapper.AddTypeHandler(new SmartEnumByNameTypeHandler<Element, string>());
         SqlMapper.AddTypeHandler(new SmartEnumByValueTypeHandler<Operation, string>());
         SqlMapper.AddTypeHandler(new SmartEnumByNameTypeHandler<NodeType, int>());
+        SqlMapper.AddTypeHandler(new SmartEnumByNameTypeHandler<TypeGroup, int>());
     }
 }

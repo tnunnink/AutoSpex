@@ -20,7 +20,7 @@
         <components:Section>
             <components:Section.Header>
                 <Grid ColumnDefinitions="Auto,*,Auto">
-                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10" Margin="10 0">
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5">
                         <TextBlock Text="Query"
                                    FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
                         <PathIcon Theme="{StaticResource IconInfoOutline}"
@@ -59,7 +59,7 @@
         <components:Section>
             <components:Section.Header>
                 <Grid ColumnDefinitions="Auto,*,Auto">
-                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10" Margin="10 0">
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5">
                         <TextBlock Text="Range"
                                    FontWeight="{a:ThemeResource HeadingFontWeightMedium}"
                                    Classes="theme-text-heading size-xs" />
@@ -75,7 +75,7 @@
                         Theme="{a:ControlTheme ToggleSwitchSolid}"
                         Margin="10"
                         VerticalAlignment="Center" HorizontalAlignment="Center"
-                        Classes="accent size-sm"
+                        Classes="accent size-xs"
                         OffContent="{x:Null}" OnContent="{x:Null}" />
                 </Grid>
             </components:Section.Header>

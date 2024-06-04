@@ -9,35 +9,56 @@
         <Border Padding="20" Height="300" Width="600">
             <StackPanel Spacing="10" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <ContentControl Content="{x:Static components:DesignData.EmptyArgument}"
-                                ContentTemplate="{DynamicResource ArgumentEntry}" />
+                                ContentTemplate="{DynamicResource ArgumentDefaultEntry}" />
                 <ContentControl Content="{x:Static components:DesignData.EnumArgument}"
-                                ContentTemplate="{DynamicResource ArgumentEntry}" />
+                                ContentTemplate="{DynamicResource ArgumentDefaultEntry}" />
                 <ContentControl Content="{x:Static components:DesignData.TextArgument}"
-                                ContentTemplate="{DynamicResource ArgumentEntry}" />
+                                ContentTemplate="{DynamicResource ArgumentDefaultEntry}" />
                 <ContentControl Content="{x:Static components:DesignData.VariableArgument}"
-                                ContentTemplate="{DynamicResource ArgumentEntry}" />
+                                ContentTemplate="{DynamicResource ArgumentDefaultEntry}" />
             </StackPanel>
         </Border>
     </Design.PreviewWith>
 
 
-    <DataTemplate x:Key="ArgumentEntry" x:DataType="observers:ArgumentObserver">
-        <StackPanel Orientation="Horizontal">
-            <controls:Entry
-                Value="{Binding Value, Mode=OneWay, FallbackValue={x:Null}}"
-                ValueTemplate="{StaticResource ValueTemplates}"
-                ItemTemplate="{StaticResource ValueTemplates}"
-                Watermark="Enter value"
-                Populate="{Binding Suggestions}"
-                Selector="{Binding Selector}"
-                Commit="{Binding Commit}">
-                <controls:Entry.IsEmpty>
-                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                        <Binding Path="Value" Converter="{x:Static ObjectConverters.IsNull}" />
-                        <Binding Path="Value" Converter="{x:Static StringConverters.IsNullOrEmpty}" />
-                    </MultiBinding>
-                </controls:Entry.IsEmpty>
-            </controls:Entry>
+    <DataTemplate x:Key="ArgumentDefaultEntry" x:DataType="observers:ArgumentObserver">
+        <controls:Entry
+            Watermark="Enter value"
+            Value="{Binding Value}"
+            ValueTemplate="{StaticResource ValueTemplates}"
+            ItemTemplate="{StaticResource ValueItemTemplate}"
+            Populate="{Binding Suggestions}"
+            Selector="{Binding Selector}"
+            Commit="{Binding Commit}">
+            <controls:Entry.IsEmpty>
+                <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                    <Binding Path="Value" Converter="{x:Static ObjectConverters.IsNull}" />
+                    <Binding Path="Value" Converter="{x:Static StringConverters.IsNullOrEmpty}" />
+                </MultiBinding>
+            </controls:Entry.IsEmpty>
+        </controls:Entry>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ArgumentCollectionEntry" x:DataType="observers:ArgumentObserver">
+        <StackPanel Orientation="Horizontal" Spacing="10">
+            <ItemsControl>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+            </ItemsControl>
+            
         </StackPanel>
     </DataTemplate>
+
+    <DataTemplate x:Key="ArgumentCriterionEntry" x:DataType="observers:ArgumentObserver">
+
+    </DataTemplate>
+
+    <components:ArgumentTemplateSelector
+        x:Key="ArgumentTemplateSelector"
+        ArgumentTemplate="{StaticResource ArgumentDefaultEntry}">
+    </components:ArgumentTemplateSelector>
 </ResourceDictionary>

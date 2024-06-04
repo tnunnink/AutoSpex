@@ -16,10 +16,10 @@ internal class SaveVariablesHandler(IConnectionManager manager) : IRequestHandle
 
     private const string UpsertVariable =
         """
-        INSERT INTO Variable(VariableId, NodeId, Name, Type, Data)
-        VALUES (@VariableId, @NodeId, @Name, @Type, @Data)
+        INSERT INTO Variable([VariableId], [NodeId], [Name], [Group], [Type], [Data], [Description])
+        VALUES (@VariableId, @NodeId, @Name, @Group, @Type, @Data, @Description)
         ON CONFLICT DO UPDATE
-        SET NodeId = @NodeId, Name = @Name, Type = @Type, Data = @Data;
+        SET NodeId = @NodeId, Name = @Name, [Group] = @Group, Type = @Type, Data = @Data, Description = @Description;
         """;
 
     private const string DeleteOrphaned =
@@ -39,7 +39,11 @@ internal class SaveVariablesHandler(IConnectionManager manager) : IRequestHandle
         //First add or update all variables provided.
         foreach (var variable in request.Variables)
         {
-            var record = new { variable.VariableId, request.NodeId, variable.Name, variable.Type, variable.Data };
+            var record = new
+            {
+                variable.VariableId, request.NodeId, variable.Name, variable.Group,
+                variable.Type, variable.Data, variable.Description
+            };
             await connection.ExecuteAsync(UpsertVariable, record, transaction);
         }
 
