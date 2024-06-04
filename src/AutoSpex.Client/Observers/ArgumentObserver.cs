@@ -162,7 +162,7 @@ public class ArgumentObserver : Observer<Argument>
         var result = await Mediator.Send(new GetScopedVariables(Id), token);
 
         return result.IsSuccess
-            ? result.Value.Select(v => new ValueObserver(new VariableObserver(v))).Where(v => v.Passes(filter))
+            ? result.Value.Select(v => new ValueObserver(new VariableObserver(v))).Where(v => v.Filter(filter))
             : Enumerable.Empty<ValueObserver>();
     }
 
@@ -181,7 +181,7 @@ public class ArgumentObserver : Observer<Argument>
             return type.GetOptions().Select(x => new ValueObserver(x));
 
         return group == TypeGroup.Enum
-            ? type.GetOptions().Select(x => new ValueObserver(x)).Where(v => v.Passes(filter))
+            ? type.GetOptions().Select(x => new ValueObserver(x)).Where(v => v.Filter(filter))
             : Enumerable.Empty<ValueObserver>();
     }
 }

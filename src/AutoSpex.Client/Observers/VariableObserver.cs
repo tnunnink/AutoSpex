@@ -122,7 +122,7 @@ public partial class VariableObserver : Observer<Variable>
             ? LogixEnum.Options()
                 .SelectMany(x => x.Value)
                 .Select(x => new ValueObserver(x))
-                .Where(x => x.Passes(filter))
+                .Where(x => x.Filter(filter))
             : Enumerable.Empty<ValueObserver>();
     }
 

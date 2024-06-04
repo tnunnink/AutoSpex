@@ -38,6 +38,13 @@ public abstract partial class Observer<TModel> : TrackableViewModel, IEquatable<
     public TModel Model { get; }
 
     /// <summary>
+    /// A 
+    /// </summary>
+    /// <param name="filter"></param>
+    /// <returns></returns>
+    public virtual bool Filter(string? filter) => string.IsNullOrEmpty(filter);
+
+    /// <summary>
     /// A command to issue deletion of this <see cref="Observer{TModel}"/> object from the database.
     /// </summary>
     /// <returns>The <see cref="Task"/> representing the async function to perform.</returns>

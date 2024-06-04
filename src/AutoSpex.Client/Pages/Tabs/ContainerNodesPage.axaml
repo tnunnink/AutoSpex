@@ -1,0 +1,75 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:components="clr-namespace:AutoSpex.Client.Components"
+             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+             xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
+             x:Class="AutoSpex.Client.Pages.ContainerNodesPage"
+             x:DataType="pages:ContainerNodesPageModel"
+             Padding="20">
+
+    <Design.Height>800</Design.Height>
+    <Design.Width>1200</Design.Width>
+
+    <components:Section>
+        <components:Section.Header>
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10">
+                    <TextBlock
+                        Text="{Binding Title}"
+                        FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
+                </StackPanel>
+
+                <TextBox Grid.Column="1"
+                         Text="{Binding Filter}"
+                         Watermark="Filter by keyword"
+                         BorderThickness="0" Background="Transparent" Margin="10 1 10 0"
+                         VerticalContentAlignment="Center" />
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="5">
+                    <Button properties:ButtonIcon.Theme="{StaticResource IconAdd}"
+                            Theme="{StaticResource IconButton}"
+                            Command="{Binding AddNodeCommand}"
+                            Classes="accent"
+                            ToolTip.Tip="New node" />
+                    <Button properties:ButtonIcon.Theme="{StaticResource IconTrashOutlined}"
+                            Theme="{StaticResource IconButton}"
+                            Command="{Binding DeleteNodesCommand}"
+                            ToolTip.Tip="Delete selected" />
+                    <Button properties:ButtonIcon.Theme="{StaticResource IconCopyOutlined}"
+                            Theme="{StaticResource IconButton}"
+                            Command="{Binding CopyNodesCommand}"
+                            ToolTip.Tip="Copy selected" />
+                    <Button properties:ButtonIcon.Theme="{StaticResource IconDotsVertical}"
+                            Theme="{StaticResource IconButton}">
+
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </components:Section.Header>
+
+        <Panel>
+            <components:NoItemsMessage
+                HeaderText="{Binding NoItemsHeader}"
+                MessageIcon="{StaticResource IconAdd}"
+                MessageText="add a new spec to this container."
+                IsVisible="{Binding !Node.Descendents.Count}" />
+
+            <ListBox
+                ItemsSource="{Binding Nodes}"
+                SelectedItems="{Binding Selected}"
+                IsVisible="{Binding Node.Descendents.Count}"
+                ItemTemplate="{StaticResource NodeListItem}"
+                SelectionMode="Multiple"
+                Classes="theme-scroll-overlay"
+                BorderThickness="0" CornerRadius="5" ClipToBounds="True">
+                <ListBox.ItemContainerTheme>
+                    <ControlTheme BasedOn="{StaticResource ListBoxItemEntry}" TargetType="ListBoxItem">
+                        <Setter Property="ContextFlyout" Value="{StaticResource NodeMenu}" />
+                    </ControlTheme>
+                </ListBox.ItemContainerTheme>
+            </ListBox>
+        </Panel>
+    </components:Section>
+</UserControl>

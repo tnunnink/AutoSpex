@@ -51,6 +51,9 @@ public partial class NodeObserver : Observer<Node>,
     public ObserverCollection<Node, NodeObserver> Nodes { get; }
     public ObservableCollection<NodeObserver> Crumbs => new(Model.Ancestors().Select(n => new NodeObserver(n)));
 
+    public ObservableCollection<NodeObserver> Descendents =>
+        new(Model.Descendents().Where(n => n.Type != NodeType.Container).Select(n => new NodeObserver(n)));
+
     [ObservableProperty] private bool _isVisible = true;
 
     [ObservableProperty] private bool _isExpanded;
@@ -65,6 +68,12 @@ public partial class NodeObserver : Observer<Node>,
 
     public static implicit operator NodeObserver(Node node) => new(node);
     public static implicit operator Node(NodeObserver observer) => observer.Model;
+    
+    /// <inheritdoc />
+    public override bool Filter(string? filter)
+    {
+        return string.IsNullOrEmpty(filter) || Name.PassesFilter(filter) || Path.PassesFilter(filter);
+    }
 
     #region Commands
 

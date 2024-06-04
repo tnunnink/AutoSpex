@@ -3,6 +3,7 @@
              xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
              xmlns:components="clr-namespace:AutoSpex.Client.Components"
+             xmlns:shared="clr-namespace:AutoSpex.Client.Shared"
              x:Class="AutoSpex.Client.Pages.RunPage"
              x:DataType="pages:RunPageModel">
 
@@ -17,19 +18,30 @@
                 SaveCommand="{Binding SaveCommand}"/>
         </Border>
 
-        <Grid RowDefinitions="Auto,*" Margin="20">
-            <StackPanel Spacing="10">
-                <StackPanel DockPanel.Dock="Top" Margin="10 0">
-                    <TextBlock Text="{Binding Run.LastRan, FallbackValue='Ran on Month Day at HH:mm:ss by tnunnink'}"
-                               Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
-                </StackPanel>
+        <TabControl
+            ItemsSource="{Binding Tabs}"
+            SelectedItem="{Binding Tab}"
+            ItemContainerTheme="{StaticResource TabItemStandard}"
+            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+            Padding="0" BorderThickness="0 1 0 0">
 
-                <components:RunSummary DockPanel.Dock="Top"
-                                       Result="{Binding Run.Result, FallbackValue={x:Null}}" />
-            </StackPanel>
+            <TabControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" Margin="10 0" />
+                </ItemsPanelTemplate>
+            </TabControl.ItemsPanel>
 
-            <components:OutcomeList Grid.Row="1" Margin="0 20 0 0"
-                                    Outcomes="{Binding Run.Outcomes}" />
-        </Grid>
+            <TabControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Title}" />
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+
+            <TabControl.ContentTemplate>
+                <DataTemplate x:DataType="shared:DetailPageModel">
+                    <ContentControl Content="{Binding}" />
+                </DataTemplate>
+            </TabControl.ContentTemplate>
+        </TabControl>
     </DockPanel>
 </UserControl>

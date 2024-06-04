@@ -25,12 +25,8 @@ public class ValueObserver(object model) : Observer<object>(model)
     /// </summary>
     public TypeGroup Group => GetTypeGroup();
 
-    /// <summary>
-    /// Determines if this value passes the provided keyword filter.
-    /// </summary>
-    /// <param name="filter">The text filter to apply.</param>
-    /// <returns><c>true</c> if this value observer contains the provided text, otherwise, <c>false</c>.</returns>
-    public bool Passes(string? filter)
+    /// <inheritdoc />
+    public override bool Filter(string? filter)
     {
         return string.IsNullOrEmpty(filter) || Text.PassesFilter(filter) || Type.PassesFilter(filter);
     }

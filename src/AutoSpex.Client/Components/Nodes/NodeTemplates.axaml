@@ -2,12 +2,23 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
-                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine">
 
     <Design.PreviewWith>
-        <ContentControl Content="{x:Static components:DesignData.SpecNode}"
-                        ContentTemplate="{DynamicResource Breadcrumb}"
-                        Padding="10" />
+        <StackPanel Spacing="30" Width="600" Height="400">
+
+            <ContentControl
+                Content="{x:Static components:DesignData.SpecNode}"
+                ContentTemplate="{DynamicResource Breadcrumb}"
+                Padding="10" />
+
+            <ListBox BorderThickness="0"
+                     ItemsSource="{x:Static components:DesignData.Specs}"
+                     ItemContainerTheme="{StaticResource ListBoxItemSection}"
+                     ItemTemplate="{DynamicResource NodeListItem}" />
+        </StackPanel>
     </Design.PreviewWith>
 
     <DataTemplate x:Key="BreadcrumbParentNode" x:DataType="observers:NodeObserver">
@@ -34,7 +45,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="BreadcrumbTargetNode" x:DataType="observers:NodeObserver">
-        <StackPanel 
+        <StackPanel
             x:Name="Panel"
             Orientation="Horizontal"
             Focusable="True">
@@ -55,11 +66,11 @@
                         Key="Enter"
                         Command="{Binding RenameCommand}"
                         CommandParameter="{Binding #NameEntry.Text}"
-                        FocusControl="Panel"/>
+                        FocusControl="Panel" />
                     <ExecuteCommandOnKeyUpBehavior
                         Key="Escape"
                         Command="{Binding ResetNameCommand}"
-                        FocusControl="Panel"/>
+                        FocusControl="Panel" />
                     <DataTriggerBehavior
                         Binding="{Binding IsNew}"
                         ComparisonCondition="Equal"
@@ -87,7 +98,6 @@
     <DataTemplate x:Key="Breadcrumb" x:DataType="observers:NodeObserver">
         <Border>
             <StackPanel Orientation="Horizontal">
-                <!--Parents-->
                 <ItemsControl ItemsSource="{Binding Crumbs}"
                               ItemTemplate="{StaticResource BreadcrumbParentNode}">
                     <ItemsControl.ItemsPanel>
@@ -96,7 +106,6 @@
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
-                <!--Target-->
                 <ContentControl
                     Content="{Binding}"
                     ContentTemplate="{StaticResource BreadcrumbTargetNode}" />
@@ -104,4 +113,38 @@
         </Border>
     </DataTemplate>
 
+    <DataTemplate x:Key="NodeListItem" x:DataType="observers:NodeObserver">
+        <Grid ColumnDefinitions="Auto,*,Auto">
+
+            <PathIcon
+                Grid.Column="0"
+                Theme="{Binding Type.Name, Converter={StaticResource KeyToIconConverter}}" />
+
+            <Button
+                Grid.Column="1"
+                Theme="{a:ControlTheme ButtonLink}"
+                Command="{Binding NavigateCommand}"
+                Padding="0" Margin="0 0 20 0"
+                HorizontalAlignment="Left">
+                <TextBlock
+                    Text="{Binding Name}"
+                    FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                    TextTrimming="CharacterEllipsis" />
+                <Button.Styles>
+                    <Style Selector="Button:pointerover > TextBlock">
+                        <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+                        <Setter Property="TextDecorations" Value="Underline" />
+                    </Style>
+                </Button.Styles>
+            </Button>
+            
+            <TextBlock
+                Grid.Column="2"
+                Text="{Binding Path}"
+                TextAlignment="Right"
+                Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                Margin="5 0"/>
+        </Grid>
+    </DataTemplate>
 </ResourceDictionary>

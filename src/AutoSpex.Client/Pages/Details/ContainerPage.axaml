@@ -35,8 +35,8 @@
             </TabControl.ItemTemplate>
 
             <TabControl.ContentTemplate>
-                <DataTemplate x:DataType="shared:PageViewModel">
-                    <ContentControl Content="{Binding}" Margin="30" />
+                <DataTemplate x:DataType="shared:DetailPageModel">
+                    <ContentControl Content="{Binding}" />
                 </DataTemplate>
             </TabControl.ContentTemplate>
         </TabControl>
