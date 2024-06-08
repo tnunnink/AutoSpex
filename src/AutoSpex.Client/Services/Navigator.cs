@@ -81,6 +81,12 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
     public void Close(PageViewModel page) => ClosePage(page);
 
     /// <summary>
+    /// Sends the custom navigation requests through the application messenger. 
+    /// </summary>
+    /// <param name="request">The <see cref="NavigationRequest"/> to be sent through the application messenger.</param>
+    public void Send(NavigationRequest request) => messenger.Send(request);
+
+    /// <summary>
     /// Disposes/Deactivates all pages current open in this instance of the <see cref="Navigator"/> service.
     /// </summary>
     public void Dispose()

@@ -24,6 +24,7 @@
     <ControlTheme x:Key="{x:Type controls:Entry}" TargetType="controls:Entry">
         <Setter Property="FontFamily" Value="{a:ThemeResource CodeFontFamily}" />
         <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeSmall}" />
+        <Setter Property="Padding" Value="{a:ThemeResource ButtonPadding}"></Setter>
         <Setter Property="MaxDropDownHeight" Value="300" />
         <Setter Property="MinDropDownWidth" Value="300" />
         <Setter Property="MaxDropDownWidth" Value="400" />
@@ -35,6 +36,7 @@
                     <Button
                         x:Name="PART_Button"
                         Theme="{a:ControlTheme ButtonSubtle}"
+                        Padding="{TemplateBinding Padding}"
                         Classes.danger="{TemplateBinding (DataValidationErrors.HasErrors)}"
                         HorizontalContentAlignment="Left">
                         <Panel>
@@ -46,8 +48,8 @@
                                 Margin="0 1 0 0" />
                             <ContentPresenter
                                 x:Name="PART_ContentPresenter"
-                                Content="{Binding Value, RelativeSource={RelativeSource TemplatedParent}}"
-                                ContentTemplate="{Binding ValueTemplate, RelativeSource={RelativeSource TemplatedParent}}"
+                                Content="{Binding Content, RelativeSource={RelativeSource TemplatedParent}}"
+                                ContentTemplate="{Binding ContentTemplate, RelativeSource={RelativeSource TemplatedParent}}"
                                 Margin="0 1 0 0" />
                         </Panel>
                     </Button>
@@ -85,6 +87,7 @@
                                 <TextBox.InnerRightContent>
                                     <Button Theme="{StaticResource IconButtonSmall}"
                                             properties:ButtonIcon.Theme="{StaticResource IconChevronExpand}"
+                                            IsVisible="{Binding $parent[controls:Entry].UseExpander}"
                                             Margin="5 0" CornerRadius="10" />
                                 </TextBox.InnerRightContent>
                                 <Interaction.Behaviors>

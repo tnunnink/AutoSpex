@@ -12,12 +12,10 @@ namespace AutoSpex.Persistence;
 /// </summary>
 /// <param name="Node">The node to create.</param>
 [PublicAPI]
-public record CreateNode(Node Node, NodeType? Type = default) : IDbCommand<Result>
+public record CreateNode(Node Node, NodeType? Type = default) : IDbCommand<Result>, IDbLoggable
 {
-    public string ChangeMessage()
-    {
-        return $"Created {Node.Type} {Node.Name}";
-    }
+    public Guid NodeId => Node.NodeId;
+    public string Message => $"Created new {Node.Type} with name '{Node.Name}'";
 }
 
 [UsedImplicitly]
@@ -31,7 +29,6 @@ internal class CreateNodeHandler(IConnectionManager manager) : IRequestHandler<C
 
     private const string InsertSpec = "INSERT INTO Spec (SpecId) VALUES (@NodeId)";
     private const string InsertSource = "INSERT INTO Source (SourceId) VALUES (@NodeId)";
-    private const string InsertRun = "INSERT INTO Run (RunId) VALUES (@NodeId)";
 
     public async Task<Result> Handle(CreateNode request, CancellationToken cancellationToken)
     {
@@ -59,8 +56,6 @@ internal class CreateNodeHandler(IConnectionManager manager) : IRequestHandler<C
             await connection.ExecuteAsync(InsertSpec, new { request.Node.NodeId }, transaction);
         if (request.Node.Type == NodeType.Source)
             await connection.ExecuteAsync(InsertSource, new { request.Node.NodeId }, transaction);
-        if (request.Node.Type == NodeType.Run)
-            await connection.ExecuteAsync(InsertRun, new { request.Node.NodeId }, transaction);
 
         transaction.Commit();
         return Result.Ok();

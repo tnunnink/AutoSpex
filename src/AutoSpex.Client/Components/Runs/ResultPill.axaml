@@ -6,6 +6,7 @@
     <Design.PreviewWith>
         <StackPanel Spacing="10" Margin="20">
             <components:ResultPill Result="None" />
+            <components:ResultPill Result="Pending" />
             <components:ResultPill Result="Passed" />
             <components:ResultPill Result="Failed" />
             <components:ResultPill Result="Error" />
@@ -17,8 +18,9 @@
         <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBorderBrushOutline}" />
         <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
         <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="Padding" Value="7 3" />
-        <Setter Property="CornerRadius" Value="20" />
+        <Setter Property="Padding" Value="10 5" />
+        <Setter Property="MinWidth" Value="70" />
+        <Setter Property="CornerRadius" Value="5" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Border x:Name="border"
@@ -26,10 +28,11 @@
                         BorderThickness="{TemplateBinding BorderThickness}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         Padding="{TemplateBinding Padding}"
-                        CornerRadius="{TemplateBinding CornerRadius}">
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        VerticalAlignment="Center">
                     <TextBlock x:Name="ResultText"
                                Text="{Binding Result, RelativeSource={RelativeSource TemplatedParent}}"
-                               FontWeight="{a:ThemeResource HeadingFontWeightSmall}"
+                               FontSize="{a:ThemeResource DefaultFontSizeSmall}"
                                HorizontalAlignment="Center" VerticalAlignment="Center"
                                Foreground="{TemplateBinding Foreground}" />
                 </Border>
@@ -37,20 +40,24 @@
         </Setter>
 
         <Style Selector="^[Result=None]">
-            <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftDisabled}" />
-            <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+            <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSolidDisabled}" />
+            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSolid}" />
+        </Style>
+        <Style Selector="^[Result=Pending]">
+            <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSolidAccentDisabled}" />
+            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSolidAccent}" />
         </Style>
         <Style Selector="^[Result=Passed]">
-            <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftSuccessDisabled}" />
-            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftSuccess}" />
+            <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSolidSuccessDisabled}" />
+            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSolidSuccess}" />
         </Style>
         <Style Selector="^[Result=Failed]">
-            <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftDangerDisabled}" />
-            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftDanger}" />
+            <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSolidDangerDisabled}" />
+            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSolidDanger}" />
         </Style>
         <Style Selector="^[Result=Error]">
-            <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftWarningDisabled}" />
-            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftWarning}" />
+            <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSolidWarningDisabled}" />
+            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSolidWarning}" />
         </Style>
     </ControlTheme>
 </ResourceDictionary>

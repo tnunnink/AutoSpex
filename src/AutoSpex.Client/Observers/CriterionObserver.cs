@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace AutoSpex.Client.Observers;
 
@@ -57,9 +58,7 @@ public partial class CriterionObserver : Observer<Criterion>
         set => SetProperty(Model.Invert, value, Model, (c, v) => c.Invert = v);
     }
 
-    public Action<object?> PropertyCommiter => UpdateProperty;
-    public Func<string?, CancellationToken, Task<IEnumerable<object>>> PropertyGetter => GetProperties;
-    public Action<object?> CommitOperation => UpdateOperation;
+    public Func<string?, CancellationToken, Task<IEnumerable<object>>> PopulateProperties => GetProperties;
     public Func<string?, CancellationToken, Task<IEnumerable<object>>> PopulateOperations => GetOperations;
 
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
@@ -106,6 +105,7 @@ public partial class CriterionObserver : Observer<Criterion>
         return Task.FromResult(filtered);
     }
 
+    [RelayCommand]
     private void UpdateProperty(object? value)
     {
         switch (value)
@@ -136,6 +136,7 @@ public partial class CriterionObserver : Observer<Criterion>
     /// Updates the criterion <see cref="Operation"/> based on the provided value type. If the user provides text we
     /// can try to parse it but if not then we need to set to null.
     /// </summary>
+    [RelayCommand]
     private void UpdateOperation(object? value)
     {
         switch (value)

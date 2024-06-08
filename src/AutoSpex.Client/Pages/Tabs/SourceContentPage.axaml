@@ -7,8 +7,7 @@
              xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
              xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
              x:Class="AutoSpex.Client.Pages.SourceContentPage"
-             x:DataType="pages:SourceContentPageModel"
-             Padding="20">
+             x:DataType="pages:SourceContentPageModel">
 
     <Design.Height>500</Design.Height>
     <Design.Width>1200</Design.Width>
@@ -95,7 +94,7 @@
                                             Element="{Binding Element}"
                                             Criteria="{Binding Filters}"
                                             Inclusion="{Binding FilterInclusion}"
-                                            MinWidth="400"/>
+                                            MinWidth="400" />
                                     </Flyout>
                                 </Button.Flyout>
                             </Button>
@@ -136,7 +135,7 @@
                     DrawerClosedLength="0"
                     DrawerOpenLength="{Binding #DrawerView.Bounds.Width, Converter={StaticResource MathConverter}, ConverterParameter='x/2'}">
                     <Panel>
-                        <components:NoItemsMessage
+                        <components:DefaultMessage
                             HeaderIcon="{StaticResource IconSourceThemed}"
                             HeaderText="No elements found"
                             CustomMessage="Use the search bar to select and filter elements within this source."
@@ -164,7 +163,7 @@
 
                     <controls:DrawerView.Drawer>
                         <Panel>
-                            <components:NoItemsMessage
+                            <components:DefaultMessage
                                 HeaderText="No elements selected"
                                 CustomMessage="Element properties will show up here when selected."
                                 IsVisible="{Binding SelectedElement, Converter={x:Static ObjectConverters.IsNull}}" />

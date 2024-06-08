@@ -7,7 +7,10 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record SaveVariables(Guid NodeId, IEnumerable<Variable> Variables) : IDbCommand<Result>;
+public record SaveVariables(Guid NodeId, IEnumerable<Variable> Variables) : IDbCommand<Result>, IDbLoggable
+{
+    public string Message => $"Saved {Variables.Count()} variables.";
+}
 
 [UsedImplicitly]
 internal class SaveVariablesHandler(IConnectionManager manager) : IRequestHandler<SaveVariables, Result>

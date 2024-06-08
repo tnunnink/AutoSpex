@@ -13,7 +13,7 @@ using FluentResults;
 
 namespace AutoSpex.Client.Pages;
 
-public partial class NodeVariablesPageModel : DetailPageModel,
+public partial class NodeVariablesPageModel : PageViewModel,
     IRecipient<VariableObserver.Deleted>,
     IRecipient<VariableObserver.GetNames>
 {

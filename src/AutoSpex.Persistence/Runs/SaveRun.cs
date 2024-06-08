@@ -7,35 +7,26 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record SaveRun(Run Run) : IDbCommand<Result>;
+public record SaveRun(Run Run) : IDbCommand<Result>, IDbLoggable
+{
+    public Guid NodeId => Run.RunId;
+    public string Message => $"Saved Run '{Run.Name}'";
+}
 
 [UsedImplicitly]
 internal class SaveRunHandler(IConnectionManager manager) : IRequestHandler<SaveRun, Result>
 {
-    private const string UpsertRun =
-        """
-        INSERT INTO Run (RunId, NodeId, SourceId, Name, Result, RanOn, RanBy)
-        VALUES (@RunId, @NodeId, @SourceId, @Name, @Result, @RanOn, @RanBy)
-        ON CONFLICT DO UPDATE
-            SET NodeId = @NodeId, SourceId = @SourceId, Name = @Name, Result = @Result, RanOn = @RanOn, RanBy = @RanBy;
-        """;
-
-    private const string DeleteOutcomes = "DELETE FROM Outcome WHERE RunId = @RunId";
-
-    private const string InsertOutcomes =
-        """
-        INSERT INTO Outcome (OutcomeId, RunId, SpecId, Result, Duration, Total, Passed, Failed, Errored, Evaluations)
-        VALUES (@OutcomeId, @RunId, @SpecId, @Result, @Duration, @Total, @Passed, @Failed, @Errored, @Evaluations)
-        """;
-
     public async Task<Result> Handle(SaveRun request, CancellationToken cancellationToken)
     {
         using var connection = await manager.Connect(Database.Project, cancellationToken);
         using var transaction = connection.BeginTransaction();
 
-        await connection.ExecuteAsync(UpsertRun, new { request.Run }, transaction);
-        await connection.ExecuteAsync(DeleteOutcomes, new { request.Run.RunId }, transaction);
-        await connection.ExecuteAsync(InsertOutcomes, new { request.Run.Outcomes }, transaction);
+        //todo the node exists already. all we do here is update the run nodes and run variables
+
+        //1. delete all run nodes with this run id.
+        //2. insert all nodes configured on the run.
+        //3. delete all run variable with this run id.
+        //4. insert all overriden variables for this run.
 
         transaction.Commit();
         return Result.Ok();

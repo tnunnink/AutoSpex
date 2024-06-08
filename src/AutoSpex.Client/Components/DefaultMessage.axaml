@@ -4,14 +4,14 @@
                     xmlns:components="using:AutoSpex.Client.Components">
 
     <Design.PreviewWith>
-        <components:NoItemsMessage
+        <components:DefaultMessage
             HeaderIcon="{StaticResource IconSpecThemed}"
             HeaderText="No criteria defined"
             MessageIcon="{StaticResource IconAdd}"
             MessageText="add a new criteria to this spec." />
     </Design.PreviewWith>
 
-    <ControlTheme x:Key="{x:Type components:NoItemsMessage}" TargetType="components:NoItemsMessage">
+    <ControlTheme x:Key="{x:Type components:DefaultMessage}" TargetType="components:DefaultMessage">
         <Setter Property="Template">
             <ControlTemplate>
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="20" Spacing="3">

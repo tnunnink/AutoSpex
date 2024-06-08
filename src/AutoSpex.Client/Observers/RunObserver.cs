@@ -1,162 +1,90 @@
 ﻿using System;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
-using AutoSpex.Persistence;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using FluentResults;
-using L5Sharp.Core;
 
 namespace AutoSpex.Client.Observers;
 
 public partial class RunObserver : Observer<Run>
 {
-    private CancellationTokenSource? _cancellation;
-
     /// <inheritdoc/>
     public RunObserver(Run model) : base(model)
     {
+        Result = Model.Result;
+        
+        Nodes = new ObserverCollection<Node, NodeObserver>(
+            refresh: () => Model.Nodes.Select(n => new NodeObserver(n)).ToList(),
+            add: (_, n) => Model.AddNode(n),
+            remove: (_, n) => Model.RemoveNode(n),
+            clear: () => Model.ClearNodes()
+        );
+        
         Outcomes = new ObserverCollection<Outcome, OutcomeObserver>(
-            () => Model.Outcomes.Select(n => new OutcomeObserver(n)).ToList(),
-            (_, m) => Model.AddOutcome(m),
-            (_, m) => Model.AddOutcome(m),
-            (_, m) => Model.Remove(m.OutcomeId),
-            () => Model.Clear());
+            refresh: () => Model.Outcomes.Select(x => new OutcomeObserver(x)).ToList(),
+            add: (_, m) => Model.AddOutcome(m),
+            remove: (_, m) => Model.RemoveOutcome(m),
+            clear: () => Model.ClearOutcomes()
+        );
+        
+        Track(Nodes);
+        Track(Outcomes);
+    }
 
-        Total = Model.Outcomes.Count();
-        Passed = Model.Outcomes.Count(o => o.Result == ResultState.Passed);
-        Failed = Model.Outcomes.Count(o => o.Result == ResultState.Failed);
-        Errored = Model.Outcomes.Count(o => o.Result == ResultState.Error);
-        Duration = Model.Outcomes.Sum(o => o.Duration);
-        Average = Ran > 0 ? Duration / Ran : 0;
+    /// <summary>
+    /// Creates a virtual <see cref="RunObserver"/> with the provided run node and seed node.
+    /// </summary>
+    /// <param name="node">The node representing the run node. This is used to copy the id and name to the new <see cref="Run"/>.</param>
+    /// <param name="seed">The node used to seed the run with the nodes to run.</param>
+    private RunObserver(NodeObserver node, NodeObserver seed) : this(new Run(node, seed))
+    {
+        IsVirtual = true;
     }
 
     public override Guid Id => Model.RunId;
-
-    public string Name
-    {
-        get => Model.Name;
-        set => SetProperty(Model.Name, value, Model, (s, v) => s.Name = v);
-    }
-
-    public SourceObserver? Source => Model.Source is not null ? new SourceObserver(Model.Source) : default;
-    public ResultState Result => Model.Result;
-    public string LastRan => $"Ran on {Model.RanOn:G} by {Model.RanBy}";
+    public string Name => Model.Name;
+    [ObservableProperty] private ResultState _result;
+    public DateTime RanOn => Model.RanOn;
+    public string RanBy => Model.RanBy;
+    public int Total => Model.Sources.Count() * Model.Specs.Count();
+    public int Ran => Outcomes.Count;
+    public int Passed => Outcomes.Count(x => x.Result == ResultState.Passed);
+    public int Failed => Outcomes.Count(x => x.Result == ResultState.Failed);
+    public int Error => Outcomes.Count(x => x.Result == ResultState.Error);
+    public long Duration => Outcomes.Sum(x => x.Duration);
+    public long Average => Outcomes.Count > 0 ? Outcomes.Sum(x => x.Duration) / Outcomes.Count : 0;
+    public ObserverCollection<Node, NodeObserver> Nodes { get; }
     public ObserverCollection<Outcome, OutcomeObserver> Outcomes { get; }
 
-    [ObservableProperty] private bool _runOnLoad;
-    [ObservableProperty] private bool _running;
-    [ObservableProperty] private int _total;
-    [ObservableProperty] private int _ran;
-    [ObservableProperty] private int _passed;
-    [ObservableProperty] private int _failed;
-    [ObservableProperty] private int _errored;
-    [ObservableProperty] private long _duration;
-    [ObservableProperty] private long _average;
+    [ObservableProperty] private bool _isVirtual;
+
+    /// <summary>
+    /// Adds the provided node (or its descendants) to this run configuration.
+    /// </summary>
+    /// <param name="node">The node to add.</param>
+    public void AddNode(NodeObserver node)
+    {
+        //Getting a local node to use as the different observer instance to respect different UI properties.
+        var observer = new NodeObserver(node);
+        //We have to add to the model since it handles adding only descendants and not the container node itself (ObserverCollection doesn't know not to).
+        //So after each add we just need to Sync the collection of the underlying model to our ObserverCollection. (Sync will trigger change notification which we want)
+        Model.AddNode(observer);
+        Nodes.Sync();
+    }
+
+    /// <summary>
+    /// A static factory method that creates a new virtual run observer with the provided seed node. It also outputs the
+    /// created run node.
+    /// </summary>
+    /// <param name="seed">The node to seed this run with.</param>
+    /// <param name="node">The run node that was created.</param>
+    /// <returns>A new <see cref="RunObserver"/> wrapping the run.</returns>
+    public static RunObserver Virtual(NodeObserver seed, out NodeObserver node)
+    {
+        node = Node.NewRun();
+        return new RunObserver(node, seed);
+    }
 
     public static implicit operator Run(RunObserver observer) => observer.Model;
     public static implicit operator RunObserver(Run model) => new(model);
-
-    protected override async Task Navigate()
-    {
-        //Load full run to navigate into details.
-        var load = await Mediator.Send(new GetRun(Id));
-        if (load.IsFailed) return;
-        await Navigator.Navigate(new RunObserver(load.Value));
-    }
-
-    [RelayCommand(CanExecute = nameof(CanExecute))]
-    public async Task Execute()
-    {
-        if (Model.SourceId == Guid.Empty) return;
-
-        //Indicate a run to the UI
-        _cancellation = new CancellationTokenSource();
-        Ran = 0;
-        Running = true;
-
-        var content = await LoadContent(_cancellation.Token);
-        if (content.IsFailed) return;
-
-        //Configure a progress tracker which will receive outcomes as they are completed.
-        var progress = new Progress<Outcome>();
-        progress.ProgressChanged += OnOutcomesProcessed;
-
-        //Execute the run
-        await ExecuteRun(content.Value, progress);
-
-        //Reset
-        Running = false;
-    }
-
-    private bool CanExecute() => Model.SourceId != Guid.Empty && Outcomes.Any();
-
-    [RelayCommand(CanExecute = nameof(CanCancel))]
-    private void Cancel()
-    {
-        _cancellation?.Cancel();
-    }
-
-    private bool CanCancel() => Running;
-
-    /// <summary>
-    /// Load the source content for this run from the database.
-    /// </summary>
-    private async Task<Result<L5X>> LoadContent(CancellationToken token)
-    {
-        var result = await Mediator.Send(new GetSourceContent(Model.SourceId), token);
-        return result.IsFailed ? result : result.Value;
-    }
-
-    /// <summary>
-    /// Executes this run using the provided specs and L5X content.
-    /// </summary>
-    /// <param name="content">The L5X content to run the specs against.</param>
-    /// <param name="progress">The progress object for tracking the execution progress. (optional)</param>
-    /// <returns>The Run object that encapsulates the execution outcome.</returns>
-    /// <exception cref="InvalidOperationException">Thrown when the input source is null.</exception>
-    /// <remarks>
-    /// Any spec that is not already added to the run will be skipped. Only specs that are configured via
-    /// <see cref="Outcomes"/> will be processed. 
-    /// </remarks>
-    private async Task ExecuteRun(L5X content, IProgress<Outcome>? progress = default)
-    {
-        foreach (var outcome in Outcomes)
-        {
-            await outcome.Process(content);
-            progress?.Report(outcome.Model);
-        }
-
-        Model.UpdateResult();
-        Refresh();
-    }
-
-    /// <summary>
-    /// Updates the user interface by incrementing counts, duration, and average after each outcome is run.
-    /// </summary>
-    private void OnOutcomesProcessed(object? sender, Outcome outcome)
-    {
-        Ran++;
-
-        // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
-        // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
-        switch (outcome.Result)
-        {
-            case ResultState.Passed:
-                Passed++;
-                break;
-            case ResultState.Failed:
-                Failed++;
-                break;
-            case ResultState.Error:
-                Errored++;
-                break;
-        }
-
-        Duration += outcome.Duration;
-        Average = Ran > 0 ? Duration / Ran : 0;
-    }
 }

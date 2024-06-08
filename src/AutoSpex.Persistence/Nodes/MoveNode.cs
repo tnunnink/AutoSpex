@@ -7,7 +7,11 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record MoveNode(Node Node) : IDbCommand<Result>;
+public record MoveNode(Node Node) : IDbCommand<Result>, IDbLoggable
+{
+    public Guid NodeId => Node.NodeId;
+    public string Message => $"Moved {Node.Type} '{Node.Name}' to parent {Node.Parent?.Name}";
+}
 
 [UsedImplicitly]
 internal class MoveNodeHandler(IConnectionManager manager) : IRequestHandler<MoveNode, Result>

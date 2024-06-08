@@ -65,6 +65,7 @@
                 <controls:Entry
                     Watermark="Enter name"
                     Value="{Binding Name}"
+                    Content="{Binding Name}"
                     MinDropDownWidth="{Binding $self.Bounds.Width}"
                     IsEmpty="{Binding Name, Converter={x:Static StringConverters.IsNullOrEmpty}}" />
 
@@ -74,10 +75,10 @@
 
                 <controls:Entry
                     Watermark="Enter value"
-                    Value="{Binding Value}"
-                    ValueTemplate="{StaticResource ValueTemplates}"
+                    Content="{Binding Value}"
+                    ContentTemplate="{StaticResource ValueTemplates}"
                     ItemTemplate="{StaticResource ValueItemTemplate}"
-                    Commit="{Binding CommitValue}"
+                    CommitCommand="{Binding UpdateValueCommand}"
                     Populate="{Binding Suggestions}">
                     <controls:Entry.IsEmpty>
                         <MultiBinding Converter="{x:Static BoolConverters.Or}">

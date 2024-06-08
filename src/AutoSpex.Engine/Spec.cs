@@ -1,4 +1,6 @@
-﻿using System.Text.Json;
+﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Text.Json;
 using JetBrains.Annotations;
 using L5Sharp.Core;
 using Task = System.Threading.Tasks.Task;
@@ -99,42 +101,26 @@ public class Spec()
         options.Converters.Add(new JsonTypeConverter());
         return JsonSerializer.Serialize(this, options);
     }
-    
+
     /// <summary>
     /// Runs the Spec on the given L5X content and returns the outcome.
     /// </summary>
-    /// <param name="content">The L5X content to run the Spec on.</param>
+    /// <param name="source"></param>
     /// <param name="token"></param>
     /// <returns>The outcome of the Spec run.</returns>
     /// <exception cref="ArgumentNullException">Thrown when the content parameter is null.</exception>
-    public Task<IEnumerable<Verification>> Run(L5X content, CancellationToken token = default)
+    public async Task<Outcome> Run(Source source, CancellationToken token = default)
     {
-        if (content is null)
-            throw new ArgumentNullException(nameof(content));
+        if (source is null)
+            throw new ArgumentNullException(nameof(source));
 
-        return Task.Run(() =>
-        {
-            var verifications = new List<Verification>();
+        var content = source.L5X;
 
-            //1.Query content
-            var elements = Element.Query(content);
-            
-            token.ThrowIfCancellationRequested();
+        var stopwatch = Stopwatch.StartNew();
+        var verifications = await RunSpec(content, token);
+        stopwatch.Stop();
 
-            //2.Filter content
-            var filtered = elements.Where(Filter).ToList();
-            
-            token.ThrowIfCancellationRequested();
-
-            //3.Evaluate count (if configured)
-            if (Settings.VerifyCount)
-                verifications.Add(VerifyCount(filtered));
-
-            //4.Verify candidates
-            verifications.AddRange(filtered.Select(Verify));
-
-            return verifications.AsEnumerable();
-        }, token);
+        return new Outcome(this, source, verifications, stopwatch.ElapsedMilliseconds);
     }
 
     /// <summary>
@@ -154,7 +140,7 @@ public class Spec()
     /// </summary>
     /// <param name="config">The spec to apply to the this spec.</param>
     /// <returns>A <see cref="Spec"/> with the updated config.</returns>
-    /// <remarks>This is mostly so I can update the data returned from the database while maintaining the id.</remarks>
+    /// <remarks>This is mostly, so I can update the data returned from the database while maintaining the id.</remarks>
     public Spec Configure(Spec config)
     {
         ArgumentNullException.ThrowIfNull(config);
@@ -292,5 +278,38 @@ public class Spec()
         }
 
         return variables;
+    }
+
+    /// <summary>
+    /// Executes the configured specification against the provided L5X content.
+    /// </summary>
+    /// <param name="content">The L5X representing the content to verify.</param>
+    /// <param name="token">A token for canceling the run.</param>
+    /// <returns>A collection of <see cref="Verification"/> objects indicating the result data.</returns>
+    private Task<ReadOnlyCollection<Verification>> RunSpec(L5X content, CancellationToken token = default)
+    {
+        return Task.Run(() =>
+        {
+            var verifications = new List<Verification>();
+
+            //1.Query content
+            var elements = Element.Query(content);
+
+            token.ThrowIfCancellationRequested();
+
+            //2.Filter content
+            var filtered = elements.Where(Filter).ToList();
+
+            token.ThrowIfCancellationRequested();
+
+            //3.Evaluate count (if configured)
+            if (Settings.VerifyCount)
+                verifications.Add(VerifyCount(filtered));
+
+            //4.Verify candidates
+            verifications.AddRange(filtered.Select(Verify));
+
+            return verifications.AsReadOnly();
+        }, token);
     }
 }

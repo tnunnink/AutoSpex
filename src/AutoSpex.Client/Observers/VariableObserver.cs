@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using L5Sharp.Core;
@@ -64,8 +65,7 @@ public partial class VariableObserver : Observer<Variable>
         get => Model.Description;
         set => SetProperty(Model.Description, value, Model, (v, s) => v.Description = s);
     }
-
-    public Action<object?> CommitValue => UpdateValue;
+    
     public Func<string?, CancellationToken, Task<IEnumerable<object>>> Suggestions => GetSuggestions;
     public override string ToString() => ScopedReference;
     public static implicit operator VariableObserver(Variable variable) => new(variable);
@@ -84,6 +84,7 @@ public partial class VariableObserver : Observer<Variable>
     /// Set the value property based on the received entry input. If input is text, we attempt to parse th input.
     /// Otherwise, we set the value to what was received.
     /// </summary>
+    [RelayCommand]
     private void UpdateValue(object? value)
     {
         switch (value)

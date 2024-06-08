@@ -5,26 +5,26 @@ using Avalonia.Styling;
 
 namespace AutoSpex.Client.Components;
 
-public class NoItemsMessage : TemplatedControl
+public class DefaultMessage : TemplatedControl
 {
     public static readonly StyledProperty<ControlTheme> HeaderIconProperty =
-        AvaloniaProperty.Register<NoItemsMessage, ControlTheme>(
+        AvaloniaProperty.Register<DefaultMessage, ControlTheme>(
             nameof(HeaderIcon));
 
     public static readonly StyledProperty<string> HeaderTextProperty =
-        AvaloniaProperty.Register<NoItemsMessage, string>(
+        AvaloniaProperty.Register<DefaultMessage, string>(
             nameof(HeaderText));
 
     public static readonly StyledProperty<ControlTheme> MessageIconProperty =
-        AvaloniaProperty.Register<NoItemsMessage, ControlTheme>(
+        AvaloniaProperty.Register<DefaultMessage, ControlTheme>(
             nameof(MessageIcon));
 
     public static readonly StyledProperty<string> MessageTextProperty =
-        AvaloniaProperty.Register<NoItemsMessage, string>(
+        AvaloniaProperty.Register<DefaultMessage, string>(
             nameof(MessageText));
 
     public static readonly StyledProperty<string?> CustomMessageProperty =
-        AvaloniaProperty.Register<NoItemsMessage, string?>(
+        AvaloniaProperty.Register<DefaultMessage, string?>(
             nameof(CustomMessage));
 
     public ControlTheme HeaderIcon

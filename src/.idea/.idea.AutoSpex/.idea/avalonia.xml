@@ -42,6 +42,7 @@
         <entry key="AutoSpex.Client/Components/Criteria/PropertyFlyout.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Components/Criterion/PropertyEntry.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Components/Criterion/PropertyFlyout.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
+        <entry key="AutoSpex.Client/Components/DefaultMessage.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Components/DetailItemsControl.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Components/DetailTabMenu.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Components/Details/All.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
@@ -374,6 +375,7 @@
         <entry key="AutoSpex.Client/Pages/Projects/ProjectPage.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Pages/Projects/SourcesPage.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Pages/Projects/SpecsPage.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
+        <entry key="AutoSpex.Client/Pages/RunnerPage.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Pages/Runners/RunnerListPage.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Pages/Runners/RunnerPage.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Pages/Runs/RunListPage.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
@@ -415,6 +417,7 @@
         <entry key="AutoSpex.Client/Pages/Tabs/NodeInfoPage.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Pages/Tabs/NodeRunsPage.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Pages/Tabs/NodeVariablesPage.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
+        <entry key="AutoSpex.Client/Pages/Tabs/RunConfigPage.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Pages/Tabs/SourceAddContentPage.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Pages/Tabs/SourceAddContentPageModel.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Pages/Tabs/SourceContentPage.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
@@ -481,6 +484,7 @@
         <entry key="AutoSpex.Client/Resources/Themes/NavigationTabItem.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Resources/Themes/PathIcon.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Resources/Themes/Prompt.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
+        <entry key="AutoSpex.Client/Resources/Themes/SplitButton.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Resources/Themes/SplitView.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Resources/Themes/StandardTabItem.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Resources/Themes/SuggestionEntry.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />

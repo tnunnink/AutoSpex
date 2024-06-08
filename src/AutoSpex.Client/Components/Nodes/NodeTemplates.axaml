@@ -3,11 +3,10 @@
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
                     xmlns:components="clr-namespace:AutoSpex.Client.Components"
-                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
-                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine">
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
 
     <Design.PreviewWith>
-        <StackPanel Spacing="30" Width="600" Height="400">
+        <StackPanel Spacing="30" Width="650" Height="500">
 
             <ContentControl
                 Content="{x:Static components:DesignData.SpecNode}"
@@ -18,6 +17,11 @@
                      ItemsSource="{x:Static components:DesignData.Specs}"
                      ItemContainerTheme="{StaticResource ListBoxItemSection}"
                      ItemTemplate="{DynamicResource NodeListItem}" />
+
+            <ListBoxItem
+                Content="{x:Static components:DesignData.ChangeLog}"
+                ContentTemplate="{DynamicResource ChangeLogListItem}"
+                Theme="{StaticResource ListBoxItemSubtle}" />
         </StackPanel>
     </Design.PreviewWith>
 
@@ -44,41 +48,36 @@
         </StackPanel>
     </DataTemplate>
 
+    <DataTemplate x:Key="NodeName" x:DataType="observers:NodeObserver">
+        <StackPanel Orientation="Horizontal" Spacing="5">
+            <PathIcon
+                Theme="{Binding Type.Name, Converter={StaticResource KeyToIconConverter}}"
+                Classes="icon-small" />
+            <TextBlock Text="{Binding Name}" />
+        </StackPanel>
+    </DataTemplate>
+
     <DataTemplate x:Key="BreadcrumbTargetNode" x:DataType="observers:NodeObserver">
         <StackPanel
             x:Name="Panel"
             Orientation="Horizontal"
             Focusable="True">
-            <TextBox x:Name="NameEntry"
-                     Text="{Binding Name, Mode=OneWay}"
-                     Classes="subtle"
-                     FontSize="{a:ThemeResource DefaultFontSizeSmall}"
-                     Padding="0 6 5 5" VerticalAlignment="Center" HorizontalAlignment="Center">
-                <TextBox.InnerLeftContent>
-                    <PathIcon
-                        Theme="{Binding Type.Name, Converter={StaticResource KeyToIconConverter}}"
-                        Classes="icon-small"
-                        Margin="3 0" />
-                </TextBox.InnerLeftContent>
+            <controls:Entry
+                x:Name="NameEntry"
+                Value="{Binding Name}"
+                Content="{Binding}"
+                ContentTemplate="{StaticResource NodeName}"
+                FontFamily="{a:ThemeResource DefaultFontFamily}"
+                CommitCommand="{Binding RenameCommand}"
+                MinDropDownWidth="{Binding #NameEntry.Bounds.Width}"
+                Padding="5">
                 <Interaction.Behaviors>
-                    <SelectAllOnGotFocusBehavior />
-                    <ExecuteCommandOnKeyUpBehavior
-                        Key="Enter"
-                        Command="{Binding RenameCommand}"
-                        CommandParameter="{Binding #NameEntry.Text}"
-                        FocusControl="Panel" />
-                    <ExecuteCommandOnKeyUpBehavior
-                        Key="Escape"
-                        Command="{Binding ResetNameCommand}"
-                        FocusControl="Panel" />
-                    <DataTriggerBehavior
-                        Binding="{Binding IsNew}"
-                        ComparisonCondition="Equal"
-                        Value="True">
-                        <FocusControlAction TargetControl="NameEntry" />
+                    <DataTriggerBehavior Binding="{Binding IsNew}" ComparisonCondition="Equal" Value="True">
+                        <ChangePropertyAction TargetObject="NameEntry" PropertyName="IsDropDownOpen" Value="True" />
                     </DataTriggerBehavior>
                 </Interaction.Behaviors>
-            </TextBox>
+            </controls:Entry>
+
             <Button Content=">"
                     IsVisible="{Binding Nodes.Count}"
                     Theme="{a:ControlTheme ButtonSubtle}"
@@ -137,14 +136,44 @@
                     </Style>
                 </Button.Styles>
             </Button>
-            
+
             <TextBlock
                 Grid.Column="2"
                 Text="{Binding Path}"
                 TextAlignment="Right"
                 Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
                 FontSize="{a:ThemeResource DefaultFontSizeSmall}"
-                Margin="5 0"/>
+                Margin="5 0" />
         </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ChangeLogListItem" x:DataType="observers:ChangeLogObserver">
+        <Grid ColumnDefinitions="Auto,*,Auto" Margin="5">
+            <PathIcon
+                Grid.Column="0" Margin="0 0 10 0"
+                Theme="{StaticResource IconJournalText}"
+
+                Classes="icon-small" Padding="3" />
+
+            <TextBlock
+                Grid.Column="1"
+                Text="{Binding Message}"
+                FontSize="{a:ThemeResource DefaultFontSizeSmall}" />
+
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="5" Margin="20 0">
+                <TextBlock
+                    Text="{Binding ChangedBy}"
+                    FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                    Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                <Border
+                    BorderBrush="{a:ThemeResource Container2BorderBrush}"
+                    BorderThickness="2 0 0 0" Margin="5 3" />
+                <TextBlock
+                    Text="{Binding ChangedOn}"
+                    FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                    Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+            </StackPanel>
+        </Grid>
+
     </DataTemplate>
 </ResourceDictionary>

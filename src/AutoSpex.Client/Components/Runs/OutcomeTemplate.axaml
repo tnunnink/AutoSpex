@@ -6,17 +6,14 @@
 
     <Design.PreviewWith>
         <Border Background="{a:ThemeResource Container1BackgroundBrush}"
-                Width="800" Height="200" Padding="30">
-            <StackPanel>
-                <ListBoxItem Theme="{StaticResource ListBoxItemSubtle}"
-                             Content="{x:Static components:DesignData.OutcomePassed}"
-                             ContentTemplate="{DynamicResource OutcomeItem}" />
-                <ListBoxItem Theme="{StaticResource ListBoxItemSubtle}"
-                             Content="{x:Static components:DesignData.OutcomeFailed}"
-                             ContentTemplate="{DynamicResource OutcomeItem}" />
-                <ListBoxItem Theme="{StaticResource ListBoxItemSubtle}"
-                             Content="{x:Static components:DesignData.OutcomeErrored}"
-                             ContentTemplate="{DynamicResource OutcomeItem}" />
+                Width="1000" Height="400" Padding="30">
+            <StackPanel Spacing="20">
+                <TreeView ItemsSource="{x:Static components:DesignData.Outcomes}"
+                          ItemContainerTheme="{StaticResource TreeViewItemSubtle}"
+                          ItemTemplate="{DynamicResource OutcomeTreeItem}" />
+                <ListBox ItemsSource="{x:Static components:DesignData.Evaluations}"
+                         ItemContainerTheme="{StaticResource ListBoxItemSubtle}"
+                         ItemTemplate="{DynamicResource EvaluationTreeItem}" />
             </StackPanel>
         </Border>
     </Design.PreviewWith>
@@ -29,8 +26,83 @@
                 <TextBlock Text="{Binding Duration}" Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
             </StackPanel>
             <StackPanel Grid.Column="2">
-                
+
             </StackPanel>
         </Grid>
     </DataTemplate>
+
+
+    <TreeDataTemplate x:Key="OutcomeTreeItem" DataType="observers:OutcomeObserver" ItemsSource="{Binding Evaluations}">
+        <DockPanel LastChildFill="False">
+            <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" Spacing="10">
+                <PathIcon Theme="{Binding Result, Converter={StaticResource ResultStateToIconConverter}}"
+                          Height="16" Width="16" Padding="1" />
+                <PathIcon Theme="{StaticResource IconSpecThemed}"
+                          Height="16" Width="16" Padding="1" />
+                <TextBlock Text="{Binding SpecName}"
+                           Foreground="{a:ThemeResource DefaultForegroundBrush}"
+                           FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                           TextTrimming="CharacterEllipsis"
+                           TextWrapping="NoWrap" />
+                <TextBlock
+                    Text="{Binding SourceNameFormatted}"
+                    Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                    FontSize="{a:ThemeResource DefaultFontSizeSmall}">
+                </TextBlock>
+            </StackPanel>
+
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="10" Margin="10 0">
+                <TextBlock Text="{Binding DurationFormatted}"
+                           Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                           FontSize="{a:ThemeResource DefaultFontSizeSmall}" />
+                <components:ResultPill Result="{Binding Result}" Padding="2" />
+            </StackPanel>
+        </DockPanel>
+    </TreeDataTemplate>
+
+    <TreeDataTemplate x:Key="EvaluationTreeItem" x:DataType="observers:EvaluationObserver">
+        <Grid ColumnDefinitions="Auto,*,Auto">
+
+            <PathIcon Grid.Column="0"
+                      Theme="{StaticResource IconPassedThemed}"
+                      Classes="success" />
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="5">
+
+                <ContentControl Content="{Binding Model.Candidate}"
+                                ContentTemplate="{StaticResource ValueTemplates}"
+                                FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                                FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
+
+                <TextBlock Text="{Binding Message}"
+                           FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                           Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+
+                <ItemsControl ItemsSource="{Binding Model.Expected}"
+                              ItemTemplate="{StaticResource ValueTemplates}"
+                              FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                              Padding="0">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+
+                <TextBlock Text="and found"
+                           FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                           Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+
+                <ContentControl
+                    Content="{Binding Model.Actual}" Padding="0"
+                    ContentTemplate="{StaticResource ValueTemplates}"
+                    FontSize="{a:ThemeResource DefaultFontSizeSmall}" />
+            </StackPanel>
+
+            <TextBlock Grid.Column="2"
+                       Text="{Binding Result}"
+                       Margin="10 0"
+                       Classes="success" />
+        </Grid>
+    </TreeDataTemplate>
 </ResourceDictionary>

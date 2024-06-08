@@ -233,30 +233,30 @@ public class NodeTests
     }
 
     [Test]
-    public void Specs_EmptyCollection_ShouldBeEmpty()
+    public void Descendants_EmptyCollection_ShouldBeEmpty()
     {
         var node = Node.NewContainer();
 
-        var specs = node.Specs();
+        var specs = node.Descendents(NodeType.Spec);
 
         specs.Should().BeEmpty();
     }
 
     [Test]
-    public void Spec_CollectionWithSpecs_ShouldHaveExpectedCount()
+    public void Descendants_CollectionWithSpecs_ShouldHaveExpectedCount()
     {
         var collection = Node.NewContainer();
         collection.AddSpec();
         collection.AddSpec();
         collection.AddSpec();
 
-        var specs = collection.Specs();
+        var specs = collection.Descendents(NodeType.Spec);
 
         specs.Should().HaveCount(3);
     }
 
     [Test]
-    public void Spec_NestedSpecs_ShouldHaveExpectedCount()
+    public void Descendants_NestedSpecs_ShouldHaveExpectedCount()
     {
         var collection = Node.NewContainer();
         var folder = collection.AddContainer();
@@ -264,17 +264,17 @@ public class NodeTests
         folder.AddSpec();
         folder.AddSpec();
 
-        var specs = collection.Specs();
+        var specs = collection.Descendents(NodeType.Spec);
 
         specs.Should().HaveCount(3);
     }
 
     [Test]
-    public void Spec_SpecNode_ShouldHaveExpectedCount()
+    public void SDescendants_SpecNode_ShouldHaveExpectedCount()
     {
         var spec = Node.NewSpec();
 
-        var specs = spec.Specs();
+        var specs = spec.Descendents(NodeType.Spec);
 
         specs.Should().HaveCount(1);
     }

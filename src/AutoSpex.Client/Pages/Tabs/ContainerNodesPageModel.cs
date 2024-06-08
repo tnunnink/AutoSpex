@@ -4,12 +4,16 @@ using System.Collections.Specialized;
 using System.Linq;
 using AutoSpex.Client.Observers;
 using AutoSpex.Client.Shared;
+using AutoSpex.Engine;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 
 namespace AutoSpex.Client.Pages;
 
-public partial class ContainerNodesPageModel : DetailPageModel
+public partial class ContainerNodesPageModel : PageViewModel,
+    IRecipient<NodeObserver.Created>,
+    IRecipient<NodeObserver.Deleted>
 {
     /// <inheritdoc/>
     public ContainerNodesPageModel(NodeObserver node)
@@ -55,9 +59,26 @@ public partial class ContainerNodesPageModel : DetailPageModel
 
     private bool NodesSelected() => Selected.Count > 0;
 
+    public void Receive(Observer<Node>.Created message)
+    {
+        if (message.Observer is not NodeObserver node || node.ParentId != Node.Id) return;
+        UpdateNodes(Filter);
+    }
+
+    public void Receive(Observer<Node>.Deleted message)
+    {
+        if (message.Observer is not NodeObserver node || node.ParentId != Node.Id) return;
+        UpdateNodes(Filter);
+    }
+
     partial void OnFilterChanged(string? value)
     {
-        var filtered = Node.Descendents.Where(n => n.Filter(value));
+        UpdateNodes(value);
+    }
+
+    private void UpdateNodes(string? filter)
+    {
+        var filtered = Node.Descendents.Where(n => n.Filter(filter));
         Nodes.Refresh(filtered);
     }
 }

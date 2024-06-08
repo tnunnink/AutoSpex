@@ -68,12 +68,15 @@ public partial class NodeObserver : Observer<Node>,
 
     public static implicit operator NodeObserver(Node node) => new(node);
     public static implicit operator Node(NodeObserver observer) => observer.Model;
-    
+
     /// <inheritdoc />
     public override bool Filter(string? filter)
     {
         return string.IsNullOrEmpty(filter) || Name.PassesFilter(filter) || Path.PassesFilter(filter);
     }
+
+    /// <inheritdoc />
+    public override string ToString() => Name;
 
     #region Commands
 
@@ -201,10 +204,17 @@ public partial class NodeObserver : Observer<Node>,
     }
 
     [RelayCommand]
-    private void Run()
+    private async Task Run()
     {
-        /*var run = new RunObserver(new Run());
-        run.Outcomes.Add(new OutcomeObserver(new Outcome()));*/
+        //Runs open the runner with the run.
+        if (Feature == NodeType.Run)
+        {
+            await NavigateRunnerPage();
+            return;
+        }
+
+        //Specs and Source (or their containers) open a run page configured with its nodes.
+        await NavigateRunPage();
     }
 
     #endregion
@@ -312,6 +322,36 @@ public partial class NodeObserver : Observer<Node>,
         {
             IsEditing = false;
         }
+    }
+
+    /// <summary>
+    /// Configures a new temp run node and runner with this node (and all descendant nodes) configured, and then
+    /// navigates the RunPageModel into view for the user. This allows them to finish configuring the run and then run it.
+    /// </summary>
+    private async Task NavigateRunPage()
+    {
+        var run = RunObserver.Virtual(this, out var node);
+        await Navigator.Navigate(() => new RunPageModel(node, run));
+    }
+
+    /// <summary>
+    /// If this is the run node type, then we simply load up the configured run and navigate it into the RunnerPageModel
+    /// which should then kick off the execution of the run.
+    /// </summary>
+    private async Task NavigateRunnerPage()
+    {
+        var result = await Mediator.Send(new GetRun(Id));
+
+        if (result.IsFailed)
+        {
+            //notify failure?
+            return;
+        }
+
+        var run = new RunObserver(result.Value);
+        var page = await Navigator.Navigate<RunnerPageModel>();
+        page.Run = run;
+        //await page.StartCommand.ExecuteAsync(null);
     }
 
     /// <summary>

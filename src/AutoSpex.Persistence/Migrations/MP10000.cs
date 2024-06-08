@@ -31,21 +31,6 @@ public class MP10000 : AutoReversingMigration
             .WithColumn("ExportedOn").AsDate().Nullable()
             .WithColumn("Content").AsString().Nullable();
 
-        Create.Table("Run")
-            .WithColumn("RunId").AsString().PrimaryKey().ForeignKey("Node", "NodeId").OnDelete(Rule.Cascade)
-            .WithColumn("SourceId").AsString().Nullable().ForeignKey("Source", "SourceId").OnDelete(Rule.SetNull)
-            .WithColumn("Result").AsString().NotNullable().WithDefaultValue(ResultState.None)
-            .WithColumn("RanOn").AsString().Nullable()
-            .WithColumn("RanBy").AsString().Nullable();
-
-        Create.Table("Outcome")
-            .WithColumn("OutcomeId").AsString().PrimaryKey()
-            .WithColumn("RunId").AsString().NotNullable().ForeignKey("Run", "RunId").OnDelete(Rule.Cascade)
-            .WithColumn("SpecId").AsString().NotNullable().ForeignKey("Spec", "SpecId").OnDelete(Rule.Cascade)
-            .WithColumn("Result").AsString().NotNullable().WithDefaultValue(ResultState.None)
-            .WithColumn("Duration").AsInt32().NotNullable().WithDefaultValue(0)
-            .WithColumn("Evaluations").AsString().Nullable();
-
         Create.Table("Variable")
             .WithColumn("VariableId").AsString().PrimaryKey()
             .WithColumn("NodeId").AsString().NotNullable().ForeignKey("Node", "NodeId").OnDelete(Rule.Cascade)
@@ -59,13 +44,45 @@ public class MP10000 : AutoReversingMigration
             .OnTable("Variable")
             .Columns("NodeId", "Name");
 
+        Create.Table("Run")
+            .WithColumn("RunId").AsString().PrimaryKey().ForeignKey("Node", "NodeId").OnDelete(Rule.Cascade)
+            .WithColumn("Result").AsString().Nullable()
+            .WithColumn("RanOn").AsString().Nullable()
+            .WithColumn("RanBy").AsString().Nullable();
+
+        Create.Table("RunNode")
+            .WithColumn("RunId").AsString().NotNullable().ForeignKey("Node", "NodeId").OnDelete(Rule.Cascade)
+            .WithColumn("NodeId").AsString().NotNullable().ForeignKey("Source", "SourceId").OnDelete(Rule.Cascade);
+
+        Create.UniqueConstraint("Unique_RunNode_RunId_NodeId").OnTable("RunNode").Columns("RunId", "NodeId");
+
+        Create.Table("RunVariable")
+            .WithColumn("RunId").AsString().NotNullable().ForeignKey("Node", "NodeId").OnDelete(Rule.Cascade)
+            .WithColumn("VariableId").AsString().NotNullable().ForeignKey("Variable", "VariableId")
+            .OnDelete(Rule.Cascade)
+            .WithColumn("Override").AsString().Nullable();
+
+        Create.UniqueConstraint("Unique_RunVariable_RunId_VariableId").OnTable("RunVariable")
+            .Columns("RunId", "VariableId");
+
+        Create.Table("Outcome")
+            .WithColumn("OutcomeId").AsString().PrimaryKey()
+            .WithColumn("RunId").AsString().NotNullable().ForeignKey("Run", "RunId").OnDelete(Rule.Cascade)
+            .WithColumn("SpecId").AsString().NotNullable().ForeignKey("Spec", "SpecId").OnDelete(Rule.Cascade)
+            .WithColumn("SourceId").AsString().NotNullable().ForeignKey("Source", "SourceId").OnDelete(Rule.Cascade)
+            .WithColumn("Result").AsString().NotNullable()
+            .WithColumn("Duration").AsInt32().NotNullable()
+            .WithColumn("Verifications").AsString().Nullable();
+
         Create.Table("ChangeLog")
             .WithColumn("ChangeId").AsString().PrimaryKey()
             .WithColumn("NodeId").AsString().NotNullable().ForeignKey("Node", "NodeId").OnDelete(Rule.Cascade)
-            .WithColumn("CommandName").AsString().NotNullable()
+            .WithColumn("Command").AsString().NotNullable()
+            .WithColumn("Message").AsString().NotNullable()
             .WithColumn("ChangedOn").AsString().NotNullable()
             .WithColumn("ChangedBy").AsString().NotNullable()
-            .WithColumn("Comment").AsString().NotNullable();
+            .WithColumn("Machine").AsInt64().NotNullable()
+            .WithColumn("Duration").AsInt64().NotNullable();
 
         Create.Table("Documentation")
             .WithColumn("NodeId").AsString().PrimaryKey().ForeignKey("Node", "NodeId").OnDeleteOrUpdate(Rule.Cascade)

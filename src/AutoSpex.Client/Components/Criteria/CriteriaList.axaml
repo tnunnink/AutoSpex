@@ -68,7 +68,7 @@
                     </components:Section.Header>
 
                     <Panel>
-                        <components:NoItemsMessage
+                        <components:DefaultMessage
                             DockPanel.Dock="Top"
                             IsVisible="{Binding !Criteria.Count, RelativeSource={RelativeSource TemplatedParent}}"
                             VerticalAlignment="Center"

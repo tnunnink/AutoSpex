@@ -7,6 +7,7 @@ using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using Avalonia.Controls.Notifications;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -15,6 +16,7 @@ using FluentResults;
 namespace AutoSpex.Client.Pages;
 
 public abstract partial class NodePageModel : DetailPageModel,
+    IRecipient<ProjectObserver.Changed>,
     IRecipient<NodeObserver.Renamed>,
     IRecipient<NodeObserver.Deleted>,
     IRecipient<NavigationRequest>
@@ -31,9 +33,9 @@ public abstract partial class NodePageModel : DetailPageModel,
     public override bool IsChanged => base.IsChanged || Tabs.Any(t => t.IsChanged);
     public override bool IsErrored => base.IsErrored || Tabs.Any(t => t.IsErrored);
     public NodeObserver Node { get; }
-    public ObservableCollection<DetailPageModel> Tabs { get; } = [];
+    public ObservableCollection<PageViewModel> Tabs { get; } = [];
 
-    [ObservableProperty] private DetailPageModel? _tab;
+    [ObservableProperty] private PageViewModel? _tab;
 
     /// <summary>
     /// When a node page is loaded, it will forward the call to its child tabs to be loaded.
@@ -41,15 +43,23 @@ public abstract partial class NodePageModel : DetailPageModel,
     public override async Task Load()
     {
         await NavigateTabs();
-        SaveCommand.NotifyCanExecuteChanged();
+        Dispatcher.UIThread.Invoke(() => SaveCommand.NotifyCanExecuteChanged());
     }
 
     /// <summary>
-    /// 
+    /// Executes the run of the contained node. If this node is a spec or source (or one of its containers) then this
+    /// command will navigate a new in memory run page with this node and its descendants automatically added. If this
+    /// is a run node, then this command will navigate the configured run into the Runner page, which will then be executed.
     /// </summary>
     /// <returns></returns>
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanRun))]
     protected virtual Task Run() => Task.CompletedTask;
+
+    /// <summary>
+    /// Determines if the run command can be executed for this node page model.
+    /// </summary>
+    /// <returns><c>true</c> if the command can be executed, otherwise <c>false</c>.</returns>
+    protected virtual bool CanRun() => true;
 
     /// <inheritdoc />
     public override async Task<Result> Save()
@@ -73,6 +83,20 @@ public abstract partial class NodePageModel : DetailPageModel,
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// If the project has detected a change refresh this node by recalling its load method. 
+    /// </summary>
+    public async void Receive(ProjectObserver.Changed message)
+    {
+        //todo technically there is nothing checking that the node actually still exists here. Maybe this is where we would handle that and navigate the node not found page in.
+
+        //Since this view model is just a container for others, we just want to iterate the tabs can call their reload.
+        foreach (var tab in Tabs)
+        {
+            await tab.Load();
+        }
     }
 
     /// <summary>
@@ -101,9 +125,9 @@ public abstract partial class NodePageModel : DetailPageModel,
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     public void Receive(NavigationRequest message)
     {
-        if (message.Page is not DetailPageModel page) return;
-        if (message.Page.Route == Route) return;
-        if (!message.Page.Route.StartsWith(Route)) return;
+        var page = message.Page;
+        if (page.Route == Route) return;
+        if (!page.Route.StartsWith(Route)) return;
 
         switch (message.Action)
         {
@@ -115,11 +139,11 @@ public abstract partial class NodePageModel : DetailPageModel,
                 Tabs.Remove(page);
                 Forget(page);
                 break;
-            /*case NavigationAction.Replace:
-                var index = Tabs.IndexOf(message.Page);
+            case NavigationAction.Replace:
+                var index = Tabs.IndexOf(page);
                 if (index < 0) break;
                 Tabs[index] = message.Page;
-                break;*/
+                break;
             default:
                 throw new ArgumentOutOfRangeException($"Navigation action {message.Action} not supported");
         }

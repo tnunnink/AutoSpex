@@ -5,8 +5,7 @@
              xmlns:components="clr-namespace:AutoSpex.Client.Components"
              xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
              x:Class="AutoSpex.Client.Pages.NodeVariablesPage"
-             x:DataType="pages:NodeVariablesPageModel"
-             Padding="20">
+             x:DataType="pages:NodeVariablesPageModel">
 
     <Design.Width>1000</Design.Width>
     <Design.Height>600</Design.Height>
@@ -48,7 +47,7 @@
         </components:Section.Header>
 
         <Panel>
-            <components:NoItemsMessage
+            <components:DefaultMessage
                 HeaderText="No variables defined"
                 MessageIcon="{StaticResource IconAdd}"
                 MessageText="add a new variable to this node."

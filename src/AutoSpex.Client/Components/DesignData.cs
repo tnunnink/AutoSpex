@@ -5,6 +5,7 @@ using System.Linq;
 using AutoSpex.Client.Observers;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
+using AutoSpex.Persistence;
 using JetBrains.Annotations;
 using L5Sharp.Core;
 using Argument = AutoSpex.Engine.Argument;
@@ -214,7 +215,7 @@ public static class DesignData
         folder.AddSpec("Test Folder");
         folder.AddSpec("Sub Spec");
         folder.AddSpec("Contained Spec");
-        return collection.Specs();
+        return collection.Descendents(NodeType.Spec);
     }
 
     private static NodeObserver SpecNodeObserver()
@@ -249,22 +250,25 @@ public static class DesignData
     public static ObservableCollection<EvaluationObserver> Evaluations =
         new(new[] { PassedEvaluation, FailedEvaluation, ErroredEvaluation });
 
-    public static OutcomeObserver OutcomePassed = new(new Outcome(new Spec(Guid.Empty, "Spec That Passed")))
-    {
-        Result = ResultState.Passed, Evaluations = { PassedEvaluation, PassedEvaluation, PassedEvaluation }
-    };
+    public static OutcomeObserver OutcomePassed = new(new Outcome("Spec That Passed", "Source that ran",
+        [PassedEvaluation, PassedEvaluation, PassedEvaluation]));
 
-    public static OutcomeObserver OutcomeFailed = new(new Outcome(new Spec(Guid.Empty, "Spec That Failed")))
-    {
-        Result = ResultState.Failed, Evaluations = { PassedEvaluation, PassedEvaluation, FailedEvaluation }
-    };
+    public static OutcomeObserver OutcomeFailed = new(new Outcome("Spec That Failed", "Source that ran",
+        [PassedEvaluation, FailedEvaluation, FailedEvaluation]));
 
-    public static OutcomeObserver OutcomeErrored = new(new Outcome(new Spec(Guid.Empty, "Spec That Erroed")))
-    {
-        Result = ResultState.Error, Evaluations = { PassedEvaluation, ErroredEvaluation, FailedEvaluation }
-    };
+    public static OutcomeObserver OutcomeErrored = new(new Outcome("Spec That Errored", "Source that ran",
+        [PassedEvaluation, ErroredEvaluation, FailedEvaluation]));
 
     public static ObservableCollection<OutcomeObserver> Outcomes = [OutcomePassed, OutcomeFailed, OutcomeErrored];
+
+    public static ChangeLogObserver ChangeLog = new(new ChangeLog
+        {
+            Command = "SaveSpec",
+            Message = "Save specification with nane 'Test spec' with 2 filters and 1 verification.",
+            ChangedOn = DateTime.Now,
+            ChangedBy = "tnunnink"
+        }
+    );
 }
 
 public class TestPageModel : PageViewModel

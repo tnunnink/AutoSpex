@@ -14,7 +14,7 @@ public class SpecTests
         spec.Filters.Should().BeEmpty();
         spec.Verifications.Should().BeEmpty();
         spec.Settings.Should().NotBeNull();
-        spec.Settings.VerifyCount.Should().BeTrue();
+        spec.Settings.VerifyCount.Should().BeFalse();
         spec.Settings.CountOperation.Should().Be(Operation.GreaterThan);
         spec.Settings.CountValue.Should().Be(0);
         spec.Settings.FilterInclusion.Should().Be(Inclusion.All);
@@ -66,20 +66,20 @@ public class SpecTests
     }
 
     [Test]
-    public async Task Run_DefaultElement_ShouldReturnFailedDueToFailedCountVerification()
+    public async Task Run_DefaultElement_ShouldReturnNoneDueToNoVerifications()
     {
         var spec = new Spec();
-        var file = L5X.Load(Known.Test);
+        var source = new Source(L5X.Load(Known.Test));
 
-        var verifications = await spec.Run(file);
+        var outcome = await spec.Run(source);
 
-        verifications.Max(r => r.Result).Should().Be(ResultState.Failed);
+        outcome.Result.Should().Be(ResultState.None);
     }
 
     [Test]
     public async Task Run_DefaultElementWithVerifyCountSetFalse_ShouldReturnNoEvaluations()
     {
-        var content = L5X.Load(Known.Test);
+        var source = new Source(L5X.Load(Known.Test));
         var spec = new Spec
         {
             Settings =
@@ -88,8 +88,8 @@ public class SpecTests
             }
         };
 
-        var verifications = (await spec.Run(content)).ToList();
+        var outcome = await spec.Run(source);
 
-        verifications.Should().BeEmpty();
+        outcome.Evaluations.Should().BeEmpty();
     }
 }

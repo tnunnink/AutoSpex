@@ -54,11 +54,11 @@
                     ToolTip.Tip="{Binding Property.Group.Name, FallbackValue='None'}" />
 
                 <controls:Entry
-                    Value="{Binding PropertyName, Mode=OneWay}"
                     Watermark="Enter property"
+                    Content="{Binding PropertyName}"
                     IsEmpty="{Binding PropertyName, Converter={x:Static StringConverters.IsNullOrEmpty}}"
-                    Populate="{Binding PropertyGetter}"
-                    Commit="{Binding PropertyCommiter}">
+                    Populate="{Binding PopulateProperties}"
+                    CommitCommand="{Binding UpdatePropertyCommand}">
                     <controls:Entry.ItemTemplate>
                         <DataTemplate x:DataType="engine:Property">
                             <Grid ColumnDefinitions="30,*,Auto">
@@ -85,10 +85,10 @@
                     Margin="5" />
 
                 <controls:Entry
-                    Value="{Binding Operation.Name, Mode=OneWay, FallbackValue={x:Null}}"
                     Watermark="Select operation"
+                    Content="{Binding Operation.Name, FallbackValue={x:Null}}"
                     Populate="{Binding PopulateOperations}"
-                    Commit="{Binding CommitOperation}"
+                    CommitCommand="{Binding UpdateOperationCommand}"
                     IsVisible="{Binding Property, Converter={x:Static ObjectConverters.IsNotNull}}">
                     <controls:Entry.ItemTemplate>
                         <DataTemplate x:DataType="engine:Operation">

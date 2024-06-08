@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
@@ -16,17 +17,13 @@ using Avalonia.VisualTree;
 namespace AutoSpex.Client.Resources.Controls;
 
 [PseudoClasses(ClassEmpty)]
-public class Entry : TemplatedControl
+public class Entry : ContentControl
 {
     #region Properties
 
     public static readonly StyledProperty<object?> ValueProperty =
         AvaloniaProperty.Register<Entry, object?>(
             nameof(Value), defaultBindingMode: BindingMode.TwoWay, enableDataValidation: true);
-
-    public static readonly StyledProperty<IDataTemplate?> ValueTemplateProperty =
-        AvaloniaProperty.Register<Entry, IDataTemplate?>(
-            nameof(ValueTemplate));
 
     public static readonly StyledProperty<string?> TextProperty =
         AvaloniaProperty.Register<Entry, string?>(
@@ -60,6 +57,10 @@ public class Entry : TemplatedControl
         AvaloniaProperty.Register<Entry, int>(
             nameof(MaxDropDownWidth));
 
+    public static readonly StyledProperty<bool> UseExpanderProperty =
+        AvaloniaProperty.Register<Entry, bool>(
+            nameof(UseExpander));
+
     public static readonly StyledProperty<Func<string?, CancellationToken, Task<IEnumerable<object>>>?>
         PopulateProperty =
             AvaloniaProperty.Register<Entry, Func<string?, CancellationToken, Task<IEnumerable<object>>>?>(
@@ -69,9 +70,9 @@ public class Entry : TemplatedControl
         AvaloniaProperty.Register<Entry, Func<object?, string>?>(
             nameof(Selector));
 
-    public static readonly StyledProperty<Action<object?>?> CommitProperty =
-        AvaloniaProperty.Register<Entry, Action<object?>?>(
-            nameof(Commit));
+    public static readonly StyledProperty<ICommand?> CommitCommandProperty =
+        AvaloniaProperty.Register<Entry, ICommand?>(
+            nameof(CommitCommand));
 
     #endregion
 
@@ -90,12 +91,6 @@ public class Entry : TemplatedControl
     {
         get => GetValue(ValueProperty);
         set => SetValue(ValueProperty, value);
-    }
-
-    public IDataTemplate? ValueTemplate
-    {
-        get => GetValue(ValueTemplateProperty);
-        set => SetValue(ValueTemplateProperty, value);
     }
 
     public string? Text
@@ -146,6 +141,12 @@ public class Entry : TemplatedControl
         set => SetValue(MinDropDownWidthProperty, value);
     }
 
+    public bool UseExpander
+    {
+        get => GetValue(UseExpanderProperty);
+        set => SetValue(UseExpanderProperty, value);
+    }
+
     public Func<string?, CancellationToken, Task<IEnumerable<object>>>? Populate
     {
         get => GetValue(PopulateProperty);
@@ -158,10 +159,10 @@ public class Entry : TemplatedControl
         set => SetValue(SelectorProperty, value);
     }
 
-    public Action<object?>? Commit
+    public ICommand? CommitCommand
     {
-        get => GetValue(CommitProperty);
-        set => SetValue(CommitProperty, value);
+        get => GetValue(CommitCommandProperty);
+        set => SetValue(CommitCommandProperty, value);
     }
 
     public ObservableCollection<object> Suggestions { get; } = [];
@@ -372,9 +373,9 @@ public class Entry : TemplatedControl
     {
         var value = _listBox?.SelectedItem ?? Text;
 
-        if (Commit is not null)
+        if (CommitCommand is not null)
         {
-            Commit?.Invoke(value);
+            CommitCommand?.Execute(value);
         }
         else
         {

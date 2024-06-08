@@ -7,7 +7,13 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record SaveSource(Source Source) : IDbCommand<Result>;
+public record SaveSource(Source Source) : IDbCommand<Result>, IDbLoggable
+{
+    public Guid NodeId => Source.SourceId;
+
+    public string Message =>
+        $"Saved Source '{Source.Name}' | Target={Source.TargetName} | Type={Source.TargetType} | Exported={Source.ExportedOn}";
+}
 
 [UsedImplicitly]
 internal class SaveSourceHandler(IConnectionManager manager) : IRequestHandler<SaveSource, Result>

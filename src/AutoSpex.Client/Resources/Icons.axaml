@@ -40,6 +40,8 @@
             <PathIcon Theme="{DynamicResource IconLayoutSplit}" />
             <PathIcon Theme="{DynamicResource IconLayoutSidebar}" />
             <PathIcon Theme="{DynamicResource IconLayoutSidebarInsert}" />
+            <PathIcon Theme="{DynamicResource IconJournal}" />
+            <PathIcon Theme="{DynamicResource IconJournalText}" />
             <PathIcon Theme="{DynamicResource IconImportOutline}" />
             <PathIcon Theme="{DynamicResource IconPlug}" />
             <PathIcon Theme="{DynamicResource IconQuestion}" />
@@ -66,6 +68,7 @@
             <PathIcon Theme="{DynamicResource IconPencilOutlined}" />
             <PathIcon Theme="{DynamicResource IconPenOutlined}" />
             <PathIcon Theme="{DynamicResource IconPinOutlined}" />
+            <PathIcon Theme="{DynamicResource IconInputText}" />
             <PathIcon Theme="{DynamicResource IconCopyOutlined}" />
             <PathIcon Theme="{DynamicResource IconCheckOutlined}" />
             <PathIcon Theme="{DynamicResource IconDashOutlined}" />
@@ -82,6 +85,7 @@
             <PathIcon Theme="{DynamicResource IconFloppyOutlined}" />
             <PathIcon Theme="{DynamicResource IconFileUploadOutlined}" />
             <PathIcon Theme="{DynamicResource IconPlayOutlined}" />
+            <PathIcon Theme="{DynamicResource IconStop}" />
             <PathIcon Theme="{DynamicResource IconPlayCircle}" />
             <PathIcon Theme="{DynamicResource IconPlayOutlinedButton}" />
             <PathIcon Theme="{DynamicResource IconPlayOutlinedCollection}" />
@@ -109,6 +113,7 @@
             <PathIcon Theme="{DynamicResource IconSpecThemed}" />
             <PathIcon Theme="{DynamicResource IconSourceThemed}" />
             <PathIcon Theme="{DynamicResource IconRunThemed}" />
+            <PathIcon Theme="{DynamicResource IconRunnerThemed}" />
             <PathIcon Theme="{DynamicResource IconVariableThemed}" />
             <PathIcon Theme="{DynamicResource IconNoneThemed}" />
             <PathIcon Theme="{DynamicResource IconPendingThemed}" />
@@ -137,12 +142,13 @@
     <converters:KeyResourceConverter x:Key="KeyToIconConverter">
         <converters:ValueResourceKey Value="Specs" Resource="IconClipboardOutlinedCheck" />
         <converters:ValueResourceKey Value="Sources" Resource="IconXml" />
-        <converters:ValueResourceKey Value="Runs" Resource="IconPlayCircle" />
+        <converters:ValueResourceKey Value="Runs" Resource="IconPlayOutlinedCollection" />
         <converters:ValueResourceKey Value="Variables" Resource="IconBraces" />
         <converters:ValueResourceKey Value="Container" Resource="IconContainerThemed" />
         <converters:ValueResourceKey Value="Spec" Resource="IconSpecThemed" />
         <converters:ValueResourceKey Value="Source" Resource="IconSourceThemed" />
         <converters:ValueResourceKey Value="Run" Resource="IconRunThemed" />
+        <converters:ValueResourceKey Value="Runner" Resource="IconRunThemed" />
         <converters:ValueResourceKey Value="Boolean" Resource="IconBooleanThemed" />
         <converters:ValueResourceKey Value="Number" Resource="IconNumberThemed" />
         <converters:ValueResourceKey Value="Text" Resource="IconTextThemed" />
@@ -177,7 +183,8 @@
         <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Date}" Resource="IconDateSmallThemed" />
         <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Enum}" Resource="IconEnumSmallThemed" />
         <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Element}" Resource="IconElementSmallThemed" />
-        <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Collection}" Resource="IconCollectionSmallThemed" />
+        <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Collection}"
+                                     Resource="IconCollectionSmallThemed" />
         <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Variable}" Resource="IconVariableSmallThemed" />
     </converters:KeyResourceConverter>
 
@@ -440,6 +447,25 @@
         <Setter Property="Padding" Value="6" />
     </ControlTheme>
 
+    <ControlTheme x:Key="IconJournal" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
+        <Setter Property="Data">
+            <GeometryGroup>
+                <StreamGeometry>M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2</StreamGeometry>
+                <StreamGeometry>M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1z</StreamGeometry>
+            </GeometryGroup>
+        </Setter>
+    </ControlTheme>
+
+    <ControlTheme x:Key="IconJournalText" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
+        <Setter Property="Data">
+            <GeometryGroup>
+                <StreamGeometry>M5 10.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5m0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5</StreamGeometry>
+                <StreamGeometry>M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2</StreamGeometry>
+                <StreamGeometry>M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1z</StreamGeometry>
+            </GeometryGroup>
+        </Setter>
+    </ControlTheme>
+
     <ControlTheme x:Key="IconPlug" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
         <Setter Property="Data">
             <StreamGeometry>M1 8a7 7 0 1 1 2.898 5.673c-.167-.121-.216-.406-.002-.62l1.8-1.8a3.5 3.5 0 0 0 4.572-.328l1.414-1.415a.5.5 0 0 0 0-.707l-.707-.707 1.559-1.563a.5.5 0 1 0-.708-.706l-1.559 1.562-1.414-1.414 1.56-1.562a.5.5 0 1 0-.707-.706l-1.56 1.56-.707-.706a.5.5 0 0 0-.707 0L5.318 5.975a3.5 3.5 0 0 0-.328 4.571l-1.8 1.8c-.58.58-.62 1.6.121 2.137A8 8 0 1 0 0 8a.5.5 0 0 0 1 0</StreamGeometry>
@@ -459,6 +485,12 @@
             <StreamGeometry>M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0</StreamGeometry>
         </Setter>
         <Setter Property="Padding" Value="7" />
+    </ControlTheme>
+
+    <ControlTheme x:Key="IconStop" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
+        <Setter Property="Data">
+            <StreamGeometry>M3.5 5A1.5 1.5 0 0 1 5 3.5h6A1.5 1.5 0 0 1 12.5 5v6a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 11zM5 4.5a.5.5 0 0 0-.5.5v6a.5.5 0 0 0 .5.5h6a.5.5 0 0 0 .5-.5V5a.5.5 0 0 0-.5-.5z</StreamGeometry>
+        </Setter>
     </ControlTheme>
 
     <ControlTheme x:Key="IconSync" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
@@ -572,6 +604,15 @@
             <GeometryGroup>
                 <StreamGeometry>M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z</StreamGeometry>
                 <StreamGeometry>M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z</StreamGeometry>
+            </GeometryGroup>
+        </Setter>
+    </ControlTheme>
+
+    <ControlTheme x:Key="IconInputText" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
+        <Setter Property="Data">
+            <GeometryGroup>
+                <StreamGeometry>M5 2a.5.5 0 0 1 .5-.5c.862 0 1.573.287 2.06.566.174.099.321.198.44.286.119-.088.266-.187.44-.286A4.17 4.17 0 0 1 10.5 1.5a.5.5 0 0 1 0 1c-.638 0-1.177.213-1.564.434a3.5 3.5 0 0 0-.436.294V7.5H9a.5.5 0 0 1 0 1h-.5v4.272c.1.08.248.187.436.294.387.221.926.434 1.564.434a.5.5 0 0 1 0 1 4.17 4.17 0 0 1-2.06-.566A5 5 0 0 1 8 13.65a5 5 0 0 1-.44.285 4.17 4.17 0 0 1-2.06.566.5.5 0 0 1 0-1c.638 0 1.177-.213 1.564-.434.188-.107.335-.214.436-.294V8.5H7a.5.5 0 0 1 0-1h.5V3.228a3.5 3.5 0 0 0-.436-.294A3.17 3.17 0 0 0 5.5 2.5.5.5 0 0 1 5 2</StreamGeometry>
+                <StreamGeometry>M10 5h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-4v1h4a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-4zM6 5V4H2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v-1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z</StreamGeometry>
             </GeometryGroup>
         </Setter>
     </ControlTheme>
@@ -837,6 +878,7 @@
                 <StreamGeometry>M1.5 14.5A1.5 1.5 0 0 1 0 13V6a1.5 1.5 0 0 1 1.5-1.5h13A1.5 1.5 0 0 1 16 6v7a1.5 1.5 0 0 1-1.5 1.5zm13-1a.5.5 0 0 0 .5-.5V6a.5.5 0 0 0-.5-.5h-13A.5.5 0 0 0 1 6v7a.5.5 0 0 0 .5.5z</StreamGeometry>
             </GeometryGroup>
         </Setter>
+        <Setter Property="Padding" Value="6" />
     </ControlTheme>
 
     <ControlTheme x:Key="IconTrashOutlined" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
@@ -876,7 +918,7 @@
     </ControlTheme>
 
     <ControlTheme x:Key="IconProjectThemed" TargetType="PathIcon" BasedOn="{StaticResource IconCollectionOutlined}">
-        <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushProject}" />
+        <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushOutlineAccent}" />
     </ControlTheme>
 
     <ControlTheme x:Key="IconContainerThemed" TargetType="PathIcon" BasedOn="{StaticResource IconFolderFilled}">
@@ -891,7 +933,11 @@
         <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushSource}" />
     </ControlTheme>
 
-    <ControlTheme x:Key="IconRunThemed" TargetType="PathIcon" BasedOn="{StaticResource IconPlayCircle}">
+    <ControlTheme x:Key="IconRunThemed" TargetType="PathIcon" BasedOn="{StaticResource IconPlayOutlinedCollection}">
+        <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushOutlineSuccess}" />
+    </ControlTheme>
+
+    <ControlTheme x:Key="IconRunnerThemed" TargetType="PathIcon" BasedOn="{StaticResource IconPlayCircle}">
         <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushOutlineSuccess}" />
     </ControlTheme>
 

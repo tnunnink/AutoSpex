@@ -10,32 +10,30 @@
     <Design.Height>800</Design.Height>
     <Design.Width>1200</Design.Width>
 
-    <ScrollViewer Theme="{a:ControlTheme ScrollViewerOverlay}">
-        <StackPanel Spacing="30" Margin="20">
-            <ContentControl
-                Content="{Binding Spec}"
-                ContentTemplate="{StaticResource SpecQuery}" />
+    <StackPanel Spacing="30">
+        <ContentControl
+            Content="{Binding Spec}"
+            ContentTemplate="{StaticResource SpecQuery}" />
 
-            <components:CriteriaList
-                Heading="Filters"
-                InfoText="Add criteria to select only specific candidates for verification."
-                IsVisible="{Binding Spec.Element, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Element.Default}}"
-                Criteria="{Binding Spec.Filters, FallbackValue={x:Null}}"
-                Element="{Binding Spec.Element, FallbackValue={x:Static engine:Element.Default}}"
-                Inclusion="{Binding Spec.FilterInclusion, FallbackValue={x:Null}}" />
+        <components:CriteriaList
+            Heading="Filters"
+            InfoText="Add criteria to select only specific candidates for verification."
+            IsVisible="{Binding Spec.Element, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Element.Default}}"
+            Criteria="{Binding Spec.Filters, FallbackValue={x:Null}}"
+            Element="{Binding Spec.Element, FallbackValue={x:Static engine:Element.Default}}"
+            Inclusion="{Binding Spec.FilterInclusion, FallbackValue={x:Null}}" />
 
-            <components:CriteriaList
-                Heading="Verifications"
-                InfoText="Add criteria to define what this specification is verifying."
-                IsVisible="{Binding Spec.Element, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Element.Default}}"
-                Criteria="{Binding Spec.Verifications, FallbackValue={x:Null}}"
-                Element="{Binding Spec.Element, FallbackValue={x:Static engine:Element.Default}}"
-                Inclusion="{Binding Spec.VerificationInclusion, FallbackValue={x:Null}}" />
+        <components:CriteriaList
+            Heading="Verifications"
+            InfoText="Add criteria to define what this specification is verifying."
+            IsVisible="{Binding Spec.Element, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Element.Default}}"
+            Criteria="{Binding Spec.Verifications, FallbackValue={x:Null}}"
+            Element="{Binding Spec.Element, FallbackValue={x:Static engine:Element.Default}}"
+            Inclusion="{Binding Spec.VerificationInclusion, FallbackValue={x:Null}}" />
 
-            <ContentControl
-                Content="{Binding Spec}"
-                ContentTemplate="{StaticResource SpecSettings}"
-                IsVisible="{Binding Spec.Element, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Element.Default}}" />
-        </StackPanel>
-    </ScrollViewer>
+        <ContentControl
+            Content="{Binding Spec}"
+            ContentTemplate="{StaticResource SpecSettings}"
+            IsVisible="{Binding Spec.Element, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Element.Default}}" />
+    </StackPanel>
 </UserControl>

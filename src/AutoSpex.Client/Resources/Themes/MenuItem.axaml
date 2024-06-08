@@ -24,10 +24,11 @@
                     <MenuItem Icon="{StaticResource IconCopyOutlined}"
                               Theme="{DynamicResource ContextMenuItem}"
                               Header="Add Item" />
-                    <MenuItem Icon="{StaticResource IconPinOutlined}"
+                    <MenuItem Icon="{StaticResource IconPlayOutlined}"
                               Theme="{DynamicResource ContextMenuItem}"
                               Header="Play Item"
-                              InputGesture="Shift+R" />
+                              InputGesture="Shift+R"
+                              Classes="success"/>
                     <MenuItem Header="-" />
                     <MenuItem Theme="{DynamicResource ContextMenuItem}"
                               Icon="{StaticResource IconFloppyOutlined}"
@@ -204,6 +205,19 @@
                 <Setter Property="Foreground" Value="{actipro:ThemeResource MenuItemForegroundBrushDisabled}" />
             </Style>
         </Style>
+        
+        <Style Selector="^.accent">
+            <Style Selector="^ /template/ Viewbox#iconHost PathIcon">
+                <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushSoftAccent}" />
+            </Style>
+            <Style Selector="^ /template/ ContentPresenter#headerPresenter">
+                <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushSoftAccent}" />
+            </Style>
+            <Style Selector="^:selected /template/ Border#border">
+                <Setter Property="Background" Value="{actipro:ThemeResource ControlBackgroundBrushSoftAccent}" />
+                <Setter Property="BorderBrush" Value="{actipro:ThemeResource ControlBackgroundBrushSoftAccent}" />
+            </Style>
+        </Style>
 
         <Style Selector="^.danger">
             <Style Selector="^ /template/ Viewbox#iconHost PathIcon">
@@ -215,6 +229,32 @@
             <Style Selector="^:selected /template/ Border#border">
                 <Setter Property="Background" Value="{actipro:ThemeResource ControlBackgroundBrushSoftDanger}" />
                 <Setter Property="BorderBrush" Value="{actipro:ThemeResource ControlBackgroundBrushSoftDanger}" />
+            </Style>
+        </Style>
+        
+        <Style Selector="^.success">
+            <Style Selector="^ /template/ Viewbox#iconHost PathIcon">
+                <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushSoftSuccess}" />
+            </Style>
+            <Style Selector="^ /template/ ContentPresenter#headerPresenter">
+                <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushSoftSuccess}" />
+            </Style>
+            <Style Selector="^:selected /template/ Border#border">
+                <Setter Property="Background" Value="{actipro:ThemeResource ControlBackgroundBrushSoftSuccess}" />
+                <Setter Property="BorderBrush" Value="{actipro:ThemeResource ControlBackgroundBrushSoftSuccess}" />
+            </Style>
+        </Style>
+        
+        <Style Selector="^.warning">
+            <Style Selector="^ /template/ Viewbox#iconHost PathIcon">
+                <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushSoftWarning}" />
+            </Style>
+            <Style Selector="^ /template/ ContentPresenter#headerPresenter">
+                <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushSoftWarning}" />
+            </Style>
+            <Style Selector="^:selected /template/ Border#border">
+                <Setter Property="Background" Value="{actipro:ThemeResource ControlBackgroundBrushSoftWarning}" />
+                <Setter Property="BorderBrush" Value="{actipro:ThemeResource ControlBackgroundBrushSoftWarning}" />
             </Style>
         </Style>
     </ControlTheme>

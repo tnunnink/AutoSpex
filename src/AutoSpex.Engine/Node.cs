@@ -29,6 +29,15 @@ public class Node : IEquatable<Node>
     public Node Root => GetRootNode();
     public IEnumerable<Node> Nodes => _nodes;
 
+    public static Node FeatureRoot(NodeType feature) => new()
+    {
+        NodeId = Guid.NewGuid(),
+        ParentId = Guid.Empty,
+        Parent = default,
+        Type = feature,
+        Name = "Root"
+    };
+    
     public static Node NewNode(NodeType type, string? name = default)
     {
         return new Node
@@ -91,7 +100,7 @@ public class Node : IEquatable<Node>
 
     public Node AddContainer(string? name = default)
     {
-        if (Type != NodeType.Container)
+        if (Parent is not null && Type != NodeType.Container)
             throw new ArgumentException($"Can not add a folder to a {Type} node.");
 
         var node = new Node
@@ -110,7 +119,7 @@ public class Node : IEquatable<Node>
 
     public Node AddSpec(string? name = default)
     {
-        if (Type != NodeType.Container)
+        if (Parent is not null && Type != NodeType.Container)
             throw new ArgumentException($"Can not add content to a {Type} node.");
 
         var node = new Node
@@ -129,7 +138,7 @@ public class Node : IEquatable<Node>
 
     public Node AddSource(string? name = default)
     {
-        if (Type != NodeType.Container)
+        if (Parent is not null && Type != NodeType.Container)
             throw new ArgumentException($"Can not add content to a {Type} node.");
 
         var node = new Node
@@ -148,7 +157,7 @@ public class Node : IEquatable<Node>
 
     public Node AddRun(string? name = default)
     {
-        if (Type != NodeType.Container)
+        if (Parent is not null && Type != NodeType.Container)
             throw new ArgumentException($"Can not add content to a {Type} node.");
 
         var node = new Node
@@ -250,18 +259,15 @@ public class Node : IEquatable<Node>
     }
 
     /// <summary>
-    /// Gets all descendent spec nodes of thid node, including this node if it is a spec type node.
+    /// Gets all descendant nodes of this node.
     /// </summary>
-    /// <returns>A collection of<see cref="Node"/>  type <see cref="NodeType.Spec"/> that are immediate and/or \
-    /// nested children of this node.</returns>
-    public IEnumerable<Node> Specs()
+    /// <returns>A collection of <see cref="Node"/> that are immediate and/or nested children of this node.</returns>
+    public IEnumerable<Node> Descendents(NodeType type)
     {
         List<Node> nodes = [];
 
-        if (Type == NodeType.Spec)
-            nodes.Add(this);
-
-        nodes.AddRange(_nodes.SelectMany(n => n.Specs()));
+        if (Type == type) nodes.Add(this);
+        nodes.AddRange(_nodes.SelectMany(n => n.Descendents(type)));
 
         return nodes;
     }

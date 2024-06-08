@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using AutoSpex.Persistence;
+using CommunityToolkit.Mvvm.Input;
 using Argument = AutoSpex.Engine.Argument;
 
 // ReSharper disable TailRecursiveCall
@@ -15,7 +16,7 @@ namespace AutoSpex.Client.Observers;
 /// <summary>
 /// A observer wrapper over the <see cref="Engine.Argument"/> class for a parent criterion object.
 /// </summary>
-public class ArgumentObserver : Observer<Argument>
+public partial class ArgumentObserver : Observer<Argument>
 {
     /// <summary>
     /// The parent or owning <see cref="CriterionObserver"/> that this argument belongs to. We need reference to the
@@ -54,11 +55,6 @@ public class ArgumentObserver : Observer<Argument>
         get => GetValue();
         set => SetProperty(Model.Value, value, Model, SetValue);
     }
-
-    /// <summary>
-    /// The action that commits the provided object to the argument's <see cref="Value"/>.
-    /// </summary>
-    public Action<object?> Commit => UpdateValue;
 
     /// <summary>
     /// The function that selects the text value for the current value object of the argument.
@@ -105,6 +101,7 @@ public class ArgumentObserver : Observer<Argument>
     /// If user enters simple text we would like to parse it as the strong type to let our data templates work.
     /// If user enters a complex object then it was selected from the suggestions, and we can just use that.
     /// </summary>
+    [RelayCommand]
     private async void UpdateValue(object? value)
     {
         var group = _criterion?.Property?.Group;

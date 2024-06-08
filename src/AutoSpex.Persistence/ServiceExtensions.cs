@@ -12,7 +12,9 @@ public static class ServiceExtensions
     {
         services.AddMediatR(c =>
             c.RegisterServicesFromAssembly(typeof(ServiceExtensions).Assembly)
-                .AddOpenBehavior(typeof(NotificationBehavior<,>)));
+                .AddOpenBehavior(typeof(NotificationBehavior<,>))
+                .AddOpenBehavior(typeof(ChangeLogBehavior<,>))
+            );
 
         services.AddSingleton<IConnectionManager>(_ => ConnectionManager.Default);
 

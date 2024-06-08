@@ -19,18 +19,18 @@ public class EvaluationObserver(Evaluation model) : Observer<Evaluation>(model)
     public IEnumerable<ValueObserver> Expected => Model.Expected.Select(x => new ValueObserver(x));
     public ValueObserver? Actual => Model.Actual is not null ? new ValueObserver(Model.Actual) : default;
 
-    /// <summary>
-    /// Determines if this evaluation object contains the provided filter text input. 
-    /// </summary>
-    /// <param name="text">The text to search or filter this evaluation on.</param>
-    /// <returns><c>true</c> if this object has a property containing the provided text, otherwise <c>false</c>.</returns>
-    public bool Filter(string? text)
+
+    /// <inheritdoc />
+    public override bool Filter(string? filter)
     {
-        if (string.IsNullOrEmpty(text)) return true;
-        if (CandidateName.Contains(text, StringComparison.OrdinalIgnoreCase)) return true;
-        if (Message.Contains(text, StringComparison.OrdinalIgnoreCase)) return true;
-        if (Expected.Any(x => x.Text.Contains(text))) return true;
-        if (Actual is not null && Actual.Text.Contains(text)) return true;
+        if (string.IsNullOrEmpty(filter)) return true;
+        if (CandidateName.Contains(filter, StringComparison.OrdinalIgnoreCase)) return true;
+        if (Message.Contains(filter, StringComparison.OrdinalIgnoreCase)) return true;
+        if (Expected.Any(x => x.Text.Contains(filter))) return true;
+        if (Actual is not null && Actual.Text.Contains(filter)) return true;
         return false;
     }
+
+    public static implicit operator Evaluation(EvaluationObserver observer) => observer.Model;
+    public static implicit operator EvaluationObserver(Evaluation model) => new(model);
 }

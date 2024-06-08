@@ -7,7 +7,7 @@
 
     <Design.PreviewWith>
         <Border Padding="30" Height="300" Width="800">
-            <components:OutcomeList Outcomes="{x:Static components:DesignData.Outcomes}"/>
+            <!--<components:OutcomeList Outcomes="{x:Static components:DesignData.Outcomes}"/>-->
         </Border>
     </Design.PreviewWith>
 

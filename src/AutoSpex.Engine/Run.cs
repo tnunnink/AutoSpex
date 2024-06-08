@@ -2,108 +2,148 @@
 
 public class Run
 {
-    private readonly Dictionary<Guid, Outcome> _outcomes = [];
+    private readonly Dictionary<Guid, Node> _nodes = [];
+    private readonly List<Outcome> _outcomes = [];
 
     public Run()
     {
     }
 
-    public Run(Source? source)
+    public Run(string name)
     {
-        SourceId = source?.SourceId ?? Guid.Empty;
-        Source = source;
+        Name = name;
+    }
+
+    public Run(Node runNode, Node seedNode)
+    {
+        RunId = runNode.NodeId;
+        Name = runNode.Name;
+        AddNodeTree(seedNode);
     }
 
     public Guid RunId { get; private set; } = Guid.NewGuid();
-    public string Name { get; set; } = "New Run";
-    public Guid SourceId { get; private set; } = Guid.Empty;
-    public Source? Source { get; private set; }
+    public string Name { get; private set; } = "Run";
     public ResultState Result { get; private set; } = ResultState.None;
-    public DateTime RanOn { get; private set; } = DateTime.Now;
-    public string RanBy { get; private set; } = Environment.UserName;
-    public IEnumerable<Outcome> Outcomes => _outcomes.Values;
+    public DateTime RanOn { get; private set; }
+    public string RanBy { get; private set; } = string.Empty;
+    public IEnumerable<Node> Nodes => _nodes.Values;
+    public IEnumerable<Node> Sources => _nodes.Values.Where(n => n.Type == NodeType.Source);
+    public IEnumerable<Node> Specs => _nodes.Values.Where(n => n.Type == NodeType.Spec);
+    public IEnumerable<Outcome> Outcomes => _outcomes;
+
 
     /// <summary>
-    /// Adds the provided <see cref="Outcome"/> to the run.
+    /// Adds a node to the Run.
     /// </summary>
-    /// <param name="outcome">The <see cref="Outcome"/> to add.</param>
-    /// <exception cref="ArgumentNullException"></exception>
+    /// <param name="node">The node to be added.</param>
+    public void AddNode(Node node)
+    {
+        AddNodeTree(node);
+    }
+
+    /// <summary>
+    /// Adds multiple nodes to the Run.
+    /// </summary>
+    /// <param name="nodes">The nodes to be added.</param>
+    /// <exception cref="ArgumentNullException">Thrown when nodes is null.</exception>
+    public void AddNodes(IEnumerable<Node> nodes)
+    {
+        if (nodes is null) throw new ArgumentNullException(nameof(nodes));
+
+        foreach (var node in nodes)
+        {
+            AddNodeTree(node);
+        }
+    }
+
+    /// <summary>
+    /// Removes a node from the Run.
+    /// </summary>
+    /// <param name="node">The node to be removed.</param>
+    public void RemoveNode(Node node)
+    {
+        if (node is null)
+            throw new ArgumentNullException(nameof(node));
+
+        _nodes.Remove(node.NodeId);
+    }
+
+    /// <summary>
+    /// Clears all configured nodes from the Run.
+    /// </summary>
+    public void ClearNodes()
+    {
+        _nodes.Clear();
+    }
+
+    /// <summary>
+    /// Adds the provided <see cref="Outcome"/> to the run as a result that it produced.
+    /// </summary>
+    /// <param name="outcome">The <see cref="Outcome"/> produced from a spec run.</param>
     public void AddOutcome(Outcome outcome)
     {
-        if (outcome is null) throw new ArgumentNullException(nameof(outcome));
+        if (outcome is null)
+            throw new ArgumentNullException(nameof(outcome));
 
-        _outcomes[outcome.SpecId] = outcome;
+        _outcomes.Add(outcome);
     }
-
+    
     /// <summary>
-    /// Adds the provided <see cref="Outcome"/> collection to the run.
+    /// Adds the provided <see cref="Outcome"/> to the run as a result that it produced.
     /// </summary>
-    /// <param name="outcomes">The collection of <see cref="Outcome"/> to add.</param>
-    /// <exception cref="ArgumentNullException">Thrown when the provided collection is null.</exception>
+    /// <param name="outcomes">The collection of <see cref="Outcome"/> produced this spec ran.</param>
     public void AddOutcomes(IEnumerable<Outcome> outcomes)
     {
-        if (outcomes is null) throw new ArgumentNullException(nameof(outcomes));
+        if (outcomes is null)
+            throw new ArgumentNullException(nameof(outcomes));
 
         foreach (var outcome in outcomes)
-            _outcomes[outcome.SpecId] = outcome;
+        {
+            _outcomes.Add(outcome);
+        }
+    }
+    
+    /// <summary>
+    /// Removes the provided <see cref="Outcome"/> from this Run.
+    /// </summary>
+    /// <param name="outcome">The <see cref="Outcome"/> produced from a spec run.</param>
+    public void RemoveOutcome(Outcome outcome)
+    {
+        if (outcome is null)
+            throw new ArgumentNullException(nameof(outcome));
+
+        _outcomes.Remove(outcome);
     }
 
     /// <summary>
-    /// Adds a <see cref="Spec"/> to the run.
+    /// Clears all outcome result from the Run.
     /// </summary>
-    /// <param name="spec">The <see cref="Spec"/> to add.</param>
-    /// <exception cref="ArgumentNullException">Thrown if the provided <paramref name="spec"/> is null.</exception>
-    public void AddSpec(Spec spec)
+    public void ClearOutcomes()
     {
-        if (spec is null) throw new ArgumentNullException(nameof(spec));
-
-        _outcomes[spec.SpecId] = new Outcome(spec);
+        _outcomes.Clear();
     }
 
     /// <summary>
-    /// Adds the provided <see cref="Spec"/> objects to the <see cref="Run"/> instance.
+    /// Updates the run results using the current outcomes collection.
     /// </summary>
-    /// <param name="specs">The collection of <see cref="Spec"/> objects to add.</param>
-    /// <exception cref="ArgumentNullException">Thrown when the <paramref name="specs"/> parameter is null.</exception>
-    public void AddSpecs(IEnumerable<Spec> specs)
+    public void Complete()
     {
-        if (specs is null) throw new ArgumentNullException(nameof(specs));
-
-        foreach (var spec in specs)
-            _outcomes[spec.SpecId] = new Outcome(spec);
-    }
-
-    /// <summary>
-    /// Clears all outcomes from the run.
-    /// </summary>
-    public void Clear() => _outcomes.Clear();
-
-    /// <summary>
-    /// Removes the <see cref="Outcome"/> with the specified <paramref name="specId"/> from the run.
-    /// </summary>
-    /// <param name="specId">The identifier of the <see cref="Outcome"/> to remove.</param>
-    public void Remove(Guid specId)
-    {
-        _outcomes.Remove(specId);
-    }
-
-    /// <summary>
-    /// Updates the result of the run based on the outcomes.
-    /// </summary>
-    public void UpdateResult()
-    {
+        Result = _outcomes.Max(x => x.Result);
         RanOn = DateTime.Now;
         RanBy = Environment.UserName;
-        Result = _outcomes.Max(r => r.Value.Result);
     }
 
-    /// <summary>
-    /// Updates the source of the run with the provided <see cref="Source"/> object.
-    /// </summary>
-    /// <param name="source">The <see cref="Source"/> object to update the run source with.</param>
-    public void UpdateSource(Source? source)
+    private void AddNodeTree(Node node)
     {
-        SourceId = source?.SourceId ?? Guid.Empty;
-        Source = source;
+        if (node is null)
+            throw new ArgumentNullException(nameof(node), "Can not add null node.");
+
+        //This could be a container or spec (or really anything) but we will call Specs to get only spec nodes to add.
+        var nodes = node.Descendents(node.Feature);
+
+        foreach (var descendent in nodes)
+        {
+            _nodes[descendent.NodeId] = descendent;
+        }
     }
 }

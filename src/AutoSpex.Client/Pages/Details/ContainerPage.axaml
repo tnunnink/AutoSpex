@@ -8,7 +8,7 @@
              x:DataType="pages:ContainerPageModel">
 
     <DockPanel>
-        <Border DockPanel.Dock="Top" Padding="10">
+        <Border DockPanel.Dock="Top">
             <components:NodeHeader
                 Node="{Binding Node}"
                 RunCommand="{Binding RunCommand}"
@@ -35,8 +35,10 @@
             </TabControl.ItemTemplate>
 
             <TabControl.ContentTemplate>
-                <DataTemplate x:DataType="shared:DetailPageModel">
-                    <ContentControl Content="{Binding}" />
+                <DataTemplate x:DataType="shared:PageViewModel">
+                    <ScrollViewer Theme="{a:ControlTheme ScrollViewerOverlay}" Padding="20">
+                        <ContentControl Content="{Binding}" />
+                    </ScrollViewer>
                 </DataTemplate>
             </TabControl.ContentTemplate>
         </TabControl>

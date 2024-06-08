@@ -12,7 +12,7 @@ using CommunityToolkit.Mvvm.Messaging;
 
 namespace AutoSpex.Client.Pages;
 
-public partial class SourceContentPageModel(NodeObserver node) : DetailPageModel,
+public partial class SourceContentPageModel(NodeObserver node) : PageViewModel,
     IRecipient<ElementObserver.View>,
     IRecipient<CriterionObserver.Deleted>
 {
@@ -58,7 +58,7 @@ public partial class SourceContentPageModel(NodeObserver node) : DetailPageModel
         if (result.IsFailed) return;
         Source = default!; //Need to set null for next set to work because we implement equality based on id.
         Source = new SourceObserver(result.Value);
-        SearchContentCommand.NotifyCanExecuteChanged();
+        Dispatcher.UIThread.Invoke(() => SearchContentCommand.NotifyCanExecuteChanged());
     }
 
     [RelayCommand]

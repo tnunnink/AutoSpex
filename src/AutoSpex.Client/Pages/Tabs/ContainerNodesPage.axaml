@@ -4,10 +4,8 @@
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
              xmlns:components="clr-namespace:AutoSpex.Client.Components"
              xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
-             xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
              x:Class="AutoSpex.Client.Pages.ContainerNodesPage"
-             x:DataType="pages:ContainerNodesPageModel"
-             Padding="20">
+             x:DataType="pages:ContainerNodesPageModel">
 
     <Design.Height>800</Design.Height>
     <Design.Width>1200</Design.Width>
@@ -50,7 +48,7 @@
         </components:Section.Header>
 
         <Panel>
-            <components:NoItemsMessage
+            <components:DefaultMessage
                 HeaderText="{Binding NoItemsHeader}"
                 MessageIcon="{StaticResource IconAdd}"
                 MessageText="add a new spec to this container."

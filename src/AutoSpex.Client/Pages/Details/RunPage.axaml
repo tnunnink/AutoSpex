@@ -11,11 +11,11 @@
     <Design.Height>1000</Design.Height>
 
     <DockPanel>
-        <Border DockPanel.Dock="Top" Padding="10">
+        <Border DockPanel.Dock="Top">
             <components:NodeHeader
                 Node="{Binding Node}"
                 RunCommand="{Binding RunCommand}"
-                SaveCommand="{Binding SaveCommand}"/>
+                SaveCommand="{Binding SaveCommand}" />
         </Border>
 
         <TabControl
@@ -38,8 +38,10 @@
             </TabControl.ItemTemplate>
 
             <TabControl.ContentTemplate>
-                <DataTemplate x:DataType="shared:DetailPageModel">
-                    <ContentControl Content="{Binding}" />
+                <DataTemplate x:DataType="shared:PageViewModel">
+                    <ScrollViewer Theme="{a:ControlTheme ScrollViewerOverlay}" Padding="20">
+                        <ContentControl Content="{Binding}" />
+                    </ScrollViewer>
                 </DataTemplate>
             </TabControl.ContentTemplate>
         </TabControl>

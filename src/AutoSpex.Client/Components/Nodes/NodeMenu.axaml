@@ -66,6 +66,7 @@
             IsVisible="{Binding Type, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:NodeType.Container}}" />
 
         <MenuItem Header="Run"
+                  Command="{Binding RunCommand}"
                   Icon="{StaticResource IconPlayOutlined}"
                   Classes="success" />
         <Separator />
@@ -73,7 +74,7 @@
         <MenuItem Header="Open"
                   Command="{Binding NavigateCommand}" />
         <MenuItem Header="Rename"
-                  Icon="{StaticResource IconPenOutlined}"
+                  Icon="{StaticResource IconInputText}"
                   Command="{Binding EditCommand}"
                   InputGesture="Ctrl+E" />
         <MenuItem Header="Duplicate"

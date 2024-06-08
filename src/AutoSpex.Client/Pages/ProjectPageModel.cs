@@ -8,6 +8,7 @@ using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
 
@@ -28,8 +29,10 @@ public partial class ProjectPageModel(ProjectObserver project) : PageViewModel, 
 
     [ObservableProperty] private PageViewModel? _detailsPage;
 
+    [ObservableProperty] private PageViewModel? _footerPage;
+
     [ObservableProperty] private bool _isNavigationOpen = true;
-    
+
     [ObservableProperty] private bool _isStatusDrawerOpen;
 
     public override async Task Load()
@@ -59,6 +62,24 @@ public partial class ProjectPageModel(ProjectObserver project) : PageViewModel, 
         base.OnDeactivated();
     }
 
+    [RelayCommand]
+    private async Task NavigateRunner()
+    {
+        if (FooterPage is null || FooterPage.Route != nameof(RunnerPageModel))
+        {
+            await Navigator.Navigate(() => new RunnerPageModel());
+            return;
+        }
+
+        IsStatusDrawerOpen = !IsStatusDrawerOpen;
+    }
+
+    [RelayCommand]
+    private void ToggleNavigationDrawer()
+    {
+        IsNavigationOpen = !IsNavigationOpen;
+    }
+
     public void Receive(NavigationRequest message)
     {
         switch (message.Action)
@@ -81,14 +102,16 @@ public partial class ProjectPageModel(ProjectObserver project) : PageViewModel, 
         switch (message.Page)
         {
             case NavigationPageModel:
-            {
                 if (!Menus.Contains(message.Page))
                     Menus.Add(message.Page);
                 SelectedMenu ??= message.Page;
                 break;
-            }
             case DetailsPageModel:
                 DetailsPage = message.Page;
+                break;
+            case RunnerPageModel:
+                FooterPage = message.Page;
+                IsStatusDrawerOpen = true;
                 break;
         }
     }
@@ -98,12 +121,15 @@ public partial class ProjectPageModel(ProjectObserver project) : PageViewModel, 
         switch (message.Page)
         {
             case NavigationPageModel:
-            {
                 Menus.Remove(message.Page);
                 break;
-            }
             case DetailsPageModel:
                 DetailsPage = null;
+                break;
+            case RunnerPageModel:
+                if (FooterPage?.Route != nameof(RunnerPageModel)) return;
+                FooterPage = null;
+                IsStatusDrawerOpen = false;
                 break;
         }
     }
@@ -145,9 +171,6 @@ public partial class ProjectPageModel(ProjectObserver project) : PageViewModel, 
 
     private void ProjectChanged(object sender, FileSystemEventArgs e)
     {
-        //todo this one is tough. Would be cool if we could send message to all pages to refresh or reload,
-        //todo but how would we know if it was this user that changed vs another user.
-        //Would it hurt to have the changed event always trigger refresh of open pages? Maybe that is how we
-        //sync everything as opposed to some other in memory event?
+        Messenger.Send(new ProjectObserver.Changed());
     }
 }

@@ -10,48 +10,14 @@
     <Design.Width>1920</Design.Width>
     <Design.Height>1080</Design.Height>
 
-    <controls:DrawerView x:Name="StatusBarDrawer"
-                         DrawerPlacement="Bottom"
-                         DrawerClosedLength="30"
-                         IsDrawerOpen="{Binding IsStatusDrawerOpen}">
-        <controls:DrawerView.Drawer>
-            <Grid RowDefinitions="30,Auto">
-                <Border Grid.Row="0"
-                        Background="{actipro:ThemeResource StatusBarBackgroundBrush}"
-                        BorderBrush="{actipro:ThemeResource StatusBarBorderBrush}"
-                        BorderThickness="{actipro:ThemeResource StatusBarBorderThickness}"
-                        TextElement.Foreground="{actipro:ThemeResource StatusBarForegroundBrush}">
-                    <Grid ColumnDefinitions="Auto,*,Auto">
-                        <Border Grid.Row="0" Padding="0">
-                            <Button Theme="{actipro:ControlTheme ButtonSubtle}">
-                                <StackPanel Orientation="Horizontal" Spacing="5">
-                                    <PathIcon Theme="{StaticResource IconProjectThemed}" />
-                                    <TextBlock Text="{Binding Project.Name}" />
-                                </StackPanel>
-                                <Button.Flyout>
-                                    <Flyout Placement="TopEdgeAlignedLeft"
-                                            ShowMode="TransientWithDismissOnPointerMoveAway"
-                                            VerticalOffset="5">
-                                        <components:ProjectDetails DataContext="{Binding Project}" />
-                                    </Flyout>
-                                </Button.Flyout>
-                            </Button>
-
-                        </Border>
-                    </Grid>
-                </Border>
-                <Border Grid.Row="1"
-                        IsVisible="{Binding IsStatusDrawerOpen}">
-                    <TextBlock Text="This is the status bar content shit" />
-                </Border>
-            </Grid>
-        </controls:DrawerView.Drawer>
-
-        <controls:DrawerView DrawerPlacement="Left"
-                             IsDrawerOpen="{Binding IsNavigationOpen}"
-                             DrawerOpenLength="400"
-                             DrawerClosedLength="80"
-                             DrawerMaxLength="600">
+    <Panel>
+        <controls:DrawerView
+            x:Name="MainDrawerView"
+            DrawerPlacement="Left"
+            IsDrawerOpen="{Binding IsNavigationOpen}"
+            DrawerOpenLength="400"
+            DrawerClosedLength="80"
+            DrawerMaxLength="600">
             <controls:DrawerView.Drawer>
                 <Border Background="{actipro:ThemeResource Container2BackgroundBrush}">
                     <components:NavigationMenus
@@ -64,5 +30,69 @@
                 <ContentControl Content="{Binding DetailsPage}" />
             </Border>
         </controls:DrawerView>
-    </controls:DrawerView>
+
+        <controls:DrawerView
+            x:Name="StatusBarDrawer"
+            IsDrawerOpen="{Binding IsStatusDrawerOpen}"
+            DrawerPlacement="Bottom"
+            DrawerClosedLength="30"
+            DrawerOpenLength="400">
+            <controls:DrawerView.Drawer>
+                <Grid RowDefinitions="*,30">
+
+                    <Border Grid.Row="0"
+                            IsVisible="{Binding IsStatusDrawerOpen}"
+                            Background="{actipro:ThemeResource Container1BackgroundBrush}">
+                        <ContentControl Content="{Binding FooterPage}" />
+                    </Border>
+
+                    <Border Grid.Row="1"
+                            Background="{actipro:ThemeResource StatusBarBackgroundBrush}"
+                            BorderBrush="{actipro:ThemeResource StatusBarBorderBrush}"
+                            BorderThickness="{actipro:ThemeResource StatusBarBorderThickness}"
+                            TextElement.Foreground="{actipro:ThemeResource StatusBarForegroundBrush}">
+                        <Grid ColumnDefinitions="Auto,*,Auto">
+
+                            <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="5">
+                                <Button Theme="{actipro:ControlTheme TitleBarButton}" 
+                                        Padding="10 5"
+                                        Command="{Binding ToggleNavigationDrawerCommand}">
+                                    <PathIcon Theme="{StaticResource IconLayoutSidebarInsert}"
+                                              Height="16" Width="16" Padding="1" />
+                                </Button>
+
+                                <Button Theme="{actipro:ControlTheme TitleBarButton}" Padding="5">
+                                    <StackPanel Orientation="Horizontal" Spacing="2">
+                                        <PathIcon Theme="{StaticResource IconProjectThemed}"
+                                                  Height="16" Width="16" Padding="1" />
+                                        <TextBlock Text="{Binding Project.Name, FallbackValue='ProjectName'}"
+                                                   FontSize="{actipro:ThemeResource DefaultFontSizeExtraSmall}" />
+                                    </StackPanel>
+                                    <Button.Flyout>
+                                        <Flyout Placement="TopEdgeAlignedLeft"
+                                                ShowMode="TransientWithDismissOnPointerMoveAway"
+                                                VerticalOffset="5" HorizontalOffset="-8">
+                                            <components:ProjectDetails DataContext="{Binding Project}" />
+                                        </Flyout>
+                                    </Button.Flyout>
+                                </Button>
+
+                                <Button Theme="{actipro:ControlTheme TitleBarButton}" Padding="5"
+                                        Command="{Binding NavigateRunnerCommand}">
+                                    <StackPanel Orientation="Horizontal" Spacing="2">
+                                        <PathIcon Theme="{StaticResource IconRunnerThemed}"
+                                                  Height="16" Width="16" Padding="1" />
+                                        <TextBlock Text="Runner"
+                                                   FontSize="{actipro:ThemeResource DefaultFontSizeExtraSmall}" />
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </controls:DrawerView.Drawer>
+            <!--Nothing will show the background-->
+        </controls:DrawerView>
+    </Panel>
+
 </UserControl>

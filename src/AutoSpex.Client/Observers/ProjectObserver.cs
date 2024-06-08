@@ -29,7 +29,7 @@ public partial class ProjectObserver : Observer<Project>
     public bool Exists => Model.Exists;
     public DateTime CreatedOn => File.GetCreationTime(Uri.LocalPath);
     public DateTime UpdatedOn => File.GetLastWriteTime(Uri.LocalPath);
-    
+
     public bool Pinned
     {
         get => Model.Pinned;
@@ -40,7 +40,7 @@ public partial class ProjectObserver : Observer<Project>
     public async Task Connect()
     {
         if (!Exists) return;
-        
+
         var action = await Mediator.Send(new EvaluateProject(Model));
         if (action.IsFailed)
         {
@@ -104,7 +104,7 @@ public partial class ProjectObserver : Observer<Project>
         IsActive = false;
         Messenger.Send(new Deleted(this));
     }
-    
+
     protected override void OnDeactivated()
     {
         base.OnDeactivated();
@@ -121,10 +121,17 @@ public partial class ProjectObserver : Observer<Project>
         if (migrate is not true) return;
         await Mediator.Send(new MigrateProject(project));
     }
-    
+
     private void OnProjectRenamed(object sender, RenamedEventArgs e) => OnPropertyChanged(nameof(Exists));
 
     private void OnProjectDeleted(object sender, FileSystemEventArgs e) => OnPropertyChanged(nameof(Exists));
 
     private void OnProjectCreated(object sender, FileSystemEventArgs e) => OnPropertyChanged(nameof(Exists));
+
+    /// <summary>
+    /// A message that is sent to indicate that the file project has changed. When this happens we want certain views
+    /// to refresh their state. This keeps the UI in sync in case and makes for concurrent users to be able to work
+    /// on the same project without some fighting for state changes.
+    /// </summary>
+    public record Changed;
 }

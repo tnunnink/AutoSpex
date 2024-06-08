@@ -15,7 +15,7 @@ public partial class DetailsPageModel(string project) : PageViewModel, IRecipien
 {
     public override string Route => $"{project}/Details";
     public override bool IsChanged => Pages.Any(p => p.IsChanged);
-    
+
     [ObservableProperty] private ObservableCollection<DetailPageModel> _pages = [];
 
     [ObservableProperty] private PageViewModel? _selected;
@@ -26,7 +26,7 @@ public partial class DetailsPageModel(string project) : PageViewModel, IRecipien
         {
             Navigator.Close(page);
         }
-        
+
         base.OnDeactivated();
     }
 
@@ -40,23 +40,23 @@ public partial class DetailsPageModel(string project) : PageViewModel, IRecipien
 
     public void Receive(NavigationRequest message)
     {
-        if (message.Page is not NodePageModel node) return;
+        if (message.Page is not DetailPageModel detail) return;
 
         if (message.Action == NavigationAction.Close)
         {
-            CloseTab(node);
+            CloseTab(detail);
             return;
         }
 
-        if (SelectExistingIfOpen(node)) return;
+        if (SelectExistingIfOpen(detail)) return;
 
         if (message.Action == NavigationAction.Replace)
         {
-            ShowOrReplace(node);
+            ShowOrReplace(detail);
             return;
         }
-        
-        OpenTab(node);
+
+        OpenTab(detail);
     }
 
     private void OpenTab(DetailPageModel page)

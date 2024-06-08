@@ -1,6 +1,5 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
                     xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
                     xmlns:components="clr-namespace:AutoSpex.Client.Components">
@@ -24,12 +23,12 @@
     <DataTemplate x:Key="ArgumentDefaultEntry" x:DataType="observers:ArgumentObserver">
         <controls:Entry
             Watermark="Enter value"
-            Value="{Binding Value}"
-            ValueTemplate="{StaticResource ValueTemplates}"
+            Content="{Binding Value}"
+            ContentTemplate="{StaticResource ValueTemplates}"
             ItemTemplate="{StaticResource ValueItemTemplate}"
             Populate="{Binding Suggestions}"
             Selector="{Binding Selector}"
-            Commit="{Binding Commit}">
+            CommitCommand="{Binding UpdateValueCommand}">
             <controls:Entry.IsEmpty>
                 <MultiBinding Converter="{x:Static BoolConverters.Or}">
                     <Binding Path="Value" Converter="{x:Static ObjectConverters.IsNull}" />
@@ -49,7 +48,7 @@
                 </ItemsControl.ItemsPanel>
 
             </ItemsControl>
-            
+
         </StackPanel>
     </DataTemplate>
 

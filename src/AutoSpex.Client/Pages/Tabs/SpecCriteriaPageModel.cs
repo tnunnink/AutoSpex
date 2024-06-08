@@ -9,7 +9,7 @@ using JetBrains.Annotations;
 namespace AutoSpex.Client.Pages;
 
 [UsedImplicitly]
-public partial class SpecCriteriaPageModel(NodeObserver node) : DetailPageModel
+public partial class SpecCriteriaPageModel(NodeObserver node) : PageViewModel
 {
     public override string Route => $"Spec/{node.Id}/{Title}";
     public override string Title => "Criteria";
