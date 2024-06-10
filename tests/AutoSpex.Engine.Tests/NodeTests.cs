@@ -16,7 +16,6 @@ public class NodeTests
         node.Depth.Should().Be(0);
         node.Path.Should().Be(string.Empty);
         node.Base.Should().BeSameAs(node);
-        node.Root.Should().BeSameAs(node);
         node.Nodes.Should().BeEmpty();
     }
 
@@ -220,13 +219,13 @@ public class NodeTests
     }
 
     [Test]
-    public void Collection_GetFromNestedSpec_ShouldNotBeNullAndExpectedInstance()
+    public void Base_GetFromNestedSpec_ShouldNotBeNullAndExpectedInstance()
     {
         var collection = Node.NewContainer();
         var folder = collection.AddContainer();
         var spec = folder.AddSpec();
 
-        var result = spec.Root;
+        var result = spec.Base;
 
         result.Should().NotBeNull();
         result.Should().BeSameAs(collection);

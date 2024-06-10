@@ -4,7 +4,6 @@
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
              xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
              xmlns:components="clr-namespace:AutoSpex.Client.Components"
-             xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
              x:Class="AutoSpex.Client.Pages.RunnerPage"
              x:DataType="pages:RunnerPageModel">
 
@@ -12,132 +11,74 @@
     <Design.Width>1200</Design.Width>
 
     <Grid RowDefinitions="Auto,Auto,*">
-        <Border Grid.Row="0"
-                Background="{a:ThemeResource Container3BackgroundBrush}"
-                Padding="10 5">
-            <DockPanel LastChildFill="False">
-                <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" Spacing="5">
-                    <StackPanel Orientation="Horizontal" Spacing="5" Margin="0 0 10 0">
-                        <PathIcon Theme="{StaticResource IconRunnerThemed}"
-                                  Classes="icon-small" />
-                        <TextBlock Text="Runner"
-                                   Classes="theme-text-heading size-xs" />
-                    </StackPanel>
-
-                    <SplitButton Command="{Binding StartCommand}"
-                                 Theme="{a:ControlTheme SplitButtonSoft}"
-                                 Height="30" Padding="5" BorderThickness="0">
-                        <PathIcon Theme="{StaticResource IconPlayOutlined}" Classes="icon-small" Padding="4" />
-                        <SplitButton.Styles>
-                            <Style Selector="SplitButton > PathIcon">
-                                <Setter Property="Foreground"
-                                        Value="{a:ThemeResource ControlForegroundBrushOutlineSuccess}" />
-                            </Style>
-                            <Style Selector=":disabled">
-                                <Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
-                                    <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoft}" />
-                                </Style>
-                                <Style Selector="^ PathIcon">
-                                    <Setter Property="Foreground"
-                                            Value="{a:ThemeResource DefaultForegroundBrushDisabled}" />
-                                </Style>
-                            </Style>
-                        </SplitButton.Styles>
-                    </SplitButton>
-
-                    <Button Theme="{a:ControlTheme ButtonSoft}" Height="30" Width="30"
-                            Command="{Binding StopCommand}">
-                        <PathIcon Theme="{StaticResource IconStop}" Classes="icon-small" Padding="4" />
-                        <Button.Styles>
-                            <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-                                <Setter Property="Background"
-                                        Value="{a:ThemeResource ControlBackgroundBrushOutlinePointerOver}" />
-                                <Setter Property="BorderBrush"
-                                        Value="{a:ThemeResource ControlBackgroundBrushOutlinePointerOver}" />
-                            </Style>
-                            <Style Selector="Button > PathIcon">
-                                <Setter Property="Foreground"
-                                        Value="{a:ThemeResource ControlForegroundBrushOutlineDanger}" />
-                            </Style>
-                            <Style Selector=":disabled">
-                                <Style Selector="^ PathIcon">
-                                    <Setter Property="Foreground"
-                                            Value="{a:ThemeResource DefaultForegroundBrushDisabled}" />
-                                </Style>
-                            </Style>
-                        </Button.Styles>
-                    </Button>
-
-                    <Button Theme="{a:ControlTheme ButtonSoft}" Height="30" Width="30">
-                        <PathIcon Theme="{StaticResource IconFloppyOutlined}" Classes="icon-small" Padding="4" />
-                        <Button.Styles>
-                            <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-                                <Setter Property="Background"
-                                        Value="{a:ThemeResource ControlBackgroundBrushOutlinePointerOver}" />
-                                <Setter Property="BorderBrush"
-                                        Value="{a:ThemeResource ControlBackgroundBrushOutlinePointerOver}" />
-                            </Style>
-                            <Style Selector="Button > PathIcon">
-                                <Setter Property="Foreground"
-                                        Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
-                            </Style>
-                            <Style Selector=":disabled">
-                                <Style Selector="^ PathIcon">
-                                    <Setter Property="Foreground"
-                                            Value="{a:ThemeResource DefaultForegroundBrushDisabled}" />
-                                </Style>
-                            </Style>
-                        </Button.Styles>
-                    </Button>
-
-                    <DropDownButton
-                        Content="{Binding Run.Name, FallbackValue='Select Run'}"
-                        Theme="{a:ControlTheme DropDownButtonSubtle}">
-
-                        <DropDownButton.Styles>
-                            <Style Selector="DropDownButton:pointerover /template/ Border#border">
-                                <Setter Property="Background"
-                                        Value="{a:ThemeResource ControlBackgroundBrushOutlinePointerOver}" />
-                                <Setter Property="BorderBrush"
-                                        Value="{a:ThemeResource ControlBackgroundBrushOutlinePointerOver}" />
-                            </Style>
-                        </DropDownButton.Styles>
-                    </DropDownButton>
+        <Border Grid.Row="0" Background="{a:ThemeResource StatusBarBackgroundBrush}" Padding="10 5">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5">
+                    <PathIcon Theme="{StaticResource IconRunnerThemed}" Classes="icon-small" />
+                    <TextBlock Text="Runner" Classes="theme-text-heading size-xs" />
+                    <a:ToggleThemeButton Height="30" Width="30" />
                 </StackPanel>
 
-                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="10">
-                    <!--Stats-->
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <TextBlock Text="Result" />
-                        <TextBlock Text="Ran on 12/3/2024 by tnunn"
-                                   FontSize="{a:ThemeResource DefaultFontSizeSmall}"
-                                   Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}" />
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="5">
 
-                        <components:ResultPill
-                            Result="{Binding Run.Result, FallbackValue={x:Static engine:ResultState.None}}" />
-                        <ItemsControl>
+                    <StackPanel Orientation="Horizontal" Spacing="5">
 
-                        </ItemsControl>
+
+                        <SplitButton Command="{Binding StartCommand}"
+                                     Theme="{a:ControlTheme SplitButtonSoft}"
+                                     Height="30" Padding="5" BorderThickness="0">
+                            <PathIcon Theme="{StaticResource IconPlayOutlined}" Classes="icon-small" Padding="4" />
+                            <SplitButton.Styles>
+                                <Style Selector="SplitButton > PathIcon">
+                                    <Setter Property="Foreground"
+                                            Value="{a:ThemeResource ControlForegroundBrushOutlineSuccess}" />
+                                </Style>
+                                <Style Selector=":disabled">
+                                    <Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
+                                        <Setter Property="Background"
+                                                Value="{a:ThemeResource ControlBackgroundBrushSoft}" />
+                                    </Style>
+                                    <Style Selector="^ PathIcon">
+                                        <Setter Property="Foreground"
+                                                Value="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                                    </Style>
+                                </Style>
+                            </SplitButton.Styles>
+                        </SplitButton>
+
+                        <Button 
+                                Theme="{StaticResource IconButtonDefault}"
+                                properties:ButtonIcon.Theme="{StaticResource IconStop}"
+                                Classes="danger"/>
+
+                        <Button Theme="{a:ControlTheme ButtonSoft}" Height="30" Width="30">
+                            <PathIcon Theme="{StaticResource IconFloppyOutlined}" Classes="icon-small" Padding="4" />
+                            <Button.Styles>
+                                <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+                                    <Setter Property="Background"
+                                            Value="{a:ThemeResource ControlBackgroundBrushOutlinePointerOver}" />
+                                    <Setter Property="BorderBrush"
+                                            Value="{a:ThemeResource ControlBackgroundBrushOutlinePointerOver}" />
+                                </Style>
+                                <Style Selector="Button > PathIcon">
+                                    <Setter Property="Foreground"
+                                            Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+                                </Style>
+                                <Style Selector=":disabled">
+                                    <Style Selector="^ PathIcon">
+                                        <Setter Property="Foreground"
+                                                Value="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                                    </Style>
+                                </Style>
+                            </Button.Styles>
+                        </Button>
                     </StackPanel>
 
                     <Border BorderThickness="1 0 0 0"
                             BorderBrush="{a:ThemeResource Container3BorderBrush}"
                             Margin="5 7" />
 
-                    <!--Buttons-->
                     <StackPanel Orientation="Horizontal" Spacing="2">
-                        <Button
-                            Click="OnExpandButtonClick"
-                            properties:ButtonIcon.Theme="{StaticResource IconChevronCollapse}"
-                            Theme="{StaticResource IconButton}"
-                            Padding="9"
-                            ToolTip.Tip="Collapse All" />
-                        <Button
-                            Click="OnCollapseButtonClick"
-                            properties:ButtonIcon.Theme="{StaticResource IconChevronExpand}"
-                            Theme="{StaticResource IconButton}"
-                            Padding="9"
-                            ToolTip.Tip="Expand All" />
                         <Button
                             properties:ButtonIcon.Theme="{StaticResource IconDotsVertical}"
                             Theme="{StaticResource IconButton}"
@@ -155,10 +96,10 @@
                             ToolTip.Tip="Hide" />
                     </StackPanel>
                 </StackPanel>
-            </DockPanel>
+            </Grid>
         </Border>
 
-        <TextBox Grid.Row="1"
+        <!--<TextBox Grid.Row="1"
                  BorderThickness="0"
                  Watermark="Filter results"
                  Theme="{StaticResource TextBoxOutlineHighlight}"
@@ -184,6 +125,6 @@
                     <StaticResource ResourceKey="EvaluationTreeItem" />
                 </TreeView.DataTemplates>
             </TreeView>
-        </Panel>
+        </Panel>-->
     </Grid>
 </UserControl>

@@ -349,9 +349,7 @@ public partial class NodeObserver : Observer<Node>,
         }
 
         var run = new RunObserver(result.Value);
-        var page = await Navigator.Navigate<RunnerPageModel>();
-        page.Run = run;
-        //await page.StartCommand.ExecuteAsync(null);
+        run.TriggerRun();
     }
 
     /// <summary>

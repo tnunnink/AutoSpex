@@ -23,7 +23,7 @@ public class Run
 
     public Guid RunId { get; private set; } = Guid.NewGuid();
     public string Name { get; private set; } = "Run";
-    public ResultState Result { get; private set; } = ResultState.None;
+    public ResultState Result => _outcomes.Max(x => x.Result);
     public DateTime RanOn { get; private set; }
     public string RanBy { get; private set; } = string.Empty;
     public IEnumerable<Node> Nodes => _nodes.Values;
@@ -33,7 +33,7 @@ public class Run
 
 
     /// <summary>
-    /// Adds a node to the Run.
+    /// Adds a node and all its descendants of the target feature to the Run.
     /// </summary>
     /// <param name="node">The node to be added.</param>
     public void AddNode(Node node)
@@ -66,14 +66,7 @@ public class Run
             throw new ArgumentNullException(nameof(node));
 
         _nodes.Remove(node.NodeId);
-    }
-
-    /// <summary>
-    /// Clears all configured nodes from the Run.
-    /// </summary>
-    public void ClearNodes()
-    {
-        _nodes.Clear();
+        _outcomes.RemoveAll(x => x.SpecId == node.NodeId || x.SourceId == node.NodeId);
     }
 
     /// <summary>
@@ -85,9 +78,9 @@ public class Run
         if (outcome is null)
             throw new ArgumentNullException(nameof(outcome));
 
-        _outcomes.Add(outcome);
+        AddOutcomeNodes(outcome);
     }
-    
+
     /// <summary>
     /// Adds the provided <see cref="Outcome"/> to the run as a result that it produced.
     /// </summary>
@@ -99,51 +92,109 @@ public class Run
 
         foreach (var outcome in outcomes)
         {
-            _outcomes.Add(outcome);
+            AddOutcomeNodes(outcome);
         }
     }
-    
-    /// <summary>
-    /// Removes the provided <see cref="Outcome"/> from this Run.
-    /// </summary>
-    /// <param name="outcome">The <see cref="Outcome"/> produced from a spec run.</param>
-    public void RemoveOutcome(Outcome outcome)
-    {
-        if (outcome is null)
-            throw new ArgumentNullException(nameof(outcome));
-
-        _outcomes.Remove(outcome);
-    }
 
     /// <summary>
-    /// Clears all outcome result from the Run.
+    /// Clears all configured <see cref="Nodes"/> and <see cref="Outcomes"/> from the Run.
     /// </summary>
-    public void ClearOutcomes()
+    public void Clear()
     {
+        _nodes.Clear();
         _outcomes.Clear();
     }
 
     /// <summary>
-    /// Updates the run results using the current outcomes collection.
+    /// Runs a <see cref="Source"/> agains the provided <see cref="Spec"/> objects and updates the result of each
+    /// outcome configured for this run. If either source or specs are not configured for this run, then no result will
+    /// be posted as there should be no corresponding Outcome object. 
     /// </summary>
-    public void Complete()
+    /// <param name="source">The <see cref="Source"/> containing the L5X content to process.</param>
+    /// <param name="specs">The collection of <see cref="Spec"/> configurations to run against the provided source.</param>
+    /// <param name="preRun">An optional callback action which is called right before executing the outcome.</param>
+    /// <param name="postRun">An optional callback action which is called right after executing the outcome.</param>
+    /// <param name="token">The cancellation token to cancel the current execution.</param>
+    
+    public async Task Execute(Source source, IEnumerable<Spec> specs,
+        Action<Outcome>? preRun = default, Action<Outcome>? postRun = default, CancellationToken token = default)
     {
-        Result = _outcomes.Max(x => x.Result);
+        var lookup = _outcomes.Where(x => x.SourceId == source.SourceId).ToDictionary(s => s.SpecId);
+
+        foreach (var spec in specs)
+        {
+            if (!lookup.TryGetValue(spec.SpecId, out var outcome)) continue;
+            preRun?.Invoke(outcome);
+            await outcome.Run(source, spec, token);
+            postRun?.Invoke(outcome);
+        }
+
+        //Update local properties to indicate when this run was last ran.
         RanOn = DateTime.Now;
         RanBy = Environment.UserName;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="outcome"></param>
+    /// <exception cref="ArgumentNullException"></exception>
+    private void AddOutcomeNodes(Outcome outcome)
+    {
+        if (outcome is null)
+            throw new ArgumentNullException(nameof(outcome), "Can not add null outcome.");
+
+        var spec = Node.Create(outcome.SpecId, NodeType.Spec, outcome.SpecName);
+        var source = Node.Create(outcome.SourceId, NodeType.Source, outcome.SourceName);
+
+        //If either node gets added to the run as in one of them didn't already exist,
+        //we can add the corresponding outcome instance.
+        if (_nodes.TryAdd(spec.NodeId, spec) || _nodes.TryAdd(source.NodeId, source))
+        {
+            _outcomes.Add(outcome);
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
     private void AddNodeTree(Node node)
     {
         if (node is null)
             throw new ArgumentNullException(nameof(node), "Can not add null node.");
 
-        //This could be a container or spec (or really anything) but we will call Specs to get only spec nodes to add.
+        //Get descendant will return the nodes wee are interested in (either spec or source).
         var nodes = node.Descendents(node.Feature);
 
         foreach (var descendent in nodes)
         {
+            if (_nodes.TryAdd(descendent.NodeId, descendent))
+            {
+                _outcomes.AddRange(GenerateOutcomes(descendent));
+                continue;
+            }
+
             _nodes[descendent.NodeId] = descendent;
         }
+    }
+
+    /// <summary>
+    /// Generates a collection of empty <see cref="Outcome"/> instances to be added to this run. For each spec we want
+    /// to add an outcome for each configured source. And for each source we want to add an outcome for each configured spec.
+    /// In other words, we want a Cartesian product of the set of all source/spec nodes because we want to run each spec
+    /// for each source. 
+    /// </summary>
+    private IEnumerable<Outcome> GenerateOutcomes(Node node)
+    {
+        var others = _nodes.Values.Where(n => n.Feature != node.Feature).ToList();
+
+        if (node.Feature == NodeType.Spec)
+            return others.Select(n => Outcome.Empty(node, n));
+
+        // ReSharper disable once ConvertIfStatementToReturnStatement
+        if (node.Feature == NodeType.Source)
+            return others.Select(n => Outcome.Empty(n, node));
+
+        return Enumerable.Empty<Outcome>();
     }
 }

@@ -11,7 +11,7 @@ public partial class RunnerPage : UserControl
     }
 
 
-    private void OnExpandButtonClick(object? sender, RoutedEventArgs e)
+    /*private void OnExpandButtonClick(object? sender, RoutedEventArgs e)
     {
         foreach (var container in ResultTree.GetRealizedTreeContainers())
         {
@@ -27,5 +27,5 @@ public partial class RunnerPage : UserControl
             if (container is not TreeViewItem item) return;
             ResultTree.CollapseSubTree(item);
         }
-    }
+    }*/
 }

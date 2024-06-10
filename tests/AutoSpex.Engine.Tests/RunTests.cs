@@ -61,7 +61,7 @@ public class RunTests
     [Test]
     public void AddNode_CollectionWithChildNodes_ShouldHaveExpectedCount()
     {
-        var container = Node.FeatureRoot(NodeType.Spec).AddContainer();
+        var container = Node.Root(NodeType.Spec).AddContainer();
         var folder = container.AddContainer();
         folder.AddSpec();
         folder.AddSpec();
@@ -77,7 +77,7 @@ public class RunTests
     public void AddNode_ManyDifferentNodes_ShouldHaveExpectedOutcomesCount()
     {
         var run = new Run();
-        var container = Node.FeatureRoot(NodeType.Spec).AddContainer();
+        var container = Node.Root(NodeType.Spec).AddContainer();
         var folder = container.AddContainer();
         var first = folder.AddSpec();
         var second = folder.AddSpec();
@@ -87,5 +87,25 @@ public class RunTests
         run.AddNodes(nodes);
 
         run.Specs.Should().HaveCount(3);
+    }
+
+    [Test]
+    public void GetOutcomes()
+    {
+        var run = new Run();
+        var specs = Node.Root(NodeType.Spec).AddContainer();
+        specs.AddSpec("Spec 1");
+        specs.AddSpec("Spec 2");
+        specs.AddSpec("Spec 3");
+        var sources = Node.Root(NodeType.Source).AddContainer();
+        sources.AddSource("Source 1");
+        sources.AddSource("Source 2");
+
+        run.AddNode(specs);
+        run.AddNode(sources);
+
+        var outcomes = run.Outcomes.ToList();
+
+        outcomes.Should().HaveCount(6);
     }
 }

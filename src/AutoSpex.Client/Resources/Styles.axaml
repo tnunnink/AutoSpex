@@ -9,44 +9,20 @@
                 <PathIcon Theme="{StaticResource IconSpecThemed}" />
                 <PathIcon Theme="{StaticResource IconSpecThemed}" Classes="icon-small" />
 
-                <TextBox Classes="folder"
-                         Watermark="Enter Value Here" Width="200" />
-                <TextBox Classes="form-entry"
-                         Watermark="Enter Value Here" Width="200" />
+
                 <TextBox Classes="subtle"
                          Watermark="Enter Value Here" Width="200" />
+                <SplitButton Classes="split">
+                    <PathIcon Theme="{StaticResource IconPlayOutlined}" 
+                              Classes="icon-small" Padding="4"
+                              Foreground="{Binding $parent[SplitButton].Foreground}"/>
+                </SplitButton>
+                <SplitButton Classes="split" IsEnabled="False">
+                    <PathIcon Theme="{StaticResource IconPlayOutlined}" Classes="icon-small" Padding="4" />
+                </SplitButton>
             </StackPanel>
         </Border>
     </Design.PreviewWith>
-
-    <Style Selector="TextBox.folder">
-        <Setter Property="InnerRightContent">
-            <Template>
-                <Button DockPanel.Dock="Right"
-                        Classes="icon"
-                        IsTabStop="False"
-                        Theme="{a:ControlTheme ButtonInvisible}">
-                    <PathIcon Theme="{StaticResource IconFolderOutlined}"
-                              Height="16" Width="16"
-                              Foreground="{TemplateBinding Foreground}" />
-                </Button>
-            </Template>
-        </Setter>
-
-        <Style Selector="^.pointerover /template/ ContentPresenter:pointerover">
-            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
-        </Style>
-    </Style>
-
-    <Style Selector="TextBox.form-entry">
-        <Setter Property="Theme" Value="{a:ControlTheme TextBoxOutline}" />
-        <Setter Property="BorderThickness" Value="2"></Setter>
-
-        <Style Selector="^:focus /template/ Border#border">
-            <Setter Property="BorderThickness" Value="2"></Setter>
-            <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBackgroundBrushEmphasizedAccent}" />
-        </Style>
-    </Style>
 
     <Style Selector="TextBox.subtle">
         <Setter Property="Theme" Value="{a:ControlTheme TextBoxSoft}" />
@@ -81,7 +57,7 @@
     <Style Selector="TextBlock">
         <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
-    
+
     <Style Selector="Label">
         <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
@@ -95,5 +71,28 @@
         <Setter Property="Height" Value="20" />
         <Setter Property="Width" Value="20" />
         <Setter Property="Padding" Value="2" />
+    </Style>
+
+    <Style Selector="Button.split">
+        <Setter Property="Theme" Value="{a:ControlTheme ButtonOutline}" />
+
+        <Style Selector="^:disabled">
+            <Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
+                <Setter Property="Background" Value="Transparent" />
+            </Style>
+            <Style Selector="^ PathIcon">
+                <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+            </Style>
+        </Style>
+        
+        <Style Selector="^:accent > PathIcon">
+            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+        </Style>
+        <Style Selector="^:success > PathIcon">
+            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineSuccess}" />
+        </Style>
+        <Style Selector="^:warning > PathIcon">
+            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineWarning}" />
+        </Style>
     </Style>
 </Styles>

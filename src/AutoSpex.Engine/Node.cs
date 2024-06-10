@@ -21,15 +21,14 @@ public class Node : IEquatable<Node>
     public Guid ParentId { get; private set; }
     public Node? Parent { get; private set; }
     public NodeType Type { get; private init; }
-    public NodeType Feature => Root.Type;
+    public NodeType Feature => GetNodeFeature();
     public string Name { get; set; }
     public int Depth { get; private set; }
     public string Path => GetPath();
     public Node Base => GetBaseNode();
-    public Node Root => GetRootNode();
     public IEnumerable<Node> Nodes => _nodes;
 
-    public static Node FeatureRoot(NodeType feature) => new()
+    public static Node Root(NodeType feature) => new()
     {
         NodeId = Guid.NewGuid(),
         ParentId = Guid.Empty,
@@ -38,6 +37,18 @@ public class Node : IEquatable<Node>
         Name = "Root"
     };
     
+    public static Node Create(Guid id, NodeType type, string name, Node? parent = null)
+    {
+        return new Node
+        {
+            NodeId = id,
+            ParentId = parent?.NodeId ?? Guid.Empty,
+            Parent = parent,
+            Type = type,
+            Name = name
+        };
+    }
+
     public static Node NewNode(NodeType type, string? name = default)
     {
         return new Node
@@ -293,7 +304,7 @@ public class Node : IEquatable<Node>
     /// Each root node will have a null parent, and this method will travers the parents until this node is reached, and
     /// return it.
     /// </summary>
-    private Node GetRootNode()
+    private NodeType GetNodeFeature()
     {
         var current = this;
 
@@ -302,7 +313,7 @@ public class Node : IEquatable<Node>
             current = current.Parent;
         }
 
-        return current;
+        return current.Type;
     }
 
     /// <summary>

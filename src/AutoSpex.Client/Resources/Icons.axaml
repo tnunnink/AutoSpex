@@ -183,8 +183,7 @@
         <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Date}" Resource="IconDateSmallThemed" />
         <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Enum}" Resource="IconEnumSmallThemed" />
         <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Element}" Resource="IconElementSmallThemed" />
-        <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Collection}"
-                                     Resource="IconCollectionSmallThemed" />
+        <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Collection}" Resource="IconCollectionSmallThemed" />
         <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Variable}" Resource="IconVariableSmallThemed" />
     </converters:KeyResourceConverter>
 
@@ -199,6 +198,7 @@
                 <Border Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
                         Padding="{TemplateBinding Padding}"
                         Height="{TemplateBinding Height}"
                         Width="{TemplateBinding Width}">
@@ -487,7 +487,7 @@
         <Setter Property="Padding" Value="7" />
     </ControlTheme>
 
-    <ControlTheme x:Key="IconStop" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
+    <ControlTheme x:Key="IconStop" TargetType="PathIcon" BasedOn="{actipro:ControlTheme PathIcon}">
         <Setter Property="Data">
             <StreamGeometry>M3.5 5A1.5 1.5 0 0 1 5 3.5h6A1.5 1.5 0 0 1 12.5 5v6a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 11zM5 4.5a.5.5 0 0 0-.5.5v6a.5.5 0 0 0 .5.5h6a.5.5 0 0 0 .5-.5V5a.5.5 0 0 0-.5-.5z</StreamGeometry>
         </Setter>

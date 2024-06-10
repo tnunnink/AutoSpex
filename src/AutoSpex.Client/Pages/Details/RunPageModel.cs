@@ -58,12 +58,10 @@ public partial class RunPageModel(NodeObserver node, RunObserver? run = default)
 
 
     /// <inheritdoc />
-    protected override async Task Run()
+    protected override Task Run()
     {
-        if (RunObserver is null) return;
-        var page = await Navigator.Navigate<RunnerPageModel>();
-        page.Run = RunObserver;
-        //await page.StartCommand.ExecuteAsync(null);
+        RunObserver?.TriggerRun();
+        return Task.CompletedTask;
     }
 
     /// <inheritdoc />

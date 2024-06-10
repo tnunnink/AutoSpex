@@ -6,6 +6,19 @@
     <Design.PreviewWith>
         <StackPanel Margin="20" Spacing="5">
             <StackPanel Spacing="10" Orientation="Horizontal">
+                <Button Theme="{DynamicResource IconButtonBase}"
+                        properties:ButtonIcon.Theme="{StaticResource IconAdd}" />
+                <Button Theme="{DynamicResource IconButtonBase}"
+                        properties:ButtonIcon.Theme="{StaticResource IconAdd}"
+                        Classes="accent icon-small" />
+                <Button Theme="{DynamicResource IconButtonBase}"
+                        properties:ButtonIcon.Theme="{StaticResource IconAdd}"
+                        Classes="accent icon-small" IsEnabled="False" />
+                <Button Theme="{DynamicResource IconButtonBase}"
+                        properties:ButtonIcon.Theme="{StaticResource IconAdd}"
+                        IsEnabled="False" />
+            </StackPanel>
+            <StackPanel Spacing="10" Orientation="Horizontal">
                 <Button Theme="{DynamicResource IconButton}"
                         properties:ButtonIcon.Theme="{StaticResource IconAdd}" />
                 <Button Theme="{DynamicResource IconButton}"
@@ -119,7 +132,7 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Button Theme="{DynamicResource IconButtonPillLeft}"
-                        properties:ButtonIcon.Theme="{StaticResource IconAdd}"/>
+                        properties:ButtonIcon.Theme="{StaticResource IconAdd}" />
                 <Button Theme="{DynamicResource IconButtonPillCenter}"
                         properties:ButtonIcon.Theme="{StaticResource IconAdd}"
                         Classes="accent" />
@@ -136,6 +149,66 @@
             </StackPanel>
         </StackPanel>
     </Design.PreviewWith>
+
+    <!-- IconButton -->
+    <ControlTheme x:Key="IconButtonBase" TargetType="Button">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushDefault}" />
+        <Setter Property="BorderThickness" Value="{actipro:ThemeResource ButtonBorderThickness}" />
+        <Setter Property="CornerRadius" Value="{actipro:ThemeResource ButtonCornerRadius}" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border x:Name="border"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        Padding="{TemplateBinding Padding}"
+                        HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                        VerticalAlignment="{TemplateBinding VerticalAlignment}">
+                    <PathIcon Theme="{TemplateBinding properties:ButtonIcon.Theme}"
+                              Foreground="{TemplateBinding Foreground}"
+                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                              actipro:ThemeProperties.CopyClassesFrom="{TemplateBinding }"
+                              actipro:ThemeProperties.CopyClassesFilter="icon-.*" />
+                </Border>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^:pointerover /template/ Border#border">
+            <Setter Property="Background" Value="{actipro:ThemeResource ButtonBackgroundBrushSoftPointerOver}" />
+            <Setter Property="BorderBrush" Value="{actipro:ThemeResource ButtonBackgroundBrushSoftPointerOver}" />
+        </Style>
+        <Style Selector="^:pressed /template/ Border#border">
+            <Setter Property="Background" Value="{actipro:ThemeResource ButtonBackgroundBrushSoftPressed}" />
+            <Setter Property="BorderBrush" Value="{actipro:ThemeResource ButtonBackgroundBrushSoftPressed}" />
+        </Style>
+        <Style Selector="^:disabled /template/ PathIcon">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Foreground" Value="{actipro:ThemeResource ButtonForegroundBrushDisabled}" />
+        </Style>
+
+        <Style Selector="^.accent">
+            <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushOutlineAccent}" />
+        </Style>
+        <Style Selector="^.success">
+            <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushOutlineSuccess}" />
+        </Style>
+        <Style Selector="^.warning">
+            <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushOutlineWarning}" />
+        </Style>
+        <Style Selector="^.danger">
+            <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushOutlineDanger}" />
+        </Style>
+    </ControlTheme>
 
     <!-- IconButton -->
     <ControlTheme x:Key="IconButton" TargetType="Button">
@@ -297,7 +370,13 @@
             </Style>
         </Style>
     </ControlTheme>
-    
+
+    <!-- IconButtonSmall -->
+    <ControlTheme x:Key="IconButtonDefault" TargetType="Button" BasedOn="{StaticResource IconButtonBase}">
+        <Setter Property="Height" Value="26" />
+        <Setter Property="Width" Value="26" />
+    </ControlTheme>
+
     <!-- IconButtonSmall -->
     <ControlTheme x:Key="IconButtonSmall" TargetType="Button" BasedOn="{StaticResource IconButton}">
         <Setter Property="Height" Value="20" />
@@ -442,19 +521,19 @@
             </Style>
         </Style>
     </ControlTheme>
-    
+
     <!-- IconButtonPillCenter -->
     <ControlTheme x:Key="IconButtonPillCenter" TargetType="Button" BasedOn="{StaticResource IconButtonPill}">
         <Setter Property="BorderThickness" Value="0 1 1 1" />
         <Setter Property="CornerRadius" Value="0" />
     </ControlTheme>
-    
+
     <!-- IconButtonPillLeft -->
     <ControlTheme x:Key="IconButtonPillLeft" TargetType="Button" BasedOn="{StaticResource IconButtonPill}">
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="5 0 0 5" />
     </ControlTheme>
-    
+
     <!-- IconButtonPillRight -->
     <ControlTheme x:Key="IconButtonPillRight" TargetType="Button" BasedOn="{StaticResource IconButtonPill}">
         <Setter Property="BorderThickness" Value="0 1 1 1" />
