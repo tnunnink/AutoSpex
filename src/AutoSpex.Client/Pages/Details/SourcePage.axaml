@@ -39,7 +39,9 @@
 
             <TabControl.ContentTemplate>
                 <DataTemplate x:DataType="shared:PageViewModel">
-                    <ScrollViewer Theme="{a:ControlTheme ScrollViewerOverlay}" Padding="20">
+                    <ScrollViewer Theme="{a:ControlTheme ScrollViewerOverlay}"
+                                  HorizontalScrollBarVisibility="Disabled"
+                                  Padding="20">
                         <ContentControl Content="{Binding}" />
                     </ScrollViewer>
                 </DataTemplate>

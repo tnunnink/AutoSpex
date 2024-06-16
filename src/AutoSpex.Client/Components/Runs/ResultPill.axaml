@@ -15,12 +15,13 @@
 
     <ControlTheme x:Key="{x:Type components:ResultPill}" TargetType="components:ResultPill">
         <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoft}" />
-        <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBorderBrushOutline}" />
+        <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBackgroundBrushSoft}" />
         <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
-        <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="Padding" Value="10 5" />
-        <Setter Property="MinWidth" Value="70" />
-        <Setter Property="CornerRadius" Value="5" />
+        <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeSmall}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="5" />
+        <Setter Property="MinWidth" Value="60" />
+        <Setter Property="CornerRadius" Value="4" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Border x:Name="border"
@@ -32,7 +33,7 @@
                         VerticalAlignment="Center">
                     <TextBlock x:Name="ResultText"
                                Text="{Binding Result, RelativeSource={RelativeSource TemplatedParent}}"
-                               FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                               FontSize="{TemplateBinding FontSize}"
                                HorizontalAlignment="Center" VerticalAlignment="Center"
                                Foreground="{TemplateBinding Foreground}" />
                 </Border>
@@ -40,7 +41,7 @@
         </Setter>
 
         <Style Selector="^[Result=None]">
-            <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSolidDisabled}" />
+            <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSolid}" />
             <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSolid}" />
         </Style>
         <Style Selector="^[Result=Pending]">

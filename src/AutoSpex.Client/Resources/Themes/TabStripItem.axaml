@@ -1,0 +1,90 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+        <Border Padding="100">
+            <TabStrip ItemContainerTheme="{DynamicResource TabStripItemStatusBar}"
+                      BorderThickness="0" Height="40"
+                      Background="{a:ThemeResource StatusBarBackgroundBrush}">
+                <TabStrip.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </TabStrip.ItemsPanel>
+                <TabStripItem Content="Item 1" />
+                <TabStripItem Content="Item 2" />
+                <TabStripItem Content="Item 3" />
+                <TabStripItem Content="Disabled" IsEnabled="False" />
+            </TabStrip>
+        </Border>
+    </Design.PreviewWith>
+
+
+    <!-- TabStripItemSubtle -->
+    <ControlTheme x:Key="TabStripItemStatusBar" TargetType="TabStripItem">
+        <ControlTheme.Resources>
+            <a:ThicknessConverter x:Key="PaddingConverter" Filter="Vertical" />
+        </ControlTheme.Resources>
+
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="00" />
+        <Setter Property="FontSize" Value="{a:ThemeResource TabItemFontSizeSubtle}" />
+        <Setter Property="FontWeight" Value="{a:ThemeResource TabItemFontWeightSubtle}" />
+        <Setter Property="Foreground" Value="{a:ThemeResource TitleBarForegroundBrush}" />
+        <Setter Property="Padding" Value="{a:ThemeResource TabItemPaddingSubtle}" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Panel>
+                    <Border
+                        x:Name="PART_LayoutRoot"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        Padding="{TemplateBinding Padding}">
+                        <ContentPresenter
+                            x:Name="PART_ContentPresenter"
+                            Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    </Border>
+                    <Border
+                        x:Name="PART_SelectedPipe"
+                        Height="3" ZIndex="100"
+                        VerticalAlignment="Top"
+                        IsVisible="False" />
+                    <Border
+                        Background="{a:ThemeResource StatusBarBorderBrush}"
+                        Width="1" Margin="0 12" ZIndex="100"
+                        HorizontalAlignment="Right" />
+                    <Border
+                        Background="{a:ThemeResource StatusBarBorderBrush}"
+                        Width="1" Margin="-1 12" ZIndex="100"
+                        HorizontalAlignment="Left" />
+                </Panel>
+
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^:pointerover">
+            <Style Selector="^ /template/ Border#PART_SelectedPipe">
+                <Setter Property="IsVisible" Value="True" />
+                <Setter Property="Background" Value="{a:ThemeResource Container5BorderBrush}" />
+            </Style>
+        </Style>
+        <Style Selector="^:selected">
+            <Setter Property="Foreground" Value="{a:ThemeResource TitleBarForegroundBrushActive}" />
+
+            <Style Selector="^ /template/ Border#PART_SelectedPipe">
+                <Setter Property="IsVisible" Value="True" />
+                <Setter Property="Background" Value="{a:ThemeResource TabItemBorderBrushSubtleSelected}" />
+            </Style>
+        </Style>
+        <Style Selector="^:disabled">
+            <Setter Property="Foreground" Value="{a:ThemeResource TabItemForegroundBrushSubtleDisabled}" />
+        </Style>
+    </ControlTheme>
+</ResourceDictionary>

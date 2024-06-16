@@ -1,0 +1,39 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+
+    <ControlTheme x:Key="IconBase" TargetType="PathIcon">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushDefault}" />
+        <Setter Property="Height" Value="30" />
+        <Setter Property="Width" Value="30" />
+        <Setter Property="Padding" Value="7" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        Padding="{TemplateBinding Padding}">
+                    <Viewbox>
+                        <Path Data="{TemplateBinding Data}" Fill="{TemplateBinding Foreground}" Stretch="Uniform" />
+                    </Viewbox>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^.accent /template/ Path">
+            <Setter Property="Fill" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+        </Style>
+        <Style Selector="^.success /template/ Path">
+            <Setter Property="Fill" Value="{a:ThemeResource ControlForegroundBrushOutlineSuccess}" />
+        </Style>
+        <Style Selector="^.warning /template/ Path">
+            <Setter Property="Fill" Value="{a:ThemeResource ControlForegroundBrushOutlineWarning}" />
+        </Style>
+        <Style Selector="^.danger /template/ Path">
+            <Setter Property="Fill" Value="{a:ThemeResource ControlForegroundBrushOutlineDanger}" />
+        </Style>
+    </ControlTheme>
+</ResourceDictionary>

@@ -55,6 +55,7 @@
 
                 <controls:Entry
                     Watermark="Enter property"
+                    Value="{Binding PropertyName}"
                     Content="{Binding PropertyName}"
                     IsEmpty="{Binding PropertyName, Converter={x:Static StringConverters.IsNullOrEmpty}}"
                     Populate="{Binding PopulateProperties}"
@@ -86,6 +87,7 @@
 
                 <controls:Entry
                     Watermark="Select operation"
+                    Value="{Binding Operation.Name, FallbackValue={x:Null}}"
                     Content="{Binding Operation.Name, FallbackValue={x:Null}}"
                     Populate="{Binding PopulateOperations}"
                     CommitCommand="{Binding UpdateOperationCommand}"

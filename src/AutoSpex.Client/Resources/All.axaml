@@ -2,34 +2,96 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:system="clr-namespace:System;assembly=System.Runtime"
-                    xmlns:converters="clr-namespace:AutoSpex.Client.Resources.Converters">
-    
+                    xmlns:converters="clr-namespace:AutoSpex.Client.Resources.Converters"
+                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine">
+
     <ResourceDictionary.MergedDictionaries>
         <ResourceInclude Source="Icons.axaml" />
         <ResourceInclude Source="Brushes.axaml" />
-        <ResourceInclude Source="Themes/ListBoxItem.axaml" />
         <ResourceInclude Source="Themes/ComboBox.axaml" />
-        <ResourceInclude Source="Themes/TextBox.axaml" />
-        <ResourceInclude Source="Themes/TabItem.axaml" />
-        <ResourceInclude Source="Themes/IconButtons.axaml" />
-        <ResourceInclude Source="Themes/TreeViewItem.axaml" />
-        <ResourceInclude Source="Themes/MenuItem.axaml" />
-        <ResourceInclude Source="Themes/DrawerView.axaml" />
-        <ResourceInclude Source="Themes/GridSplitter.axaml" />
-        <ResourceInclude Source="Themes/Prompt.axaml" />
-        <ResourceInclude Source="Themes/Entry.axaml" />
         <ResourceInclude Source="Themes/DataGrid.axaml" />
         <ResourceInclude Source="Themes/DataGridCell.axaml" />
         <ResourceInclude Source="Themes/DataGridRow.axaml" />
         <ResourceInclude Source="Themes/DataGridColumnHeader.axaml" />
+        <ResourceInclude Source="Themes/DrawerView.axaml" />
+        <ResourceInclude Source="Themes/Entry.axaml" />
+        <ResourceInclude Source="Themes/GridSplitter.axaml" />
+        <ResourceInclude Source="Themes/HighlightableTextBlock.axaml" />
+        <ResourceInclude Source="Themes/IconButtons.axaml" />
+        <ResourceInclude Source="Themes/ListBoxItem.axaml" />
+        <ResourceInclude Source="Themes/MenuItem.axaml" />
+        <ResourceInclude Source="Themes/PathIcon.axaml" />
+        <ResourceInclude Source="Themes/Prompt.axaml" />
+        <ResourceInclude Source="Themes/TabItem.axaml" />
+        <ResourceInclude Source="Themes/TabStripItem.axaml" />
+        <ResourceInclude Source="Themes/TextBox.axaml" />
+        <ResourceInclude Source="Themes/ToggleButton.axaml" />
+        <ResourceInclude Source="Themes/TreeViewItem.axaml" />
     </ResourceDictionary.MergedDictionaries>
-    
+
     <system:Boolean x:Key="True">True</system:Boolean>
     <system:Boolean x:Key="False">False</system:Boolean>
-    
+
     <converters:ElementXmlConverter x:Key="ElementXmlConverter" />
     <actipro:ComparisonConverter x:Key="EqualToConverter" Operator="EqualTo" />
     <actipro:ComparisonConverter x:Key="NotEqualToConverter" Operator="NotEqualTo" />
     <actipro:MathConverter x:Key="MathConverter" />
+
+    <converters:KeyResourceConverter x:Key="KeyToIconConverter">
+        <converters:ValueResourceKey Value="Specs" Resource="IconClipboardOutlinedCheck" />
+        <converters:ValueResourceKey Value="Sources" Resource="IconXml" />
+        <converters:ValueResourceKey Value="Runs" Resource="IconPlayOutlinedCollection" />
+        <converters:ValueResourceKey Value="Variables" Resource="IconBraces" />
+        <converters:ValueResourceKey Value="Container" Resource="IconContainerThemed" />
+        <converters:ValueResourceKey Value="Spec" Resource="IconSpecThemed" />
+        <converters:ValueResourceKey Value="Source" Resource="IconSourceThemed" />
+        <converters:ValueResourceKey Value="Run" Resource="IconRunThemed" />
+        <converters:ValueResourceKey Value="Runner" Resource="IconRunThemed" />
+        <converters:ValueResourceKey Value="Boolean" Resource="IconBooleanThemed" />
+        <converters:ValueResourceKey Value="Number" Resource="IconNumberThemed" />
+        <converters:ValueResourceKey Value="Text" Resource="IconTextThemed" />
+        <converters:ValueResourceKey Value="Date" Resource="IconDateThemed" />
+        <converters:ValueResourceKey Value="Enum" Resource="IconEnumThemed" />
+        <converters:ValueResourceKey Value="Element" Resource="IconElementThemed" />
+    </converters:KeyResourceConverter>
+
+    <converters:KeyResourceConverter x:Key="ResultStateToIconConverter">
+        <converters:ValueResourceKey Value="{x:Static engine:ResultState.None}" Resource="IconNoneThemed" />
+        <converters:ValueResourceKey Value="{x:Static engine:ResultState.Pending}" Resource="IconRunningThemed" />
+        <converters:ValueResourceKey Value="{x:Static engine:ResultState.Passed}" Resource="IconPassedThemed" />
+        <converters:ValueResourceKey Value="{x:Static engine:ResultState.Failed}" Resource="IconFailedThemed" />
+        <converters:ValueResourceKey Value="{x:Static engine:ResultState.Error}" Resource="IconErrorThemed" />
+    </converters:KeyResourceConverter>
+
+    <!--<converters:KeyResourceConverter x:Key="ResultStateToBrushConverter">
+        <converters:ValueResourceKey Value="{x:Static engine:ResultState.None}" Resource="IconNoneThemed" />
+        <converters:ValueResourceKey Value="{x:Static engine:ResultState.Pending}" Resource="Control" />
+        <converters:ValueResourceKey Value="{x:Static engine:ResultState.Passed}" Resource="IconPassedThemed" />
+        <converters:ValueResourceKey Value="{x:Static engine:ResultState.Failed}" Resource="IconFailedThemed" />
+        <converters:ValueResourceKey Value="{x:Static engine:ResultState.Error}" Resource="IconErrorThemed" />
+    </converters:KeyResourceConverter>-->
+
+    <converters:KeyResourceConverter x:Key="TypeGroupToIconConverter">
+        <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Boolean}" Resource="IconBooleanThemed" />
+        <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Number}" Resource="IconNumberThemed" />
+        <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Text}" Resource="IconTextThemed" />
+        <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Date}" Resource="IconDateThemed" />
+        <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Enum}" Resource="IconEnumThemed" />
+        <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Element}" Resource="IconElementThemed" />
+        <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Collection}" Resource="IconCollectionThemed" />
+        <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Variable}" Resource="IconVariableThemed" />
+    </converters:KeyResourceConverter>
+
+    <converters:KeyResourceConverter x:Key="TypeGroupSmallToIconConverter">
+        <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Boolean}" Resource="IconBooleanSmallThemed" />
+        <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Number}" Resource="IconNumberSmallThemed" />
+        <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Text}" Resource="IconTextSmallThemed" />
+        <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Date}" Resource="IconDateSmallThemed" />
+        <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Enum}" Resource="IconEnumSmallThemed" />
+        <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Element}" Resource="IconElementSmallThemed" />
+        <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Collection}"
+                                     Resource="IconCollectionSmallThemed" />
+        <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Variable}" Resource="IconVariableSmallThemed" />
+    </converters:KeyResourceConverter>
 
 </ResourceDictionary>

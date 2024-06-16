@@ -75,6 +75,7 @@
 
                 <controls:Entry
                     Watermark="Enter value"
+                    Value="{Binding Value}"
                     Content="{Binding Value}"
                     ContentTemplate="{StaticResource ValueTemplates}"
                     ItemTemplate="{StaticResource ValueItemTemplate}"

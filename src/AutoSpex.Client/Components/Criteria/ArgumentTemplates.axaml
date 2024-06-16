@@ -23,6 +23,7 @@
     <DataTemplate x:Key="ArgumentDefaultEntry" x:DataType="observers:ArgumentObserver">
         <controls:Entry
             Watermark="Enter value"
+            Value="{Binding Value}"
             Content="{Binding Value}"
             ContentTemplate="{StaticResource ValueTemplates}"
             ItemTemplate="{StaticResource ValueItemTemplate}"

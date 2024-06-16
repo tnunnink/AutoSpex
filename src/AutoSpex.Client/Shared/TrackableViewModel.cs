@@ -25,7 +25,7 @@ public abstract class TrackableViewModel : ViewModelBase, ITrackable
     /// Indicates that there are changes made to the state of the view model that need to be persisted or saved.
     /// </summary>
     public virtual bool IsChanged => _changed.Count > 0 || _tracked.Any(t => t.IsChanged);
-    
+
     /// <summary>
     /// Indicates that this view model or any of its tracked view models have errors present.
     /// </summary>
@@ -43,7 +43,7 @@ public abstract class TrackableViewModel : ViewModelBase, ITrackable
 
         OnPropertyChanged(nameof(IsChanged));
     }
-    
+
     /// <summary>
     /// Accepts the changes to the specified property name. This will just remove the property from the internal
     /// change collection.
@@ -57,8 +57,8 @@ public abstract class TrackableViewModel : ViewModelBase, ITrackable
 
     /// <summary>
     /// Refreshes all bindings to the derived observer object. This could be used if changes are made to the model
-    /// internally without the observer knowing (data refresh or domain level logic/events) It should signify a reset or
-    /// sync between the model and observer and therefore UI. 
+    /// internally without the observer knowing (data refresh or domain level logic/events) It should signify a reset
+    /// between the model and observer and therefore UI. 
     /// </summary>
     public virtual void Refresh()
     {
@@ -130,7 +130,7 @@ public abstract class TrackableViewModel : ViewModelBase, ITrackable
         base.OnPropertyChanged(e);
 
         if (string.IsNullOrEmpty(e.PropertyName)) return;
-        
+
         switch (e.PropertyName)
         {
             case nameof(IsChanged) or nameof(IsErrored):
@@ -142,9 +142,9 @@ public abstract class TrackableViewModel : ViewModelBase, ITrackable
 
         if (!_tracking.Contains(e.PropertyName)) return;
         _changed.Add(e.PropertyName);
-        OnPropertyChanged(nameof(IsChanged));  
+        OnPropertyChanged(nameof(IsChanged));
     }
-    
+
     /// <summary>
     /// Forwards the tracked model property changed event up the chain to notify this observer the <see cref="IsChanged"/>
     /// has changed.
@@ -154,7 +154,7 @@ public abstract class TrackableViewModel : ViewModelBase, ITrackable
         if (e.PropertyName != nameof(IsChanged)) return;
         OnPropertyChanged(nameof(IsChanged));
     }
-    
+
     /// <summary>
     /// Forwards the tracked model errors changed event up the chain to notify this observer the <see cref="IsErrored"/>
     /// has changed.

@@ -11,11 +11,4 @@ public class SpecPageModel(NodeObserver node) : NodePageModel(node)
         await Navigator.Navigate(() => new NodeVariablesPageModel(Node));
         await Navigator.Navigate(() => new NodeInfoPageModel(Node));
     }
-
-    /// <inheritdoc />
-    protected override async Task Run()
-    {
-        var run = RunObserver.Virtual(Node, out var node);
-        await Navigator.Navigate(() => new RunPageModel(node, run));
-    }
 }

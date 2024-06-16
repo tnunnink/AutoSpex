@@ -21,14 +21,16 @@ public partial class OutcomeObserver : Observer<Outcome>,
     }
 
     public override Guid Id => Model.OutcomeId;
-    public string SpecName => Model.SpecName;
-    public string SourceName => Model.SourceName;
-    public string SourceNameFormatted => $"({Model.SourceName})";
+    public Guid SpecId => Model.Spec?.NodeId ?? Guid.Empty;
+    public Guid SourceId => Model.Source?.NodeId ?? Guid.Empty;
+    public string SpecName => Model.Spec?.Name ?? string.Empty;
+    public string SourceName => Model.Source?.Name ?? string.Empty;
     public long Duration => Model.Duration;
-    public string DurationFormatted => $"[{Model.Duration} ms]";
 
     [ObservableProperty] private ResultState _result;
     public ObservableCollection<EvaluationObserver> Evaluations { get; }
+
+    [ObservableProperty] private string? _filterText;
 
     /// <summary>
     /// When we receive the running message for the outcome with the same local id, then we want to set the result
@@ -57,6 +59,17 @@ public partial class OutcomeObserver : Observer<Outcome>,
             Refresh();
             Evaluations.Refresh(Model.Evaluations.Select(e => new EvaluationObserver(e)));
         });
+    }
+
+    public override bool Filter(string? filter)
+    {
+        FilterText = filter;
+
+        return string.IsNullOrEmpty(filter)
+               || SpecName.PassesFilter(filter)
+               || SourceName.PassesFilter(filter)
+               || Result.ToString().PassesFilter(filter)
+               || Evaluations.Any(e => e.Filter(filter));
     }
 
     public static implicit operator Outcome(OutcomeObserver observer) => observer.Model;

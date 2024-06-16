@@ -25,23 +25,11 @@
                         CornerRadius="{TemplateBinding CornerRadius}"
                         Padding="{TemplateBinding Padding}">
                     <Panel>
-                        <!--No Projects-->
-                        <StackPanel
+                        <components:DefaultMessage
                             IsVisible="{Binding !ProjectSource.Count, RelativeSource={RelativeSource TemplatedParent}}"
-                            VerticalAlignment="Center" HorizontalAlignment="Center">
-                            <PathIcon Theme="{StaticResource IconProjectThemed}"
-                                      Padding="0" Margin="10" Height="50" Width="50" />
-                            <TextBlock Text="No recent projects"
-                                       Classes="theme-text-heading size"
-                                       Margin="5"
-                                       HorizontalAlignment="Center" />
-                            <TextBlock Text="Start by creating a new project or opening an existing project from disc."
-                                       Classes="theme-text-body"
-                                       HorizontalAlignment="Center" />
-                            <TextBlock Text="Recently opened projects will show up here."
-                                       Classes="theme-text-body"
-                                       HorizontalAlignment="Center" />
-                        </StackPanel>
+                            HeaderIcon="{StaticResource IconProjectThemed}"
+                            HeaderText="No recent projects"
+                            CustomMessage="Start by creating a new project or opening an existing project from disc." />
 
                         <ScrollViewer HorizontalScrollBarVisibility="Auto"
                                       Theme="{a:ControlTheme ScrollViewer}">

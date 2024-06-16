@@ -4,39 +4,52 @@
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
              xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
              xmlns:components="clr-namespace:AutoSpex.Client.Components"
+             xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
              x:Class="AutoSpex.Client.Pages.RunnerPage"
              x:DataType="pages:RunnerPageModel">
 
     <Design.Height>800</Design.Height>
     <Design.Width>1200</Design.Width>
 
-    <Grid RowDefinitions="Auto,Auto,*">
-        <Border Grid.Row="0" Background="{a:ThemeResource StatusBarBackgroundBrush}" Padding="10 5">
+    <Grid RowDefinitions="Auto,Auto,Auto,*">
+
+        <Border Grid.Row="0"
+                Background="{a:ThemeResource StatusBarBackgroundBrush}"
+                Height="40">
             <Grid ColumnDefinitions="Auto,*,Auto">
-                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5">
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5" Margin="10 0">
                     <PathIcon Theme="{StaticResource IconRunnerThemed}" Classes="icon-small" />
                     <TextBlock Text="Runner" Classes="theme-text-heading size-xs" />
-                    <a:ToggleThemeButton Height="30" Width="30" />
                 </StackPanel>
 
-                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="5">
+                <TabStrip Grid.Column="1"
+                          Theme="{a:ControlTheme TabStripOutline}"
+                          ItemsSource="{Binding Runs}"
+                          SelectedItem="{Binding SelectedRun}"
+                          ItemTemplate="{StaticResource RunTab}"
+                          ItemContainerTheme="{StaticResource TabStripItemStatusBar}"
+                          BorderThickness="0" Margin="10 0" />
 
-                    <StackPanel Orientation="Horizontal" Spacing="5">
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="5" Margin="10 0">
 
-
-                        <SplitButton Command="{Binding StartCommand}"
-                                     Theme="{a:ControlTheme SplitButtonSoft}"
-                                     Height="30" Padding="5" BorderThickness="0">
-                            <PathIcon Theme="{StaticResource IconPlayOutlined}" Classes="icon-small" Padding="4" />
+                    <StackPanel Orientation="Horizontal" Spacing="10" Margin="10 0"
+                                IsVisible="{Binding SelectedRun, Converter={x:Static ObjectConverters.IsNotNull}}">
+                        <SplitButton Command="{Binding SelectedRun.RunCommand, FallbackValue={x:Null}}"
+                                     Theme="{a:ControlTheme SplitButtonOutline}"
+                                     Background="Transparent"
+                                     Padding="5" Height="26">
+                            <PathIcon Theme="{StaticResource IconPlayFilled}"
+                                      Classes="icon-small"
+                                      Padding="4" />
                             <SplitButton.Styles>
                                 <Style Selector="SplitButton > PathIcon">
                                     <Setter Property="Foreground"
-                                            Value="{a:ThemeResource ControlForegroundBrushOutlineSuccess}" />
+                                            Value="{a:ThemeResource ControlForegroundBrushSoftSuccess}" />
                                 </Style>
                                 <Style Selector=":disabled">
                                     <Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
-                                        <Setter Property="Background"
-                                                Value="{a:ThemeResource ControlBackgroundBrushSoft}" />
+                                        <Setter Property="Background" Value="Transparent" />
                                     </Style>
                                     <Style Selector="^ PathIcon">
                                         <Setter Property="Foreground"
@@ -46,25 +59,21 @@
                             </SplitButton.Styles>
                         </SplitButton>
 
-                        <Button 
-                                Theme="{StaticResource IconButtonDefault}"
-                                properties:ButtonIcon.Theme="{StaticResource IconStop}"
-                                Classes="danger"/>
-
-                        <Button Theme="{a:ControlTheme ButtonSoft}" Height="30" Width="30">
-                            <PathIcon Theme="{StaticResource IconFloppyOutlined}" Classes="icon-small" Padding="4" />
+                        <Button Command="{Binding SelectedRun.CancelCommand, FallbackValue={x:Null}}"
+                                Theme="{a:ControlTheme ButtonOutline}"
+                                Background="Transparent"
+                                Height="26" Width="26">
+                            <PathIcon Theme="{StaticResource IconStopFilled}"
+                                      Classes="icon-small" Padding="4" />
                             <Button.Styles>
-                                <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-                                    <Setter Property="Background"
-                                            Value="{a:ThemeResource ControlBackgroundBrushOutlinePointerOver}" />
-                                    <Setter Property="BorderBrush"
-                                            Value="{a:ThemeResource ControlBackgroundBrushOutlinePointerOver}" />
-                                </Style>
                                 <Style Selector="Button > PathIcon">
                                     <Setter Property="Foreground"
-                                            Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+                                            Value="{a:ThemeResource ControlForegroundBrushSoftDanger}" />
                                 </Style>
                                 <Style Selector=":disabled">
+                                    <Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
+                                        <Setter Property="Background" Value="Transparent" />
+                                    </Style>
                                     <Style Selector="^ PathIcon">
                                         <Setter Property="Foreground"
                                                 Value="{a:ThemeResource DefaultForegroundBrushDisabled}" />
@@ -72,59 +81,122 @@
                                 </Style>
                             </Button.Styles>
                         </Button>
-                    </StackPanel>
 
-                    <Border BorderThickness="1 0 0 0"
-                            BorderBrush="{a:ThemeResource Container3BorderBrush}"
-                            Margin="5 7" />
-
-                    <StackPanel Orientation="Horizontal" Spacing="2">
-                        <Button
-                            properties:ButtonIcon.Theme="{StaticResource IconDotsVertical}"
-                            Theme="{StaticResource IconButton}"
-                            Padding="9"
-                            ToolTip.Tip="Options">
-                            <Flyout Placement="BottomEdgeAlignedRight"
-                                    HorizontalOffset="8">
-                            </Flyout>
+                        <Button Theme="{a:ControlTheme ButtonOutline}"
+                                Background="Transparent"
+                                Height="26" Width="26">
+                            <PathIcon Theme="{StaticResource IconFloppyOutlined}"
+                                      Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
+                                      Classes="icon-small" Padding="3" />
                         </Button>
-                        <Button
-                            Command="{Binding ClosePageCommand}"
-                            properties:ButtonIcon.Theme="{StaticResource IconDash}"
-                            Theme="{StaticResource IconButton}"
-                            Padding="9"
-                            ToolTip.Tip="Hide" />
                     </StackPanel>
+
+                    <Button
+                        Command="{Binding ClosePageCommand}"
+                        properties:ButtonIcon.Theme="{StaticResource IconDash}"
+                        Theme="{StaticResource IconButton}"
+                        Padding="9"
+                        ToolTip.Tip="Hide" />
                 </StackPanel>
             </Grid>
         </Border>
 
-        <!--<TextBox Grid.Row="1"
-                 BorderThickness="0"
-                 Watermark="Filter results"
-                 Theme="{StaticResource TextBoxOutlineHighlight}"
-                 Background="{a:ThemeResource Container2BackgroundBrush}">
-            <TextBox.InnerLeftContent>
-                <PathIcon Theme="{StaticResource IconFilter}" Margin="10 0 0 0" />
-            </TextBox.InnerLeftContent>
-        </TextBox>
+        <ProgressBar
+            Grid.Row="1"
+            Background="{a:ThemeResource Container2BackgroundBrush}"
+            Value="{Binding SelectedRun.Progress, FallbackValue={x:Null}}"
+            IsVisible="{Binding SelectedRun.Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Pending}, FallbackValue={x:False}}"
+            CornerRadius="0" MinHeight="3" Classes="accent" />
 
-        <Panel Grid.Row="2">
-            <components:DefaultMessage
-                HeaderText="No results..."
-                IsVisible="{Binding !Outcomes.Count}" />
-            <TreeView
-                x:Name="ResultTree"
-                ItemsSource="{Binding Outcomes}"
-                ItemContainerTheme="{StaticResource TreeViewItemSubtle}"
-                SelectionMode="Multiple"
-                Classes="theme-scroll-overlay"
-                BorderThickness="0" CornerRadius="5" ClipToBounds="True">
-                <TreeView.DataTemplates>
-                    <StaticResource ResourceKey="OutcomeTreeItem" />
-                    <StaticResource ResourceKey="EvaluationTreeItem" />
-                </TreeView.DataTemplates>
-            </TreeView>
-        </Panel>-->
+        <Border Grid.Row="2"
+                IsVisible="{Binding SelectedRun, Converter={x:Static ObjectConverters.IsNotNull}}"
+                Padding="10">
+            <StackPanel Spacing="5">
+                <Border>
+                    <Grid ColumnDefinitions="Auto,*,Auto">
+                        <ContentControl
+                            Grid.Column="0"
+                            Content="{Binding SelectedRun}"
+                            ContentTemplate="{DynamicResource RunSummary}"
+                            IsVisible="{Binding SelectedRun.HasResult, FallbackValue={x:False}}" />
+                        <TextBlock
+                            Grid.Column="0"
+                            Text="Execute run to view results"
+                            Opacity="{a:ThemeResource EditWatermarkOpacity}"
+                            IsVisible="{Binding !SelectedRun.HasResult, FallbackValue={x:True}}" />
+
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="5">
+                            <Button
+                                properties:ButtonIcon.Theme="{StaticResource IconChevronExpand}"
+                                Theme="{StaticResource IconButton}"
+                                Padding="9" />
+                            <Button
+                                properties:ButtonIcon.Theme="{StaticResource IconChevronCollapse}"
+                                Theme="{StaticResource IconButton}"
+                                Padding="9" />
+
+                            <Button
+                                properties:ButtonIcon.Theme="{StaticResource IconDownloadOutlined}"
+                                Theme="{StaticResource IconButton}"
+                                Padding="7" />
+                            <Button
+                                properties:ButtonIcon.Theme="{StaticResource IconDotsVertical}"
+                                Theme="{StaticResource IconButton}"
+                                Padding="9"
+                                ToolTip.Tip="Options">
+                                <Flyout Placement="BottomEdgeAlignedRight"
+                                        HorizontalOffset="8">
+                                </Flyout>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <TextBox
+                    x:Name="FilterText"
+                    Watermark="Filter run content"
+                    Theme="{StaticResource TextBoxOutlineHighlight}"
+                    Margin="0 5 0 0">
+                    <TextBox.InnerLeftContent>
+                        <PathIcon Theme="{StaticResource IconFilter}" Classes="icon-small" Margin="10 0" />
+                    </TextBox.InnerLeftContent>
+                    <TextBox.InnerRightContent>
+                        <Button Theme="{a:ControlTheme ButtonSubtle}" Padding="10 0"
+                                IsVisible="{Binding SelectedRun.Sources.Count, FallbackValue={x:False}}">
+                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                <PathIcon Theme="{StaticResource IconSourceThemed}"
+                                          Classes="icon-small" />
+                                <Panel>
+                                    <TextBlock Text="All Sources"
+                                               FontSize="{a:ThemeResource DefaultFontSizeSmall}" />
+                                    <!--<TextBlock Text=""></TextBlock>-->
+                                </Panel>
+                            </StackPanel>
+
+                            <Button.Flyout>
+                                <Flyout Placement="BottomEdgeAlignedRight" HorizontalOffset="8">
+                                    <ListBox
+                                        ItemsSource="{Binding SelectedRun.Sources, FallbackValue={x:Null}}"
+                                        ItemTemplate="{StaticResource NodeCheckable}"
+                                        ItemContainerTheme="{StaticResource ListBoxItemSimple}"
+                                        BorderThickness="0"
+                                        CornerRadius="{a:ThemeResource PopupCornerRadius}"
+                                        MinWidth="200" />
+                                </Flyout>
+                            </Button.Flyout>
+                        </Button>
+                    </TextBox.InnerRightContent>
+                    <Interaction.Behaviors>
+                        <SelectAllOnGotFocusBehavior />
+                    </Interaction.Behaviors>
+                </TextBox>
+            </StackPanel>
+        </Border>
+
+        <components:OutcomeTree
+            Grid.Row="3"
+            Run="{Binding SelectedRun, Mode=TwoWay}"
+            TextFilter="{Binding #FilterText.Text, Mode=TwoWay}"
+            Margin="10 0" />
     </Grid>
 </UserControl>

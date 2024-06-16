@@ -13,6 +13,11 @@
                 ContentTemplate="{DynamicResource Breadcrumb}"
                 Padding="10" />
 
+            <ContentControl
+                Content="{x:Static components:DesignData.SpecNode}"
+                ContentTemplate="{DynamicResource NodeCheckable}"
+                Padding="10" />
+
             <ListBox BorderThickness="0"
                      ItemsSource="{x:Static components:DesignData.Specs}"
                      ItemContainerTheme="{StaticResource ListBoxItemSection}"
@@ -48,11 +53,17 @@
         </StackPanel>
     </DataTemplate>
 
-    <DataTemplate x:Key="NodeName" x:DataType="observers:NodeObserver">
+    <DataTemplate x:Key="NodeSimple" x:DataType="observers:NodeObserver">
         <StackPanel Orientation="Horizontal" Spacing="5">
-            <PathIcon
-                Theme="{Binding Type.Name, Converter={StaticResource KeyToIconConverter}}"
-                Classes="icon-small" />
+            <PathIcon Theme="{Binding Type.Name, Converter={StaticResource KeyToIconConverter}}" Classes="icon-small" />
+            <TextBlock Text="{Binding Name}" />
+        </StackPanel>
+    </DataTemplate>
+
+    <DataTemplate x:Key="NodeCheckable" x:DataType="observers:NodeObserver">
+        <StackPanel Orientation="Horizontal" Spacing="5">
+            <CheckBox IsChecked="{Binding IsChecked}" Classes="size-xs accent" />
+            <PathIcon Theme="{Binding Type.Name, Converter={StaticResource KeyToIconConverter}}" Classes="icon-small" />
             <TextBlock Text="{Binding Name}" />
         </StackPanel>
     </DataTemplate>
@@ -66,7 +77,7 @@
                 x:Name="NameEntry"
                 Value="{Binding Name}"
                 Content="{Binding}"
-                ContentTemplate="{StaticResource NodeName}"
+                ContentTemplate="{StaticResource NodeSimple}"
                 FontFamily="{a:ThemeResource DefaultFontFamily}"
                 CommitCommand="{Binding RenameCommand}"
                 MinDropDownWidth="{Binding #NameEntry.Bounds.Width}"
@@ -148,7 +159,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="ChangeLogListItem" x:DataType="observers:ChangeLogObserver">
-        <Grid ColumnDefinitions="Auto,*,Auto" Margin="5">
+        <Grid ColumnDefinitions="Auto,*,Auto">
             <PathIcon
                 Grid.Column="0" Margin="0 0 10 0"
                 Theme="{StaticResource IconJournalText}"

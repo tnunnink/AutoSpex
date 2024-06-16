@@ -15,8 +15,11 @@ using JetBrains.Annotations;
 namespace AutoSpex.Client.Pages;
 
 [UsedImplicitly]
-public partial class ProjectPageModel(ProjectObserver project) : PageViewModel, IRecipient<NavigationRequest>
+public partial class ProjectPageModel(ProjectObserver project) : PageViewModel,
+    IRecipient<NavigationRequest>,
+    IRecipient<RunObserver.OpenRun>
 {
+    private RunnerPageModel? _runner;
     private FileSystemWatcher? _projectWatcher;
     public override string Route => $"{Project.Directory}/{Project.Name}";
     public override bool IsChanged => DetailsPage?.IsChanged is true;
@@ -35,14 +38,17 @@ public partial class ProjectPageModel(ProjectObserver project) : PageViewModel, 
 
     [ObservableProperty] private bool _isStatusDrawerOpen;
 
+    /// <inheritdoc />
     public override async Task Load()
     {
         await Navigator.Navigate(() => new NavigationPageModel(Route, NodeType.Spec));
         await Navigator.Navigate(() => new NavigationPageModel(Route, NodeType.Source));
         await Navigator.Navigate(() => new NavigationPageModel(Route, NodeType.Run));
         await Navigator.Navigate(() => new DetailsPageModel(Route));
+        await Navigator.Navigate<RunnerPageModel>();
     }
 
+    /// <inheritdoc />
     protected override void OnActivated()
     {
         ResetWatcher();
@@ -50,6 +56,7 @@ public partial class ProjectPageModel(ProjectObserver project) : PageViewModel, 
         base.OnActivated();
     }
 
+    /// <inheritdoc />
     protected override void OnDeactivated()
     {
         foreach (var menu in Menus.ToList())
@@ -58,10 +65,26 @@ public partial class ProjectPageModel(ProjectObserver project) : PageViewModel, 
         if (DetailsPage is not null)
             Navigator.Close(DetailsPage);
 
+        if (_runner is not null)
+            Navigator.Close(_runner);
+
         ResetWatcher();
         base.OnDeactivated();
     }
 
+    /// <summary>
+    /// Toggles the navigation drawer view of the main project page.
+    /// </summary>
+    [RelayCommand]
+    private void ToggleNavigationDrawer()
+    {
+        IsNavigationOpen = !IsNavigationOpen;
+    }
+
+    /// <summary>
+    /// Navigates the runner footer page into view (if not currently shown) and either opens or toggles the status bar
+    /// drawer view.
+    /// </summary>
     [RelayCommand]
     private async Task NavigateRunner()
     {
@@ -74,12 +97,9 @@ public partial class ProjectPageModel(ProjectObserver project) : PageViewModel, 
         IsStatusDrawerOpen = !IsStatusDrawerOpen;
     }
 
-    [RelayCommand]
-    private void ToggleNavigationDrawer()
-    {
-        IsNavigationOpen = !IsNavigationOpen;
-    }
-
+    /// <summary>
+    /// Handles the navigation requests for this main project page.
+    /// </summary>
     public void Receive(NavigationRequest message)
     {
         switch (message.Action)
@@ -97,6 +117,21 @@ public partial class ProjectPageModel(ProjectObserver project) : PageViewModel, 
         }
     }
 
+    /// <summary>
+    /// When the open run message is sent, ensure the runner footer page is opened and then reply with a flag that the
+    /// message as received.
+    /// </summary>
+    /// <param name="message">The <see cref="RunObserver.OpenRun"/> messages sent to trigger opening and loading
+    /// of the provided run.</param>
+    public async void Receive(RunObserver.OpenRun message)
+    {
+        await Navigator.Navigate(() => new RunnerPageModel());
+        message.Reply(true);
+    }
+
+    /// <summary>
+    /// Opens the requested page depending on the model that is passed in.
+    /// </summary>
     private void OpenPage(NavigationRequest message)
     {
         switch (message.Page)
@@ -109,13 +144,15 @@ public partial class ProjectPageModel(ProjectObserver project) : PageViewModel, 
             case DetailsPageModel:
                 DetailsPage = message.Page;
                 break;
-            case RunnerPageModel:
-                FooterPage = message.Page;
-                IsStatusDrawerOpen = true;
+            case RunnerPageModel runner:
+                ShowRunner(runner);
                 break;
         }
     }
 
+    /// <summary>
+    /// Closes the requested page depending on the model that is passed in.
+    /// </summary>
     private void ClosePage(NavigationRequest message)
     {
         switch (message.Page)
@@ -127,11 +164,36 @@ public partial class ProjectPageModel(ProjectObserver project) : PageViewModel, 
                 DetailsPage = null;
                 break;
             case RunnerPageModel:
-                if (FooterPage?.Route != nameof(RunnerPageModel)) return;
-                FooterPage = null;
-                IsStatusDrawerOpen = false;
+                HideRunner();
                 break;
         }
+    }
+
+    /// <summary>
+    /// Shows the runner page in the status bar drawer. If this is the first time the runner is called (on startup) then
+    /// just return without opening the drawer.
+    /// </summary>
+    private void ShowRunner(RunnerPageModel runner)
+    {
+        FooterPage = runner;
+
+        if (_runner is null)
+        {
+            _runner = runner;
+            return;
+        }
+
+        IsStatusDrawerOpen = true;
+    }
+
+    /// <summary>
+    /// Hides the runner page in the status bar drawer if that is indeed the current footer page being shown.
+    /// </summary>
+    private void HideRunner()
+    {
+        if (FooterPage?.Route != nameof(RunnerPageModel)) return;
+        FooterPage = null;
+        IsStatusDrawerOpen = false;
     }
 
     private void RegisterWatcher()

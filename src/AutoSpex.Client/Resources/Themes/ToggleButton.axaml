@@ -1,7 +1,98 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    
-    
-    
-    
+
+    <Design.PreviewWith>
+        <StackPanel Spacing="5" Margin="10">
+            <ToggleButton Theme="{DynamicResource ToggleButtonFaint}" Content="Testing" />
+            <ToggleButton Theme="{DynamicResource ToggleButtonFaint}" Content="Testing" Classes="accent" />
+            <ToggleButton Theme="{DynamicResource ToggleButtonFaint}" Content="Testing" Classes="success" />
+            <ToggleButton Theme="{DynamicResource ToggleButtonFaint}" Content="Testing" Classes="danger" />
+            <ToggleButton Theme="{DynamicResource ToggleButtonFaint}" Content="Testing" Classes="warning" />
+            <ToggleButton Theme="{DynamicResource ToggleButtonFaint}" Content="Testing" IsChecked="True" />
+            <ToggleButton Theme="{DynamicResource ToggleButtonFaint}" Content="Testing" IsChecked="True"
+                          Classes="accent" />
+            <ToggleButton Theme="{DynamicResource ToggleButtonFaint}" Content="Testing" IsChecked="True"
+                          Classes="success" />
+            <ToggleButton Theme="{DynamicResource ToggleButtonFaint}" Content="Testing" IsChecked="True"
+                          Classes="danger" />
+            <ToggleButton Theme="{DynamicResource ToggleButtonFaint}" Content="Testing" IsChecked="True"
+                          Classes="warning" />
+            <ToggleButton Theme="{DynamicResource ToggleButtonFaint}" Content="Testing" IsEnabled="False" />
+        </StackPanel>
+    </Design.PreviewWith>
+
+    <!-- ToggleButtonFaint -->
+    <ControlTheme x:Key="ToggleButtonFaint" TargetType="ToggleButton" BasedOn="{a:ControlTheme ButtonSubtle}">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Panel>
+                    <ContentPresenter
+                        x:Name="PART_ContentPresenter"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        Content="{TemplateBinding Content}"
+                        ContentTemplate="{TemplateBinding ContentTemplate}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        Foreground="{TemplateBinding Foreground}"
+                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        Padding="{TemplateBinding Padding}"
+                        RecognizesAccessKey="True"
+                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                </Panel>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^:not(:unchecked)">
+            <Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
+                <Setter Property="Background" Value="{a:ThemeResource ButtonBackgroundBrushSoft}" />
+                <Setter Property="BorderBrush" Value="{a:ThemeResource ButtonBackgroundBrushSoft}" />
+            </Style>
+            <Style Selector="^.accent /template/ ContentPresenter#PART_ContentPresenter">
+                <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftAccent}" />
+                <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBackgroundBrushSoftAccent}" />
+            </Style>
+            <Style Selector="^.danger /template/ ContentPresenter#PART_ContentPresenter">
+                <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftDanger}" />
+                <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBackgroundBrushSoftDanger}" />
+            </Style>
+            <Style Selector="^.success /template/ ContentPresenter#PART_ContentPresenter">
+                <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftSuccess}" />
+                <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBackgroundBrushSoftSuccess}" />
+            </Style>
+            <Style Selector="^.warning /template/ ContentPresenter#PART_ContentPresenter">
+                <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftWarning}" />
+                <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBackgroundBrushSoftWarning}" />
+            </Style>
+
+            <Style Selector="^:disabled">
+                <Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
+                    <Setter Property="Background" Value="{a:ThemeResource ButtonBackgroundBrushSoftDisabled}" />
+                    <Setter Property="BorderBrush" Value="{a:ThemeResource ButtonBackgroundBrushSoftDisabled}" />
+                </Style>
+                <Style Selector="^.accent /template/ ContentPresenter#PART_ContentPresenter">
+                    <Setter Property="Background"
+                            Value="{a:ThemeResource ControlBackgroundBrushSoftAccentDisabled}" />
+                    <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBackgroundBrushSoftAccentDisabled}" />
+                </Style>
+                <Style Selector="^.danger /template/ ContentPresenter#PART_ContentPresenter">
+                    <Setter Property="Background"
+                            Value="{a:ThemeResource ControlBackgroundBrushSoftDangerDisabled}" />
+                    <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBackgroundBrushSoftDangerDisabled}" />
+                </Style>
+                <Style Selector="^.success /template/ ContentPresenter#PART_ContentPresenter">
+                    <Setter Property="Background"
+                            Value="{a:ThemeResource ControlBackgroundBrushSoftSuccessDisabled}" />
+                    <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBackgroundBrushSoftSuccessDisabled}" />
+                </Style>
+                <Style Selector="^.warning /template/ ContentPresenter#PART_ContentPresenter">
+                    <Setter Property="Background"
+                            Value="{a:ThemeResource ControlBackgroundBrushSoftWarningDisabled}" />
+                    <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBackgroundBrushSoftWarningDisabled}" />
+                </Style>
+            </Style>
+        </Style>
+    </ControlTheme>
+
 </ResourceDictionary>

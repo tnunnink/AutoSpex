@@ -4,11 +4,17 @@
                     xmlns:components="using:AutoSpex.Client.Components">
 
     <Design.PreviewWith>
-        <components:DefaultMessage
-            HeaderIcon="{StaticResource IconSpecThemed}"
-            HeaderText="No criteria defined"
-            MessageIcon="{StaticResource IconAdd}"
-            MessageText="add a new criteria to this spec." />
+        <StackPanel Spacing="10">
+            <components:DefaultMessage
+                HeaderIcon="{StaticResource IconSpecThemed}"
+                HeaderText="No criteria defined"
+                MessageIcon="{StaticResource IconAdd}"
+                MessageText="add a new criteria to this spec." />
+            <components:DefaultMessage
+                HeaderIcon="{StaticResource IconProjectThemed}"
+                HeaderText="No criteria defined"
+                CustomMessage="This is a custom message that the user needs to see that will or perhaps should wrap around so that it does no just go on forever" />
+        </StackPanel>
     </Design.PreviewWith>
 
     <ControlTheme x:Key="{x:Type components:DefaultMessage}" TargetType="components:DefaultMessage">
@@ -48,7 +54,9 @@
                                 IsVisible="{Binding CustomMessage, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
                         <TextBlock Text="{TemplateBinding CustomMessage}"
                                    Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
-                                   TextAlignment="Center" />
+                                   TextAlignment="Center"
+                                   TextWrapping="Wrap"
+                                   MaxWidth="360" />
                     </StackPanel>
                 </StackPanel>
             </ControlTemplate>

@@ -97,6 +97,7 @@ public static class DesignData
     public static Property Property = new DesignRadixProperty();
 
     public static NodeObserver SpecNode = SpecNodeObserver();
+    public static NodeObserver SourceNode = new(Node.NewSource());
 
     public static ObservableCollection<NodeObserver> Nodes = new(GenerateNodes().Select(n => new NodeObserver(n)));
 
@@ -260,6 +261,21 @@ public static class DesignData
         [PassedEvaluation, ErroredEvaluation, FailedEvaluation]));
 
     public static ObservableCollection<OutcomeObserver> Outcomes = [OutcomePassed, OutcomeFailed, OutcomeErrored];
+
+    public static RunObserver RunObserver = BuildRunObserver();
+
+    private static RunObserver BuildRunObserver()
+    {
+        var run = new RunObserver(new Run(Node.NewRun()));
+        var outcomes = Outcomes.Select(x => x.Model);
+
+        foreach (var outcome in outcomes)
+        {
+            run.Outcomes.Add(outcome);
+        }
+
+        return run;
+    }
 
     public static ChangeLogObserver ChangeLog = new(new ChangeLog
         {

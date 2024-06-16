@@ -40,7 +40,7 @@ public partial class RunPageModel(NodeObserver node, RunObserver? run = default)
         if (RunObserver is null)
             throw new ArgumentException("Can not load run page without a valid RunObserver.");
 
-        await Navigator.Navigate(() => new RunConfigPageModel(RunObserver));
+        await Navigator.Navigate(() => new RunResultsPageModel(RunObserver));
         await Navigator.Navigate(() => new NodeInfoPageModel(Node));
     }
 
@@ -52,16 +52,18 @@ public partial class RunPageModel(NodeObserver node, RunObserver? run = default)
     }
 
     /// <inheritdoc />
-    /// <remarks>For a run page since we can pass in an virtual run observer, we can determine if it can be saved by
-    /// comparing it to the node....</remarks>
+    /// <remarks>
+    /// For a run page since we can pass in an virtual run observer, we can determine if it can be saved by
+    /// comparing it to the node....
+    /// </remarks>
     public override bool CanSave() => RunObserver?.IsVirtual is true || base.CanSave();
 
 
     /// <inheritdoc />
-    protected override Task Run()
+    protected override async Task Run()
     {
-        RunObserver?.TriggerRun();
-        return Task.CompletedTask;
+        if (RunObserver is null) return;
+        await RunObserver.Open();
     }
 
     /// <inheritdoc />

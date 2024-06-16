@@ -53,7 +53,11 @@ public abstract partial class NodePageModel : DetailPageModel,
     /// </summary>
     /// <returns></returns>
     [RelayCommand(CanExecute = nameof(CanRun))]
-    protected virtual Task Run() => Task.CompletedTask;
+    protected virtual async Task Run()
+    {
+        var run = RunObserver.Virtual(Node);
+        await run.Open();
+    }
 
     /// <summary>
     /// Determines if the run command can be executed for this node page model.

@@ -221,14 +221,14 @@ public class NodeTests
     [Test]
     public void Base_GetFromNestedSpec_ShouldNotBeNullAndExpectedInstance()
     {
-        var collection = Node.NewContainer();
-        var folder = collection.AddContainer();
-        var spec = folder.AddSpec();
+        var root = Node.Root(NodeType.Spec);
+        var container = root.AddContainer();
+        var spec = container.AddSpec();
 
         var result = spec.Base;
 
         result.Should().NotBeNull();
-        result.Should().BeSameAs(collection);
+        result.Should().BeSameAs(container);
     }
 
     [Test]

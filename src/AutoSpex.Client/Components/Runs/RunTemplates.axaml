@@ -1,0 +1,274 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
+
+    <Design.PreviewWith>
+        <Border Background="{a:ThemeResource Container1BackgroundBrush}"
+                Width="1000" Height="400" Padding="30">
+            <StackPanel Spacing="20">
+                <ContentControl Content="{x:Static components:DesignData.RunObserver}"
+                                ContentTemplate="{DynamicResource RunSummary}" />
+
+                <TreeView ItemsSource="{x:Static components:DesignData.Outcomes}"
+                          ItemContainerTheme="{StaticResource TreeViewItemSubtle}"
+                          ItemTemplate="{DynamicResource OutcomeTreeItem}" />
+                <ListBox ItemsSource="{x:Static components:DesignData.Evaluations}"
+                         ItemContainerTheme="{StaticResource ListBoxItemSubtle}"
+                         ItemTemplate="{DynamicResource EvaluationTreeItem}" />
+            </StackPanel>
+        </Border>
+    </Design.PreviewWith>
+
+    <!--RunTab-->
+    <DataTemplate x:Key="RunTab" x:DataType="observers:RunObserver">
+        <Grid ColumnDefinitions="Auto,*,Auto">
+            <PathIcon x:Name="icon"
+                      Grid.Column="0"
+                      Theme="{StaticResource IconRunThemed}"
+                      Classes="icon-small" />
+            <TextBlock Grid.Column="1"
+                       Text="{Binding Name}"
+                       FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                       Margin="7 0" />
+            <Border Grid.Column="2" Height="20" Width="20" Margin="0">
+                <Button x:Name="close"
+                        properties:ButtonIcon.Theme="{StaticResource IconClose}"
+                        Theme="{StaticResource IconButtonSmall}"
+                        Command="{Binding CloseCommand}"
+                        CornerRadius="10" Height="16" Width="16" Padding="11" />
+            </Border>
+        </Grid>
+    </DataTemplate>
+
+    <!--RunSummary-->
+    <DataTemplate x:Key="RunSummary" x:DataType="observers:RunObserver">
+        <StackPanel Orientation="Horizontal" Spacing="10">
+            <StackPanel.Styles>
+                <Style Selector="TextBlock">
+                    <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeSmall}" />
+                    <Style Selector="^.offset">
+                        <Setter Property="Padding" Value="0 0 0 1" />
+                    </Style>
+                    <Style Selector="^.caption">
+                        <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                        <Setter Property="Padding" Value="0 0 0 2" />
+                    </Style>
+                </Style>
+                <Style Selector="PathIcon">
+                    <Setter Property="Height" Value="16" />
+                    <Setter Property="Width" Value="16" />
+                    <Setter Property="Padding" Value="1" />
+                </Style>
+                <Style Selector="ToggleButton">
+                    <Setter Property="Theme" Value="{StaticResource ToggleButtonFaint}" />
+                    <Setter Property="Padding" Value="3" />
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                </Style>
+            </StackPanel.Styles>
+
+            <StackPanel Orientation="Horizontal" Spacing="5">
+                <components:ResultPill Result="{Binding Result}" />
+                <TextBlock Text="on" Classes="caption" />
+                <TextBlock Text="{Binding RanOn, StringFormat='MM/dd/yyyy HH:mm:ss'}" />
+                <TextBlock Text="by" Classes="caption" />
+                <TextBlock Text="{Binding RanBy}" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Spacing="5">
+                <StackPanel Orientation="Horizontal" Spacing="3">
+                    <PathIcon Theme="{StaticResource IconStopwatchOutlined}" Classes="accent" />
+                    <TextBlock Text="{Binding Duration}" />
+                    <TextBlock Text="ms" Classes="caption" />
+                    <ToolTip.Tip>Duration</ToolTip.Tip>
+                </StackPanel>
+
+                <TextBlock Text="/" Margin="0 0 0 1" Classes="caption" />
+
+                <StackPanel Orientation="Horizontal" Spacing="3">
+                    <PathIcon Theme="{StaticResource IconStopwatchOutlined}" Classes="accent" />
+                    <TextBlock Text="{Binding Average}" />
+                    <TextBlock Text="ms" Classes="caption" />
+                    <ToolTip.Tip>Average</ToolTip.Tip>
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Spacing="5">
+                <ToggleButton
+                    IsVisible="{Binding Ran}"
+                    IsChecked="{Binding ResultFilter, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.None}}"
+                    Command="{Binding ApplyResultFilterCommand}"
+                    CommandParameter="{x:Static engine:ResultState.None}">
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <PathIcon Theme="{StaticResource IconPlayCircle}" Margin="0 1 0 0" />
+                        <TextBlock Text="{Binding Ran}" />
+                    </StackPanel>
+                </ToggleButton>
+
+                <ToggleButton
+                    IsVisible="{Binding Passed}"
+                    IsChecked="{Binding ResultFilter, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Passed}}"
+                    Command="{Binding ApplyResultFilterCommand}"
+                    CommandParameter="{x:Static engine:ResultState.Passed}">
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <PathIcon Theme="{StaticResource IconPassedThemed}" Margin="0 1 0 0" />
+                        <TextBlock Text="{Binding Passed}" />
+                    </StackPanel>
+                </ToggleButton>
+
+                <ToggleButton
+                    IsVisible="{Binding Failed}"
+                    IsChecked="{Binding ResultFilter, Mode=TwoWay, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Failed}}"
+                    Command="{Binding ApplyResultFilterCommand}"
+                    CommandParameter="{x:Static engine:ResultState.Failed}">
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <PathIcon Theme="{StaticResource IconFailedThemed}" Margin="0 1 0 0" />
+                        <TextBlock Text="{Binding Failed}" />
+                    </StackPanel>
+                </ToggleButton>
+
+                <ToggleButton
+                    IsVisible="{Binding Error}"
+                    IsChecked="{Binding ResultFilter, Mode=TwoWay, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Error}}"
+                    Command="{Binding ApplyResultFilterCommand}"
+                    CommandParameter="{x:Static engine:ResultState.Error}">
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <PathIcon Theme="{StaticResource IconErrorThemed}" Margin="0 1 0 0" />
+                        <TextBlock Text="{Binding Error}" />
+                    </StackPanel>
+                </ToggleButton>
+            </StackPanel>
+        </StackPanel>
+    </DataTemplate>
+
+    <!--OutcomeTreeItem-->
+    <TreeDataTemplate x:Key="OutcomeTreeItem" DataType="observers:OutcomeObserver" ItemsSource="{Binding Evaluations}">
+        <DockPanel LastChildFill="False">
+            <DockPanel.Styles>
+                <Style Selector="controls|HighlightableTextBlock">
+                    <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeSmall}" />
+                    <Setter Property="TextWrapping" Value="NoWrap" />
+                </Style>
+                <Style Selector="TextBlock">
+                    <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeSmall}" />
+                    <Setter Property="TextWrapping" Value="NoWrap" />
+                </Style>
+                <Style Selector="PathIcon">
+                    <Setter Property="Height" Value="16" />
+                    <Setter Property="Width" Value="16" />
+                    <Setter Property="Padding" Value="1" />
+                </Style>
+            </DockPanel.Styles>
+
+            <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" Spacing="10">
+
+                <PathIcon Theme="{Binding Result, Converter={StaticResource ResultStateToIconConverter}}" />
+
+                <StackPanel Orientation="Horizontal" Spacing="5">
+                    <PathIcon Theme="{StaticResource IconSpecThemed}" />
+                    <Panel>
+                        <TextBlock
+                            Text="Drag spec to add"
+                            IsVisible="{Binding SpecName, Converter={x:Static StringConverters.IsNullOrEmpty}}"
+                            Opacity="{a:ThemeResource EditWatermarkOpacity}"
+                            FontStyle="Italic" />
+                        <controls:HighlightableTextBlock
+                            Text="{Binding SpecName}"
+                            HighlightedText="{Binding FilterText}"
+                            IsVisible="{Binding SpecName, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                    </Panel>
+                    <ToolTip.Tip>Spec</ToolTip.Tip>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Spacing="5">
+                    <PathIcon Theme="{StaticResource IconSourceThemed}" />
+                    <Panel>
+                        <TextBlock
+                            Text="Drag source to add"
+                            IsVisible="{Binding SourceName, Converter={x:Static StringConverters.IsNullOrEmpty}}"
+                            Opacity="{a:ThemeResource EditWatermarkOpacity}"
+                            FontStyle="Italic" />
+                        <controls:HighlightableTextBlock
+                            Text="{Binding SourceName}"
+                            HighlightedText="{Binding FilterText}"
+                            IsVisible="{Binding SourceName, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                    </Panel>
+                    <ToolTip.Tip>Source</ToolTip.Tip>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Spacing="3"
+                            IsVisible="{Binding Result, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:ResultState.None}}">
+                    <PathIcon Theme="{StaticResource IconStopwatchOutlined}" Classes="accent" />
+                    <TextBlock Text="{Binding Duration}" />
+                    <TextBlock Text="ms" Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                    <ToolTip.Tip>Duration</ToolTip.Tip>
+                </StackPanel>
+
+                <controls:HighlightableTextBlock
+                    Text="{Binding Result}"
+                    HighlightedText="{Binding FilterText}"
+                    IsVisible="{Binding Result, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:ResultState.None}}"
+                    Classes.accent="{Binding Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Pending}}"
+                    Classes.success="{Binding Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Passed}}"
+                    Classes.danger="{Binding Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Failed}}"
+                    Classes.warning="{Binding Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Error}}"
+                    ToolTip.Tip="Result" />
+            </StackPanel>
+        </DockPanel>
+    </TreeDataTemplate>
+
+    <!--EvaluationTreeItem-->
+    <TreeDataTemplate x:Key="EvaluationTreeItem" x:DataType="observers:EvaluationObserver">
+        <DockPanel LastChildFill="False">
+            <DockPanel.Styles>
+                <Style Selector="TextBlock">
+                    <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeSmall}" />
+                </Style>
+                <Style Selector="PathIcon">
+                    <Setter Property="Height" Value="16" />
+                    <Setter Property="Width" Value="16" />
+                    <Setter Property="Padding" Value="1" />
+                </Style>
+            </DockPanel.Styles>
+
+            <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" Spacing="5">
+                <PathIcon Theme="{Binding Result, Converter={StaticResource ResultStateToIconConverter}}" />
+
+                <ContentControl Content="{Binding Model.Candidate}"
+                                ContentTemplate="{StaticResource ValueTemplates}"
+                                TextElement.Foreground="{a:ThemeResource DefaultForegroundBrush}" />
+
+                <TextBlock
+                    Text="{Binding Message}"
+                    Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+
+                <ItemsControl
+                    ItemsSource="{Binding Model.Expected}"
+                    ItemTemplate="{StaticResource ValueTemplates}"
+                    Padding="0">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+
+                <TextBlock
+                    Text="and found"
+                    Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+
+                <ContentControl
+                    Content="{Binding Model.Actual}" Padding="0"
+                    ContentTemplate="{StaticResource ValueTemplates}"
+                    FontSize="{a:ThemeResource DefaultFontSizeSmall}" />
+            </StackPanel>
+
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="10" Margin="10 0">
+            </StackPanel>
+        </DockPanel>
+    </TreeDataTemplate>
+</ResourceDictionary>

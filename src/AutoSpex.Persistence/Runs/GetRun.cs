@@ -12,14 +12,21 @@ public record GetRun(Guid RunId) : IDbCommand<Result<Run>>;
 [UsedImplicitly]
 internal class GetRunHandler(IConnectionManager manager) : IRequestHandler<GetRun, Result<Run>>
 {
-    private const string GetRun = "SELECT NodeId as [RunId], Name FROM Node WHERE NodeId = @RunId";
-
-    private const string GetNodes =
+    private const string GetRun =
         """
-        SELECT n.NodeId, n.ParentId, n.Type, n.Name
-        FROM RunNode r
-        JOIN Node n on n.NodeId = r.NodeId
-        WHERE r.RunId = @RunId
+        SELECT n.Name, r.Result, r.RanOn, r.RanBy
+            FROM Node n
+            JOIN Run r on n.NodeId = r.RunId
+            WHERE NodeId = @RunId
+        """;
+
+    private const string GetOutcomes =
+        """
+        SELECT OutcomeId, Result, Duration, Evaluations, SpecId, spec.Name, spec.Type, SourceId, spec.ParentId, spec.Name, spec.Type
+        FROM Outcome o
+        LEFT JOIN Node spec on spec.NodeId = o.SpecId
+        LEFT JOIN Node source on source.NodeId = o.SourceId
+        WHERE RunId = @RunId
         """;
 
     public async Task<Result<Run>> Handle(GetRun request, CancellationToken cancellationToken)
@@ -28,11 +35,15 @@ internal class GetRunHandler(IConnectionManager manager) : IRequestHandler<GetRu
 
         var run = await connection.QuerySingleOrDefaultAsync<Run>(GetRun, new { request.RunId });
         if (run is null) return Result.Fail($"Run not found: '{request.RunId}'");
-        
-        var nodes = await connection.QueryAsync<Node>(GetNodes, new { request.RunId });
-        run.AddNodes(nodes);
-        
-        //todo variables
+
+        var outcomes = await connection.QueryAsync<Outcome, Node, Node, Outcome>(GetOutcomes,
+            (outcome, spec, source) => outcome.ConfigureSpec(spec).ConfigureSource(source),
+            splitOn: "SpecId,SourceId",
+            param: new { request.RunId });
+
+        run.AddOutcomes(outcomes);
+
+        //todo overrides?
 
         return Result.Ok(run);
     }

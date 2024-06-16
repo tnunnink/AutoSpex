@@ -120,7 +120,7 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
 
         var added = collection.Where(x => this.All(o => o != x)).ToList();
         var removed = this.Where(o => collection.All(x => x != o)).ToList();
-        var modified = this.Except(added).Except(removed).Where(x => x.IsChanged).ToList();
+        var others = this.Except(added).Except(removed).ToList();
 
         foreach (var observer in added)
             Add(observer);
@@ -128,7 +128,7 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
         foreach (var observer in removed)
             Remove(observer);
 
-        foreach (var observer in modified)
+        foreach (var observer in others)
             observer.Refresh();
     }
 

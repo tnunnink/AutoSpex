@@ -62,7 +62,7 @@ public partial class NodeObserver : Observer<Node>,
 
     [ObservableProperty] private bool _isEditing;
 
-    [ObservableProperty] private bool _isChecked = true;
+    [ObservableProperty] private bool _isChecked;
 
     [ObservableProperty] private bool _isNew;
 
@@ -207,14 +207,14 @@ public partial class NodeObserver : Observer<Node>,
     private async Task Run()
     {
         //Runs open the runner with the run.
-        if (Feature == NodeType.Run)
+        if (Type == NodeType.Run)
         {
-            await NavigateRunnerPage();
+            await LoadAndNavigateRun();
             return;
         }
 
-        //Specs and Source (or their containers) open a run page configured with its nodes.
-        await NavigateRunPage();
+        //Specs and Source (or their containers) will create a new virtual run and open that in the runner.
+        await NavigateVirtualRun();
     }
 
     #endregion
@@ -328,17 +328,17 @@ public partial class NodeObserver : Observer<Node>,
     /// Configures a new temp run node and runner with this node (and all descendant nodes) configured, and then
     /// navigates the RunPageModel into view for the user. This allows them to finish configuring the run and then run it.
     /// </summary>
-    private async Task NavigateRunPage()
+    private async Task NavigateVirtualRun()
     {
-        var run = RunObserver.Virtual(this, out var node);
-        await Navigator.Navigate(() => new RunPageModel(node, run));
+        var run = RunObserver.Virtual(this);
+        await run.Open();
     }
 
     /// <summary>
     /// If this is the run node type, then we simply load up the configured run and navigate it into the RunnerPageModel
     /// which should then kick off the execution of the run.
     /// </summary>
-    private async Task NavigateRunnerPage()
+    private async Task LoadAndNavigateRun()
     {
         var result = await Mediator.Send(new GetRun(Id));
 
@@ -349,7 +349,7 @@ public partial class NodeObserver : Observer<Node>,
         }
 
         var run = new RunObserver(result.Value);
-        run.TriggerRun();
+        await run.Open();
     }
 
     /// <summary>
