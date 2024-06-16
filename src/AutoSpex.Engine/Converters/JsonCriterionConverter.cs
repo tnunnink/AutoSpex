@@ -9,7 +9,7 @@ public class JsonCriterionConverter : JsonConverter<Criterion>
     {
         var id = Guid.Empty;
         var type = typeof(object);
-        var property = string.Empty;
+        var property = Property.This(type);
         var operation = Operation.None;
         var arguments = new List<Argument>();
         var invert = false;
@@ -30,7 +30,9 @@ public class JsonCriterionConverter : JsonConverter<Criterion>
                     type = JsonSerializer.Deserialize<Type>(ref reader, options);
                     break;
                 case nameof(Criterion.Property):
-                    property = reader.GetString();
+                    if (type is null) break;
+                    var path = reader.GetString();
+                    property = Property.This(type).Descendant(path);
                     break;
                 case nameof(Criterion.Operation):
                     operation = Operation.FromName(reader.GetString());
@@ -59,7 +61,7 @@ public class JsonCriterionConverter : JsonConverter<Criterion>
             writer.WriteString(nameof(Criterion.Type), value.Type.FullName);
 
         if (value.Property is not null)
-            writer.WriteString(nameof(Criterion.Property), value.Property);
+            writer.WriteString(nameof(Criterion.Property), value.Property.Path);
 
         if (value.Operation is not null)
             writer.WriteString(nameof(Criterion.Operation), value.Operation.Name);

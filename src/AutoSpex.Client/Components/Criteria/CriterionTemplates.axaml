@@ -55,9 +55,9 @@
 
                 <controls:Entry
                     Watermark="Enter property"
-                    Value="{Binding PropertyName}"
-                    Content="{Binding PropertyName}"
-                    IsEmpty="{Binding PropertyName, Converter={x:Static StringConverters.IsNullOrEmpty}}"
+                    Value="{Binding Property}"
+                    Content="{Binding Property}"
+                    IsEmpty="{Binding Property, Converter={x:Static ObjectConverters.IsNull}}"
                     Populate="{Binding PopulateProperties}"
                     CommitCommand="{Binding UpdatePropertyCommand}">
                     <controls:Entry.ItemTemplate>
@@ -189,7 +189,7 @@
             <StackPanel Orientation="Horizontal" Spacing="5">
                 <PathIcon Theme="{StaticResource IconFilter}"
                           Height="20" Width="20" Padding="3" />
-                <TextBlock Text="{Binding PropertyName}"
+                <TextBlock Text="{Binding Property}"
                            TextTrimming="CharacterEllipsis"
                            Foreground="{a:ThemeResource ControlForegroundBrushSoftAccent}" />
                 <Button Theme="{StaticResource IconButtonSmall}"

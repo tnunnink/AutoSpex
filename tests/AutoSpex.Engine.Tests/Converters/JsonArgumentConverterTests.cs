@@ -51,7 +51,7 @@ public class JsonArgumentConverterTests
     public void RunSerializationForCriterionAndValidateResults()
     {
         Expression<Func<IMemberInfo, bool>> exclude = m => m.Type == typeof(Guid);
-        var criterion = new Criterion("SubProp", Operation.Equal, "Some Value");
+        var criterion = new Criterion(Element.Tag.Property("Description"), Operation.Equal, "Some Value");
         var argument = new Argument(criterion);
         
         var data = JsonSerializer.Serialize(argument, _options);

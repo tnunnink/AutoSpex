@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using System.Reflection;
 
 namespace AutoSpex.Engine;
 
@@ -11,6 +12,14 @@ public class Property : IEquatable<Property>
 {
     private const char Separator = '.';
 
+    //These are properties that I don't want to show up for the user because they are not really useful and are confusing.
+    private static readonly List<string> PropertyExclusions = ["L5X", "IsAttached", "L5XType", "Length"];
+
+    /// <summary>
+    /// 
+    /// </summary>
+    private static readonly Lazy<Dictionary<Type, List<Property>>> PropertyCache = new();
+
     /// <summary>
     /// Holds compiled property getter functions, so we don't have to recreate them each time we need to get a property.
     /// This will improve the overall performance when we go to run many criterion for many specifications.
@@ -22,7 +31,7 @@ public class Property : IEquatable<Property>
     /// <summary>
     /// A custom getter function for this property which will be used instead of trying to create a getter expression
     /// using the property type information. This allows for pseudo creation of properties with custom getters which
-    /// I amd using in the client to get collection items for a type graph. The order of operation is cache, custom, then
+    /// I amd using in the client to get collection items for a type graph. The order of operation is custom, cache,
     /// generate expression.
     /// </summary>
     private readonly Func<object?, object?>? _getter;
@@ -53,7 +62,7 @@ public class Property : IEquatable<Property>
     public string Key => string.Concat(Origin, ".", Path);
 
     /// <summary>
-    /// The root or originating property to which this property belongs.
+    /// The root or originating type to which this property belongs.
     /// </summary>
     public Type Origin => GetOriginType();
 
@@ -83,7 +92,7 @@ public class Property : IEquatable<Property>
     public string Identifier => Type.CommonName();
 
     /// <summary>
-    /// The <see cref="TypeGroup"/> two which this property's return type belongs.
+    /// The <see cref="TypeGroup"/> in which this property's return type belongs.
     /// </summary>
     public TypeGroup Group => TypeGroup.FromType(Type);
 
@@ -95,7 +104,7 @@ public class Property : IEquatable<Property>
     /// <summary>
     /// The set of child properties which can be navigated to from this property's type.
     /// </summary>
-    public IEnumerable<Property> Properties => Type.Properties(this);
+    public IEnumerable<Property> Properties => GetProperties();
 
     /// <summary>
     /// 
@@ -121,18 +130,9 @@ public class Property : IEquatable<Property>
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="origin"></param>
     /// <param name="path"></param>
     /// <returns></returns>
-    public static Func<object?, object?>? Getter(Type? origin, string? path)
-    {
-        var key = string.Concat(origin, ".", path);
-        if (Cache.TryGetValue(key, out var getter)) return getter;
-
-        var property = origin?.Property(path);
-        if (property is null) return default;
-        return x => property.GetValue(x);
-    }
+    public Property? Descendant(string? path) => GetProperty(path);
 
     /// <summary>
     /// Gets the value of this <see cref="Property"/> given an instance representing the origin type this
@@ -188,6 +188,72 @@ public class Property : IEquatable<Property>
 
     /// <inheritdoc />
     public override string ToString() => Path;
+
+    /// <summary>
+    /// Gets all child properties of the current property type.
+    /// </summary>
+    /// <returns>A collection of <see cref="Property"/> objects defining the child properties of the type.</returns>
+    /// <remarks>
+    /// This is the primary means through which we get properties for a given logix or .NET type. This will
+    /// check if the type is an <see cref="Element"/> type and if so also append the defined custom properties for that type.
+    /// </remarks>
+    private IEnumerable<Property> GetProperties()
+    {
+        var children = new List<Property>();
+
+        //Always first check if this type's properties we already cached to exit early and avoid reflection usage.
+        if (PropertyCache.Value.TryGetValue(Type, out var cached)) return cached;
+
+        var properties = Type
+            .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+            .Where(p => p.GetIndexParameters().Length == 0 && !PropertyExclusions.Contains(p.Name));
+
+        //Generate properties using the type information.
+        foreach (var prop in properties)
+        {
+            var property = new Property(prop.Name, prop.PropertyType, this);
+            children.Add(property);
+        }
+
+        //Add custom properties defined on elements.
+        if (!Element.TryFromName(Type.Name, out var element)) return children;
+        children.AddRange(element.CustomProperties);
+
+        //Cache all properties for this type, they should not change at runtime, and we can avoid reusing reflection. 
+        PropertyCache.Value.TryAdd(Type, children);
+
+        return children;
+    }
+
+    /// <summary>
+    /// Gets a specified nested property using the provided property path name.
+    /// </summary>
+    /// <param name="path">The path of the property from the current type.</param>
+    /// <returns>The <see cref="Property"/> object representing the child property if found, Otherwise null.</returns>
+    /// <remarks>
+    /// This is the primary extension fot getting a single child or nested property from a given type. Both
+    /// <see cref="Element"/> and <see cref="Property"/> make use of this extension to retrieve child property objects.
+    /// This extension will check if the type is an Element type and if so also search the defined custom properties.
+    /// </remarks>
+    private Property? GetProperty(string? path)
+    {
+        if (path is null) return default;
+
+        Property? property = null;
+        var properties = Properties.ToList();
+
+        //todo would like to also handle collection indexer properties here as pseudo (non cached) properties.
+        while (!string.IsNullOrEmpty(path) && properties.Count > 0)
+        {
+            var dot = path.IndexOf('.');
+            var member = dot >= 0 ? path[..dot] : path;
+            property = properties.SingleOrDefault(p => p.Name == member);
+            properties = property?.Properties.ToList() ?? Enumerable.Empty<Property>().ToList();
+            path = dot >= 0 ? path[(dot + 1)..] : string.Empty;
+        }
+
+        return property;
+    }
 
     /// <summary>
     /// Retrieves the getter function for this property, which will either be the custom getter, cached expression,

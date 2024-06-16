@@ -167,7 +167,7 @@ public class Spec()
     /// <param name="property">The property name to select for the filter criterion.</param>
     /// <param name="operation">The <see cref="Operation"/> the criterion will perform.</param>
     /// <param name="args">The collection of <see cref="Argument"/> to supply to the criterion operation.</param>
-    public Spec Where(string property, Operation operation, params Argument[] args)
+    public Spec Where(Property? property, Operation operation, params Argument[] args)
     {
         Filters.Add(new Criterion(property, operation, args));
         return this;
@@ -179,7 +179,7 @@ public class Spec()
     /// <param name="property">The property name to select for the filter criterion.</param>
     /// <param name="operation">The <see cref="Operation"/> the criterion will perform.</param>
     /// <param name="args">The collection of <see cref="Argument"/> to supply to the criterion operation.</param>
-    public Spec Verify(string property, Operation operation, params Argument[] args)
+    public Spec Verify(Property? property, Operation operation, params Argument[] args)
     {
         Verifications.Add(new Criterion(property, operation, args));
         return this;

@@ -19,7 +19,7 @@ public class JsonCriterionConverterTests
     [Test]
     public void RunSerializationForLogixAtomicTypeAndValidateResults()
     {
-        var criterion = new Criterion("Test", Operation.All, 1, 2, 3);
+        var criterion = new Criterion(Element.Tag.Property("Value"), Operation.All, 1, 2, 3);
         
         var data = JsonSerializer.Serialize(criterion, _options);
         data.Should().NotBeEmpty();

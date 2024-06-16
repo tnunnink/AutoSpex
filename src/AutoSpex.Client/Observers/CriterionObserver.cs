@@ -19,26 +19,21 @@ public partial class CriterionObserver : Observer<Criterion>
         Arguments = new ObserverCollection<Argument, ArgumentObserver>(
             Model.Arguments, a => new ArgumentObserver(a, this));
 
-        Track(nameof(PropertyName));
+        Track(nameof(Property));
         Track(nameof(Operation));
         Track(nameof(Invert));
         Track(Arguments);
-
-        ResolveProperty();
     }
 
     public override Guid Id => Model.CriterionId;
+    public Type Type => Model.Type ?? typeof(object);
 
-    [ObservableProperty] private bool _isEnabled = true;
-
-    public string? PropertyName
+    [Required]
+    public Property? Property
     {
         get => Model.Property;
         set => SetProperty(Model.Property, value, Model, (c, p) => c.Property = p);
     }
-
-    [ObservableProperty] [NotifyDataErrorInfo] [Required]
-    private Property? _property;
 
     /// <summary>
     /// The <see cref="Engine.Operation"/> to execute for the criterion. This property wraps the underlying model.
@@ -58,6 +53,8 @@ public partial class CriterionObserver : Observer<Criterion>
         set => SetProperty(Model.Invert, value, Model, (c, v) => c.Invert = v);
     }
 
+    [ObservableProperty] private bool _isEnabled = true;
+
     public Func<string?, CancellationToken, Task<IEnumerable<object>>> PopulateProperties => GetProperties;
     public Func<string?, CancellationToken, Task<IEnumerable<object>>> PopulateOperations => GetOperations;
 
@@ -65,15 +62,8 @@ public partial class CriterionObserver : Observer<Criterion>
     {
         base.OnPropertyChanged(e);
 
-        switch (e.PropertyName)
-        {
-            case nameof(PropertyName):
-                ResolveProperty();
-                break;
-            case nameof(Operation):
-                UpdateArguments();
-                break;
-        }
+        if (e.PropertyName == nameof(Operation))
+            UpdateArguments();
     }
 
     public static implicit operator Criterion(CriterionObserver observer) => observer.Model;
@@ -87,15 +77,17 @@ public partial class CriterionObserver : Observer<Criterion>
         if (type is null)
             return Task.FromResult(Enumerable.Empty<object>());
 
+        var origin = Property.This(type);
+
         if (string.IsNullOrEmpty(filter))
-            return Task.FromResult(type.Properties().Cast<object>());
+            return Task.FromResult(origin.Properties.Cast<object>());
 
         var index = filter.LastIndexOf('.');
         var path = index > -1 ? filter[..index] : string.Empty;
         var member = index > -1 ? filter[(index + 1)..] : filter;
 
-        var property = type.Property(path);
-        var properties = property?.Properties ?? type.Properties();
+        var property = origin.Descendant(path);
+        var properties = property?.Properties ?? origin.Properties;
 
         var filtered = properties
             .Where(p => p.Name.Contains(member, StringComparison.OrdinalIgnoreCase))
@@ -111,10 +103,10 @@ public partial class CriterionObserver : Observer<Criterion>
         switch (value)
         {
             case Property property:
-                PropertyName = property.Path;
+                Property = property;
                 return;
-            case string text:
-                PropertyName = text;
+            case string path:
+                Property = Property.This(Type).Descendant(path);
                 return;
         }
     }
@@ -149,14 +141,6 @@ public partial class CriterionObserver : Observer<Criterion>
                 Operation = found ? parsed : null;
                 return;
         }
-    }
-
-    private void ResolveProperty()
-    {
-        if (string.IsNullOrEmpty(PropertyName))
-            return;
-
-        Property = Model.Type?.Property(PropertyName);
     }
 
     /// <summary>

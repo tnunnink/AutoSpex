@@ -62,7 +62,7 @@ public class ArgumentTests
     [Test]
     public void New_CriterionType_ShouldHaveExpectedValues()
     {
-        var value = new Criterion("Test", Operation.Contains, "Something");
+        var value = new Criterion(Element.Tag.Property("Test"), Operation.Contains, "Something");
         var argument = new Argument(value);
 
         argument.Should().NotBeNull();
@@ -151,7 +151,7 @@ public class ArgumentTests
     [Test]
     public void ResolveAs_CriterionRegardlessOfType_ShouldHaveExpectedValues()
     {
-        var value = new Criterion("Test", Operation.Contains, "Something");
+        var value = new Criterion(Element.Tag.Property("Test"), Operation.Contains, "Something");
         var argument = new Argument(value);
 
         var result = argument.ResolveAs(typeof(string));

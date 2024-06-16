@@ -25,19 +25,17 @@ public abstract class Element : SmartEnum<Element, string>
     private Element(Type type) : base(type.Name, type.Name)
     {
         Type = type ?? throw new ArgumentNullException(nameof(type));
-        RegisterThis();
     }
 
     private Element(string name, Type type) : base(name, type.FullName ?? throw new ArgumentNullException(nameof(type)))
     {
         Type = type ?? throw new ArgumentNullException(nameof(type));
-        RegisterThis();
     }
 
     public Type Type { get; }
-    public IEnumerable<Property> Properties => Type.Properties(This);
+    public Property This => Engine.Property.This(Type);
+    public IEnumerable<Property> Properties => This.Properties;
     public IEnumerable<Property> CustomProperties => _customProperties;
-    public Property This => _customProperties.Single(p => p.Name == nameof(This));
     public virtual Func<L5X, IEnumerable<LogixElement>> Query => file => file.Query(Type);
     public Func<L5X, string, object?> Lookup => (file, name) => file.Find(new ComponentKey(Type.Name, name));
     public bool IsComponent => Type.IsAssignableTo(typeof(LogixComponent));
@@ -88,7 +86,7 @@ public abstract class Element : SmartEnum<Element, string>
     /// </summary>
     /// <param name="path">The path to the desired property, separated by dots.</param>
     /// <returns>The <see cref="Property"/> object representing the specified property if found, otherwise, <c>null</c>.</returns>
-    public Property? Property(string? path) => Type.Property(path, This);
+    public Property? Property(string? path) => This.Descendant(path);
 
     /// <summary>
     /// Registers a custom property for the element type using the provided property name and getter function.
@@ -102,16 +100,6 @@ public abstract class Element : SmartEnum<Element, string>
     {
         var property = new Property(name, typeof(T), This, getter);
         _customProperties.Add(property);
-    }
-
-    /// <summary>
-    /// Registers a custom property called "This" as a reference to current instance of an object to the internal
-    /// custom property collection. This allows all elements to reference themselves as a property for filtering or
-    /// validation.
-    /// </summary>
-    private void RegisterThis()
-    {
-        _customProperties.Add(Engine.Property.This(Type));
     }
 
     private class DefaultElement : Element
@@ -185,7 +173,7 @@ public abstract class Element : SmartEnum<Element, string>
     {
         public TagElement() : base(typeof(Tag))
         {
-            Register<IList<Tag>>("Members", x => ((Tag)x!).Members().ToList()); 
+            Register<IList<Tag>>("Members", x => ((Tag)x!).Members().ToList());
         }
 
         public override Func<L5X, IEnumerable<LogixElement>> Query => x => x.Query<Tag>().SelectMany(t => t.Members());

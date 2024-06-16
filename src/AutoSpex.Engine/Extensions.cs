@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.IO.Compression;
-using System.Reflection;
 using System.Text;
 using L5Sharp.Core;
 
@@ -10,72 +9,6 @@ namespace AutoSpex.Engine;
 
 public static class Extensions
 {
-    //These are properties that I don't want to show up for the user because they are not really useful and are confusing.
-    private static readonly List<string> PropertyExclusions = ["L5X", "IsAttached", "L5XType", "Length"];
-
-    /// <summary>
-    /// Gets all predefined and custom properties for the current type.
-    /// </summary>
-    /// <param name="type">The type for which to get properties.</param>
-    /// <param name="parent">THe optional parent property of this property. This is used for nested properties so
-    /// we can know the full path from the origin type down to the nested property type.</param>
-    /// <returns>A collection of <see cref="Property"/> objects defining the child properties of the type.</returns>
-    /// <remarks>
-    /// This is the primary extension through which we get properties for a given logix or .NET type. This will
-    /// check if the type is an <see cref="Element"/> type and if so also append the defined custom properties for that type.
-    /// Both <see cref="Element"/> and <see cref="Property"/> make use of this extension to get child properties.
-    /// </remarks>
-    public static IEnumerable<Property> Properties(this Type type, Property? parent = default)
-    {
-        parent ??= Engine.Property.This(type);
-        var properties = new List<Property>();
-
-        var predefined = type
-            .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-            .Where(p => p.GetIndexParameters().Length == 0 && !PropertyExclusions.Contains(p.Name));
-
-        foreach (var prop in predefined)
-        {
-            var property = new Property(prop.Name, prop.PropertyType, parent);
-            properties.Add(property);
-        }
-
-        if (!Element.TryFromName(type.Name, out var element)) return properties;
-        properties.AddRange(element.CustomProperties);
-        return properties;
-    }
-
-    /// <summary>
-    /// Gets a specified nested property using the provided property path name.
-    /// </summary>
-    /// <param name="type">The type for which to get a child or nested property.</param>
-    /// <param name="path">The path of the property from the current type.</param>
-    /// <returns>The <see cref="Property"/> object representing the child property if found, Otherwise null.</returns>
-    /// <remarks>
-    /// This is the primary extension fot getting a single child or nested property from a given type. Both
-    /// <see cref="Element"/> and <see cref="Property"/> make use of this extension to retrieve child property objects.
-    /// This extension will check if the type is an Element type and if so also search the defined custom properties.
-    /// </remarks>
-    public static Property? Property(this Type type, string? path, Property? parent = default)
-    {
-        if (path is null) return default;
-
-        Property? property = null;
-        parent ??= Engine.Property.This(type);
-        var properties = type.Properties(parent).ToList();
-
-        while (!string.IsNullOrEmpty(path) && properties.Count > 0)
-        {
-            var dot = path.IndexOf('.');
-            var member = dot >= 0 ? path[..dot] : path;
-            property = properties.SingleOrDefault(p => p.Name == member);
-            properties = property?.Properties.ToList() ?? Enumerable.Empty<Property>().ToList();
-            path = dot >= 0 ? path[(dot + 1)..] : string.Empty;
-        }
-
-        return property;
-    }
-
     /// <summary>
     /// Returns the current type or the inner generic argument type if the type is a generic type.
     /// </summary>
@@ -139,7 +72,7 @@ public static class Extensions
             Tag tag => tag.TagName,
             DataTypeMember member => member.Name,
             Parameter parameter => parameter.Name,
-            LogixCode code => code.Location,
+            LogixCode code => $"{code.Container}/{code.Routine?.Name}/{code.Location}",
             LogixComponent component => component.Name,
             LogixEnum enumeration => enumeration.Name,
             _ => candidate?.ToString() ?? string.Empty

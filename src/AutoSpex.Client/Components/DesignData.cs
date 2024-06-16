@@ -45,47 +45,21 @@ public static class DesignData
         new DesignRealProjectObserver()
     ];
 
-    public static readonly CriterionObserver BoolCriterion = new(new Criterion(Element.Tag.Type)
-    {
-        Property = "Constant",
-        Operation = Operation.IsTrue
-    });
+    public static readonly CriterionObserver BoolCriterion =
+        new(new Criterion(Element.Tag.Property("Constant"), Operation.IsTrue));
 
-    public static readonly CriterionObserver NumberCriterion = new(new Criterion(Element.Tag.Type)
-    {
-        Property = "Dimensions",
-        Operation = Operation.GreaterThanOrEqual,
-        Arguments = [new Argument(10)]
-    });
+    public static readonly CriterionObserver NumberCriterion =
+        new(new Criterion(Element.Tag.Property("Dimensions"), Operation.GreaterThanOrEqual, new Argument(10)));
 
-    public static readonly CriterionObserver TextCriterion = new(new Criterion(Element.Tag.Type)
-    {
-        Property = "Name",
-        Operation = Operation.Equal,
-        Arguments = ["Test"]
-    });
+    public static readonly CriterionObserver TextCriterion =
+        new(new Criterion(Element.Tag.Property("Name"), Operation.Equal, "Test"));
 
-    public static readonly CriterionObserver EnumCriterion = new(new Criterion(Element.Tag.Type)
-    {
-        Property = "Radix",
-        Operation = Operation.Equal,
-        Arguments = [new Argument(Radix.Binary)]
-    });
+    public static readonly CriterionObserver EnumCriterion =
+        new(new Criterion(Element.Tag.Property("Radix"), Operation.Equal, Radix.Binary));
 
-    public static readonly CriterionObserver InnerCriterion = new(new Criterion(Element.Tag.Type)
-    {
-        Property = "Members",
-        Operation = Operation.Any,
-        Arguments =
-        [
-            new Argument(new Criterion(Element.Tag.Type)
-            {
-                Property = "TagName",
-                Operation = Operation.Like,
-                Arguments = [new Argument("%MemberName")]
-            })
-        ]
-    });
+    public static readonly CriterionObserver InnerCriterion =
+        new(new Criterion(Element.Tag.Property("Members"), Operation.Any,
+            new Criterion(Element.Tag.Property("TagName"), Operation.Like, "%MemberName")));
 
     public static readonly ObservableCollection<CriterionObserver> Criteria =
     [
@@ -106,8 +80,8 @@ public static class DesignData
     public static SpecObserver SpecObserver =
         new(Spec.Configure(c =>
             c.Query(Element.Tag)
-                .Where("TagName", Operation.Contains, "TestTag")
-                .Verify("Value", Operation.Equal, 123)
+                .Where(Element.Tag.Property("TagName"), Operation.Contains, "TestTag")
+                .Verify(Element.Tag.Property("Value"), Operation.Equal, 123)
         ));
 
     public static VariableObserver VariableObserver = new DesignVariableObserver();
@@ -237,15 +211,17 @@ public static class DesignData
     public static ValueObserver RadixValueObserver = new(Radix.Float);
 
     public static EvaluationObserver PassedEvaluation = new(
-        Evaluation.Passed(new Criterion("DataType", Operation.Equal, "MyType"), new Tag() { Name = "Custom_Tag_Name" },
+        Evaluation.Passed(new Criterion(Element.Tag.Property("DataType"), Operation.Equal, "MyType"),
+            new Tag() { Name = "Custom_Tag_Name" },
             ["MyType"], "MyType"));
 
     public static EvaluationObserver FailedEvaluation = new(
-        Evaluation.Failed(new Criterion("DataType", Operation.Contains, "Pump"),
+        Evaluation.Failed(new Criterion(Element.Tag.Property("DataType"), Operation.Contains, "Pump"),
             new Tag() { Name = "MyProgram:Local_Tag_Name_01.Control.Value" }, ["Pump"], "ValveType"));
 
     public static EvaluationObserver ErroredEvaluation = new(
-        Evaluation.Error(new Criterion("DataType", Operation.Equal, "MyType"), new Tag() { Name = "Custom_Tag_Name" },
+        Evaluation.Error(new Criterion(Element.Tag.Property("DataType"), Operation.Equal, "MyType"),
+            new Tag() { Name = "Custom_Tag_Name" },
             new ArgumentException("Could not execute code due to this throw exception")));
 
     public static ObservableCollection<EvaluationObserver> Evaluations =
@@ -304,12 +280,8 @@ public class DesignRealProjectObserver()
 
 public class DesignFakeProjectObserver() : ProjectObserver(new Project(@"C:\Users\tnunn\Documents\Spex\Fake.spex"));
 
-public class DesignCriterionObserver() : CriterionObserver(new Criterion(Element.Tag.Type)
-{
-    Property = "Name",
-    Operation = Operation.Equal,
-    Arguments = ["Test"]
-});
+public class DesignCriterionObserver()
+    : CriterionObserver(new Criterion(Element.Tag.Property("Name"), Operation.Equal, "Test"));
 
 public class DesignArgumentObserver() : ArgumentObserver(new Argument("Literal Text Value"));
 

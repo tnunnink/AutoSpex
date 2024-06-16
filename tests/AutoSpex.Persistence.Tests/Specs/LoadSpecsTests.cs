@@ -47,8 +47,8 @@ public class LoadSpecsTests
         //Create spec that uses variable
         var spec = new Spec(node.NodeId, node.Name);
         spec.Query(Element.Tag);
-        spec.Where("Test", Operation.Contains, variable);
-        spec.Verify("Name", Operation.Equal, variable);
+        spec.Where(Element.Tag.Property("Test"), Operation.Contains, variable);
+        spec.Verify(Element.Tag.Property("Name"), Operation.Equal, variable);
         await mediator.Send(new SaveSpec(spec));
         //Update the variable value to ensure the resolving works
         variable.Value = "MostRecentValue";

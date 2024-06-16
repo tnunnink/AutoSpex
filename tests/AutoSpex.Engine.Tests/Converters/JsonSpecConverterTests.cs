@@ -18,7 +18,7 @@ public class JsonSpecConverterTests
         options.Converters.Add(new JsonTypeConverter());
         _options = options;
     }
-    
+
     [Test]
     public void Serialize_ValidSpec_ShouldBeExpected()
     {
@@ -27,13 +27,14 @@ public class JsonSpecConverterTests
             Element = Element.Controller,
             Filters =
             {
-                new Criterion("Name", Operation.Equal, "Test"),
-                new Criterion("Processor", Operation.EndsWith, "74")
+                new Criterion(Element.Controller.Property("Value"), Operation.Equal, "Test"),
+                new Criterion(Element.Controller.Property("Processor"), Operation.EndsWith, "74"),
             },
             Verifications =
             {
-                new Criterion("Test", Operation.All, new Criterion("SubProp", Operation.In, 1, 2, 3, 4)),
-                new Criterion("Another", Operation.Between, 1, 5)
+                new Criterion(Element.Controller.Property("Test"), Operation.All,
+                    new Criterion(Element.Controller.Property("SubProp"), Operation.In, 1, 2, 3, 4)),
+                new Criterion(Element.Controller.Property("Another"), Operation.Between, 1, 5),
             }
         };
 
@@ -41,7 +42,7 @@ public class JsonSpecConverterTests
 
         result.Should().NotBeEmpty();
     }
-    
+
     [Test]
     public void Deserialize_ValidSpec_ShouldBeExpected()
     {
@@ -50,18 +51,19 @@ public class JsonSpecConverterTests
             Element = Element.Controller,
             Filters =
             {
-                new Criterion("Name", Operation.Equal, "Test"),
-                new Criterion("Processor", Operation.EndsWith, "74")
+                new Criterion(Element.Controller.Property("Value"), Operation.Equal, "Test"),
+                new Criterion(Element.Controller.Property("Processor"), Operation.EndsWith, "74"),
             },
             Verifications =
             {
-                new Criterion("Test", Operation.All, new Criterion("SubProp", Operation.In, 1, 2, 3, 4)),
-                new Criterion("Another", Operation.Between, 1, 5)
+                new Criterion(Element.Controller.Property("Test"), Operation.All,
+                    new Criterion(Element.Controller.Property("SubProp"), Operation.In, 1, 2, 3, 4)),
+                new Criterion(Element.Controller.Property("Another"), Operation.Between, 1, 5),
             }
         };
 
         var data = JsonSerializer.Serialize(spec, _options);
-        
+
         var result = JsonSerializer.Deserialize(data, typeof(Spec), _options);
         result.Should().BeEquivalentTo(spec, options => options.Excluding(m => m.Type == typeof(Guid)));
     }

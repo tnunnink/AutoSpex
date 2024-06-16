@@ -114,7 +114,7 @@ public class GetScopedVariablesTests
         await mediator.Send(new SaveVariables(spec.NodeId, [new Variable("SpecVar", TagType.Base)]));
         var argument = new Argument("Test");
         var specification = new Spec(spec.NodeId);
-        specification.Query(Element.Module).Where("Name", Operation.Equal, argument);
+        specification.Query(Element.Module).Where(Element.Tag.Property("Name"), Operation.Equal, argument);
         await mediator.Send(new SaveSpec(specification));
 
         var result = await mediator.Send(new GetScopedVariables(argument.ArgumentId));
@@ -139,7 +139,7 @@ public class GetScopedVariablesTests
         await mediator.Send(new SaveVariables(spec.NodeId, [new Variable("MyVar01", TagType.Base)]));
         var argument = new Argument("Test");
         var specification = new Spec(spec.NodeId);
-        specification.Query(Element.Module).Where("Name", Operation.Equal, argument);
+        specification.Query(Element.Module).Where(Element.Tag.Property("Name"), Operation.Equal, argument);
         await mediator.Send(new SaveSpec(specification));
 
         var result = await mediator.Send(new GetScopedVariables(argument.ArgumentId));

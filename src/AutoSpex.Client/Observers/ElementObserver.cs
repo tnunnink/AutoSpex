@@ -18,7 +18,7 @@ public partial class ElementObserver(LogixElement model) : Observer<LogixElement
     public Element Element => Element.FromName(Model.GetType().Name);
 
     public IEnumerable<PropertyObserver> Properties =>
-        Element.Properties.Where(p => p.Name != "This").Select(p => new PropertyObserver(p, this));
+        Element.This.Properties.Select(p => new PropertyObserver(p, this));
 
     public ICollection<PropertyObserver> DisplayProperties => GetDisplayProperties();
     public int PropertyCount => DisplayProperties.Count + 2;
@@ -50,7 +50,7 @@ public partial class ElementObserver(LogixElement model) : Observer<LogixElement
     /// </summary>
     /// <param name="filter">The filter text to apply.</param>
     /// <returns><c>true</c> if this observer passes the filter, otherwise, <c>false</c></returns>
-    public bool Filter(string? filter)
+    public override bool Filter(string? filter)
     {
         return string.IsNullOrEmpty(filter) ||
                Model.Serialize().ToString().Contains(filter, StringComparison.OrdinalIgnoreCase);
