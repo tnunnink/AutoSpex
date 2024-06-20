@@ -4,8 +4,6 @@ namespace AutoSpex.Engine;
 
 public abstract class CollectionOperation(string name) : Operation(name)
 {
-    public override int NumberOfArguments => 1;
-    
     public override bool Execute(object? input, params object[] values)
     {
         if (input is not IEnumerable enumerable)
@@ -16,10 +14,10 @@ public abstract class CollectionOperation(string name) : Operation(name)
 
         if (values[0] is not Criterion criterion)
             throw new ArgumentException("Collection operations require criterion argument");
-        
+
         return Evaluate(enumerable.Cast<object?>(), criterion);
     }
-    
+
     protected abstract bool Evaluate(IEnumerable<object?> collection, Criterion criterion);
 
     protected override bool Supports(TypeGroup group) => group == TypeGroup.Collection;

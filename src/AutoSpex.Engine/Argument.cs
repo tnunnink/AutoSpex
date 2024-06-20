@@ -87,6 +87,22 @@ public class Argument : IEquatable<Argument>
         return text.TryParse(type) ?? value;
     }
 
+    /// <summary>
+    /// Traverses the argument value and retrieves the final expected argument value(s).
+    /// Since an argument value can be a <see cref="Variable"/> or inner <see cref="Criterion"/> we want to check
+    /// them and get the values which are going to be used in the operation.
+    /// </summary>
+    /// <returns>A collection of object values that represent the final arguments.</returns>
+    public IEnumerable<object> Expected()
+    {
+        var value = Value is Variable variable ? variable.Value : Value;
+
+        if (value is Criterion criterion)
+            return criterion.Arguments.SelectMany(a => a.Expected());
+        
+        return value is not null ? [value] : Enumerable.Empty<object>();
+    }
+
     /// <inheritdoc />
     public override string ToString() => Value.ToText();
 

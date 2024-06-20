@@ -4,13 +4,11 @@ namespace AutoSpex.Engine;
 
 public class IsMatchOperation() : BinaryOperation("Is Match")
 {
-    public override string ShouldMessage => "Should Match";
-    
     protected override bool Evaluate(object? input, object value)
     {
-        if (value.ToString() is null) 
+        if (value.ToString() is null)
             throw new ArgumentNullException(nameof(value));
-        
+
         return input?.ToString() is not null && Regex.IsMatch(input.ToString()!, value.ToString()!);
     }
 

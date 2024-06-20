@@ -4,8 +4,6 @@ namespace AutoSpex.Engine;
 
 public class LikeOperation() : BinaryOperation("Like")
 {
-    public override string ShouldMessage => "Should Be Like";
-
     protected override bool Evaluate(object? input, object value)
     {
         if (value.ToString() is not { } pattern) return false;

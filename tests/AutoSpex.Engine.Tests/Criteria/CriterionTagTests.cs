@@ -1,4 +1,4 @@
-﻿namespace AutoSpex.Engine.Tests.CriterionTests;
+﻿namespace AutoSpex.Engine.Tests.Criteria;
 
 [TestFixture]
 public class CriterionTagTests

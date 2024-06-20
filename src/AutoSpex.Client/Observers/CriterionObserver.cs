@@ -86,7 +86,7 @@ public partial class CriterionObserver : Observer<Criterion>
         var path = index > -1 ? filter[..index] : string.Empty;
         var member = index > -1 ? filter[(index + 1)..] : filter;
 
-        var property = origin.Descendant(path);
+        var property = origin.GetProperty(path);
         var properties = property?.Properties ?? origin.Properties;
 
         var filtered = properties
@@ -106,7 +106,7 @@ public partial class CriterionObserver : Observer<Criterion>
                 Property = property;
                 return;
             case string path:
-                Property = Property.This(Type).Descendant(path);
+                Property = Property.This(Type).GetProperty(path);
                 return;
         }
     }

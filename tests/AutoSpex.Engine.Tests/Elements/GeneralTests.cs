@@ -57,7 +57,7 @@ public class GeneralTests
     {
         var element = Element.Tag;
 
-        var result = element.Property("This");
+        var result = element.This;
 
         result.Should().NotBeNull();
         result?.Name.Should().Be("This");

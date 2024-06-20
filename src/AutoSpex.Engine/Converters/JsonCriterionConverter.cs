@@ -32,7 +32,7 @@ public class JsonCriterionConverter : JsonConverter<Criterion>
                 case nameof(Criterion.Property):
                     if (type is null) break;
                     var path = reader.GetString();
-                    property = Property.This(type).Descendant(path);
+                    property = Property.This(type).GetProperty(path);
                     break;
                 case nameof(Criterion.Operation):
                     operation = Operation.FromName(reader.GetString());

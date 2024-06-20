@@ -80,6 +80,22 @@ public static class Extensions
     }
 
     /// <summary>
+    /// Based on the object type return a UI friendly text representation for which we can identify this object.
+    /// </summary>
+    public static string ToData(this object? candidate)
+    {
+        return candidate switch
+        {
+            bool b => b.ToString().ToLowerInvariant(),
+            LogixEnum enumeration => enumeration.Name,
+            AtomicData v => v.ToString(), //atomic data is a logix element, but we want the value not the XML.
+            LogixElement element => element.Serialize().ToString(),
+            IEnumerable enumerable => $"[{string.Join(", ", from object? item in enumerable select item.ToData())}]",
+            _ => candidate?.ToString() ?? string.Empty
+        };
+    }
+
+    /// <summary>
     /// Given a type returns a collection of possible values. This is meant primarily for enumeration types so that we
     /// can provide the user with a selectable set of options for a given enum value. This however will also return
     /// true/false for boolean type and empty collection for anything else (numbers, string, collections, complex objects).

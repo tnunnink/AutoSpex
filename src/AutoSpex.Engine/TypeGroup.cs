@@ -68,7 +68,8 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
 
         public override bool TryParse(string text, out object? value)
         {
-            throw new NotImplementedException();
+            value = null;
+            return false;
         }
     }
 

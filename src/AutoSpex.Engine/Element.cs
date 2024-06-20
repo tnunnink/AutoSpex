@@ -86,7 +86,7 @@ public abstract class Element : SmartEnum<Element, string>
     /// </summary>
     /// <param name="path">The path to the desired property, separated by dots.</param>
     /// <returns>The <see cref="Property"/> object representing the specified property if found, otherwise, <c>null</c>.</returns>
-    public Property? Property(string? path) => This.Descendant(path);
+    public Property? Property(string? path) => This.GetProperty(path);
 
     /// <summary>
     /// Registers a custom property for the element type using the provided property name and getter function.

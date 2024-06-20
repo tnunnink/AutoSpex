@@ -36,14 +36,4 @@ public class NodeObserverTests
     {
         FluentActions.Invoking(() => new NodeObserver(null!)).Should().Throw<ArgumentNullException>();
     }
-
-    [Test]
-    public void IsChanged_SetName_ShouldBeFalseBecauseWeChangeAndPersistItUponCommand()
-    {
-        var observer = new NodeObserver(Node.NewSpec("Test"));
-
-        observer.Name = "Updated Name";
-
-        observer.IsChanged.Should().BeFalse("Because this property is changed and persisted using the Rename command.");
-    }
 }

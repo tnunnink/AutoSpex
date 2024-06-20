@@ -14,7 +14,7 @@ internal class GetRunHandler(IConnectionManager manager) : IRequestHandler<GetRu
 {
     private const string GetRun =
         """
-        SELECT n.Name, r.Result, r.RanOn, r.RanBy
+        SELECT r.RunId, n.Name, r.Result, r.RanOn, r.RanBy
             FROM Node n
             JOIN Run r on n.NodeId = r.RunId
             WHERE NodeId = @RunId

@@ -11,7 +11,7 @@ public class MoveNodeTests
         
         //seed some nodes
         var collection = Node.NewContainer();
-        await mediator.Send(new CreateNode(collection));
+        await mediator.Send(new CreateNode(collection, NodeType.Spec));
         await mediator.Send(new CreateNode(collection.AddContainer()));
         var destination = collection.AddContainer();
         await mediator.Send(new CreateNode(destination));

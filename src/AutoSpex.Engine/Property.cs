@@ -10,7 +10,9 @@ namespace AutoSpex.Engine;
 /// </summary>
 public class Property : IEquatable<Property>
 {
-    private const char Separator = '.';
+    private const char MemberSeparator = '.';
+    private const char ArraySeparator = '[';
+    private static readonly char[] Separators = [MemberSeparator, ArraySeparator];
 
     //These are properties that I don't want to show up for the user because they are not really useful and are confusing.
     private static readonly List<string> PropertyExclusions = ["L5X", "IsAttached", "L5XType", "Length"];
@@ -57,9 +59,25 @@ public class Property : IEquatable<Property>
     }
 
     /// <summary>
+    /// Creates a new nested property instance given an existing property definition and a new parent property.
+    /// </summary>
+    /// <param name="property">The property to recreate with a new parent.</param>
+    /// <param name="parent">The new parent to the property being creates.</param>
+    private Property(Property property, Property parent)
+    {
+        ArgumentNullException.ThrowIfNull(property);
+        ArgumentNullException.ThrowIfNull(parent);
+
+        Name = property.Name;
+        Type = property.Type;
+        Parent = parent;
+        _getter = property._getter;
+    }
+
+    /// <summary>
     /// The string that uniquely identifies this property using the origin type and property path.
     /// </summary>
-    public string Key => string.Concat(Origin, ".", Path);
+    public string Key => string.Concat(Origin, MemberSeparator, Path).TrimEnd(MemberSeparator);
 
     /// <summary>
     /// The root or originating type to which this property belongs.
@@ -107,7 +125,7 @@ public class Property : IEquatable<Property>
     public IEnumerable<Property> Properties => GetProperties();
 
     /// <summary>
-    /// 
+    /// The collection of types that lead up to the current property starting from the origin type.
     /// </summary>
     public Type[] TypeGraph => GetTypeGraph().ToArray();
 
@@ -119,6 +137,12 @@ public class Property : IEquatable<Property>
     public Type InnerType => Type.SelfOrInnerType();
 
     /// <summary>
+    /// Represents a default or property that is just a reference to <see cref="object"/>. We can use this in place
+    /// of a null property instance.
+    /// </summary>
+    public static Property Default => This(typeof(object));
+
+    /// <summary>
     /// Creates a default self-referential property called "This" with a null parent, which can be used as a root
     /// property for all sub properties of the provided type. This is need with how <see cref="Property"/> is designed
     /// to get values, since it needs some root pseudo property as the origin of the type graph.
@@ -128,11 +152,49 @@ public class Property : IEquatable<Property>
     public static Property This(Type type) => new(nameof(This), type, null, x => x);
 
     /// <summary>
-    /// 
+    /// Gets a specified nested property using the provided property path name.
     /// </summary>
-    /// <param name="path"></param>
-    /// <returns></returns>
-    public Property? Descendant(string? path) => GetProperty(path);
+    /// <param name="path">The path of the property from the current type.</param>
+    /// <returns>The <see cref="Property"/> object representing the child property if found, Otherwise null.</returns>
+    /// <remarks>
+    /// This is the primary extension fot getting a single child or nested property from a given type. Both
+    /// <see cref="Element"/> and <see cref="Property"/> make use of this extension to retrieve child property objects.
+    /// This extension will check if the type is an Element type and if so also search the defined custom properties.
+    /// </remarks>
+    public Property? GetProperty(string? path)
+    {
+        if (path is null) return default;
+
+        var property = this;
+        var properties = Properties.ToList();
+
+        while (!string.IsNullOrEmpty(path))
+        {
+            int index;
+            string member;
+
+            //Collection indexers are special case where we can return a "pseudo" property instance.
+            if (path.StartsWith(ArraySeparator))
+            {
+                index = path.IndexOf(MemberSeparator);
+                member = index >= 0 ? path[..index] : path;
+                property = new Property(member, Type.SelfOrInnerType(), property);
+            }
+            else
+            {
+                index = path.IndexOfAny(Separators);
+                member = index >= 0 ? path[..index] : path;
+                var defined = properties.SingleOrDefault(p => p.Name == member);
+                if (defined is null) return default;
+                property = new Property(defined, property);
+            }
+
+            properties = property.Properties.ToList();
+            path = index >= 0 ? path[index..].TrimStart(MemberSeparator) : string.Empty;
+        }
+
+        return property;
+    }
 
     /// <summary>
     /// Gets the value of this <see cref="Property"/> given an instance representing the origin type this
@@ -150,7 +212,7 @@ public class Property : IEquatable<Property>
 
         if (Origin != origin.GetType())
             throw new ArgumentException(
-                $"The provided origin {origin.GetType()} does not match this property's origin {Origin}");
+                $"Input object of type '{origin.GetType()}' does not match the property origin type '{Origin}'");
 
         //If we are at the root either use a custom getter or just return the origin object.
         //This marks the start of the traversal back down the tree.
@@ -189,6 +251,9 @@ public class Property : IEquatable<Property>
     /// <inheritdoc />
     public override string ToString() => Path;
 
+    public static bool operator ==(Property left, Property right) => Equals(left, right);
+    public static bool operator !=(Property left, Property right) => !Equals(left, right);
+
     /// <summary>
     /// Gets all child properties of the current property type.
     /// </summary>
@@ -202,7 +267,7 @@ public class Property : IEquatable<Property>
         var children = new List<Property>();
 
         //Always first check if this type's properties we already cached to exit early and avoid reflection usage.
-        if (PropertyCache.Value.TryGetValue(Type, out var cached)) return cached;
+        if (PropertyCache.Value.TryGetValue(Type, out var cached)) return cached.Select(c => new Property(c, this));
 
         var properties = Type
             .GetProperties(BindingFlags.Public | BindingFlags.Instance)
@@ -223,36 +288,6 @@ public class Property : IEquatable<Property>
         PropertyCache.Value.TryAdd(Type, children);
 
         return children;
-    }
-
-    /// <summary>
-    /// Gets a specified nested property using the provided property path name.
-    /// </summary>
-    /// <param name="path">The path of the property from the current type.</param>
-    /// <returns>The <see cref="Property"/> object representing the child property if found, Otherwise null.</returns>
-    /// <remarks>
-    /// This is the primary extension fot getting a single child or nested property from a given type. Both
-    /// <see cref="Element"/> and <see cref="Property"/> make use of this extension to retrieve child property objects.
-    /// This extension will check if the type is an Element type and if so also search the defined custom properties.
-    /// </remarks>
-    private Property? GetProperty(string? path)
-    {
-        if (path is null) return default;
-
-        Property? property = null;
-        var properties = Properties.ToList();
-
-        //todo would like to also handle collection indexer properties here as pseudo (non cached) properties.
-        while (!string.IsNullOrEmpty(path) && properties.Count > 0)
-        {
-            var dot = path.IndexOf('.');
-            var member = dot >= 0 ? path[..dot] : path;
-            property = properties.SingleOrDefault(p => p.Name == member);
-            properties = property?.Properties.ToList() ?? Enumerable.Empty<Property>().ToList();
-            path = dot >= 0 ? path[(dot + 1)..] : string.Empty;
-        }
-
-        return property;
     }
 
     /// <summary>
@@ -344,7 +379,8 @@ public class Property : IEquatable<Property>
     }
 
     /// <summary>
-    /// 
+    /// Returns the type graph of the Property. The type graph represents the hierarchy of types starting from
+    /// the origin parent property to the current property.
     /// </summary>
     private IEnumerable<Type> GetTypeGraph()
     {
@@ -363,6 +399,6 @@ public class Property : IEquatable<Property>
     /// <returns>A string representing the combined path of the left and right members.</returns>
     private static string CombineMembers(string left, string right)
     {
-        return right.StartsWith('[') ? $"{left}{right}" : $"{left}.{right}".Trim(Separator);
+        return right.StartsWith('[') ? $"{left}{right}" : $"{left}.{right}".Trim(MemberSeparator);
     }
 }

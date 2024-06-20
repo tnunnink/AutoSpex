@@ -25,6 +25,8 @@ public class PropertyTests
         property.Identifier.Should().Be("string");
         property.Group.Should().Be(TypeGroup.Text);
         property.Options.Should().BeEmpty();
+        property.TypeGraph.Should().HaveCount(2);
+        property.InnerType.Should().Be(typeof(string));
     }
 
     [Test]
@@ -54,6 +56,70 @@ public class PropertyTests
     }
 
     [Test]
+    public void GetProperty_TagSimpleProperty_ShouldReturnExpectedProperty()
+    {
+        var origin = Element.Tag.This;
+
+        var property = origin.GetProperty("Name");
+
+        property.Should().NotBeNull();
+        property?.Key.Should().Be("L5Sharp.Core.Tag.Name");
+        property?.Origin.Should().Be(typeof(Tag));
+        property?.Path.Should().Be("Name");
+        property?.Name.Should().Be("Name");
+        property?.Type.Should().Be(typeof(string));
+        property?.Group.Should().Be(TypeGroup.Text);
+    }
+
+    [Test]
+    public void GetProperty_NestedProperty_ShouldReturnExpected()
+    {
+        var origin = Element.Tag.This;
+
+        var property = origin.GetProperty("Radix.Name");
+
+        property.Should().NotBeNull();
+        property?.Key.Should().Be("L5Sharp.Core.Tag.Radix.Name");
+        property?.Origin.Should().Be(typeof(Tag));
+        property?.Path.Should().Be("Radix.Name");
+        property?.Name.Should().Be("Name");
+        property?.Type.Should().Be(typeof(string));
+        property?.Group.Should().Be(TypeGroup.Text);
+    }
+
+    [Test]
+    public void GetProperty_CollectionIndexProperty_ShouldReturnExpected()
+    {
+        var origin = Element.Tag.This;
+
+        var property = origin.GetProperty("Members[1]");
+
+        property.Should().NotBeNull();
+        property?.Key.Should().Be("L5Sharp.Core.Tag.Members[1]");
+        property?.Origin.Should().Be(typeof(Tag));
+        property?.Path.Should().Be("Members[1]");
+        property?.Name.Should().Be("[1]");
+        property?.Type.Should().Be(typeof(Tag));
+        property?.Group.Should().Be(TypeGroup.Element);
+    }
+
+    [Test]
+    public void GetProperty_CollectionIndexPropertyPartiallyCompleted_ShouldReturnExpected()
+    {
+        var origin = Element.Tag.This;
+
+        var property = origin.GetProperty("Members[");
+
+        property.Should().NotBeNull();
+        property?.Key.Should().Be("L5Sharp.Core.Tag.Members[");
+        property?.Origin.Should().Be(typeof(Tag));
+        property?.Path.Should().Be("Members[");
+        property?.Name.Should().Be("[");
+        property?.Type.Should().Be(typeof(Tag));
+        property?.Group.Should().Be(TypeGroup.Element);
+    }
+
+    [Test]
     public void GetValue_TagSimpleProperty_ShouldReturnExpectedValue()
     {
         var tag = new Tag("Test", 123);
@@ -63,7 +129,7 @@ public class PropertyTests
 
         value.Should().Be("Test");
     }
-    
+
     [Test]
     public void GetValue_TagNestedProperty_ShouldReturnExpectedValue()
     {
@@ -86,7 +152,7 @@ public class PropertyTests
 
         var parent = Element.DataType.Property("Members");
         var property = new Property("[1]", typeof(DataTypeMember), parent);
-        
+
         var value = property.GetValue(instance);
 
         value.Should().NotBeNull();
@@ -106,9 +172,9 @@ public class PropertyTests
         var parent = Element.DataType.Property("Members");
         var item = new Property("[1]", typeof(DataTypeMember), parent);
         var property = new Property("Name", typeof(string), item);
-        
+
         var value = property.GetValue(instance);
-        
+
         value.Should().NotBeNull();
         value.Should().BeOfType<string>();
         value.Should().Be("Child2");
@@ -135,7 +201,7 @@ public class PropertyTests
         value.Should().BeOfType<List<Tag>>();
         value.As<List<Tag>>().Should().HaveCount(6);
     }
-    
+
     [Test]
     public void GetValue_CustomPropertyNestedMember_ShouldBeExpected()
     {
@@ -152,12 +218,30 @@ public class PropertyTests
     }
 
     [Test]
+    public void Default_WhenCalled_HasExpectedValues()
+    {
+        var property = Property.Default;
+
+        property.Key.Should().Be("System.Object");
+        property.Origin.Should().Be(typeof(object));
+        property.Parent.Should().BeNull();
+        property.Name.Should().Be("This");
+        property.Path.Should().BeEmpty();
+        property.Identifier.Should().Be("Object");
+        property.Group.Should().Be(TypeGroup.Default);
+        property.Options.Should().BeEmpty();
+        property.Properties.Should().BeEmpty();
+        property.InnerType.Should().Be(typeof(object));
+        property.TypeGraph.Should().HaveCount(1);
+    }
+
+    [Test]
     public void TypeGraph_WhenCalled_ShouldBeExpected()
     {
         var property = Element.Tag.Property("Name");
 
         var graph = property?.TypeGraph;
-        
+
         graph.Should().NotBeNull();
         graph.Should().HaveCount(2);
         graph?[0].Should().Be(typeof(Tag));

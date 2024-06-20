@@ -212,16 +212,15 @@ public static class DesignData
 
     public static EvaluationObserver PassedEvaluation = new(
         Evaluation.Passed(new Criterion(Element.Tag.Property("DataType"), Operation.Equal, "MyType"),
-            new Tag() { Name = "Custom_Tag_Name" },
-            ["MyType"], "MyType"));
+            new Tag { Name = "Custom_Tag_Name" }, "MyType"));
 
     public static EvaluationObserver FailedEvaluation = new(
         Evaluation.Failed(new Criterion(Element.Tag.Property("DataType"), Operation.Contains, "Pump"),
-            new Tag() { Name = "MyProgram:Local_Tag_Name_01.Control.Value" }, ["Pump"], "ValveType"));
+            new Tag { Name = "MyProgram:Local_Tag_Name_01.Control.Value" }, "ValveType"));
 
     public static EvaluationObserver ErroredEvaluation = new(
-        Evaluation.Error(new Criterion(Element.Tag.Property("DataType"), Operation.Equal, "MyType"),
-            new Tag() { Name = "Custom_Tag_Name" },
+        Evaluation.Errored(new Criterion(Element.Tag.Property("DataType"), Operation.Equal, "MyType"),
+            new Tag { Name = "Custom_Tag_Name" },
             new ArgumentException("Could not execute code due to this throw exception")));
 
     public static ObservableCollection<EvaluationObserver> Evaluations =

@@ -9,10 +9,6 @@ namespace AutoSpex.Engine;
 /// </summary>
 public abstract class Operation(string name) : SmartEnum<Operation, string>(name, name.Replace(" ", string.Empty))
 {
-    public abstract int NumberOfArguments { get; }
-
-    public virtual string ShouldMessage => $"should be {Name.ToLower()} to";
-
     /// <summary>
     /// Performs the operation on the input and provided values and returns the result.
     /// The actual implementation of the operation (how it's evaluated) is defined

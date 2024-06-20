@@ -13,11 +13,4 @@ public class Scratch
 
         uri.Should().NotBeNull();
     }
-
-    [Test]
-    public void METHOD()
-    {
-        var test = L5X.Load(@"C:\Users\admin\Documents\L5X\Test.L5X");
-        test.Should().NotBeNull();
-    }
 }

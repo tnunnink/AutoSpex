@@ -74,7 +74,8 @@ public partial class PropertyObserver(Property model, ElementObserver element) :
     private Task CreateVariable()
     {
         var sourceId = _element.SourceId;
-        throw new NotImplementedException();
+        
+        return Task.CompletedTask;
     }
 
     /// <summary>
@@ -91,7 +92,7 @@ public partial class PropertyObserver(Property model, ElementObserver element) :
 
         if (PassesFilter(filter))
             properties.Add(this);
-        
+
         foreach (var property in Properties)
             properties.AddRange(property.FindProperties(filter, depth + 1));
 
@@ -116,7 +117,8 @@ public partial class PropertyObserver(Property model, ElementObserver element) :
         //If this is a normal property then just return the sub properties wrapped in the observer and pass
         //down the root Element.
         return Model.Properties
-            .Where(p => p.Type != _element.Element.Type && p.Name != "This") //No self referencing types please. Just confusing to look at.
+            .Where(p => p.Type != _element.Element.Type &&
+                        p.Name != "This") //No self referencing types please. Just confusing to look at.
             .Select(p => new PropertyObserver(p, _element));
     }
 

@@ -225,8 +225,20 @@
     <TreeDataTemplate x:Key="EvaluationTreeItem" x:DataType="observers:EvaluationObserver">
         <DockPanel LastChildFill="False">
             <DockPanel.Styles>
+                <Style Selector="controls|HighlightableTextBlock">
+                    <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeSmall}" />
+                    <Setter Property="TextWrapping" Value="NoWrap" />
+                    <Setter Property="HighlightedText" Value="{Binding FilterText}" />
+                    <Style Selector="^.criteria">
+                        <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                    </Style>
+                    <Style Selector="^.value">
+                        <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushText}" />
+                    </Style>
+                </Style>
                 <Style Selector="TextBlock">
                     <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeSmall}" />
+                    <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushDisabled}" />
                 </Style>
                 <Style Selector="PathIcon">
                     <Setter Property="Height" Value="16" />
@@ -237,37 +249,21 @@
 
             <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" Spacing="5">
                 <PathIcon Theme="{Binding Result, Converter={StaticResource ResultStateToIconConverter}}" />
-
-                <ContentControl Content="{Binding Model.Candidate}"
-                                ContentTemplate="{StaticResource ValueTemplates}"
-                                TextElement.Foreground="{a:ThemeResource DefaultForegroundBrush}" />
-
-                <TextBlock
-                    Text="{Binding Message}"
-                    Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
-
-                <ItemsControl
-                    ItemsSource="{Binding Model.Expected}"
-                    ItemTemplate="{StaticResource ValueTemplates}"
-                    Padding="0">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                </ItemsControl>
-
-                <TextBlock
-                    Text="and found"
-                    Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
-
-                <ContentControl
-                    Content="{Binding Model.Actual}" Padding="0"
-                    ContentTemplate="{StaticResource ValueTemplates}"
-                    FontSize="{a:ThemeResource DefaultFontSizeSmall}" />
+                <controls:HighlightableTextBlock Text="{Binding Candidate}" />
+                <TextBlock Text="Expected" />
+                <controls:HighlightableTextBlock Text="{Binding Criteria}" Classes="criteria" />
+                <controls:HighlightableTextBlock Text="{Binding Expected}" />
+                <TextBlock Text="Found" />
+                <controls:HighlightableTextBlock
+                    Text="{Binding Actual}"
+                    IsVisible="{Binding Actual, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                <controls:HighlightableTextBlock
+                    Text="{Binding Error}"
+                    IsVisible="{Binding Actual, Converter={x:Static StringConverters.IsNullOrEmpty}}"
+                    Foreground="{a:ThemeResource ControlForegroundBrushOutlineWarning}"/>
             </StackPanel>
 
-            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="10" Margin="10 0">
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="5" Margin="10 0">
             </StackPanel>
         </DockPanel>
     </TreeDataTemplate>

@@ -2,8 +2,6 @@
 
 public class IsNullOrWhiteSpaceOperation() : UnaryOperation("Is Null Or WhiteSpace")
 {
-    public override string ShouldMessage => "Should Be Null Or WhiteSpace";
-    
     protected override bool Evaluate(object? input)
     {
         return string.IsNullOrWhiteSpace(input?.ToString());

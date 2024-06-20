@@ -5,51 +5,64 @@ namespace AutoSpex.Engine;
 [PublicAPI]
 public record Evaluation
 {
-    private Evaluation(ResultState result, Criterion criterion, object? candidate, object[] args, object? actual)
+    public Evaluation(Guid criterionId, ResultState result, string candidate, string criteria,
+        string expected, string? actual, string? exception)
     {
+        CriterionId = criterionId;
         Result = result;
-        CriterionId = criterion.CriterionId;
-        Message = string.Join(" ", criterion.Property, criterion.Operation?.ShouldMessage);
         Candidate = candidate;
-        Expected = args;
-        Actual = actual;
+        Criteria = criteria;
+        Expected = expected;
+        Actual = actual ?? string.Empty;
+        Error = exception ?? string.Empty;
     }
-    
+
+    private Evaluation(ResultState result, Criterion criterion, object? candidate, object? actual)
+    {
+        CriterionId = criterion.CriterionId;
+        Result = result;
+        Candidate = candidate.ToText();
+        Criteria = criterion.GetCriteria();
+        Expected = criterion.GetExpected();
+        Actual = actual.ToText();
+    }
+
     private Evaluation(ResultState result, Criterion criterion, object? candidate, Exception exception)
     {
-        Result = result;
         CriterionId = criterion.CriterionId;
-        Message = string.Join(" ", criterion.Property, criterion.Operation?.ShouldMessage);
-        Candidate = candidate;
-        Expected = [];
-        Exception = exception;
+        Result = result;
+        Candidate = candidate.ToText();
+        Criteria = criterion.GetCriteria();
+        Expected = criterion.GetExpected();
+        Error = exception.Message;
     }
 
-    public Guid CriterionId { get; }
+    public Guid CriterionId { get; } = Guid.Empty;
     public ResultState Result { get; } = ResultState.None;
-    public string Message { get; }
-    public object? Candidate { get; }
-    public object[] Expected { get; }
-    public object? Actual { get; }
-    public Exception? Exception { get; }
+    public string Candidate { get; } = string.Empty;
+    public string Criteria { get; } = string.Empty;
+    public string Expected { get; } = string.Empty;
+    public string Actual { get; } = string.Empty;
+    public string Error { get; } = string.Empty;
 
-    public static Evaluation Passed(Criterion criterion, object? candidate, object[] args, object? actual)
+
+    public static Evaluation Passed(Criterion criterion, object? candidate, object? actual)
     {
         if (criterion is null)
             throw new ArgumentNullException(nameof(criterion));
 
-        return new Evaluation(ResultState.Passed, criterion, candidate, args, actual);
+        return new Evaluation(ResultState.Passed, criterion, candidate, actual);
     }
 
-    public static Evaluation Failed(Criterion criterion, object? candidate, object[] args, object? actual)
+    public static Evaluation Failed(Criterion criterion, object? candidate, object? actual)
     {
         if (criterion is null)
             throw new ArgumentNullException(nameof(criterion));
 
-        return new Evaluation(ResultState.Failed, criterion, candidate, args, actual);
+        return new Evaluation(ResultState.Failed, criterion, candidate, actual);
     }
 
-    public static Evaluation Error(Criterion criterion, object? candidate, Exception exception)
+    public static Evaluation Errored(Criterion criterion, object? candidate, Exception exception)
     {
         if (criterion is null)
             throw new ArgumentNullException(nameof(criterion));
@@ -57,6 +70,10 @@ public record Evaluation
         return new Evaluation(ResultState.Error, criterion, candidate, exception);
     }
 
-    public override string ToString() => Message;
     public static implicit operator bool(Evaluation evaluation) => evaluation.Result == ResultState.Passed;
+
+    public override string ToString()
+    {
+        return $"{Candidate} Expected: {Criteria} {Expected}; Found: {Actual};";
+    }
 }

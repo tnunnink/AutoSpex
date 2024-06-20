@@ -2,7 +2,6 @@
 
 public class IsEmptyOperation() : UnaryOperation("Is Empty")
 {
-    public override string ShouldMessage => "Should Be Empty";
     protected override bool Evaluate(object? input)
     {
         return input is not null && input switch
