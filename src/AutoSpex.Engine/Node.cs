@@ -256,14 +256,14 @@ public class Node : IEquatable<Node>
     /// Gets all descendant nodes of this node.
     /// </summary>
     /// <returns>A collection of <see cref="Node"/> that are immediate and/or nested children of this node.</returns>
-    public IEnumerable<Node> Descendents()
+    public IEnumerable<Node> Descendants()
     {
         List<Node> nodes = [];
 
         foreach (var node in _nodes)
         {
             nodes.Add(node);
-            nodes.AddRange(node.Descendents());
+            nodes.AddRange(node.Descendants());
         }
 
         return nodes;
@@ -273,12 +273,12 @@ public class Node : IEquatable<Node>
     /// Gets all descendant nodes of this node.
     /// </summary>
     /// <returns>A collection of <see cref="Node"/> that are immediate and/or nested children of this node.</returns>
-    public IEnumerable<Node> Descendents(NodeType type)
+    public IEnumerable<Node> Descendants(NodeType type)
     {
         List<Node> nodes = [];
 
         if (Type == type) nodes.Add(this);
-        nodes.AddRange(_nodes.SelectMany(n => n.Descendents(type)));
+        nodes.AddRange(_nodes.SelectMany(n => n.Descendants(type)));
 
         return nodes;
     }

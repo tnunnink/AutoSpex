@@ -1,9 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using AutoSpex.Client.Observers;
+using AutoSpex.Client.Shared;
 using Avalonia;
 using Avalonia.Controls.Primitives;
-using DynamicData;
 
 namespace AutoSpex.Client.Components;
 
@@ -34,7 +34,7 @@ public class NodePath : TemplatedControl
     public ObservableCollection<string> Parents { get; } = [];
     public string Target { get; private set; } = string.Empty;
     public string NodeType { get; private set; } = string.Empty;
-    
+
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
@@ -58,7 +58,7 @@ public class NodePath : TemplatedControl
         if (node is null) return;
 
         var parents = node.Model.Ancestors().Select(a => a.Name);
-        Parents.AddRange(parents);
+        Parents.Refresh(parents);
         Target = node.Name;
         NodeType = node.Type.Name;
     }

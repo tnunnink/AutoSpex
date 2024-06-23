@@ -21,7 +21,7 @@ public class GetSpecTests
         var mediator = context.Resolve<IMediator>();
         var node = Node.NewSpec();
         await mediator.Send(new CreateNode(node));
-        var spec = new Spec(node.NodeId);
+        var spec = new Spec(node);
         await mediator.Send(new SaveSpec(spec));
 
         var result = await mediator.Send(new GetSpec(spec.SpecId));

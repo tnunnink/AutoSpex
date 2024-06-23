@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
+using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using Avalonia;
 using Avalonia.Controls;
@@ -9,7 +9,6 @@ using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.LogicalTree;
 using Avalonia.Styling;
-using DynamicData;
 
 namespace AutoSpex.Client.Components;
 
@@ -62,7 +61,7 @@ public class ElementSelector : TemplatedControl
         get => GetValue(ButtonThemeProperty);
         set => SetValue(ButtonThemeProperty, value);
     }
-    
+
     public PlacementMode FlyoutPlacement
     {
         get => GetValue(FlyoutPlacementProperty);
@@ -101,19 +100,11 @@ public class ElementSelector : TemplatedControl
 
         var filter = textBox.Text;
 
-        Elements.Clear();
+        var filtered = Element.Selectable
+            .Where(x => x.Name.PassesFilter(filter))
+            .OrderBy(x => x.Name);
 
-        if (!string.IsNullOrEmpty(filter))
-        {
-            var filtered = Element.List
-                .Where(x => x.Name.Contains(filter, StringComparison.OrdinalIgnoreCase))
-                .OrderBy(x => x.Name);
-
-            Elements.AddRange(filtered);
-            return;
-        }
-
-        Elements.AddRange(Element.Selectable);
+        Elements.Refresh(filtered);
     }
 
     private void RegisterElementList(TemplateAppliedEventArgs args)
@@ -125,7 +116,7 @@ public class ElementSelector : TemplatedControl
 
     private void ElementListPressed(object? sender, PointerReleasedEventArgs e)
     {
-        if (e.Source is not Control {DataContext: Element element} control) return;
+        if (e.Source is not Control { DataContext: Element element } control) return;
 
         e.Handled = true;
         Element = element;

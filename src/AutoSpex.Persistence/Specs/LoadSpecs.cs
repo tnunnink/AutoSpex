@@ -51,8 +51,8 @@ internal class LoadSpecsHandler(IConnectionManager manager) : IRequestHandler<Lo
             {
                 if (!specs.ContainsKey(id))
                 {
-                    var spec = new Spec(id, name);
-                    spec.Configure(Spec.Deserialize(config));
+                    var spec = new Spec(Node.Create(id, NodeType.Spec, name));
+                    spec.Update(Spec.Deserialize(config));
                     specs.Add(id, spec);
                 }
 

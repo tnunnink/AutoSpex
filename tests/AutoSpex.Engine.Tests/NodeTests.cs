@@ -213,7 +213,7 @@ public class NodeTests
         var folder = collection.AddContainer();
         folder.AddSpec();
 
-        var descendents = collection.Descendents().ToList();
+        var descendents = collection.Descendants().ToList();
 
         descendents.Should().HaveCount(2);
     }
@@ -236,7 +236,7 @@ public class NodeTests
     {
         var node = Node.NewContainer();
 
-        var specs = node.Descendents(NodeType.Spec);
+        var specs = node.Descendants(NodeType.Spec);
 
         specs.Should().BeEmpty();
     }
@@ -249,7 +249,7 @@ public class NodeTests
         collection.AddSpec();
         collection.AddSpec();
 
-        var specs = collection.Descendents(NodeType.Spec);
+        var specs = collection.Descendants(NodeType.Spec);
 
         specs.Should().HaveCount(3);
     }
@@ -263,7 +263,7 @@ public class NodeTests
         folder.AddSpec();
         folder.AddSpec();
 
-        var specs = collection.Descendents(NodeType.Spec);
+        var specs = collection.Descendants(NodeType.Spec);
 
         specs.Should().HaveCount(3);
     }
@@ -273,7 +273,7 @@ public class NodeTests
     {
         var spec = Node.NewSpec();
 
-        var specs = spec.Descendents(NodeType.Spec);
+        var specs = spec.Descendants(NodeType.Spec);
 
         specs.Should().HaveCount(1);
     }

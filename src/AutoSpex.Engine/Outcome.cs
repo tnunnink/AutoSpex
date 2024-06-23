@@ -1,4 +1,6 @@
-﻿namespace AutoSpex.Engine;
+﻿using System.Text.Json;
+
+namespace AutoSpex.Engine;
 
 /// <summary>
 /// An object containing the resulting data from running a <see cref="Spec"/> against a given <see cref="Source"/>.
@@ -41,7 +43,7 @@ public class Outcome : IEquatable<Outcome>
 
         Spec = Node.Create(spec.SpecId, NodeType.Spec, spec.Name);
         Source = Node.Create(source.SourceId, NodeType.Source, source.Name);
-        Result = verifications.Count > 0 ? verifications.Max(r => r.Result) : ResultState.None;
+        Result = verifications.Count > 0 ? verifications.Max(r => r.Result) : ResultState.Inconclusive;
         Duration = duration;
         _evaluations = verifications.SelectMany(v => v.Evaluations).ToList();
     }
@@ -56,14 +58,42 @@ public class Outcome : IEquatable<Outcome>
 
     public Outcome ConfigureSpec(Node? node)
     {
-        Spec = node is not null ? Node.Create(node.NodeId, NodeType.Spec, node.Name) : default;
+        if (node is null || node.Feature == NodeType.Spec)
+        {
+            Spec = node;
+        }
+
         return this;
     }
 
     public Outcome ConfigureSource(Node? node)
     {
-        Source = node is not null ? Node.Create(node.NodeId, NodeType.Source, node.Name) : default;
+        if (node is null || node.Feature == NodeType.Source)
+        {
+            Source = node;
+        }
+
         return this;
+    }
+
+    public Outcome ConfigureEvaluations(string data)
+    {
+        var options = new JsonSerializerOptions();
+        options.Converters.Add(new JsonEvaluationConverter());
+
+        var evaluations = JsonSerializer.Deserialize<List<Evaluation>>(data, options);
+        if (evaluations is null) return this;
+
+        _evaluations.Clear();
+        _evaluations.AddRange(evaluations);
+        return this;
+    }
+
+    public string GetEvaluationData()
+    {
+        var options = new JsonSerializerOptions();
+        options.Converters.Add(new JsonEvaluationConverter());
+        return JsonSerializer.Serialize(_evaluations, options);
     }
 
     public async Task Run(Source source, Spec spec, CancellationToken token = default)

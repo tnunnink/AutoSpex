@@ -7,8 +7,12 @@ namespace AutoSpex.Engine;
 /// important components of filtering and querying data because they define the criteria 
 /// for what data should be fetched.
 /// </summary>
-public abstract class Operation(string name) : SmartEnum<Operation, string>(name, name.Replace(" ", string.Empty))
+public abstract class Operation(string name, string value) : SmartEnum<Operation, string>(name, value)
 {
+    protected Operation(string name) : this(name, name.Replace(" ", string.Empty))
+    {
+    }
+
     /// <summary>
     /// Performs the operation on the input and provided values and returns the result.
     /// The actual implementation of the operation (how it's evaluated) is defined
@@ -26,11 +30,11 @@ public abstract class Operation(string name) : SmartEnum<Operation, string>(name
     public abstract bool Execute(object? input, params object[] values);
 
     public static IEnumerable<Operation> Supporting(Property property) => List.Where(x => x.Supports(property.Group));
-    
+
     public static IEnumerable<Operation> Supporting(TypeGroup group) => List.Where(x => x.Supports(group));
 
     protected virtual bool Supports(TypeGroup group) => true;
-    
+
     /// <summary>
     /// Represents an equality operation. The operation checks if the input value 
     /// is equal to the comparison value. Comparison is done based on the underlying
@@ -76,12 +80,12 @@ public abstract class Operation(string name) : SmartEnum<Operation, string>(name
     /// input types that implement IComparable interface.
     /// </summary>
     public static readonly Operation LessThanOrEqual = new LessThanOrEqualOperation();
-    
+
     /// <summary>
     /// Returns the an <see cref="Operation"/> which evaluates whether an input value is <c>true</c>. 
     /// </summary>
     public static readonly Operation IsTrue = new IsTrueOperation();
-    
+
     /// <summary>
     /// Returns the an <see cref="Operation"/> which evaluates whether an input value is <c>false</c>. 
     /// </summary>
@@ -134,8 +138,8 @@ public abstract class Operation(string name) : SmartEnum<Operation, string>(name
     /// matches any value within a supplied list of values.
     /// </summary>
     public static readonly Operation In = new InOperation();
-    
-    
+
+
     public static readonly Operation Like = new LikeOperation();
 
     /// <summary>

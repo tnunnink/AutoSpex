@@ -18,7 +18,9 @@
         <Setter Property="BorderBrush" Value="{a:ThemeResource Container1BorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="5" />
-        <Setter Property="HeaderBackground" Value="{a:ThemeResource Container3BackgroundBrush}" />
+        <Setter Property="HeaderBackground" Value="{a:ThemeResource Container2BackgroundBrush}" />
+        <Setter Property="HeaderBorderBrush" Value="{a:ThemeResource Container1BorderBrush}" />
+        <Setter Property="HeaderBorderThickness" Value="0" />
         <Setter Property="HeaderPadding" Value="10 5" />
         <Setter Property="HeaderMinHeight" Value="30" />
         <Setter Property="HeaderMaxHeight" Value="50" />
@@ -32,6 +34,8 @@
                         <Border Grid.Row="0"
                                 x:Name="PART_HeaderBorder"
                                 Background="{TemplateBinding HeaderBackground}"
+                                BorderBrush="{TemplateBinding HeaderBorderBrush}"
+                                BorderThickness="{TemplateBinding HeaderBorderThickness}"
                                 Padding="{TemplateBinding HeaderPadding}"
                                 MaxHeight="{TemplateBinding HeaderMaxHeight}"
                                 MinHeight="{TemplateBinding HeaderMinHeight}">

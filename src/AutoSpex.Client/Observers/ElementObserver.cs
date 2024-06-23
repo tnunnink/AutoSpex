@@ -52,8 +52,8 @@ public partial class ElementObserver(LogixElement model) : Observer<LogixElement
     /// <returns><c>true</c> if this observer passes the filter, otherwise, <c>false</c></returns>
     public override bool Filter(string? filter)
     {
-        return string.IsNullOrEmpty(filter) ||
-               Model.Serialize().ToString().Contains(filter, StringComparison.OrdinalIgnoreCase);
+        return base.Filter(filter) ||
+               Model.Serialize().ToString().PassesFilter(filter);
     }
 
     public override string ToString() => DetermineName();

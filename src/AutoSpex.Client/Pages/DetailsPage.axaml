@@ -1,17 +1,161 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
              xmlns:components="clr-namespace:AutoSpex.Client.Components"
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
-             mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="500"
+             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+             xmlns:shared="clr-namespace:AutoSpex.Client.Shared"
+             xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
              x:Class="AutoSpex.Client.Pages.DetailsPage"
-             x:DataType="pages:DetailsPageModel"
-             Background="{a:ThemeResource Container1BackgroundBrush}"
-             BorderThickness="0">
+             x:DataType="pages:DetailsPageModel">
 
-    <components:DetailsContainer ItemsSource="{Binding Pages}"
-                                 SelectedItem="{Binding Selected}"
-                                 AddSpecCommand="{Binding CreateSpecCommand}"/>
+    <Design.Width>1200</Design.Width>
+    <Design.Height>800</Design.Height>
+
+    <UserControl.Resources>
+        <DataTemplate x:Key="DetailTabTemplate" x:DataType="shared:DetailPageModel">
+            <StackPanel Orientation="Horizontal" Spacing="5">
+                <StackPanel.Styles>
+                    <Style Selector="TextBlock.changed">
+                        <Setter Property="Foreground"
+                                Value="{a:ThemeResource ControlForegroundBrushSoftWarning}" />
+                    </Style>
+                </StackPanel.Styles>
+                <PathIcon
+                    Theme="{Binding Icon, Converter={StaticResource KeyToIconConverter}}"
+                    Classes="icon-small" />
+                <TextBlock
+                    Text="{Binding Title}"
+                    Margin="0 1 0 0"
+                    Classes.changed="{Binding IsChanged}" />
+                <Border Height="20" Width="20" Margin="0 1 0 0">
+                    <Button
+                        properties:ButtonIcon.Theme="{StaticResource IconClose}"
+                        Theme="{StaticResource IconButtonSmall}"
+                        Command="{Binding CloseCommand}"
+                        IsVisible="{Binding $parent[TabStripItem].IsPointerOver}"
+                        HotKey="Ctrl+W"
+                        CornerRadius="5" Height="16" Width="16" Padding="11" />
+                </Border>
+            </StackPanel>
+        </DataTemplate>
+
+        <ControlTheme x:Key="DetailTabTheme" x:DataType="shared:DetailPageModel"
+                      TargetType="TabStripItem" BasedOn="{StaticResource TabStripItemInverted}">
+            <Setter Property="Padding" Value="7 5" />
+            <Setter Property="ContextFlyout">
+                <MenuFlyout>
+                    <MenuFlyout.ItemContainerTheme>
+                        <ControlTheme TargetType="MenuItem"
+                                      BasedOn="{StaticResource ContextMenuItem}" />
+                    </MenuFlyout.ItemContainerTheme>
+                    <MenuItem Header="Close Tab"
+                              InputGesture="Ctrl+W"
+                              Command="{Binding CloseCommand}" />
+                    <MenuItem Header="Close All Tabs"
+                              InputGesture="Ctrl+Shift+W"
+                              Command="{Binding $parent[TabStrip].((pages:DetailsPageModel)DataContext).CloseAllTabsCommand, FallbackValue={x:Null}}" />
+                    <MenuItem Header="-" />
+                    <MenuItem Header="Close Other Tabs"
+                              Command="{Binding $parent[TabStrip].((pages:DetailsPageModel)DataContext).CloseOtherTabsCommand, FallbackValue={x:Null}}"
+                              CommandParameter="{Binding}" />
+                    <MenuItem Header="Close Tabs to Right"
+                              Command="{Binding $parent[TabStrip].((pages:DetailsPageModel)DataContext).CloseRightTabsCommand, FallbackValue={x:Null}}"
+                              CommandParameter="{Binding}" />
+                    <MenuItem Header="Close Tabs to Left"
+                              Command="{Binding $parent[TabStrip].((pages:DetailsPageModel)DataContext).CloseLeftTabsCommand, FallbackValue={x:Null}}"
+                              CommandParameter="{Binding}" />
+                    <MenuItem Header="-" />
+                    <MenuItem Header="Force Close Tab"
+                              InputGesture="Alt+W"
+                              Command="{Binding ForceCloseCommand}" />
+                    <MenuItem Header="Force Close Tabs"
+                              InputGesture="Alt+Shift+W"
+                              Command="{Binding $parent[TabStrip].((pages:DetailsPageModel)DataContext).ForceCloseAllTabsCommand, FallbackValue={x:Null}}" />
+                </MenuFlyout>
+            </Setter>
+        </ControlTheme>
+    </UserControl.Resources>
+
+    <DockPanel>
+        <Border DockPanel.Dock="Top"
+                Height="41"
+                BorderThickness="0 0 0 1"
+                BorderBrush="{a:ThemeResource Container1BorderBrush}">
+            <Grid ColumnDefinitions="*,Auto">
+                <ScrollViewer Grid.Column="0"
+                              Classes="theme-scroll-overlay"
+                              VerticalScrollBarVisibility="Disabled"
+                              HorizontalScrollBarVisibility="Hidden">
+                    <TabStrip
+                        ItemsSource="{Binding Pages}"
+                        SelectedItem="{Binding Selected}"
+                        ItemTemplate="{StaticResource DetailTabTemplate}"
+                        ItemContainerTheme="{StaticResource DetailTabTheme}"
+                        BorderThickness="0" />
+                </ScrollViewer>
+
+                <Border Grid.Column="1" Padding="10 0">
+                    <Button Theme="{a:ControlTheme ButtonSubtle}"
+                            ContentTemplate="{a:GlyphTemplate DropDownArrow16}"
+                            Padding="3" VerticalAlignment="Center">
+                        <Button.Flyout>
+                            <Flyout Placement="BottomEdgeAlignedRight" VerticalOffset="3" HorizontalOffset="8">
+                                <components:DetailTabList Tabs="{Binding Pages}" />
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+                </Border>
+            </Grid>
+        </Border>
+
+        <Panel>
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="10"
+                        IsVisible="{Binding !Pages.Count}">
+
+                <Image Source="../../Resources/Images/logo.png"
+                       Height="60" Width="60" Margin="20" />
+
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Create new item to get started"
+                               TextAlignment="Center"
+                               Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <StackPanel.Styles>
+                            <Style Selector="Button">
+                                <Setter Property="Margin" Value="5" />
+                                <Setter Property="Width" Value="40" />
+                                <Setter Property="Height" Value="40" />
+                                <Setter Property="VerticalAlignment" Value="Center" />
+                                <Setter Property="HorizontalAlignment" Value="Center" />
+                            </Style>
+                        </StackPanel.Styles>
+
+                        <Button Theme="{a:ControlTheme ButtonSubtle}"
+                                Command="{Binding CreateNodeCommand}"
+                                CommandParameter="{x:Static engine:NodeType.Spec}"
+                                ToolTip.Tip="New Spec">
+                            <PathIcon Theme="{StaticResource IconSpecThemed}" />
+                        </Button>
+                        <Button Theme="{a:ControlTheme ButtonSubtle}"
+                                Command="{Binding CreateNodeCommand}"
+                                CommandParameter="{x:Static engine:NodeType.Source}"
+                                ToolTip.Tip="New Source">
+                            <PathIcon Theme="{StaticResource IconSourceThemed}" />
+                        </Button>
+                        <Button Theme="{a:ControlTheme ButtonSubtle}"
+                                Command="{Binding CreateNodeCommand}"
+                                CommandParameter="{x:Static engine:NodeType.Run}"
+                                ToolTip.Tip="New Run">
+                            <PathIcon Theme="{StaticResource IconRunThemed}" />
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+
+            <ContentControl
+                IsVisible="{Binding Selected, Converter={x:Static ObjectConverters.IsNotNull}}"
+                Content="{Binding Selected}" />
+        </Panel>
+    </DockPanel>
 </UserControl>

@@ -53,7 +53,7 @@ public class MP10000 : AutoReversingMigration
         Create.Table("Outcome")
             .WithColumn("OutcomeId").AsString().PrimaryKey()
             .WithColumn("RunId").AsString().NotNullable().ForeignKey("Run", "RunId").OnDelete(Rule.Cascade)
-            .WithColumn("SpecId").AsString().NotNullable().ForeignKey("Spec", "SpecId").OnDelete(Rule.Cascade)
+            .WithColumn("SpecId").AsString().Nullable().ForeignKey("Spec", "SpecId").OnDelete(Rule.Cascade)
             .WithColumn("SourceId").AsString().Nullable().ForeignKey("Source", "SourceId").OnDelete(Rule.Cascade)
             .WithColumn("Result").AsString().Nullable().WithDefaultValue(ResultState.None)
             .WithColumn("Duration").AsInt32().Nullable()

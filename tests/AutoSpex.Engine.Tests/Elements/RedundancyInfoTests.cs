@@ -1,4 +1,4 @@
-﻿namespace AutoSpex.Engine.Tests.ElementTests;
+﻿namespace AutoSpex.Engine.Tests.Elements;
 
 public class RedundancyInfoTests
 {

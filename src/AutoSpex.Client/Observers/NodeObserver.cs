@@ -52,7 +52,7 @@ public partial class NodeObserver : Observer<Node>,
     public ObservableCollection<NodeObserver> Crumbs => new(Model.Ancestors().Select(n => new NodeObserver(n)));
 
     public ObservableCollection<NodeObserver> Descendents =>
-        new(Model.Descendents().Where(n => n.Type != NodeType.Container).Select(n => new NodeObserver(n)));
+        new(Model.Descendants().Where(n => n.Type != NodeType.Container).Select(n => new NodeObserver(n)));
 
     [ObservableProperty] private bool _isVisible = true;
 
@@ -72,7 +72,7 @@ public partial class NodeObserver : Observer<Node>,
     /// <inheritdoc />
     public override bool Filter(string? filter)
     {
-        return string.IsNullOrEmpty(filter) || Name.PassesFilter(filter) || Path.PassesFilter(filter);
+        return base.Filter(filter) || Name.PassesFilter(filter) || Path.PassesFilter(filter);
     }
 
     /// <inheritdoc />
@@ -209,12 +209,22 @@ public partial class NodeObserver : Observer<Node>,
         //Runs open the runner with the run.
         if (Type == NodeType.Run)
         {
-            await LoadAndNavigateRun();
+            var result = await Mediator.Send(new GetRun(Id));
+
+            if (result.IsFailed)
+            {
+                //notify failure?
+                return;
+            }
+
+            var loaded = new RunObserver(result.Value);
+            await loaded.Open();
             return;
         }
 
         //Specs and Source (or their containers) will create a new virtual run and open that in the runner.
-        await NavigateVirtualRun();
+        var run = RunObserver.Virtual(this);
+        await run.Open();
     }
 
     #endregion
@@ -322,34 +332,6 @@ public partial class NodeObserver : Observer<Node>,
         {
             IsEditing = false;
         }
-    }
-
-    /// <summary>
-    /// Configures a new temp run node and runner with this node (and all descendant nodes) configured, and then
-    /// navigates the RunPageModel into view for the user. This allows them to finish configuring the run and then run it.
-    /// </summary>
-    private async Task NavigateVirtualRun()
-    {
-        var run = RunObserver.Virtual(this);
-        await run.Open();
-    }
-
-    /// <summary>
-    /// If this is the run node type, then we simply load up the configured run and navigate it into the RunnerPageModel
-    /// which should then kick off the execution of the run.
-    /// </summary>
-    private async Task LoadAndNavigateRun()
-    {
-        var result = await Mediator.Send(new GetRun(Id));
-
-        if (result.IsFailed)
-        {
-            //notify failure?
-            return;
-        }
-
-        var run = new RunObserver(result.Value);
-        await run.Open();
     }
 
     /// <summary>

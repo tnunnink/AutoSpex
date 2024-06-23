@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using System.Text.Json;
+using JetBrains.Annotations;
 
 namespace AutoSpex.Engine;
 
@@ -75,5 +76,20 @@ public record Evaluation
     public override string ToString()
     {
         return $"{Candidate} Expected: {Criteria} {Expected}; Found: {Actual};";
+    }
+    
+    public string Serialize()
+    {
+        var options = new JsonSerializerOptions();
+        options.Converters.Add(new JsonEvaluationConverter());
+        return JsonSerializer.Serialize(this, options);
+    }
+
+    public static Evaluation Deserialize(string eval)
+    {
+        var options = new JsonSerializerOptions();
+        options.Converters.Add(new JsonEvaluationConverter());
+        return JsonSerializer.Deserialize<Evaluation>(eval, options)
+               ?? throw new ArgumentException("Not able to deserialize provided data into a valid evaluation");;
     }
 }

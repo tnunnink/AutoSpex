@@ -3,6 +3,7 @@ using System.Linq;
 using AutoSpex.Client.Observers;
 using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
+using AutoSpex.Engine;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -31,11 +32,12 @@ public partial class DetailsPageModel(string project) : PageViewModel, IRecipien
     }
 
     [RelayCommand]
-    private async Task CreateSpec()
+    private async Task CreateNode(NodeType? feature)
     {
-        var spec = await Prompter.Show<NodeObserver?>(() => new AddSpecPageModel());
-        if (spec is null) return;
-        await Navigator.Navigate(spec);
+        if (feature is null) return;
+        var node = await Prompter.Show<NodeObserver?>(() => new CreateNodePageModel(feature));
+        if (node is null) return;
+        await node.NavigateCommand.ExecuteAsync(null);
     }
 
     public void Receive(NavigationRequest message)
@@ -44,7 +46,7 @@ public partial class DetailsPageModel(string project) : PageViewModel, IRecipien
 
         if (message.Action == NavigationAction.Close)
         {
-            CloseTab(detail);
+            ClosePage(detail);
             return;
         }
 
@@ -56,16 +58,94 @@ public partial class DetailsPageModel(string project) : PageViewModel, IRecipien
             return;
         }
 
-        OpenTab(detail);
+        OpenPage(detail);
+    }
+    
+    [RelayCommand]
+    private static async Task CloseTab(DetailPageModel? page)
+    {
+        if (page is null) return;
+        await page.Close(); //todo we might not need this command and just use the bound page/tab close command.
     }
 
-    private void OpenTab(DetailPageModel page)
+    [RelayCommand]
+    private async Task CloseAllTabs()
+    {
+        var pages = Pages.ToList();
+
+        foreach (var page in pages)
+        {
+            await page.Close();
+        }
+
+        pages.Clear();
+    }
+
+    [RelayCommand]
+    private async Task CloseOtherTabs(PageViewModel? page)
+    {
+        if (page is null) return;
+
+        var pages = Pages.Where(p => p != page).ToList();
+
+        foreach (var closable in pages)
+        {
+            await closable.Close();
+        }
+
+        pages.Clear();
+    }
+
+    [RelayCommand]
+    private async Task CloseRightTabs(DetailPageModel? page)
+    {
+        if (page is null) return;
+
+        var pages = Pages.ToList();
+        var start = pages.IndexOf(page) + 1;
+
+        for (var i = start; i < pages.Count; i++)
+        {
+            var closable = pages[i];
+            await closable.Close();
+        }
+    }
+
+    [RelayCommand]
+    private async Task CloseLeftTabs(DetailPageModel? page)
+    {
+        if (page is null) return;
+
+        var pages = Pages.ToList();
+        var start = pages.IndexOf(page) - 1;
+
+        for (var i = start; i >= 0; i--)
+        {
+            var closable = pages[i];
+            await closable.Close();
+        }
+    }
+
+    [RelayCommand]
+    private void ForceCloseAllTabs()
+    {
+        var pages = Pages.ToList();
+
+        foreach (var page in pages)
+        {
+            page.ForceCloseCommand.Execute(null);
+        }
+
+        pages.Clear();
+    }
+
+    private void OpenPage(DetailPageModel page)
     {
         Pages.Add(page);
         Selected = page;
     }
-
-    private void CloseTab(DetailPageModel page)
+    
+    private void ClosePage(DetailPageModel page)
     {
         Pages.Remove(page);
 

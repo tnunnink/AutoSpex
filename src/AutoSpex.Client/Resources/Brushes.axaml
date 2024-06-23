@@ -12,6 +12,7 @@
             <SolidColorBrush x:Key='IconForegroundBrushContainer' Color="#b7b7c8" />
             <SolidColorBrush x:Key='IconForegroundBrushSpec' Color="#4073d8" />
             <SolidColorBrush x:Key='IconForegroundBrushSource' Color="#ce665e" />
+            <SolidColorBrush x:Key='IconForegroundBrushRun' Color="#248866" />
             <SolidColorBrush x:Key="TypeGroupForegroundBrushDefault" Color="#b0a4a4" />
             <SolidColorBrush x:Key="TypeGroupForegroundBrushNumber" Color="#bc5f9d" />
             <SolidColorBrush x:Key="TypeGroupForegroundBrushBoolean" Color="#1055d6" />
@@ -27,6 +28,7 @@
             <SolidColorBrush x:Key='IconForegroundBrushContainer' Color="#5c6470" />
             <SolidColorBrush x:Key='IconForegroundBrushSpec' Color="#6e9eff" />
             <SolidColorBrush x:Key='IconForegroundBrushSource' Color="#ff9073" />
+            <SolidColorBrush x:Key='IconForegroundBrushRun' Color="#38c998" />
             <SolidColorBrush x:Key="TypeGroupForegroundBrushDefault" Color="#6c6c6c" />
             <SolidColorBrush x:Key="TypeGroupForegroundBrushNumber" Color="#e89ca7" />
             <SolidColorBrush x:Key="TypeGroupForegroundBrushBoolean" Color="#688cd4" />

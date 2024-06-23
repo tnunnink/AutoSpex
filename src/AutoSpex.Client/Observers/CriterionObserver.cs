@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 namespace AutoSpex.Client.Observers;
@@ -26,10 +25,9 @@ public partial class CriterionObserver : Observer<Criterion>
     }
 
     public override Guid Id => Model.CriterionId;
-    public Type Type => Model.Type ?? typeof(object);
 
     [Required]
-    public Property? Property
+    public Property Property
     {
         get => Model.Property;
         set => SetProperty(Model.Property, value, Model, (c, p) => c.Property = p);
@@ -39,7 +37,7 @@ public partial class CriterionObserver : Observer<Criterion>
     /// The <see cref="Engine.Operation"/> to execute for the criterion. This property wraps the underlying model.
     /// </summary>
     [Required]
-    public Operation? Operation
+    public Operation Operation
     {
         get => Model.Operation;
         set => SetProperty(Model.Operation, value, Model, (c, o) => c.Operation = o, true);
@@ -53,10 +51,11 @@ public partial class CriterionObserver : Observer<Criterion>
         set => SetProperty(Model.Invert, value, Model, (c, v) => c.Invert = v);
     }
 
-    [ObservableProperty] private bool _isEnabled = true;
-
     public Func<string?, CancellationToken, Task<IEnumerable<object>>> PopulateProperties => GetProperties;
     public Func<string?, CancellationToken, Task<IEnumerable<object>>> PopulateOperations => GetOperations;
+
+    public Func<object?, string> SelectOperation => x =>
+        x is Operation operation && operation != Operation.None ? operation.Name : string.Empty;
 
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
@@ -73,10 +72,6 @@ public partial class CriterionObserver : Observer<Criterion>
     private Task<IEnumerable<object>> GetProperties(string? filter, CancellationToken token)
     {
         var type = Model.Type;
-
-        if (type is null)
-            return Task.FromResult(Enumerable.Empty<object>());
-
         var origin = Property.This(type);
 
         if (string.IsNullOrEmpty(filter))
@@ -106,7 +101,7 @@ public partial class CriterionObserver : Observer<Criterion>
                 Property = property;
                 return;
             case string path:
-                Property = Property.This(Type).GetProperty(path);
+                Property = Property.This(Model.Type).GetProperty(path) ?? Property.Default;
                 return;
         }
     }
@@ -117,11 +112,8 @@ public partial class CriterionObserver : Observer<Criterion>
     /// </summary>
     private Task<IEnumerable<object>> GetOperations(string? filter, CancellationToken token)
     {
-        var filtered = Property is not null
-            ? Operation.Supporting(Property).Where(x => x.Name.PassesFilter(filter))
-            : Enumerable.Empty<object>();
-
-        return Task.FromResult(filtered);
+        var filtered = Operation.Supporting(Property).Where(x => x.Name.PassesFilter(filter));
+        return Task.FromResult(filtered.Cast<object>());
     }
 
     /// <summary>
@@ -138,7 +130,7 @@ public partial class CriterionObserver : Observer<Criterion>
                 return;
             case string text:
                 var found = Operation.TryFromName(text, out var parsed);
-                Operation = found ? parsed : null;
+                Operation = found ? parsed : Operation.None;
                 return;
         }
     }
@@ -176,7 +168,7 @@ public partial class CriterionObserver : Observer<Criterion>
         }
 
         if (Operation is not CollectionOperation) return;
-        var innerType = Property?.Type.SelfOrInnerType() ?? typeof(object);
+        var innerType = Property.InnerType;
         Arguments.Add(new ArgumentObserver(new Argument(new Criterion(innerType)), this));
     }
 }

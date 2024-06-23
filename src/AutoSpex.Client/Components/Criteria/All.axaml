@@ -4,6 +4,5 @@
         <ResourceInclude Source="CriteriaList.axaml" />
         <ResourceInclude Source="CriterionTemplates.axaml" />
         <ResourceInclude Source="ArgumentTemplates.axaml" />
-        <ResourceInclude Source="InclusionSwitch.axaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

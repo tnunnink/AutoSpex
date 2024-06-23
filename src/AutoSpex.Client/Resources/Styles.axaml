@@ -1,6 +1,7 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:a="http://schemas.actiprosoftware.com/avaloniaui">
+        xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+        xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
     <Design.PreviewWith>
         <Border Padding="20">
             <StackPanel Orientation="Vertical" Spacing="10">
@@ -13,13 +14,35 @@
                 <TextBox Classes="subtle"
                          Watermark="Enter Value Here" Width="200" />
                 <SplitButton Classes="split">
-                    <PathIcon Theme="{StaticResource IconPlayOutlined}" 
+                    <PathIcon Theme="{StaticResource IconPlayOutlined}"
                               Classes="icon-small" Padding="4"
-                              Foreground="{Binding $parent[SplitButton].Foreground}"/>
+                              Foreground="{Binding $parent[SplitButton].Foreground}" />
                 </SplitButton>
                 <SplitButton Classes="split" IsEnabled="False">
                     <PathIcon Theme="{StaticResource IconPlayOutlined}" Classes="icon-small" Padding="4" />
                 </SplitButton>
+
+                <Border BorderBrush="Red" BorderThickness="1" Height="40">
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <PathIcon Theme="{StaticResource IconSpecThemed}" />
+                        <TextBlock Text="Testing" />
+                    </StackPanel>
+                </Border>
+
+                <StackPanel Orientation="Horizontal" Spacing="5">
+                    <PathIcon
+                        Theme="{StaticResource IconSpecThemed}"
+                        Classes="icon-small" />
+                    <TextBlock Text="Container Name" />
+                    <Border Height="20" Width="20" Margin="0 2 0 0">
+                        <Button
+                            properties:ButtonIcon.Theme="{StaticResource IconClose}"
+                            Theme="{StaticResource IconButtonSmall}"
+                            IsVisible="{Binding $parent[TabStripItem].IsPointerOver}"
+                            HotKey="Ctrl+W"
+                            CornerRadius="10" Height="16" Width="16" Padding="12" />
+                    </Border>
+                </StackPanel>
             </StackPanel>
         </Border>
     </Design.PreviewWith>
@@ -56,6 +79,13 @@
 
     <Style Selector="TextBlock">
         <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeSmall}" />
+    </Style>
+
+    <Style Selector="TextBlock.centered">
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeSmall}" />
+        <Setter Property="Padding" Value="0 1 0 0" />
     </Style>
 
     <Style Selector="Label">
@@ -73,6 +103,21 @@
         <Setter Property="Padding" Value="2" />
     </Style>
 
+    <Style Selector="TabStrip">
+        <Setter Property="ItemsPanel">
+            <ItemsPanelTemplate>
+                <StackPanel Margin="{a:ThemeResource TabControlHeaderPaddingOutline}"
+                            Orientation="Horizontal"
+                            Spacing="{a:ThemeResource TabItemSpacingOutline}" />
+            </ItemsPanelTemplate>
+        </Setter>
+    </Style>
+
+    <Style Selector="ScrollViewer">
+        <Setter Property="Theme" Value="{a:ControlTheme ScrollViewerOverlay}" />
+        <Setter Property="HorizontalScrollBarVisibility" Value="Auto" />
+    </Style>
+
     <Style Selector="Button.split">
         <Setter Property="Theme" Value="{a:ControlTheme ButtonOutline}" />
 
@@ -84,7 +129,7 @@
                 <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushDisabled}" />
             </Style>
         </Style>
-        
+
         <Style Selector="^:accent > PathIcon">
             <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
         </Style>

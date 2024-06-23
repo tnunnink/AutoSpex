@@ -53,7 +53,6 @@ public class Run
     public IEnumerable<Node> Sources => GetNodes(NodeType.Source);
     public IEnumerable<Node> Specs => GetNodes(NodeType.Spec);
 
-
     /// <summary>
     /// Adds the provided <see cref="Outcome"/> to the run as a result that it produced.
     /// </summary>
@@ -138,9 +137,9 @@ public class Run
 
         foreach (var spec in specs)
         {
+            token.ThrowIfCancellationRequested();
             if (!lookup.TryGetValue(spec.SpecId, out var outcome)) continue;
             preRun?.Invoke(outcome);
-            //await Task.Delay(5000, token);
             await outcome.Run(source, spec, token);
             postRun?.Invoke(outcome);
         }
@@ -151,14 +150,16 @@ public class Run
     }
 
     /// <summary>
-    /// 
+    /// Finds all descendant spec or source nodes and generates a collection of new <see cref="Outcome"/> objects to be
+    /// added to this <see cref="Run"/>. The outcomes will hold the reference to the node which we can also retrieve
+    /// from the run later.
     /// </summary>
     private void AddNodeTree(Node node)
     {
         ArgumentNullException.ThrowIfNull(node);
 
-        //Get descendant will return the nodes wee are interested in (either spec or source).
-        var nodes = node.Descendents(node.Feature);
+        //Get descendants will return the nodes wee are interested in (either spec or source).
+        var nodes = node.Descendants(node.Feature);
 
         foreach (var descendent in nodes)
         {
@@ -206,9 +207,9 @@ public class Run
     }
 
     /// <summary>
-    /// Generates a collection of virtual nodes as defined by the configured outcomes for this run. Will return all
-    /// unless a feature <see cref="NodeType"/> is provided in which case it will only return the nodes for the
-    /// corresponding type.
+    /// Gets all unique node instance configured on all outcomes for this run.
+    /// Will return all nodes unless a feature <see cref="NodeType"/> is provided, in which case it will only return
+    /// the nodes for the corresponding type.
     /// </summary>
     private IEnumerable<Node> GetNodes(NodeType? feature = default)
     {
@@ -220,8 +221,7 @@ public class Run
             {
                 nodes.TryAdd(outcome.Spec.NodeId, outcome.Spec);
             }
-
-            // ReSharper disable once InvertIf
+            
             if (outcome.Source is not null && (feature is null || feature == NodeType.Source))
             {
                 nodes.TryAdd(outcome.Source.NodeId, outcome.Source);

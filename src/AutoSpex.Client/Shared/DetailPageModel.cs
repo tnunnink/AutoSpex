@@ -3,8 +3,6 @@ using System.Threading.Tasks;
 using AutoSpex.Client.Services;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
-using FluentResults;
-using MediatR;
 
 namespace AutoSpex.Client.Shared;
 

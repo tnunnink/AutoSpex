@@ -24,19 +24,13 @@ public class SaveSourceTests
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-        var source = new Source();
-        await mediator.Send(new CreateSource(source));
-
-        var before = await mediator.Send(new GetSource(source.SourceId));
-        before.IsSuccess.Should().BeTrue();
-        before.Value.TargetName.Should().BeNullOrEmpty();
-        before.Value.TargetType.Should().BeNullOrEmpty();
-        before.Value.ExportedBy.Should().BeNullOrEmpty();
-        before.Value.Content.Should().BeNullOrEmpty();
-
+        var node = Node.NewSource();
+        await mediator.Send(new CreateNode(node));
+        var source = new Source(node);
         source.Update(L5X.Load(Known.Test), true);
-        var update = await mediator.Send(new SaveSource(source));
-        update.IsSuccess.Should().BeTrue();
+        
+        var saved = await mediator.Send(new SaveSource(source));
+        saved.IsSuccess.Should().BeTrue();
 
         var result = await mediator.Send(new GetSource(source.SourceId));
         result.IsSuccess.Should().BeTrue();
@@ -51,13 +45,16 @@ public class SaveSourceTests
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-        var source = new Source(L5X.Load(Known.Example));
-        await mediator.Send(new CreateSource(source));
+        var node = Node.NewSource();
+        await mediator.Send(new CreateNode(node));
+        var source = new Source(node);
+        source.Update(L5X.Load(Known.Example), true);
+        await mediator.Send(new SaveSource(source));
 
         source.Update(L5X.Load(Known.Test), true);
 
-        var update = await mediator.Send(new SaveSource(source));
-        update.IsSuccess.Should().BeTrue();
+        var updated = await mediator.Send(new SaveSource(source));
+        updated.IsSuccess.Should().BeTrue();
 
         var result = await mediator.Send(new GetSource(source.SourceId));
         result.IsSuccess.Should().BeTrue();

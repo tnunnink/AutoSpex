@@ -1,6 +1,4 @@
-﻿using FluentAssertions;
-
-namespace AutoSpex.Engine.Tests.OperationTests;
+﻿namespace AutoSpex.Engine.Tests.Operations;
 
 [TestFixture]
 public class EqualOperationTests
@@ -49,6 +47,16 @@ public class EqualOperationTests
         
         var result = operation.Execute(1, 2);
         
+        result.Should().BeFalse();
+    }
+
+    [Test]
+    public void Execute_StringArgument_ShouldBeExpected()
+    {
+        var operation = Operation.Equal;
+
+        var result = operation.Execute("Test", "Another");
+
         result.Should().BeFalse();
     }
 }

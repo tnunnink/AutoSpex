@@ -12,6 +12,14 @@ public class Section : HeaderedContentControl
         AvaloniaProperty.Register<Section, IBrush?>(
             nameof(HeaderBackground));
 
+    public static readonly StyledProperty<IBrush?> HeaderBorderBrushProperty =
+        AvaloniaProperty.Register<Section, IBrush?>(
+            nameof(HeaderBorderBrush));
+
+    public static readonly StyledProperty<Thickness> HeaderBorderThicknessProperty =
+        AvaloniaProperty.Register<Section, Thickness>(
+            nameof(HeaderBorderThickness), defaultValue: new Thickness(0));
+
     public static readonly StyledProperty<Thickness> HeaderPaddingProperty =
         AvaloniaProperty.Register<Section, Thickness>(
             nameof(HeaderPadding));
@@ -30,6 +38,18 @@ public class Section : HeaderedContentControl
     {
         get => GetValue(HeaderBackgroundProperty);
         set => SetValue(HeaderBackgroundProperty, value);
+    }
+
+    public IBrush? HeaderBorderBrush
+    {
+        get => GetValue(HeaderBorderBrushProperty);
+        set => SetValue(HeaderBorderBrushProperty, value);
+    }
+
+    public Thickness HeaderBorderThickness
+    {
+        get => GetValue(HeaderBorderThicknessProperty);
+        set => SetValue(HeaderBorderThicknessProperty, value);
     }
 
     public Thickness HeaderPadding

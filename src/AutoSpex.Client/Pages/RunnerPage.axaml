@@ -28,7 +28,7 @@
                           ItemsSource="{Binding Runs}"
                           SelectedItem="{Binding SelectedRun}"
                           ItemTemplate="{StaticResource RunTab}"
-                          ItemContainerTheme="{StaticResource TabStripItemStatusBar}"
+                          ItemContainerTheme="{StaticResource TabStripItemInverted}"
                           BorderThickness="0" Margin="10 0" />
 
                 <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="5" Margin="10 0">

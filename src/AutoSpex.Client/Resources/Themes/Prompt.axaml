@@ -29,9 +29,6 @@
         <Setter Property="properties:ButtonIcon.Theme" Value="{StaticResource IconClose}" />
         <Setter Property="Padding" Value="10" />
         <Setter Property="Foreground" Value="{actipro:ThemeResource DefaultForegroundBrushTertiary}" />
-        <Style Selector="^:pointerover /template/ Border#border">
-            <Setter Property="Background" Value="{actipro:ThemeResource Container4BackgroundBrush}" />
-        </Style>
     </ControlTheme>
 
     <actipro:ThicknessConverter x:Key="HeaderThicknessConverter" Filter="Left, Top" BaseThickness="0,0,5,5" />
@@ -52,7 +49,8 @@
                     <Border BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             Background="{TemplateBinding Background}"
-                            CornerRadius="{TemplateBinding CornerRadius}">
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            actipro:BorderChildClipConverter.ClipToContainingBorder="True">
                         <DockPanel>
 
                             <!--Header-->
@@ -67,13 +65,12 @@
                                                 Spacing="10">
                                         <PathIcon x:Name="HeaderIcon"
                                                   Theme="{TemplateBinding HeaderIcon}"
-                                                  Foreground="{actipro:ThemeResource DefaultForegroundBrushTertiary}"
-                                                  actipro:ThemeProperties.CopyClassesFrom="{Binding $parent[controls:Prompt]}"
-                                                  IsVisible="{Binding HeaderIcon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ObjectConverters.IsNotNull}}"
-                                                  Padding="4" />
+                                                  IsVisible="{Binding HeaderIcon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ObjectConverters.IsNotNull}}" />
                                         <TextBlock x:Name="HeaderText"
                                                    Text="{TemplateBinding Header}"
-                                                   FontWeight="{actipro:ThemeResource HeadingFontWeightMedium}" />
+                                                   FontSize="{actipro:ThemeResource DefaultFontSizeMedium}"
+                                                   FontWeight="{actipro:ThemeResource HeadingFontWeightMedium}"
+                                                   Foreground="{actipro:ThemeResource DefaultForegroundBrushSecondary}"/>
                                     </StackPanel>
 
                                     <Button Grid.Column="1"

@@ -90,4 +90,5 @@
             <Setter Property="Foreground" Value="{a:ThemeResource TabItemForegroundBrushSubtleDisabled}" />
         </Style>
     </ControlTheme>
+    
 </ResourceDictionary>

@@ -69,7 +69,7 @@ public partial class RunObserver : Observer<Run>
     public long Duration => Outcomes.Sum(x => x.Duration);
     public long Average => Outcomes.Count > 0 ? Outcomes.Sum(x => x.Duration) / Outcomes.Count : 0;
     public ObserverCollection<Outcome, OutcomeObserver> Outcomes { get; }
-    public ObservableCollection<OutcomeObserver> Selected { get; } = [];
+    public ObservableCollection<object> Selected { get; } = [];
     public ObserverCollection<Node, NodeObserver> Sources { get; }
 
     [ObservableProperty] private List<NodeObserver> _sourceFilter = [];

@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using AutoSpex.Client.Observers;
 using AutoSpex.Client.Shared;
@@ -8,8 +9,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace AutoSpex.Client.Pages;
 
-public partial class SelectContainerPageModel(NodeType type) : PageViewModel
+public partial class SelectContainerPageModel(NodeType feature) : PageViewModel
 {
+    private readonly List<NodeObserver> _containers = [];
     public ObservableCollection<NodeObserver> Containers { get; } = [];
     
     [ObservableProperty] private NodeObserver? _selected;
@@ -18,10 +20,21 @@ public partial class SelectContainerPageModel(NodeType type) : PageViewModel
     
     public override async Task Load()
     {
-        var result = await Mediator.Send(new GetContainerNodes(type));
+        var result = await Mediator.Send(new GetContainerNodes(feature));
         if (result.IsFailed) return;
-        
-        Containers.Clear();
-        Containers.AddRange(result.Value.Select(n => new NodeObserver(n)));
+        _containers.Clear();
+        _containers.AddRange(result.Value.Select(n => new NodeObserver(n)));
+        UpdateContainers();
+    }
+
+    partial void OnFilterChanged(string? value)
+    {
+        UpdateContainers(value);
+    }
+
+    private void UpdateContainers(string? filter = default)
+    {
+        var filtered = _containers.Where(n => n.Filter(filter));
+        Containers.Refresh(filtered);
     }
 }

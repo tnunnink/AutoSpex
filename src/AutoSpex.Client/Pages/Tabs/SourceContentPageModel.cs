@@ -19,7 +19,7 @@ public partial class SourceContentPageModel(NodeObserver node) : PageViewModel,
     public override string Route => $"Source/{node.Id}/{Title}";
     public override string Title => "Content";
 
-    [ObservableProperty] private SourceObserver _source = SourceObserver.Empty(node.Id);
+    [ObservableProperty] private SourceObserver _source = SourceObserver.Empty(node);
 
     [ObservableProperty] private string? _filter = string.Empty;
 

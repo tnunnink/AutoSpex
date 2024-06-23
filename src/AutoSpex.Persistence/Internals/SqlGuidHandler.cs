@@ -18,11 +18,6 @@ public class SqlGuidHandler : SqlMapper.TypeHandler<Guid>
 
     public override Guid Parse(object? value)
     {
-        if (value == null)
-        {
-            return Guid.Empty;
-        }
-        
-        return Guid.Parse((string)value);
+        return value is null or DBNull ? Guid.Empty : Guid.Parse((string)value);
     }
 }

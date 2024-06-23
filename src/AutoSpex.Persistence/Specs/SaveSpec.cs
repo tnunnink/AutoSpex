@@ -11,8 +11,7 @@ public record SaveSpec(Spec Spec) : IDbCommand<Result>, IDbLoggable
 {
     public Guid NodeId => Spec.SpecId;
 
-    public string Message =>
-        $"Saved {Spec.Element} Spec '{Spec.Name}' with {Spec.Filters.Count} filters and {Spec.Verifications.Count} verifications";
+    public string Message => $"Saved Spec '{Spec.Name}'";
 }
 
 [UsedImplicitly]

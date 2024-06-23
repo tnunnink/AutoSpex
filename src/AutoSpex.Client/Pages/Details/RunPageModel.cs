@@ -44,21 +44,6 @@ public partial class RunPageModel(NodeObserver node, RunObserver? run = default)
         await Navigator.Navigate(() => new NodeInfoPageModel(Node));
     }
 
-    public override Task<Result> Save()
-    {
-        //todo if virtual node we need to first create it
-        //todo once created I guess we can just call the base save which issues save to each tab.
-        return base.Save();
-    }
-
-    /// <inheritdoc />
-    /// <remarks>
-    /// For a run page since we can pass in an virtual run observer, we can determine if it can be saved by
-    /// comparing it to the node....
-    /// </remarks>
-    public override bool CanSave() => RunObserver?.IsVirtual is true || base.CanSave();
-
-
     /// <inheritdoc />
     protected override async Task Run()
     {

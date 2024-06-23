@@ -1,4 +1,5 @@
 ﻿using System;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
@@ -36,13 +37,25 @@ public abstract partial class Observer<TModel> : TrackableViewModel, IEquatable<
     /// The underlying model object that is being wrapped by the observer.
     /// </summary>
     public TModel Model { get; }
+    
+    /// <summary>
+    /// The current filter text being applied to the observer. This is here because many observers we want to highlight
+    /// the portion of the text that matches the input filter.
+    /// </summary>
+    [ObservableProperty] private string? _filterText;
 
     /// <summary>
-    /// A 
+    /// A function to apply filtering to this <see cref="Observer{TModel}"/> object given an input filter text. By default,
+    /// this updates <see cref="FilterText"/> and return <c>true</c> if the filter input is null or empty which is the
+    /// default condition for all items. Deriving observer can override to further define how to filter each object.
     /// </summary>
-    /// <param name="filter"></param>
-    /// <returns></returns>
-    public virtual bool Filter(string? filter) => string.IsNullOrEmpty(filter);
+    /// <param name="filter">The input filter text.</param>
+    /// <returns><c>true</c> if this object passes the filter provided, otherwise, <c>false</c>.</returns>
+    public virtual bool Filter(string? filter)
+    {
+        FilterText = filter;
+        return string.IsNullOrEmpty(filter);
+    }
 
     /// <summary>
     /// A command to issue deletion of this <see cref="Observer{TModel}"/> object from the database.

@@ -5,12 +5,12 @@
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
              xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
              xmlns:components="clr-namespace:AutoSpex.Client.Components"
-             x:Class="AutoSpex.Client.Pages.AddSpecPage"
-             x:DataType="pages:AddSpecPageModel"
+             x:Class="AutoSpex.Client.Pages.CreateNodePage"
+             x:DataType="pages:CreateNodePageModel"
              Height="600" Width="600">
 
-    <controls:Prompt Header="Create new specification"
-                     HeaderIcon="{StaticResource IconSpecThemed}"
+    <controls:Prompt Header="{Binding Title}"
+                     HeaderIcon="{Binding Feature.Name, Converter={StaticResource KeyToIconConverter}}"
                      CancelButtonTheme="{a:ControlTheme ButtonSoft}"
                      CancelCommandParameter="{x:Null}"
                      ActionButtonText="Create"
@@ -22,42 +22,20 @@
 
         <ScrollViewer VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Disabled">
-            <Grid RowDefinitions="Auto,Auto,*">
+            <Grid RowDefinitions="Auto,*">
 
                 <StackPanel Grid.Row="0" Spacing="5" Margin="0 0 0 10">
-                    <Label Content="Spec Name" />
+                    <Label Content="Name" />
                     <TextBox
                         Text="{Binding Name}"
                         Watermark="Enter a descriptive name"
                         Theme="{StaticResource TextBoxOutlineHighlight}" />
                 </StackPanel>
 
-                <Panel Grid.Row="1">
-                    <StackPanel Spacing="5" IsVisible="{Binding ShowDescription}">
-                        <Label Content="Description" />
-                        <TextBox
-                            Text="{Binding Documentation}"
-                            Theme="{StaticResource TextBoxOutlineHighlight}"
-                            TextWrapping="Wrap"
-                            Height="80" />
-                    </StackPanel>
-                    <Button
-                        Command="{Binding AddDescriptionCommand}"
-                        Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
-                        Classes="accent"
-                        IsVisible="{Binding !ShowDescription}"
-                        VerticalAlignment="Top"
-                        HorizontalAlignment="Left"
-                        Padding="0"
-                        Theme="{a:ControlTheme ButtonLink}">
-                        <TextBlock Text="Add description" TextDecorations="Underline" />
-                    </Button>
-                </Panel>
-
-                <DockPanel Grid.Row="2">
+                <DockPanel Grid.Row="1">
                     <Border DockPanel.Dock="Top" Padding="0 10">
                         <StackPanel Orientation="Horizontal" Spacing="5">
-                            <TextBlock Text="Save To" />
+                            <TextBlock Text="Container" />
                             <components:NodePath
                                 Node="{Binding SelectedNode}"
                                 ShowNodeIcon="False"
@@ -69,10 +47,10 @@
                             BorderThickness="{a:ThemeResource EditBorderThickness}"
                             CornerRadius="{a:ThemeResource EditCornerRadius}">
                         <StackPanel>
-                            <TextBox Text="{Binding SearchText}"
+                            <TextBox Text="{Binding Filter}"
                                      Theme="{a:ControlTheme TextBoxSoft}"
                                      Background="Transparent" BorderThickness="0 0 0 1" CornerRadius="0"
-                                     Watermark="Search for collection or folder"
+                                     Watermark="Filter containers"
                                      Padding="0 5"
                                      VerticalContentAlignment="Center">
                                 <TextBox.InnerLeftContent>
@@ -81,7 +59,7 @@
                                 </TextBox.InnerLeftContent>
                             </TextBox>
 
-                            <ListBox ItemsSource="{Binding Nodes}"
+                            <ListBox ItemsSource="{Binding Containers}"
                                      SelectedItem="{Binding SelectedNode}"
                                      BorderThickness="0">
                                 <ListBox.ItemTemplate>

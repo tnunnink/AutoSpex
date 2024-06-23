@@ -30,8 +30,8 @@ internal class GetSpecsInHandler(IConnectionManager manager) : IRequestHandler<G
         foreach (var result in results)
         {
             var config = Spec.Deserialize(result.Specification);
-            var spec = new Spec(result.SpecId, result.Name);
-            spec.Configure(config);
+            var spec = new Spec(Node.Create(result.SpecId, NodeType.Spec, result.Name));
+            spec.Update(config);
             specs.Add(spec);
         }
         

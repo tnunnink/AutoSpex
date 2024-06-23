@@ -17,6 +17,7 @@ namespace AutoSpex.Client.Pages;
 [UsedImplicitly]
 public partial class ProjectPageModel(ProjectObserver project) : PageViewModel,
     IRecipient<NavigationRequest>,
+    IRecipient<NodeObserver.Created>,
     IRecipient<RunObserver.OpenRun>
 {
     private RunnerPageModel? _runner;
@@ -115,6 +116,18 @@ public partial class ProjectPageModel(ProjectObserver project) : PageViewModel,
             default:
                 throw new ArgumentOutOfRangeException(nameof(message), "Navigation action out of expected range");
         }
+    }
+
+    /// <summary>
+    /// When a node is created from another location than the navigation menu we want to switch the tab to the correct
+    /// menu to show the newly created node.
+    /// </summary>
+    public void Receive(Observer<Node>.Created message)
+    {
+        var feature = message.Observer.Model.Feature;
+        var menu = Menus.FirstOrDefault(m => m.Route.Contains(feature.Name));
+        if (menu is null) return;
+        SelectedMenu = menu;
     }
 
     /// <summary>

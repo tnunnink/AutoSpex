@@ -218,6 +218,13 @@
                     Classes.warning="{Binding Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Error}}"
                     ToolTip.Tip="Result" />
             </StackPanel>
+
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="5">
+                <controls:HighlightableTextBlock
+                    Text="{Binding SpecPath}"
+                    HighlightedText="{Binding FilterText}"
+                    Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+            </StackPanel>
         </DockPanel>
     </TreeDataTemplate>
 
@@ -260,7 +267,7 @@
                 <controls:HighlightableTextBlock
                     Text="{Binding Error}"
                     IsVisible="{Binding Actual, Converter={x:Static StringConverters.IsNullOrEmpty}}"
-                    Foreground="{a:ThemeResource ControlForegroundBrushOutlineWarning}"/>
+                    Foreground="{a:ThemeResource ControlForegroundBrushOutlineWarning}" />
             </StackPanel>
 
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="5" Margin="10 0">

@@ -2,9 +2,9 @@
 
 namespace AutoSpex.Client.Pages;
 
-public partial class AddSpecPage : UserControl
+public partial class CreateNodePage : UserControl
 {
-    public AddSpecPage()
+    public CreateNodePage()
     {
         InitializeComponent();
     }

@@ -57,7 +57,6 @@
                     Watermark="Enter property"
                     Value="{Binding Property}"
                     Content="{Binding Property}"
-                    IsEmpty="{Binding Property, Converter={x:Static ObjectConverters.IsNull}}"
                     Populate="{Binding PopulateProperties}"
                     CommitCommand="{Binding UpdatePropertyCommand}">
                     <controls:Entry.ItemTemplate>
@@ -78,20 +77,25 @@
                             </Grid>
                         </DataTemplate>
                     </controls:Entry.ItemTemplate>
+                    <controls:Entry.IsEmpty>
+                        <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                            <Binding Path="Property"
+                                     Converter="{x:Static ObjectConverters.IsNull}" />
+                            <Binding Path="Property"
+                                     Converter="{StaticResource EqualToConverter}"
+                                     ConverterParameter="{x:Static engine:Property.Default}" />
+                        </MultiBinding>
+                    </controls:Entry.IsEmpty>
                 </controls:Entry>
-
-                <Border
-                    BorderThickness="1 0 0 0"
-                    BorderBrush="{a:ThemeResource Container1BorderBrush}"
-                    Margin="5" />
 
                 <controls:Entry
                     Watermark="Select operation"
                     Value="{Binding Operation.Name, FallbackValue={x:Null}}"
                     Content="{Binding Operation.Name, FallbackValue={x:Null}}"
                     Populate="{Binding PopulateOperations}"
+                    Selector="{Binding SelectOperation}"
                     CommitCommand="{Binding UpdateOperationCommand}"
-                    IsVisible="{Binding Property, Converter={x:Static ObjectConverters.IsNotNull}}">
+                    IsVisible="{Binding Property, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Property.Default}}">
                     <controls:Entry.ItemTemplate>
                         <DataTemplate x:DataType="engine:Operation">
                             <TextBlock
@@ -111,12 +115,6 @@
                     </controls:Entry.IsEmpty>
                 </controls:Entry>
 
-                <Border
-                    BorderThickness="1 0 0 0"
-                    BorderBrush="{a:ThemeResource Container1BorderBrush}"
-                    Margin="5"
-                    IsVisible="{Binding Property, Converter={x:Static ObjectConverters.IsNotNull}}" />
-
                 <ItemsControl ItemsSource="{Binding Arguments}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -130,10 +128,6 @@
                                     <ContentControl
                                         Content="{Binding}"
                                         ContentTemplate="{StaticResource ArgumentDefaultEntry}" />
-                                    <Border
-                                        BorderThickness="1 0 0 0"
-                                        BorderBrush="{a:ThemeResource Container1BorderBrush}"
-                                        Margin="5" />
                                 </StackPanel>
 
                                 <ContentControl
@@ -161,14 +155,7 @@
                     properties:ButtonIcon.Theme="{StaticResource IconExclamation}"
                     Theme="{StaticResource IconToggleButton}"
                     Classes="warning"
-                    ToolTip.Tip="Invert"
-                    ToolTip.Placement="BottomEdgeAlignedRight" />
-                <ToggleButton
-                    IsChecked="{Binding !IsEnabled}"
-                    properties:ButtonIcon.Theme="{StaticResource IconBanOutlined}"
-                    Theme="{StaticResource IconToggleButton}"
-                    Classes="danger"
-                    ToolTip.Tip="Disable"
+                    ToolTip.Tip="Invert Operation"
                     ToolTip.Placement="BottomEdgeAlignedRight" />
                 <Button
                     properties:ButtonIcon.Theme="{StaticResource IconTrashOutlined}"
@@ -176,7 +163,7 @@
                     Command="{Binding DeleteCommand}"
                     Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
                     Padding="8"
-                    ToolTip.Tip="Remove"
+                    ToolTip.Tip="Delete Criteria"
                     ToolTip.Placement="BottomEdgeAlignedRight" />
             </StackPanel>
         </Grid>

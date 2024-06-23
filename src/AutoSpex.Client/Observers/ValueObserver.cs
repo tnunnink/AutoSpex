@@ -28,7 +28,7 @@ public class ValueObserver(object model) : Observer<object>(model)
     /// <inheritdoc />
     public override bool Filter(string? filter)
     {
-        return string.IsNullOrEmpty(filter) || Text.PassesFilter(filter) || Type.PassesFilter(filter);
+        return base.Filter(filter) || Text.PassesFilter(filter) || Type.PassesFilter(filter);
     }
 
     private string GetTypeName()

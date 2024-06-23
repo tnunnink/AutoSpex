@@ -36,9 +36,9 @@ internal class SaveRunHandler(IConnectionManager manager) : IRequestHandler<Save
         using var transaction = connection.BeginTransaction();
 
         var exists = connection.QuerySingleOrDefault<int>(RunExists, new { request.Run.RunId });
-        if (exists != 1) return Result.Fail($"Run Not Found: {request.Run.RunId}");
+        if (exists != 1) return Result.Fail($"Run not found: {request.Run.RunId}");
 
-        await connection.ExecuteAsync(UpdateRun, new { request.Run }, transaction);
+        await connection.ExecuteAsync(UpdateRun, request.Run, transaction);
 
         await connection.ExecuteAsync(UpsertOutcomes,
             request.Run.Outcomes.Select(outcome => new
@@ -49,7 +49,7 @@ internal class SaveRunHandler(IConnectionManager manager) : IRequestHandler<Save
                 SourceId = outcome.Source?.NodeId,
                 outcome.Result,
                 outcome.Duration,
-                Evaluations = outcome.Evaluations
+                Evaluations = outcome.GetEvaluationData()
             }), transaction);
 
         //3. upsert the Override table

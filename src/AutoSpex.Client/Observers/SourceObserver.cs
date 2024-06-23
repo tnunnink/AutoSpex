@@ -26,7 +26,7 @@ public partial class SourceObserver : Observer<Source>
     public DateTime ExportedOn => Model.ExportedOn;
     public string Size => $"{ComputeSize():N0} KB";
     public string Compressed => $"{ComputeCompressedSize():N0} KB";
-    public static SourceObserver Empty(Guid id = default) => new(new Source(id));
+    public static SourceObserver Empty(Node node) => new(new Source(node));
 
     /// <summary>
     /// Updates the content of the Source with the specified L5X data and applies optional scrubbing.

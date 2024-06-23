@@ -24,13 +24,12 @@ public partial class OutcomeObserver : Observer<Outcome>,
     public Guid SpecId => Model.Spec?.NodeId ?? Guid.Empty;
     public Guid SourceId => Model.Source?.NodeId ?? Guid.Empty;
     public string SpecName => Model.Spec?.Name ?? string.Empty;
+    public string SpecPath => Model.Spec?.Path ?? string.Empty;
     public string SourceName => Model.Source?.Name ?? string.Empty;
     public long Duration => Model.Duration;
 
     [ObservableProperty] private ResultState _result;
     public ObservableCollection<EvaluationObserver> Evaluations { get; }
-
-    [ObservableProperty] private string? _filterText;
 
     /// <summary>
     /// When we receive the running message for the outcome with the same local id, then we want to set the result
@@ -40,8 +39,7 @@ public partial class OutcomeObserver : Observer<Outcome>,
     public void Receive(Running message)
     {
         if (Id != message.OutcomeId) return;
-
-        Dispatcher.UIThread.Invoke(() => { Result = ResultState.Pending; });
+        Dispatcher.UIThread.Invoke(() => { Result = ResultState.Running; });
     }
 
     /// <summary>
@@ -63,11 +61,10 @@ public partial class OutcomeObserver : Observer<Outcome>,
 
     public override bool Filter(string? filter)
     {
-        FilterText = filter;
-
-        return string.IsNullOrEmpty(filter)
+        return base.Filter(filter)
                || SpecName.PassesFilter(filter)
                || SourceName.PassesFilter(filter)
+               || SpecPath.PassesFilter(filter)
                || Result.ToString().PassesFilter(filter)
                || Evaluations.Any(e => e.Filter(filter));
     }

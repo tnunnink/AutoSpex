@@ -71,7 +71,7 @@
             <PathIcon Theme="{DynamicResource IconCopyOutlined}" />
             <PathIcon Theme="{DynamicResource IconCheckOutlined}" />
             <PathIcon Theme="{DynamicResource IconDashOutlined}" />
-            <PathIcon Theme="{DynamicResource IconHelpOutlined}" />
+            <PathIcon Theme="{DynamicResource IconQuestionOutlined}" />
             <PathIcon Theme="{DynamicResource IconInfoOutline}" />
             <PathIcon Theme="{DynamicResource IconFilterOutlined}" />
             <PathIcon Theme="{DynamicResource IconFolderOutlined}" />
@@ -118,6 +118,8 @@
             <PathIcon Theme="{DynamicResource IconVariableThemed}" />
             <PathIcon Theme="{DynamicResource IconNoneThemed}" />
             <PathIcon Theme="{DynamicResource IconPendingThemed}" />
+            <PathIcon Theme="{DynamicResource IconRunningThemed}" />
+            <PathIcon Theme="{DynamicResource IconInconclusiveThemed}" />
             <PathIcon Theme="{DynamicResource IconPassedThemed}" />
             <PathIcon Theme="{DynamicResource IconFailedThemed}" />
             <PathIcon Theme="{DynamicResource IconErrorThemed}" />
@@ -748,7 +750,7 @@
         </Setter>
     </ControlTheme>
 
-    <ControlTheme x:Key="IconHelpOutlined" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
+    <ControlTheme x:Key="IconQuestionOutlined" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
         <Setter Property="Data">
             <GeometryGroup>
                 <StreamGeometry>M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16</StreamGeometry>
@@ -811,6 +813,7 @@
                 <StreamGeometry>M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm15 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1z</StreamGeometry>
             </GeometryGroup>
         </Setter>
+        <Setter Property="Padding" Value="6" />
     </ControlTheme>
 
     <ControlTheme x:Key="IconPlayOutlinedCollection" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
@@ -880,8 +883,8 @@
         <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushSource}" />
     </ControlTheme>
 
-    <ControlTheme x:Key="IconRunThemed" TargetType="PathIcon" BasedOn="{StaticResource IconPlayOutlinedCollection}">
-        <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushOutlineSuccess}" />
+    <ControlTheme x:Key="IconRunThemed" TargetType="PathIcon" BasedOn="{StaticResource IconPlayOutlinedButton}">
+        <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushRun}" />
     </ControlTheme>
 
     <ControlTheme x:Key="IconRunnerThemed" TargetType="PathIcon" BasedOn="{StaticResource IconPlayCircle}">
@@ -896,6 +899,13 @@
 
     <ControlTheme x:Key="IconPendingThemed" TargetType="PathIcon" BasedOn="{StaticResource IconCircleHalfFill}">
         <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushOutlineAccent}" />
+    </ControlTheme>
+
+    <ControlTheme x:Key="IconRunningThemed" TargetType="PathIcon" BasedOn="{StaticResource IconCircleHalfFill}">
+        <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushOutlineSuccess}" />
+    </ControlTheme>
+
+    <ControlTheme x:Key="IconInconclusiveThemed" TargetType="PathIcon" BasedOn="{StaticResource IconQuestionOutlined}">
     </ControlTheme>
 
     <ControlTheme x:Key="IconPassedThemed" TargetType="PathIcon" BasedOn="{StaticResource IconCheck}">

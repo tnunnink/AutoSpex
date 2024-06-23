@@ -33,7 +33,7 @@
                         HorizontalAlignment="Center" />
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
-                                IsVisible="{Binding CustomMessage, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static StringConverters.IsNullOrEmpty}}">
+                                IsVisible="{Binding MessageText, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
                         <TextBlock
                             Text="Click the "
                             Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"

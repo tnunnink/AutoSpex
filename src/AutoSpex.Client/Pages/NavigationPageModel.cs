@@ -12,6 +12,7 @@ using CommunityToolkit.Mvvm.Messaging;
 namespace AutoSpex.Client.Pages;
 
 public partial class NavigationPageModel(string project, NodeType feature) : PageViewModel,
+    IRecipient<NodeObserver.Created>,
     IRecipient<NodeObserver.Deleted>,
     IRecipient<NodeObserver.Renamed>,
     IRecipient<NodeObserver.Moved>
@@ -50,6 +51,13 @@ public partial class NavigationPageModel(string project, NodeType feature) : Pag
         var result = await Mediator.Send(new CreateNode(node));
         if (result.IsFailed) return;
         await AddNode(node);
+    }
+
+    public void Receive(Observer<Node>.Created message)
+    {
+        if (message.Observer is not NodeObserver node) return;
+        node.IsSelected = true;
+        node.IsExpanded = true;
     }
 
     /// <summary>

@@ -190,7 +190,7 @@ public static class DesignData
         folder.AddSpec("Test Folder");
         folder.AddSpec("Sub Spec");
         folder.AddSpec("Contained Spec");
-        return collection.Descendents(NodeType.Spec);
+        return collection.Descendants(NodeType.Spec);
     }
 
     private static NodeObserver SpecNodeObserver()

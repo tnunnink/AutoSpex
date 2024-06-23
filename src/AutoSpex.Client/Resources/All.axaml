@@ -40,7 +40,7 @@
     <converters:KeyResourceConverter x:Key="KeyToIconConverter">
         <converters:ValueResourceKey Value="Specs" Resource="IconClipboardOutlinedCheck" />
         <converters:ValueResourceKey Value="Sources" Resource="IconXml" />
-        <converters:ValueResourceKey Value="Runs" Resource="IconPlayOutlinedCollection" />
+        <converters:ValueResourceKey Value="Runs" Resource="IconPlayOutlinedButton" />
         <converters:ValueResourceKey Value="Variables" Resource="IconBraces" />
         <converters:ValueResourceKey Value="Container" Resource="IconContainerThemed" />
         <converters:ValueResourceKey Value="Spec" Resource="IconSpecThemed" />
@@ -57,7 +57,9 @@
 
     <converters:KeyResourceConverter x:Key="ResultStateToIconConverter">
         <converters:ValueResourceKey Value="{x:Static engine:ResultState.None}" Resource="IconNoneThemed" />
-        <converters:ValueResourceKey Value="{x:Static engine:ResultState.Pending}" Resource="IconRunningThemed" />
+        <converters:ValueResourceKey Value="{x:Static engine:ResultState.Pending}" Resource="IconPendingThemed" />
+        <converters:ValueResourceKey Value="{x:Static engine:ResultState.Running}" Resource="IconRunningThemed" />
+        <converters:ValueResourceKey Value="{x:Static engine:ResultState.Inconclusive}" Resource="IconInconclusiveThemed" />
         <converters:ValueResourceKey Value="{x:Static engine:ResultState.Passed}" Resource="IconPassedThemed" />
         <converters:ValueResourceKey Value="{x:Static engine:ResultState.Failed}" Resource="IconFailedThemed" />
         <converters:ValueResourceKey Value="{x:Static engine:ResultState.Error}" Resource="IconErrorThemed" />

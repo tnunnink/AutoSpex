@@ -10,7 +10,7 @@
             <components:CriteriaList Height="200" Width="800"
                                      Heading="Filters"
                                      InfoText="These criteria will filter the queried elements"
-                                     Criteria="{x:Static components:DesignData.Criteria}"
+
                                      Element="{x:Static engine:Element.Tag}" />
         </Border>
     </Design.PreviewWith>
@@ -21,73 +21,70 @@
                 <components:Section>
                     <components:Section.Header>
                         <Grid ColumnDefinitions="Auto,*,Auto">
-                            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10" Margin="10 0">
+                            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10">
+
                                 <TextBlock
                                     Text="{TemplateBinding Heading}"
+                                    Classes="centered"
                                     FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
-                                <PathIcon
-                                    Theme="{StaticResource IconInfoOutline}"
-                                    Margin="0 1 0 0"
-                                    ToolTip.Tip="{TemplateBinding InfoText}" />
 
-                                <Border BorderThickness="1 0 0 0"
-                                        BorderBrush="{a:ThemeResource Container3BorderBrush}"
-                                        Margin="2 5" />
+                                <StackPanel Orientation="Horizontal" Spacing="5" Margin="10 0"
+                                            IsVisible="{Binding Criteria.Count, RelativeSource={RelativeSource TemplatedParent}, FallbackValue={x:False}}">
+                                    <TextBlock
+                                        Text="Match" Classes="centered"
+                                        Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                                    <Button
+                                        Content="{TemplateBinding Inclusion}"
+                                        Command="{Binding ToggleInclusionCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                                        FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                                        Theme="{a:ControlTheme ToggleButtonLink}"
+                                        Classes="accent" Padding="0" />
+                                    <TextBlock
+                                        Text="Criteria" Classes="centered"
+                                        Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}">
+                                    </TextBlock>
+                                </StackPanel>
 
-                                <components:InclusionSwitch
-                                    Inclusion="{Binding Inclusion, RelativeSource={RelativeSource TemplatedParent}}"
-                                    BorderThickness="0"
-                                    VerticalAlignment="Center"
-                                    Padding="4"
-                                    Background="{a:ThemeResource ControlBackgroundBrushSoft}" />
                             </StackPanel>
 
                             <StackPanel Grid.Column="2"
                                         Orientation="Horizontal"
                                         VerticalAlignment="Center"
-                                        Spacing="5">
+                                        Spacing="10">
                                 <Button properties:ButtonIcon.Theme="{StaticResource IconAdd}"
                                         Theme="{StaticResource IconButton}"
                                         Command="{Binding AddCriterionCommand, RelativeSource={RelativeSource TemplatedParent}}"
                                         Classes="accent"
                                         ToolTip.Tip="Add Criteria" />
-                                <Button properties:ButtonIcon.Theme="{StaticResource IconTrashOutlined}"
-                                        Theme="{StaticResource IconButton}"
-                                        Command="{Binding RemoveSelectedCommand, RelativeSource={RelativeSource TemplatedParent}}"
-                                        ToolTip.Tip="Delete Selected" />
-                                <Button properties:ButtonIcon.Theme="{StaticResource IconCopyOutlined}"
-                                        Theme="{StaticResource IconButton}"
-                                        Command="{Binding CopySelectedCommand, RelativeSource={RelativeSource TemplatedParent}}"
-                                        ToolTip.Tip="Copy Selected" />
-                                <Button properties:ButtonIcon.Theme="{StaticResource IconDotsVertical}"
-                                        Theme="{StaticResource IconButton}">
-
-                                </Button>
                             </StackPanel>
                         </Grid>
                     </components:Section.Header>
 
                     <Panel>
-                        <components:DefaultMessage
+                        <!--<components:DefaultMessage
                             DockPanel.Dock="Top"
                             IsVisible="{Binding !Criteria.Count, RelativeSource={RelativeSource TemplatedParent}}"
                             VerticalAlignment="Center"
                             HorizontalAlignment="Center"
-                            HeaderText="No criteria found"
-                            MessageText="add a new criteria to this spec."
-                            MessageIcon="{StaticResource IconAdd}" />
+                            Padding="0"
+                            HeaderText="No criteria defined" />-->
 
                         <ListBox
                             ItemsSource="{TemplateBinding Criteria}"
                             SelectedItems="{Binding SelectedCriteria, RelativeSource={RelativeSource TemplatedParent}}"
                             ItemTemplate="{StaticResource CriterionItem}"
-                            ItemContainerTheme="{StaticResource ListBoxItemSection}"
-                            IsVisible="{Binding Criteria.Count, RelativeSource={RelativeSource TemplatedParent}, FallbackValue=0}"
+                            ItemContainerTheme="{StaticResource ListBoxItemEntry}"
+                            IsVisible="{Binding Criteria.Count, RelativeSource={RelativeSource TemplatedParent}, FallbackValue={x:False}}"
                             SelectionMode="Multiple"
                             ClipToBounds="True"
-                            BorderThickness="0" CornerRadius="5"
-                            Background="Transparent"
-                            ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
+                            BorderThickness="0" CornerRadius="0 0 5 5"
+                            ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                            <ListBox.Styles>
+                                <Style Selector="ListBox > ListBoxItem:nth-last-child(-n+1)">
+                                    <Setter Property="BorderThickness" Value="0" />
+                                </Style>
+                            </ListBox.Styles>
+                        </ListBox>
                     </Panel>
                 </components:Section>
             </ControlTemplate>

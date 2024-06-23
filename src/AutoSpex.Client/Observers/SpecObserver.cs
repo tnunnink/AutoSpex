@@ -2,10 +2,11 @@
 using System.ComponentModel.DataAnnotations;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
+using CommunityToolkit.Mvvm.Messaging;
 
 namespace AutoSpex.Client.Observers;
 
-public class SpecObserver : Observer<Spec>
+public class SpecObserver : Observer<Spec>, IRecipient<CriterionObserver.Deleted>
 {
     public SpecObserver(Spec model) : base(model)
     {
@@ -67,8 +68,18 @@ public class SpecObserver : Observer<Spec>
 
     public ObserverCollection<Criterion, CriterionObserver> Filters { get; }
     public ObserverCollection<Criterion, CriterionObserver> Verifications { get; }
+    
+    /// <summary>
+    /// If a criterion is deleted remove if from either the filters or verification collection if it is found in either.
+    /// </summary>
+    public void Receive(Observer<Criterion>.Deleted message)
+    {
+        if (message.Observer is not CriterionObserver observer) return;
+        if (Filters.Remove(observer)) return;
+        Verifications.Remove(observer);
+    }
 
-    public static SpecObserver Empty => new(new Spec(Guid.Empty));
+    public static SpecObserver Empty => new(new Spec());
     public static implicit operator SpecObserver(Spec model) => new(model);
     public static implicit operator Spec(SpecObserver observer) => observer.Model;
 }

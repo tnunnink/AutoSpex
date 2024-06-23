@@ -20,7 +20,7 @@
             DrawerMaxLength="600"
             Margin="0 0 0 30">
             <controls:DrawerView.Drawer>
-                <Border Background="{actipro:ThemeResource Container2BackgroundBrush}">
+                <Border Background="{actipro:ThemeResource TitleBarBackgroundBrush}">
                     <components:NavigationMenus
                         Pages="{Binding Menus}"
                         SelectedPage="{Binding SelectedMenu}" />

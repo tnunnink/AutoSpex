@@ -1,8 +1,11 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoSpex.Client.Observers;
 using AutoSpex.Client.Shared;
+using AutoSpex.Persistence;
 using CommunityToolkit.Mvvm.ComponentModel;
+using FluentResults;
 
 namespace AutoSpex.Client.Pages;
 
@@ -22,6 +25,9 @@ public partial class RunResultsPageModel(RunObserver run) : PageViewModel
         base.OnActivated();
         UpdateOutcomes();
     }
+
+    /// <inheritdoc />
+    public override async Task<Result> Save() => await Mediator.Send(new SaveRun(Run));
 
     /// <summary>
     /// Handles adding the provided node to this <see cref="Run"/>. This will add all descendant nodes if it is a

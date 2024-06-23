@@ -9,7 +9,7 @@
              x:DataType="pages:SelectContainerPageModel"
              Height="600" Width="600">
 
-    <controls:Prompt Header="Select parent container"
+    <controls:Prompt Header="Select container"
                      HeaderIcon="{StaticResource IconContainerThemed}"
                      CancelButtonTheme="{a:ControlTheme ButtonSoft}"
                      CancelCommandParameter="{x:Null}"

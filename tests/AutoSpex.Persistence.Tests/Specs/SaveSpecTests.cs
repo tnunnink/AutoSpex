@@ -20,7 +20,7 @@ public class SaveSpecTests
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-        var spec = new Spec(Guid.NewGuid());
+        var spec = new Spec(Node.NewSpec());
 
         var result = await mediator.Send(new SaveSpec(spec));
 
@@ -34,7 +34,7 @@ public class SaveSpecTests
         var mediator = context.Resolve<IMediator>();
         var node = Node.NewSpec();
         await mediator.Send(new CreateNode(node));
-        var spec = new Spec(node.NodeId);
+        var spec = new Spec(node);
 
         var result = await mediator.Send(new SaveSpec(spec));
 
@@ -49,7 +49,7 @@ public class SaveSpecTests
         var node = Node.NewSpec();
         await mediator.Send(new CreateNode(node));
         
-        var spec = new Spec(node.NodeId)
+        var spec = new Spec(node)
             .Query(Element.Program)
             .Where(Element.Program.Property("Name"), Operation.Equal, "SomeName")
             .Verify(Element.Program.Property("Disabled"), Operation.IsFalse);
@@ -66,7 +66,7 @@ public class SaveSpecTests
         var mediator = context.Resolve<IMediator>();
         var node = Node.NewSpec();
         await mediator.Send(new CreateNode(node));
-        var spec = new Spec(node.NodeId);
+        var spec = new Spec(node);
         await mediator.Send(new SaveSpec(spec));
 
         spec.Query(Element.Tag).Where(Element.Tag.Property("Name"), Operation.Contains, "TagName");

@@ -5,7 +5,6 @@ using System.Linq;
 using AutoSpex.Client.Shared;
 using Avalonia;
 using Avalonia.Controls.Primitives;
-using DynamicData;
 
 namespace AutoSpex.Client.Components;
 

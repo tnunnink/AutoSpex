@@ -7,18 +7,24 @@ using Task = System.Threading.Tasks.Task;
 
 namespace AutoSpex.Engine;
 
+/// <summary>
+/// The configuration that defines the specification to run against a given source. A spec is basically a definition
+/// for how to get data from an L5X file and check the values of for the returned data to verify it's content. So this
+/// is the primary means though which we set up and verify L5X content. A spec will query a specific element type,
+/// filter those resulting element, and verify the candidate element all using the configured <see cref="Criterion"/>
+/// objects. This object is persisted to the database to be reloaded and executed against source files as needed.
+/// </summary>
 [PublicAPI]
 public class Spec()
 {
     /// <summary>
     /// Creates a new <see cref="Spec"/> with the provided node id.
     /// </summary>
-    /// <param name="nodeId">The <see cref="Guid"/> representing the owning node for this spec config.</param>
-    /// <param name="name">The <see cref="string"/> name of the owning node for this spec config.</param>
-    public Spec(Guid nodeId, string? name = default) : this()
+    /// <param name="node">The <see cref="Node"/> that this spec is attached to.</param>
+    public Spec(Node node) : this()
     {
-        SpecId = nodeId;
-        Name = name ?? string.Empty;
+        SpecId = node.NodeId;
+        Name = node.Name;
     }
 
     /// <summary>
@@ -141,7 +147,7 @@ public class Spec()
     /// <param name="config">The spec to apply to the this spec.</param>
     /// <returns>A <see cref="Spec"/> with the updated config.</returns>
     /// <remarks>This is mostly, so I can update the data returned from the database while maintaining the id.</remarks>
-    public Spec Configure(Spec config)
+    public Spec Update(Spec config)
     {
         ArgumentNullException.ThrowIfNull(config);
         Element = config.Element;
@@ -202,6 +208,41 @@ public class Spec()
     }
 
     /// <summary>
+    /// Executes the configured specification against the provided L5X content.
+    /// </summary>
+    /// <param name="content">The L5X representing the content to verify.</param>
+    /// <param name="token">A token for canceling the run.</param>
+    /// <returns>A collection of <see cref="Verification"/> objects indicating the result data.</returns>
+    private Task<ReadOnlyCollection<Verification>> RunSpec(L5X content, CancellationToken token = default)
+    {
+        return Task.Run(() =>
+        {
+            var verifications = new List<Verification>();
+
+            //1.Query content
+            var elements = Element.Query(content);
+
+            token.ThrowIfCancellationRequested();
+
+            //2.Filter content
+            var filtered = elements.Where(Filter).ToList();
+
+            token.ThrowIfCancellationRequested();
+
+            //3.Evaluate count (if configured)
+            if (Settings.VerifyCount)
+                verifications.Add(VerifyCount(filtered));
+
+            token.ThrowIfCancellationRequested();
+
+            //4.Verify candidates
+            verifications.AddRange(filtered.Select(Verify));
+
+            return verifications.AsReadOnly();
+        }, token);
+    }
+
+    /// <summary>
     /// Given a target object, runs the configured <see cref="Filters"/> to evaluate whether this object should be
     /// considered a candidate for verification of this spec.
     /// </summary>
@@ -237,12 +278,13 @@ public class Spec()
     /// Given the filtered candidate collection, verify the configured range criterion stored in the spec
     /// <see cref="Settings"/> object. 
     /// </summary>
-    /// <param name="candidates">The collection of candidate object that passed the filter step.</param>
+    /// <param name="collection">The collection of candidate object that passed the filter step.</param>
     /// <returns>A <see cref="Verification"/> representing the result of the range criterion.</returns>
-    private Verification VerifyCount(ICollection<LogixElement> candidates)
+    private Verification VerifyCount(ICollection<LogixElement> collection)
     {
-        var criterion = new Criterion(Settings.CountOperation, Settings.CountValue);
-        var evaluation = criterion.Evaluate(candidates.Count);
+        var property = Property.This(typeof(ICollection<LogixElement>)).GetProperty("Count");
+        var criterion = new Criterion(property, Settings.CountOperation, Settings.CountValue);
+        var evaluation = criterion.Evaluate(collection);
         return Verification.For(evaluation);
     }
 
@@ -278,38 +320,5 @@ public class Spec()
         }
 
         return variables;
-    }
-
-    /// <summary>
-    /// Executes the configured specification against the provided L5X content.
-    /// </summary>
-    /// <param name="content">The L5X representing the content to verify.</param>
-    /// <param name="token">A token for canceling the run.</param>
-    /// <returns>A collection of <see cref="Verification"/> objects indicating the result data.</returns>
-    private Task<ReadOnlyCollection<Verification>> RunSpec(L5X content, CancellationToken token = default)
-    {
-        return Task.Run(() =>
-        {
-            var verifications = new List<Verification>();
-
-            //1.Query content
-            var elements = Element.Query(content);
-
-            token.ThrowIfCancellationRequested();
-
-            //2.Filter content
-            var filtered = elements.Where(Filter).ToList();
-
-            token.ThrowIfCancellationRequested();
-
-            //3.Evaluate count (if configured)
-            if (Settings.VerifyCount)
-                verifications.Add(VerifyCount(filtered));
-
-            //4.Verify candidates
-            verifications.AddRange(filtered.Select(Verify));
-
-            return verifications.AsReadOnly();
-        }, token);
     }
 }

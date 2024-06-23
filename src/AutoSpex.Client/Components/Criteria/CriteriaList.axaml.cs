@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Linq;
 using AutoSpex.Client.Observers;
 using AutoSpex.Engine;
@@ -47,13 +46,10 @@ public class CriteriaList : TemplatedControl
 
     public CriteriaList()
     {
-        SelectedCriteria.CollectionChanged += OnSelectedCriteriaChanged;
         AddCriterionCommand = new RelayCommand(AddCriterion, CanAddCriterion);
+        ToggleInclusionCommand = new RelayCommand(ToggleInclusion);
         RemoveCriterionCommand = new RelayCommand<CriterionObserver>(RemoveCriterion);
         RemoveSelectedCommand = new RelayCommand(RemoveSelected, HasSelected);
-        InvertSelectedCommand = new RelayCommand(InvertSelected, HasSelected);
-        EnableSelectedCommand = new RelayCommand(EnableSelected, HasSelected);
-        DisableSelectedCommand = new RelayCommand(DisableSelected, HasSelected);
         CopySelectedCommand = new AsyncRelayCommand(CopySelected, HasSelected);
         PasteSelectedCommand = new AsyncRelayCommand(PasteCriteria);
     }
@@ -91,11 +87,9 @@ public class CriteriaList : TemplatedControl
     public ObservableCollection<CriterionObserver> SelectedCriteria { get; } = [];
 
     public IRelayCommand? AddCriterionCommand { get; }
+    public IRelayCommand? ToggleInclusionCommand { get; }
     public IRelayCommand? RemoveCriterionCommand { get; }
     public IRelayCommand? RemoveSelectedCommand { get; }
-    public IRelayCommand? InvertSelectedCommand { get; }
-    public IRelayCommand? EnableSelectedCommand { get; }
-    public IRelayCommand? DisableSelectedCommand { get; }
     public IRelayCommand? CopySelectedCommand { get; }
     public IRelayCommand? PasteSelectedCommand { get; }
 
@@ -134,30 +128,6 @@ public class CriteriaList : TemplatedControl
             Criteria.Remove(criterion);
     }
 
-    private void InvertSelected()
-    {
-        var selected = SelectedCriteria.ToList();
-
-        foreach (var criterion in selected)
-            criterion.Invert = true;
-    }
-
-    private void EnableSelected()
-    {
-        var selected = SelectedCriteria.ToList();
-
-        foreach (var criterion in selected)
-            criterion.IsEnabled = true;
-    }
-
-    private void DisableSelected()
-    {
-        var selected = SelectedCriteria.ToList();
-
-        foreach (var criterion in selected)
-            criterion.IsEnabled = false;
-    }
-
     private Task CopySelected()
     {
         var clipboard = TopLevel.GetTopLevel(this)?.Clipboard ??
@@ -185,18 +155,11 @@ public class CriteriaList : TemplatedControl
 
     private bool HasSelected() => SelectedCriteria.Count > 0;
 
-    private void OnSelectedCriteriaChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    /// <summary>
+    /// Changes the state of the inclusion property to the opposite value.
+    /// </summary>
+    private void ToggleInclusion()
     {
-        RefreshButtonExecutionStates();
-    }
-
-    private void RefreshButtonExecutionStates()
-    {
-        RemoveSelectedCommand?.NotifyCanExecuteChanged();
-        InvertSelectedCommand?.NotifyCanExecuteChanged();
-        EnableSelectedCommand?.NotifyCanExecuteChanged();
-        DisableSelectedCommand?.NotifyCanExecuteChanged();
-        CopySelectedCommand?.NotifyCanExecuteChanged();
-        PasteSelectedCommand?.NotifyCanExecuteChanged();
+        Inclusion = Inclusion == Inclusion.All ? Inclusion.Any : Inclusion.All;
     }
 }
