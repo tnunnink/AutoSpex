@@ -54,7 +54,7 @@ public class CriterionTests
     }
 
     [Test]
-    public void Evaluate_InvalidOperationForPropertyType_ShouldHaveFailedEvaluation()
+    public void Evaluate_StringPropertyWithNumericArguments_ShouldHaveFailedButNotErrorBecauseTheArgumentsAreConverted()
     {
         var tag = new Tag { Name = "Test" };
 
@@ -62,8 +62,7 @@ public class CriterionTests
 
         var evaluation = criterion.Evaluate(tag);
 
-        evaluation.Result.Should().Be(ResultState.Error);
-        evaluation.Error.Should().NotBeEmpty();
+        evaluation.Result.Should().Be(ResultState.Failed);
     }
 
     [Test]
@@ -133,7 +132,7 @@ public class CriterionTests
     public void VariableArgument_LogixTypeFloatEquals_ShouldRunCorrectly()
     {
         var tag = new Tag { Name = "TestTag", Value = 1.2345f };
-        var variable = new Variable("Value", 1.2345f);
+        var variable = new Variable("Value", new REAL(1.2345f));
         var criterion = new Criterion(Element.Tag.Property("Value"), Operation.Equal, variable);
 
         var eval = criterion.Evaluate(tag);

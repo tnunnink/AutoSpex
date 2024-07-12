@@ -1,4 +1,5 @@
-﻿using L5Sharp.Core;
+﻿using System.Text.Json.Serialization;
+using Ardalis.SmartEnum.SystemTextJson;
 
 namespace AutoSpex.Engine;
 
@@ -8,15 +9,21 @@ namespace AutoSpex.Engine;
 /// </summary>
 public class Variable : IEquatable<Variable>
 {
-    private const char VariableStart = '{';
-    private const char VariableEnd = '}';
-
     /// <summary>
     /// Creates a new <see cref="Variable"/> with default empty values.
     /// </summary>
     public Variable()
     {
         ChangeGroup(TypeGroup.Text);
+    }
+
+    /// <summary>
+    /// Creates a new <see cref="Variable"/> having the provided node id.
+    /// </summary>
+    /// <param name="nodeId">The id of the node this variable belongs to.</param>
+    public Variable(Guid nodeId) : this()
+    {
+        NodeId = nodeId;
     }
 
     /// <summary>
@@ -40,87 +47,51 @@ public class Variable : IEquatable<Variable>
             throw new ArgumentException("Can not create variable with null or empty name.");
 
         Name = name;
-        Group = TypeGroup.FromType(value?.GetType());
-        Type = value?.GetType() ?? Group.DefaultType;
         Value = value;
+        Group = TypeGroup.FromType(value?.GetType());
     }
 
     /// <summary>
     /// The unique id of the <see cref="Variable"/> object.
     /// </summary>
-    public Guid VariableId { get; init; } = Guid.NewGuid();
+    [JsonInclude]
+    public Guid VariableId { get; private init; } = Guid.NewGuid();
+
+    /// <summary>
+    /// The <see cref="Guid"/> that identifies the node this variable is defined for.
+    /// By default, this is an empty guid, but should be set upon retrieval from the database so that the object can
+    /// identify which node it is scoped to.
+    /// </summary>
+    [JsonIgnore]
+    public Guid NodeId { get; private set; } = Guid.Empty;
 
     /// <summary>
     /// The string name used to identify the <see cref="Variable"/>.
     /// </summary>
+    [JsonInclude]
     public string Name { get; set; } = string.Empty;
 
     /// <summary>
-    /// The qualified path representing the node this variable belongs to.
+    /// The <see cref="TypeGroup"/> which the variable value belongs. This is somewhat loosely coupled to the value type
+    /// since you can change value and not group. But this is more for the interface so the suer can select a group which
+    /// we can use to attempt to parse their text input.
     /// </summary>
-    public string Path { get; private set; } = string.Empty;
-
-    /// <summary>
-    /// Represents a scoped reference to a <see cref="Variable"/> object.
-    /// </summary>
-    public string ScopedReference => string.Concat(VariableStart, Name, VariableEnd);
-
-    /// <summary>
-    /// Represents the absolute reference of a <see cref="Variable"/> object.
-    /// </summary>
-    /// <remarks>
-    /// The absolute reference is the full path of a variable, including its name and the path of its parent object, if any.
-    /// It is used to uniquely identify a variable within a system.
-    /// </remarks>
-    public string AbsoluteReference =>
-        string.IsNullOrEmpty(Path) ? ScopedReference : string.Concat(VariableStart, Path, ".", Name, VariableEnd);
-
-    /// <summary>
-    /// The <see cref="TypeGroup"/> which the variable value belongs.
-    /// </summary>
+    [JsonConverter(typeof(SmartEnumNameConverter<TypeGroup, int>))]
+    [JsonInclude]
     public TypeGroup Group { get; private set; } = TypeGroup.Default;
 
     /// <summary>
-    /// The type of the variable value. This is persisted, so we know how to materialize the object value to a strongly
-    /// typed object at runtime, which will allow us to pass in strongly typed values for criteria evaluation.
+    /// The type of the variable value.
     /// </summary>
-    public Type? Type { get; private set; } = typeof(object);
+    [JsonIgnore]
+    public Type? Type => Value?.GetType();
 
     /// <summary>
     /// The object value of the <see cref="Variable"/>.
     /// </summary>
-    public object? Value
-    {
-        get => GetValue();
-        set => SetValue(value);
-    }
-
-    /// <summary>
-    /// The raw string data representing the value of the variable. This is what is persisted and ultimately what
-    /// <see cref="Value"/> is after being parsed using the defined type.
-    /// </summary>
-    public string? Data { get; private set; }
-
-    /// <summary>
-    /// Gets or sets the description of the <see cref="Variable"/> object.
-    /// </summary>
-    public string? Description { get; set; }
-
-    /// <inheritdoc />
-    public override string ToString() => ScopedReference;
-
-    /// <inheritdoc />
-    public bool Equals(Variable? other)
-    {
-        if (ReferenceEquals(null, other)) return false;
-        return ReferenceEquals(this, other) || VariableId.Equals(other.VariableId);
-    }
-
-    /// <inheritdoc />
-    public override bool Equals(object? obj) => obj is Variable other && Equals(other);
-
-    /// <inheritdoc />
-    public override int GetHashCode() => VariableId.GetHashCode();
+    [JsonConverter(typeof(JsonObjectConverter))]
+    [JsonInclude]
+    public object? Value { get; set; }
 
     /// <summary>
     /// Updates the variable <see cref="Group"/> that the value represents.
@@ -134,33 +105,48 @@ public class Variable : IEquatable<Variable>
     }
 
     /// <summary>
-    /// Gets an object value using the provided string data and specified type information.
+    /// Creates a new cloned instance of the <see cref="Variable"/> object that can be used as an override to the
+    /// value when a run is executed.
     /// </summary>
-    private object? GetValue()
+    /// <returns>A new <see cref="Variable"/> instance that is a clone of the current instance.</returns>
+    public Variable CreateOverride(object? value)
     {
-        if (Data is null || Type is null)
-            return default;
-
-        //Technically out LogixParser can handle all the types we care about.
-        return Type.IsParsable() ? Data.TryParse(Type) : null;
+        return new Variable
+        {
+            VariableId = VariableId,
+            NodeId = NodeId,
+            Name = Name,
+            Group = Group,
+            Value = value
+        };
     }
 
     /// <summary>
-    /// Converts an input object to the storable string  and assigns to <see cref="Data"/>,
-    /// which we will know how to convert back to the strongly typed object when retrieving from the database.
+    /// Updates the local variable data to match the data of the provided variable. This includes properties
+    /// <see cref="NodeId"/>, <see cref="Name"/>, <see cref="Group"/>, and <see cref="Value"/>.
     /// </summary>
-    private void SetValue(object? value)
+    /// <param name="variable">The variable to sync the data to.</param>
+    public void SyncTo(Variable variable)
     {
-        Type = value?.GetType();
-        //todo handling collections that are not LogixContainer
-        Data = value switch
-        {
-            null => null,
-            string v => v,
-            LogixEnum v => v.Name,
-            AtomicData v => v.ToString(),
-            LogixElement v => v.Serialize().ToString(),
-            _ => value.ToString()
-        };
+        NodeId = variable.NodeId;
+        Name = variable.Name;
+        Group = variable.Group;
+        Value = variable.Value;
     }
+
+    /// <inheritdoc />
+    public override string ToString() => Name;
+
+    /// <inheritdoc />
+    public bool Equals(Variable? other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        return ReferenceEquals(this, other) || VariableId.Equals(other.VariableId);
+    }
+
+    /// <inheritdoc />
+    public override bool Equals(object? obj) => obj is Variable other && Equals(other);
+
+    /// <inheritdoc />
+    public override int GetHashCode() => VariableId.GetHashCode();
 }

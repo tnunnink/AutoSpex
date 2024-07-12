@@ -4,7 +4,7 @@
         xmlns:client="clr-namespace:AutoSpex.Client"
         x:Class="AutoSpex.Client.Shell"
         x:DataType="client:Shell"
-        Width="1200" Height="900"
+        Width="1400" Height="980"
         WindowState="Normal"
         Icon="Resources/Images/logo.ico"
         WindowStartupLocation="CenterScreen"
@@ -13,38 +13,29 @@
         ExtendClientAreaTitleBarHeightHint="0"
         SystemDecorations="BorderOnly"
         Focusable="True" IsTabStop="False">
-    <Interaction.Behaviors>
-        <EventTriggerBehavior EventName="Loaded">
-            <InvokeCommandAction Command="{Binding NavigateHomeCommand}" />
-        </EventTriggerBehavior>
-    </Interaction.Behaviors>
 
     <Panel>
         <DockPanel>
             <!-- Title Bar -->
             <a:ChromedTitleBar DockPanel.Dock="Top" Height="40">
                 <a:ChromedTitleBar.LeftContent>
-                    <Button
-                        Theme="{a:ControlTheme TitleBarButton}"
-                        Command="{Binding NavigateHomeCommand}">
+                    <Border Padding="10 0">
                         <StackPanel Orientation="Horizontal" Spacing="10">
                             <Image Source="../Resources/Images/logo.png"
                                    Height="22" Width="22" />
                             <TextBlock Text="AutoSpex" Classes="theme-text-heading size-xs" />
                         </StackPanel>
-                    </Button>
+                    </Border>
                 </a:ChromedTitleBar.LeftContent>
 
                 <a:ChromedTitleBar.RightContent>
                     <StackPanel Orientation="Horizontal" Margin="5 0">
                         <a:ToggleThemeButton
                             Theme="{a:ControlTheme TitleBarToggleThemeButton}"
-                            Padding="10"
                             ToolTip.Tip="Toggle Theme" />
                         <Button Theme="{a:ControlTheme TitleBarButton}"
-                                Padding="3"
                                 ToolTip.Tip="Settings">
-                            <PathIcon Theme="{StaticResource IconCogOutlined}"
+                            <PathIcon Theme="{StaticResource IconLineGear}"
                                       Foreground="{Binding $parent[Button].Foreground}" />
                         </Button>
                     </StackPanel>

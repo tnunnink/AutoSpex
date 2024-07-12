@@ -1,0 +1,65 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:component="using:AutoSpex.Client.Components"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
+
+    <Design.PreviewWith>
+        <component:RenamePrompt />
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type component:RenamePrompt}" TargetType="component:RenamePrompt">
+        <Setter Property="Template">
+            <ControlTemplate>
+                
+                <controls:Prompt Header="Rename"
+                                 HeaderIcon="{Binding Observer.Icon, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource KeyToIconConverter}, FallbackValue={x:Null}}"
+                                 CancelButtonTheme="{a:ControlTheme ButtonSoft}"
+                                 CancelCommandParameter="{x:Null}"
+                                 ActionButtonTheme="{a:ControlTheme ButtonSolid}"
+                                 ActionButtonText="OK"
+                                 ActionCommandParameter="{Binding #NameEntry.Text}"
+                                 Classes="accent"
+                                 MinWidth="500">
+
+                    <controls:Prompt.Content>
+                        <Border x:Name="Border" Focusable="True">
+
+                            <StackPanel Spacing="10">
+
+                                <DockPanel>
+                                    <Label
+                                        DockPanel.Dock="Left"
+                                        Content="New Name:"
+                                        Margin="0 0 10 0" />
+                                    <TextBox x:Name="NameEntry"
+                                             Text="{Binding Observer.Name, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay, FallbackValue={x:Null}}"
+                                             Watermark="Enter name"
+                                             Theme="{StaticResource TextBoxOutlineHighlight}"
+                                             VerticalContentAlignment="Center"
+                                             TextWrapping="NoWrap"
+                                             Focusable="True">
+                                        <Interaction.Behaviors>
+                                            <FocusOnAttachedToVisualTreeBehavior />
+                                            <SelectAllOnGotFocusBehavior />
+                                            <ExecuteCommandOnKeyUpBehavior
+                                                Key="Enter"
+                                                Command="{Binding $parent[controls:Prompt].ActionCommand}"
+                                                CommandParameter="{Binding #NameEntry.Text}"
+                                                FocusControl="Border" />
+                                            <ExecuteCommandOnKeyUpBehavior
+                                                Key="Escape"
+                                                Command="{Binding $parent[controls:Prompt].CancelCommand}" />
+                                        </Interaction.Behaviors>
+                                    </TextBox>
+                                </DockPanel>
+
+                            </StackPanel>
+                        </Border>
+                    </controls:Prompt.Content>
+
+                </controls:Prompt>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

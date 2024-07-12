@@ -1,4 +1,6 @@
 ﻿using System.Linq.Expressions;
+using System.Text.Json.Serialization;
+using Ardalis.SmartEnum.SystemTextJson;
 
 namespace AutoSpex.Engine;
 
@@ -84,24 +86,29 @@ public class Criterion : IEquatable<Criterion>
     /// <summary>
     /// A <see cref="Guid"/> that uniquely identifies this object.
     /// </summary>
-    public Guid CriterionId { get; } = Guid.NewGuid();
+    [JsonInclude]
+    public Guid CriterionId { get; private init; } = Guid.NewGuid();
 
     /// <summary>
     /// The type this criterion represents. This is not used when evaluation is called, but
     /// is here to allow this data to be passed along with the object, so we know which properties can be resolved for this criterion. 
     /// </summary>
-    public Type Type { get; } = typeof(object);
+    [JsonConverter(typeof(JsonTypeConverter))]
+    [JsonInclude]
+    public Type Type { get; private set; } = typeof(object);
 
     /// <summary>
     /// The property of the provided object which will be the target or input value of the evaluation. If null,
     /// then <see cref="Evaluate"/> will simply use the provided candidate object itself as the target of the
     /// evaluation. This allows use to pass simple or complex objects to the criterion and specify which property to evaluate.
     /// </summary>
+    [JsonConverter(typeof(JsonPropertyConverter))]
     public Property Property { get; set; } = Property.Default;
 
     /// <summary>
     /// The operation the evaluation will execute on the input and argument values.
     /// </summary>
+    [JsonConverter(typeof(SmartEnumNameConverter<Operation, string>))]
     public Operation Operation { get; set; } = Operation.None;
 
     /// <summary>
@@ -114,15 +121,15 @@ public class Criterion : IEquatable<Criterion>
     /// </summary>
     public bool Invert { get; set; }
 
-    public static implicit operator Func<object?, bool>(Criterion criterion) => x => criterion.Evaluate(x);
-    public static implicit operator Expression<Func<object?, bool>>(Criterion criterion) => criterion.ToExpression();
+    public static implicit operator Func<object, bool>(Criterion criterion) => x => criterion.Evaluate(x);
+    public static implicit operator Expression<Func<object, bool>>(Criterion criterion) => criterion.ToExpression();
 
     /// <summary>
     /// Evaluates a candidate object using the current state/properties of the criterion object.
     /// </summary>
     /// <param name="candidate">The object to be evaluated.</param>
     /// <returns>An Evaluation object indicating the result of the evaluation.</returns>
-    public Evaluation Evaluate(object? candidate)
+    public Evaluation Evaluate(object candidate)
     {
         try
         {
@@ -156,7 +163,19 @@ public class Criterion : IEquatable<Criterion>
                            (criterion.CriterionId == other.CriterionId || criterion.Contains(other)));
 
     /// <inheritdoc />
-    public override string ToString() => $"{GetCriteria()} {GetExpected()}".Trim();
+    public override string ToString()
+    {
+        var final = GetExpected().ToList();
+
+        var expected = final.Count switch
+        {
+            1 => final[0].ToText(),
+            > 1 => $"[{string.Join(',', final.Select(x => x.ToText()))}]",
+            _ => string.Empty
+        };
+        
+        return $"{GetCriteria()} {expected}".Trim();
+    }
 
     /// <summary>
     /// Gets test text containing the property and operation that this criterion is configured to evaluate. this includes
@@ -180,16 +199,9 @@ public class Criterion : IEquatable<Criterion>
     /// If there are multiple arguments, it returns a string representation of the list of final values enclosed in square brackets.
     /// If there are no arguments, it returns an empty string.
     /// </returns>
-    public string GetExpected()
+    public IEnumerable<object> GetExpected()
     {
-        var final = Arguments.SelectMany(a => a.Expected()).ToList();
-
-        return final.Count switch
-        {
-            1 => final[0].ToText(),
-            > 1 => $"[{string.Join(',', final.Select(x => x.ToText()))}]",
-            _ => string.Empty
-        };
+        return Arguments.SelectMany(a => a.Expected()).ToList();
     }
 
     public bool Equals(Criterion? other)
@@ -201,11 +213,11 @@ public class Criterion : IEquatable<Criterion>
     public override bool Equals(object? obj) => obj is Criterion other && Equals(other);
     public override int GetHashCode() => CriterionId.GetHashCode();
 
-    private Expression<Func<object?, bool>> ToExpression()
+    private Expression<Func<object, bool>> ToExpression()
     {
         var parameter = Expression.Parameter(typeof(object), "x");
         Func<object, bool> func = x => (bool)Evaluate(x);
         var call = Expression.Call(Expression.Constant(func.Target), func.Method, parameter);
-        return Expression.Lambda<Func<object?, bool>>(call, parameter);
+        return Expression.Lambda<Func<object, bool>>(call, parameter);
     }
 }

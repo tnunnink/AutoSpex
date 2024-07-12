@@ -1,4 +1,7 @@
-﻿using AutoSpex.Client.Shared;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 
 namespace AutoSpex.Client.Observers;
@@ -11,21 +14,30 @@ namespace AutoSpex.Client.Observers;
 public class EvaluationObserver(Evaluation model) : Observer<Evaluation>(model)
 {
     public ResultState Result => Model.Result;
-    public string Candidate => Model.Candidate;
+    public ValueObserver Candidate => new(Model.Candidate);
     public string Criteria => Model.Criteria;
-    public string Expected => Model.Expected;
-    public string Actual => Model.Actual;
-    public string Error => Model.Error;
+    public ObservableCollection<ValueObserver> Expected => new(Model.Expected.Select(x => new ValueObserver(x)));
+    public ValueObserver Actual => new(Model.Actual);
+    public Exception? Error => Model.Error;
+    public Guid SourceId => Model.SourceId;
+    public string SourceName => Model.SourceName;
+    public string SourcePath => Model.SourcePath;
+
 
     /// <inheritdoc />
     public override bool Filter(string? filter)
     {
-        return base.Filter(filter)
-               || Candidate.PassesFilter(filter)
-               || Criteria.PassesFilter(filter)
-               || Expected.PassesFilter(filter)
-               || Actual.PassesFilter(filter)
-               || Error.PassesFilter(filter);
+        FilterText = filter;
+
+        var passes = string.IsNullOrEmpty(filter)
+                    || Candidate.Text.Satisfies(filter)
+                    || Criteria.Satisfies(filter)
+                    || Expected.Any(e => e.Text.Satisfies(filter))
+                    || Actual.Text.Satisfies(filter)
+                    || Error is not null && Error.Message.Satisfies(filter)
+                    || SourceName.Satisfies(filter);
+
+        return passes;
     }
 
     public static implicit operator Evaluation(EvaluationObserver observer) => observer.Model;

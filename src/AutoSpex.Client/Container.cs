@@ -50,9 +50,7 @@ public class Container
         registry.RegisterPrompter();
         registry.RegisterPages();
 
-        var container = new Lamar.Container(registry);
-
-        _container = container;
+        _container = new Lamar.Container(registry);
     }
 
     public static void Dispose()
@@ -96,7 +94,7 @@ internal static class RegistrationExtensions
     {
         registry.For<Notifier>().Use<Notifier>().Singleton();
     }
-    
+
     internal static void RegisterPrompter(this ServiceRegistry registry)
     {
         registry.For<Prompter>().Use<Prompter>().Singleton();

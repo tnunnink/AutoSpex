@@ -1,5 +1,8 @@
 ﻿// ReSharper disable UseObjectOrCollectionInitializer
 
+using System.Text.Json;
+using Task = System.Threading.Tasks.Task;
+
 namespace AutoSpex.Engine.Tests;
 
 [TestFixture]
@@ -12,14 +15,9 @@ public class VariableTests
 
         variable.VariableId.Should().NotBeEmpty();
         variable.Name.Should().BeEmpty();
-        variable.Path.Should().BeEmpty();
-        variable.ScopedReference.Should().Be("{}");
-        variable.AbsoluteReference.Should().Be("{}");
         variable.Group.Should().Be(TypeGroup.Text);
         variable.Type.Should().Be(typeof(string));
         variable.Value.Should().Be(string.Empty);
-        variable.Data.Should().Be(string.Empty);
-        variable.Description.Should().BeNull();
     }
 
     [Test]
@@ -31,7 +29,6 @@ public class VariableTests
         variable.Type.Should().Be(typeof(bool));
         variable.Group.Should().Be(TypeGroup.Boolean);
         variable.Value.Should().Be(false);
-        variable.Data.Should().Be("False");
     }
 
     [Test]
@@ -43,7 +40,6 @@ public class VariableTests
         variable.Type.Should().Be(typeof(int));
         variable.Group.Should().Be(TypeGroup.Number);
         variable.Value.Should().Be(0);
-        variable.Data.Should().Be("0");
     }
 
     [Test]
@@ -55,7 +51,6 @@ public class VariableTests
         variable.Type.Should().Be(typeof(string));
         variable.Group.Should().Be(TypeGroup.Text);
         variable.Value.Should().Be("");
-        variable.Data.Should().Be("");
     }
 
     [Test]
@@ -67,8 +62,6 @@ public class VariableTests
         variable.Type.Should().Be(typeof(DateTime));
         variable.Group.Should().Be(TypeGroup.Date);
         variable.Value.Should().Be(DateTime.Today);
-        // ReSharper disable once SpecifyACultureInStringConversionExplicitly
-        variable.Data.Should().Be(DateTime.Today.ToString());
     }
 
     [Test]
@@ -80,7 +73,6 @@ public class VariableTests
         variable.Group.Should().Be(TypeGroup.Enum);
         variable.Type.Should().BeNull();
         variable.Value.Should().BeNull();
-        variable.Data.Should().BeNull();
     }
 
     [Test]
@@ -92,7 +84,6 @@ public class VariableTests
         variable.Group.Should().Be(TypeGroup.Element);
         variable.Type.Should().BeNull();
         variable.Value.Should().BeNull();
-        variable.Data.Should().BeNull();
     }
 
     [Test]
@@ -104,8 +95,7 @@ public class VariableTests
         variable.Group.Should().Be(TypeGroup.Collection);
         variable.Type.Should().Be(typeof(List<object>));
         //todo we need to work out collection. How is it serialized and parsed?
-        /*variable.Value.Should().Be(new List<object>());
-        variable.Data.Should().NotBeEmpty();*/
+        /*variable.Value.Should().Be(new List<object>());*/
     }
 
     [Test]
@@ -115,12 +105,9 @@ public class VariableTests
 
         variable.VariableId.Should().NotBeEmpty();
         variable.Name.Should().Be("MyVar");
-        variable.ScopedReference.Should().Be("{MyVar}");
-        variable.AbsoluteReference.Should().Be("{MyVar}");
         variable.Type.Should().Be(typeof(string));
         variable.Group.Should().Be(TypeGroup.Text);
         variable.Value.Should().Be("SomeValue");
-        variable.Data.Should().Be("SomeValue");
     }
 
     [Test]
@@ -131,7 +118,6 @@ public class VariableTests
         variable.Value = null;
 
         variable.Value.Should().BeNull();
-        variable.Data.Should().BeNull();
         variable.Type.Should().BeNull();
     }
 
@@ -144,7 +130,6 @@ public class VariableTests
 
         variable.Value.Should().Be("Something");
         variable.Type.Should().Be(typeof(string));
-        variable.Data.Should().Be("Something");
     }
 
     [Test]
@@ -156,7 +141,6 @@ public class VariableTests
 
         variable.Value.Should().Be(123);
         variable.Type.Should().Be(typeof(int));
-        variable.Data.Should().Be("123");
     }
 
     [Test]
@@ -168,7 +152,6 @@ public class VariableTests
 
         variable.Value.Should().Be(1.23);
         variable.Type.Should().Be(typeof(double));
-        variable.Data.Should().Be("1.23");
     }
 
     [Test]
@@ -180,7 +163,6 @@ public class VariableTests
 
         variable.Value.Should().Be(true);
         variable.Type.Should().Be(typeof(bool));
-        variable.Data.Should().Be("True");
     }
 
     [Test]
@@ -192,7 +174,6 @@ public class VariableTests
 
         variable.Value.Should().Be(123);
         variable.Type.Should().Be(typeof(DINT));
-        variable.Data.Should().Be("123");
     }
 
     [Test]
@@ -204,7 +185,6 @@ public class VariableTests
 
         variable.Value.Should().Be(1.23f);
         variable.Type.Should().Be(typeof(REAL));
-        variable.Data.Should().Be("1.23");
     }
 
     [Test]
@@ -216,7 +196,6 @@ public class VariableTests
 
         variable.Value.Should().Be(true);
         variable.Type.Should().Be(typeof(BOOL));
-        variable.Data.Should().Be("1");
     }
 
     [Test]
@@ -228,7 +207,6 @@ public class VariableTests
 
         variable.Value.Should().Be(ExternalAccess.None);
         variable.Type.Should().Be(typeof(ExternalAccess));
-        variable.Data.Should().Be("None");
     }
 
     [Test]
@@ -240,7 +218,6 @@ public class VariableTests
 
         variable.Value.Should().Be(Radix.Ascii);
         variable.Type.Should().Be(Radix.Ascii.GetType());
-        variable.Data.Should().Be("Ascii");
     }
 
     [Test]
@@ -253,7 +230,27 @@ public class VariableTests
         variable.Value = tag;
 
         variable.Value.Should().BeEquivalentTo(tag);
-        variable.Data.Should().Be(tag.Serialize().ToString());
         variable.Type.Should().Be(typeof(Tag));
+    }
+    
+    [Test]
+    public Task Serialize_SimpleValue_ShouldBeVerified()
+    {
+        var variable = new Variable("Test", 123);
+
+        var data = JsonSerializer.Serialize(variable);
+
+        return VerifyJson(data);
+    }
+
+    [Test]
+    public void Deserialize_SimpleValue_ShouldBeExpected()
+    {
+        var variable = new Variable("Test", 123);
+        var data = JsonSerializer.Serialize(variable);
+
+        var result = JsonSerializer.Deserialize<Variable>(data);
+
+        result.Should().BeEquivalentTo(variable);
     }
 }

@@ -1,0 +1,137 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+
+    <Design.PreviewWith>
+        <ListBox
+            Margin="20" Width="700" Height="300"
+            ItemsSource="{x:Static components:DesignData.DefaultOutcomes}"
+            ItemTemplate="{DynamicResource OutcomeListItem}"
+            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+            BorderThickness="1" CornerRadius="5" VerticalAlignment="Top">
+            <ListBox.ItemContainerTheme>
+                <ControlTheme TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemSection}"
+                              x:DataType="observers:OutcomeObserver">
+
+                    <Style Selector="^:pointerover /template/ Border#RootBorder">
+                        <Setter Property="Background" Value="{a:ThemeResource Container2BackgroundBrush}" />
+                    </Style>
+                </ControlTheme>
+            </ListBox.ItemContainerTheme>
+        </ListBox>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="OutcomeListItem" x:DataType="observers:OutcomeObserver">
+        <Border Padding="0 5">
+            <Expander
+                Theme="{StaticResource ExpanderEmbedded}"
+                IsExpanded="{Binding IsExpanded}">
+
+                <Expander.Header>
+                    <Grid Margin="7 0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="DurationColumnGroup" />
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="PathColumnGroup" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+
+                            <PathIcon
+                                Theme="{Binding Result, Converter={StaticResource ResultStateToIconConverter}}" />
+
+                            <controls:HighlightableTextBlock
+                                Text="{Binding Name}"
+                                HighlightedText="{Binding FilterText}"
+                                FontWeight="{a:ThemeResource HeadingFontWeightMedium}"
+                                MaxWidth="250"
+                                TextTrimming="CharacterEllipsis"
+                                ToolTip.Tip="{Binding Name}" />
+
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <TextBlock Text="in" Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                                <ItemsControl ItemsSource="{Binding Node.Crumbs, FallbackValue={x:Null}}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Horizontal" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="observers:NodeObserver">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock
+                                                    x:Name="Separator"
+                                                    Text="/"
+                                                    Padding="3 0 3 1"
+                                                    IsVisible="{Binding Parent, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                                    Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                                                <controls:HighlightableTextBlock
+                                                    Text="{Binding Name}"
+                                                    HighlightedText="{Binding $parent[Expander].((observers:OutcomeObserver)DataContext).FilterText, FallbackValue={x:Null}}"
+                                                    Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="5">
+
+                            <StackPanel Orientation="Horizontal" Spacing="2" Margin="10 0"
+                                        IsVisible="{Binding Duration}">
+                                <PathIcon Theme="{StaticResource IconLineStopwatch}" Classes="size-sm accent"
+                                          Margin="4 1 4 0" />
+                                <TextBlock Text="{Binding Duration}" />
+                                <TextBlock Text="ms" Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                            </StackPanel>
+
+                            <Button
+                                Command="{Binding NavigateCommand}"
+                                IsVisible="{Binding Node, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                Theme="{StaticResource IconButtonSmall}"
+                                properties:Icon.Theme="{StaticResource IconLineLink}"
+                                ToolTip.Tip="Open Spec" />
+                            <Button
+                                Theme="{StaticResource IconButtonSmall}"
+                                properties:Icon.Theme="{StaticResource IconDots}"
+                                ToolTip.Tip="Options" />
+
+                        </StackPanel>
+                    </Grid>
+                </Expander.Header>
+
+                <Expander.Content>
+                    <Panel>
+                        <controls:DefaultMessage
+                            IsVisible="{Binding !Results.Count}"
+                            HeaderText="No results available"
+                            CustomMessage="Result will appear after executing this run." />
+
+                        <ListBox
+                            ItemsSource="{Binding Results}"
+                            ItemTemplate="{StaticResource EvaluationListItem}"
+                            SelectionMode="Multiple"
+                            VerticalAlignment="Top"
+                            MaxHeight="300">
+                            <ListBox.ItemContainerTheme>
+                                <ControlTheme TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemSubtle}"
+                                              x:DataType="observers:EvaluationObserver">
+                                    <Setter Property="Padding" Value="0" />
+                                    <Setter Property="BorderThickness" Value="0" />
+                                    <Setter Property="IsVisible" Value="{Binding IsVisible}" />
+                                </ControlTheme>
+                            </ListBox.ItemContainerTheme>
+                        </ListBox>
+                    </Panel>
+                </Expander.Content>
+            </Expander>
+        </Border>
+    </DataTemplate>
+</ResourceDictionary>

@@ -36,8 +36,6 @@ public abstract class Element : SmartEnum<Element, string>
     public Property This => Engine.Property.This(Type);
     public IEnumerable<Property> Properties => This.Properties;
     public IEnumerable<Property> CustomProperties => _customProperties;
-    public virtual Func<L5X, IEnumerable<LogixElement>> Query => file => file.Query(Type);
-    public Func<L5X, string, object?> Lookup => (file, name) => file.Find(new ComponentKey(Type.Name, name));
     public bool IsComponent => Type.IsAssignableTo(typeof(LogixComponent));
     protected virtual bool IsSelectable => IsComponent;
     public static IEnumerable<Element> Components => List.Where(e => e.IsComponent);
@@ -175,8 +173,6 @@ public abstract class Element : SmartEnum<Element, string>
         {
             Register<IList<Tag>>("Members", x => ((Tag)x!).Members().ToList());
         }
-
-        public override Func<L5X, IEnumerable<LogixElement>> Query => x => x.Query<Tag>().SelectMany(t => t.Members());
 
         public override IEnumerable<string> DisplayProperties =>
         [

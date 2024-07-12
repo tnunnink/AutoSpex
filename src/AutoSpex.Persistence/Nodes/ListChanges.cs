@@ -22,7 +22,7 @@ internal class ListChangesHandler(IConnectionManager manager)
 
     public async Task<Result<IEnumerable<ChangeLog>>> Handle(ListChanges request, CancellationToken cancellationToken)
     {
-        using var connection = await manager.Connect(Database.Project, cancellationToken);
+        using var connection = await manager.Connect(cancellationToken);
         var changes = await connection.QueryAsync<ChangeLog>(ListChanges, new { request.NodeId });
         return Result.Ok(changes);
     }

@@ -1,0 +1,16 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceInclude Source="ElementListItem.axaml" />
+        <ResourceInclude Source="EnvironmentListItem.axaml" />
+        <ResourceInclude Source="EvaluationListItem.axaml" />
+        <ResourceInclude Source="NodeTreeItem.axaml" />
+        <ResourceInclude Source="ObserverListItem.axaml" />
+        <ResourceInclude Source="OutcomeListItem.axaml" />
+        <ResourceInclude Source="OverrideListItem.axaml" />
+        <ResourceInclude Source="PropertyTreeItem.axaml" />
+        <ResourceInclude Source="SourceListItem.axaml" />
+        <ResourceInclude Source="SpecListItem.axaml" />
+        <ResourceInclude Source="VariableListItem.axaml" />
+    </ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>

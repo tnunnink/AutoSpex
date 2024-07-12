@@ -31,7 +31,7 @@ internal class GetNodeHandler(IConnectionManager manager) : IRequestHandler<GetN
 
     public async Task<Result<Node>> Handle(GetNode request, CancellationToken cancellationToken)
     {
-        using var connection = await manager.Connect(Database.Project, cancellationToken);
+        using var connection = await manager.Connect(cancellationToken);
         
         var nodes = await connection.QueryAsync<Node>(GetNodes, new { request.NodeId });
 

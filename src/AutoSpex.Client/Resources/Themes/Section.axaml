@@ -1,0 +1,140 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
+
+    <Design.PreviewWith>
+        <Border Padding="20" Width="600" Height="400">
+            <StackPanel Spacing="10">
+                <controls:Section Theme="{DynamicResource SectionBase}"
+                                  Header="Heading"
+                                  Description="This is the content of the item"
+                                  ShowContent="False">
+                    <controls:Section.Icon>
+                        <PathIcon Theme="{StaticResource IconFilledClipboard}" />
+                    </controls:Section.Icon>
+                    <controls:Section.Action>
+                        <Button Theme="{a:ControlTheme ButtonOutline}" Classes="accent"
+                                Content="Command" />
+                    </controls:Section.Action>
+                </controls:Section>
+
+                <controls:Section Theme="{DynamicResource SectionBase}"
+                                  Header="Filters"
+                                  Description="Define the filters for this specification here in this list.">
+                    <controls:Section.Icon>
+                        <PathIcon Theme="{StaticResource IconFilledFunnel}" />
+                    </controls:Section.Icon>
+                    <ListBox ItemContainerTheme="{StaticResource ListBoxItemSection}"
+                             BorderThickness="1" CornerRadius="5"
+                             BorderBrush="{a:ThemeResource Container1BorderBrush}">
+                        <ListBoxItem Content="Some Items" />
+                        <ListBoxItem Content="Some Items" />
+                        <ListBoxItem Content="Some Items" />
+                        <ListBoxItem Content="Some Items" />
+                    </ListBox>
+                </controls:Section>
+            </StackPanel>
+        </Border>
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="SectionBase" TargetType="controls:Section">
+        <ControlTheme.Resources>
+            <a:ThicknessConverter x:Key="LeftOnlyThicknessConverter" Filter="Left" BaseThickness="0" />
+            <a:ThicknessConverter x:Key="RightOnlyThicknessConverter" Filter="Right" BaseThickness="0" />
+            <a:ThicknessConverter x:Key="TopOnlyThicknessConverter" Filter="Top" BaseThickness="0" />
+        </ControlTheme.Resources>
+
+        <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrush}" />
+        <Setter Property="Background" Value="{a:ThemeResource Container1BackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{a:ThemeResource Container1BorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="5" />
+        <Setter Property="Padding" Value="15" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="{TemplateBinding CornerRadius}"
+                    Padding="{TemplateBinding Padding}">
+
+                    <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto"
+                          a:BorderChildClipConverter.ClipToContainingBorder="True"
+                          Grid.IsSharedSizeScope="True">
+
+                        <!-- Header Icon -->
+                        <ContentPresenter
+                            x:Name="PART_HeaderIconPresenter"
+                            Grid.Row="0" Grid.Column="0"
+                            Content="{TemplateBinding Icon}"
+                            ContentTemplate="{TemplateBinding IconTemplate}"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            IsVisible="{TemplateBinding Icon, Converter={x:Static ObjectConverters.IsNotNull}}"
+                            Margin="{TemplateBinding Padding, Converter={StaticResource RightOnlyThicknessConverter}}" />
+
+                        <StackPanel Grid.Row="0" Grid.Column="1" VerticalAlignment="Center">
+
+                            <!-- Header -->
+                            <ContentPresenter
+                                x:Name="PART_HeaderPresenter"
+                                Content="{TemplateBinding Header}"
+                                ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                HorizontalAlignment="Left"
+                                IsVisible="{TemplateBinding Header, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
+                            <!-- Description -->
+                            <ContentPresenter
+                                x:Name="PART_DescriptionPresenter"
+                                Content="{TemplateBinding Description}"
+                                ContentTemplate="{TemplateBinding DescriptionTemplate}"
+                                HorizontalAlignment="Stretch"
+                                Margin="-1 2 0 0"
+                                IsVisible="{TemplateBinding Description, Converter={x:Static ObjectConverters.IsNotNull}}">
+                                <ContentPresenter.Styles>
+                                    <Style Selector="TextBlock">
+                                        <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeExtraSmall}" />
+                                        <Setter Property="TextWrapping" Value="Wrap" />
+                                    </Style>
+                                </ContentPresenter.Styles>
+                            </ContentPresenter>
+                        </StackPanel>
+
+                        <!-- Action -->
+                        <ContentPresenter
+                            x:Name="PART_ActionPresenter"
+                            Grid.Row="0" Grid.Column="2"
+                            Content="{TemplateBinding Action}"
+                            ContentTemplate="{TemplateBinding ActionTemplate}"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            IsVisible="{TemplateBinding Action, Converter={x:Static ObjectConverters.IsNotNull}}"
+                            Margin="{TemplateBinding Padding, Converter={StaticResource LeftOnlyThicknessConverter}}" />
+
+                        <!-- Content -->
+                        <ContentPresenter
+                            x:Name="PART_ContentPresenter"
+                            Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
+                            Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                            Margin="{TemplateBinding Padding, Converter={StaticResource TopOnlyThicknessConverter}}"
+                            IsVisible="{TemplateBinding ShowContent}" />
+                    </Grid>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^ /template/ ContentPresenter#PART_DescriptionPresenter">
+            <Setter Property="TextElement.Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+        </Style>
+        <Style Selector="^ /template/ ContentPresenter#PART_HeaderPresenter">
+            <Setter Property="TextElement.FontWeight" Value="{a:ThemeResource HeadingFontWeightMedium}" />
+        </Style>
+    </ControlTheme>
+
+    <ControlTheme x:Key="{x:Type controls:Section}" TargetType="controls:Section"
+                  BasedOn="{StaticResource SectionBase}" />
+</ResourceDictionary>

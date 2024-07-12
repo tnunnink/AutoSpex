@@ -1,12 +1,12 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui">
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:converters="clr-namespace:Avalonia.Controls.Converters;assembly=Avalonia.Controls">
 
     <Design.PreviewWith>
-        <Border Padding="20"
-                MinWidth="300"
-                MinHeight="500">
-            <TreeView ItemContainerTheme="{DynamicResource TreeViewItemSubtle}">
+        <StackPanel Margin="20" MinWidth="300" MinHeight="500" Spacing="20">
+            <TreeView ItemContainerTheme="{DynamicResource TreeViewItemSimple}" Padding="5"
+                      Background="{a:ThemeResource Container2BackgroundBrush}">
                 <TreeViewItem Header="Level 1" IsExpanded="True">
                     <TreeViewItem Header="Level 2.1" IsSelected="True" IsExpanded="True">
                         <TreeViewItem Header="Level 3.1" />
@@ -17,8 +17,98 @@
                     <TreeViewItem Header="Level 2.2" IsEnabled="False" />
                 </TreeViewItem>
             </TreeView>
-        </Border>
+        </StackPanel>
     </Design.PreviewWith>
+
+    <!-- TreeViewItemSimple -->
+    <ControlTheme x:Key="TreeViewItemSimple" TargetType="TreeViewItem">
+        <ControlTheme.Resources>
+            <converters:MarginMultiplierConverter
+                x:Key="LeftMarginConverter"
+                Indent="{StaticResource {a:ThemeResourceKey TreeItemIndent}}"
+                Left="True" />
+            <a:ThicknessConverter
+                x:Key="PaddingConverter"
+                Filter="Top, Right, Bottom" />
+        </ControlTheme.Resources>
+
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{a:ThemeResource ListItemForegroundBrush}" />
+        <Setter Property="Padding" Value="{a:ThemeResource ListItemPadding}" />
+        <Setter Property="CornerRadius" Value="5" />
+        <Setter Property="Margin" Value="0 3 0 0" />
+        <Setter Property="FocusAdorner" Value="{x:Null}" />
+
+        <Setter Property="Template">
+            <ControlTemplate>
+
+                <StackPanel>
+                    <Border
+                        x:Name="border"
+                        MinHeight="{TemplateBinding MinHeight}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        TemplatedControl.IsTemplateFocusTarget="True">
+                        <Grid Name="PART_Header"
+                              Margin="{TemplateBinding Level, Converter={StaticResource LeftMarginConverter}}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition MinWidth="{StaticResource {a:ThemeResourceKey TreeItemIndent}}"
+                                                  Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <ToggleButton
+                                x:Name="ToggleButton"
+                                IsChecked="{TemplateBinding IsExpanded, Mode=TwoWay}"
+                                Theme="{a:ControlTheme TreeViewItemToggleButton}" />
+
+                            <ContentPresenter
+                                x:Name="PART_HeaderPresenter"
+                                Grid.Column="1"
+                                Background="Transparent"
+                                Content="{TemplateBinding Header}"
+                                ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                Padding="{TemplateBinding Padding, Converter={StaticResource PaddingConverter}}"
+                                VerticalAlignment="Center" />
+                        </Grid>
+                    </Border>
+
+                    <Panel>
+                        <a:AnimatedExpanderDecorator
+                            x:Name="expanderDecorator"
+                            IsExpanded="{TemplateBinding IsExpanded}"
+                            IsAnimationEnabled="{TemplateBinding a:ThemeProperties.IsAnimationEnabled}">
+                            <ItemsPresenter ItemsPanel="{TemplateBinding ItemsPanel}" />
+                        </a:AnimatedExpanderDecorator>
+
+                        <Panel Margin="9.5 0 0 0">
+                            <Border Width="2" HorizontalAlignment="Left"
+                                    CornerRadius="{a:ThemeResource ButtonCornerRadius}"
+                                    Background="{a:ThemeResource Container1BorderBrush}"
+                                    Margin="{TemplateBinding Level, Converter={StaticResource LeftMarginConverter}}" />
+                        </Panel>
+                    </Panel>
+                </StackPanel>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^:empty /template/ ToggleButton">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+
+        <Style Selector="^:pointerover /template/ Border#border:pointerover">
+            <Setter Property="Background" Value="{a:ThemeResource ListItemBackgroundBrushPointerOver}" />
+        </Style>
+        <Style Selector="^:disabled /template/ Border#border">
+            <Setter Property="TextElement.Foreground" Value="{a:ThemeResource ListItemForegroundBrushDisabled}" />
+        </Style>
+        <Style Selector="^:selected /template/ Border#border">
+            <Setter Property="Background" Value="{a:ThemeResource ListItemBackgroundBrushPointerOver}" />
+            <Setter Property="TextElement.Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+        </Style>
+    </ControlTheme>
 
     <!-- TreeViewItemSubtle -->
     <ControlTheme x:Key="TreeViewItemSubtle" TargetType="TreeViewItem" BasedOn="{a:ControlTheme TreeViewItem}">

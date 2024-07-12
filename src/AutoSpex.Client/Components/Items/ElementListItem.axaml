@@ -1,0 +1,40 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+
+    <Design.PreviewWith>
+        <StackPanel Margin="10" Spacing="10" Width="500" Height="400">
+            <ListBox ItemsSource="{x:Static components:DesignData.Tags}"
+                     ItemContainerTheme="{StaticResource ListBoxItemSimple}"
+                     ItemTemplate="{DynamicResource ElementListItem}"
+                     BorderThickness="0"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
+        </StackPanel>
+    </Design.PreviewWith>
+
+
+    <DataTemplate x:Key="ElementListItem" x:DataType="observers:ElementObserver">
+        <Border x:Name="Border" Background="Transparent" Focusable="True">
+            <Grid ColumnDefinitions="*,Auto" Margin="10 0">
+
+                <StackPanel Orientation="Horizontal" Spacing="10" ClipToBounds="True">
+                    <PathIcon
+                        Theme="{StaticResource IconThemedSource}"
+                        Classes="size-sm" />
+                    <TextBlock
+                        Text="{Binding Name}"
+                        FontFamily="{a:ThemeResource CodeFontFamily}" Classes="centered" />
+                </StackPanel>
+
+                <TextBlock
+                    Grid.Column="1"
+                    Text="{Binding Container}"
+                    Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                    Background="{Binding $parent[TreeViewItem].Background}"
+                    TextAlignment="Right" HorizontalAlignment="Right" />
+            </Grid>
+        </Border>
+    </DataTemplate>
+</ResourceDictionary>

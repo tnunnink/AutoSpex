@@ -13,14 +13,14 @@ public class DeleteNodeTests
 
         result.IsSuccess.Should().BeTrue();
     }
-    
+
     [Test]
     public async Task DeleteNode_ContainerNode_ShouldReturnSuccess()
     {
         var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
         var node = Node.NewContainer();
-        await mediator.Send(new CreateNode(node, NodeType.Spec));
+        await mediator.Send(new CreateNode(node));
 
         var deleted = await mediator.Send(new DeleteNode(node.NodeId));
 
@@ -28,43 +28,13 @@ public class DeleteNodeTests
         var get = await mediator.Send(new GetNode(node.NodeId));
         get.IsFailed.Should().BeTrue();
     }
-    
+
     [Test]
     public async Task DeleteNode_SpecNode_ShouldReturnSuccess()
     {
         var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
         var node = Node.NewSpec();
-        await mediator.Send(new CreateNode(node));
-
-        var deleted = await mediator.Send(new DeleteNode(node.NodeId));
-
-        deleted.IsSuccess.Should().BeTrue();
-        var get = await mediator.Send(new GetNode(node.NodeId));
-        get.IsFailed.Should().BeTrue();
-    }
-    
-    [Test]
-    public async Task DeleteNode_SourceNode_ShouldReturnSuccess()
-    {
-        var context = new TestContext();
-        var mediator = context.Resolve<IMediator>();
-        var node = Node.NewSource();
-        await mediator.Send(new CreateNode(node));
-
-        var deleted = await mediator.Send(new DeleteNode(node.NodeId));
-
-        deleted.IsSuccess.Should().BeTrue();
-        var get = await mediator.Send(new GetNode(node.NodeId));
-        get.IsFailed.Should().BeTrue();
-    }
-    
-    [Test]
-    public async Task DeleteNode_RunNode_ShouldReturnSuccess()
-    {
-        var context = new TestContext();
-        var mediator = context.Resolve<IMediator>();
-        var node = Node.NewRun();
         await mediator.Send(new CreateNode(node));
 
         var deleted = await mediator.Send(new DeleteNode(node.NodeId));

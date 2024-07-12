@@ -1,9 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
-using AutoSpex.Client.Observers;
 using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
-using AutoSpex.Engine;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -12,11 +10,8 @@ using JetBrains.Annotations;
 namespace AutoSpex.Client.Pages;
 
 [UsedImplicitly]
-public partial class DetailsPageModel(string project) : PageViewModel, IRecipient<NavigationRequest>
+public partial class DetailsPageModel : PageViewModel, IRecipient<NavigationRequest>
 {
-    public override string Route => $"{project}/Details";
-    public override bool IsChanged => Pages.Any(p => p.IsChanged);
-
     [ObservableProperty] private ObservableCollection<DetailPageModel> _pages = [];
 
     [ObservableProperty] private PageViewModel? _selected;
@@ -29,15 +24,6 @@ public partial class DetailsPageModel(string project) : PageViewModel, IRecipien
         }
 
         base.OnDeactivated();
-    }
-
-    [RelayCommand]
-    private async Task CreateNode(NodeType? feature)
-    {
-        if (feature is null) return;
-        var node = await Prompter.Show<NodeObserver?>(() => new CreateNodePageModel(feature));
-        if (node is null) return;
-        await node.NavigateCommand.ExecuteAsync(null);
     }
 
     public void Receive(NavigationRequest message)
@@ -60,7 +46,7 @@ public partial class DetailsPageModel(string project) : PageViewModel, IRecipien
 
         OpenPage(detail);
     }
-    
+
     [RelayCommand]
     private static async Task CloseTab(DetailPageModel? page)
     {
@@ -144,7 +130,7 @@ public partial class DetailsPageModel(string project) : PageViewModel, IRecipien
         Pages.Add(page);
         Selected = page;
     }
-    
+
     private void ClosePage(DetailPageModel page)
     {
         Pages.Remove(page);

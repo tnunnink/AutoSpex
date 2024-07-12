@@ -11,39 +11,10 @@
         <Border Background="{a:ThemeResource Container1BackgroundBrush}"
                 Width="1000" Height="400" Padding="30">
             <StackPanel Spacing="20">
-                <ContentControl Content="{x:Static components:DesignData.RunObserver}"
-                                ContentTemplate="{DynamicResource RunSummary}" />
-
-                <TreeView ItemsSource="{x:Static components:DesignData.Outcomes}"
-                          ItemContainerTheme="{StaticResource TreeViewItemSubtle}"
-                          ItemTemplate="{DynamicResource OutcomeTreeItem}" />
-                <ListBox ItemsSource="{x:Static components:DesignData.Evaluations}"
-                         ItemContainerTheme="{StaticResource ListBoxItemSubtle}"
-                         ItemTemplate="{DynamicResource EvaluationTreeItem}" />
+               
             </StackPanel>
         </Border>
     </Design.PreviewWith>
-
-    <!--RunTab-->
-    <DataTemplate x:Key="RunTab" x:DataType="observers:RunObserver">
-        <Grid ColumnDefinitions="Auto,*,Auto">
-            <PathIcon x:Name="icon"
-                      Grid.Column="0"
-                      Theme="{StaticResource IconRunThemed}"
-                      Classes="icon-small" />
-            <TextBlock Grid.Column="1"
-                       Text="{Binding Name}"
-                       FontSize="{a:ThemeResource DefaultFontSizeSmall}"
-                       Margin="7 0" />
-            <Border Grid.Column="2" Height="20" Width="20" Margin="0">
-                <Button x:Name="close"
-                        properties:ButtonIcon.Theme="{StaticResource IconClose}"
-                        Theme="{StaticResource IconButtonSmall}"
-                        Command="{Binding CloseCommand}"
-                        CornerRadius="10" Height="16" Width="16" Padding="11" />
-            </Border>
-        </Grid>
-    </DataTemplate>
 
     <!--RunSummary-->
     <DataTemplate x:Key="RunSummary" x:DataType="observers:RunObserver">
@@ -72,7 +43,7 @@
             </StackPanel.Styles>
 
             <StackPanel Orientation="Horizontal" Spacing="5">
-                <components:ResultPill Result="{Binding Result}" />
+                <!--<components:ResultPill Result="{Binding Result}" />-->
                 <TextBlock Text="on" Classes="caption" />
                 <TextBlock Text="{Binding RanOn, StringFormat='MM/dd/yyyy HH:mm:ss'}" />
                 <TextBlock Text="by" Classes="caption" />
@@ -81,7 +52,7 @@
 
             <StackPanel Orientation="Horizontal" Spacing="5">
                 <StackPanel Orientation="Horizontal" Spacing="3">
-                    <PathIcon Theme="{StaticResource IconStopwatchOutlined}" Classes="accent" />
+                    <PathIcon Theme="{StaticResource IconStopwatch}" Classes="accent" />
                     <TextBlock Text="{Binding Duration}" />
                     <TextBlock Text="ms" Classes="caption" />
                     <ToolTip.Tip>Duration</ToolTip.Tip>
@@ -90,7 +61,7 @@
                 <TextBlock Text="/" Margin="0 0 0 1" Classes="caption" />
 
                 <StackPanel Orientation="Horizontal" Spacing="3">
-                    <PathIcon Theme="{StaticResource IconStopwatchOutlined}" Classes="accent" />
+                    <PathIcon Theme="{StaticResource IconStopwatch}" Classes="accent" />
                     <TextBlock Text="{Binding Average}" />
                     <TextBlock Text="ms" Classes="caption" />
                     <ToolTip.Tip>Average</ToolTip.Tip>
@@ -115,7 +86,7 @@
                     Command="{Binding ApplyResultFilterCommand}"
                     CommandParameter="{x:Static engine:ResultState.Passed}">
                     <StackPanel Orientation="Horizontal" Spacing="5">
-                        <PathIcon Theme="{StaticResource IconPassedThemed}" Margin="0 1 0 0" />
+                        <PathIcon Theme="{StaticResource IconThemedPassed}" Margin="0 1 0 0" />
                         <TextBlock Text="{Binding Passed}" />
                     </StackPanel>
                 </ToggleButton>
@@ -126,7 +97,7 @@
                     Command="{Binding ApplyResultFilterCommand}"
                     CommandParameter="{x:Static engine:ResultState.Failed}">
                     <StackPanel Orientation="Horizontal" Spacing="5">
-                        <PathIcon Theme="{StaticResource IconFailedThemed}" Margin="0 1 0 0" />
+                        <PathIcon Theme="{StaticResource IconThemedFailed}" Margin="0 1 0 0" />
                         <TextBlock Text="{Binding Failed}" />
                     </StackPanel>
                 </ToggleButton>
@@ -137,7 +108,7 @@
                     Command="{Binding ApplyResultFilterCommand}"
                     CommandParameter="{x:Static engine:ResultState.Error}">
                     <StackPanel Orientation="Horizontal" Spacing="5">
-                        <PathIcon Theme="{StaticResource IconErrorThemed}" Margin="0 1 0 0" />
+                        <PathIcon Theme="{StaticResource IconThemedError}" Margin="0 1 0 0" />
                         <TextBlock Text="{Binding Error}" />
                     </StackPanel>
                 </ToggleButton>
@@ -146,7 +117,7 @@
     </DataTemplate>
 
     <!--OutcomeTreeItem-->
-    <TreeDataTemplate x:Key="OutcomeTreeItem" DataType="observers:OutcomeObserver" ItemsSource="{Binding Evaluations}">
+    <TreeDataTemplate x:Key="OutcomeTreeItem" DataType="observers:OutcomeObserver" ItemsSource="{Binding Verifications}">
         <DockPanel LastChildFill="False">
             <DockPanel.Styles>
                 <Style Selector="controls|HighlightableTextBlock">
@@ -169,40 +140,24 @@
                 <PathIcon Theme="{Binding Result, Converter={StaticResource ResultStateToIconConverter}}" />
 
                 <StackPanel Orientation="Horizontal" Spacing="5">
-                    <PathIcon Theme="{StaticResource IconSpecThemed}" />
+                    <PathIcon Theme="{StaticResource IconThemedSpec}" />
                     <Panel>
                         <TextBlock
                             Text="Drag spec to add"
-                            IsVisible="{Binding SpecName, Converter={x:Static StringConverters.IsNullOrEmpty}}"
+                            IsVisible="{Binding Name, Converter={x:Static StringConverters.IsNullOrEmpty}}"
                             Opacity="{a:ThemeResource EditWatermarkOpacity}"
                             FontStyle="Italic" />
                         <controls:HighlightableTextBlock
-                            Text="{Binding SpecName}"
+                            Text="{Binding Name}"
                             HighlightedText="{Binding FilterText}"
-                            IsVisible="{Binding SpecName, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                            IsVisible="{Binding Name, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
                     </Panel>
                     <ToolTip.Tip>Spec</ToolTip.Tip>
                 </StackPanel>
 
-                <StackPanel Orientation="Horizontal" Spacing="5">
-                    <PathIcon Theme="{StaticResource IconSourceThemed}" />
-                    <Panel>
-                        <TextBlock
-                            Text="Drag source to add"
-                            IsVisible="{Binding SourceName, Converter={x:Static StringConverters.IsNullOrEmpty}}"
-                            Opacity="{a:ThemeResource EditWatermarkOpacity}"
-                            FontStyle="Italic" />
-                        <controls:HighlightableTextBlock
-                            Text="{Binding SourceName}"
-                            HighlightedText="{Binding FilterText}"
-                            IsVisible="{Binding SourceName, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
-                    </Panel>
-                    <ToolTip.Tip>Source</ToolTip.Tip>
-                </StackPanel>
-
                 <StackPanel Orientation="Horizontal" Spacing="3"
                             IsVisible="{Binding Result, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:ResultState.None}}">
-                    <PathIcon Theme="{StaticResource IconStopwatchOutlined}" Classes="accent" />
+                    <PathIcon Theme="{StaticResource IconStopwatch}" Classes="accent" />
                     <TextBlock Text="{Binding Duration}" />
                     <TextBlock Text="ms" Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
                     <ToolTip.Tip>Duration</ToolTip.Tip>
@@ -221,7 +176,7 @@
 
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="5">
                 <controls:HighlightableTextBlock
-                    Text="{Binding SpecPath}"
+                    Text="{Binding Path}"
                     HighlightedText="{Binding FilterText}"
                     Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
             </StackPanel>
@@ -256,7 +211,6 @@
 
             <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" Spacing="5">
                 <PathIcon Theme="{Binding Result, Converter={StaticResource ResultStateToIconConverter}}" />
-                <controls:HighlightableTextBlock Text="{Binding Candidate}" />
                 <TextBlock Text="Expected" />
                 <controls:HighlightableTextBlock Text="{Binding Criteria}" Classes="criteria" />
                 <controls:HighlightableTextBlock Text="{Binding Expected}" />

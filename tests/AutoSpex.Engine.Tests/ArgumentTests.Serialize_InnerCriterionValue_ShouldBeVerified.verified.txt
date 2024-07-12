@@ -1,0 +1,7 @@
+﻿{
+  ArgumentId: Guid_1,
+  Value: {
+    Type: AutoSpex.Engine.Criterion,
+    Data: {"CriterionId":"1cf40591-facd-4928-a29b-adb95fc43052","Type":"L5Sharp.Core.Tag","Property":{"Origin":"L5Sharp.Core.Tag","Path":"Name"},"Operation":"Contains","Arguments":[{"ArgumentId":"f44834c1-9d92-414b-b751-f8d3da5c6347","Value":{"Type":"System.String","Data":"Test"}}],"Invert":false}
+  }
+}

@@ -1,0 +1,78 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+
+    <Design.PreviewWith>
+        <Button Content="{x:Static components:DesignData.SpecNode}"
+                Flyout="{DynamicResource NodeMenu}" Margin="200">
+            <Button.ContentTemplate>
+                <DataTemplate x:DataType="observers:NodeObserver">
+                    <TextBlock Text="{Binding Name}" />
+                </DataTemplate>
+            </Button.ContentTemplate>
+        </Button>
+    </Design.PreviewWith>
+
+    <MenuFlyout x:Key="NodeMenu" 
+                x:DataType="observers:NodeObserver"
+                ItemContainerTheme="{StaticResource ContextMenuItem}">
+
+        <MenuItem Header="Add Container"
+                  Icon="{StaticResource IconThemedContainer}"
+                  Command="{Binding AddContainerCommand}"
+                  IsVisible="{Binding Type, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:NodeType.Spec}}"
+                  InputGesture="Ctrl+Shift+N" />
+
+        <MenuItem Header="Add Spec"
+                  Icon="{StaticResource IconThemedSpec}"
+                  Command="{Binding AddSpecCommand}"
+                  IsVisible="{Binding Type, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:NodeType.Spec}}"
+                  InputGesture="Shift+N" />
+
+        <Separator
+            IsVisible="{Binding Type, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:NodeType.Spec}}" />
+
+        <MenuItem
+            Header="Run"
+            Command="{Binding RunCommand}"
+            Icon="{StaticResource IconFilledLightning}"
+            Classes="accent" 
+            InputGesture="Ctrl+R"/>
+
+        <Separator />
+
+        <MenuItem
+            Header="Open"
+            Command="{Binding NavigateCommand}"
+            Icon="{StaticResource IconLineLink}"
+            IsVisible="{Binding !IsSolelySelected}"
+            InputGesture="Enter"/>
+        <MenuItem
+            Header="Rename"
+            Command="{Binding StartEditCommand}"
+            Icon="{StaticResource IconLineInputText}"
+            IsVisible="{Binding !IsSolelySelected}"
+            InputGesture="Ctrl+E" />
+        <MenuItem
+            Header="Duplicate"
+            Command="{Binding DuplicateCommand}"
+            Icon="{StaticResource IconLineCopy}"
+            InputGesture="Ctrl+D" />
+        <MenuItem
+            Header="Move"
+            Command="{Binding MoveSelectedCommand}"
+            Icon="{StaticResource IconLineMove}" />
+        <MenuItem
+            Header="Delete"
+            Icon="{StaticResource IconLineTrash}"
+            Command="{Binding DeleteCommand}"
+            InputGesture="Delete"
+            Classes="danger" />
+    </MenuFlyout>
+
+    <MenuFlyout x:Key="NodeMenuDynamic" x:DataType="observers:NodeObserver"
+                ItemContainerTheme="{StaticResource MenuActionItem}"
+                ItemsSource="{Binding MenuItems}" />
+</ResourceDictionary>

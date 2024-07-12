@@ -7,7 +7,7 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record GetContainerNodes(NodeType Type) : IDbQuery<Result<IEnumerable<Node>>>;
+public record GetContainerNodes : IDbQuery<Result<IEnumerable<Node>>>;
 
 [UsedImplicitly]
 internal class GetContainerNodesHandler(IConnectionManager manager)
@@ -18,7 +18,7 @@ internal class GetContainerNodesHandler(IConnectionManager manager)
         WITH Tree AS (
             SELECT NodeId, ParentId, Type, Name, 0 as Depth
             FROM Node
-            WHERE ParentId is null and Type = @Type
+            WHERE ParentId is null
             UNION ALL
             SELECT n.NodeId, n.ParentId, n.Type, n.Name, t.Depth + 1 as Depth
             FROM Node n
@@ -32,9 +32,9 @@ internal class GetContainerNodesHandler(IConnectionManager manager)
 
     public async Task<Result<IEnumerable<Node>>> Handle(GetContainerNodes request, CancellationToken cancellationToken)
     {
-        using var connection = await manager.Connect(Database.Project, cancellationToken);
+        using var connection = await manager.Connect(cancellationToken);
 
-        var records = await connection.QueryAsync<Node>(GetContainerNodes, new { request.Type });
+        var records = await connection.QueryAsync<Node>(GetContainerNodes);
 
         var lookup = new Dictionary<Guid, Node>();
 

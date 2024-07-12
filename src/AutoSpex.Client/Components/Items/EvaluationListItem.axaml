@@ -1,0 +1,138 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+
+    <Design.PreviewWith>
+        <StackPanel Width="700" Height="200">
+            <ListBoxItem Padding="0"
+                         Content="{x:Static components:DesignData.PassedEvaluation}"
+                         ContentTemplate="{DynamicResource EvaluationListItem}" />
+            <ListBoxItem Padding="0"
+                         Content="{x:Static components:DesignData.ErroredEvaluation}"
+                         ContentTemplate="{DynamicResource EvaluationListItem}" />
+            <ListBoxItem Padding="0"
+                         Content="{x:Static components:DesignData.FailedEvaluation}"
+                         ContentTemplate="{DynamicResource EvaluationListItem}" />
+        </StackPanel>
+    </Design.PreviewWith>
+
+    <!--EvaluationTreeItem-->
+    <DataTemplate x:Key="EvaluationListItem" x:DataType="observers:EvaluationObserver">
+
+        <Border properties:StyleClasses.Classes="{Binding Result}"
+                BorderThickness="3 0 0 0" CornerRadius="0"
+                Padding="10 7">
+
+            <Border.Styles>
+                <Style Selector="Border.Passed">
+                    <Setter Property="BorderBrush" Value="{a:ThemeResource ControlForegroundBrushOutlineSuccess}" />
+                </Style>
+                <Style Selector="Border.Failed">
+                    <Setter Property="BorderBrush" Value="{a:ThemeResource ControlForegroundBrushOutlineDanger}" />
+                </Style>
+                <Style Selector="Border.Error">
+                    <Setter Property="BorderBrush" Value="{a:ThemeResource ControlForegroundBrushOutlineWarning}" />
+                </Style>
+
+                <Style Selector="controls|HighlightableTextBlock">
+                    <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushSecondary}" />
+                    <Setter Property="HighlightedText" Value="{Binding FilterText}" />
+                    <Setter Property="TextWrapping" Value="NoWrap" />
+                    <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+                </Style>
+                <Style Selector="TextBlock">
+                    <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                    <Setter Property="TextWrapping" Value="NoWrap" />
+                    <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+                </Style>
+            </Border.Styles>
+
+            <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" Spacing="5" ClipToBounds="True">
+
+                <Border
+                    ToolTip.Placement="BottomEdgeAlignedRight">
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <PathIcon Theme="{StaticResource IconThemedSource}" Classes="size-sm" Margin="0 1 0 0" />
+                        <controls:HighlightableTextBlock Text="{Binding SourceName}" />
+                    </StackPanel>
+                    <ToolTip.Tip>
+                        <Grid ColumnDefinitions="Auto,*" Margin="5">
+                            <PathIcon Grid.Column="0" Theme="{StaticResource IconThemedSource}" Classes="size-lg" />
+                            <StackPanel Grid.Column="1" Spacing="5" VerticalAlignment="Center" Margin="10 0">
+                                <TextBlock Text="{Binding SourceName}"
+                                           FontSize="{a:ThemeResource  DefaultFontSizeMedium}"
+                                           FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
+                                <TextBlock Text="{Binding SourcePath}"
+                                           Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                            </StackPanel>
+                        </Grid>
+                    </ToolTip.Tip>
+                </Border>
+
+                <TextBlock Text="Expected" />
+
+                <controls:HighlightableTextBlock
+                    Text="{Binding Candidate.Text}"
+                    Foreground="{DynamicResource TypeGroupForegroundBrushText}" />
+
+                <TextBlock
+                    Text="to have" />
+
+                <controls:HighlightableTextBlock
+                    Text="{Binding Criteria}"
+                    HighlightedText="{Binding FilterText}"
+                    Foreground="{a:ThemeResource DefaultForegroundBrush}" />
+
+                <ItemsControl
+                    ItemsSource="{Binding Expected}"
+                    IsVisible="{Binding Expected.Count}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" Spacing="5" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="observers:ValueObserver">
+                            <controls:HighlightableTextBlock
+                                Text="{Binding Text}"
+                                Foreground="{DynamicResource TypeGroupForegroundBrushText}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <StackPanel
+                    Orientation="Horizontal" Spacing="5"
+                    IsVisible="{Binding Result, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:ResultState.Error}}">
+
+                    <TextBlock
+                        IsVisible="{Binding Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Passed}}"
+                        Text="and found" />
+                    <TextBlock
+                        IsVisible="{Binding Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Failed}}"
+                        Text="but found" />
+
+                    <controls:HighlightableTextBlock
+                        Text="{Binding Actual.Text}"
+                        Foreground="{DynamicResource TypeGroupForegroundBrushText}" />
+                </StackPanel>
+
+                <StackPanel
+                    Orientation="Horizontal" Spacing="5"
+                    IsVisible="{Binding Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Error}}">
+
+                    <TextBlock
+                        Text="but got error" />
+
+                    <controls:HighlightableTextBlock
+                        Text="{Binding Error.Message}"
+                        Foreground="{a:ThemeResource ControlForegroundBrushOutlineWarning}" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </DataTemplate>
+</ResourceDictionary>

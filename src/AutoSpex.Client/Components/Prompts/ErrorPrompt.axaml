@@ -6,20 +6,26 @@
 
     <Design.PreviewWith>
         <components:ErrorPrompt Title="An error has occurred"
-                                ErrorContent="This is the content of the error message to the user to let them know what iw going on"/>
+                                ErrorContent="This is the content of the error message to the user to let them know what iw going on" />
     </Design.PreviewWith>
 
     <ControlTheme x:Key="{x:Type components:ErrorPrompt}" TargetType="components:ErrorPrompt">
         <Setter Property="Template">
             <ControlTemplate>
                 <controls:Prompt Header="{TemplateBinding Title}"
-                                 HeaderIcon="{StaticResource IconErrorFilled}"
                                  UseActionButton="False"
                                  CancelButtonText="Okay"
                                  CancelButtonTheme="{a:ControlTheme ButtonSoft}"
                                  CancelCommandParameter="{StaticResource False}"
                                  Classes="danger"
-                                 MinWidth="300" MaxWidth="500" Padding="20">
+                                 MinWidth="300" MaxWidth="500">
+                    <controls:Prompt.HeaderIcon>
+                        <ControlTheme TargetType="PathIcon" BasedOn="{StaticResource IconFilledCross}">
+                            <Setter Property="Foreground"
+                                    Value="{a:ThemeResource ControlForegroundBrushOutlineDanger}" />
+                            <Setter Property="FontSize" Value="20" />
+                        </ControlTheme>
+                    </controls:Prompt.HeaderIcon>
                     <controls:Prompt.Content>
                         <StackPanel Spacing="10">
                             <ContentPresenter Content="{TemplateBinding ErrorContent}" />

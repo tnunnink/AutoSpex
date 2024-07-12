@@ -108,6 +108,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
             typeof(Watchdog),
             typeof(TaskPriority),
             typeof(ScanRate),
+            typeof(LogixData),
             typeof(AtomicData),
             typeof(Dimensions),
             typeof(ProductType),

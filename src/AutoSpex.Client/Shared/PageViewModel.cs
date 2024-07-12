@@ -27,6 +27,14 @@ public abstract partial class PageViewModel : TrackableViewModel, IEquatable<Pag
     public virtual string Icon => "None";
 
     /// <summary>
+    /// Gets or sets a value indicating whether the page should be kept alive in the navigation stack.
+    /// </summary>
+    /// <value>
+    /// <c>true</c> if the page should be kept alive; otherwise, <c>false</c>.
+    /// </value>
+    public virtual bool KeepAlive => true;
+
+    /// <summary>
     /// A command to initiate the loading of data from external resources in order to populate this page with it's
     /// required content.
     /// </summary>

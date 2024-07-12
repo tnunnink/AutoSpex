@@ -87,7 +87,7 @@ public abstract class Operation(string name, string value) : SmartEnum<Operation
     public static readonly Operation IsTrue = new IsTrueOperation();
 
     /// <summary>
-    /// Returns the an <see cref="Operation"/> which evaluates whether an input value is <c>false</c>. 
+    /// Returns the <see cref="Operation"/> which evaluates whether an input value is <c>false</c>. 
     /// </summary>
     public static readonly Operation IsFalse = new IsFalseOperation();
 
@@ -139,7 +139,10 @@ public abstract class Operation(string name, string value) : SmartEnum<Operation
     /// </summary>
     public static readonly Operation In = new InOperation();
 
-
+    /// <summary>
+    /// Represents a like operation. The operation checks if the input value
+    /// is similar to the comparison value based on a pattern matching algorithm.
+    /// </summary>
     public static readonly Operation Like = new LikeOperation();
 
     /// <summary>
@@ -148,10 +151,18 @@ public abstract class Operation(string name, string value) : SmartEnum<Operation
     /// </summary>
     public static readonly Operation Between = new BetweenOperation();
 
-
+    /// <summary>
+    /// Represents an operation that checks if all elements of a collection meet a specific condition.
+    /// </summary>
     public static readonly Operation All = new AllOperation();
 
+    /// <summary>
+    /// Represents an operation that matches any value.
+    /// </summary>
     public static readonly Operation Any = new AnyOperation();
 
+    /// <summary>
+    /// Represents an operation that checks the number of items in a collection.
+    /// </summary>
     public static readonly Operation Count = new CountOperation();
 }

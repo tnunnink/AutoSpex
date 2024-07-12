@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using AutoSpex.Client.Observers;
 using AutoSpex.Client.Pages;
 using AutoSpex.Client.Shared;
-using AutoSpex.Engine;
 using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
 
@@ -19,21 +18,6 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
     /// The locally maintained set of open page references.
     /// </summary>
     private readonly Dictionary<string, PageViewModel> _openPages = [];
-
-    /// <summary>
-    /// A default instance of the <see cref="Navigator"/> service which uses the <see cref="WeakReferenceMessenger"/>
-    /// as the internal messenger for sending the <see cref="NavigationRequest"/> message.
-    /// </summary>
-    public static Navigator Default => new(WeakReferenceMessenger.Default);
-
-    /// <summary>
-    /// Performs navigation of the <see cref="HomePageModel"/>.
-    /// </summary>
-    /// <returns>A <see cref="Task"/> representing the async function with the page result.</returns>
-    public Task<HomePageModel> NavigateHome()
-    {
-        return OpenPage(Container.Resolve<HomePageModel>);
-    }
 
     /// <summary>
     /// Performs navigation of the <see cref="PageViewModel"/> specified using the generic type parameter. This method
@@ -81,12 +65,6 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
     public void Close(PageViewModel page) => ClosePage(page);
 
     /// <summary>
-    /// Sends the custom navigation requests through the application messenger. 
-    /// </summary>
-    /// <param name="request">The <see cref="NavigationRequest"/> to be sent through the application messenger.</param>
-    public void Send(NavigationRequest request) => messenger.Send(request);
-
-    /// <summary>
     /// Disposes/Deactivates all pages current open in this instance of the <see cref="Navigator"/> service.
     /// </summary>
     public void Dispose()
@@ -102,10 +80,10 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
     /// <summary>
     /// Opens a page using the provided page factory and navigation action. This will resolve the page and use the open
     /// instance if found (allowing the created instance to be garbage collected). It will then create the
-    /// <see cref="NavigationRequest"/> message and send that out. The owning pages responsible for displaying this
+    /// <see cref="NavigationRequest"/> message and send that out. Any owning pages responsible for displaying this
     /// page should receive and render the page. Once rendered this service will await the Activation/Loading of the
     /// page to initialize it's state. Finally, it will clean up inactive pages from memory and then return the active
-    /// page to the caller of the navigation request.
+    /// page to the caller of the navigation request in case it is needed to perform further interaction.
     /// </summary>
     private async Task<TPage> OpenPage<TPage>(Func<TPage> factory, NavigationAction action = NavigationAction.Open)
         where TPage : PageViewModel
@@ -118,6 +96,14 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
         return page;
     }
 
+    /// <summary>
+    /// Opens a page using the provided page factory and navigation action. This will resolve the page and use the open
+    /// instance if found (allowing the created instance to be garbage collected). It will then create the
+    /// <see cref="NavigationRequest"/> message and send that out. Any owning pages responsible for displaying this
+    /// page should receive and render the page. Once rendered this service will await the Activation/Loading of the
+    /// page to initialize it's state. Finally, it will clean up inactive pages from memory and then return the active
+    /// page to the caller of the navigation request in case it is needed to perform further interaction.
+    /// </summary>
     private async Task<PageViewModel> OpenPage(Func<PageViewModel> factory,
         NavigationAction action = NavigationAction.Open)
     {
@@ -129,6 +115,7 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
         return page;
     }
 
+
     private void ClosePage(PageViewModel page)
     {
         var request = new NavigationRequest(page, NavigationAction.Close);
@@ -137,9 +124,21 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
         page.IsActive = false;
     }
 
+    /// <summary>
+    /// We resolve the page by calling the provided factory method. We then look at the page route and determine if
+    /// we already have an instance of this page open. If so we want to return that and discard the created page.
+    /// Note that since we have not called load and our services are not injected then this is not costly. Also, we only
+    /// consider pages that are configured with the KeepAlive configured to true. Otherwise, we always create and never
+    /// maintain the instance of the page.
+    /// </summary>
     private TPage ResolvePage<TPage>(Func<TPage> factory) where TPage : PageViewModel
     {
         var page = factory();
+
+        if (!page.KeepAlive)
+        {
+            return page;
+        }
 
         if (!_openPages.TryAdd(page.Route, page))
         {
@@ -149,6 +148,12 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
         return page;
     }
 
+    /// <summary>
+    /// Activation involves setting the IsActive bit true, which calls the OnActivated method for the page, registering
+    /// the message handlers, and performing any other custom activation logic. We then await the Load method for the page,
+    /// which is where the page requests data from external sources to load it with the content to display. This is what
+    /// makes navigation async, and with this method we don't need to worry about calling load in the page constructor.
+    /// </summary>
     private static async Task ActivatePage(PageViewModel page)
     {
         if (page.IsActive) return;
@@ -156,6 +161,9 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
         await page.Load();
     }
 
+    /// <summary>
+    /// Removes any deactivated page instances from the open page cache.
+    /// </summary>
     private void CleanUp()
     {
         var deactivated = _openPages.Where(p => !p.Value.IsActive).Select(p => p.Key).ToList();
@@ -165,15 +173,15 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
         }
     }
 
+    /// <summary>
+    /// Resolves the detail page corresponding to the provided trackable observer type.
+    /// </summary>
     private static Func<PageViewModel> GetPageResolver(ITrackable observer)
     {
         return observer switch
         {
-            ProjectObserver project => () => new ProjectPageModel(project),
-            NodeObserver node when node.Type == NodeType.Container => () => new ContainerPageModel(node),
-            NodeObserver node when node.Type == NodeType.Spec => () => new SpecPageModel(node),
-            NodeObserver node when node.Type == NodeType.Source => () => new SourcePageModel(node),
-            NodeObserver node when node.Type == NodeType.Run => () => new RunPageModel(node),
+            NodeObserver node => () => new NodeDetailPageModel(node),
+            EnvironmentObserver environment => () => new EnvironmentDetailPageModel(environment),
             _ => throw new NotSupportedException($"The observer type {observer.GetType()} does not support navigation")
         };
     }

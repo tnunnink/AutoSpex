@@ -1,0 +1,134 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Design.PreviewWith>
+        <StackPanel Width="500" Height="200" Margin="30">
+            <Expander Theme="{DynamicResource ExpanderEmbedded}">
+                This is the content of the expander
+            </Expander>
+        </StackPanel>
+    </Design.PreviewWith>
+
+    <!-- ExpanderToggleButtonEmbedded -->
+    <ControlTheme x:Key="ExpanderToggleButtonEmbedded" TargetType="ToggleButton">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="CornerRadius" Value="{a:ThemeResource ExpanderCornerRadius}" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border
+                    x:Name="border"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="{TemplateBinding CornerRadius}">
+                    <ContentPresenter
+                        x:Name="glyph"
+                        ContentTemplate="{a:GlyphTemplate DownArrow16}"
+                        Margin="{a:ScaledThickness '0.3,0.3'}"
+                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}">
+                        <ContentPresenter.RenderTransform>
+                            <RotateTransform />
+                        </ContentPresenter.RenderTransform>
+                    </ContentPresenter>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^:pointerover /template/ Border#border">
+            <Setter Property="Background" Value="{a:ThemeResource ExpanderHeaderBackgroundBrushPointerOver}" />
+            <Setter Property="TextElement.Foreground"
+                    Value="{a:ThemeResource ExpanderHeaderForegroundBrushPointerOver}" />
+        </Style>
+        <Style Selector="^:pressed /template/ Border#border">
+            <Setter Property="Background" Value="{a:ThemeResource ExpanderHeaderBackgroundBrushPressed}" />
+            <Setter Property="TextElement.Foreground"
+                    Value="{a:ThemeResource ExpanderHeaderForegroundBrushPressed}" />
+        </Style>
+
+        <Style Selector="^:checked /template/ ContentPresenter#glyph">
+            <Style.Animations>
+                <Animation FillMode="Forward" Duration="{a:AnimationSetting SubtleAnimationDuration}">
+                    <KeyFrame Cue="100%">
+                        <Setter Property="RotateTransform.Angle" Value="-180" />
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+        </Style>
+        <Style Selector="^:not(:checked) /template/ ContentPresenter#glyph">
+            <Style.Animations>
+                <Animation FillMode="Forward" Duration="{a:AnimationSetting SubtleAnimationDuration}">
+                    <KeyFrame Cue="100%">
+                        <Setter Property="RotateTransform.Angle" Value="0" />
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+        </Style>
+    </ControlTheme>
+
+    <!-- ListItemExpander -->
+    <ControlTheme x:Key="ExpanderEmbedded" TargetType="Expander">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{a:ThemeResource ListItemForegroundBrush}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="{a:ThemeResource ExpanderPadding}" />
+        <Setter Property="CornerRadius" Value="{a:ThemeResource ExpanderCornerRadius}" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border
+                    x:Name="RootBorder"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="{TemplateBinding CornerRadius}">
+
+                    <DockPanel a:BorderChildClipConverter.ClipToContainingBorder="True">
+                        <Grid ColumnDefinitions="Auto,*" DockPanel.Dock="Top">
+                            <ToggleButton
+                                Grid.Column="0"
+                                x:Name="ExpanderButton"
+                                IsChecked="{TemplateBinding IsExpanded, Mode=TwoWay}"
+                                Theme="{StaticResource ExpanderToggleButtonEmbedded}"
+                                a:ThemeProperties.IsAnimationEnabled="True" />
+                            <ContentPresenter
+                                Grid.Column="1"
+                                x:Name="PART_HeaderPresenter"
+                                Content="{TemplateBinding Header}"
+                                ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                Foreground="{TemplateBinding Foreground}" />
+                        </Grid>
+
+                        <a:AnimatedExpanderDecorator
+                            x:Name="ExpanderDecorator"
+                            IsExpanded="{TemplateBinding IsExpanded}"
+                            ExpandDirection="Down"
+                            IsAnimationEnabled="True">
+                            <ContentPresenter
+                                x:Name="PART_ContentPresenter"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Padding="{TemplateBinding Padding}" />
+                        </a:AnimatedExpanderDecorator>
+                    </DockPanel>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^:expanded">
+            <Style Selector="^:down /template/ ToggleButton#ExpanderButton">
+                <Style.Resources>
+                    <a:ThicknessConverter x:Key="ThicknessConverter" Filter="Bottom" />
+                </Style.Resources>
+
+                <Setter Property="BorderThickness"
+                        Value="{TemplateBinding BorderThickness, Converter={StaticResource ThicknessConverter}}" />
+            </Style>
+        </Style>
+    </ControlTheme>
+</ResourceDictionary>

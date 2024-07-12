@@ -22,14 +22,9 @@ internal class LoadSpecsHandler(IConnectionManager manager) : IRequestHandler<Lo
                       FROM Node n
                                INNER JOIN Tree t ON t.ParentId = n.NodeId)
 
-        SELECT t.SpecId,
-               n.Name,
-               s.Specification,
-               v.VariableId,
-               v.NodeId,
-               v.Name,
-               v.Type,
-               v.Data
+        SELECT n.[NodeId], n.[ParentId], n.[Name], n.[Type],
+               s.[Specification],
+               v.[VariableId], v.[NodeId], v.[Name], v.[Group], v.[Value]
         FROM Tree t
                  JOIN Node n on t.SpecId = n.NodeId
                  JOIN Spec s on t.SpecId = s.SpecId
@@ -39,31 +34,31 @@ internal class LoadSpecsHandler(IConnectionManager manager) : IRequestHandler<Lo
 
     public async Task<Result<IEnumerable<Spec>>> Handle(LoadSpecs request, CancellationToken cancellationToken)
     {
-        using var connection = await manager.Connect(Database.Project, cancellationToken);
+        using var connection = await manager.Connect(cancellationToken);
 
         var ids = request.Ids.Select(x => x.ToString()).ToList();
         var specs = new Dictionary<Guid, Spec>();
         var variables = new Dictionary<Guid, Dictionary<string, Variable>>();
 
-        //Query all spec, mapping the name, config, and variables out into a lookup.
-        await connection.QueryAsync<Guid, string, string, Variable?, int>(LoadSpecs,
-            (id, name, config, variable) =>
+        //Query all spec, mapping the node, specification, and variables out into a lookup.
+        await connection.QueryAsync<Node, string, Variable?, int>(LoadSpecs,
+            (node, config, variable) =>
             {
-                if (!specs.ContainsKey(id))
+                if (!specs.ContainsKey(node.NodeId))
                 {
-                    var spec = new Spec(Node.Create(id, NodeType.Spec, name));
+                    var spec = new Spec(node);
                     spec.Update(Spec.Deserialize(config));
-                    specs.Add(id, spec);
+                    specs.Add(node.NodeId, spec);
                 }
 
-                variables.TryAdd(id, []);
+                variables.TryAdd(node.NodeId, []);
                 if (variable is not null)
-                    variables[id].TryAdd(variable.Name, variable);
+                    variables[node.NodeId].TryAdd(variable.Name, variable);
 
                 return 1;
             },
             param: new { Ids = ids },
-            splitOn: "Name,Specification,VariableId");
+            splitOn: "Specification,VariableId");
 
         //Iterate the spec objects and perform the lookup for matching scoped variables.
         //If found, update the spec variable's value to "resolve" it to the current persisted state.
@@ -72,8 +67,10 @@ internal class LoadSpecsHandler(IConnectionManager manager) : IRequestHandler<Lo
             if (!variables.TryGetValue(spec.SpecId, out var scoped)) continue;
 
             foreach (var variable in spec.Variables)
-                if (scoped.TryGetValue(variable.Name, out var match))
-                    variable.Value = match.Value;
+            {
+                if (!scoped.TryGetValue(variable.Name, out var match)) continue;
+                variable.SyncTo(match);
+            }
         }
 
         return Result.Ok(specs.Values.AsEnumerable());

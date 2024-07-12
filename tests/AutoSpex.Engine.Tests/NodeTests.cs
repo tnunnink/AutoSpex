@@ -4,6 +4,22 @@
 public class NodeTests
 {
     [Test]
+    public void NewCollection_Default_ShouldHaveExpectedValues()
+    {
+        var node = Node.NewCollection();
+
+        node.NodeId.Should().NotBeEmpty();
+        node.ParentId.Should().BeEmpty();
+        node.Parent.Should().BeNull();
+        node.Type.Should().Be(NodeType.Collection);
+        node.Name.Should().Be("New Collection");
+        node.Comment.Should().BeNull();
+        node.Depth.Should().Be(0);
+        node.Path.Should().Be(string.Empty);
+        node.Nodes.Should().BeEmpty();
+    }
+
+    [Test]
     public void NewContainer_Default_ShouldHaveExpectedValues()
     {
         var node = Node.NewContainer();
@@ -13,9 +29,9 @@ public class NodeTests
         node.Parent.Should().BeNull();
         node.Type.Should().Be(NodeType.Container);
         node.Name.Should().Be("New Container");
+        node.Comment.Should().BeNull();
         node.Depth.Should().Be(0);
         node.Path.Should().Be(string.Empty);
-        node.Base.Should().BeSameAs(node);
         node.Nodes.Should().BeEmpty();
     }
 
@@ -28,6 +44,16 @@ public class NodeTests
     }
 
     [Test]
+    public void SetComment_AnyValue_ShouldUpdate()
+    {
+        var node = Node.NewCollection();
+
+        node.Comment = "This is the root collection";
+
+        node.Comment.Should().NotBeEmpty();
+    }
+
+    [Test]
     public void NewSpec_Default_ShouldHaveExpectedValues()
     {
         var node = Node.NewSpec("MySpec");
@@ -37,30 +63,7 @@ public class NodeTests
         node.Parent.Should().BeNull();
         node.Type.Should().Be(NodeType.Spec);
         node.Name.Should().Be("MySpec");
-    }
-    
-    [Test]
-    public void NewSource_Default_ShouldHaveExpectedValues()
-    {
-        var node = Node.NewSource("MySource");
-
-        node.NodeId.Should().NotBeEmpty();
-        node.ParentId.Should().BeEmpty();
-        node.Parent.Should().BeNull();
-        node.Type.Should().Be(NodeType.Source);
-        node.Name.Should().Be("MySource");
-    }
-    
-    [Test]
-    public void NewRun_Default_ShouldHaveExpectedValues()
-    {
-        var node = Node.NewRun("MyRun");
-
-        node.NodeId.Should().NotBeEmpty();
-        node.ParentId.Should().BeEmpty();
-        node.Parent.Should().BeNull();
-        node.Type.Should().Be(NodeType.Run);
-        node.Name.Should().Be("MyRun");
+        node.Comment.Should().BeNull();
     }
 
     [Test]
@@ -77,6 +80,22 @@ public class NodeTests
         node.Type.Should().Be(NodeType.Container);
         node.Name.Should().Be("Folder");
         node.Depth.Should().Be(1);
+    }
+
+    [Test]
+    public void AddContainer_ToSpec_ShouldFail()
+    {
+        var spec = Node.NewSpec();
+
+        FluentActions.Invoking(() => spec.AddContainer("Folder")).Should().Throw<InvalidOperationException>();
+    }
+
+    [Test]
+    public void AddSpec_ToSpec_ShouldFail()
+    {
+        var spec = Node.NewSpec();
+
+        FluentActions.Invoking(() => spec.AddSpec("Spec")).Should().Throw<InvalidOperationException>();
     }
 
     [Test]
@@ -97,25 +116,26 @@ public class NodeTests
     [Test]
     public void Path_NestedSpec_ShouldBeExpected()
     {
-        var root = Node.NewContainer("Root"); //this would represent the root feature node
+        var root = Node.NewCollection("Collection");
         var first = root.AddContainer("First");
         var second = first.AddContainer("Second");
         var spec = second.AddSpec();
 
         var path = spec.Path;
 
-        path.Should().Be("First/Second");
+        path.Should().Be("Collection > First > Second");
     }
 
     [Test]
     public void AddNode_ValidNode_ShouldHaveExpectedCount()
     {
-        var collection = Node.NewContainer();
+        var collection = Node.NewCollection();
         var folder = Node.NewContainer();
 
         collection.AddNode(folder);
 
         collection.Nodes.Should().HaveCount(1);
+        folder.Parent.Should().Be(collection);
     }
 
     [Test]
@@ -150,60 +170,73 @@ public class NodeTests
         FluentActions.Invoking(() => collection.RemoveNode(null!)).Should().Throw<ArgumentNullException>();
     }
 
+    [Test]
+    public void ClearNodes_WhenCalled_ShouldClearNodes()
+    {
+        var collection = Node.NewCollection();
+        collection.AddContainer();
+        collection.AddSpec();
+
+        collection.ClearNodes();
+
+        collection.Nodes.Should().BeEmpty();
+    }
 
     [Test]
     public void Ancestors_NestedHierarchy_ShouldHaveExpectedCount()
     {
-        var root = Node.NewContainer(); //this would represent the root feature node
-        var first = root.AddContainer();
+        var collection = Node.NewCollection();
+        var first = collection.AddContainer();
         var second = first.AddContainer();
         var spec = second.AddSpec();
 
         var ancestors = spec.Ancestors();
 
-        ancestors.Should().HaveCount(2);
+        ancestors.Should().HaveCount(3);
     }
 
     [Test]
     public void Ancestors_NestedHierarchy_ShouldHaveExpectedOrder()
     {
-        var root = Node.NewContainer(); //this would represent the root feature node
-        var first = root.AddContainer();
+        var collection = Node.NewCollection();
+        var first = collection.AddContainer();
         var second = first.AddContainer();
         var spec = second.AddSpec();
 
         var nodes = spec.Ancestors().ToList();
 
-        nodes[0].Should().BeSameAs(first);
-        nodes[1].Should().BeSameAs(second);
+        nodes[0].Should().BeSameAs(collection);
+        nodes[1].Should().BeSameAs(first);
+        nodes[2].Should().BeSameAs(second);
     }
 
     [Test]
     public void AncestorsAndSelf_NestedHierarchy_ShouldHaveExpectedCount()
     {
-        var root = Node.NewContainer(); //this would represent the root feature node
-        var first = root.AddContainer();
+        var collection = Node.NewCollection();
+        var first = collection.AddContainer();
         var second = first.AddContainer();
         var spec = second.AddSpec();
 
         var path = spec.AncestorsAndSelf();
 
-        path.Should().HaveCount(3);
+        path.Should().HaveCount(4);
     }
 
     [Test]
     public void AncestorsAndSelf_NestedHierarchy_ShouldHaveExpectedOrder()
     {
-        var root = Node.NewContainer(); //this would represent the root feature node
-        var first = root.AddContainer();
+        var collection = Node.NewCollection();
+        var first = collection.AddContainer();
         var second = first.AddContainer();
         var spec = second.AddSpec();
 
         var path = spec.AncestorsAndSelf().ToList();
 
-        path[0].Should().BeSameAs(first);
-        path[1].Should().BeSameAs(second);
-        path[2].Should().BeSameAs(spec);
+        path[0].Should().BeSameAs(collection);
+        path[1].Should().BeSameAs(first);
+        path[2].Should().BeSameAs(second);
+        path[3].Should().BeSameAs(spec);
     }
 
     [Test]
@@ -216,19 +249,6 @@ public class NodeTests
         var descendents = collection.Descendants().ToList();
 
         descendents.Should().HaveCount(2);
-    }
-
-    [Test]
-    public void Base_GetFromNestedSpec_ShouldNotBeNullAndExpectedInstance()
-    {
-        var root = Node.Root(NodeType.Spec);
-        var container = root.AddContainer();
-        var spec = container.AddSpec();
-
-        var result = spec.Base;
-
-        result.Should().NotBeNull();
-        result.Should().BeSameAs(container);
     }
 
     [Test]

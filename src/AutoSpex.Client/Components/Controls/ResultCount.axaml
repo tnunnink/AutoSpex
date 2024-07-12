@@ -1,0 +1,70 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers">
+
+    <Design.PreviewWith>
+        <StackPanel Orientation="Horizontal" Spacing="10" Margin="10">
+
+            <ContentControl
+                Content="{x:Static components:DesignData.DefaultOutcome}"
+                ContentTemplate="{DynamicResource ResultCount}" />
+        </StackPanel>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="ResultCount" x:DataType="observers:OutcomeObserver">
+        <StackPanel Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
+            <StackPanel.Styles>
+                <Style Selector="Button">
+                    
+                </Style>
+            </StackPanel.Styles>
+            <Button
+                IsVisible="{Binding Passed}"
+                Content="{Binding Passed}" Padding="5 0"
+                FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                VerticalAlignment="Center"
+                Theme="{a:ControlTheme ButtonSubtle}" Classes="success" />
+            <Button
+                IsVisible="{Binding Failed}"
+                Content="{Binding Failed}" Padding="5 0"
+                FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                VerticalAlignment="Center"
+                Theme="{a:ControlTheme ButtonSubtle}" Classes="danger" />
+            <Button
+                IsVisible="{Binding Errored}"
+                Content="{Binding Errored}" Padding="5 0"
+                FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                VerticalAlignment="Center"
+                Theme="{a:ControlTheme ButtonSubtle}" Classes="warning" />
+        </StackPanel>
+
+        <!--<Border.Styles>
+                <Style Selector="Border">
+                    <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftDisabled}" />
+                    <Style Selector="^ TextBlock">
+                        <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                    </Style>
+                </Style>
+                <Style Selector="Border.success">
+                    <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftSuccess}" />
+                    <Style Selector="^ TextBlock">
+                        <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftSuccess}" />
+                    </Style>
+                </Style>
+                <Style Selector="Border.danger">
+                    <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftDanger}" />
+                    <Style Selector="^ TextBlock">
+                        <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftDanger}" />
+                    </Style>
+                </Style>
+                <Style Selector="Border.warning">
+                    <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftWarning}" />
+                    <Style Selector="^ TextBlock">
+                        <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftWarning}" />
+                    </Style>
+                </Style>
+            </Border.Styles>-->
+    </DataTemplate>
+</ResourceDictionary>

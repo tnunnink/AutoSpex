@@ -17,7 +17,7 @@ public class CriterionTagTests
     [Test]
     public void Evaluate_TagValueEqualTo_IsEqualTo_ShouldBeTrue()
     {
-        var criterion = new Criterion(Element.Tag.Property("Value"), Operation.Equal, 1000);
+        var criterion = new Criterion(Element.Tag.Property("Value"), Operation.Equal, new INT(1000));
         var tag = new Tag {Name = "Test", Value = 1000};
         
         var evaluation = criterion.Evaluate(tag);

@@ -69,22 +69,16 @@ public static class PromptExtensions
         var control = new DeletePrompt { Title = "Delete items?", Message = message };
         return prompter.Show<bool?>(control);
     }
+    
+    public static Task<string?> PromptRename(this Prompter prompter, Observer observer)
+    {
+        var control = new RenamePrompt { Observer = observer };
+        return prompter.Show<string?>(control);
+    }
 
     public static Task<string?> PromptSave(this Prompter prompter, string name)
     {
         var control = new SaveChangesPrompt { ItemName = name };
         return prompter.Show<string?>(control);
-    }
-
-    public static Task<bool?> PromptMigrate(this Prompter prompter, string name)
-    {
-        var control = new MigratePrompt { ProjectName = name };
-        return prompter.Show<bool?>(control);
-    }
-
-    public static Task<bool?> PromptDisconnection(this Prompter prompter, string path)
-    {
-        var control = new DisconnectionPrompt { ProjectPath = path };
-        return prompter.Show<bool?>(control);
     }
 }

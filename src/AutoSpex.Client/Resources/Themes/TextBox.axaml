@@ -15,6 +15,7 @@
                          BorderThickness="1" />
                 <TextBox Theme="{DynamicResource TextBoxOutlineHighlight}"
                          Watermark="Label"
+                         Text="This is test value"
                          MinWidth="100"
                          BorderThickness="1">
                 </TextBox>

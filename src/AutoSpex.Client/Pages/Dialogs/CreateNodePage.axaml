@@ -10,7 +10,7 @@
              Height="600" Width="600">
 
     <controls:Prompt Header="{Binding Title}"
-                     HeaderIcon="{Binding Feature.Name, Converter={StaticResource KeyToIconConverter}}"
+                     HeaderIcon="{StaticResource IconThemedSpec}"
                      CancelButtonTheme="{a:ControlTheme ButtonSoft}"
                      CancelCommandParameter="{x:Null}"
                      ActionButtonText="Create"
@@ -54,7 +54,7 @@
                                      Padding="0 5"
                                      VerticalContentAlignment="Center">
                                 <TextBox.InnerLeftContent>
-                                    <PathIcon Theme="{StaticResource IconFilter}"
+                                    <PathIcon Theme="{StaticResource IconLineFilter}"
                                               Margin="5 0" />
                                 </TextBox.InnerLeftContent>
                             </TextBox>

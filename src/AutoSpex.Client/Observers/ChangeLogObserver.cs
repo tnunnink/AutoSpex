@@ -15,9 +15,9 @@ public class ChangeLogObserver(ChangeLog model) : Observer<ChangeLog>(model)
     public override bool Filter(string? filter)
     {
         return base.Filter(filter)
-               || Command.PassesFilter(filter)
-               || Message.PassesFilter(filter)
-               || ChangedOn.PassesFilter(filter)
-               || ChangedBy.PassesFilter(filter);
+               || Command.Satisfies(filter)
+               || Message.Satisfies(filter)
+               || ChangedOn.Satisfies(filter)
+               || ChangedBy.Satisfies(filter);
     }
 }

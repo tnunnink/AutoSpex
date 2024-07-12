@@ -40,7 +40,7 @@ public class AnyOperationTests
     }
     
     [Test]
-    public void Evaluate_DoesNotHaveSpecifiedValue_ShouldBeTrue()
+    public void Evaluate_DoesNotHaveSpecifiedValue_ShouldBeFalse()
     {
         var items = new List<int> {1, 2, 3, 4, 5};
         

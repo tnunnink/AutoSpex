@@ -1,0 +1,112 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+             xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors"
+             xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+             x:Class="AutoSpex.Client.Pages.EnvironmentsPage"
+             x:DataType="pages:EnvironmentsPageModel"
+             Background="{a:ThemeResource Container2BackgroundBrush}">
+
+    <Design.Height>800</Design.Height>
+    <Design.Width>300</Design.Width>
+
+    <Grid RowDefinitions="Auto,Auto,*">
+
+        <Border Grid.Row="0"
+                Padding="10 5" Height="41"
+                BorderThickness="0 0 0 1"
+                BorderBrush="{a:ThemeResource Container1BorderBrush}">
+
+            <DockPanel LastChildFill="False">
+
+                <TextBlock
+                    DockPanel.Dock="Left"
+                    Text="Environments"
+                    FontSize="{a:ThemeResource DefaultFontSizeMedium}"
+                    FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
+
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="5">
+
+                    <Button
+                        Command="{Binding AddEnvironmentCommand}"
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconAdd}"
+                        Classes="accent"
+                        ToolTip.Tip="New Environment">
+                    </Button>
+
+                    <ToggleButton
+                        IsChecked="{Binding #SearchTextBox.IsVisible}"
+                        Theme="{StaticResource IconToggleButton}"
+                        properties:Icon.Theme="{StaticResource IconLineSearch}"
+                        ToolTip.Tip="Search" />
+
+                    <Button
+                        properties:Icon.Theme="{StaticResource IconDotsVertical}"
+                        Theme="{StaticResource IconButton}"
+                        Classes="size-sm"
+                        ToolTip.Tip="Options">
+                    </Button>
+
+                    <Button
+                        properties:Icon.Theme="{StaticResource IconDash}"
+                        Theme="{StaticResource IconButton}"
+                        Classes="size-sm"
+                        ToolTip.Tip="Hide">
+                        <Interaction.Behaviors>
+                            <behaviors:HideDrawerOnClickBehavior />
+                        </Interaction.Behaviors>
+                    </Button>
+
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <TextBox
+            x:Name="SearchTextBox"
+            Grid.Row="1"
+            IsVisible="False"
+            Watermark="Search"
+            Theme="{StaticResource TextBoxSimple}"
+            VerticalContentAlignment="Center"
+            Background="{a:ThemeResource Container1BackgroundBrush}"
+            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+            Padding="0 5" BorderThickness="0 0 0 1" CornerRadius="0" Height="36">
+            <TextBox.InnerLeftContent>
+                <PathIcon Theme="{StaticResource IconLineSearch}"
+                          VerticalAlignment="Center" Margin="10 0"
+                          Classes="size-sm"
+                          Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+            </TextBox.InnerLeftContent>
+            <Interaction.Behaviors>
+                <DataTriggerBehavior
+                    Binding="{Binding #SearchTextBox.IsVisible}"
+                    ComparisonCondition="Equal"
+                    Value="True">
+                    <FocusControlAction TargetControl="SearchTextBox" />
+                </DataTriggerBehavior>
+                <SelectAllOnGotFocusBehavior />
+            </Interaction.Behaviors>
+        </TextBox>
+
+        <ListBox
+            Grid.Row="2"
+            ItemsSource="{Binding Environments}"
+            SelectedItems="{Binding Selected}"
+            ItemTemplate="{StaticResource ObserverListItem}"
+            IsVisible="{Binding Environments.Count}"
+            SelectionMode="Multiple"
+            Padding="10 5">
+            <ListBox.ItemContainerTheme>
+                <ControlTheme TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemSimple}"
+                              x:DataType="observers:EnvironmentObserver">
+                    <Setter Property="IsVisible" Value="{Binding IsVisible}" />
+                    <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+                </ControlTheme>
+            </ListBox.ItemContainerTheme>
+        </ListBox>
+
+    </Grid>
+</UserControl>

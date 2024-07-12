@@ -1,25 +1,39 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:components="clr-namespace:AutoSpex.Client.Components"
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
-             xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
              x:Class="AutoSpex.Client.Pages.NavigationPage"
              x:DataType="pages:NavigationPageModel">
 
     <Design.Height>800</Design.Height>
     <Design.Width>300</Design.Width>
 
-    <components:NavigationTree ItemsSource="{Binding Nodes}"
-                               SelectedItems="{Binding SelectedNodes}"
-                               Feature="{Binding Feature}"
-                               AddContainerCommand="{Binding AddContainerCommand}"
-                               AddItemCommand="{Binding AddItemCommand}"
-                               SelectionMode="Multiple">
-        <components:NavigationTree.ItemTemplate>
-            <TreeDataTemplate x:DataType="observers:NodeObserver"
-                              ItemsSource="{Binding Nodes}">
-                <TextBlock Text="{Binding Name}" />
-            </TreeDataTemplate>
-        </components:NavigationTree.ItemTemplate>
-    </components:NavigationTree>
+    <Border
+        Background="{a:ThemeResource Container2BackgroundBrush}"
+        BorderBrush="{a:ThemeResource Container2BackgroundBrush}">
+
+        <Grid>
+
+            <Expander DockPanel.Dock="Top" Header="Specs" BorderThickness="0 0 0 1" CornerRadius="0">
+
+            </Expander>
+
+            <Expander BorderThickness="0 0 0 1" CornerRadius="0"
+                      Background="Transparent" VerticalContentAlignment="Stretch">
+                <Expander.Header>
+                    <Border>
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <PathIcon Theme="{StaticResource IconThemedEnvironment}" />
+                            <TextBlock Text="Environments"
+                                       FontSize="{a:ThemeResource DefaultFontSizeLarge}"
+                                       Classes="theme-text-heading"
+                                       Margin="0 0 0 1" />
+                        </StackPanel>
+                    </Border>
+                </Expander.Header>
+                <ListBox></ListBox>
+            </Expander>
+
+        </Grid>
+    </Border>
 </UserControl>

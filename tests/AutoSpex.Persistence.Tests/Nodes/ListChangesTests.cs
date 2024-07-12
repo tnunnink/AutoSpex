@@ -21,7 +21,7 @@ public class ListChangesTests
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
         var container = Node.NewContainer();
-        await mediator.Send(new CreateNode(container, NodeType.Spec));
+        await mediator.Send(new CreateNode(container));
 
         var result = await mediator.Send(new ListChanges(container.NodeId));
 
@@ -37,8 +37,8 @@ public class ListChangesTests
         var container = Node.NewContainer();
         var nested = container.AddContainer();
         var spec = nested.AddSpec();
-        await mediator.Send(new CreateNode(container, NodeType.Spec));
-        await mediator.Send(new CreateNode(nested, NodeType.Spec));
+        await mediator.Send(new CreateNode(container));
+        await mediator.Send(new CreateNode(nested));
         await mediator.Send(new CreateNode(spec));
 
         var result = await mediator.Send(new ListChanges(container.NodeId));

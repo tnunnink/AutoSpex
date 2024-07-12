@@ -11,40 +11,27 @@ public static class DialogExtensions
 {
     private static FilePickerFileType Spex { get; } = new("Spex Project")
     {
-        Patterns = new[] {"*.spex"}
+        Patterns = new[] { "*.spex" }
     };
-    
+
     private static FilePickerFileType L5X { get; } = new("L5X")
     {
-        Patterns = new[] {"*.L5X"}
+        Patterns = new[] { "*.L5X", "*.l5x" }
     };
-    
+
     public static async Task<Uri?> SelectFolderUri(this IStorageProvider provider, string title)
     {
         var options = new FolderPickerOpenOptions
         {
             Title = title,
-            AllowMultiple = false,
+            AllowMultiple = false
         };
 
         var folder = (await provider.OpenFolderPickerAsync(options)).SingleOrDefault();
         return folder?.Path;
     }
 
-    public static async Task<Uri?> SelectProjectUri(this IStorageProvider provider)
-    {
-        var options = new FilePickerOpenOptions
-        {
-            Title = "Select Spex Project",
-            AllowMultiple = false,
-            FileTypeFilter = [Spex],
-        };
-
-        var folder = (await provider.OpenFilePickerAsync(options)).SingleOrDefault();
-        return folder?.Path;
-    }
-
-    public static async Task<Uri?> SelectL5XUri(this IStorageProvider provider)
+    public static async Task<Uri?> SelectSourceFile(this IStorageProvider provider)
     {
         var options = new FilePickerOpenOptions
         {
@@ -56,12 +43,12 @@ public static class DialogExtensions
         var folder = (await provider.OpenFilePickerAsync(options)).SingleOrDefault();
         return folder?.Path;
     }
-    
+
     public static Task ShowInExplorer(this IStorageProvider service, string directory)
     {
         return Task.FromResult(Result.Try(() =>
         {
-            Process.Start(new ProcessStartInfo {FileName = directory, UseShellExecute = true});
+            Process.Start(new ProcessStartInfo { FileName = directory, UseShellExecute = true });
         }));
     }
 }

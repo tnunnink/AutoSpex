@@ -1,0 +1,85 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:shared="clr-namespace:AutoSpex.Client.Shared"
+             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+             x:Class="AutoSpex.Client.Pages.EnvironmentDetailPage"
+             x:DataType="pages:EnvironmentDetailPageModel">
+
+
+    <Design.Width>1400</Design.Width>
+    <Design.Height>900</Design.Height>
+
+    <DockPanel>
+
+        <Border DockPanel.Dock="Top" Padding="20" Background="{a:ThemeResource Container2BackgroundBrush}">
+
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <StackPanel Grid.Column="0" Spacing="5" HorizontalAlignment="Left" Orientation="Horizontal">
+
+                    <PathIcon
+                        Theme="{Binding Icon, Converter={StaticResource KeyToIconConverter}}"
+                        Classes="size-lg" />
+
+                    <ContentControl
+                        Content="{Binding Environment}"
+                        ContentTemplate="{StaticResource ObserverTitle}" />
+
+                    <Button Theme="{StaticResource IconButtonSmall}"
+                            ToolTip.Tip="Documentation"
+                            properties:Icon.Theme="{StaticResource IconLineParagraph}">
+                        <Button.Flyout>
+                            <Flyout Placement="BottomEdgeAlignedLeft" HorizontalOffset="-8" VerticalOffset="5">
+                                <TextBox
+                                    Text="{Binding Environment.Comment}"
+                                    Watermark="Add comments to help others"
+                                    Theme="{StaticResource TextBoxSimple}"
+                                    TextWrapping="Wrap"
+                                    Width="400" />
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10">
+                    <Button
+                        Command="{Binding SaveCommand}"
+                        Classes="save" />
+                    <Button
+                        Classes="run accent"
+                        CornerRadius="{a:ThemeResource ButtonCornerRadius}" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <DockPanel>
+            <TabStrip
+                DockPanel.Dock="Top"
+                ItemsSource="{Binding Tabs}"
+                SelectedItem="{Binding Tab}"
+                ItemContainerTheme="{StaticResource TabItemStandard}"
+                Background="{a:ThemeResource Container2BackgroundBrush}"
+                BorderThickness="0"
+                Padding="20 0">
+                <TabStrip.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" Spacing="20" />
+                    </ItemsPanelTemplate>
+                </TabStrip.ItemsPanel>
+                <TabStrip.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Title}" />
+                    </DataTemplate>
+                </TabStrip.ItemTemplate>
+            </TabStrip>
+            <ContentControl Content="{Binding Tab}">
+                <ContentControl.ContentTemplate>
+                    <DataTemplate x:DataType="shared:PageViewModel">
+                        <ContentControl Content="{Binding}" />
+                    </DataTemplate>
+                </ContentControl.ContentTemplate>
+            </ContentControl>
+        </DockPanel>
+    </DockPanel>
+</UserControl>

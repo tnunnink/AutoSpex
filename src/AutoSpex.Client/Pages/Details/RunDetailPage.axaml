@@ -1,0 +1,171 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+             xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
+             x:Class="AutoSpex.Client.Pages.RunDetailPage"
+             x:DataType="pages:RunDetailPageModel">
+
+    <Design.Width>1400</Design.Width>
+    <Design.Height>900</Design.Height>
+
+    <DockPanel>
+        <Border DockPanel.Dock="Top" Padding="20" Background="{a:ThemeResource Container2BackgroundBrush}">
+            <StackPanel Spacing="10">
+
+                <Grid ColumnDefinitions="Auto,*,Auto">
+                    <StackPanel Grid.Column="0" Spacing="5" HorizontalAlignment="Left" Orientation="Horizontal">
+                        <PathIcon Theme="{Binding Icon, Converter={StaticResource KeyToIconConverter}}" />
+                        <ContentControl
+                            Content="{Binding Run}"
+                            ContentTemplate="{StaticResource ObserverTitle}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10">
+
+                        <Button
+                            Command="{Binding Run.RunCommand}"
+                            Classes="run accent"
+                            CornerRadius="5"
+                            IsVisible="{Binding Run.Result, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:ResultState.Pending}}" />
+
+                        <Button
+                            Command="{Binding Run.CancelCommand}"
+                            Classes="cancel"
+                            IsVisible="{Binding Run.Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Pending}}" />
+
+                        <Button
+                            Classes="export" />
+
+                    </StackPanel>
+                </Grid>
+
+                <ContentControl
+                    Content="{Binding Run}"
+                    ContentTemplate="{StaticResource ResultSummary}" />
+            </StackPanel>
+        </Border>
+
+        <Grid Margin="20" RowDefinitions="Auto,*">
+            <Grid ColumnDefinitions="Auto,*,Auto" Margin="0 0 0 10">
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10">
+                    <TextBox
+                        Text="{Binding Run.FilterText}"
+                        Watermark="Filter results"
+                        Theme="{StaticResource TextBoxOutlineHighlight}"
+                        BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                        MinWidth="300">
+                        <TextBox.InnerLeftContent>
+                            <PathIcon Theme="{StaticResource IconLineFilter}" Margin="10 0 0 0" />
+                        </TextBox.InnerLeftContent>
+                    </TextBox>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10">
+
+                    <Button BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                            VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <PathIcon Theme="{StaticResource IconThemedSource}" />
+                            <TextBlock Text="Sources" />
+                            <StackPanel Orientation="Horizontal">
+
+                            </StackPanel>
+                        </StackPanel>
+                        <Button.IsVisible>
+                            <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                <Binding Path="Run.HasResult" />
+                                <Binding Path="Run.HasManySources" />
+                            </MultiBinding>
+                        </Button.IsVisible>
+                        <Button.Flyout>
+                            <Flyout Placement="BottomEdgeAlignedRight" HorizontalOffset="8" VerticalOffset="5">
+                                <ListBox ItemsSource="{Binding Run.Sources}"
+                                         ItemContainerTheme="{StaticResource ListBoxItemSimple}"
+                                         Margin="5" MinWidth="200">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate x:DataType="observers:SourceObserver">
+                                            <StackPanel Orientation="Horizontal" Spacing="7">
+                                                <CheckBox Classes="size-sm accent" IsChecked="{Binding IsChecked}" />
+                                                <TextBlock Text="{Binding Name}" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+
+                    <ComboBox ItemsSource="{Binding Run.ResultFilters}"
+                              SelectedItem="{Binding Run.ResultFilter}"
+                              ItemTemplate="{DynamicResource ResultStateItem}"
+                              Theme="{StaticResource ComboBoxSubtle}"
+                              VerticalAlignment="Center" />
+
+                    <StackPanel Orientation="Horizontal">
+                        <Button
+                            Theme="{StaticResource IconButtonPillLeft}"
+                            properties:Icon.Theme="{StaticResource IconAdd}"
+                            Classes="accent"
+                            ToolTip.Tip="Add Specs" />
+                        <Button
+                            Command="{Binding Run.CollapseAllCommand}"
+                            Theme="{StaticResource IconButtonPillCenter}"
+                            properties:Icon.Theme="{StaticResource IconChevronCollapse}"
+                            Classes="size-sm"
+                            ToolTip.Tip="Collapse All" />
+                        <Button
+                            Command="{Binding Run.ExpandAllCommand}"
+                            Theme="{StaticResource IconButtonPillCenter}"
+                            properties:Icon.Theme="{StaticResource IconChevronExpand}"
+                            Classes="size-sm"
+                            ToolTip.Tip="Expand All" />
+                        <Button
+                            Theme="{StaticResource IconButtonPillRight}"
+                            properties:Icon.Theme="{StaticResource IconDots}"
+                            ToolTip.Tip="Options" />
+                    </StackPanel>
+
+                </StackPanel>
+            </Grid>
+
+            <Border x:Name="DropArea" Grid.Row="1" DragDrop.AllowDrop="True">
+                <Border.Styles>
+                    <Style Selector="Border">
+                        <Setter Property="Background" Value="Transparent" />
+                    </Style>
+                    <Style Selector="Border.dragover">
+                        <Setter Property="Background" Value="#212528" />
+                    </Style>
+                </Border.Styles>
+
+                <ListBox
+                    x:Name="OutcomeList"
+                    VerticalAlignment="Top"
+                    ItemsSource="{Binding Run.Outcomes}"
+                    ItemTemplate="{StaticResource OutcomeListItem}"
+                    SelectedItems="{Binding Run.Selected}"
+                    SelectionMode="Multiple"
+                    IsVisible="{Binding Run.Outcomes.Count}"
+                    BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                    BorderThickness="1" CornerRadius="5"
+                    DragDrop.AllowDrop="True">
+                    <ListBox.ItemContainerTheme>
+                        <ControlTheme TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemSection}"
+                                      x:DataType="observers:OutcomeObserver">
+                            <Setter Property="IsVisible" Value="{Binding IsVisible}" />
+
+                            <Style Selector="^:pointerover /template/ Border#RootBorder">
+                                <Setter Property="Background" Value="{a:ThemeResource Container2BackgroundBrush}" />
+                            </Style>
+                        </ControlTheme>
+                    </ListBox.ItemContainerTheme>
+                </ListBox>
+            </Border>
+
+        </Grid>
+    </DockPanel>
+</UserControl>

@@ -1,0 +1,7 @@
+﻿{
+  ArgumentId: Guid_1,
+  Value: {
+    Type: System.Int32,
+    Data: 123
+  }
+}

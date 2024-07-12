@@ -1,27 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoSpex.Client.Pages;
+using AutoSpex.Client.Resources;
 using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using AutoSpex.Persistence;
-using CommunityToolkit.Mvvm.ComponentModel;
+using Avalonia.Input;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using CommunityToolkit.Mvvm.Messaging.Messages;
+using FluentResults;
 using JetBrains.Annotations;
 
 namespace AutoSpex.Client.Observers;
 
 [PublicAPI]
 public partial class NodeObserver : Observer<Node>,
-    IRecipient<Observer<Node>.Created>,
-    IRecipient<Observer<Node>.Deleted>,
-    IRecipient<NodeObserver.Renamed>,
+    IRecipient<Observer.Deleted>,
+    IRecipient<Observer.Request<NodeObserver>>,
     IRecipient<NodeObserver.Moved>,
-    IRecipient<NodeObserver.GetSelected>
+    IRecipient<NodeObserver.ExpandTo>
 {
     public NodeObserver(Node node) : base(node)
     {
@@ -31,52 +33,56 @@ public partial class NodeObserver : Observer<Node>,
             (_, n) => Model.AddNode(n),
             (_, n) => Model.RemoveNode(n),
             () => Model.ClearNodes());
-
-        Track(nameof(Name));
     }
 
     public override Guid Id => Model.NodeId;
+    public override string Icon => Type.Name;
     public Guid ParentId => Model.ParentId;
     public NodeObserver? Parent => Model.Parent is not null ? new NodeObserver(Model.Parent) : default;
     public NodeType Type => Model.Type;
-    public NodeType Feature => Model.Feature;
-    public string Path => Model.Path;
 
-    public string Name
+    [Required]
+    public override string Name
     {
         get => Model.Name;
-        set => SetProperty(Model.Name, value, Model, (s, v) => s.Name = v);
+        set => SetProperty(Model.Name, value, Model, (s, v) => s.Name = v, true);
     }
 
     public ObserverCollection<Node, NodeObserver> Nodes { get; }
-    public ObservableCollection<NodeObserver> Crumbs => new(Model.Ancestors().Select(n => new NodeObserver(n)));
-
-    public ObservableCollection<NodeObserver> Descendents =>
-        new(Model.Descendants().Where(n => n.Type != NodeType.Container).Select(n => new NodeObserver(n)));
-
-    [ObservableProperty] private bool _isVisible = true;
-
-    [ObservableProperty] private bool _isExpanded;
-
-    [ObservableProperty] private bool _isSelected;
-
-    [ObservableProperty] private bool _isEditing;
-
-    [ObservableProperty] private bool _isChecked;
-
-    [ObservableProperty] private bool _isNew;
-
-    public static implicit operator NodeObserver(Node node) => new(node);
-    public static implicit operator Node(NodeObserver observer) => observer.Model;
+    public IEnumerable<NodeObserver> Crumbs => Model.Ancestors().Select(n => new NodeObserver(n));
+    public IEnumerable<NodeObserver> Path => Model.AncestorsAndSelf().Select(n => new NodeObserver(n));
 
     /// <inheritdoc />
+    /// <remarks>
+    /// Since the node is a tree we want to also filter depth first to find children containing the text.
+    /// If found we set the visibility and expand up to the found items.
+    /// </remarks>
     public override bool Filter(string? filter)
     {
-        return base.Filter(filter) || Name.PassesFilter(filter) || Path.PassesFilter(filter);
+        var passes = base.Filter(filter);
+        var children = Nodes.Count(x => x.Filter(filter));
+
+        IsVisible = passes || children > 0;
+        IsExpanded = children > 0;
+
+        return IsVisible;
     }
 
-    /// <inheritdoc />
-    public override string ToString() => Name;
+    /// <summary>
+    /// Traverses the entire node tree to determine if it contains the provided node observer instance.
+    /// </summary>
+    /// <param name="observer">The node instance to find.</param>
+    /// <returns><c>true</c> if the node is in the tree, otherwise, <c>false</c>.</returns>
+    public bool HasNode(NodeObserver observer)
+    {
+        foreach (var node in Nodes)
+        {
+            if (node.Is(observer)) return true;
+            if (node.HasNode(observer)) return true;
+        }
+
+        return false;
+    }
 
     #region Commands
 
@@ -86,47 +92,12 @@ public partial class NodeObserver : Observer<Node>,
     [RelayCommand]
     private Task AddSpec() => AddNode(new NodeObserver(Node.NewSpec()) { IsNew = true });
 
-    [RelayCommand]
-    private Task AddSource() => AddNode(new NodeObserver(Node.NewSource()) { IsNew = true });
-
-    [RelayCommand]
-    private Task AddRun() => AddNode(new NodeObserver(Node.NewRun()) { IsNew = true });
-
-    private async Task AddNode(NodeObserver node)
-    {
-        //Add before sending request because this sets the parent correctly.
-        Nodes.Add(node);
-
-        var result = await Mediator.Send(new CreateNode(node));
-
-        if (result.IsFailed)
-        {
-            Nodes.Remove(node);
-            return;
-        }
-
-        Nodes.Sort(n => n.Name, StringComparer.OrdinalIgnoreCase);
-        await Navigator.Navigate(node);
-    }
-
     /// <inheritdoc />
     protected override async Task Delete()
     {
-        var delete = await Prompter.PromptDeleteItem(Name);
-        if (delete is not true) return;
-
-        var result = await Mediator.Send(new DeleteNode(Id));
-        if (result.IsFailed) return;
-
-        Messenger.Send(new Deleted(this));
-    }
-
-    [RelayCommand]
-    private async Task DeleteSelected()
-    {
         if (!IsSelected) return;
 
-        var selected = Messenger.Send(new GetSelected()).Responses;
+        var selected = SelectedItems.ToList();
 
         if (selected.Count == 1)
         {
@@ -147,30 +118,10 @@ public partial class NodeObserver : Observer<Node>,
     }
 
     [RelayCommand]
-    private async Task Rename(string? name)
-    {
-        if (string.IsNullOrEmpty(name) || name.Length > 100) return;
-
-        Name = name;
-        var rename = await Mediator.Send(new RenameNode(this));
-        if (rename.IsFailed) return;
-
-        IsEditing = false;
-        IsNew = false;
-        AcceptChanges(nameof(Name));
-        Messenger.Send(new Renamed(this));
-    }
-
-    [RelayCommand]
-    private void ResetName()
-    {
-        IsEditing = false;
-        OnPropertyChanged(nameof(Name));
-    }
-
-    [RelayCommand]
     private async Task Move(IList<NodeObserver> nodes)
     {
+        if (nodes.Any(n => !Type.CanContain(n.Type))) return;
+
         var result = await Mediator.Send(new MoveNodes(nodes.Select(n => n.Model), Id));
         if (result.IsFailed) return;
 
@@ -183,10 +134,12 @@ public partial class NodeObserver : Observer<Node>,
     [RelayCommand]
     private async Task MoveSelected()
     {
-        var selected = Messenger.Send(new GetSelected()).Responses;
+        var selected = SelectedItems.Where(x => x is NodeObserver).Cast<NodeObserver>().ToList();
 
-        var parent = await Prompter.Show<NodeObserver?>(() => new SelectContainerPageModel(Feature));
+        var parent = await Prompter.Show<NodeObserver?>(() => new SelectContainerPageModel());
         if (parent is null) return;
+
+        if (selected.Any(n => !parent.Type.CanContain(n.Type))) return;
 
         var result = await Mediator.Send(new MoveNodes(selected.Select(n => n.Model), parent.Id));
         if (result.IsFailed) return;
@@ -197,54 +150,81 @@ public partial class NodeObserver : Observer<Node>,
             Messenger.Send(new Moved(node));
     }
 
+    /// <summary>
+    /// Sends the command to expand the tree and select this node, thereby locating this node in the hierarchy.
+    /// </summary>
     [RelayCommand]
-    private void Edit()
+    public void Locate()
     {
-        IsEditing = true;
+        Messenger.Send(new ExpandTo(this));
+        IsSelected = true;
     }
 
+    /// <summary>
+    /// Sends the command to expand the tree and select this node, thereby locating this node in the hierarchy.
+    /// </summary>
+    [RelayCommand]
+    public void ExpandAll()
+    {
+        IsExpanded = true;
+
+        foreach (var node in Nodes)
+        {
+            node.ExpandAll();
+        }
+    }
+
+    /// <summary>
+    /// Sends the command to expand the tree and select this node, thereby locating this node in the hierarchy.
+    /// </summary>
+    [RelayCommand]
+    public void CollapseAll()
+    {
+        IsExpanded = false;
+
+        foreach (var node in Nodes)
+        {
+            node.CollapseAll();
+        }
+    }
+
+    /// <summary>
+    /// A command to run this node and all child specifications.
+    /// </summary>
     [RelayCommand]
     private async Task Run()
     {
-        //Runs open the runner with the run.
-        if (Type == NodeType.Run)
-        {
-            var result = await Mediator.Send(new GetRun(Id));
+        //We need to load the full environment to get sources and overrides.
+        var result = await Mediator.Send(new GetTargetEnvironment());
+        if (result.IsFailed) return;
+        var environment = new EnvironmentObserver(result.Value);
 
-            if (result.IsFailed)
-            {
-                //notify failure?
-                return;
-            }
+        //Create new run instance with the target environment and current node.
+        var run = new Run(environment, this);
 
-            var loaded = new RunObserver(result.Value);
-            await loaded.Open();
-            return;
-        }
-
-        //Specs and Source (or their containers) will create a new virtual run and open that in the runner.
-        var run = RunObserver.Virtual(this);
-        await run.Open();
+        await Navigator.Navigate(() => new RunDetailPageModel(run));
     }
 
     #endregion
 
-    #region MessageHandlers
+    #region Handlers
 
-    /// <summary>
-    /// Will handle the creation of a node. Parent nodes need to ensure the object is added if it belongs as a child.
-    /// Also, this is where we want to sort the children to ensure proper ordering.
-    /// </summary>
-    public void Receive(Created message)
-    {
-        if (message.Observer is not NodeObserver node) return;
+/*/// <summary>
+/// Will handle the creation of a node. Parent nodes need to ensure the object is added if it belongs as a child.
+/// Also, this is where we want to sort the children to ensure proper ordering. Also trigger the locate command
+/// to allow the UI to select and display this node in the tree.
+/// </summary>
+public void Receive(Created message)
+{
+    if (message.Observer is not NodeObserver node) return;
 
-        if (Id != node.ParentId) return;
-        if (Nodes.Any(n => n.Id == node.Id)) return;
+    if (Id != node.ParentId) return;
+    if (Nodes.Any(n => n.Id == node.Id)) return;
 
-        Nodes.Add(node);
-        Nodes.Sort(n => n.Name, StringComparer.OrdinalIgnoreCase);
-    }
+    Nodes.Add(node);
+    Nodes.Sort(n => n.Name, StringComparer.OrdinalIgnoreCase);
+    Locate();
+}*/
 
     /// <summary>
     /// Will handle the removal of the node and/or child nodes as based on which observer object is received.
@@ -266,34 +246,16 @@ public partial class NodeObserver : Observer<Node>,
         Messenger.UnregisterAll(this);
     }
 
-    /// <summary>
-    /// Handles the observer renamed message by updating this object's name if it is not the sender of the
-    /// message. If this object is updated then it in turn sends a renamed message.
-    /// </summary>
-    public void Receive(Renamed message)
+    /// <inheritdoc />
+    public override void Receive(Renamed message)
     {
-        var node = message.Node;
+        base.Receive(message);
+
+        if (message.Observer is not NodeObserver node) return;
 
         //If I am the parent to the renamed node then sort my children to ensure proper ordering.
-        if (Id == node.ParentId)
-        {
-            Nodes.Sort(n => n.Name, StringComparer.OrdinalIgnoreCase);
-            return;
-        }
-
-        //If this is the same instance or not the changed node then return.
-        if (ReferenceEquals(this, node)) return;
-        if (Id != node.Id) return;
-
-        //Otherwise make sure the name is synced. 
-        if (Name != node.Name)
-        {
-            Name = node.Name;
-            return;
-        }
-
-        //Notify property change regardless to update the UI.
-        OnPropertyChanged(nameof(Name));
+        if (Id != node.ParentId) return;
+        Nodes.Sort(n => n.Name, StringComparer.OrdinalIgnoreCase);
     }
 
     /// <summary>
@@ -310,35 +272,29 @@ public partial class NodeObserver : Observer<Node>,
     }
 
     /// <summary>
-    /// Handles the <see cref="GetSelected"/> request message sent from a node. If this is a selected node then
-    /// and the responses does not container it, reply with this node object. IsSelected is assumed to be used by the
-    /// main navigation tree of the application.
+    /// When the <see cref="ExpandTo"/> message is received we want to expand the parent node if the received node is
+    /// a child of this node. When then in turn send the <see cref="ExpandTo"/> up the tree until we reach the root.
     /// </summary>
-    public void Receive(GetSelected message)
+    public void Receive(ExpandTo message)
     {
-        if (!IsSelected) return;
-        if (message.Responses.Contains(this)) return;
+        if (!Nodes.Contains(message.Node)) return;
+        IsExpanded = true;
+        Messenger.Send(new ExpandTo(this));
+    }
+
+    /// <summary>
+    /// Respond to the request message of a node observer instance if the id matches this node's id.
+    /// </summary>
+    public void Receive(Request<NodeObserver> message)
+    {
+        if (message.HasReceivedResponse) return;
+        if (Id != message.Id) return;
         message.Reply(this);
     }
 
     #endregion
 
-    /// <summary>
-    /// This will force the editing mode to end when the item loses selection.
-    /// </summary>
-    partial void OnIsSelectedChanged(bool value)
-    {
-        if (IsEditing && !value)
-        {
-            IsEditing = false;
-        }
-    }
-
-    /// <summary>
-    /// A message to be sent when the <see cref="NodeObserver"/> name changes so that other node instance can respond and
-    /// update their local value and in turn refresh the UI.
-    /// </summary>
-    public record Renamed(NodeObserver Node);
+    #region Messages
 
     /// <summary>
     /// A message to be sent when the <see cref="NodeObserver"/> is moved to a different parent container. This is so that
@@ -347,7 +303,100 @@ public partial class NodeObserver : Observer<Node>,
     public record Moved(NodeObserver Node);
 
     /// <summary>
-    /// A request message that will return all selected <see cref="NodeObserver"/> instance to the requesting node. 
+    /// A message that informs the parent nodes to expand their container if the provided node is a child of the
+    /// received node. this allows use to expand the tree from a child leaf node.
     /// </summary>
-    public class GetSelected : CollectionRequestMessage<NodeObserver>;
+    public record ExpandTo(NodeObserver Node);
+
+    #endregion
+
+    protected override Task<Result> UpdateName(string name)
+    {
+        Model.Name = name;
+        return Mediator.Send(new RenameNode(this));
+    }
+
+    protected override IEnumerable<MenuActionItem> GenerateMenuItems()
+    {
+        yield return new MenuActionItem
+        {
+            Header = "Add Container",
+            Icon = Resource.Find("IconThemedContainer"),
+            Command = AddContainerCommand
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Add Spec",
+            Icon = Resource.Find("IconThemedSpec"),
+            Command = AddSpecCommand,
+        };
+
+        yield return MenuActionItem.Separator;
+
+        yield return new MenuActionItem
+        {
+            Header = "Run",
+            Icon = Resource.Find("IconFilledLightning"),
+            Classes = "accent",
+            Command = RunCommand
+        };
+
+        yield return MenuActionItem.Separator;
+
+        yield return new MenuActionItem
+        {
+            Header = "Properties",
+            Icon = Resource.Find("IconFilledGear"),
+            Command = NavigateCommand,
+            Gesture = new KeyGesture(Key.Enter)
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Rename",
+            Icon = Resource.Find("IconFilledPen"),
+            Command = RenameCommand,
+            Gesture = new KeyGesture(Key.E, KeyModifiers.Control)
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Duplicate",
+            Icon = Resource.Find("IconFilledClone"),
+            Command = DuplicateCommand,
+            Gesture = new KeyGesture(Key.D, KeyModifiers.Control)
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Delete",
+            Icon = Resource.Find("IconLineTrash"),
+            Classes = "danger",
+            Command = DeleteCommand,
+            Gesture = new KeyGesture(Key.Delete)
+        };
+    }
+
+    private async Task AddNode(NodeObserver node)
+    {
+        //Add before sending request because this sets the parent correctly.
+        Nodes.Add(node);
+
+        var result = await Mediator.Send(new CreateNode(node));
+
+        if (result.IsFailed)
+        {
+            Nodes.Remove(node);
+            return;
+        }
+
+        Nodes.Sort(n => n.Name, StringComparer.OrdinalIgnoreCase);
+        Locate();
+        Messenger.Send(new Created(node));
+        await Navigator.Navigate(node);
+    }
+
+    public static implicit operator NodeObserver(Node node) => new(node);
+    public static implicit operator Node(NodeObserver observer) => observer.Model;
 }

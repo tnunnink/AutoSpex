@@ -13,13 +13,11 @@ using CommunityToolkit.Mvvm.Messaging;
 
 namespace AutoSpex.Client.Pages;
 
-public partial class CreateNodePageModel(NodeType feature) : PageViewModel
+public partial class CreateNodePageModel : PageViewModel
 {
     private readonly List<NodeObserver> _containers = [];
-    
-    [ObservableProperty] private NodeType _feature = feature;
-    
-    [ObservableProperty] private string _title = $"Create new {feature.ToString().ToLowerInvariant()}";
+
+    [ObservableProperty] private string _title = $"Create new spec";
 
     [ObservableProperty] [NotifyDataErrorInfo] [NotifyCanExecuteChangedFor(nameof(CreateCommand))] [Required]
     private string _name = string.Empty;
@@ -28,11 +26,11 @@ public partial class CreateNodePageModel(NodeType feature) : PageViewModel
     public ObservableCollection<NodeObserver> Containers { get; } = [];
 
     [ObservableProperty] private string _filter = string.Empty;
-    
+
 
     public override async Task Load()
     {
-        var result = await Mediator.Send(new GetContainerNodes(Feature));
+        var result = await Mediator.Send(new GetContainerNodes());
         if (result.IsFailed) return;
 
         var nodes = result.Value.Select(n => new NodeObserver(n));
@@ -44,10 +42,10 @@ public partial class CreateNodePageModel(NodeType feature) : PageViewModel
     [RelayCommand(CanExecute = nameof(CanCreate))]
     private async Task Create(Window dialog)
     {
-        var node = Node.NewNode(Feature, Name);
+        var node = Node.NewSpec(Name);
 
         SelectedNode?.Model.AddNode(node);
-        
+
         var result = await Mediator.Send(new CreateNode(node));
         if (result.IsFailed)
         {

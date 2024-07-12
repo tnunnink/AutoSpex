@@ -8,8 +8,10 @@
 
 
     <Design.PreviewWith>
-        <Border Padding="30" Height="400" Width="400">
+        <Border Padding="30" Height="400" Width="400"
+                Background="{a:ThemeResource Container1BackgroundBrush}">
             <StackPanel Spacing="10">
+                <a:ToggleThemeButton Theme="{a:ControlTheme ToggleThemeButtonSubtle}" />
                 <controls:Entry Watermark="Enter value" />
                 <controls:Entry Watermark="Enter value" Value="This is a test" />
                 <controls:Entry Watermark="Enter value" Value="Test"
@@ -48,8 +50,8 @@
                                 Margin="0 1 0 0" />
                             <ContentPresenter
                                 x:Name="PART_ContentPresenter"
-                                Content="{Binding Content, RelativeSource={RelativeSource TemplatedParent}}"
-                                ContentTemplate="{Binding ContentTemplate, RelativeSource={RelativeSource TemplatedParent}}"
+                                Content="{Binding Value, RelativeSource={RelativeSource TemplatedParent}}"
+                                ContentTemplate="{Binding ValueTemplate, RelativeSource={RelativeSource TemplatedParent}}"
                                 Margin="0 1 0 0" />
                         </Panel>
                     </Button>
@@ -73,20 +75,21 @@
                                 Grid.Row="0"
                                 Text="{TemplateBinding Text, Mode=TwoWay}"
                                 Watermark="{TemplateBinding Watermark}"
+                                FontFamily="{TemplateBinding FontFamily}"
+                                FontSize="{TemplateBinding FontSize}"
+                                FontWeight="{TemplateBinding FontWeight}"
                                 Theme="{a:ControlTheme TextBoxOutline}"
                                 BorderThickness="0"
                                 Margin="0 1 0 0"
                                 CornerRadius="0 0 4 4"
                                 MinHeight="30"
-                                FontFamily="{TemplateBinding FontFamily}"
-                                FontSize="{TemplateBinding FontSize}"
                                 VerticalContentAlignment="Center"
                                 a:ThemeProperties.CopyClassesFrom="{TemplateBinding}"
                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                 ScrollViewer.VerticalScrollBarVisibility="Disabled">
                                 <TextBox.InnerRightContent>
-                                    <Button Theme="{StaticResource IconButtonSmall}"
-                                            properties:ButtonIcon.Theme="{StaticResource IconChevronExpand}"
+                                    <Button Theme="{a:ControlTheme ButtonSubtle}"
+                                            properties:Icon.Theme="{StaticResource IconChevronExpand}"
                                             IsVisible="{Binding $parent[controls:Entry].UseExpander}"
                                             Margin="5 0" CornerRadius="10" />
                                 </TextBox.InnerRightContent>

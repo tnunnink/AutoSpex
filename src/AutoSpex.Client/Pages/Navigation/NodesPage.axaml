@@ -1,0 +1,143 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+             xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors"
+             xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+             xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
+             x:Class="AutoSpex.Client.Pages.NodesPage"
+             x:DataType="pages:NodesPageModel"
+             Background="{a:ThemeResource Container2BackgroundBrush}">
+
+    <Design.Height>800</Design.Height>
+    <Design.Width>400</Design.Width>
+
+    <Grid RowDefinitions="Auto,Auto,*">
+
+        <Border Grid.Row="0"
+                Padding="10 5" Height="41"
+                BorderThickness="0 0 0 1"
+                BorderBrush="{a:ThemeResource Container1BorderBrush}">
+
+            <DockPanel LastChildFill="False">
+
+                <TextBlock
+                    DockPanel.Dock="Left"
+                    Text="Specifications"
+                    FontSize="{a:ThemeResource DefaultFontSizeMedium}"
+                    FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
+
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="5">
+
+                    <Button
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconAdd}"
+                        Classes="accent"
+                        ToolTip.Tip="Add">
+                        <Button.Flyout>
+                            <MenuFlyout Placement="BottomEdgeAlignedRight" HorizontalOffset="8" VerticalOffset="5"
+                                        ItemContainerTheme="{StaticResource ContextMenuItem}">
+                                <MenuItem
+                                    Command="{Binding AddNodeCommand}"
+                                    CommandParameter="{x:Static engine:NodeType.Container}"
+                                    Header="Add Container"
+                                    Icon="{StaticResource IconThemedContainer}" />
+                                <MenuItem
+                                    Command="{Binding AddNodeCommand}"
+                                    CommandParameter="{x:Static engine:NodeType.Spec}"
+                                    Header="Add Spec"
+                                    Icon="{StaticResource IconThemedSpec}" />
+                            </MenuFlyout>
+                        </Button.Flyout>
+                    </Button>
+
+                    <ToggleButton
+                        IsChecked="{Binding #SearchTextBox.IsVisible}"
+                        Theme="{StaticResource IconToggleButton}"
+                        properties:Icon.Theme="{StaticResource IconLineSearch}"
+                        ToolTip.Tip="Search" />
+
+                    <Panel>
+                        <Button
+                            Command="{Binding ExpandAllCommand}"
+                            IsVisible="{Binding !IsExpanded}"
+                            Theme="{StaticResource IconButton}"
+                            properties:Icon.Theme="{StaticResource IconChevronExpand}"
+                            ToolTip.Tip="Expand All" />
+                        <Button
+                            Command="{Binding CollapseAllCommand}"
+                            IsVisible="{Binding IsExpanded}"
+                            Theme="{StaticResource IconButton}"
+                            properties:Icon.Theme="{StaticResource IconChevronCollapse}"
+                            ToolTip.Tip="Collapse All" />
+                    </Panel>
+
+                    <Button
+                        properties:Icon.Theme="{StaticResource IconDotsVertical}"
+                        Theme="{StaticResource IconButton}"
+                        Classes="size-sm"
+                        ToolTip.Tip="Options">
+                    </Button>
+
+                    <Button
+                        properties:Icon.Theme="{StaticResource IconDash}"
+                        Theme="{StaticResource IconButton}"
+                        Classes="size-sm"
+                        ToolTip.Tip="Hide">
+                        <Interaction.Behaviors>
+                            <behaviors:HideDrawerOnClickBehavior />
+                        </Interaction.Behaviors>
+                    </Button>
+
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <TextBox
+            x:Name="SearchTextBox"
+            Grid.Row="1"
+            IsVisible="False"
+            Text="{Binding Filter}"
+            Watermark="Search"
+            Theme="{StaticResource TextBoxSimple}"
+            VerticalContentAlignment="Center"
+            Background="{a:ThemeResource Container1BackgroundBrush}"
+            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+            Padding="0 5" BorderThickness="0 0 0 1" CornerRadius="0" Height="36">
+            <TextBox.InnerLeftContent>
+                <PathIcon Theme="{StaticResource IconLineSearch}"
+                          VerticalAlignment="Center" Margin="10 0"
+                          Classes="size-sm"
+                          Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+            </TextBox.InnerLeftContent>
+            <Interaction.Behaviors>
+                <DataTriggerBehavior
+                    Binding="{Binding #SearchTextBox.IsVisible}"
+                    ComparisonCondition="Equal"
+                    Value="True">
+                    <FocusControlAction TargetControl="SearchTextBox" />
+                </DataTriggerBehavior>
+                <SelectAllOnGotFocusBehavior />
+            </Interaction.Behaviors>
+        </TextBox>
+
+        <TreeView
+            Grid.Row="2"
+            ItemsSource="{Binding Nodes}"
+            SelectedItems="{Binding Selected}"
+            ItemTemplate="{StaticResource NodeTreeItem}"
+            SelectionMode="Multiple"
+            Padding="10 5">
+            <TreeView.ItemContainerTheme>
+                <ControlTheme TargetType="TreeViewItem" BasedOn="{StaticResource TreeViewItemSimple}"
+                              x:DataType="observers:NodeObserver">
+                    <Setter Property="IsVisible" Value="{Binding IsVisible}" />
+                    <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
+                </ControlTheme>
+            </TreeView.ItemContainerTheme>
+        </TreeView>
+
+    </Grid>
+</UserControl>

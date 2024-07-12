@@ -1,0 +1,50 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             x:Class="AutoSpex.Client.Pages.SourceSettingsPage"
+             x:DataType="pages:SourceSettingsPageModel"
+             MinWidth="600">
+
+    <controls:Prompt Header="Source Settings"
+                     HeaderIcon="{StaticResource IconThemedSource}"
+                     CancelButtonTheme="{a:ControlTheme ButtonSoft}"
+                     CancelCommandParameter="{x:Null}"
+                     ActionButtonText="OK"
+                     ActionButtonTheme="{a:ControlTheme ButtonSolid}"
+                     ActionCommandParameter="{Binding $parent[Window]}"
+                     Classes="accent"
+                     Padding="20">
+
+        <StackPanel Spacing="10">
+
+            <controls:Section
+                Header="Name"
+                Description="Enter a name to identify this source file."
+                ShowContent="False">
+                <controls:Section.Action>
+                    <TextBox
+                        Text="{Binding Source.Name}"
+                        MinWidth="200"
+                        Theme="{StaticResource TextBoxOutlineHighlight}"
+                        BorderBrush="{a:ThemeResource Container1BorderBrush}" />
+                </controls:Section.Action>
+            </controls:Section>
+
+            <controls:Section
+                Header="Location"
+                Description="The physical location of the source L5X file."
+                ShowContent="False">
+                <controls:Section.Action>
+                    <TextBox
+                        Text="{Binding Source.Name}"
+                        MinWidth="200"
+                        Theme="{StaticResource TextBoxOutlineHighlight}"
+                        BorderBrush="{a:ThemeResource Container1BorderBrush}" />
+                </controls:Section.Action>
+            </controls:Section>
+
+        </StackPanel>
+    </controls:Prompt>
+</UserControl>

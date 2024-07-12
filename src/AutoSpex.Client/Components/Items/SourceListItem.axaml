@@ -1,0 +1,96 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+
+    <Design.PreviewWith>
+        <Border Padding="30" Width="700" Height="400">
+            <ListBox ItemsSource="{x:Static components:DesignData.Sources}"
+                     ItemTemplate="{DynamicResource SourceListItem}"
+                     ItemContainerTheme="{StaticResource ListBoxItemSection}"
+                     CornerRadius="5" BorderThickness="1" BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                     SelectionMode="Multiple"
+                     VerticalAlignment="Top" />
+        </Border>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="SourceListItem" x:DataType="observers:SourceObserver">
+        <Border x:Name="Border" Focusable="True" Background="Transparent" Padding="5">
+            <Border.ContextFlyout>
+                <MenuFlyout
+                    ItemsSource="{Binding ContextItems}"
+                    ItemContainerTheme="{StaticResource MenuActionItem}"
+                    Placement="Pointer" />
+            </Border.ContextFlyout>
+
+            <Grid ColumnDefinitions="Auto,*,Auto">
+
+                <Panel VerticalAlignment="Center" Margin="0 0 15 0">
+
+                    <PathIcon
+                        Theme="{StaticResource IconThemedSource}"
+                        IsVisible="{Binding Exists}" />
+
+                    <PathIcon
+                        Theme="{StaticResource IconFilledWarning}"
+                        Classes="danger"
+                        IsVisible="{Binding !Exists}"
+                        ToolTip.Tip="File no longer exist" />
+
+                </Panel>
+
+
+                <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+
+                    <controls:HighlightableTextBlock
+                        Text="{Binding Name}"
+                        HighlightedText="{Binding FilterText}"
+                        FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
+
+                    <controls:HighlightableTextBlock
+                        Text="{Binding LocalPath}"
+                        HighlightedText="{Binding FilterText}"
+                        Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                        FontSize="{a:ThemeResource DefaultFontSizeExtraSmall}" />
+
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="20">
+
+                    <TextBlock Text="{Binding CreatedOn}"
+                               IsVisible="{Binding Exists}"
+                               Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                               FontSize="{a:ThemeResource DefaultFontSizeExtraSmall}"
+                               ToolTip.Tip="Created On" />
+
+                    <TextBlock Text="{Binding Size}"
+                               IsVisible="{Binding Exists}"
+                               Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                               FontSize="{a:ThemeResource DefaultFontSizeExtraSmall}"
+                               ToolTip.Tip="File Size" />
+
+                    <Button Theme="{StaticResource IconButton}"
+                            properties:Icon.Theme="{StaticResource IconDots}"
+                            ToolTip.Tip="Options">
+                        <Button.Flyout>
+                            <MenuFlyout
+                                ItemsSource="{Binding MenuItems}"
+                                ItemContainerTheme="{StaticResource MenuActionItem}"
+                                Placement="BottomEdgeAlignedRight" HorizontalOffset="8" VerticalOffset="5" />
+                        </Button.Flyout>
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <Interaction.Behaviors>
+                <ExecuteCommandOnKeyDownBehavior 
+                    Gesture="Ctrl+E"
+                    Command="{Binding RenameCommand}"
+                    MarkAsHandled="True"/>
+            </Interaction.Behaviors>
+        </Border>
+    </DataTemplate>
+</ResourceDictionary>

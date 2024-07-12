@@ -1,13 +1,12 @@
-﻿using L5Sharp.Core;
-
-// ReSharper disable ConvertIfStatementToReturnStatement
+﻿using System.Text.Json.Serialization;
+using L5Sharp.Core;
 
 namespace AutoSpex.Engine;
 
 public class Argument : IEquatable<Argument>
 {
     /// <summary>
-    /// Creates a new <see cref="Argument"/> with the empty string default value.
+    /// Creates a new <see cref="Argument"/> with the null value.
     /// </summary>
     public Argument()
     {
@@ -23,40 +22,37 @@ public class Argument : IEquatable<Argument>
     }
 
     /// <summary>
-    /// Creates a new argument with the provided object value. 
-    /// </summary>
-    /// <param name="argumentId">The guid identifying the argument instance.</param>
-    /// <param name="value">The value of the argument.</param>
-    public Argument(Guid argumentId, object? value)
-    {
-        ArgumentId = argumentId;
-        Value = value;
-    }
-
-    /// <summary>
     /// A <see cref="Guid"/> that uniquely identifies this object.
     /// </summary>
-    public Guid ArgumentId { get; } = Guid.NewGuid();
+    [JsonInclude]
+    public Guid ArgumentId { get; private init; } = Guid.NewGuid();
 
     /// <summary>
-    /// The value of the argument.
+    /// The type of the argument value. This is persisted, so we know how to materialize the object value to a strongly
+    /// typed object at runtime, which will allow us to pass in strongly typed values for criteria evaluation.
     /// </summary>
-    public object? Value { get; set; }
-
-    /// <summary>
-    /// The type of the argument's value.
-    /// </summary>
-    public Type? Type => Value?.GetType();
+    [JsonIgnore]
+    public Type Type => Value?.GetType() ?? typeof(object);
 
     /// <summary>
     /// The friendly type name of the argument value.
     /// </summary>
-    public string? Identifier => Type?.CommonName();
+    [JsonIgnore]
+    public string Identifier => Type.CommonName();
 
     /// <summary>
     /// The <see cref="TypeGroup"/> which this argument value belongs to.
     /// </summary>
+    [JsonIgnore]
     public TypeGroup Group => TypeGroup.FromType(Type);
+
+    /// <summary>
+    /// The value of the argument, which is just a generic object, since the user can enter primitive or complex types.
+    /// This value is persisted and materialized using a custom JSON serializer.
+    /// </summary>
+    [JsonConverter(typeof(JsonObjectConverter))]
+    [JsonInclude]
+    public object? Value { get; set; }
 
     /// <summary>
     /// Resolves the underlying argument value to the specified type if possible.
@@ -71,20 +67,31 @@ public class Argument : IEquatable<Argument>
     /// </remarks>
     public object ResolveAs(Type? type)
     {
-        //If a variable was provided, take the inner variable value, otherwise take this value.
+        //If a variable is configured, take the inner variable value, otherwise take this literal value.
         var value = Value is Variable variable ? variable.Value : Value;
 
         //If a criterion was provided, just return that. Nested arguments will get resolved here too.
-        if (value is Criterion criterion) return criterion;
-
-        //From here we expect some immediate value.
-        //If the type is not specified or value is null or not text, the only option is to return what we have.
-        //Exceptions will get caught in evaluation, so we don't need to worry about null reference.
-        if (type is null || value is not string text) return value!;
+        // ReSharper disable once ConvertIfStatementToSwitchStatement
+        if (value is Criterion criterion)
+        {
+            return criterion;
+        }
 
         //Text is a special case because the user may enter value as text, and we can attempt to parse it to get
         //the equality methods to work as expected. If not parsed then return value.
-        return text.TryParse(type) ?? value;
+        if (value is string text && type is not null && type != typeof(string))
+        {
+            return text.TryParse(type) ?? value;
+        }
+
+        //If this is a typed value that is convertible, convert it.
+        if (value is not string && value is IConvertible convertible && type is not null)
+        {
+            return convertible.ToType(type, null);
+        }
+
+        //Just return what we have and if it fails we will catch the exception in the criterion and display the error
+        return value!;
     }
 
     /// <summary>
@@ -99,7 +106,7 @@ public class Argument : IEquatable<Argument>
 
         if (value is Criterion criterion)
             return criterion.Arguments.SelectMany(a => a.Expected());
-        
+
         return value is not null ? [value] : Enumerable.Empty<object>();
     }
 
@@ -123,6 +130,7 @@ public class Argument : IEquatable<Argument>
     public static implicit operator Argument(string value) => new(value);
     public static implicit operator Argument(DateTime value) => new(value);
     public static implicit operator Argument(LogixEnum value) => new(value);
+    public static implicit operator Argument(LogixElement value) => new(value);
     public static implicit operator Argument(Criterion value) => new(value);
     public static implicit operator Argument(Variable value) => new(value);
 }

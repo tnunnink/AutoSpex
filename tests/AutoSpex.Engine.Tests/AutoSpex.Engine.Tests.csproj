@@ -12,10 +12,10 @@
 
     <ItemGroup>
         <PackageReference Include="FluentAssertions" Version="6.12.0" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
-        <PackageReference Include="NUnit" Version="4.0.1" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
+        <PackageReference Include="NUnit" Version="4.1.0" />
         <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
-        <PackageReference Include="NUnit.Analyzers" Version="3.10.0">
+        <PackageReference Include="NUnit.Analyzers" Version="4.2.0">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -23,13 +23,28 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Serialize.Linq" Version="3.0.148" />
-        <PackageReference Include="System.Linq.Dynamic.Core" Version="1.3.7" />
+        <PackageReference Include="System.Text.Json" Version="8.0.0" />
+        <PackageReference Include="Verify.NUnit" Version="25.0.4" />
     </ItemGroup>
 
     <ItemGroup>
       <None Update="Test.xml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="SpecTests.Serialize_WhenCalled_ShouldBeVerified.verified.txt">
+        <DependentUpon>SpecTests.cs</DependentUpon>
+      </None>
+      <None Update="ArgumentTests.Serialize_SimpleValue_ShouldBeVerified.verified.txt">
+        <DependentUpon>ArgumentTests.cs</DependentUpon>
+      </None>
+      <None Update="ArgumentTests.Serialize_InnerCriterionValue_ShouldBeVerified.verified.txt">
+        <DependentUpon>ArgumentTests.cs</DependentUpon>
+      </None>
+      <None Update="VariableTests.Serialize_SimpleValue_ShouldBeVerified.verified.txt">
+        <DependentUpon>VariableTests.cs</DependentUpon>
+      </None>
+      <None Update="OutcomeTests.Serialize_WithNode_ShouldBeVerified.verified.txt">
+        <DependentUpon>OutcomeTests.cs</DependentUpon>
       </None>
     </ItemGroup>
 

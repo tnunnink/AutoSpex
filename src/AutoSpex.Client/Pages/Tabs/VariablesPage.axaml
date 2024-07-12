@@ -1,0 +1,50 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             x:Class="AutoSpex.Client.Pages.VariablesPage"
+             x:DataType="pages:VariablesPageModel"
+             Background="{a:ThemeResource Container1BackgroundBrush}">
+
+    <Design.Height>800</Design.Height>
+    <Design.Width>1200</Design.Width>
+
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Padding="20">
+
+        <controls:Section Header="Variables"
+                          Description="Add variables to reference data dynamically from criteria arguments."
+                          ShowContent="{Binding Variables.Count}"
+                          VerticalAlignment="Top">
+
+            <controls:Section.Icon>
+                <PathIcon Theme="{StaticResource IconLineBraces}" />
+            </controls:Section.Icon>
+
+            <controls:Section.Action>
+                <StackPanel Orientation="Horizontal">
+                    <Button
+                        Command="{Binding AddVariableCommand}"
+                        properties:Icon.Theme="{StaticResource IconAdd}"
+                        Theme="{StaticResource IconButtonPillLeft}"
+                        Classes="accent"
+                        ToolTip.Tip="Add Variable" />
+                    <Button
+                        properties:Icon.Theme="{StaticResource IconDots}"
+                        Theme="{StaticResource IconButtonPillRight}"
+                        ToolTip.Tip="Options">
+                    </Button>
+                </StackPanel>
+            </controls:Section.Action>
+
+            <ListBox
+                ItemsSource="{Binding Variables}"
+                SelectedItems="{Binding Selected}"
+                ItemTemplate="{StaticResource VariableListItem}"
+                ItemContainerTheme="{StaticResource ListBoxItemSection}"
+                SelectionMode="Multiple"
+                BorderThickness="1" BorderBrush="{a:ThemeResource Container1BorderBrush}" CornerRadius="5" />
+        </controls:Section>
+    </ScrollViewer>
+</UserControl>

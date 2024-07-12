@@ -1,4 +1,7 @@
-﻿namespace AutoSpex.Engine.Tests;
+﻿using System.Text.Json;
+using Task = System.Threading.Tasks.Task;
+
+namespace AutoSpex.Engine.Tests;
 
 [TestFixture]
 public class ArgumentTests
@@ -62,7 +65,7 @@ public class ArgumentTests
     [Test]
     public void New_CriterionType_ShouldHaveExpectedValues()
     {
-        var value = new Criterion(Element.Tag.Property("Test"), Operation.Contains, "Something");
+        var value = new Criterion(Element.Tag.Property("Name"), Operation.Contains, "Something");
         var argument = new Argument(value);
 
         argument.Should().NotBeNull();
@@ -203,5 +206,47 @@ public class ArgumentTests
 
         result.Should().BeOfType<DINT>();
         result.Should().Be(new DINT(123));
+    }
+
+    [Test]
+    public Task Serialize_SimpleValue_ShouldBeVerified()
+    {
+        var argument = new Argument(123);
+
+        var data = JsonSerializer.Serialize(argument);
+
+        return VerifyJson(data);
+    }
+
+    [Test]
+    public void Deserialize_SimpleValue_ShouldBeExpected()
+    {
+        var argument = new Argument(123);
+        var data = JsonSerializer.Serialize(argument);
+
+        var result = JsonSerializer.Deserialize<Argument>(data);
+
+        result.Should().BeEquivalentTo(argument);
+    }
+    
+    [Test]
+    public Task Serialize_InnerCriterionValue_ShouldBeVerified()
+    {
+        var argument = new Argument(new Criterion(Element.Tag.Property("Name"), Operation.Contains, "Test"));
+
+        var data = JsonSerializer.Serialize(argument);
+
+        return VerifyJson(data);
+    }
+
+    [Test]
+    public void DeserializeInnerCriterionValue_ShouldBeExpected()
+    {
+        var argument = new Argument(new Criterion(Element.Tag.Property("Name"), Operation.Contains, "Test"));
+        var data = JsonSerializer.Serialize(argument);
+
+        var result = JsonSerializer.Deserialize<Argument>(data);
+
+        result.Should().BeEquivalentTo(argument);
     }
 }

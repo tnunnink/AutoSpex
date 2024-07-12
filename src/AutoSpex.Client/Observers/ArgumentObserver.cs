@@ -18,23 +18,13 @@ namespace AutoSpex.Client.Observers;
 /// </summary>
 public partial class ArgumentObserver : Observer<Argument>
 {
-    /// <summary>
-    /// The parent or owning <see cref="CriterionObserver"/> that this argument belongs to. We need reference to the
-    /// parent in order to know which property type the argument should resolve to. This is specified on the criterion
-    /// object itself.
-    /// </summary>
-    private readonly CriterionObserver? _criterion;
-
-    public ArgumentObserver(Argument argument, CriterionObserver? criterion = default) : base(argument)
+    public ArgumentObserver(Argument argument) : base(argument)
     {
-        _criterion = criterion;
         Track(nameof(Value));
     }
 
-    public ArgumentObserver(CriterionObserver criterion) : base(new Argument())
+    public ArgumentObserver() : this(new Argument())
     {
-        _criterion = criterion;
-        Track(nameof(Value));
     }
 
     /// <inheritdoc />
@@ -67,6 +57,10 @@ public partial class ArgumentObserver : Observer<Argument>
     public Func<string?, CancellationToken, Task<IEnumerable<object>>> Suggestions => GetSuggestions;
 
     public static implicit operator Argument(ArgumentObserver observer) => observer.Model;
+    public static implicit operator ArgumentObserver(Argument model) => new(model);
+
+    /// <inheritdoc />
+    public override string ToString() => Model.ToString();
 
     /// <summary>
     /// We need some special wrapping of the child values for Argument. It can be a nested criterion or variable, and
@@ -102,9 +96,10 @@ public partial class ArgumentObserver : Observer<Argument>
     /// If user enters a complex object then it was selected from the suggestions, and we can just use that.
     /// </summary>
     [RelayCommand]
-    private async void UpdateValue(object? value)
+    private async Task UpdateValue(object? value)
     {
-        var group = _criterion?.Property?.Group;
+        var criterion = FindInstance<CriterionObserver>();
+        var group = criterion?.Property.Group;
 
         switch (value)
         {
@@ -115,7 +110,7 @@ public partial class ArgumentObserver : Observer<Argument>
                 Value = parsed;
                 return;
             case ValueObserver observer:
-                Value = observer.Model;
+                Value = observer.Value;
                 return;
             default:
                 Value = value;
@@ -156,7 +151,11 @@ public partial class ArgumentObserver : Observer<Argument>
     /// </summary>
     private async Task<IEnumerable<ValueObserver>> GetScopedVariables(string? filter, CancellationToken token)
     {
-        var result = await Mediator.Send(new GetScopedVariables(Id), token);
+        var spec = FindInstance<SpecObserver>();
+
+        if (spec is null) return Enumerable.Empty<ValueObserver>();
+
+        var result = await Mediator.Send(new GetScopedVariables(spec.Id), token);
 
         return result.IsSuccess
             ? result.Value.Select(v => new ValueObserver(new VariableObserver(v))).Where(v => v.Filter(filter))
@@ -168,8 +167,9 @@ public partial class ArgumentObserver : Observer<Argument>
     /// </summary>
     private IEnumerable<ValueObserver> GetOptions(string? filter)
     {
-        var type = _criterion?.Property?.Type;
-        var group = _criterion?.Property?.Group;
+        var criterion = FindInstance<CriterionObserver>();
+        var type = criterion?.Property.Type;
+        var group = criterion?.Property.Group;
 
         if (type is null)
             return Enumerable.Empty<ValueObserver>();

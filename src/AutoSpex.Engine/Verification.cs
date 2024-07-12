@@ -1,6 +1,6 @@
 ﻿namespace AutoSpex.Engine;
 
-public record Verification
+public class Verification
 {
     private Verification(ResultState result, params Evaluation[] evaluations)
     {
@@ -9,12 +9,19 @@ public record Verification
     }
 
     public ResultState Result { get; }
-    public IReadOnlyCollection<Evaluation> Evaluations { get; }
+    public IEnumerable<Evaluation> Evaluations { get; }
+
     public static Verification For(Evaluation evaluation) => new(evaluation.Result, evaluation);
 
-    public static Verification All(Evaluation[] evaluations) =>
-        new(evaluations.Length > 0 ? evaluations.Max(e => e.Result) : ResultState.Inconclusive, evaluations);
+    public static Verification All(Evaluation[] evaluations)
+    {
+        var result = ResultState.MaxOrDefault(evaluations.Select(e => e.Result).ToList());
+        return new Verification(result, evaluations);
+    }
 
-    public static Verification Any(Evaluation[] evaluations) => 
-        new(evaluations.Length > 0 ? evaluations.Min(e => e.Result) : ResultState.Inconclusive, evaluations);
+    public static Verification Any(Evaluation[] evaluations)
+    {
+        var result = ResultState.MinOrDefault(evaluations.Select(e => e.Result).ToList());
+        return new Verification(result, evaluations);
+    }
 }

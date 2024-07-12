@@ -7,12 +7,14 @@
 
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Light">
-            <SolidColorBrush x:Key="IconForegroundBrushDefault" Color="#5c637b" />
-            <SolidColorBrush x:Key='IconForegroundBrushProject' Color="#924ae6" />
-            <SolidColorBrush x:Key='IconForegroundBrushContainer' Color="#b7b7c8" />
-            <SolidColorBrush x:Key='IconForegroundBrushSpec' Color="#4073d8" />
+            <SolidColorBrush x:Key="IconForegroundBrushDefault" Color="#606780" />
+            <SolidColorBrush x:Key='IconForegroundBrushCollection' Color="#7B6BA9" />
+            <SolidColorBrush x:Key='IconForegroundBrushContainer' Color="#97a9b4" />
+            <!--<SolidColorBrush x:Key='IconForegroundBrushSpec' Color="#38a3bf" />-->
+            <SolidColorBrush x:Key='IconForegroundBrushSpec' Color="#097995" />
+            <SolidColorBrush x:Key='IconForegroundBrushEnvironment' Color="#53758a" />
             <SolidColorBrush x:Key='IconForegroundBrushSource' Color="#ce665e" />
-            <SolidColorBrush x:Key='IconForegroundBrushRun' Color="#248866" />
+            <SolidColorBrush x:Key='IconForegroundBrushRun' Color="#3f9082" />
             <SolidColorBrush x:Key="TypeGroupForegroundBrushDefault" Color="#b0a4a4" />
             <SolidColorBrush x:Key="TypeGroupForegroundBrushNumber" Color="#bc5f9d" />
             <SolidColorBrush x:Key="TypeGroupForegroundBrushBoolean" Color="#1055d6" />
@@ -20,15 +22,16 @@
             <SolidColorBrush x:Key="TypeGroupForegroundBrushEnum" Color="#9d7842" />
             <SolidColorBrush x:Key="TypeGroupForegroundBrushDate" Color="#ab62d9" />
             <SolidColorBrush x:Key="TypeGroupForegroundBrushCollection" Color="#6f9f22" />
-            <SolidColorBrush x:Key="TypeGroupForegroundBrushElement" Color="#248866" />
+            <SolidColorBrush x:Key="TypeGroupForegroundBrushElement" Color="#ce665e" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Dark">
-            <SolidColorBrush x:Key="IconForegroundBrushDefault" Color="#b1beed" />
-            <SolidColorBrush x:Key='IconForegroundBrushProject' Color="#b67cff" />
-            <SolidColorBrush x:Key='IconForegroundBrushContainer' Color="#5c6470" />
-            <SolidColorBrush x:Key='IconForegroundBrushSpec' Color="#6e9eff" />
+            <SolidColorBrush x:Key="IconForegroundBrushDefault" Color="#9fa4b7" />
+            <SolidColorBrush x:Key='IconForegroundBrushCollection' Color="#908fd7" />
+            <SolidColorBrush x:Key='IconForegroundBrushContainer' Color="#546a76" />
+            <SolidColorBrush x:Key='IconForegroundBrushSpec' Color="#6dc0d5" />
+            <SolidColorBrush x:Key='IconForegroundBrushEnvironment' Color="#85a7bb" />
             <SolidColorBrush x:Key='IconForegroundBrushSource' Color="#ff9073" />
-            <SolidColorBrush x:Key='IconForegroundBrushRun' Color="#38c998" />
+            <SolidColorBrush x:Key='IconForegroundBrushRun' Color="#5ddfc8" />
             <SolidColorBrush x:Key="TypeGroupForegroundBrushDefault" Color="#6c6c6c" />
             <SolidColorBrush x:Key="TypeGroupForegroundBrushNumber" Color="#e89ca7" />
             <SolidColorBrush x:Key="TypeGroupForegroundBrushBoolean" Color="#688cd4" />
@@ -36,7 +39,7 @@
             <SolidColorBrush x:Key="TypeGroupForegroundBrushEnum" Color="#d5ad76" />
             <SolidColorBrush x:Key="TypeGroupForegroundBrushDate" Color="#c08ffe" />
             <SolidColorBrush x:Key="TypeGroupForegroundBrushCollection" Color="#6ec362" />
-            <SolidColorBrush x:Key="TypeGroupForegroundBrushElement" Color="#38c998" />
+            <SolidColorBrush x:Key="TypeGroupForegroundBrushElement" Color="#ff9073" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 </ResourceDictionary>

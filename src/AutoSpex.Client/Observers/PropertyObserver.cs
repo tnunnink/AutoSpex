@@ -74,7 +74,7 @@ public partial class PropertyObserver(Property model, ElementObserver element) :
     private Task CreateVariable()
     {
         var sourceId = _element.SourceId;
-        
+
         return Task.CompletedTask;
     }
 
@@ -90,7 +90,7 @@ public partial class PropertyObserver(Property model, ElementObserver element) :
 
         if (depth > MaxFilterDepth) return properties;
 
-        if (PassesFilter(filter))
+        if (Filter(filter))
             properties.Add(this);
 
         foreach (var property in Properties)
@@ -152,11 +152,11 @@ public partial class PropertyObserver(Property model, ElementObserver element) :
     /// </summary>
     /// <param name="filter">The filter string.</param>
     /// <returns>True if the property passes the filter, false otherwise.</returns>
-    private bool PassesFilter(string? filter)
+    public override bool Filter(string? filter)
     {
-        if (string.IsNullOrEmpty(filter)) return true;
-        if (Name.ContainsText(filter)) return true;
-        if (Type.ContainsText(filter)) return true;
-        return Value?.ToString()?.ContainsText(filter) is true;
+        return base.Filter(filter)
+               || Name.Satisfies(filter)
+               || Type.Satisfies(filter)
+               || Value?.ToString()?.Satisfies(filter) is true;
     }
 }

@@ -1,53 +1,56 @@
-﻿using System.Text.Json;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
+using L5Sharp.Core;
 
 namespace AutoSpex.Engine;
 
 [PublicAPI]
 public record Evaluation
 {
-    public Evaluation(Guid criterionId, ResultState result, string candidate, string criteria,
-        string expected, string? actual, string? exception)
+    private Evaluation(ResultState result, Criterion criterion, object candidate, object? actual)
     {
-        CriterionId = criterionId;
         Result = result;
         Candidate = candidate;
-        Criteria = criteria;
-        Expected = expected;
-        Actual = actual ?? string.Empty;
-        Error = exception ?? string.Empty;
-    }
-
-    private Evaluation(ResultState result, Criterion criterion, object? candidate, object? actual)
-    {
-        CriterionId = criterion.CriterionId;
-        Result = result;
-        Candidate = candidate.ToText();
         Criteria = criterion.GetCriteria();
         Expected = criterion.GetExpected();
-        Actual = actual.ToText();
+        Actual = actual;
     }
 
-    private Evaluation(ResultState result, Criterion criterion, object? candidate, Exception exception)
+    private Evaluation(ResultState result, Criterion criterion, object candidate, Exception exception)
     {
-        CriterionId = criterion.CriterionId;
         Result = result;
-        Candidate = candidate.ToText();
+        Candidate = candidate;
         Criteria = criterion.GetCriteria();
         Expected = criterion.GetExpected();
-        Error = exception.Message;
+        Error = exception;
+    }
+    
+    private Evaluation(ResultState result, Exception exception)
+    {
+        Result = result;
+        Error = exception;
     }
 
-    public Guid CriterionId { get; } = Guid.Empty;
     public ResultState Result { get; } = ResultState.None;
-    public string Candidate { get; } = string.Empty;
-    public string Criteria { get; } = string.Empty;
-    public string Expected { get; } = string.Empty;
-    public string Actual { get; } = string.Empty;
-    public string Error { get; } = string.Empty;
+    public string? Message { get; }
+    public object Candidate { get; }
+    public string Criteria { get; }
+    public IEnumerable<object> Expected { get; }
+    public object? Actual { get; }
+    public Exception? Error { get; }
+    public Guid SourceId => GetSourceId();
+    public string SourceName => GetSourceName();
+    public string SourcePath => GetSourcePath();
 
 
-    public static Evaluation Passed(Criterion criterion, object? candidate, object? actual)
+    /// <summary>
+    /// Creates a new Passed evaluation instance with the provided data.
+    /// </summary>
+    /// <param name="criterion"></param>
+    /// <param name="candidate"></param>
+    /// <param name="actual"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    public static Evaluation Passed(Criterion criterion, object candidate, object? actual)
     {
         if (criterion is null)
             throw new ArgumentNullException(nameof(criterion));
@@ -55,7 +58,7 @@ public record Evaluation
         return new Evaluation(ResultState.Passed, criterion, candidate, actual);
     }
 
-    public static Evaluation Failed(Criterion criterion, object? candidate, object? actual)
+    public static Evaluation Failed(Criterion criterion, object candidate, object? actual)
     {
         if (criterion is null)
             throw new ArgumentNullException(nameof(criterion));
@@ -63,7 +66,7 @@ public record Evaluation
         return new Evaluation(ResultState.Failed, criterion, candidate, actual);
     }
 
-    public static Evaluation Errored(Criterion criterion, object? candidate, Exception exception)
+    public static Evaluation Errored(Criterion criterion, object candidate, Exception exception)
     {
         if (criterion is null)
             throw new ArgumentNullException(nameof(criterion));
@@ -71,25 +74,45 @@ public record Evaluation
         return new Evaluation(ResultState.Error, criterion, candidate, exception);
     }
 
+    public static Evaluation Errored(Exception exception)
+    {
+        return new Evaluation(ResultState.Error, exception);
+    }
+
     public static implicit operator bool(Evaluation evaluation) => evaluation.Result == ResultState.Passed;
 
-    public override string ToString()
+    public override string ToString() => $"Expected: {Criteria} {Expected} Found: {Actual};";
+
+    /// <summary>
+    /// Tries to get the injected source name from the candidate logix element to be used as addition information
+    /// indicating which source this evaluation belongs to.
+    /// </summary>
+    private string GetSourceName()
     {
-        return $"{Candidate} Expected: {Criteria} {Expected}; Found: {Actual};";
-    }
-    
-    public string Serialize()
-    {
-        var options = new JsonSerializerOptions();
-        options.Converters.Add(new JsonEvaluationConverter());
-        return JsonSerializer.Serialize(this, options);
+        return Candidate is LogixElement element
+            ? element.L5X?.Serialize().Attribute("SourceName")?.Value ?? string.Empty
+            : string.Empty;
     }
 
-    public static Evaluation Deserialize(string eval)
+    /// <summary>
+    /// Tries to get the injected source id from the candidate logix element to be used as addition information
+    /// indicating which source this evaluation belongs to.
+    /// </summary>
+    private Guid GetSourceId()
     {
-        var options = new JsonSerializerOptions();
-        options.Converters.Add(new JsonEvaluationConverter());
-        return JsonSerializer.Deserialize<Evaluation>(eval, options)
-               ?? throw new ArgumentException("Not able to deserialize provided data into a valid evaluation");;
+        return Candidate is LogixElement element
+            ? element.L5X?.Serialize().Attribute("SourceId")?.Value.Parse<Guid>() ?? Guid.Empty
+            : Guid.Empty;
+    }
+
+    /// <summary>
+    /// Tries to get the injected source file path from the candidate logix element to be used as addition information
+    /// indicating which source this evaluation belongs to.
+    /// </summary>
+    private string GetSourcePath()
+    {
+        return Candidate is LogixElement element
+            ? element.L5X?.Serialize().Attribute("SourcePath")?.Value ?? string.Empty
+            : string.Empty;
     }
 }
