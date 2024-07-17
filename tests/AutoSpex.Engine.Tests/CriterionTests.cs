@@ -32,7 +32,7 @@ public class CriterionTests
     public void New_InnerCriterionArgument_ShouldHaveExpected()
     {
         var criterion = new Criterion(Element.Tag.Property("Members"), Operation.Any,
-            new Criterion(Element.Tag.Property("Name"), Operation.Contains, "Test"));
+            new Criterion(Element.Tag.Property("Name"), Operation.Containing, "Test"));
 
         criterion.Type.Should().Be(typeof(Tag));
         criterion.Property.Should().Be(Element.Tag.Property("Members"));
@@ -46,7 +46,7 @@ public class CriterionTests
     {
         var tag = new Tag { Name = "Test" };
 
-        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Equal, "Test");
+        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.EqualTo, "Test");
 
         var evaluation = criterion.Evaluate(tag);
 
@@ -82,7 +82,7 @@ public class CriterionTests
     {
         var tag = new Tag { Name = "Test" };
 
-        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Equal, "Test");
+        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.EqualTo, "Test");
 
 
         var expression = (Expression<Func<object?, bool>>)criterion;
@@ -97,7 +97,7 @@ public class CriterionTests
     {
         var tag = new Tag { Name = "MyTestTag" };
         var variable = new Variable("MyVar", "Test");
-        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Contains, variable);
+        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Containing, variable);
 
         var eval = criterion.Evaluate(tag);
 
@@ -109,7 +109,7 @@ public class CriterionTests
     {
         var tag = new Tag { Name = "MyTestTag", Value = 123 };
         var variable = new Variable("MyVar", "Decimal");
-        var criterion = new Criterion(Element.Tag.Property("Radix"), Operation.Equal, variable);
+        var criterion = new Criterion(Element.Tag.Property("Radix"), Operation.EqualTo, variable);
 
         var eval = criterion.Evaluate(tag);
 
@@ -133,7 +133,7 @@ public class CriterionTests
     {
         var tag = new Tag { Name = "TestTag", Value = 1.2345f };
         var variable = new Variable("Value", new REAL(1.2345f));
-        var criterion = new Criterion(Element.Tag.Property("Value"), Operation.Equal, variable);
+        var criterion = new Criterion(Element.Tag.Property("Value"), Operation.EqualTo, variable);
 
         var eval = criterion.Evaluate(tag);
 
@@ -143,7 +143,7 @@ public class CriterionTests
     [Test]
     public void ToString_SimpleStringArgument_ShouldBeExpected()
     {
-        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Equal, "Test");
+        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.EqualTo, "Test");
 
         var result = criterion.ToString();
 
@@ -153,7 +153,7 @@ public class CriterionTests
     [Test]
     public void ToString_SimpleEnumArgument_ShouldBeExpected()
     {
-        var criterion = new Criterion(Element.Tag.Property("Radix"), Operation.Equal, Radix.Ascii);
+        var criterion = new Criterion(Element.Tag.Property("Radix"), Operation.EqualTo, Radix.Ascii);
 
         var result = criterion.ToString();
 
@@ -163,7 +163,7 @@ public class CriterionTests
     [Test]
     public void ToString_SimpleUnaryOperation_ShouldBeExpected()
     {
-        var criterion = new Criterion(Element.Tag.Property("Constant"), Operation.IsFalse);
+        var criterion = new Criterion(Element.Tag.Property("Constant"), Operation.False);
 
         var result = criterion.ToString();
 
@@ -174,7 +174,7 @@ public class CriterionTests
     public void ToString_NestedCriterion_ShouldBeExpected()
     {
         var criterion = new Criterion(Element.Tag.Property("Members"), Operation.Any,
-            new Criterion(Element.Tag.Property("TagName"), Operation.Contains, "SomeValue"));
+            new Criterion(Element.Tag.Property("TagName"), Operation.Containing, "SomeValue"));
 
         var result = criterion.ToString();
 

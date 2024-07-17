@@ -16,7 +16,8 @@ namespace AutoSpex.Client.Pages;
 public partial class EnvironmentsPageModel : PageViewModel,
     IRecipient<Observer.Created>,
     IRecipient<Observer.Deleted>,
-    IRecipient<Observer.Renamed>
+    IRecipient<Observer.Renamed>,
+    IRecipient<Observer.GetSelected>
 {
     public override string Route => "Environments";
     public override string Title => "Environments";
@@ -55,16 +56,30 @@ public partial class EnvironmentsPageModel : PageViewModel,
 
     public void Receive(Observer.Created message)
     {
+        if (message.Observer is not EnvironmentObserver observer) return;
+        Environments.Add(observer);
     }
 
     public void Receive(Observer.Deleted message)
     {
+        if (message.Observer is not EnvironmentObserver observer) return;
+        Environments.Remove(observer);
     }
 
     public void Receive(Observer.Renamed message)
     {
+        if (message.Observer is not EnvironmentObserver) return;
+        Environments.Sort(n => n.Name, StringComparer.OrdinalIgnoreCase);
     }
-    
+
+    public void Receive(Observer.GetSelected message)
+    {
+        if (message.Observer is not EnvironmentObserver) return;
+
+        foreach (var observer in Selected)
+            message.Reply(observer);
+    }
+
     /// <summary>
     /// When the filter text changes apply the filter function to filter the collection.
     /// </summary>

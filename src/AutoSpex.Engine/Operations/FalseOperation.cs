@@ -1,6 +1,6 @@
 ﻿namespace AutoSpex.Engine;
 
-public class IsFalseOperation() : UnaryOperation("Is False")
+public class FalseOperation() : UnaryOperation("False")
 {
     protected override bool Evaluate(object? input) => input is false;
 

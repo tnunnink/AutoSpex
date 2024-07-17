@@ -34,10 +34,17 @@
                 <Grid ColumnDefinitions="Auto,*,Auto">
 
                     <StackPanel Grid.Column="0" Spacing="3">
-                        <ContentControl
-                            HorizontalAlignment="Left"
-                            Content="{Binding Node}"
-                            ContentTemplate="{StaticResource ObserverTitle}" />
+
+                        <StackPanel Orientation="Horizontal" Spacing="3" Margin="5 0 0 0">
+                            <PathIcon
+                                Theme="{Binding Node.Type.Name, Converter={StaticResource KeyToIconConverter}}"
+                                Classes="size-lg" />
+                            <ContentControl
+                                HorizontalAlignment="Left"
+                                Content="{Binding Node}"
+                                ContentTemplate="{StaticResource NameEntry}" />
+                        </StackPanel>
+
                         <ContentControl
                             Content="{Binding Node}"
                             ContentTemplate="{StaticResource BreadcrumbLink}" />

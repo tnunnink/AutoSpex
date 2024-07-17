@@ -51,8 +51,8 @@ public class SaveSpecTests
         
         var spec = new Spec(node)
             .Search(Element.Program)
-            .Where(Element.Program.Property("Name"), Operation.Equal, "SomeName")
-            .ShouldHave(Element.Program.Property("Disabled"), Operation.IsFalse);
+            .Where(Element.Program.Property("Name"), Operation.EqualTo, "SomeName")
+            .ShouldHave(Element.Program.Property("Disabled"), Operation.False);
 
         var result = await mediator.Send(new SaveSpec(spec));
 
@@ -69,7 +69,7 @@ public class SaveSpecTests
         var spec = new Spec(node);
         await mediator.Send(new SaveSpec(spec));
 
-        spec.Search(Element.Tag).Where(Element.Tag.Property("Name"), Operation.Contains, "TagName");
+        spec.Search(Element.Tag).Where(Element.Tag.Property("Name"), Operation.Containing, "TagName");
         
         var result = await mediator.Send(new SaveSpec(spec));
 

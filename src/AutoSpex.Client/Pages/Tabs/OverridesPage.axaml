@@ -33,6 +33,7 @@
                         x:Name="SelectorButton"
                         Height="30"
                         Content="{Binding SelectedSource}"
+                        IsVisible="{Binding Environment.Sources.Count}"
                         Theme="{a:ControlTheme ButtonSubtle}"
                         Background="{a:ThemeResource Container1BackgroundBrush}"
                         BorderBrush="{a:ThemeResource Container1BorderBrush}">
@@ -40,8 +41,7 @@
                             <DataTemplate x:DataType="observers:SourceObserver">
                                 <StackPanel Orientation="Horizontal" Spacing="10">
                                     <PathIcon Theme="{StaticResource IconThemedSource}" />
-                                    <TextBlock Text="{Binding Name}"
-                                               FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
+                                    <TextBlock Text="{Binding Name}" />
                                     <PathIcon Theme="{StaticResource IconChevronExpand}" Classes="size-sm" />
                                 </StackPanel>
                             </DataTemplate>
@@ -78,13 +78,9 @@
                         <Button
                             Command="{Binding AddOverrideCommand}"
                             properties:Icon.Theme="{StaticResource IconAdd}"
-                            Theme="{StaticResource IconButtonPillLeft}"
+                            Theme="{StaticResource IconButtonPill}"
                             Classes="accent"
                             ToolTip.Tip="Add override" />
-                        <Button
-                            properties:Icon.Theme="{StaticResource IconDots}"
-                            Theme="{StaticResource IconButtonPillRight}">
-                        </Button>
                     </StackPanel>
 
                 </StackPanel>

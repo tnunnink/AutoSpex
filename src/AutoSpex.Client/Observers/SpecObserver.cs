@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using AutoSpex.Client.Pages;
+using AutoSpex.Client.Resources;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
+using Avalonia.Input;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
@@ -203,6 +206,42 @@ public partial class SpecObserver : Observer<Spec>,
 
         foreach (var filter in selected)
             Verifications.Remove(filter);
+    }
+
+    /// <inheritdoc />
+    protected override IEnumerable<MenuActionItem> GenerateMenuItems()
+    {
+        yield return new MenuActionItem
+        {
+            Header = "Open",
+            Icon = Resource.Find("IconLineLink"),
+            Command = NavigateCommand
+        };
+        
+        yield return new MenuActionItem
+        {
+            Header = "Rename",
+            Icon = Resource.Find("IconFilledPen"),
+            Command = RenameCommand,
+            Gesture = new KeyGesture(Key.E, KeyModifiers.Control)
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Duplicate",
+            Icon = Resource.Find("IconFilledClone"),
+            Command = DuplicateCommand,
+            Gesture = new KeyGesture(Key.D, KeyModifiers.Control)
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Delete",
+            Icon = Resource.Find("IconFilledTrash"),
+            Classes = "danger",
+            Command = DeleteCommand,
+            Gesture = new KeyGesture(Key.Delete)
+        };
     }
 
     public static SpecObserver Empty => new(new Spec());

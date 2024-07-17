@@ -74,8 +74,7 @@
                                                         Text="{Binding Name}"
                                                         Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
                                                         FontFamily="{a:ThemeResource CodeFontFamily}"
-                                                        Margin="10 0"
-                                                        Classes="centered" />
+                                                        Margin="10 0" />
                                                 </Grid>
                                                 <Interaction.Behaviors>
                                                     <behaviors:HideFlyoutOnClickedBehavior />
@@ -127,7 +126,7 @@
                     </Button.Flyout>
                 </Button>
             </Grid>
-            
+
             <Interaction.Behaviors>
                 <ExecuteCommandOnKeyDownBehavior
                     Key="Delete" Command="{Binding DeleteCommand}" MarkAsHandled="True" FocusControl="Border" />

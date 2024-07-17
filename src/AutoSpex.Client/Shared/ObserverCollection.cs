@@ -175,6 +175,20 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
     }
 
     /// <summary>
+    /// Removes any observer items from the collection that match the specified predicate.
+    /// </summary>
+    /// <param name="predicate">The function used to determine if an observer item should be removed.</param>
+    public void RemoveAny(Func<TObserver, bool> predicate)
+    {
+        var targets = this.Where(predicate).ToList();
+
+        foreach (var target in targets)
+        {
+            Remove(target);
+        }
+    }
+
+    /// <summary>
     /// Retrieves all error messages found for child observers in the <see cref="ObserverCollection{TModel,TObserver}"/>
     /// </summary>
     /// <param name="propertyName">The name of the property to get errors for.</param>

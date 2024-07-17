@@ -13,7 +13,7 @@ public abstract class CollectionOperation(string name) : Operation(name)
             throw new ArgumentException("Collection operations require one argument", nameof(values));
 
         if (values[0] is not Criterion criterion)
-            throw new ArgumentException("Collection operations require criterion argument");
+            throw new ArgumentException("Collection operations require an inner criterion argument");
 
         return Evaluate(enumerable.Cast<object?>(), criterion);
     }

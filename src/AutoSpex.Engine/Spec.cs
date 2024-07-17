@@ -263,7 +263,7 @@ public class Spec()
     /// <param name="args">The collection of <see cref="Argument"/> to supply to the criterion operation.</param>
     public Spec ShouldNotHave(Property? property, Operation operation, params Argument[] args)
     {
-        Verifications.Add(new Criterion(property, operation, args) { Invert = true });
+        Verifications.Add(new Criterion(property, operation, args) { Negation = Negation.Not });
         return this;
     }
 

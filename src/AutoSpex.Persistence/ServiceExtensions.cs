@@ -30,6 +30,7 @@ public static class ServiceExtensions
         SqlMapper.AddTypeHandler(new SmartEnumByNameTypeHandler<NodeType, int>());
         SqlMapper.AddTypeHandler(new SmartEnumByNameTypeHandler<TypeGroup, int>());
         SqlMapper.AddTypeHandler(new SmartEnumByNameTypeHandler<ResultState, int>());
+        SqlMapper.AddTypeHandler(new SmartEnumByNameTypeHandler<Negation, bool>());
         
         Migrate();
     }

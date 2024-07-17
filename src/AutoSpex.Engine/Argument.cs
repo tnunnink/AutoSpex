@@ -28,25 +28,6 @@ public class Argument : IEquatable<Argument>
     public Guid ArgumentId { get; private init; } = Guid.NewGuid();
 
     /// <summary>
-    /// The type of the argument value. This is persisted, so we know how to materialize the object value to a strongly
-    /// typed object at runtime, which will allow us to pass in strongly typed values for criteria evaluation.
-    /// </summary>
-    [JsonIgnore]
-    public Type Type => Value?.GetType() ?? typeof(object);
-
-    /// <summary>
-    /// The friendly type name of the argument value.
-    /// </summary>
-    [JsonIgnore]
-    public string Identifier => Type.CommonName();
-
-    /// <summary>
-    /// The <see cref="TypeGroup"/> which this argument value belongs to.
-    /// </summary>
-    [JsonIgnore]
-    public TypeGroup Group => TypeGroup.FromType(Type);
-
-    /// <summary>
     /// The value of the argument, which is just a generic object, since the user can enter primitive or complex types.
     /// This value is persisted and materialized using a custom JSON serializer.
     /// </summary>

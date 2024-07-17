@@ -44,7 +44,7 @@
     <converters:KeyResourceConverter x:Key="KeyToIconConverter">
         <converters:ValueResourceKey Value="Collections" Resource="IconFilledStack" />
         <converters:ValueResourceKey Value="Environments" Resource="IconFilledCog" />
-        <converters:ValueResourceKey Value="Specs" Resource="IconFilledClipboard" />
+        <converters:ValueResourceKey Value="Specs" Resource="IconFilledClipboardAlt" />
         <converters:ValueResourceKey Value="Sources" Resource="IconLineXml" />
         <converters:ValueResourceKey Value="Runs" Resource="IconFilledLightning" />
         <converters:ValueResourceKey Value="Variables" Resource="IconLineBraces" />

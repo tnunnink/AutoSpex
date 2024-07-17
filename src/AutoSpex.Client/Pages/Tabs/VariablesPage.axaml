@@ -27,14 +27,9 @@
                     <Button
                         Command="{Binding AddVariableCommand}"
                         properties:Icon.Theme="{StaticResource IconAdd}"
-                        Theme="{StaticResource IconButtonPillLeft}"
+                        Theme="{StaticResource IconButtonPill}"
                         Classes="accent"
                         ToolTip.Tip="Add Variable" />
-                    <Button
-                        properties:Icon.Theme="{StaticResource IconDots}"
-                        Theme="{StaticResource IconButtonPillRight}"
-                        ToolTip.Tip="Options">
-                    </Button>
                 </StackPanel>
             </controls:Section.Action>
 

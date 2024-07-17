@@ -46,8 +46,6 @@
         <!--  Selected state  -->
         <Style Selector="^:selected /template/ Border#PART_LayoutRoot">
             <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftAccent}" />
-            <Setter Property="TextElement.Foreground"
-                    Value="{a:ThemeResource ControlForegroundBrushSoftAccent}" />
         </Style>
         <Style Selector="^:selected">
             <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftAccent}" />
@@ -55,16 +53,12 @@
 
         <!--  PointerOver state  -->
         <Style Selector="^:pointerover /template/ Border#PART_LayoutRoot">
-            <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftPointerOver}" />
-            <Setter Property="TextElement.Foreground"
-                    Value="{a:ThemeResource DefaultForegroundBrushSecondary}" />
+            <Setter Property="Background" Value="{a:ThemeResource Container4BackgroundBrush}" />
         </Style>
 
         <!-- PointerOver Selected state  -->
         <Style Selector="^:selected:pointerover /template/ Border#PART_LayoutRoot">
             <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftAccent}" />
-            <Setter Property="TextElement.Foreground"
-                    Value="{a:ThemeResource ControlForegroundBrushSoftAccent}" />
         </Style>
 
         <!--  Disabled state  -->

@@ -3,7 +3,6 @@
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
                     xmlns:components="clr-namespace:AutoSpex.Client.Components"
-                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
                     xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
 
     <Design.PreviewWith>
@@ -17,46 +16,29 @@
     </Design.PreviewWith>
 
     <DataTemplate x:Key="SpecListItem" x:DataType="observers:SpecObserver">
-
         <Border x:Name="Border" Focusable="True" Background="Transparent">
+            <Grid ColumnDefinitions="Auto,*,Auto">
 
-            <Grid IsSharedSizeScope="True">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" SharedSizeGroup="TitleGroup" />
-                    <ColumnDefinition Width="Auto" SharedSizeGroup="ElementGroup" />
-                    <ColumnDefinition Width="*" SharedSizeGroup="BreadcrumbGroup" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-
-                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5">
                     <PathIcon
                         Theme="{StaticResource IconThemedSpec}" />
-                    <controls:HighlightableTextBlock
-                        Text="{Binding Name}"
-                        HighlightedText="{Binding FilterText}"
-                        TextTrimming="CharacterEllipsis"
-                        ToolTip.Tip="{Binding Name}" />
+                    <ContentControl
+                        Content="{Binding Node}"
+                        ContentTemplate="{StaticResource NodePath}" />
                 </StackPanel>
 
-                <TextBlock
-                    Grid.Column="1"
-                    Text="{Binding Element}" />
-                
-                <ContentControl
+                <Button
                     Grid.Column="2"
-                    Content="{Binding Node}"
-                    ContentTemplate="{StaticResource BreadcrumbLabel}" />
+                    Theme="{StaticResource IconButtonSmall}"
+                    properties:Icon.Theme="{StaticResource IconDots}">
+                    <Button.Flyout>
+                        <MenuFlyout
+                            ItemsSource="{Binding MenuItems}"
+                            ItemContainerTheme="{StaticResource MenuActionItem}"
+                            Placement="BottomEdgeAlignedRight" HorizontalOffset="8" VerticalOffset="5" />
+                    </Button.Flyout>
+                </Button>
 
-                <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="5">
-                    <Button
-                        Theme="{StaticResource IconButtonSmall}"
-                        IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}"
-                        Command="{Binding NavigateCommand}"
-                        properties:Icon.Theme="{StaticResource IconLineLink}" />
-                    <Button
-                        Theme="{StaticResource IconButtonSmall}"
-                        properties:Icon.Theme="{StaticResource IconDots}" />
-                </StackPanel>
             </Grid>
         </Border>
     </DataTemplate>

@@ -250,10 +250,6 @@
         <DependentUpon>DetailTabList.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
-      <Compile Update="Components\Controls\NodePath.axaml.cs">
-        <DependentUpon>NodePath.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
     </ItemGroup>
 
     <ItemGroup>
@@ -329,6 +325,7 @@
       <UpToDateCheckInput Remove="Components\Navigation\All.axaml" />
       <UpToDateCheckInput Remove="Components\Specs\All.axaml" />
       <UpToDateCheckInput Remove="Components\Details\All.axaml" />
+      <UpToDateCheckInput Remove="Components\Entries\All.axaml" />
     </ItemGroup>
 
     <ItemGroup>

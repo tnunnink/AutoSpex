@@ -42,12 +42,10 @@
             <StackPanel Orientation="Horizontal">
                 <Button
                     Command="{Binding AddFilterCommand}"
-                    Theme="{StaticResource IconButtonPillLeft}"
+                    Theme="{StaticResource IconButtonPill}"
                     properties:Icon.Theme="{StaticResource IconAdd}"
                     Classes="accent"
                     ToolTip.Tip="Add Filter" />
-                <Button Theme="{StaticResource IconButtonPillRight}"
-                        properties:Icon.Theme="{StaticResource IconDots}" />
             </StackPanel>
 
         </StackPanel>
@@ -77,12 +75,10 @@
             <StackPanel Orientation="Horizontal">
                 <Button
                     Command="{Binding AddVerificationCommand}"
-                    Theme="{StaticResource IconButtonPillLeft}"
+                    Theme="{StaticResource IconButtonPill}"
                     properties:Icon.Theme="{StaticResource IconAdd}"
                     Classes="accent"
                     ToolTip.Tip="Add Verification" />
-                <Button Theme="{StaticResource IconButtonPillRight}"
-                        properties:Icon.Theme="{StaticResource IconDots}" />
             </StackPanel>
 
         </StackPanel>

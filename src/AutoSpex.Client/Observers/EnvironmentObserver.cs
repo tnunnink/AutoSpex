@@ -1,11 +1,13 @@
 ﻿using System;
-using System.Collections.Specialized;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoSpex.Client.Resources;
 using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using AutoSpex.Persistence;
+using Avalonia.Input;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FluentResults;
@@ -25,7 +27,7 @@ public partial class EnvironmentObserver : Observer<Environment>,
         Track(nameof(Comment));
         Track(Sources);
     }
-    
+
     public override Guid Id => Model.EnvironmentId;
     public override string Icon => nameof(Environment);
 
@@ -133,6 +135,53 @@ public partial class EnvironmentObserver : Observer<Environment>,
     /// </summary>
     /// <param name="Environment"></param>
     public record Targeted(EnvironmentObserver Environment);
+
+    /// <inheritdoc />
+    protected override IEnumerable<MenuActionItem> GenerateContextItems()
+    {
+        yield return new MenuActionItem
+        {
+            Header = "Run",
+            Icon = Resource.Find("IconFilledLightning"),
+            Classes = "accent"
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Open",
+            Icon = Resource.Find("IconLineLink"),
+            Command = NavigateCommand,
+            Gesture = new KeyGesture(Key.Enter),
+            DetermineVisibility = () => IsSolelySelected
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Rename",
+            Icon = Resource.Find("IconFilledPencilAlt"),
+            Command = RenameCommand,
+            Gesture = new KeyGesture(Key.E, KeyModifiers.Control),
+            DetermineVisibility = () => IsSolelySelected
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Duplicate",
+            Icon = Resource.Find("IconFilledClone"),
+            Command = DuplicateCommand,
+            Gesture = new KeyGesture(Key.D, KeyModifiers.Control),
+            DetermineVisibility = () => IsSolelySelected
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Delete",
+            Icon = Resource.Find("IconFilledTrash"),
+            Classes = "danger",
+            Command = DeleteCommand,
+            Gesture = new KeyGesture(Key.Delete)
+        };
+    }
 
     public static implicit operator Environment(EnvironmentObserver observer) => observer.Model;
     public static implicit operator EnvironmentObserver(Environment model) => new(model);

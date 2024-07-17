@@ -29,10 +29,25 @@ public abstract class Operation(string name, string value) : SmartEnum<Operation
     /// </remarks>
     public abstract bool Execute(object? input, params object[] values);
 
+    /// <summary>
+    /// Returns a collection of operations that support the specified property group.
+    /// </summary>
+    /// <param name="property">The property for which supporting operations are to be retrieved.</param>
+    /// <returns>A collection of operations that support the specified property group.</returns>
     public static IEnumerable<Operation> Supporting(Property property) => List.Where(x => x.Supports(property.Group));
 
+    /// <summary>
+    /// Returns a list of operations that support the specified type group.
+    /// </summary>
+    /// <param name="group">The type group for which to retrieve the supporting operations.</param>
+    /// <returns>A list of operations that support the specified type group.</returns>
     public static IEnumerable<Operation> Supporting(TypeGroup group) => List.Where(x => x.Supports(group));
 
+    /// <summary>
+    /// Determines whether the given TypeGroup is supported by the Operation.
+    /// </summary>
+    /// <param name="group">The TypeGroup to check.</param>
+    /// <returns>True if the Operation supports the TypeGroup; otherwise, false.</returns>
     protected virtual bool Supports(TypeGroup group) => true;
 
     /// <summary>
@@ -47,12 +62,12 @@ public abstract class Operation(string name, string value) : SmartEnum<Operation
     /// is equal to the comparison value. Comparison is done based on the underlying
     /// type of the input value.
     /// </summary>
-    public static readonly Operation Equal = new EqualOperation();
+    public static readonly Operation EqualTo = new EqualToOperation();
 
     /// <summary>
     /// Represents an operation that checks whether two values are equivalent.
     /// </summary>
-    public static readonly Operation IsEquivalent = new IsEquivalentOperation();
+    public static readonly Operation EquivalentTo = new EquivalentToOperation();
 
     /// <summary>
     /// Represents a greater than operation. The operation checks if the input value 
@@ -65,7 +80,7 @@ public abstract class Operation(string name, string value) : SmartEnum<Operation
     /// Represents an operation that checks whether a value is greater than or equal to another value.
     /// This operation is only valid for input types that implement IComparable interface.
     /// </summary>
-    public static readonly Operation GreaterThanOrEqual = new GreaterThanOrEqualOperation();
+    public static readonly Operation GreaterThanOrEqualTo = new GreaterThanOrEqualToOperation();
 
     /// <summary>
     /// Represents the less than comparison operation. The operation checks if the input value 
@@ -79,59 +94,54 @@ public abstract class Operation(string name, string value) : SmartEnum<Operation
     /// is less than or equal to the comparison value. This operation is only valid for 
     /// input types that implement IComparable interface.
     /// </summary>
-    public static readonly Operation LessThanOrEqual = new LessThanOrEqualOperation();
+    public static readonly Operation LessThanOrEqualTo = new LessThanOrEqualToOperation();
 
     /// <summary>
-    /// Returns the an <see cref="Operation"/> which evaluates whether an input value is <c>true</c>. 
+    /// Returns the <see cref="Operation"/> which evaluates whether an input value is <c>true</c>. 
     /// </summary>
-    public static readonly Operation IsTrue = new IsTrueOperation();
+    public static readonly Operation True = new TrueOperation();
 
     /// <summary>
     /// Returns the <see cref="Operation"/> which evaluates whether an input value is <c>false</c>. 
     /// </summary>
-    public static readonly Operation IsFalse = new IsFalseOperation();
+    public static readonly Operation False = new FalseOperation();
 
     /// <summary>
     /// Represents an operation that checks for null values. It returns true 
     /// if the input value is null and false otherwise.
     /// </summary>
-    public static readonly Operation IsNull = new IsNullOperation();
+    public static readonly Operation Null = new NullOperation();
 
     /// <summary>
     /// The IsEmpty operation represents a condition that checks if a value or a collection of values is empty.
     /// </summary>
-    public static readonly Operation IsEmpty = new IsEmptyOperation();
+    public static readonly Operation Empty = new EmptyOperation();
 
     /// <summary>
     /// Represents an operation that checks if a string is null or empty.
     /// </summary>
-    public static readonly Operation IsNullOrEmpty = new IsNullOrEmptyOperation();
+    public static readonly Operation NullOrEmpty = new NullOrEmptyOperation();
 
     /// <summary>
     /// Represents an operation that determines whether a string is null, empty, or consists only of white-space characters.
     /// This operation is typically used for input validation or cleansing.
     /// </summary>
-    public static readonly Operation IsNullOrWhiteSpace = new IsNullOrWhiteSpaceOperation();
-
-    /// <summary>
-    /// Represents an operation that checks for a match between the input value and a pattern or set of values.
-    /// </summary>
-    public static readonly Operation IsMatch = new IsMatchOperation();
+    public static readonly Operation NullOrWhiteSpace = new NullOrWhiteSpaceOperation();
 
     /// <summary>
     /// Represents an operation that checks whether the input string contains a specific substring.
     /// </summary>
-    public static readonly Operation Contains = new ContainsOperation();
+    public static readonly Operation Containing = new ContainingOperation();
 
     /// <summary>
     /// The StartsWith operation is used to check if a string starts with a specified value.
     /// </summary>
-    public static readonly Operation StartsWith = new StartsWithOperation();
+    public static readonly Operation StartingWith = new StartingWithOperation();
 
     /// <summary>
     /// Represents an operation that checks if a string ends with a specific value.
     /// </summary>
-    public static readonly Operation EndsWith = new EndsWithOperation();
+    public static readonly Operation EndingWith = new EndingWithOperation();
 
     /// <summary>
     /// Represents an "in" operation. The operation checks whether the input value 
@@ -144,10 +154,14 @@ public abstract class Operation(string name, string value) : SmartEnum<Operation
     /// is similar to the comparison value based on a pattern matching algorithm.
     /// </summary>
     public static readonly Operation Like = new LikeOperation();
+    
+    /// <summary>
+    /// Represents an operation that checks for a match between the input value and a pattern or set of values.
+    /// </summary>
+    public static readonly Operation Match = new MatchOperation();
 
     /// <summary>
-    /// Represents a "between" operation. This operation checks if the input value falls between 
-    /// two specified bounds (inclusive or exclusive based on the operation's implementation).
+    /// This operation checks if the input value falls between two specified bounds
     /// </summary>
     public static readonly Operation Between = new BetweenOperation();
 
@@ -157,12 +171,7 @@ public abstract class Operation(string name, string value) : SmartEnum<Operation
     public static readonly Operation All = new AllOperation();
 
     /// <summary>
-    /// Represents an operation that matches any value.
+    /// Represents an operation that checks if any elements of a collection meet a specific condition.
     /// </summary>
     public static readonly Operation Any = new AnyOperation();
-
-    /// <summary>
-    /// Represents an operation that checks the number of items in a collection.
-    /// </summary>
-    public static readonly Operation Count = new CountOperation();
 }

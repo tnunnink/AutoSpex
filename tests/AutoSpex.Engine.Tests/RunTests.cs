@@ -167,7 +167,7 @@ public class RunTests
         environment.Add(new Uri(Known.Test));
 
         var spec = new Spec();
-        spec.Search(Element.Module).ShouldHave(Element.Module.Property("Inhibited"), Operation.IsFalse);
+        spec.Search(Element.Module).ShouldHave(Element.Module.Property("Inhibited"), Operation.False);
         
         var run = new Run(environment);
         run.AddNode(spec.ToNode());
@@ -188,9 +188,9 @@ public class RunTests
 
         var spec = new Spec();
         spec.Search(Element.DataType)
-            .Where(Element.DataType.Property("Name"), Operation.Equal, "ComplexType")
+            .Where(Element.DataType.Property("Name"), Operation.EqualTo, "ComplexType")
             .ShouldHave(Element.DataType.Property("Members"), Operation.Any,
-                new Criterion(Element.DataTypeMember.Property("DataType"), Operation.Equal, "SimpleType"));
+                new Criterion(Element.DataTypeMember.Property("DataType"), Operation.EqualTo, "SimpleType"));
         
         var run = new Run(environment);
         run.AddNode(spec.ToNode());

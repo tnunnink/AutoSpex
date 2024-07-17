@@ -13,8 +13,6 @@ public class ArgumentTests
 
         argument.Should().NotBeNull();
         argument.Value.Should().Be("Test");
-        argument.Type.Should().Be(typeof(string));
-        argument.Group.Should().Be(TypeGroup.Text);
     }
 
     [Test]
@@ -24,8 +22,6 @@ public class ArgumentTests
 
         argument.Should().NotBeNull();
         argument.Value.Should().Be(true);
-        argument.Type.Should().Be(typeof(bool));
-        argument.Group.Should().Be(TypeGroup.Boolean);
     }
 
     [Test]
@@ -35,10 +31,8 @@ public class ArgumentTests
 
         argument.Should().NotBeNull();
         argument.Value.Should().Be(123);
-        argument.Type.Should().Be(typeof(int));
-        argument.Group.Should().Be(TypeGroup.Number);
     }
-    
+
     [Test]
     public void New_EnumType_ShouldHaveExpectedValues()
     {
@@ -46,8 +40,6 @@ public class ArgumentTests
 
         argument.Should().NotBeNull();
         argument.Value.Should().Be(Radix.Decimal);
-        argument.Type.Should().Be(Radix.Decimal.GetType());
-        argument.Group.Should().Be(TypeGroup.Enum);
     }
 
     [Test]
@@ -58,22 +50,18 @@ public class ArgumentTests
 
         argument.Should().NotBeNull();
         argument.Value.Should().BeEquivalentTo(value);
-        argument.Type.Should().Be(typeof(Variable));
-        argument.Group.Should().Be(TypeGroup.Variable);
     }
-    
+
     [Test]
     public void New_CriterionType_ShouldHaveExpectedValues()
     {
-        var value = new Criterion(Element.Tag.Property("Name"), Operation.Contains, "Something");
+        var value = new Criterion(Element.Tag.Property("Name"), Operation.Containing, "Something");
         var argument = new Argument(value);
 
         argument.Should().NotBeNull();
         argument.Value.Should().BeEquivalentTo(value);
-        argument.Type.Should().Be(typeof(Criterion));
-        argument.Group.Should().Be(TypeGroup.Criterion);
     }
-    
+
     [Test]
     public void ResolveAs_StringTypeAsString_ShouldHaveExpectedValues()
     {
@@ -84,7 +72,7 @@ public class ArgumentTests
         result.Should().Be("Test");
         result.Should().BeOfType<string>();
     }
-    
+
     [Test]
     public void ResolveAs_BoolAsBool_ShouldHaveExpectedValues()
     {
@@ -95,7 +83,7 @@ public class ArgumentTests
         result.Should().Be(true);
         result.Should().BeOfType<bool>();
     }
-    
+
     [Test]
     public void ResolveAs_BoolAsBoolToNullableBool_ShouldStillBeJustBool()
     {
@@ -106,7 +94,7 @@ public class ArgumentTests
         result.Should().Be(true);
         result.Should().BeOfType<bool>();
     }
-    
+
     [Test]
     public void ResolveAs_BoolAsStringToNullableBool_ShouldStillBeJustBool()
     {
@@ -128,7 +116,7 @@ public class ArgumentTests
         result.Should().Be(123);
         result.Should().BeOfType<int>();
     }
-    
+
     [Test]
     public void ResolveAs_FloatAsStringToFloat_ShouldBeExpectedValue()
     {
@@ -139,7 +127,7 @@ public class ArgumentTests
         result.Should().Be(12.312345f);
         result.Should().BeOfType<float>();
     }
-    
+
     [Test]
     public void ResolveAs_DateTimeAsStringToDateTime_ShouldBeExpectedValue()
     {
@@ -150,11 +138,11 @@ public class ArgumentTests
         result.Should().Be(new DateTime(2023, 12, 15, 10, 34, 22));
         result.Should().BeOfType<DateTime>();
     }
-    
+
     [Test]
     public void ResolveAs_CriterionRegardlessOfType_ShouldHaveExpectedValues()
     {
-        var value = new Criterion(Element.Tag.Property("Test"), Operation.Contains, "Something");
+        var value = new Criterion(Element.Tag.Property("Test"), Operation.Containing, "Something");
         var argument = new Argument(value);
 
         var result = argument.ResolveAs(typeof(string));
@@ -162,7 +150,7 @@ public class ArgumentTests
         result.Should().BeEquivalentTo(value);
         result.Should().BeOfType<Criterion>();
     }
-    
+
     [Test]
     public void ResolveAs_VariableAaString_ShouldHaveExpectedValues()
     {
@@ -228,11 +216,11 @@ public class ArgumentTests
 
         result.Should().BeEquivalentTo(argument);
     }
-    
+
     [Test]
     public Task Serialize_InnerCriterionValue_ShouldBeVerified()
     {
-        var argument = new Argument(new Criterion(Element.Tag.Property("Name"), Operation.Contains, "Test"));
+        var argument = new Argument(new Criterion(Element.Tag.Property("Name"), Operation.Containing, "Test"));
 
         var data = JsonSerializer.Serialize(argument);
 
@@ -242,7 +230,7 @@ public class ArgumentTests
     [Test]
     public void DeserializeInnerCriterionValue_ShouldBeExpected()
     {
-        var argument = new Argument(new Criterion(Element.Tag.Property("Name"), Operation.Contains, "Test"));
+        var argument = new Argument(new Criterion(Element.Tag.Property("Name"), Operation.Containing, "Test"));
         var data = JsonSerializer.Serialize(argument);
 
         var result = JsonSerializer.Deserialize<Argument>(data);

@@ -117,21 +117,15 @@ public partial class SourceObserver : Observer<Source>
     {
         yield return new MenuActionItem
         {
-            Header = "Settings",
-            Icon = Resource.Find("IconLineGear"),
-        };
-
-        yield return new MenuActionItem
-        {
             Header = "Inspect",
-            Icon = Resource.Find("IconLineBinoculars"),
+            Icon = Resource.Find("IconFilledBinoculars"),
             DetermineVisibility = () => Exists
         };
 
         yield return new MenuActionItem
         {
             Header = "Open In Explorer",
-            Icon = Resource.Find("IconLineFolderOpen"),
+            Icon = Resource.Find("IconFilledFolder"),
             Command = LocateCommand,
             DetermineVisibility = () => Exists
         };
@@ -147,7 +141,7 @@ public partial class SourceObserver : Observer<Source>
         yield return new MenuActionItem
         {
             Header = "Duplicate",
-            Icon = Resource.Find("IconLineCopy"),
+            Icon = Resource.Find("IconFilledClone"),
             Command = DuplicateCommand,
             Gesture = new KeyGesture(Key.D, KeyModifiers.Control),
             DetermineVisibility = () => Exists
@@ -156,7 +150,7 @@ public partial class SourceObserver : Observer<Source>
         yield return new MenuActionItem
         {
             Header = "Delete",
-            Icon = Resource.Find("IconLineTrash"),
+            Icon = Resource.Find("IconFilledTrash"),
             Classes = "danger",
             Command = DeleteCommand,
             Gesture = new KeyGesture(Key.Delete)
@@ -167,22 +161,15 @@ public partial class SourceObserver : Observer<Source>
     {
         yield return new MenuActionItem
         {
-            Header = "Settings",
-            Icon = Resource.Find("IconLineGear"),
-            DetermineVisibility = () => IsSolelySelected
-        };
-
-        yield return new MenuActionItem
-        {
             Header = "Inspect",
-            Icon = Resource.Find("IconLineBinoculars"),
+            Icon = Resource.Find("IconFilledBinoculars"),
             DetermineVisibility = () => IsSolelySelected && Exists
         };
 
         yield return new MenuActionItem
         {
             Header = "Open In Explorer",
-            Icon = Resource.Find("IconLineFolderOpen"),
+            Icon = Resource.Find("IconFilledFolderOpen"),
             Command = LocateCommand,
             DetermineVisibility = () => IsSolelySelected && Exists
         };
@@ -190,7 +177,7 @@ public partial class SourceObserver : Observer<Source>
         yield return new MenuActionItem
         {
             Header = "Rename",
-            Icon = Resource.Find("IconLineInputText"),
+            Icon = Resource.Find("IconFilledPen"),
             Command = RenameCommand,
             Gesture = new KeyGesture(Key.E, KeyModifiers.Control),
             DetermineVisibility = () => IsSolelySelected
@@ -199,7 +186,7 @@ public partial class SourceObserver : Observer<Source>
         yield return new MenuActionItem
         {
             Header = "Duplicate",
-            Icon = Resource.Find("IconLineCopy"),
+            Icon = Resource.Find("IconFilledClone"),
             Command = DuplicateCommand,
             Gesture = new KeyGesture(Key.D, KeyModifiers.Control),
             DetermineVisibility = () => IsSolelySelected && Exists
@@ -208,7 +195,7 @@ public partial class SourceObserver : Observer<Source>
         yield return new MenuActionItem
         {
             Header = "Delete",
-            Icon = Resource.Find("IconLineTrash"),
+            Icon = Resource.Find("IconFilledTrash"),
             Classes = "danger",
             Command = DeleteCommand,
             Gesture = new KeyGesture(Key.Delete)

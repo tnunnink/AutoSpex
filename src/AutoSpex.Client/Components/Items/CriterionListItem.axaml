@@ -1,0 +1,64 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+
+    <Design.PreviewWith>
+        <ListBox
+            ItemsSource="{x:Static components:DesignData.Criteria}"
+            ItemTemplate="{DynamicResource CriterionListItem}"
+            ItemContainerTheme="{StaticResource ListBoxItemSection}"
+            SelectionMode="Multiple"
+            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+            BorderThickness="1"
+            CornerRadius="5"
+            Background="Transparent"
+            Width="400" Height="200" Margin="10"/>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="CriterionListItem" x:DataType="observers:CriterionObserver">
+        <Border x:Name="Border" Background="Transparent" Focusable="True">
+
+            <Border.ContextFlyout>
+                <MenuFlyout
+                    Placement="Bottom"
+                    ItemContainerTheme="{StaticResource MenuActionItem}"
+                    ItemsSource="{Binding MenuItems}" />
+            </Border.ContextFlyout>
+
+            <Grid ColumnDefinitions="*,Auto">
+                
+                <ContentControl
+                    Grid.Column="0"
+                    Content="{Binding}"
+                    ContentTemplate="{StaticResource CriterionEntry}" />
+
+                <Button
+                    Grid.Column="1"
+                    properties:Icon.Theme="{StaticResource IconDots}"
+                    Theme="{StaticResource IconButtonSmall}"
+                    Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                    Margin="5 0"
+                    ToolTip.Tip="Options"
+                    ToolTip.Placement="BottomEdgeAlignedRight">
+                    <Button.Flyout>
+                        <MenuFlyout
+                            Placement="BottomEdgeAlignedRight" HorizontalOffset="8"
+                            ItemsSource="{Binding MenuItems}"
+                            ItemContainerTheme="{StaticResource MenuActionItem}" />
+                    </Button.Flyout>
+                </Button>
+            </Grid>
+
+            <Interaction.Behaviors>
+                <ExecuteCommandOnKeyDownBehavior
+                    Key="Delete"
+                    Command="{Binding DeleteCommand}"
+                    MarkAsHandled="True"
+                    FocusControl="Border" />
+            </Interaction.Behaviors>
+        </Border>
+    </DataTemplate>
+</ResourceDictionary>

@@ -32,7 +32,6 @@ public partial class SourcesPageModel(EnvironmentObserver environment) : PageVie
 
     public void Receive(Observer.GetSelected message)
     {
-        Console.WriteLine("GetSelected");
         if (message.Observer is not SourceObserver source) return;
         if (Environment.Sources.All(x => !x.Is(source))) return;
 

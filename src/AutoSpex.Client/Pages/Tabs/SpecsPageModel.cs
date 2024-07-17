@@ -22,7 +22,7 @@ public partial class SpecsPageModel : PageViewModel,
     public override string Route => $"{Node.Type}/{Node.Id}/{Title}";
     public override string Title => "Specs";
     public NodeObserver Node { get; }
-    public ObservableCollection<SpecObserver> Specs { get; } = [];
+    public ObserverCollection<Spec, SpecObserver> Specs { get; private set; } = [];
     public ObservableCollection<SpecObserver> Selected { get; } = [];
 
     [ObservableProperty] private string? _filter;
@@ -31,29 +31,22 @@ public partial class SpecsPageModel : PageViewModel,
     {
         var result = await Mediator.Send(new ListSpecsIn(Node.Id));
         if (result.IsFailed) return;
-        Specs.Refresh(result.Value.Select(s => new SpecObserver(s)));
+        Specs = new ObserverCollection<Spec, SpecObserver>(result.Value.ToList(), s => new SpecObserver(s));
     }
 
     public void Receive(Observer.Created message)
     {
         if (message.Observer is not NodeObserver node || node.Type != NodeType.Spec) return;
-        FilterSpecs(Filter);
     }
 
     public void Receive(Observer.Deleted message)
     {
         if (message.Observer is not NodeObserver node || node.Type != NodeType.Spec) return;
-        FilterSpecs(Filter);
+        Specs.RemoveAny(s => s.Id == node.Id);
     }
 
     partial void OnFilterChanged(string? value)
     {
-        FilterSpecs(value);
-    }
-
-    private void FilterSpecs(string? filter)
-    {
-        foreach (var spec in Specs)
-            spec.Filter(filter);
+        Specs.Filter(s => s.Node.Filter(value) || s.Element.Name.Satisfies(value));
     }
 }

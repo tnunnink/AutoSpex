@@ -24,7 +24,7 @@
 
                     <ContentControl
                         Content="{Binding Environment}"
-                        ContentTemplate="{StaticResource ObserverTitle}" />
+                        ContentTemplate="{StaticResource NameEntry}" />
 
                     <Button Theme="{StaticResource IconButtonSmall}"
                             ToolTip.Tip="Documentation"

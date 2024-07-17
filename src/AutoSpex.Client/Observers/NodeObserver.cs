@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -117,37 +116,75 @@ public partial class NodeObserver : Observer<Node>,
             Messenger.Send(new Deleted(deleted));
     }
 
-    [RelayCommand]
-    private async Task Move(IList<NodeObserver> nodes)
+    /// <summary>
+    /// Command to move the provided node and the selected items to this node container.
+    /// </summary>
+    /// <param name="source">The node that is to be moved to this node.</param>
+    [RelayCommand(CanExecute = nameof(CanMove))]
+    private async Task Move(object? source)
     {
-        if (nodes.Any(n => !Type.CanContain(n.Type))) return;
+        if (source is not NodeObserver node) return;
 
-        var result = await Mediator.Send(new MoveNodes(nodes.Select(n => n.Model), Id));
+        //We want to get the selected items from this nodes container to ensure we move all selected nodes.
+        var selected = node.SelectedItems.Where(o => o is NodeObserver).Cast<NodeObserver>().ToList();
+        if (selected.Any(n => !Type.CanContain(n.Type) || Id == n.Id)) return;
+
+        //Update the database parent id for the selected node.
+        var result = await Mediator.Send(new MoveNodes(selected.Select(n => n.Model), Id));
         if (result.IsFailed) return;
 
-        Nodes.AddRange(nodes);
+        //Add the selected nodes to the parent to update the parent id correctly.
+        foreach (var moved in selected)
+        {
+            if (Nodes.Contains(moved)) continue;
+            Nodes.Add(moved);
+        }
 
-        foreach (var node in nodes)
-            Messenger.Send(new Moved(node));
+        //Sends the message to other nodes to remove the moved nodes from their child nodes collection.
+        Messenger.Send(new Moved());
     }
 
-    [RelayCommand]
-    private async Task MoveSelected()
+    /// <summary>
+    /// Determines if the provided source object is a node which has selected nodes that can be moved to this node.
+    /// </summary>
+    /// <param name="source">The source command parameter.</param>
+    /// <returns>true if the provided source contains valid nodes to be added to this node. Otherwise, false.</returns>
+    private bool CanMove(object? source)
     {
-        var selected = SelectedItems.Where(x => x is NodeObserver).Cast<NodeObserver>().ToList();
+        if (source is not NodeObserver node) return false;
+        if (Type == NodeType.Spec) return false;
+        if (node.Id == Id) return false;
+        var selected = node.SelectedItems.Where(o => o is NodeObserver).Cast<NodeObserver>().ToList();
+        return selected.All(n => Type.CanContain(n.Type) && Id != n.Id);
+    }
 
+    /// <summary>
+    /// Command to allow the user to select a node to move the selected nodes to.
+    /// </summary>
+    [RelayCommand]
+    private async Task MoveTo()
+    {
+        //Prompt the user to select the node instance to move the selected nodes to.
         var parent = await Prompter.Show<NodeObserver?>(() => new SelectContainerPageModel());
         if (parent is null) return;
 
-        if (selected.Any(n => !parent.Type.CanContain(n.Type))) return;
+        //We want to get the selected items from this nodes container to ensure we move all selected nodes.
+        var selected = SelectedItems.Where(o => o is NodeObserver).Cast<NodeObserver>().ToList();
+        if (selected.Any(n => !Type.CanContain(n.Type) || Id == n.Id)) return;
 
+        //Update the database parent id for the selected node.
         var result = await Mediator.Send(new MoveNodes(selected.Select(n => n.Model), parent.Id));
         if (result.IsFailed) return;
 
-        parent.Nodes.AddRange(selected);
+        //Add the selected nodes to the parent to update the parent id correctly.
+        foreach (var moved in selected)
+        {
+            if (parent.Nodes.Contains(moved)) continue;
+            parent.Nodes.Add(moved);
+        }
 
-        foreach (var node in selected)
-            Messenger.Send(new Moved(node));
+        //Sends the message to other nodes to remove the moved nodes from their child nodes collection.
+        Messenger.Send(new Moved());
     }
 
     /// <summary>
@@ -264,11 +301,11 @@ public void Receive(Created message)
     /// </summary>
     public void Receive(Moved message)
     {
-        if (Nodes.Contains(message.Node) && Id != message.Node.ParentId)
-            Nodes.Remove(message.Node);
+        //Remove any children that this node is no longer the parent of.
+        Nodes.RemoveAny(x => x.ParentId != Id);
 
-        if (!Nodes.Contains(message.Node) && Id == message.Node.ParentId)
-            Nodes.Add(message.Node);
+        //Resort to ensure proper order.
+        Nodes.Sort(n => n.Name, StringComparer.OrdinalIgnoreCase);
     }
 
     /// <summary>
@@ -297,10 +334,10 @@ public void Receive(Created message)
     #region Messages
 
     /// <summary>
-    /// A message to be sent when the <see cref="NodeObserver"/> is moved to a different parent container. This is so that
+    /// A message to be sent when nodes are moved to a different parent container. This is so that
     /// other node instances can respond by removing the moved node from its node children.
     /// </summary>
-    public record Moved(NodeObserver Node);
+    public record Moved;
 
     /// <summary>
     /// A message that informs the parent nodes to expand their container if the provided node is a child of the
@@ -314,68 +351,6 @@ public void Receive(Created message)
     {
         Model.Name = name;
         return Mediator.Send(new RenameNode(this));
-    }
-
-    protected override IEnumerable<MenuActionItem> GenerateMenuItems()
-    {
-        yield return new MenuActionItem
-        {
-            Header = "Add Container",
-            Icon = Resource.Find("IconThemedContainer"),
-            Command = AddContainerCommand
-        };
-
-        yield return new MenuActionItem
-        {
-            Header = "Add Spec",
-            Icon = Resource.Find("IconThemedSpec"),
-            Command = AddSpecCommand,
-        };
-
-        yield return MenuActionItem.Separator;
-
-        yield return new MenuActionItem
-        {
-            Header = "Run",
-            Icon = Resource.Find("IconFilledLightning"),
-            Classes = "accent",
-            Command = RunCommand
-        };
-
-        yield return MenuActionItem.Separator;
-
-        yield return new MenuActionItem
-        {
-            Header = "Properties",
-            Icon = Resource.Find("IconFilledGear"),
-            Command = NavigateCommand,
-            Gesture = new KeyGesture(Key.Enter)
-        };
-
-        yield return new MenuActionItem
-        {
-            Header = "Rename",
-            Icon = Resource.Find("IconFilledPen"),
-            Command = RenameCommand,
-            Gesture = new KeyGesture(Key.E, KeyModifiers.Control)
-        };
-
-        yield return new MenuActionItem
-        {
-            Header = "Duplicate",
-            Icon = Resource.Find("IconFilledClone"),
-            Command = DuplicateCommand,
-            Gesture = new KeyGesture(Key.D, KeyModifiers.Control)
-        };
-
-        yield return new MenuActionItem
-        {
-            Header = "Delete",
-            Icon = Resource.Find("IconLineTrash"),
-            Classes = "danger",
-            Command = DeleteCommand,
-            Gesture = new KeyGesture(Key.Delete)
-        };
     }
 
     private async Task AddNode(NodeObserver node)
@@ -395,6 +370,77 @@ public void Receive(Created message)
         Locate();
         Messenger.Send(new Created(node));
         await Navigator.Navigate(node);
+    }
+
+    /// <inheritdoc />
+    protected override IEnumerable<MenuActionItem> GenerateContextItems()
+    {
+        yield return new MenuActionItem
+        {
+            Header = "Add Container",
+            Icon = Resource.Find("IconThemedContainer"),
+            Command = AddContainerCommand,
+            DetermineVisibility = () => IsSolelySelected && Type != NodeType.Spec
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Add Spec",
+            Icon = Resource.Find("IconThemedSpec"),
+            Command = AddSpecCommand,
+            DetermineVisibility = () => IsSolelySelected && Type != NodeType.Spec
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Run",
+            Icon = Resource.Find("IconFilledLightning"),
+            Classes = "accent",
+            Command = RunCommand
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Open",
+            Icon = Resource.Find("IconLineLink"),
+            Command = NavigateCommand,
+            Gesture = new KeyGesture(Key.Enter),
+            DetermineVisibility = () => IsSolelySelected
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Rename",
+            Icon = Resource.Find("IconFilledPencilAlt"),
+            Command = RenameCommand,
+            Gesture = new KeyGesture(Key.E, KeyModifiers.Control),
+            DetermineVisibility = () => IsSolelySelected
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Duplicate",
+            Icon = Resource.Find("IconFilledClone"),
+            Command = DuplicateCommand,
+            Gesture = new KeyGesture(Key.D, KeyModifiers.Control),
+            DetermineVisibility = () => IsSolelySelected
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Move",
+            Icon = Resource.Find("IconLineMove"),
+            Command = MoveToCommand
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Delete",
+            Icon = Resource.Find("IconFilledTrash"),
+            Classes = "danger",
+            Command = DeleteCommand,
+            Gesture = new KeyGesture(Key.Delete)
+        };
     }
 
     public static implicit operator NodeObserver(Node node) => new(node);

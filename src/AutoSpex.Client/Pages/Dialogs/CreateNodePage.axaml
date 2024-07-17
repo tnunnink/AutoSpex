@@ -36,10 +36,6 @@
                     <Border DockPanel.Dock="Top" Padding="0 10">
                         <StackPanel Orientation="Horizontal" Spacing="5">
                             <TextBlock Text="Container" />
-                            <components:NodePath
-                                Node="{Binding SelectedNode}"
-                                ShowNodeIcon="False"
-                                IsVisible="{Binding SelectedNode, Converter={x:Static ObjectConverters.IsNotNull}}" />
                         </StackPanel>
                     </Border>
 
@@ -62,11 +58,6 @@
                             <ListBox ItemsSource="{Binding Containers}"
                                      SelectedItem="{Binding SelectedNode}"
                                      BorderThickness="0">
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate x:DataType="observers:NodeObserver">
-                                        <components:NodePath Node="{Binding}" />
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
                                 <ListBox.ItemContainerTheme>
                                     <ControlTheme TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemSimple}"
                                                   x:DataType="observers:NodeObserver">

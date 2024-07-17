@@ -4,7 +4,6 @@
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
              xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
              xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors"
-             xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
              x:Class="AutoSpex.Client.Pages.EnvironmentsPage"
              x:DataType="pages:EnvironmentsPageModel"
              Background="{a:ThemeResource Container2BackgroundBrush}">
@@ -42,13 +41,6 @@
                         Theme="{StaticResource IconToggleButton}"
                         properties:Icon.Theme="{StaticResource IconLineSearch}"
                         ToolTip.Tip="Search" />
-
-                    <Button
-                        properties:Icon.Theme="{StaticResource IconDotsVertical}"
-                        Theme="{StaticResource IconButton}"
-                        Classes="size-sm"
-                        ToolTip.Tip="Options">
-                    </Button>
 
                     <Button
                         properties:Icon.Theme="{StaticResource IconDash}"
@@ -95,18 +87,10 @@
             Grid.Row="2"
             ItemsSource="{Binding Environments}"
             SelectedItems="{Binding Selected}"
-            ItemTemplate="{StaticResource ObserverListItem}"
+            ItemTemplate="{DynamicResource EnvironmentListItem}"
+            ItemContainerTheme="{DynamicResource EnvironmentListItemTheme}"
             IsVisible="{Binding Environments.Count}"
             SelectionMode="Multiple"
-            Padding="10 5">
-            <ListBox.ItemContainerTheme>
-                <ControlTheme TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemSimple}"
-                              x:DataType="observers:EnvironmentObserver">
-                    <Setter Property="IsVisible" Value="{Binding IsVisible}" />
-                    <Setter Property="IsSelected" Value="{Binding IsSelected}" />
-                </ControlTheme>
-            </ListBox.ItemContainerTheme>
-        </ListBox>
-
+            Padding="10 5" />
     </Grid>
 </UserControl>

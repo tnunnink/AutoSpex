@@ -94,7 +94,8 @@
                                 IsVisible="{TemplateBinding Description, Converter={x:Static ObjectConverters.IsNotNull}}">
                                 <ContentPresenter.Styles>
                                     <Style Selector="TextBlock">
-                                        <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeExtraSmall}" />
+                                        <Setter Property="FontSize"
+                                                Value="{a:ThemeResource DefaultFontSizeExtraSmall}" />
                                         <Setter Property="TextWrapping" Value="Wrap" />
                                     </Style>
                                 </ContentPresenter.Styles>

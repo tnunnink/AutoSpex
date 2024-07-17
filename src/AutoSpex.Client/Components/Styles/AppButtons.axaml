@@ -17,7 +17,7 @@
     </Design.PreviewWith>
 
     <Style Selector="Button.run">
-        <Setter Property="Theme" Value="{a:ControlTheme ButtonSoft}" />
+        <Setter Property="Theme" Value="{a:ControlTheme ButtonSolid}" />
         <Setter Property="CornerRadius" Value="0 4 4 0" />
         <Setter Property="Content">
             <Template>
@@ -28,10 +28,10 @@
             </Template>
         </Setter>
         <Style Selector="^:disabled PathIcon">
-            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftAccentDisabled}" />
+            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSolidAccentDisabled}" />
         </Style>
         <Style Selector="^:not(:disabled) PathIcon">
-            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftAccent}" />
+            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSolidAccent}" />
         </Style>
     </Style>
     

@@ -34,7 +34,7 @@ public class AnyOperationTests
     {
         var items = new List<int> {1, 2, 3, 4, 5};
         
-        var result = Operation.Any.Execute(items, new Criterion(Operation.Equal, 3));
+        var result = Operation.Any.Execute(items, new Criterion(Operation.EqualTo, 3));
         
         result.Should().BeTrue();
     }
@@ -44,7 +44,7 @@ public class AnyOperationTests
     {
         var items = new List<int> {1, 2, 3, 4, 5};
         
-        var result = Operation.Any.Execute(items, new Criterion(Operation.Equal, 6));
+        var result = Operation.Any.Execute(items, new Criterion(Operation.EqualTo, 6));
         
         result.Should().BeFalse();
     }

@@ -46,13 +46,11 @@
                                 Text="{TemplateBinding Watermark}"
                                 IsVisible="{Binding IsEmpty, RelativeSource={RelativeSource TemplatedParent}}"
                                 Opacity="{a:ThemeResource EditWatermarkOpacity}"
-                                FontStyle="Italic"
-                                Margin="0 1 0 0" />
+                                FontStyle="Italic" />
                             <ContentPresenter
                                 x:Name="PART_ContentPresenter"
                                 Content="{Binding Value, RelativeSource={RelativeSource TemplatedParent}}"
-                                ContentTemplate="{Binding ValueTemplate, RelativeSource={RelativeSource TemplatedParent}}"
-                                Margin="0 1 0 0" />
+                                ContentTemplate="{Binding ValueTemplate, RelativeSource={RelativeSource TemplatedParent}}" />
                         </Panel>
                     </Button>
 
@@ -66,7 +64,7 @@
                         MinChildWidth="{TemplateBinding MinDropDownWidth}"
                         PlacementTarget="{Binding #PART_Button}"
                         Placement="BottomEdgeAlignedLeft"
-                        VerticalOffset="{Binding #PART_Button.Bounds.Height, Converter={StaticResource MathConverter}, ConverterParameter='(x * -1) -4'}"
+                        VerticalOffset="{Binding #PART_Button.Bounds.Height, Converter={StaticResource MathConverter}, ConverterParameter='(x * -1) -6'}"
                         BorderThickness="2">
 
                         <Grid RowDefinitions="Auto,Auto,*">
@@ -109,7 +107,7 @@
                                     <DataTemplate x:DataType="system:Object">
                                         <StackPanel Orientation="Horizontal" Spacing="5" ClipToBounds="True">
                                             <PathIcon
-                                                Theme="{StaticResource IconExclamationOutlined}"
+                                                Theme="{StaticResource IconFilledExclamation}"
                                                 Foreground="{a:ThemeResource ControlForegroundBrushSoftDanger}" />
                                             <TextBlock
                                                 Text="{Binding }"

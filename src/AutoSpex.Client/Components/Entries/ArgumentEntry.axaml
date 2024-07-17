@@ -2,25 +2,26 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
                     xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
-                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
 
     <Design.PreviewWith>
         <Border Padding="20" Height="300" Width="600">
             <StackPanel Spacing="10" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <ContentControl Content="{x:Static components:DesignData.EmptyArgument}"
-                                ContentTemplate="{DynamicResource ArgumentDefaultEntry}" />
+                                ContentTemplate="{DynamicResource ArgumentEntry}" />
                 <ContentControl Content="{x:Static components:DesignData.EnumArgument}"
-                                ContentTemplate="{DynamicResource ArgumentDefaultEntry}" />
+                                ContentTemplate="{DynamicResource ArgumentEntry}" />
                 <ContentControl Content="{x:Static components:DesignData.TextArgument}"
-                                ContentTemplate="{DynamicResource ArgumentDefaultEntry}" />
+                                ContentTemplate="{DynamicResource ArgumentEntry}" />
                 <ContentControl Content="{x:Static components:DesignData.VariableArgument}"
-                                ContentTemplate="{DynamicResource ArgumentDefaultEntry}" />
+                                ContentTemplate="{DynamicResource ArgumentEntry}" />
             </StackPanel>
         </Border>
     </Design.PreviewWith>
 
 
-    <DataTemplate x:Key="ArgumentDefaultEntry" x:DataType="observers:ArgumentObserver">
+    <DataTemplate x:Key="ArgumentEntry" x:DataType="observers:ArgumentObserver">
         <controls:Entry
             Watermark="Enter value"
             Value="{Binding Value}"
@@ -37,27 +38,5 @@
             </controls:Entry.IsEmpty>
         </controls:Entry>
     </DataTemplate>
-
-    <DataTemplate x:Key="ArgumentCollectionEntry" x:DataType="observers:ArgumentObserver">
-        <StackPanel Orientation="Horizontal" Spacing="10">
-            <ItemsControl>
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-
-            </ItemsControl>
-
-        </StackPanel>
-    </DataTemplate>
-
-    <DataTemplate x:Key="ArgumentCriterionEntry" x:DataType="observers:ArgumentObserver">
-
-    </DataTemplate>
-
-    <components:ArgumentTemplateSelector
-        x:Key="ArgumentTemplateSelector"
-        ArgumentTemplate="{StaticResource ArgumentDefaultEntry}">
-    </components:ArgumentTemplateSelector>
+    
 </ResourceDictionary>

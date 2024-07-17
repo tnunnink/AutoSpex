@@ -1,6 +1,6 @@
 ﻿namespace AutoSpex.Engine;
 
-public class IsEmptyOperation() : UnaryOperation("Is Empty")
+public class EmptyOperation() : UnaryOperation("Empty")
 {
     protected override bool Evaluate(object? input)
     {

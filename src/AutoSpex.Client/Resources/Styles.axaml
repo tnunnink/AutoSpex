@@ -91,6 +91,11 @@
         <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
         <Setter Property="FontSize" Value="13" />
     </Style>
+    
+    <Style Selector="TextBlock.faint">
+        <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+        <Setter Property="FontSize" Value="13" />
+    </Style>
 
     <Style Selector="TabStrip">
         <Setter Property="ItemsPanel">

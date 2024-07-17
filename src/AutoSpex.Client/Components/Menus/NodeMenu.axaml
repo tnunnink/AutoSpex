@@ -62,7 +62,7 @@
             InputGesture="Ctrl+D" />
         <MenuItem
             Header="Move"
-            Command="{Binding MoveSelectedCommand}"
+            Command="{Binding MoveToCommand}"
             Icon="{StaticResource IconLineMove}" />
         <MenuItem
             Header="Delete"

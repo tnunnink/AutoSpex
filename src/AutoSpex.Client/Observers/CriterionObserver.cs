@@ -5,7 +5,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoSpex.Client.Resources;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using Avalonia.Input;
@@ -22,8 +21,8 @@ public partial class CriterionObserver : Observer<Criterion>,
         Arguments = new ObserverCollection<Argument, ArgumentObserver>(Model.Arguments, a => new ArgumentObserver(a));
 
         Track(nameof(Property));
+        Track(nameof(Negation));
         Track(nameof(Operation));
-        Track(nameof(Invert));
         Track(Arguments);
     }
 
@@ -36,9 +35,13 @@ public partial class CriterionObserver : Observer<Criterion>,
         set => SetProperty(Model.Property, value, Model, (c, p) => c.Property = p);
     }
 
-    /// <summary>
-    /// The <see cref="Engine.Operation"/> to execute for the criterion. This property wraps the underlying model.
-    /// </summary>
+    [Required]
+    public Negation Negation
+    {
+        get => Model.Negation;
+        set => SetProperty(Model.Negation, value, Model, (c, v) => c.Negation = v);
+    }
+
     [Required]
     public Operation Operation
     {
@@ -48,33 +51,31 @@ public partial class CriterionObserver : Observer<Criterion>,
 
     public ObserverCollection<Argument, ArgumentObserver> Arguments { get; }
 
-    public bool Invert
-    {
-        get => Model.Invert;
-        set => SetProperty(Model.Invert, value, Model, (c, v) => c.Invert = v);
-    }
-
     public Func<string?, CancellationToken, Task<IEnumerable<object>>> PopulateProperties => GetProperties;
     public Func<string?, CancellationToken, Task<IEnumerable<object>>> PopulateOperations => GetOperations;
 
-    public Func<object?, string> SelectOperation => x =>
-        x is Operation operation && operation != Operation.None ? operation.Name : string.Empty;
 
+    /// <inheritdoc />
+    /// <remarks>
+    /// When the property changes we want to reset the operation which in turn resets the arguments. This prevents invalid entry.
+    /// WHen the operation changes we want to update the arguments based on the selected operation type.
+    /// </remarks>
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
         base.OnPropertyChanged(e);
 
-        if (e.PropertyName == nameof(Operation))
-            UpdateArguments();
+        switch (e.PropertyName)
+        {
+            case nameof(Property):
+                Operation = Operation.None;
+                break;
+            case nameof(Operation):
+                UpdateArguments();
+                break;
+        }
     }
 
-    public void Receive(Request<CriterionObserver> message)
-    {
-        if (message.HasReceivedResponse) return;
-        if (Id != message.Id && Arguments.All(a => a.Id != message.Id)) return;
-        message.Reply(this);
-    }
-
+    /// <inheritdoc />
     protected override Task Duplicate()
     {
         Messenger.Send(new Duplicated(this, new CriterionObserver(Model)));
@@ -119,6 +120,40 @@ public partial class CriterionObserver : Observer<Criterion>,
     }
 
     /// <summary>
+    /// Toggles the state of the criterion <see cref="Negation"/> property to make the operation negate the output.
+    /// </summary>
+    [RelayCommand]
+    private void ToggleNegation()
+    {
+        Negation = Negation.Negate;
+    }
+
+    /// <summary>
+    /// Adds another argument value to the <see cref="Arguments"/> collection. This is only available for the In
+    /// operation where the user can specify a set of value.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanAddArgument))]
+    private void AddArgument()
+    {
+        Arguments.Add(new ArgumentObserver());
+    }
+
+    /// <summary>
+    /// Determines if the user can add an argument to the argument collection.
+    /// </summary>
+    private bool CanAddArgument() => Operation == Operation.In;
+
+    /// <summary>
+    /// Reply with this criterion observer instance if the id matches or the id is that of a child argument.
+    /// </summary>
+    public void Receive(Request<CriterionObserver> message)
+    {
+        if (message.HasReceivedResponse) return;
+        if (Id != message.Id && Arguments.All(a => a.Id != message.Id)) return;
+        message.Reply(this);
+    }
+
+    /// <summary>
     /// Updates the criterion arguments collection based on the selected operation.
     /// Each operation type expects a certain number of arguments (except for In).
     /// Collection operations expect an inner criterion that's type needs to be the inner type of the collection.
@@ -141,12 +176,7 @@ public partial class CriterionObserver : Observer<Criterion>,
         if (Operation == Operation.In)
         {
             Arguments.Add(new ArgumentObserver());
-            return;
-        }
-
-        if (Operation == Operation.Count)
-        {
-            Arguments.Add(new ArgumentObserver());
+            AddArgumentCommand.NotifyCanExecuteChanged();
             return;
         }
 
@@ -156,11 +186,11 @@ public partial class CriterionObserver : Observer<Criterion>,
     }
 
     /// <summary>
-    /// 
+    /// Retrieves a list of properties based on the specified filter.
     /// </summary>
-    /// <param name="filter"></param>
-    /// <param name="token"></param>
-    /// <returns></returns>
+    /// <param name="filter">The filter to apply to the properties. If null or empty, all properties are returned.</param>
+    /// <param name="token">The cancellation token used to cancel the operation.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result contains the list of properties.</returns>
     private Task<IEnumerable<object>> GetProperties(string? filter, CancellationToken token)
     {
         var type = Model.Type;
@@ -190,7 +220,7 @@ public partial class CriterionObserver : Observer<Criterion>,
     /// </summary>
     private Task<IEnumerable<object>> GetOperations(string? filter, CancellationToken token)
     {
-        var filtered = Operation.Supporting(Property).Where(x => x.Name.Satisfies(filter));
+        var filtered = Operation.Supporting(Property);
         return Task.FromResult(filtered.Cast<object>());
     }
 

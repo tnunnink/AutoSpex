@@ -2,7 +2,7 @@
 
 namespace AutoSpex.Engine;
 
-public class IsMatchOperation() : BinaryOperation("Is Match")
+public class MatchOperation() : BinaryOperation("Match")
 {
     protected override bool Evaluate(object? input, object value)
     {

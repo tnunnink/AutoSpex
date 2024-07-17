@@ -9,10 +9,10 @@ public class OperationSupportingTests
         var results = Operation.Supporting(TypeGroup.Boolean).ToList();
 
         results.Should().HaveCount(4);
-        results.Should().Contain(Operation.IsNull);
-        results.Should().Contain(Operation.Equal);
-        results.Should().Contain(Operation.IsTrue);
-        results.Should().Contain(Operation.IsFalse);
+        results.Should().Contain(Operation.Null);
+        results.Should().Contain(Operation.EqualTo);
+        results.Should().Contain(Operation.True);
+        results.Should().Contain(Operation.False);
     }
     
     [Test]
@@ -21,13 +21,13 @@ public class OperationSupportingTests
         var results = Operation.Supporting(TypeGroup.Number).ToList();
 
         results.Should().HaveCount(8);
-        results.Should().Contain(Operation.IsNull);
-        results.Should().Contain(Operation.Equal);
+        results.Should().Contain(Operation.Null);
+        results.Should().Contain(Operation.EqualTo);
         results.Should().Contain(Operation.In);
         results.Should().Contain(Operation.GreaterThan);
-        results.Should().Contain(Operation.GreaterThanOrEqual);
+        results.Should().Contain(Operation.GreaterThanOrEqualTo);
         results.Should().Contain(Operation.LessThan);
-        results.Should().Contain(Operation.LessThanOrEqual);
+        results.Should().Contain(Operation.LessThanOrEqualTo);
         results.Should().Contain(Operation.Between);
     }
     
@@ -37,16 +37,16 @@ public class OperationSupportingTests
         var results = Operation.Supporting(TypeGroup.Text).ToList();
 
         results.Should().HaveCount(11);
-        results.Should().Contain(Operation.IsNull);
-        results.Should().Contain(Operation.Equal);
+        results.Should().Contain(Operation.Null);
+        results.Should().Contain(Operation.EqualTo);
         results.Should().Contain(Operation.In);
-        results.Should().Contain(Operation.StartsWith);
-        results.Should().Contain(Operation.EndsWith);
-        results.Should().Contain(Operation.Contains);
-        results.Should().Contain(Operation.IsEmpty);
-        results.Should().Contain(Operation.IsNullOrEmpty);
-        results.Should().Contain(Operation.IsNullOrWhiteSpace);
-        results.Should().Contain(Operation.IsMatch);
+        results.Should().Contain(Operation.StartingWith);
+        results.Should().Contain(Operation.EndingWith);
+        results.Should().Contain(Operation.Containing);
+        results.Should().Contain(Operation.Empty);
+        results.Should().Contain(Operation.NullOrEmpty);
+        results.Should().Contain(Operation.NullOrWhiteSpace);
+        results.Should().Contain(Operation.Match);
         results.Should().Contain(Operation.Like);
     }
     
@@ -56,13 +56,13 @@ public class OperationSupportingTests
         var results = Operation.Supporting(TypeGroup.Date).ToList();
 
         results.Should().HaveCount(8);
-        results.Should().Contain(Operation.IsNull);
-        results.Should().Contain(Operation.Equal);
+        results.Should().Contain(Operation.Null);
+        results.Should().Contain(Operation.EqualTo);
         results.Should().Contain(Operation.In);
         results.Should().Contain(Operation.GreaterThan);
-        results.Should().Contain(Operation.GreaterThanOrEqual);
+        results.Should().Contain(Operation.GreaterThanOrEqualTo);
         results.Should().Contain(Operation.LessThan);
-        results.Should().Contain(Operation.LessThanOrEqual);
+        results.Should().Contain(Operation.LessThanOrEqualTo);
         results.Should().Contain(Operation.Between);
     }
     

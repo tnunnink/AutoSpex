@@ -22,17 +22,6 @@
         <ScrollViewer VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Disabled">
             <DockPanel>
-                <Border DockPanel.Dock="Top" Padding="0 10">
-                    <StackPanel Orientation="Horizontal" Spacing="5">
-                        <TextBlock Text="Container :" 
-                                   Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"/>
-                        <components:NodePath
-                            Node="{Binding Selected}"
-                            ShowNodeIcon="False"
-                            IsVisible="{Binding Selected, Converter={x:Static ObjectConverters.IsNotNull}}" />
-                    </StackPanel>
-                </Border>
-
                 <Border BorderBrush="{a:ThemeResource Container1BorderBrush}"
                         BorderThickness="{a:ThemeResource EditBorderThickness}"
                         CornerRadius="{a:ThemeResource EditCornerRadius}">
@@ -52,11 +41,6 @@
                         <ListBox ItemsSource="{Binding Containers}"
                                  SelectedItem="{Binding Selected}"
                                  BorderThickness="0">
-                            <ListBox.ItemTemplate>
-                                <DataTemplate x:DataType="observers:NodeObserver">
-                                    <components:NodePath Node="{Binding}" />
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
                             <ListBox.ItemContainerTheme>
                                 <ControlTheme TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemSimple}"
                                               x:DataType="observers:NodeObserver">

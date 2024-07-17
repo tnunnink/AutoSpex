@@ -1,6 +1,6 @@
 ﻿namespace AutoSpex.Engine;
 
-public class EqualOperation() : BinaryOperation("Equal")
+public class EqualToOperation() : BinaryOperation("Equal To")
 {
     protected override bool Evaluate(object? input, object value)
     {

@@ -93,90 +93,49 @@
         </DataTemplate>
 
         <DataTemplate DataType="system:String">
-            <Border x:Name="Root">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock
-                        Text="&quot;" Padding="0"
-                        Foreground="{DynamicResource TypeGroupForegroundBrushText}" />
-                    <TextBlock
-                        Text="{Binding}"
-                        Foreground="{DynamicResource TypeGroupForegroundBrushText}"
-                        IsVisible="{Binding Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-                        TextTrimming="CharacterEllipsis"
-                        ToolTip.Tip="{Binding}">
-                    </TextBlock>
-                    <TextBlock
-                        Text="&quot;" Padding="0"
-                        Foreground="{DynamicResource TypeGroupForegroundBrushText}" />
-                </StackPanel>
-            </Border>
+            <TextBlock
+                Text="{Binding}"
+                Foreground="{DynamicResource TypeGroupForegroundBrushText}"
+                IsVisible="{Binding Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                TextTrimming="CharacterEllipsis"
+                ToolTip.Tip="{Binding}">
+            </TextBlock>
         </DataTemplate>
 
         <DataTemplate DataType="core:TagName">
-            <Border x:Name="Root">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock
-                        Text="&quot;" Padding="0"
-                        Foreground="{DynamicResource TypeGroupForegroundBrushText}" />
-                    <TextBlock
-                        Text="{Binding}"
-                        Foreground="{DynamicResource TypeGroupForegroundBrushText}"
-                        IsVisible="{Binding Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-                        TextTrimming="CharacterEllipsis"
-                        ToolTip.Tip="{Binding}">
-                    </TextBlock>
-                    <TextBlock
-                        Text="&quot;" Padding="0"
-                        Foreground="{DynamicResource TypeGroupForegroundBrushText}" />
-                </StackPanel>
-            </Border>
+            <TextBlock
+                Text="{Binding}"
+                Foreground="{DynamicResource TypeGroupForegroundBrushText}"
+                IsVisible="{Binding Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                TextTrimming="CharacterEllipsis"
+                ToolTip.Tip="{Binding}">
+            </TextBlock>
         </DataTemplate>
 
         <DataTemplate DataType="core:NeutralText">
-            <Border x:Name="Root">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock
-                        Text="&quot;" Padding="0"
-                        Foreground="{DynamicResource TypeGroupForegroundBrushText}" />
-                    <TextBlock
-                        Text="{Binding}"
-                        Foreground="{DynamicResource TypeGroupForegroundBrushText}"
-                        IsVisible="{Binding Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-                        TextTrimming="CharacterEllipsis"
-                        ToolTip.Tip="{Binding}">
-                    </TextBlock>
-                    <TextBlock
-                        Text="&quot;" Padding="0"
-                        Foreground="{DynamicResource TypeGroupForegroundBrushText}" />
-                </StackPanel>
-            </Border>
+            <TextBlock
+                Text="{Binding}"
+                Foreground="{DynamicResource TypeGroupForegroundBrushText}"
+                IsVisible="{Binding Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                TextTrimming="CharacterEllipsis"
+                ToolTip.Tip="{Binding}">
+            </TextBlock>
         </DataTemplate>
 
         <DataTemplate DataType="core:Revision">
-            <Panel Margin="0 1 0 0">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock
-                        Text="&quot;" Padding="0"
-                        Foreground="{DynamicResource TypeGroupForegroundBrushText}" />
-                    <TextBlock
-                        Text="{Binding}"
-                        Foreground="{DynamicResource TypeGroupForegroundBrushText}"
-                        IsVisible="{Binding Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-                        TextTrimming="CharacterEllipsis"
-                        ToolTip.Tip="{Binding}">
-                    </TextBlock>
-                    <TextBlock
-                        Text="&quot;" Padding="0"
-                        Foreground="{DynamicResource TypeGroupForegroundBrushText}" />
-                </StackPanel>
-            </Panel>
+            <TextBlock
+                Text="{Binding}"
+                Foreground="{DynamicResource TypeGroupForegroundBrushText}"
+                IsVisible="{Binding Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                TextTrimming="CharacterEllipsis"
+                ToolTip.Tip="{Binding}">
+            </TextBlock>
         </DataTemplate>
 
         <DataTemplate DataType="system:DateTime">
-            <Panel>
-                <TextBlock Text="{Binding }"
-                           Foreground="{DynamicResource TypeGroupForegroundBrushDate}" />
-            </Panel>
+            <TextBlock
+                Text="{Binding }"
+                Foreground="{DynamicResource TypeGroupForegroundBrushDate}" />
         </DataTemplate>
 
         <DataTemplate DataType="core:LogixEnum">

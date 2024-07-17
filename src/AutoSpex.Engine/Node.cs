@@ -6,6 +6,7 @@ namespace AutoSpex.Engine;
 public class Node : IEquatable<Node>
 {
     private readonly List<Node> _nodes = [];
+    private readonly Dictionary<string, Variable> _variables = [];
 
     private Node()
     {
@@ -27,6 +28,7 @@ public class Node : IEquatable<Node>
     public string Path => GetPath();
     public string Route => $"{Path}/{Name}".Trim('/');
     public IEnumerable<Node> Nodes => _nodes;
+    public IEnumerable<Variable> Variables => _variables.Values;
 
     public static Node New(NodeType type)
     {
@@ -39,7 +41,7 @@ public class Node : IEquatable<Node>
             Name = $"New {type}"
         };
     }
-    
+
     public static Node New(Guid id, string name, NodeType type)
     {
         return new Node
@@ -163,6 +165,10 @@ public class Node : IEquatable<Node>
         _nodes.Clear();
     }
 
+    /// <summary>
+    /// Gets all ancestor nodes of this node.
+    /// </summary>
+    /// <returns>A collection of <see cref="Node"/> that are immediate and/or nested parents of this node.</returns>
     public IEnumerable<Node> Ancestors()
     {
         var nodes = new List<Node>();
@@ -178,6 +184,13 @@ public class Node : IEquatable<Node>
         return nodes.OrderBy(n => n.Depth);
     }
 
+    /// <summary>
+    /// Gets all ancestor nodes of this node, including itself.
+    /// </summary>
+    /// <returns>
+    /// A collection of <see cref="Node"/> objects that are immediate and/or nested parents of this node,
+    /// including itself.
+    /// </returns>
     public IEnumerable<Node> AncestorsAndSelf()
     {
         var nodes = new List<Node>();
@@ -225,21 +238,6 @@ public class Node : IEquatable<Node>
     }
 
     /// <summary>
-    /// Gets the base node containing this node. This is not the root node but the node immediately after this node.
-    /// </summary>
-    private Node GetCollection()
-    {
-        var current = this;
-
-        while (current.Parent is not null)
-        {
-            current = current.Parent;
-        }
-
-        return current;
-    }
-
-    /// <summary>
     /// Gets the path of the current node by concatenating the names of its ancestors.
     /// </summary>
     /// <returns>The path of the current node as a string.</returns>
@@ -250,7 +248,7 @@ public class Node : IEquatable<Node>
 
         while (current is not null)
         {
-            path = !string.IsNullOrEmpty(path) ? string.Concat(current.Name, " > " , path) : current.Name;
+            path = !string.IsNullOrEmpty(path) ? string.Concat(current.Name, "/", path) : current.Name;
             current = current.Parent;
         }
 

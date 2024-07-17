@@ -37,6 +37,7 @@
         <Setter Property="Padding" Value="{a:ThemeResource ListItemPadding}" />
         <Setter Property="CornerRadius" Value="5" />
         <Setter Property="Margin" Value="0 3 0 0" />
+        <Setter Property="Focusable" Value="True" />
         <Setter Property="FocusAdorner" Value="{x:Null}" />
 
         <Setter Property="Template">
@@ -50,9 +51,10 @@
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding CornerRadius}"
-                        TemplatedControl.IsTemplateFocusTarget="True">
-                        <Grid Name="PART_Header"
-                              Margin="{TemplateBinding Level, Converter={StaticResource LeftMarginConverter}}">
+                        TemplatedControl.IsTemplateFocusTarget="True"
+                        Margin="{TemplateBinding Level, Converter={StaticResource LeftMarginConverter}}">
+
+                        <Grid Name="PART_Header">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition MinWidth="{StaticResource {a:ThemeResourceKey TreeItemIndent}}"
                                                   Width="Auto" />
@@ -83,16 +85,23 @@
                             <ItemsPresenter ItemsPanel="{TemplateBinding ItemsPanel}" />
                         </a:AnimatedExpanderDecorator>
 
-                        <Panel Margin="9.5 0 0 0">
-                            <Border Width="2" HorizontalAlignment="Left"
-                                    CornerRadius="{a:ThemeResource ButtonCornerRadius}"
-                                    Background="{a:ThemeResource Container1BorderBrush}"
-                                    Margin="{TemplateBinding Level, Converter={StaticResource LeftMarginConverter}}" />
-                        </Panel>
+                        <Border Margin="9.5 0 0 0">
+                            <Border
+                                x:Name="IndentBorder"
+                                Width="2" 
+                                HorizontalAlignment="Left"
+                                CornerRadius="{a:ThemeResource ButtonCornerRadius}"
+                                Margin="{TemplateBinding Level, Converter={StaticResource LeftMarginConverter}}" />
+                        </Border>
                     </Panel>
+
                 </StackPanel>
             </ControlTemplate>
         </Setter>
+
+        <Style Selector="^ /template/ Border#IndentBorder">
+            <Setter Property="Background" Value="{a:ThemeResource Container1BorderBrush}" />
+        </Style>
 
         <Style Selector="^:empty /template/ ToggleButton">
             <Setter Property="IsVisible" Value="False" />
@@ -107,6 +116,9 @@
         <Style Selector="^:selected /template/ Border#border">
             <Setter Property="Background" Value="{a:ThemeResource ListItemBackgroundBrushPointerOver}" />
             <Setter Property="TextElement.Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+        </Style>
+        <Style Selector="^:selected /template/ Border#IndentBorder">
+            <Setter Property="Background" Value="{a:ThemeResource ControlForegroundBrushOutlineAccentDisabled}" />
         </Style>
     </ControlTheme>
 

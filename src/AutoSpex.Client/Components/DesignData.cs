@@ -40,16 +40,16 @@ public static class DesignData
     ];
 
     public static readonly CriterionObserver BoolCriterion =
-        new(new Criterion(Element.Tag.Property("Constant"), Operation.IsTrue));
+        new(new Criterion(Element.Tag.Property("Constant"), Operation.True));
 
     public static readonly CriterionObserver NumberCriterion =
-        new(new Criterion(Element.Tag.Property("Dimensions"), Operation.GreaterThanOrEqual, new Argument(10)));
+        new(new Criterion(Element.Tag.Property("Dimensions"), Operation.GreaterThanOrEqualTo, new Argument(10)));
 
     public static readonly CriterionObserver TextCriterion =
-        new(new Criterion(Element.Tag.Property("Name"), Operation.Equal, "Test"));
+        new(new Criterion(Element.Tag.Property("Name"), Operation.EqualTo, "Test"));
 
     public static readonly CriterionObserver EnumCriterion =
-        new(new Criterion(Element.Tag.Property("Radix"), Operation.Equal, Radix.Binary));
+        new(new Criterion(Element.Tag.Property("Radix"), Operation.EqualTo, Radix.Binary));
 
     public static readonly CriterionObserver InnerCriterion =
         new(new Criterion(Element.Tag.Property("Members"), Operation.Any,
@@ -77,14 +77,14 @@ public static class DesignData
     });
 
     public static ObservableCollection<EnvironmentObserver> Environments =
-        [EnvironmentItemDefault, EnvironmentItemTest, EnvironmentItemTest];
+        [EnvironmentItemDefault, EnvironmentItemTest];
 
 
     public static SpecObserver SpecObserver =
         new(Spec.Configure(c =>
             c.Search(Element.Tag)
-                .Where(Element.Tag.Property("TagName"), Operation.Contains, "TestTag")
-                .ShouldHave(Element.Tag.Property("Value"), Operation.Equal, 123)
+                .Where(Element.Tag.Property("TagName"), Operation.Containing, "TestTag")
+                .ShouldHave(Element.Tag.Property("Value"), Operation.EqualTo, 123)
         ));
 
     public static VariableObserver VariableObserver = new DesignVariableObserver();
@@ -232,7 +232,7 @@ public static class DesignData
         environment.Add(new Uri(TestSource));
 
         var spec = new Spec();
-        spec.Search(Element.Module).ShouldHave(Element.Module.Property("Inhibited"), Operation.IsFalse);
+        spec.Search(Element.Module).ShouldHave(Element.Module.Property("Inhibited"), Operation.False);
 
         var run = new Run(environment);
         run.AddNode(spec.ToNode());
@@ -251,19 +251,19 @@ public static class DesignData
     public static IEnumerable<OutcomeObserver> DefaultOutcomes = [DefaultOutcome, DefaultOutcome, DefaultOutcome];
 
     public static EvaluationObserver PassedEvaluation = new(
-        Evaluation.Passed(new Criterion(Element.Tag.Property("DataType"), Operation.Equal, "MyType"),
+        Evaluation.Passed(new Criterion(Element.Tag.Property("DataType"), Operation.EqualTo, "MyType"),
             new Tag("TestTag", "MyType"),
             "MyType")
     );
 
     public static EvaluationObserver FailedEvaluation = new(
-        Evaluation.Failed(new Criterion(Element.Tag.Property("DataType"), Operation.Contains, "Pump"),
+        Evaluation.Failed(new Criterion(Element.Tag.Property("DataType"), Operation.Containing, "Pump"),
             new Tag("TestTag", "MyType"),
             "ValveType")
     );
 
     public static EvaluationObserver ErroredEvaluation = new(
-        Evaluation.Errored(new Criterion(Element.Tag.Property("DataType"), Operation.Equal, "MyType"),
+        Evaluation.Errored(new Criterion(Element.Tag.Property("DataType"), Operation.EqualTo, "MyType"),
             new Tag("TestTag", "MyType"),
             new ArgumentException("Could not execute code due to this throw exception"))
     );
@@ -307,7 +307,7 @@ public class TestDetailPageModel : DetailPageModel
 }
 
 public class DesignCriterionObserver()
-    : CriterionObserver(new Criterion(Element.Tag.Property("Name"), Operation.Equal, "Test"));
+    : CriterionObserver(new Criterion(Element.Tag.Property("Name"), Operation.EqualTo, "Test"));
 
 public class DesignArgumentObserver() : ArgumentObserver(new Argument("Literal Text Value"));
 

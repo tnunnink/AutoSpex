@@ -32,13 +32,9 @@
                 <Button
                     Command="{Binding AddSourceCommand}"
                     properties:Icon.Theme="{StaticResource IconAdd}"
-                    Theme="{StaticResource IconButtonPillLeft}"
+                    Theme="{StaticResource IconButtonPill}"
                     Classes="accent"
                     ToolTip.Tip="Add source" />
-                <Button
-                    properties:Icon.Theme="{StaticResource IconDots}"
-                    Theme="{StaticResource IconButtonPillRight}">
-                </Button>
             </StackPanel>
         </Grid>
         

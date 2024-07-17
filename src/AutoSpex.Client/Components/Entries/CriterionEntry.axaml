@@ -3,12 +3,12 @@
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
                     xmlns:components="clr-namespace:AutoSpex.Client.Components"
-                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
                     xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
-                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
 
     <Design.PreviewWith>
-        <StackPanel Spacing="10" Margin="10" Height="500" Width="600">
+        <StackPanel Spacing="10" Margin="10" Height="300" Width="600">
             <StackPanel>
                 <StackPanel.Styles>
                     <Style Selector="ContentControl.criterion">
@@ -27,16 +27,6 @@
                 <ContentControl Content="{x:Static components:DesignData.EnumCriterion}" Classes="criterion" />
                 <ContentControl Content="{x:Static components:DesignData.InnerCriterion}" Classes="criterion" />
             </StackPanel>
-
-            <ListBox
-                ItemsSource="{x:Static components:DesignData.Criteria}"
-                ItemTemplate="{DynamicResource CriterionListItem}"
-                ItemContainerTheme="{StaticResource ListBoxItemSection}"
-                SelectionMode="Multiple"
-                BorderBrush="{a:ThemeResource Container1BorderBrush}"
-                BorderThickness="1"
-                CornerRadius="5"
-                Background="Transparent" />
         </StackPanel>
     </Design.PreviewWith>
 
@@ -44,7 +34,7 @@
 
         <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Hidden">
 
-            <StackPanel Orientation="Horizontal" Spacing="5">
+            <StackPanel Orientation="Horizontal">
 
                 <controls:Entry
                     Watermark="Enter property"
@@ -61,8 +51,9 @@
                     </controls:Entry.ValueTemplate>
                     <controls:Entry.ItemTemplate>
                         <DataTemplate x:DataType="engine:Property">
-                            <Grid ColumnDefinitions="30,*,Auto">
+                            <Grid ColumnDefinitions="Auto,*,Auto">
                                 <PathIcon
+                                    Grid.Column="0"
                                     Theme="{Binding Group, Converter={StaticResource TypeGroupToIconConverter}}"
                                     Margin="0 0 10 0" />
                                 <TextBlock
@@ -88,11 +79,19 @@
                     </controls:Entry.IsEmpty>
                 </controls:Entry>
 
+                <Button
+                    Command="{Binding ToggleNegationCommand}"
+                    Content="{Binding Negation}"
+                    IsVisible="{Binding Property, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Property.Default}}"
+                    FontFamily="{a:ThemeResource CodeFontFamily}"
+                    FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                    Theme="{a:ControlTheme ButtonSubtle}"
+                    ToolTip.Tip="Negate" />
+
                 <controls:Entry
                     Watermark="Select operation"
                     Value="{Binding Operation}"
                     Populate="{Binding PopulateOperations}"
-                    Selector="{Binding SelectOperation}"
                     CommitCommand="{Binding UpdateOperationCommand}"
                     IsVisible="{Binding Property, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Property.Default}}">
                     <controls:Entry.ItemTemplate>
@@ -123,11 +122,10 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="observers:ArgumentObserver">
                             <Panel>
-                                <StackPanel Orientation="Horizontal" IsVisible="{Binding !IsCriterion}">
-                                    <ContentControl
-                                        Content="{Binding}"
-                                        ContentTemplate="{StaticResource ArgumentDefaultEntry}" />
-                                </StackPanel>
+                                <ContentControl
+                                    Content="{Binding}"
+                                    ContentTemplate="{StaticResource ArgumentEntry}"
+                                    IsVisible="{Binding !IsCriterion}" />
 
                                 <ContentControl
                                     Content="{Binding Value}"
@@ -137,6 +135,16 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
+
+                <Button
+                    Command="{Binding AddArgumentCommand}"
+                    IsVisible="{Binding Operation, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:Operation.In}}"
+                    Margin="2 0"
+                    Theme="{StaticResource IconButtonSmall}"
+                    properties:Icon.Theme="{StaticResource IconAdd}"
+                    Classes="accent"
+                    ToolTip.Tip="Add Argument" />
+
             </StackPanel>
         </ScrollViewer>
     </DataTemplate>
@@ -159,7 +167,6 @@
                     Watermark="Select operation"
                     Value="{Binding Operation}"
                     Populate="{Binding PopulateOperations}"
-                    Selector="{Binding SelectOperation}"
                     CommitCommand="{Binding UpdateOperationCommand}"
                     IsVisible="{Binding Property, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Property.Default}}">
                     <controls:Entry.ItemTemplate>
@@ -192,7 +199,7 @@
                             <StackPanel Orientation="Horizontal">
                                 <ContentControl
                                     Content="{Binding}"
-                                    ContentTemplate="{StaticResource ArgumentDefaultEntry}" />
+                                    ContentTemplate="{StaticResource ArgumentEntry}" />
                             </StackPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
@@ -201,46 +208,4 @@
         </ScrollViewer>
     </DataTemplate>
 
-    <DataTemplate x:Key="CriterionListItem" x:DataType="observers:CriterionObserver">
-        <Border x:Name="Border" Background="Transparent" Focusable="True">
-
-            <Border.ContextFlyout>
-                <MenuFlyout
-                    Placement="Bottom"
-                    ItemContainerTheme="{StaticResource MenuActionItem}"
-                    ItemsSource="{Binding MenuItems}" />
-            </Border.ContextFlyout>
-
-            <Grid ColumnDefinitions="*,Auto">
-                <ContentControl
-                    Grid.Column="0"
-                    Content="{Binding}"
-                    ContentTemplate="{StaticResource CriterionEntry}" />
-
-                <Button
-                    Grid.Column="1"
-                    properties:Icon.Theme="{StaticResource IconDots}"
-                    Theme="{StaticResource IconButtonSmall}"
-                    Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
-                    Margin="5 0"
-                    ToolTip.Tip="Options"
-                    ToolTip.Placement="BottomEdgeAlignedRight">
-                    <Button.Flyout>
-                        <MenuFlyout
-                            Placement="BottomEdgeAlignedRight" HorizontalOffset="8"
-                            ItemsSource="{Binding MenuItems}"
-                            ItemContainerTheme="{StaticResource MenuActionItem}" />
-                    </Button.Flyout>
-                </Button>
-            </Grid>
-
-            <Interaction.Behaviors>
-                <ExecuteCommandOnKeyDownBehavior
-                    Key="Delete"
-                    Command="{Binding DeleteCommand}"
-                    MarkAsHandled="True"
-                    FocusControl="Border" />
-            </Interaction.Behaviors>
-        </Border>
-    </DataTemplate>
 </ResourceDictionary>

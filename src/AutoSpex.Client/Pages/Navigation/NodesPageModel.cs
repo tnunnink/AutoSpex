@@ -17,8 +17,8 @@ public partial class NodesPageModel : PageViewModel,
     IRecipient<Observer.Created>,
     IRecipient<Observer.Deleted>,
     IRecipient<Observer.Renamed>,
-    IRecipient<NodeObserver.Moved>,
-    IRecipient<Observer.GetSelected>
+    IRecipient<Observer.GetSelected>,
+    IRecipient<NodeObserver.Moved>
 {
     public override string Route => "Specs";
     public override string Title => "Specs";
@@ -123,8 +123,8 @@ public partial class NodesPageModel : PageViewModel,
 
     public void Receive(NodeObserver.Moved message)
     {
-        if (!Nodes.Contains(message.Node)) return;
-        Nodes.Remove(message.Node);
+        Nodes.RemoveAny(n => n.ParentId != Guid.Empty);
+        Nodes.Sort(n => n.Name, StringComparer.OrdinalIgnoreCase);
     }
 
     /// <summary>

@@ -12,8 +12,8 @@ public class ProofTests
         var source = new Source(new Uri(Known.Test));
         var spec = new Spec();
         spec.Search(Element.Tag);
-        spec.Where(Element.Tag.Property("TagName"), Operation.Equal, "TestSimpleTag");
-        spec.ShouldHave(Element.Tag.Property("DataType"), Operation.Equal, "SimpleType");
+        spec.Where(Element.Tag.Property("TagName"), Operation.EqualTo, "TestSimpleTag");
+        spec.ShouldHave(Element.Tag.Property("DataType"), Operation.EqualTo, "SimpleType");
 
         var outcome = await spec.RunAsync(source);
 
@@ -28,8 +28,8 @@ public class ProofTests
         var spec = Spec.Configure(c =>
         {
             c.Search(Element.Tag);
-            c.Where(Element.Tag.Property("TagName"), Operation.Equal, "TestSimpleTag");
-            c.ShouldHave(Element.Tag.Property("DataType"), Operation.Equal, "SimpleType");
+            c.Where(Element.Tag.Property("TagName"), Operation.EqualTo, "TestSimpleTag");
+            c.ShouldHave(Element.Tag.Property("DataType"), Operation.EqualTo, "SimpleType");
         });
 
         var results = new List<Outcome>();
@@ -53,8 +53,8 @@ public class ProofTests
         var spec = Spec.Configure(c =>
         {
             c.Search(Element.Module);
-            c.Where(Element.Module.Property("CatalogNumber"), Operation.Equal, "5094-IB16/A");
-            c.ShouldHave(Element.Module.Property("Revision"), Operation.Equal, "2.11");
+            c.Where(Element.Module.Property("CatalogNumber"), Operation.EqualTo, "5094-IB16/A");
+            c.ShouldHave(Element.Module.Property("Revision"), Operation.EqualTo, "2.11");
         });
 
         var outcome = await spec.RunAsync(source);

@@ -74,13 +74,6 @@
                     </Panel>
 
                     <Button
-                        properties:Icon.Theme="{StaticResource IconDotsVertical}"
-                        Theme="{StaticResource IconButton}"
-                        Classes="size-sm"
-                        ToolTip.Tip="Options">
-                    </Button>
-
-                    <Button
                         properties:Icon.Theme="{StaticResource IconDash}"
                         Theme="{StaticResource IconButton}"
                         Classes="size-sm"
@@ -126,18 +119,10 @@
             Grid.Row="2"
             ItemsSource="{Binding Nodes}"
             SelectedItems="{Binding Selected}"
+            ItemContainerTheme="{StaticResource NodeTreeItemTheme}"
             ItemTemplate="{StaticResource NodeTreeItem}"
             SelectionMode="Multiple"
             Padding="10 5">
-            <TreeView.ItemContainerTheme>
-                <ControlTheme TargetType="TreeViewItem" BasedOn="{StaticResource TreeViewItemSimple}"
-                              x:DataType="observers:NodeObserver">
-                    <Setter Property="IsVisible" Value="{Binding IsVisible}" />
-                    <Setter Property="IsSelected" Value="{Binding IsSelected}" />
-                    <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
-                </ControlTheme>
-            </TreeView.ItemContainerTheme>
         </TreeView>
-
     </Grid>
 </UserControl>

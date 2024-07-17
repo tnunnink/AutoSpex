@@ -1,6 +1,6 @@
 ﻿namespace AutoSpex.Engine;
 
-public class IsNullOrWhiteSpaceOperation() : UnaryOperation("Is Null Or WhiteSpace")
+public class NullOrWhiteSpaceOperation() : UnaryOperation("Null Or WhiteSpace")
 {
     protected override bool Evaluate(object? input)
     {

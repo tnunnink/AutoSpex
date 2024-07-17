@@ -3,85 +3,80 @@
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
                     xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
-                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
-    
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors">
+
     <Design.PreviewWith>
         <StackPanel Width="300" Height="400">
             <TreeView
                 ItemsSource="{x:Static components:DesignData.Nodes}"
-                ItemContainerTheme="{StaticResource TreeViewItemSimple}"
+                ItemContainerTheme="{DynamicResource NodeTreeItemTheme}"
                 ItemTemplate="{DynamicResource NodeTreeItem}"
                 SelectionMode="Multiple"
                 Padding="5" />
         </StackPanel>
     </Design.PreviewWith>
-    
-    
+
+    <a:ThicknessConverter
+        x:Key="PaddingConverter"
+        Filter="Top, Right, Bottom" />
+
     <TreeDataTemplate x:Key="NodeTreeItem" x:DataType="observers:NodeObserver" ItemsSource="{Binding Nodes}">
-        <Border x:Name="Border" Focusable="True" Background="Transparent"
-                ContextFlyout="{StaticResource NodeMenu}">
+        <Border x:Name="Border" Background="Transparent" Focusable="True" Padding="0 5 9 5">
+
+            <Border.ContextFlyout>
+                <MenuFlyout
+                    ItemsSource="{Binding ContextItems}"
+                    ItemContainerTheme="{StaticResource MenuActionItem}"
+                    Placement="Pointer" />
+            </Border.ContextFlyout>
 
             <Grid ColumnDefinitions="Auto,*">
-
-                <PathIcon Grid.Column="0"
-                          Theme="{Binding Icon, Converter={StaticResource KeyToIconConverter}}"
-                          Margin="0 0 5 0" />
-
-                <Panel Grid.Column="1">
-                    <controls:HighlightableTextBlock
-                        Text="{Binding Name}"
-                        HighlightedText="{Binding FilterText}"
-                        IsVisible="{Binding !IsEditing}" />
-                    <TextBox x:Name="NameEntry"
-                             Text="{Binding Name, Mode=OneWay}"
-                             Watermark="Enter name"
-                             IsVisible="{Binding IsEditing}"
-                             Theme="{a:ControlTheme TextBoxOutline}"
-                             FontSize="{a:ThemeResource DefaultFontSizeSmall}"
-                             BorderThickness="0" Padding="5 0 0 0"
-                             VerticalContentAlignment="Center"
-                             TextWrapping="NoWrap"
-                             Focusable="True">
-                        <Interaction.Behaviors>
-                            <DataTriggerBehavior
-                                Binding="{Binding IsEditing}"
-                                ComparisonCondition="Equal"
-                                Value="True">
-                                <FocusControlAction TargetControl="NameEntry" />
-                            </DataTriggerBehavior>
-                            <SelectAllOnGotFocusBehavior />
-                            <ExecuteCommandOnKeyUpBehavior
-                                Key="Enter"
-                                Command="{Binding RenameCommand}"
-                                CommandParameter="{Binding #NameEntry.Text}"
-                                FocusControl="border" />
-                            <ExecuteCommandOnKeyUpBehavior
-                                Key="Escape"
-                                Command="{Binding EndEditCommand}"
-                                FocusControl="border" />
-                            <ExecuteCommandOnLostFocusBehavior
-                                Command="{Binding EndEditCommand}"
-                                FocusControl="border" />
-                        </Interaction.Behaviors>
-                    </TextBox>
-                </Panel>
-
+                <PathIcon
+                    Grid.Column="0"
+                    Theme="{Binding Icon, Converter={StaticResource KeyToIconConverter}}"
+                    Margin="0 0 5 0" />
+                <controls:HighlightableTextBlock
+                    Grid.Column="1"
+                    Text="{Binding Name}"
+                    HighlightedText="{Binding FilterText}" />
             </Grid>
 
             <Interaction.Behaviors>
-                <ItemDragBehavior />
                 <ExecuteCommandOnDoubleTappedBehavior
-                    Command="{Binding NavigateCommand}" MarkAsHandled="True" />
+                    Command="{Binding NavigateCommand}"
+                    MarkAsHandled="True" />
                 <ExecuteCommandOnKeyDownBehavior
                     Key="Enter"
-                    Command="{Binding NavigateCommand}" MarkAsHandled="True" />
+                    Command="{Binding NavigateCommand}"
+                    MarkAsHandled="True"
+                    EventRoutingStrategy="Bubble" />
                 <ExecuteCommandOnKeyDownBehavior
                     Key="Delete"
-                    Command="{Binding DeleteCommand}" MarkAsHandled="True" />
+                    Command="{Binding DeleteCommand}"
+                    MarkAsHandled="True" />
                 <ExecuteCommandOnKeyDownBehavior
                     Gesture="Ctrl+E"
-                    Command="{Binding StartEditCommand}" MarkAsHandled="True" />
+                    Command="{Binding RenameCommand}"
+                    MarkAsHandled="True" />
+                <behaviors:DraggableBehavior
+                    Context="{Binding}" />
+                <behaviors:ExecuteCommandOnDropBehavior
+                    Command="{Binding MoveCommand}"
+                    StyleElement="{Binding $parent[TreeViewItem]}" />
             </Interaction.Behaviors>
         </Border>
     </TreeDataTemplate>
+
+    <ControlTheme x:Key="NodeTreeItemTheme" TargetType="TreeViewItem" BasedOn="{StaticResource TreeViewItemSimple}"
+                  x:DataType="observers:NodeObserver">
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="IsVisible" Value="{Binding IsVisible}" />
+        <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+        <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
+
+        <Style Selector="^.dragover /template/ Border#border">
+            <Setter Property="Background" Value="{a:ThemeResource ListItemBackgroundBrushSelected}" />
+        </Style>
+    </ControlTheme>
 </ResourceDictionary>

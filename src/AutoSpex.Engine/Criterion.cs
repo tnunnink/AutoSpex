@@ -41,13 +41,13 @@ public class Criterion : IEquatable<Criterion>
     /// <param name="type">The type this criterion is configured for.</param>
     /// <param name="property">The name of the property for which to retrieve the the value from the candidate.</param>
     /// <param name="operation">The operation to perform when evaluating.</param>
-    /// <param name="invert">Wether to invert the condition of the evaluation to false=pass (i.e. NOT).</param>
+    /// <param name="negation">Wether to negate the condition of the evaluation (i.e. IsNot).</param>
     /// <param name="arguments">The set of <see cref="Argument"/> values to use when evaluating.</param>
     public Criterion(Guid criterionId,
         Type? type = default,
         Property? property = default,
         Operation? operation = default,
-        bool invert = false,
+        Negation? negation = default,
         params Argument[] arguments)
     {
         CriterionId = criterionId;
@@ -55,7 +55,7 @@ public class Criterion : IEquatable<Criterion>
         Property = property ?? Property.Default;
         Operation = operation ?? Operation.None;
         Arguments = [..arguments];
-        Invert = invert;
+        Negation = negation ?? Negation.Is;
     }
 
     /// <summary>
@@ -117,9 +117,10 @@ public class Criterion : IEquatable<Criterion>
     public List<Argument> Arguments { get; init; } = [];
 
     /// <summary>
-    /// A flag to invert the result of the operation.
+    /// A flag to negate the result of the operation for this criterion. 
     /// </summary>
-    public bool Invert { get; set; }
+    [JsonConverter(typeof(SmartEnumNameConverter<Negation, bool>))]
+    public Negation Negation { get; set; } = Negation.Is;
 
     public static implicit operator Func<object, bool>(Criterion criterion) => x => criterion.Evaluate(x);
     public static implicit operator Expression<Func<object, bool>>(Criterion criterion) => criterion.ToExpression();
@@ -136,9 +137,9 @@ public class Criterion : IEquatable<Criterion>
             var value = Property != Property.Default ? Property.GetValue(candidate) : candidate;
             var valueType = value?.GetType();
             var args = Arguments.Select(a => a.ResolveAs(valueType)).ToArray();
-            var result = !Invert ? Operation.Execute(value, args) : !Operation.Execute(value, args);
+            var result = Operation.Execute(value, args);
 
-            return result
+            return Negation.Satisfies(result)
                 ? Evaluation.Passed(this, candidate, value)
                 : Evaluation.Failed(this, candidate, value);
         }
@@ -173,7 +174,7 @@ public class Criterion : IEquatable<Criterion>
             > 1 => $"[{string.Join(',', final.Select(x => x.ToText()))}]",
             _ => string.Empty
         };
-        
+
         return $"{GetCriteria()} {expected}".Trim();
     }
 

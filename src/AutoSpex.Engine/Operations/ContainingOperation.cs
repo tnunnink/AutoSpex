@@ -1,6 +1,6 @@
 ﻿namespace AutoSpex.Engine;
 
-public class ContainsOperation() : BinaryOperation("Contains")
+public class ContainingOperation() : BinaryOperation("Containing")
 {
     protected override bool Evaluate(object? input, object value)
     {

@@ -3,127 +3,58 @@
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
                     xmlns:components="clr-namespace:AutoSpex.Client.Components"
-                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
-                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers">
 
     <Design.PreviewWith>
-        <StackPanel Width="300" Height="200">
+        <Border MinHeight="300" MinWidth="300">
             <ListBox BorderThickness="0"
                      ItemsSource="{x:Static components:DesignData.Environments}"
-                     ItemContainerTheme="{DynamicResource ListBoxItemEnvironment}"
-                     SelectionMode="Multiple">
-            </ListBox>
-        </StackPanel>
+                     ItemTemplate="{DynamicResource EnvironmentListItem}"
+                     ItemContainerTheme="{DynamicResource EnvironmentListItemTheme}"
+                     SelectionMode="Multiple"
+                     Margin="5" />
+        </Border>
     </Design.PreviewWith>
 
-    <ControlTheme x:Key="ListBoxItemEnvironment" TargetType="ListBoxItem" x:DataType="observers:EnvironmentObserver">
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{a:ThemeResource ListItemForegroundBrush}" />
-        <Setter Property="Padding" Value="{a:ThemeResource ListItemPadding}" />
-        <Setter Property="BorderThickness" Value="3 0 0 0" />
+    <DataTemplate x:Key="EnvironmentListItem" x:DataType="observers:EnvironmentObserver">
+        <Border x:Name="Border" Focusable="True" Background="Transparent" Padding="{a:ThemeResource ListItemPadding}">
+            
+            <Border.ContextFlyout>
+                <MenuFlyout
+                    ItemsSource="{Binding ContextItems}"
+                    ItemContainerTheme="{StaticResource MenuActionItem}"
+                    Placement="Pointer" />
+            </Border.ContextFlyout>
 
-        <Setter Property="Template">
-            <ControlTemplate>
+            <StackPanel Orientation="Horizontal" Spacing="5">
+                <PathIcon Theme="{Binding Icon, Converter={StaticResource KeyToIconConverter}}" />
+                <controls:HighlightableTextBlock Text="{Binding Name}" HighlightedText="{Binding FilterText}" />
+            </StackPanel>
 
-                <Border
-                    x:Name="Border"
-                    Background="{TemplateBinding Background}"
-                    BorderBrush="{TemplateBinding BorderBrush}"
-                    BorderThickness="{TemplateBinding BorderThickness}"
-                    CornerRadius="{TemplateBinding CornerRadius}"
-                    Padding="{TemplateBinding Padding}"
-                    Focusable="True">
+            <Interaction.Behaviors>
+                <ExecuteCommandOnDoubleTappedBehavior
+                    Command="{Binding NavigateCommand}"
+                    MarkAsHandled="True" />
+                <ExecuteCommandOnKeyDownBehavior
+                    Key="Enter"
+                    Command="{Binding NavigateCommand}"
+                    MarkAsHandled="True" />
+                <ExecuteCommandOnKeyDownBehavior
+                    Key="Delete"
+                    Command="{Binding DeleteCommand}"
+                    MarkAsHandled="True" />
+                <ExecuteCommandOnKeyDownBehavior
+                    Gesture="Ctrl+E"
+                    Command="{Binding RenameCommand}"
+                    MarkAsHandled="True" />
+            </Interaction.Behaviors>
+        </Border>
+    </DataTemplate>
 
-                    <Grid ColumnDefinitions="Auto,*,Auto">
-
-                        <PathIcon
-                            Grid.Column="0"
-                            Theme="{StaticResource IconThemedEnvironment}"
-                            Margin="0 0 5 0" />
-
-                        <Panel Grid.Column="1">
-
-                            <controls:HighlightableTextBlock
-                                Text="{Binding Name}"
-                                HighlightedText="{Binding FilterText}" />
-
-                            <TextBox
-                                x:Name="NameEntry"
-                                Text="{Binding Name, Mode=OneWay}"
-                                Watermark="Enter name"
-                                IsVisible="{Binding IsEditing}"
-                                Theme="{a:ControlTheme TextBoxOutline}"
-                                BorderThickness="0" Padding="5 0 0 0"
-                                VerticalContentAlignment="Center"
-                                TextWrapping="NoWrap"
-                                Focusable="True">
-                                <Interaction.Behaviors>
-                                    <SelectAllOnGotFocusBehavior />
-                                    <DataTriggerBehavior
-                                        Binding="{Binding IsEditing}"
-                                        ComparisonCondition="Equal"
-                                        Value="True">
-                                        <FocusControlAction TargetControl="NameEntry" />
-                                    </DataTriggerBehavior>
-                                    <ExecuteCommandOnKeyUpBehavior
-                                        Key="Enter"
-                                        Command="{Binding RenameCommand}"
-                                        CommandParameter="{Binding #NameEntry.Text}"
-                                        FocusControl="border" />
-                                    <ExecuteCommandOnKeyUpBehavior
-                                        Key="Escape"
-                                        Command="{Binding EndEditCommand}"
-                                        FocusControl="border" />
-                                </Interaction.Behaviors>
-                            </TextBox>
-                        </Panel>
-
-                        <!--<Button
-                            Grid.Column="2"
-                            Theme="{StaticResource IconButtonSmall}"
-                            properties:Icon.Theme="{StaticResource IconFilledCheck}"
-                            ToolTip.Tip="Set as run target">
-                            <Button.IsVisible>
-                                <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                                    <Binding Path="$parent[ListBoxItem].IsPointerOver" />
-                                </MultiBinding>
-                            </Button.IsVisible>
-                        </Button>-->
-                    </Grid>
-
-                    <Interaction.Behaviors>
-                        <ExecuteCommandOnDoubleTappedBehavior
-                            Command="{Binding NavigateCommand}" />
-                        <ExecuteCommandOnKeyDownBehavior
-                            Key="Enter"
-                            Command="{Binding NavigateCommand}" />
-                        <ExecuteCommandOnKeyDownBehavior
-                            Key="Delete"
-                            Command="{Binding DeleteCommand}" />
-                        <ExecuteCommandOnKeyDownBehavior
-                            Gesture="Ctrl+E"
-                            Command="{Binding StartEditCommand}" />
-                    </Interaction.Behaviors>
-                </Border>
-            </ControlTemplate>
-        </Setter>
-
-        <Style Selector="^:pointerover /template/ Border#Border">
-            <Setter Property="Background" Value="{a:ThemeResource ListItemBackgroundBrushPointerOver}" />
-            <Setter Property="BorderBrush" Value="{a:ThemeResource Container4BorderBrush}" />
-        </Style>
-        <Style Selector="^:disabled /template/ Border#Border">
-            <Setter Property="TextElement.Foreground" Value="{a:ThemeResource ListItemForegroundBrushDisabled}" />
-            <Setter Property="Opacity" Value="{a:ThemeResource EditWatermarkOpacity}" />
-        </Style>
-        <Style Selector="^:selected /template/ Border#Border">
-            <Setter Property="Background" Value="{a:ThemeResource ListItemBackgroundBrushPointerOver}" />
-            <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBackgroundBrushSolidAccent}" />
-            <Setter Property="TextElement.Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
-
-            <Style Selector="^:focus-within">
-                <Setter Property="Background" Value="{a:ThemeResource ListItemBackgroundBrushPointerOver}" />
-            </Style>
-        </Style>
+    <ControlTheme x:Key="EnvironmentListItemTheme" x:DataType="observers:NodeObserver"
+                  TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemSimple}">
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="IsVisible" Value="{Binding IsVisible}" />
+        <Setter Property="IsSelected" Value="{Binding IsSelected}" />
     </ControlTheme>
 </ResourceDictionary>

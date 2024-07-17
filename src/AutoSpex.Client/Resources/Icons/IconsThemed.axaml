@@ -41,8 +41,8 @@
         </StackPanel>
     </Design.PreviewWith>
 
-    <ControlTheme x:Key="IconThemedCollection" TargetType="PathIcon" BasedOn="{StaticResource IconFilledFolder}">
-        <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushContainer}" />
+    <ControlTheme x:Key="IconThemedCollection" TargetType="PathIcon" BasedOn="{StaticResource IconFilledStack}">
+        <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushCollection}" />
     </ControlTheme>
     <ControlTheme x:Key="IconThemedContainer" TargetType="PathIcon" BasedOn="{StaticResource IconFilledFolder}">
         <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushContainer}" />
@@ -68,9 +68,9 @@
     </ControlTheme>
     <ControlTheme x:Key="IconThemedPending" TargetType="PathIcon" BasedOn="{StaticResource IconLineCircleHalfFill}">
         <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
-        <!--<Style Selector="^">
+        <Style Selector="^">
             <Style.Animations>
-                <Animation Duration="0:0:1" IterationCount="INFINITE">
+                <Animation Duration="0:0:0.5" IterationCount="INFINITE">
                     <KeyFrame Cue="0%">
                         <Setter Property="RotateTransform.Angle" Value="0" />
                     </KeyFrame>
@@ -79,13 +79,13 @@
                     </KeyFrame>
                 </Animation>
             </Style.Animations>
-        </Style>-->
+        </Style>
     </ControlTheme>
     <ControlTheme x:Key="IconThemedRunning" TargetType="PathIcon" BasedOn="{StaticResource IconLineCircleHalfFill}">
         <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineSuccess}" />
-        <!--<Style Selector="^">
+        <Style Selector="^">
             <Style.Animations>
-                <Animation Duration="0:0:1" IterationCount="INFINITE">
+                <Animation Duration="0:0:0.5" IterationCount="INFINITE">
                     <KeyFrame Cue="0%">
                         <Setter Property="RotateTransform.Angle" Value="0" />
                     </KeyFrame>
@@ -94,7 +94,7 @@
                     </KeyFrame>
                 </Animation>
             </Style.Animations>
-        </Style>-->
+        </Style>
     </ControlTheme>
     <ControlTheme x:Key="IconThemedInconclusive" TargetType="PathIcon" BasedOn="{StaticResource IconFilledQuestion}">
         <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />

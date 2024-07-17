@@ -26,7 +26,7 @@ public class SpecTests
         var spec = new Spec();
 
         spec.Search(Element.Module)
-            .Where(Element.Tag.Property("Name"), Operation.Contains, "Test")
+            .Where(Element.Tag.Property("Name"), Operation.Containing, "Test")
             .ShouldHave(Element.Tag.Property("Value"), Operation.In, 1, 2, 3, 4, 5);
 
         spec.Query.Element.Should().Be(Element.Module);
@@ -53,8 +53,8 @@ public class SpecTests
         var source = new Source(new Uri(Known.Test));
 
         spec.Search(Element.Tag)
-            .Where(Element.Tag.Property("Name"), Operation.Contains, "Test")
-            .ShouldNotHave(Element.Tag.Property("DataType"), Operation.IsNullOrEmpty);
+            .Where(Element.Tag.Property("Name"), Operation.Containing, "Test")
+            .ShouldNotHave(Element.Tag.Property("DataType"), Operation.NullOrEmpty);
 
         var outcome = await spec.RunAsync(source);
 
@@ -69,8 +69,8 @@ public class SpecTests
         var source = new Source(new Uri(Known.Test));
 
         spec.Search(Element.Program)
-            .Where(Element.Program.Property("Type"), Operation.Equal, ProgramType.Normal)
-            .ShouldReturn(Operation.GreaterThanOrEqual, 1);
+            .Where(Element.Program.Property("Type"), Operation.EqualTo, ProgramType.Normal)
+            .ShouldReturn(Operation.GreaterThanOrEqualTo, 1);
 
         var outcome = await spec.RunAsync(source);
 
@@ -84,7 +84,7 @@ public class SpecTests
         var source = new Source(new Uri(Known.Test));
 
         spec.Search(Element.Program)
-            .Where(Element.Program.Property("Type"), Operation.Equal, ProgramType.Normal)
+            .Where(Element.Program.Property("Type"), Operation.EqualTo, ProgramType.Normal)
             .ShouldReturn(Operation.LessThan, 1);
 
         var outcome = await spec.RunAsync(source);
@@ -100,8 +100,8 @@ public class SpecTests
         var example = new Source(new Uri(Known.Example));
 
         spec.Search(Element.Program)
-            .Where(Element.Program.Property("Type"), Operation.Equal, ProgramType.Normal)
-            .ShouldHave(Element.Program.Property("Disabled"), Operation.IsFalse)
+            .Where(Element.Program.Property("Type"), Operation.EqualTo, ProgramType.Normal)
+            .ShouldHave(Element.Program.Property("Disabled"), Operation.False)
             .ShouldReturn(Operation.GreaterThan, 1);
 
         var outcome = await spec.RunAllAsync([test, example]);
@@ -115,8 +115,8 @@ public class SpecTests
         var spec = new Spec();
 
         spec.Search(Element.Tag)
-            .Where(Element.Tag.Property("Name"), Operation.Contains, "Test")
-            .ShouldNotHave(Element.Tag.Property("DataType"), Operation.IsNullOrEmpty);
+            .Where(Element.Tag.Property("Name"), Operation.Containing, "Test")
+            .ShouldNotHave(Element.Tag.Property("DataType"), Operation.NullOrEmpty);
 
         return VerifyJson(spec.Serialize());
     }
@@ -126,8 +126,8 @@ public class SpecTests
     {
         var spec = new Spec();
         spec.Search(Element.Tag)
-            .Where(Element.Tag.Property("Name"), Operation.Contains, "Test")
-            .ShouldNotHave(Element.Tag.Property("DataType"), Operation.IsNullOrEmpty);
+            .Where(Element.Tag.Property("Name"), Operation.Containing, "Test")
+            .ShouldNotHave(Element.Tag.Property("DataType"), Operation.NullOrEmpty);
         var data = spec.Serialize();
 
         var result = Spec.Deserialize(data);

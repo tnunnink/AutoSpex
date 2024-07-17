@@ -8,7 +8,7 @@
                     xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
 
     <Design.PreviewWith>
-        <StackPanel Spacing="20" Margin="20" Width="200">
+        <StackPanel Spacing="20" Margin="20" Width="200" Height="300">
             <a:ToggleThemeButton Theme="{a:ControlTheme ToggleThemeButtonSoft}" />
             <ComboBox ItemsSource="{x:Static engine:ResultState.List}"
                       SelectedItem="{x:Static engine:ResultState.None}"
