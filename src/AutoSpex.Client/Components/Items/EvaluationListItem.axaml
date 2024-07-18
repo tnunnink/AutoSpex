@@ -77,7 +77,7 @@
                 <TextBlock Text="Expected" />
 
                 <controls:HighlightableTextBlock
-                    Text="{Binding Candidate.Text}"
+                    Text="{Binding Candidate.Name}"
                     Foreground="{DynamicResource TypeGroupForegroundBrushText}" />
 
                 <TextBlock
@@ -99,7 +99,7 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="observers:ValueObserver">
                             <controls:HighlightableTextBlock
-                                Text="{Binding Text}"
+                                Text="{Binding Name}"
                                 Foreground="{DynamicResource TypeGroupForegroundBrushText}" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
@@ -117,7 +117,7 @@
                         Text="but found" />
 
                     <controls:HighlightableTextBlock
-                        Text="{Binding Actual.Text}"
+                        Text="{Binding Actual.Name}"
                         Foreground="{DynamicResource TypeGroupForegroundBrushText}" />
                 </StackPanel>
 

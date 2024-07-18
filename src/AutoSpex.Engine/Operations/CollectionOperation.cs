@@ -15,10 +15,10 @@ public abstract class CollectionOperation(string name) : Operation(name)
         if (values[0] is not Criterion criterion)
             throw new ArgumentException("Collection operations require an inner criterion argument");
 
-        return Evaluate(enumerable.Cast<object?>(), criterion);
+        return Evaluate(enumerable.Cast<object>(), criterion);
     }
 
-    protected abstract bool Evaluate(IEnumerable<object?> collection, Criterion criterion);
+    protected abstract bool Evaluate(IEnumerable<object> collection, Criterion criterion);
 
     protected override bool Supports(TypeGroup group) => group == TypeGroup.Collection;
 }

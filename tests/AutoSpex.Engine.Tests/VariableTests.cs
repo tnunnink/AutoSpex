@@ -18,6 +18,7 @@ public class VariableTests
         variable.Group.Should().Be(TypeGroup.Text);
         variable.Type.Should().Be(typeof(string));
         variable.Value.Should().Be(string.Empty);
+        variable.Reference.Should().NotBeNull();
     }
 
     [Test]
@@ -231,6 +232,17 @@ public class VariableTests
 
         variable.Value.Should().BeEquivalentTo(tag);
         variable.Type.Should().Be(typeof(Tag));
+    }
+
+    [Test]
+    public void Reference_WhenCalled_ShouldHaveExpectedName()
+    {
+        var variable = new Variable("Test");
+
+        var reference = variable.Reference;
+
+        reference.Name.Should().Be("Test");
+        reference.ToString().Should().Be("@Test");
     }
     
     [Test]

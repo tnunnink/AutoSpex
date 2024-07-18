@@ -12,7 +12,27 @@ public record LoadSpecs(IEnumerable<Guid> Ids) : IDbQuery<Result<IEnumerable<Spe
 [UsedImplicitly]
 internal class LoadSpecsHandler(IConnectionManager manager) : IRequestHandler<LoadSpecs, Result<IEnumerable<Spec>>>
 {
-    private const string LoadSpecs =
+    private const string LoadNodes =
+        """
+        WITH Nodes AS (
+            SELECT NodeId, ParentId, Type, Name, 0 as Depth
+            FROM Node
+            WHERE ParentId is null
+            UNION ALL
+            SELECT c.NodeId, c.ParentId, c.Type, c.Name, n.Depth + 1 as Depth
+            FROM Node c
+            INNER JOIN Nodes n ON c.ParentId = n.NodeId
+        )
+
+        SELECT n.[NodeId], n.[ParentId], n.[Name], n.[Type], v.[VariableId], v.[NodeId], v.[Name], v.[Group], v.[Value]
+        FROM Nodes n
+        LEFT JOIN Variable v ON v.NodeId = n.NodeId
+        ORDER BY Depth, Name;
+        """;
+
+    private const string LoadSpecs = "SELECT SpecId, Specification FROM Spec WHERE SpecId In @Ids";
+
+    /*private const string LoadSpecs =
         """
         WITH Tree AS (SELECT NodeId as SpecId, NodeId, ParentId
                       FROM Node
@@ -29,50 +49,43 @@ internal class LoadSpecsHandler(IConnectionManager manager) : IRequestHandler<Lo
                  JOIN Node n on t.SpecId = n.NodeId
                  JOIN Spec s on t.SpecId = s.SpecId
                  LEFT JOIN Variable v ON v.NodeId = t.NodeId
-        """;
+        """;*/
 
 
     public async Task<Result<IEnumerable<Spec>>> Handle(LoadSpecs request, CancellationToken cancellationToken)
     {
         using var connection = await manager.Connect(cancellationToken);
 
-        var ids = request.Ids.Select(x => x.ToString()).ToList();
-        var specs = new Dictionary<Guid, Spec>();
-        var variables = new Dictionary<Guid, Dictionary<string, Variable>>();
+        var lookup = new Dictionary<Guid, Node>();
 
-        //Query all spec, mapping the node, specification, and variables out into a lookup.
-        await connection.QueryAsync<Node, string, Variable?, int>(LoadSpecs,
-            (node, config, variable) =>
+        //Load the full node tree and associated variables to allow the spec to resolve any references.
+        await connection.QueryAsync<Node, Variable?, Node>(LoadNodes,
+            (n, v) =>
             {
-                if (!specs.ContainsKey(node.NodeId))
-                {
-                    var spec = new Spec(node);
-                    spec.Update(Spec.Deserialize(config));
-                    specs.Add(node.NodeId, spec);
-                }
+                lookup.TryAdd(n.NodeId, n);
 
-                variables.TryAdd(node.NodeId, []);
-                if (variable is not null)
-                    variables[node.NodeId].TryAdd(variable.Name, variable);
+                if (lookup.TryGetValue(n.ParentId, out var parent))
+                    parent.AddNode(n);
 
-                return 1;
+                if (v is not null)
+                    n.AddVariable(v);
+
+                return n;
             },
-            param: new { Ids = ids },
-            splitOn: "Specification,VariableId");
+            splitOn: "VariableId");
 
-        //Iterate the spec objects and perform the lookup for matching scoped variables.
-        //If found, update the spec variable's value to "resolve" it to the current persisted state.
-        foreach (var spec in specs.Values)
-        {
-            if (!variables.TryGetValue(spec.SpecId, out var scoped)) continue;
-
-            foreach (var variable in spec.Variables)
+        var specs = await connection.QueryAsync<Guid, string, Spec>(LoadSpecs,
+            (id, config) =>
             {
-                if (!scoped.TryGetValue(variable.Name, out var match)) continue;
-                variable.SyncTo(match);
-            }
-        }
-
-        return Result.Ok(specs.Values.AsEnumerable());
+                var node = lookup[id];
+                var spec = new Spec(node);
+                spec.Update(Spec.Deserialize(config));
+                return spec;
+            },
+            splitOn: "Specification",
+            param: new { Ids = request.Ids.Select(x => x.ToString()).ToList() }
+        );
+        
+        return Result.Ok(specs);
     }
 }

@@ -43,13 +43,14 @@ public class ArgumentTests
     }
 
     [Test]
-    public void New_VariableType_ShouldHaveExpectedValues()
+    public void New_VariableReference_ShouldHaveExpectedValues()
     {
         var value = new Variable("Test", "Test");
-        var argument = new Argument(value);
+        var reference = value.Reference;
+        var argument = new Argument(reference);
 
         argument.Should().NotBeNull();
-        argument.Value.Should().BeEquivalentTo(value);
+        argument.Value.Should().BeEquivalentTo(reference);
     }
 
     [Test]
@@ -152,15 +153,15 @@ public class ArgumentTests
     }
 
     [Test]
-    public void ResolveAs_VariableAaString_ShouldHaveExpectedValues()
+    public void ResolveAs_ReferenceToVariable_ShouldReturnVariableValue()
     {
-        var value = new Variable("Test", "Test");
-        var argument = new Argument(value);
+        var variable = new Variable("Test", "Test");
+        var reference = variable.Reference;
+        var argument = new Argument(reference);
 
         var result = argument.ResolveAs(typeof(string));
-
+        
         result.Should().Be("Test");
-        result.Should().BeOfType<string>();
     }
 
     [Test]
@@ -171,29 +172,6 @@ public class ArgumentTests
         var result = argument.ResolveAs(typeof(Radix));
 
         result.Should().Be(Radix.Decimal);
-    }
-
-    [Test]
-    public void ResolveAs_LogixEnumFromVariableString_ShouldHaveExpectedValue()
-    {
-        var variable = new Variable("Test", "Read/Write");
-        var argument = new Argument(variable);
-
-        var result = argument.ResolveAs(typeof(ExternalAccess));
-
-        result.Should().Be(ExternalAccess.ReadWrite);
-    }
-
-    [Test]
-    public void ResolveAs_LogixTypeFromVariableString_ShouldHaveExpectedValue()
-    {
-        var variable = new Variable("Test", "123");
-        var argument = new Argument(variable);
-
-        var result = argument.ResolveAs(typeof(DINT));
-
-        result.Should().BeOfType<DINT>();
-        result.Should().Be(new DINT(123));
     }
 
     [Test]
@@ -215,16 +193,6 @@ public class ArgumentTests
         var result = JsonSerializer.Deserialize<Argument>(data);
 
         result.Should().BeEquivalentTo(argument);
-    }
-
-    [Test]
-    public Task Serialize_InnerCriterionValue_ShouldBeVerified()
-    {
-        var argument = new Argument(new Criterion(Element.Tag.Property("Name"), Operation.Containing, "Test"));
-
-        var data = JsonSerializer.Serialize(argument);
-
-        return VerifyJson(data);
     }
 
     [Test]

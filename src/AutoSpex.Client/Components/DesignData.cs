@@ -82,7 +82,7 @@ public static class DesignData
 
     public static SpecObserver SpecObserver =
         new(Spec.Configure(c =>
-            c.Search(Element.Tag)
+            c.Find(Element.Tag)
                 .Where(Element.Tag.Property("TagName"), Operation.Containing, "TestTag")
                 .ShouldHave(Element.Tag.Property("Value"), Operation.EqualTo, 123)
         ));
@@ -232,7 +232,7 @@ public static class DesignData
         environment.Add(new Uri(TestSource));
 
         var spec = new Spec();
-        spec.Search(Element.Module).ShouldHave(Element.Module.Property("Inhibited"), Operation.False);
+        spec.Find(Element.Module).ShouldHave(Element.Module.Property("Inhibited"), Operation.False);
 
         var run = new Run(environment);
         run.AddNode(spec.ToNode());
@@ -282,6 +282,7 @@ public static class DesignData
 
     public static ValueObserver BooleanValueObserver = new(true);
     public static ValueObserver RadixValueObserver = new(Radix.Float);
+    public static ValueObserver CollectionValueObserver = new(new List<Argument> { new(), new(), new() });
 
 
     public static ChangeLogObserver ChangeLog = new(new ChangeLog

@@ -34,66 +34,38 @@ public partial class ArgumentObserver : Observer<Argument>
     /// Indicates that the argument's value is an inner criterion object itself. This controls whether we will display
     /// a simple argument entry field or a nested criterion entry field.
     /// </summary>
-    public bool IsCriterion => Model.Value is Criterion;
+    public bool IsCriterion => Value.Group == TypeGroup.Criterion;
+
+    /// <summary>
+    /// Indicates that the argument's value is an collection of values.
+    /// </summary>
+    public bool IsCollection => Value.Group == TypeGroup.Collection;
 
     /// <summary>
     /// The value of the argument which represents the data in which the criterion will evaluate against. This
     /// is ultimately the persisted value.
     /// </summary>
-    public object? Value
+    public ValueObserver Value
     {
-        get => GetValue();
-        set => SetProperty(Model.Value, value, Model, SetValue);
+        get => new(Model.Value);
+        set => SetProperty(new ValueObserver(Model.Value), value, Model, (a, v) => a.Value = v.Model);
     }
-
-    /// <summary>
-    /// The function that selects the text value for the current value object of the argument.
-    /// </summary>
-    public Func<object?, string> Selector => x => x.ToText();
 
     /// <summary>
     /// The function that retrieves a collection of object values that are suggestions to the entry control.
     /// </summary>
     public Func<string?, CancellationToken, Task<IEnumerable<object>>> Suggestions => GetSuggestions;
 
-    public static implicit operator Argument(ArgumentObserver observer) => observer.Model;
-    public static implicit operator ArgumentObserver(Argument model) => new(model);
 
     /// <inheritdoc />
-    public override string ToString() => Model.ToString();
+    public override string ToString() => Value.ToString();
 
     /// <summary>
-    /// We need some special wrapping of the child values for Argument. It can be a nested criterion or variable, and
-    /// if so we need to wrap those in observers. If not we can just return the simple value.
-    /// </summary>
-    private object? GetValue()
-    {
-        return Model.Value switch
-        {
-            Criterion criterion => new CriterionObserver(criterion),
-            Variable variable => new VariableObserver(variable),
-            _ => Model.Value
-        };
-    }
-
-    /// <summary>
-    /// When we set argument with a criterion or variable observer we need to pass in the actual model object since that
-    /// is what Argument expects. Anything else can be the plain value (text, number, enum, bool, etc.)
-    /// </summary>
-    private static void SetValue(Argument argument, object? value)
-    {
-        argument.Value = value switch
-        {
-            CriterionObserver criterion => criterion.Model,
-            VariableObserver variable => variable.Model,
-            _ => value
-        };
-    }
-
-    /// <summary>
-    /// Updates the underlying argument value based on the received value type from the entry field.
+    /// Updates the argument <see cref="Value"/> based on the received value type from the entry field.
     /// If user enters simple text we would like to parse it as the strong type to let our data templates work.
+    /// If the user enters a variable reference (text starting with '@') then we want to find and resolve the object.
     /// If user enters a complex object then it was selected from the suggestions, and we can just use that.
+    /// Anything else just wrap in a value observer and set accordingly.
     /// </summary>
     [RelayCommand]
     private async Task UpdateValue(object? value)
@@ -104,16 +76,17 @@ public partial class ArgumentObserver : Observer<Argument>
         switch (value)
         {
             case string text when text.StartsWith('{') && text.EndsWith('}'):
-                Value = await GetVariable(text) ?? text;
+                var variable = await GetVariable(text) ?? text;
+                Value = new ValueObserver(variable);
                 return;
             case string text when group?.TryParse(text, out var parsed) is true && parsed is not null:
-                Value = parsed;
+                Value = new ValueObserver(parsed);
                 return;
             case ValueObserver observer:
-                Value = observer.Value;
+                Value = observer;
                 return;
             default:
-                Value = value;
+                Value = new ValueObserver(value);
                 break;
         }
     }
@@ -181,4 +154,7 @@ public partial class ArgumentObserver : Observer<Argument>
             ? type.GetOptions().Select(x => new ValueObserver(x)).Where(v => v.Filter(filter))
             : Enumerable.Empty<ValueObserver>();
     }
+
+    public static implicit operator Argument(ArgumentObserver observer) => observer.Model;
+    public static implicit operator ArgumentObserver(Argument model) => new(model);
 }

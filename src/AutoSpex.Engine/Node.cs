@@ -238,6 +238,33 @@ public class Node : IEquatable<Node>
     }
 
     /// <summary>
+    /// Adds the provided variable to this node and sets the NodeId of the variable to match.
+    /// </summary>
+    /// <param name="variable">The <see cref="Variable"/> instance to add.</param>
+    public void AddVariable(Variable variable)
+    {
+        if (variable is null)
+            throw new ArgumentNullException(nameof(variable));
+
+        if (variable.NodeId != NodeId)
+            throw new ArgumentException("Variable does not have valid node id.");
+
+        _variables[variable.Name] = variable;
+    }
+
+    /// <summary>
+    /// Resolves the provided reference to a named variable by traversing up this node tree until it finds the first
+    /// mating variable name, and returns that variable's value. If not variable is found, meaning unresolvable, then
+    /// this method returns null.
+    /// </summary>
+    /// <param name="reference">The reference to a scoped variable to resolve.</param>
+    /// <returns>The value of the referenced variable if found, otherwise, <c>null</c></returns>
+    public object? Resolve(Reference reference)
+    {
+        return _variables.TryGetValue(reference.Name, out var variable) ? variable.Value : Parent?.Resolve(reference);
+    }
+
+    /// <summary>
     /// Gets the path of the current node by concatenating the names of its ancestors.
     /// </summary>
     /// <returns>The path of the current node as a string.</returns>

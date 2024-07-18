@@ -69,13 +69,6 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     [ObservableProperty] private bool _isChecked;
 
     /// <summary>
-    /// Indicates that this observer is being "edited" meaning the name entry field is being available. This is used
-    /// in conjunction with the Rename functionality to show the entry for renaming an observer, but deriving classes
-    /// can also use this for other purposes.
-    /// </summary>
-    [ObservableProperty] private bool _isEditing;
-
-    /// <summary>
     /// Indicates that this is a "new" observer that has not been persisted. Deriving classes can use this to drive
     /// the state of the UI as needed.
     /// </summary>
@@ -101,7 +94,7 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     /// <summary>
     /// A collection of other <see cref="Observer"/> instances that are selected and part of the same containing
     /// UI control (list/tree/etc.). We want to know if the user has selected multiple observers, so we can drive the
-    /// display of menu items and what actions they may take (delete selected, move selected, etc.). This uses the
+    /// display of context items and what actions they may take (delete selected, move selected, etc.). This uses the
     /// <see cref="GetSelected"/> message which should be handled in each page the observers are displayed within an
     /// items control.
     /// </summary>
@@ -174,6 +167,9 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     }
 
     #region Commands
+    
+    /// <inheritdoc />
+    protected override Task Navigate() => Navigator.Navigate(this);
 
     /// <summary>
     /// A command to issue deletion of this <see cref="Observer{TModel}"/> object from the database.
@@ -203,9 +199,6 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     [RelayCommand]
     protected virtual Task Export() => Task.CompletedTask;
 
-    /// <inheritdoc />
-    protected override Task Navigate() => Navigator.Navigate(this);
-
     /// <summary>
     /// A command that updates the name of the underlying item model and sends a command to update the persisted value.
     /// </summary>
@@ -225,29 +218,7 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
 
         Name = name;
         Messenger.Send(new Renamed(this));
-        IsEditing = false;
         IsNew = false;
-    }
-
-    /// <summary>
-    /// Command to activate the <see cref="IsEditing"/> indication for this item to indicate to the UI that this item
-    /// is being renamed.
-    /// </summary>
-    [RelayCommand]
-    private void StartEdit()
-    {
-        IsEditing = true;
-    }
-
-    /// <summary>
-    /// A command to reset the <see cref="IsEditing"/> indication to notify property change the <see cref="Name"/>
-    /// of this item to refresh the UI.
-    /// </summary>
-    [RelayCommand]
-    private void EndEdit()
-    {
-        IsEditing = false;
-        OnPropertyChanged(nameof(Name));
     }
 
     #endregion
@@ -262,17 +233,14 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     {
         var other = message.Observer;
 
-        //Only applies to other observers with same identity.
         if (Id != other.Id) return;
 
-        //To sync other observers check that the name is updated.
         if (Name != other.Name)
         {
             Name = other.Name;
             /*Messenger.Send(new Renamed(this));*/
         }
 
-        //Always notify property changed to sync the UI.
         OnPropertyChanged(nameof(Name));
     }
 
@@ -383,17 +351,6 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     /// Gets the configured collection of <see cref="MenuActionItem"/> to display in the UI.
     /// </summary>
     protected virtual IEnumerable<MenuActionItem> GenerateContextItems() => Enumerable.Empty<MenuActionItem>();
-
-    /// <summary>
-    /// This will force the editing mode to end when the item loses selection.
-    /// </summary>
-    partial void OnIsSelectedChanged(bool value)
-    {
-        if (IsEditing && !value)
-        {
-            IsEditing = false;
-        }
-    }
 }
 
 /// <summary>

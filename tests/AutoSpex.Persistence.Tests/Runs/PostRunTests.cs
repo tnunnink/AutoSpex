@@ -54,7 +54,7 @@ public class PostRunTests
         var environment = new Environment();
         environment.Add(new Uri(Known.Test));
         var spec = new Spec();
-        spec.Search(Element.DataType)
+        spec.Find(Element.DataType)
             .Where(Element.DataType.Property("Name"), Operation.EqualTo, "ComplexType")
             .ShouldHave(Element.DataType.Property("Members"), Operation.Any,
                 new Criterion(Element.DataTypeMember.Property("DataType"), Operation.EqualTo, "SimpleType"));

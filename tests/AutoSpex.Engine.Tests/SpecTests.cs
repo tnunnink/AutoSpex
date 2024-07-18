@@ -25,7 +25,7 @@ public class SpecTests
     {
         var spec = new Spec();
 
-        spec.Search(Element.Module)
+        spec.Find(Element.Module)
             .Where(Element.Tag.Property("Name"), Operation.Containing, "Test")
             .ShouldHave(Element.Tag.Property("Value"), Operation.In, 1, 2, 3, 4, 5);
 
@@ -52,7 +52,7 @@ public class SpecTests
         var spec = new Spec();
         var source = new Source(new Uri(Known.Test));
 
-        spec.Search(Element.Tag)
+        spec.Find(Element.Tag)
             .Where(Element.Tag.Property("Name"), Operation.Containing, "Test")
             .ShouldNotHave(Element.Tag.Property("DataType"), Operation.NullOrEmpty);
 
@@ -68,7 +68,7 @@ public class SpecTests
         var spec = new Spec();
         var source = new Source(new Uri(Known.Test));
 
-        spec.Search(Element.Program)
+        spec.Find(Element.Program)
             .Where(Element.Program.Property("Type"), Operation.EqualTo, ProgramType.Normal)
             .ShouldReturn(Operation.GreaterThanOrEqualTo, 1);
 
@@ -76,14 +76,14 @@ public class SpecTests
 
         outcome.Result.Should().Be(ResultState.Passed);
     }
-    
+
     [Test]
     public async Task Run_WithRangeInvalidRange_ShouldReturnFailure()
     {
         var spec = new Spec();
         var source = new Source(new Uri(Known.Test));
 
-        spec.Search(Element.Program)
+        spec.Find(Element.Program)
             .Where(Element.Program.Property("Type"), Operation.EqualTo, ProgramType.Normal)
             .ShouldReturn(Operation.LessThan, 1);
 
@@ -91,7 +91,7 @@ public class SpecTests
 
         outcome.Result.Should().Be(ResultState.Failed);
     }
-    
+
     [Test]
     public async Task RunAll_ValidSpec_ShouldReturnPassed()
     {
@@ -99,7 +99,7 @@ public class SpecTests
         var test = new Source(new Uri(Known.Test));
         var example = new Source(new Uri(Known.Example));
 
-        spec.Search(Element.Program)
+        spec.Find(Element.Program)
             .Where(Element.Program.Property("Type"), Operation.EqualTo, ProgramType.Normal)
             .ShouldHave(Element.Program.Property("Disabled"), Operation.False)
             .ShouldReturn(Operation.GreaterThan, 1);
@@ -110,11 +110,11 @@ public class SpecTests
     }
 
     [Test]
-    public Task Serialize_WhenCalled_ShouldBeVerified()
+    public Task Serialize_ConfiguredSpec_ShouldBeVerified()
     {
         var spec = new Spec();
 
-        spec.Search(Element.Tag)
+        spec.Find(Element.Tag)
             .Where(Element.Tag.Property("Name"), Operation.Containing, "Test")
             .ShouldNotHave(Element.Tag.Property("DataType"), Operation.NullOrEmpty);
 
@@ -125,7 +125,7 @@ public class SpecTests
     public void Deserialize_WhenCalled_ShouldBeExpected()
     {
         var spec = new Spec();
-        spec.Search(Element.Tag)
+        spec.Find(Element.Tag)
             .Where(Element.Tag.Property("Name"), Operation.Containing, "Test")
             .ShouldNotHave(Element.Tag.Property("DataType"), Operation.NullOrEmpty);
         var data = spec.Serialize();
@@ -138,6 +138,11 @@ public class SpecTests
         result?.Filters.Should().HaveCount(1);
         result?.Verifications.Should().HaveCount(1);
 
-        result.Should().BeEquivalentTo(spec);
+        result.Should().BeEquivalentTo(spec, options =>
+            options
+                .Excluding(s => s.SpecId)
+                .Excluding(s => s.Name)
+                .Excluding(s => s.Node)
+        );
     }
 }

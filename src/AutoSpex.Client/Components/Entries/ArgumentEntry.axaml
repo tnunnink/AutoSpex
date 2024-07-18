@@ -2,8 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
                     xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
-                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
-                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
 
     <Design.PreviewWith>
         <Border Padding="20" Height="300" Width="600">
@@ -24,11 +23,10 @@
     <DataTemplate x:Key="ArgumentEntry" x:DataType="observers:ArgumentObserver">
         <controls:Entry
             Watermark="Enter value"
-            Value="{Binding Value}"
+            Value="{Binding Value.Value}"
             ValueTemplate="{StaticResource ValueTemplates}"
             ItemTemplate="{StaticResource ValueItemTemplate}"
             Populate="{Binding Suggestions}"
-            Selector="{Binding Selector}"
             CommitCommand="{Binding UpdateValueCommand}">
             <controls:Entry.IsEmpty>
                 <MultiBinding Converter="{x:Static BoolConverters.Or}">
@@ -38,5 +36,5 @@
             </controls:Entry.IsEmpty>
         </controls:Entry>
     </DataTemplate>
-    
+
 </ResourceDictionary>

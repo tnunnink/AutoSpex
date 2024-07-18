@@ -53,10 +53,11 @@ public partial class VariableObserver : Observer<Variable>
         set => SetProperty(Model.Name, value, Model, (v, x) => v.Name = x, true);
     }
 
-    public object? Value
+    [Required]
+    public ValueObserver Value
     {
-        get => Model.Value;
-        set => SetProperty(Model.Value, value, Model, (v, x) => v.Value = x);
+        get => new(Model.Value);
+        set => SetProperty(new ValueObserver(Model.Value), value, Model, (v, o) => v.Value = o.Model);
     }
 
     public Func<string?, CancellationToken, Task<IEnumerable<object>>> Suggestions => GetSuggestions;
@@ -71,7 +72,7 @@ public partial class VariableObserver : Observer<Variable>
     {
         if (group is null) return;
         Group = group;
-        Value = group.DefaultValue;
+        Value = new ValueObserver(group.DefaultValue);
     }
 
     /// <summary>
@@ -84,13 +85,13 @@ public partial class VariableObserver : Observer<Variable>
         switch (value)
         {
             case string text when Group.TryParse(text, out var parsed) && parsed is not null:
-                Value = parsed;
+                Value = new ValueObserver(parsed);
                 return;
             case ValueObserver observer:
-                Value = observer.Value;
+                Value = observer;
                 return;
             default:
-                Value = value;
+                Value = new ValueObserver(value);
                 break;
         }
     }

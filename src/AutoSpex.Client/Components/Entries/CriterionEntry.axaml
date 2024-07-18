@@ -4,8 +4,7 @@
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
                     xmlns:components="clr-namespace:AutoSpex.Client.Components"
                     xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
-                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
-                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
 
     <Design.PreviewWith>
         <StackPanel Spacing="10" Margin="10" Height="300" Width="600">
@@ -135,16 +134,6 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-
-                <Button
-                    Command="{Binding AddArgumentCommand}"
-                    IsVisible="{Binding Operation, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:Operation.In}}"
-                    Margin="2 0"
-                    Theme="{StaticResource IconButtonSmall}"
-                    properties:Icon.Theme="{StaticResource IconAdd}"
-                    Classes="accent"
-                    ToolTip.Tip="Add Argument" />
-
             </StackPanel>
         </ScrollViewer>
     </DataTemplate>

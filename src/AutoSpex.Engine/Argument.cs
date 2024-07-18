@@ -48,47 +48,37 @@ public class Argument : IEquatable<Argument>
     /// </remarks>
     public object ResolveAs(Type? type)
     {
-        //If a variable is configured, take the inner variable value, otherwise take this literal value.
-        var value = Value is Variable variable ? variable.Value : Value;
+        var value = Value is Reference reference ? reference.Value : Value;
 
-        //If a criterion was provided, just return that. Nested arguments will get resolved here too.
-        // ReSharper disable once ConvertIfStatementToSwitchStatement
-        if (value is Criterion criterion)
+        var typed = value switch
         {
-            return criterion;
-        }
+            Criterion criterion => criterion,
+            IEnumerable<Argument> arguments => arguments.Select(a => a.ResolveAs(type)),
+            string text when type is not null && type != typeof(string) => text.TryParse(type),
+            not string when type is not null && type != value?.GetType() && value is IConvertible convertible =>
+                convertible.ToType(type, null),
+            _ => value
+        };
 
-        //Text is a special case because the user may enter value as text, and we can attempt to parse it to get
-        //the equality methods to work as expected. If not parsed then return value.
-        if (value is string text && type is not null && type != typeof(string))
-        {
-            return text.TryParse(type) ?? value;
-        }
-
-        //If this is a typed value that is convertible, convert it.
-        if (value is not string && value is IConvertible convertible && type is not null)
-        {
-            return convertible.ToType(type, null);
-        }
-
-        //Just return what we have and if it fails we will catch the exception in the criterion and display the error
-        return value!;
+        return (typed ?? value)!;
     }
 
     /// <summary>
     /// Traverses the argument value and retrieves the final expected argument value(s).
-    /// Since an argument value can be a <see cref="Variable"/> or inner <see cref="Criterion"/> we want to check
-    /// them and get the values which are going to be used in the operation.
+    /// Since an argument value can be a <see cref="Reference"/> or inner <see cref="Criterion"/> or a collection of
+    /// inner <see cref="Argument"/> we want to check them and get the values which are going to be used in the operation.
     /// </summary>
     /// <returns>A collection of object values that represent the final arguments.</returns>
     public IEnumerable<object> Expected()
     {
-        var value = Value is Variable variable ? variable.Value : Value;
+        var value = Value is Reference reference ? reference.Value : Value;
 
-        if (value is Criterion criterion)
-            return criterion.Arguments.SelectMany(a => a.Expected());
-
-        return value is not null ? [value] : Enumerable.Empty<object>();
+        return value switch
+        {
+            Criterion criterion => criterion.Arguments.SelectMany(a => a.Expected()),
+            IEnumerable<Argument> arguments => arguments.SelectMany(a => a.Expected()),
+            _ => value is not null ? [value] : Enumerable.Empty<object>()
+        };
     }
 
     /// <inheritdoc />
@@ -112,6 +102,7 @@ public class Argument : IEquatable<Argument>
     public static implicit operator Argument(DateTime value) => new(value);
     public static implicit operator Argument(LogixEnum value) => new(value);
     public static implicit operator Argument(LogixElement value) => new(value);
+    public static implicit operator Argument(List<Argument> value) => new(value);
     public static implicit operator Argument(Criterion value) => new(value);
-    public static implicit operator Argument(Variable value) => new(value);
+    public static implicit operator Argument(Reference value) => new(value);
 }

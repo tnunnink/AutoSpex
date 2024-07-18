@@ -84,8 +84,7 @@ public class CriterionTests
 
         var criterion = new Criterion(Element.Tag.Property("Name"), Operation.EqualTo, "Test");
 
-
-        var expression = (Expression<Func<object?, bool>>)criterion;
+        var expression = (Expression<Func<object, bool>>)criterion;
         var func = expression.Compile();
 
         var result = func(tag);
@@ -97,7 +96,7 @@ public class CriterionTests
     {
         var tag = new Tag { Name = "MyTestTag" };
         var variable = new Variable("MyVar", "Test");
-        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Containing, variable);
+        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Containing, variable.Reference);
 
         var eval = criterion.Evaluate(tag);
 
@@ -109,7 +108,7 @@ public class CriterionTests
     {
         var tag = new Tag { Name = "MyTestTag", Value = 123 };
         var variable = new Variable("MyVar", "Decimal");
-        var criterion = new Criterion(Element.Tag.Property("Radix"), Operation.EqualTo, variable);
+        var criterion = new Criterion(Element.Tag.Property("Radix"), Operation.EqualTo, variable.Reference);
 
         var eval = criterion.Evaluate(tag);
 
@@ -121,7 +120,7 @@ public class CriterionTests
     {
         var tag = new Tag { Name = "TestTag", Value = 1.21f };
         var variable = new Variable("Value", "1.221");
-        var criterion = new Criterion(Element.Tag.Property("Value"), Operation.GreaterThan, variable);
+        var criterion = new Criterion(Element.Tag.Property("Value"), Operation.GreaterThan, variable.Reference);
 
         var eval = criterion.Evaluate(tag);
 
@@ -133,7 +132,7 @@ public class CriterionTests
     {
         var tag = new Tag { Name = "TestTag", Value = 1.2345f };
         var variable = new Variable("Value", new REAL(1.2345f));
-        var criterion = new Criterion(Element.Tag.Property("Value"), Operation.EqualTo, variable);
+        var criterion = new Criterion(Element.Tag.Property("Value"), Operation.EqualTo, variable.Reference);
 
         var eval = criterion.Evaluate(tag);
 
@@ -147,7 +146,7 @@ public class CriterionTests
 
         var result = criterion.ToString();
 
-        result.Should().Be("Name Equal Test");
+        result.Should().Be("Name Is Equal To Test");
     }
 
     [Test]
@@ -157,7 +156,7 @@ public class CriterionTests
 
         var result = criterion.ToString();
 
-        result.Should().Be("Radix Equal Ascii");
+        result.Should().Be("Radix Is Equal To Ascii");
     }
 
     [Test]
@@ -178,16 +177,16 @@ public class CriterionTests
 
         var result = criterion.ToString();
 
-        result.Should().Be("Members Any TagName Contains SomeValue");
+        result.Should().Be("Members Is Any TagName Is Containing SomeValue");
     }
 
     [Test]
     public void ToString_NestedVariable_ShouldBeExpected()
     {
-        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Like, new Variable("Test", "%Test_%"));
+        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Like, new Variable("Test", "%Test_%").Reference);
 
         var result = criterion.ToString();
 
-        result.Should().Be("Name Like %Test_%");
+        result.Should().Be("Name Is Like %Test_%");
     }
 }

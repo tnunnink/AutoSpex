@@ -20,7 +20,7 @@ public partial class Query
     }
 
     /// <summary>
-    /// Cretaes a new <see cref="Query"/> with the provided element and optioanl name.
+    /// Creates a new <see cref="Query"/> with the provided element and optioanl name.
     /// </summary>
     /// <param name="element">The <see cref="Engine.Element"/> to query.</param>
     /// <param name="name">The name of the element to scope the query to.</param>

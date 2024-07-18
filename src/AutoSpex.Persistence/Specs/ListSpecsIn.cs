@@ -49,7 +49,7 @@ internal class ListSpecsInHandler(IConnectionManager manager) : IRequestHandler<
 
                 if (node.Type == NodeType.Spec && element is not null)
                 {
-                    specs.Add(new Spec(node).Search(element));
+                    specs.Add(new Spec(node).Find(element));
                 }
 
                 return node;

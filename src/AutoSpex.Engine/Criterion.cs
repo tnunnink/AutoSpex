@@ -37,30 +37,6 @@ public class Criterion : IEquatable<Criterion>
     /// <summary>
     /// Creates a new <see cref="Criterion"/> with the provided arguments.
     /// </summary>
-    /// <param name="criterionId">The id of the cri</param>
-    /// <param name="type">The type this criterion is configured for.</param>
-    /// <param name="property">The name of the property for which to retrieve the the value from the candidate.</param>
-    /// <param name="operation">The operation to perform when evaluating.</param>
-    /// <param name="negation">Wether to negate the condition of the evaluation (i.e. IsNot).</param>
-    /// <param name="arguments">The set of <see cref="Argument"/> values to use when evaluating.</param>
-    public Criterion(Guid criterionId,
-        Type? type = default,
-        Property? property = default,
-        Operation? operation = default,
-        Negation? negation = default,
-        params Argument[] arguments)
-    {
-        CriterionId = criterionId;
-        Type = type ?? typeof(object);
-        Property = property ?? Property.Default;
-        Operation = operation ?? Operation.None;
-        Arguments = [..arguments];
-        Negation = negation ?? Negation.Is;
-    }
-
-    /// <summary>
-    /// Creates a new <see cref="Criterion"/> with the provided arguments.
-    /// </summary>
     /// <param name="property">The name of the property for which to retrieve the the value from the candidate.</param>
     /// <param name="operation">The operation to perform when evaluating.</param>
     /// <param name="arguments">The set of <see cref="Argument"/> values to use when evaluating.</param>
@@ -150,6 +126,14 @@ public class Criterion : IEquatable<Criterion>
     }
 
     /// <summary>
+    /// Resolves all argument reference values to the scoped variables of the provided node instance.
+    /// This method will travers any nested criterion or arguments to deeply resolve all argument reference values.
+    /// If references are unresolvable from using the given node, they cause errors when the criterion is evaluated.
+    /// </summary>
+    /// <param name="node">The node providing the scoped variables for which to resolve argument references.</param>
+    public void Resolve(Node node) => Resolve(this, node);
+
+    /// <summary>
     /// Determines if the provided criterion is a nested object of this criterion, meaning that one of this criterion's
     /// arguments or descendent arguments is this criterion object. 
     /// </summary>
@@ -179,14 +163,14 @@ public class Criterion : IEquatable<Criterion>
     }
 
     /// <summary>
-    /// Gets test text containing the property and operation that this criterion is configured to evaluate. this includes
-    /// all nested criterion argument values, thereby forming a chain of readable text that identifies what is being
-    /// checked.
+    /// Gets the text containing the property, negation, and operation that this criterion is configured to evaluate.
+    /// This includes all nested criterion argument values, thereby forming a chain of readable text that identifies
+    /// what is being checked.
     /// </summary>
     /// <returns>A <see cref="string"/> containing the criteria text.</returns>
     public string GetCriteria()
     {
-        var rootText = $"{Property.Path} {Operation}";
+        var rootText = $"{Property.Path} {Negation} {Operation}";
         var innerText = Arguments is [{ Value: Criterion criterion }] ? criterion.GetCriteria() : string.Empty;
         return $"{rootText} {innerText}".Trim();
     }
@@ -195,10 +179,8 @@ public class Criterion : IEquatable<Criterion>
     /// Gets the final values of the arguments in the <see cref="Criterion"/> instance.
     /// </summary>
     /// <returns>
-    /// The final values of the arguments.
-    /// If there is only one argument, it returns the text representation of the argument's final value.
-    /// If there are multiple arguments, it returns a string representation of the list of final values enclosed in square brackets.
-    /// If there are no arguments, it returns an empty string.
+    /// A collection of object values that represent the final resolved (and perhaps nested) argument values for this
+    /// criterion instance.
     /// </returns>
     public IEnumerable<object> GetExpected()
     {
@@ -214,11 +196,50 @@ public class Criterion : IEquatable<Criterion>
     public override bool Equals(object? obj) => obj is Criterion other && Equals(other);
     public override int GetHashCode() => CriterionId.GetHashCode();
 
+    /// <summary>
+    /// Converts the current <see cref="Criterion"/> instance into an expression tree.
+    /// </summary>
+    /// <returns>An expression tree representing the current <see cref="Criterion"/> instance.</returns>
     private Expression<Func<object, bool>> ToExpression()
     {
         var parameter = Expression.Parameter(typeof(object), "x");
         Func<object, bool> func = x => (bool)Evaluate(x);
         var call = Expression.Call(Expression.Constant(func.Target), func.Method, parameter);
         return Expression.Lambda<Func<object, bool>>(call, parameter);
+    }
+
+    /// <summary>
+    /// Resolves the references in the given <see cref="Criterion"/> instance using the provided <see cref="Node"/>.
+    /// </summary>
+    private void Resolve(Criterion criterion, Node node)
+    {
+        foreach (var argument in criterion.Arguments)
+        {
+            ResolveReferences(argument, node);
+        }
+    }
+
+    /// <summary>
+    /// Resolves the argument reference values using the provided node instance.
+    /// If the argument is a nested criterion or argument(s), then this method will forward call down the hierarchy to
+    /// deeply resolve all argument references.
+    /// </summary>
+    /// <param name="argument">The argument to resolve.</param>
+    /// <param name="node">The node that provides the context for resolving the argument.</param>
+    private void ResolveReferences(Argument argument, Node node)
+    {
+        switch (argument.Value)
+        {
+            case Criterion nested:
+                Resolve(nested, node);
+                break;
+            case IEnumerable<Argument> collection:
+                collection.ToList().ForEach(a => ResolveReferences(a, node));
+                break;
+            case Reference reference:
+                var value = node.Resolve(reference);
+                reference.Value = value;
+                break;
+        }
     }
 }

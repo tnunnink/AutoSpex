@@ -129,21 +129,6 @@ public partial class CriterionObserver : Observer<Criterion>,
     }
 
     /// <summary>
-    /// Adds another argument value to the <see cref="Arguments"/> collection. This is only available for the In
-    /// operation where the user can specify a set of value.
-    /// </summary>
-    [RelayCommand(CanExecute = nameof(CanAddArgument))]
-    private void AddArgument()
-    {
-        Arguments.Add(new ArgumentObserver());
-    }
-
-    /// <summary>
-    /// Determines if the user can add an argument to the argument collection.
-    /// </summary>
-    private bool CanAddArgument() => Operation == Operation.In;
-
-    /// <summary>
     /// Reply with this criterion observer instance if the id matches or the id is that of a child argument.
     /// </summary>
     public void Receive(Request<CriterionObserver> message)
@@ -162,6 +147,13 @@ public partial class CriterionObserver : Observer<Criterion>,
     {
         Arguments.Clear();
 
+        //We need to make the argument value a list of inner arguments to get the correct UI display.
+        if (Operation == Operation.In)
+        {
+            Arguments.Add(new ArgumentObserver(new Argument(new List<Argument> { new() })));
+            return;
+        }
+
         if (Operation is BinaryOperation)
         {
             Arguments.Add(new ArgumentObserver());
@@ -171,13 +163,6 @@ public partial class CriterionObserver : Observer<Criterion>,
         {
             Arguments.Add(new ArgumentObserver());
             Arguments.Add(new ArgumentObserver());
-        }
-
-        if (Operation == Operation.In)
-        {
-            Arguments.Add(new ArgumentObserver());
-            AddArgumentCommand.NotifyCanExecuteChanged();
-            return;
         }
 
         if (Operation is not CollectionOperation) return;

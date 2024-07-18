@@ -11,7 +11,7 @@ public class ProofTests
     {
         var source = new Source(new Uri(Known.Test));
         var spec = new Spec();
-        spec.Search(Element.Tag);
+        spec.Find(Element.Tag);
         spec.Where(Element.Tag.Property("TagName"), Operation.EqualTo, "TestSimpleTag");
         spec.ShouldHave(Element.Tag.Property("DataType"), Operation.EqualTo, "SimpleType");
 
@@ -27,7 +27,7 @@ public class ProofTests
         var source = new Source(new Uri(Known.Test));
         var spec = Spec.Configure(c =>
         {
-            c.Search(Element.Tag);
+            c.Find(Element.Tag);
             c.Where(Element.Tag.Property("TagName"), Operation.EqualTo, "TestSimpleTag");
             c.ShouldHave(Element.Tag.Property("DataType"), Operation.EqualTo, "SimpleType");
         });
@@ -52,7 +52,7 @@ public class ProofTests
         var source = new Source(new Uri(Known.Example));
         var spec = Spec.Configure(c =>
         {
-            c.Search(Element.Module);
+            c.Find(Element.Module);
             c.Where(Element.Module.Property("CatalogNumber"), Operation.EqualTo, "5094-IB16/A");
             c.ShouldHave(Element.Module.Property("Revision"), Operation.EqualTo, "2.11");
         });

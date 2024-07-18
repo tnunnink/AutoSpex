@@ -23,7 +23,7 @@ public class ListSpecsIsTests
         var root = Node.NewContainer();
         var folder = root.AddContainer();
         var node = folder.AddSpec();
-        var spec = new Spec(node).Search(Element.Tag);
+        var spec = new Spec(node).Find(Element.Tag);
         await mediator.Send(new CreateNode(root));
         await mediator.Send(new CreateNode(folder));
         await mediator.Send(new CreateNode(node));

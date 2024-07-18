@@ -12,67 +12,56 @@ public record GetSpec(Guid NodeId) : IDbQuery<Result<Spec>>;
 [UsedImplicitly]
 internal class GetSpecHandler(IConnectionManager manager) : IRequestHandler<GetSpec, Result<Spec>>
 {
-    private const string LoadSpec =
-        """
-        WITH Tree AS (SELECT NodeId as SpecId, NodeId, ParentId
-                      FROM Node
-                      WHERE NodeId = @NodeId
-                      UNION ALL
-                      SELECT t.SpecId as SpecId, n.NodeId, n.ParentId
-                      FROM Node n
-                               INNER JOIN Tree t ON t.ParentId = n.NodeId)
+    private const string GetSpec = "SELECT Specification FROM Spec WHERE SpecId = @NodeId";
 
-        SELECT n.[NodeId], n.[ParentId], n.[Name], n.[Type],
-               s.[Specification],
-               v.[VariableId], v.[NodeId], v.[Name], v.[Group], v.[Value]
-        FROM Tree t
-                 JOIN Node n on t.SpecId = n.NodeId
-                 JOIN Spec s on t.SpecId = s.SpecId
-                 LEFT JOIN Variable v ON v.NodeId = t.NodeId
+    private const string GetNodes =
+        """
+        WITH Nodes AS (
+            SELECT NodeId, ParentId, Type, Name, 0 as Distance
+            FROM Node
+            WHERE NodeId = @NodeId
+            UNION ALL
+            SELECT p.NodeId, p.ParentId, p.Type, p.Name, n.Distance + 1 as Distance
+            FROM Node p
+            INNER JOIN Nodes n ON n.ParentId = p.NodeId
+        )
+
+        SELECT n.[NodeId], n.[ParentId], n.[Name], n.[Type], v.[VariableId], v.[NodeId], v.[Name], v.[Group], v.[Value]
+        FROM Nodes n
+        LEFT JOIN Variable v ON v.NodeId = n.NodeId
+        ORDER BY Distance DESC;
         """;
 
     public async Task<Result<Spec>> Handle(GetSpec request, CancellationToken cancellationToken)
     {
         using var connection = await manager.Connect(cancellationToken);
 
-        var specs = new Dictionary<Guid, Spec>();
-        var variables = new Dictionary<Guid, Dictionary<string, Variable>>();
+        var config = await connection.QuerySingleOrDefaultAsync<string>(GetSpec, new { request.NodeId });
 
-        //Query node, specification, and scoped variables and map each to a lookup.
-        await connection.QueryAsync<Node, string, Variable?, int>(LoadSpec,
-            (node, config, variable) =>
+        var lookup = new Dictionary<Guid, Node>();
+
+        //Load the full node tree and associated variables to allow the spec to resolve any references.
+        await connection.QueryAsync<Node, Variable?, Node>(GetNodes,
+            (node, variable) =>
             {
-                if (!specs.ContainsKey(node.NodeId))
-                {
-                    var spec = new Spec(node);
-                    spec.Update(Spec.Deserialize(config));
-                    specs.Add(node.NodeId, spec);
-                }
+                lookup.TryAdd(node.NodeId, node);
 
-                variables.TryAdd(node.NodeId, []);
+                if (lookup.TryGetValue(node.ParentId, out var parent))
+                    parent.AddNode(node);
+
                 if (variable is not null)
-                    variables[node.NodeId].TryAdd(variable.Name, variable);
+                    node.AddVariable(variable);
 
-                return 1;
+                return node;
             },
             param: new { request.NodeId },
-            splitOn: "Specification,VariableId");
+            splitOn: "VariableId");
 
-        //Iterate the spec objects (there should just be one) and perform the lookup for matching scoped variables.
-        //If found, update the spec variable's value to "resolve" it to the current persisted state.
-        foreach (var spec in specs.Values)
-        {
-            if (!variables.TryGetValue(spec.SpecId, out var scoped)) continue;
+        if (!lookup.TryGetValue(request.NodeId, out var target) || config is null)
+            return Result.Fail<Spec>($"Node not found: '{request.NodeId}'");
 
-            foreach (var variable in spec.Variables)
-            {
-                if (!scoped.TryGetValue(variable.Name, out var match)) continue;
-                variable.SyncTo(match);
-            }
-        }
-
-        return !specs.TryGetValue(request.NodeId, out var target)
-            ? Result.Fail<Spec>($"Node not found: '{request.NodeId}'")
-            : Result.Ok(target);
+        var spec = new Spec(target);
+        spec.Update(Spec.Deserialize(config));
+        return Result.Ok(spec);
     }
 }

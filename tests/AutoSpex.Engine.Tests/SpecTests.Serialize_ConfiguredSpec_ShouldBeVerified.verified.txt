@@ -1,59 +1,61 @@
 ﻿{
-  SpecId: Guid_1,
-  Element: Tag,
+  Query: {
+    Element: Tag,
+    Name: null
+  },
   Filters: [
     {
-      CriterionId: Guid_2,
+      CriterionId: Guid_1,
       Type: L5Sharp.Core.Tag,
       Property: {
         Origin: L5Sharp.Core.Tag,
         Path: Name
       },
-      Operation: Contains,
+      Operation: Containing,
       Arguments: [
         {
-          ArgumentId: Guid_3,
+          ArgumentId: Guid_2,
           Value: {
             Type: System.String,
             Data: Test
           }
         }
       ],
-      Invert: false
+      Negation: Is
     }
   ],
   Verifications: [
     {
-      CriterionId: Guid_4,
+      CriterionId: Guid_3,
       Type: L5Sharp.Core.Tag,
       Property: {
         Origin: L5Sharp.Core.Tag,
         Path: DataType
       },
-      Operation: Is Null Or Empty,
-      Invert: true
+      Operation: Null Or Empty,
+      Negation: Not
     }
   ],
   Range: {
     Enabled: false,
     Criterion: {
-      CriterionId: Guid_5,
-      Type: System.Collections.Generic.List`1[[L5Sharp.Core.LogixElement, L5Sharp.Core, Version=3.1.0.0, Culture=neutral, PublicKeyToken=null]],
+      CriterionId: Guid_4,
+      Type: System.Collections.Generic.List`1[[L5Sharp.Core.LogixElement, L5Sharp.Core, Version=3.2.0.0, Culture=neutral, PublicKeyToken=null]],
       Property: {
-        Origin: System.Collections.Generic.List`1[[L5Sharp.Core.LogixElement, L5Sharp.Core, Version=3.1.0.0, Culture=neutral, PublicKeyToken=null]],
+        Origin: System.Collections.Generic.List`1[[L5Sharp.Core.LogixElement, L5Sharp.Core, Version=3.2.0.0, Culture=neutral, PublicKeyToken=null]],
         Path: Count
       },
       Operation: Greater Than,
       Arguments: [
         {
-          ArgumentId: Guid_6,
+          ArgumentId: Guid_5,
           Value: {
             Type: System.Int32,
             Data: 0
           }
         }
       ],
-      Invert: false
+      Negation: Is
     }
   },
   FilterInclusion: 0,

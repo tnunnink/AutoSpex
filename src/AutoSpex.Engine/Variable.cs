@@ -62,7 +62,7 @@ public class Variable : IEquatable<Variable>
     /// By default, this is an empty guid, but should be set upon retrieval from the database so that the object can
     /// identify which node it is scoped to.
     /// </summary>
-    [JsonIgnore]
+    [JsonInclude]
     public Guid NodeId { get; private set; } = Guid.Empty;
 
     /// <summary>
@@ -73,12 +73,19 @@ public class Variable : IEquatable<Variable>
 
     /// <summary>
     /// The <see cref="TypeGroup"/> which the variable value belongs. This is somewhat loosely coupled to the value type
-    /// since you can change value and not group. But this is more for the interface so the suer can select a group which
+    /// since you can change value and not group. But this is more for the interface so the user can select a group which
     /// we can use to attempt to parse their text input.
     /// </summary>
     [JsonConverter(typeof(SmartEnumNameConverter<TypeGroup, int>))]
     [JsonInclude]
     public TypeGroup Group { get; private set; } = TypeGroup.Default;
+
+    /// <summary>
+    /// The object value of the <see cref="Variable"/>.
+    /// </summary>
+    [JsonConverter(typeof(JsonObjectConverter))]
+    [JsonInclude]
+    public object? Value { get; set; }
 
     /// <summary>
     /// The type of the variable value.
@@ -87,11 +94,11 @@ public class Variable : IEquatable<Variable>
     public Type? Type => Value?.GetType();
 
     /// <summary>
-    /// The object value of the <see cref="Variable"/>.
+    /// The <see cref="Engine.Reference"/> object that refers to the name of this Variable.
     /// </summary>
-    [JsonConverter(typeof(JsonObjectConverter))]
-    [JsonInclude]
-    public object? Value { get; set; }
+    /// <value>A <see cref="Engine.Reference"/> with the name of this variable.</value>
+    [JsonIgnore]
+    public Reference Reference => new(Name, Value);
 
     /// <summary>
     /// Updates the variable <see cref="Group"/> that the value represents.
@@ -102,36 +109,6 @@ public class Variable : IEquatable<Variable>
     {
         Group = group ?? throw new ArgumentNullException(nameof(group));
         Value = group.DefaultValue;
-    }
-
-    /// <summary>
-    /// Creates a new cloned instance of the <see cref="Variable"/> object that can be used as an override to the
-    /// value when a run is executed.
-    /// </summary>
-    /// <returns>A new <see cref="Variable"/> instance that is a clone of the current instance.</returns>
-    public Variable CreateOverride(object? value)
-    {
-        return new Variable
-        {
-            VariableId = VariableId,
-            NodeId = NodeId,
-            Name = Name,
-            Group = Group,
-            Value = value
-        };
-    }
-
-    /// <summary>
-    /// Updates the local variable data to match the data of the provided variable. This includes properties
-    /// <see cref="NodeId"/>, <see cref="Name"/>, <see cref="Group"/>, and <see cref="Value"/>.
-    /// </summary>
-    /// <param name="variable">The variable to sync the data to.</param>
-    public void SyncTo(Variable variable)
-    {
-        NodeId = variable.NodeId;
-        Name = variable.Name;
-        Group = variable.Group;
-        Value = variable.Value;
     }
 
     /// <inheritdoc />
@@ -149,4 +126,6 @@ public class Variable : IEquatable<Variable>
 
     /// <inheritdoc />
     public override int GetHashCode() => VariableId.GetHashCode();
+
+    public static implicit operator Reference(Variable variable) => new(variable.Name);
 }

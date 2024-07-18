@@ -1,9 +1,32 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:converters="clr-namespace:AutoSpex.Client.Resources.Converters"
+                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers">
     <ResourceDictionary.MergedDictionaries>
         <ResourceInclude Source="ArgumentEntry.axaml" />
+        <ResourceInclude Source="CollectionEntry.axaml" />
         <ResourceInclude Source="CriterionEntry.axaml" />
         <ResourceInclude Source="NameEntry.axaml" />
         <ResourceInclude Source="QueryEntry.axaml" />
     </ResourceDictionary.MergedDictionaries>
+
+    <converters:DataTemplateConverter
+        x:Key="ArgumentTemplateConverter"
+        DefaultTemplate="{StaticResource ArgumentEntry}">
+
+        <DataTemplate x:Key="{x:Static engine:TypeGroup.Criterion}" x:DataType="observers:ArgumentObserver">
+            <ContentControl
+                Content="{Binding Value}"
+                ContentTemplate="{StaticResource CriterionEntry}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="{x:Static engine:TypeGroup.Collection}" x:DataType="observers:ArgumentObserver">
+            <ContentControl
+                Content="{Binding Value}"
+                ContentTemplate="{StaticResource CollectionEntry}" />
+        </DataTemplate>
+
+    </converters:DataTemplateConverter>
+    
 </ResourceDictionary>

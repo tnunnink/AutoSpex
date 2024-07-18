@@ -31,13 +31,7 @@
       <None Update="Test.xml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="SpecTests.Serialize_WhenCalled_ShouldBeVerified.verified.txt">
-        <DependentUpon>SpecTests.cs</DependentUpon>
-      </None>
       <None Update="ArgumentTests.Serialize_SimpleValue_ShouldBeVerified.verified.txt">
-        <DependentUpon>ArgumentTests.cs</DependentUpon>
-      </None>
-      <None Update="ArgumentTests.Serialize_InnerCriterionValue_ShouldBeVerified.verified.txt">
         <DependentUpon>ArgumentTests.cs</DependentUpon>
       </None>
       <None Update="VariableTests.Serialize_SimpleValue_ShouldBeVerified.verified.txt">
@@ -45,6 +39,9 @@
       </None>
       <None Update="OutcomeTests.Serialize_WithNode_ShouldBeVerified.verified.txt">
         <DependentUpon>OutcomeTests.cs</DependentUpon>
+      </None>
+      <None Update="SpecTests.Serialize_ConfiguredSpec_ShouldBeVerified.verified.txt">
+        <DependentUpon>SpecTests.cs</DependentUpon>
       </None>
     </ItemGroup>
 
