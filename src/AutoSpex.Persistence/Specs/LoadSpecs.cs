@@ -27,7 +27,7 @@ internal class LoadSpecsHandler(IConnectionManager manager) : IRequestHandler<Lo
         SELECT n.[NodeId], n.[ParentId], n.[Name], n.[Type], v.[VariableId], v.[NodeId], v.[Name], v.[Group], v.[Value]
         FROM Nodes n
         LEFT JOIN Variable v ON v.NodeId = n.NodeId
-        ORDER BY Depth, Name;
+        ORDER BY n.Depth, n.Name;
         """;
 
     private const string LoadSpecs = "SELECT SpecId, Specification FROM Spec WHERE SpecId In @Ids";

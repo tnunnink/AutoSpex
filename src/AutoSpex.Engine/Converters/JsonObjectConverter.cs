@@ -31,9 +31,10 @@ public class JsonObjectConverter : JsonConverter<object?>
 
         if (type is null || data is null) return default;
 
-        //Handle any known complex type that was serialized as JSON. 
-        if (type == typeof(Variable)) return JsonSerializer.Deserialize<Variable>(data);
+        //Handle any known complex type that was serialized as JSON.
         if (type == typeof(Criterion)) return JsonSerializer.Deserialize<Criterion>(data);
+        if (type == typeof(Reference)) return JsonSerializer.Deserialize<Reference>(data);
+        if (type == typeof(Variable)) return JsonSerializer.Deserialize<Variable>(data);
 
         //LogixParser can handle all the other types we care about (.NET primitive and L5Sharp).
         return type.IsParsable() ? data.TryParse(type) : default;
@@ -53,6 +54,7 @@ public class JsonObjectConverter : JsonConverter<object?>
             AtomicData v => v.ToString(),
             LogixElement v => v.Serialize().ToString(),
             Criterion v => JsonSerializer.Serialize(v),
+            Reference v => JsonSerializer.Serialize(v),
             Variable v => JsonSerializer.Serialize(v),
             _ => value.ToString()
         };

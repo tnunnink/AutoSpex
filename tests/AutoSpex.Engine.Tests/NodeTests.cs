@@ -123,7 +123,7 @@ public class NodeTests
 
         var path = spec.Path;
 
-        path.Should().Be("Collection > First > Second");
+        path.Should().Be("Collection/First/Second");
     }
 
     [Test]

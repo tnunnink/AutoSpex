@@ -43,12 +43,13 @@ public class LoadSpecsTests
         await mediator.Send(new CreateNode(node));
         //Create variable to reference node
         var variable = new Variable("MyVar", "SomeValue");
+        var reference = variable.Reference;
         await mediator.Send(new SaveVariables(node.NodeId, [variable]));
         //Create spec that uses variable
         var spec = new Spec(node);
         spec.Find(Element.Tag);
-        spec.Where(Element.Tag.Property("Test"), Operation.Containing, variable.Reference);
-        spec.ShouldHave(Element.Tag.Property("Name"), Operation.EqualTo, variable.Reference);
+        spec.Where(Element.Tag.Property("Test"), Operation.Containing, reference);
+        spec.ShouldHave(Element.Tag.Property("Name"), Operation.EqualTo, reference);
         await mediator.Send(new SaveSpec(spec));
         //Update the variable value to ensure the resolving works
         variable.Value = "MostRecentValue";
@@ -61,7 +62,15 @@ public class LoadSpecsTests
         result.Value.Should().HaveCount(1);
 
         var target = result.Value.First();
-        target.Filters[0].Arguments[0].As<Argument>().Value.As<Variable>().Value.Should().Be("MostRecentValue");
-        target.Verifications[0].Arguments[0].As<Argument>().Value.As<Variable>().Value.Should().Be("MostRecentValue");
+        
+        target.Filters[0].Arguments[0].As<Argument>().Value.As<Reference>()
+            .Should().BeEquivalentTo(reference, o => o.Excluding(r => r.Value));
+        target.Verifications[0].Arguments[0].As<Argument>().Value.As<Reference>()
+            .Should().BeEquivalentTo(reference, o => o.Excluding(r => r.Value));
+
+        //Resolve variable and check value.
+        var criterion = target.Filters[0];
+        criterion.Resolve(target.Node);
+        criterion.Arguments[0].Value.As<Reference>().Value.Should().Be("MostRecentValue");
     }
 }

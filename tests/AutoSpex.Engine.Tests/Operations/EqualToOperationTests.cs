@@ -16,7 +16,7 @@ public class EqualToOperationTests
     {
         var operation = Operation.EqualTo;
 
-        operation.Name.Should().Be(nameof(Operation.EqualTo));
+        operation.Name.Should().Be("Equal To");
     }
     
     [Test]
