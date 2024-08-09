@@ -9,6 +9,7 @@
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
         <LangVersion>12</LangVersion>
         <ApplicationIcon>Resources\Images\logo.ico</ApplicationIcon>
+        <Platforms>AnyCPU;x64;x86</Platforms>
     </PropertyGroup>
 
     <!--<Choose>
@@ -27,7 +28,7 @@
     </Choose>-->
 
     <ItemGroup>
-        <TrimmerRootAssembly Include="Avalonia.Themes.Fluent"/>
+        <TrimmerRootAssembly Include="Avalonia.Themes.Fluent" />
     </ItemGroup>
 
     <ItemGroup>
