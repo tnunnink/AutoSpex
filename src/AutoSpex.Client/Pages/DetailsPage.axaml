@@ -21,7 +21,7 @@
                         </Style>
                     </StackPanel.Styles>
                     <PathIcon
-                        Theme="{Binding Icon,Converter={StaticResource KeyToIconConverter}}" />
+                        Theme="{Binding Icon,Converter={StaticResource KeyIconConverter}}" />
                     <TextBlock
                         ClipToBounds="True"
                         Text="{Binding Title}"
@@ -94,7 +94,13 @@
                         ItemTemplate="{StaticResource DetailTabTemplate}"
                         ItemContainerTheme="{StaticResource DetailTabTheme}"
                         Background="{a:ThemeResource Container2BackgroundBrush}"
-                        BorderThickness="0" />
+                        BorderThickness="0" Padding="5 0">
+                        <TabStrip.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" Spacing="5" />
+                            </ItemsPanelTemplate>
+                        </TabStrip.ItemsPanel>
+                    </TabStrip>
                 </ScrollViewer>
 
                 <Border Grid.Column="1" Padding="10 0"

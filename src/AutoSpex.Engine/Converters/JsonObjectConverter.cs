@@ -56,6 +56,7 @@ public class JsonObjectConverter : JsonConverter<object?>
             Criterion v => JsonSerializer.Serialize(v),
             Reference v => JsonSerializer.Serialize(v),
             Variable v => JsonSerializer.Serialize(v),
+            IEnumerable<Argument> v => JsonSerializer.Serialize(v),
             _ => value.ToString()
         };
 

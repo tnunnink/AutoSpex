@@ -69,16 +69,5 @@ public class Migration10000 : AutoReversingMigration
             .WithColumn("ChangedBy").AsString().NotNullable()
             .WithColumn("Machine").AsInt64().NotNullable()
             .WithColumn("Duration").AsInt64().NotNullable();
-
-        //Seed a default environment.
-        var environment = Engine.Environment.Default;
-        Insert.IntoTable("Environment")
-            .Row(new
-            {
-                EnvironmentId = environment.EnvironmentId.ToString(),
-                environment.Name,
-                environment.Comment,
-                environment.IsTarget,
-            });
     }
 }

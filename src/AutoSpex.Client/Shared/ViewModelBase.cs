@@ -10,12 +10,19 @@ namespace AutoSpex.Client.Shared;
 /// <see cref="ObservableRecipient"/> to provide a fully featured view model capable of notification, validation,
 /// and messaging (including activation and deactivation).
 /// </summary>
+/// <remarks>
+/// We will also supply our services directly using the app container to resolve dependencies.
+/// This means unit tests will need to initialize the app, but I will not do too
+/// much unit testing in the client layer, but rather rely more on integration testing.
+/// </remarks>
 [ObservableRecipient]
 public abstract partial class ViewModelBase : ObservableValidator
 {
     //Instead of injecting I'm resolving dependencies for the models directly.
     //I am choosing to do this to simplify the construction and since I am never going to do mocking,
     //but rather using the real implementations to preform integration testing for my application pages.
+    //I think this is (should be) a small enough app where DI is overkill.
+    //These services are singleton so memory allocation should not be an issue.
     protected readonly Shell Shell = Container.Resolve<Shell>();
     protected readonly IMediator Mediator = Container.Resolve<IMediator>();
     protected readonly Navigator Navigator = Container.Resolve<Navigator>();

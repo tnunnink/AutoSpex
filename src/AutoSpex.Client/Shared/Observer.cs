@@ -83,24 +83,6 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     [ObservableProperty] private string? _filterText;
 
     /// <summary>
-    /// Gets a value indicating whether this observer is solely selected.
-    /// </summary>
-    /// <remarks>
-    /// The observer is considered solely selected if there is only one item selected in the
-    /// <see cref="SelectedItems"/> collection and the <see cref="IsSelected"/> property is true.
-    /// </remarks>
-    public bool IsSolelySelected => SelectedItems.Count() == 1 && IsSelected;
-
-    /// <summary>
-    /// A collection of other <see cref="Observer"/> instances that are selected and part of the same containing
-    /// UI control (list/tree/etc.). We want to know if the user has selected multiple observers, so we can drive the
-    /// display of context items and what actions they may take (delete selected, move selected, etc.). This uses the
-    /// <see cref="GetSelected"/> message which should be handled in each page the observers are displayed within an
-    /// items control.
-    /// </summary>
-    public IEnumerable<Observer> SelectedItems => Messenger.Send(new GetSelected(this)).Responses;
-
-    /// <summary>
     /// The collection of <see cref="MenuActionItem"/> objects configured for the observer which are shown in the
     /// context menu when an observer is right-clicked. These are configured since we want to control some of the options
     /// dynamically.
@@ -115,9 +97,35 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     public IEnumerable<MenuActionItem> ContextItems => GenerateContextItems();
 
     /// <summary>
+    /// Gets a value indicating whether this observer belongs to a items collection where only a single item is selected.
+    /// We need to know this for context menu items, as the options would change based on how many items the user is
+    /// selecting.
+    /// </summary>
+    /// <remarks>
+    /// To accomplish this, we are using the <see cref="SelectedItems"/> collection with is retrieved by sending a request
+    /// message for selected observers that are siblings (contained in the same list or tree) as this observer.
+    /// </remarks>
+    protected bool HasSingleSelection => SelectedItems.Count() == 1;
+
+    /// <summary>
+    /// A collection of other <see cref="Observer"/> instances that are selected and part of the same containing
+    /// UI control (list/tree/etc.). We want to know if the user has selected multiple observers, so we can drive the
+    /// display of context items and what actions they may take (delete selected, move selected, etc.). This uses the
+    /// <see cref="GetSelected"/> message which should be handled in each page the observers are displayed within an
+    /// items control (and assuming this functionality is needed).
+    /// </summary>
+    protected IEnumerable<Observer> SelectedItems => Messenger.Send(new GetSelected(this)).Responses;
+
+    /// <summary>
+    /// Indicates whether this observer should by default prompt the user when it or it's selected siblings are being
+    /// deleted from the application.
+    /// </summary>
+    protected virtual bool PromptForDeletion => true;
+
+    /// <summary>
     /// A function to apply filtering to this <see cref="Observer"/> object given an input filter text. returns
     /// <c>true</c> if the filter input is null or empty or the <see cref="Name"/> contains the filter text, which is the
-    /// default condition for most items. Deriving observer can override to further define how to filter each object.
+    /// default condition for most items. Deriving observers can override to further define how to filter each object.
     /// This method will also set the <see cref="IsVisible"/> property, so items controls can bind to this property and
     /// filtering is automatically taken care of. This would reduce the number of places we need to rewrite filter
     /// functionality.
@@ -132,21 +140,20 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     }
 
     /// <summary>
-    /// Attempts to find an observer instance of the specified type using the current instance's <see cref="Id"/>.
-    /// This would allow observer or page to request an instance from another place assuming it is in memory.
-    /// This allows of loose coupling of parent child relationships and the ability to get a references to a specific
+    /// Attempts to find a parent observer instance of the specified type using the current observer <see cref="Id"/>.
+    /// This would allow observer or page to request it's parent from another observer/page assuming it is in memory.
+    /// This allows for loose coupling of parent child relationships and the ability to get a references to a specific
     /// object from across pages in the application.
     /// </summary>
     /// <typeparam name="TObserver">The observer type to find.</typeparam>
     /// <returns>
-    /// The observer instance of the specified type that has or contains (depending on how handler logic)
-    /// the provided id.
+    /// The observer instance of the specified type that contains (depending on how handler logic) the provided id.
     /// </returns>
     /// <remarks>
     /// If the instance is not in memory, and therefore the message has no response, this method returns
     /// null, and it is up to the caller to handle this situation.
     /// </remarks>
-    protected TObserver? FindInstance<TObserver>() where TObserver : Observer
+    protected TObserver? FindParent<TObserver>() where TObserver : Observer
     {
         var request = new Request<TObserver>(Id);
         Messenger.Send(request);
@@ -154,12 +161,17 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     }
 
     /// <summary>
-    /// 
+    /// Attempts to find an observer instance of the specified type using the provided observer id.
+    /// This would allow one observer to request another observer type assuming it is in memory.
+    /// This allows for loose coupling of observer types and the ability to get a reference to a specific object from
+    /// different pages or observers in the application.
     /// </summary>
-    /// <param name="id"></param>
-    /// <typeparam name="TObserver"></typeparam>
-    /// <returns></returns>
-    protected TObserver? FindInstance<TObserver>(Guid id) where TObserver : Observer
+    /// <param name="id">The unique <see cref="Guid"/> id of the observer to find.</param>
+    /// <typeparam name="TObserver">The observer type to find.</typeparam>
+    /// <returns>
+    /// If found, the observer instance of the specified type having the provided id; otherwise, <c>null</c>.
+    /// </returns>
+    protected TObserver? FindObserver<TObserver>(Guid id) where TObserver : Observer
     {
         var request = new Request<TObserver>(id);
         Messenger.Send(request);
@@ -167,9 +179,12 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     }
 
     #region Commands
-    
+
     /// <inheritdoc />
-    protected override Task Navigate() => Navigator.Navigate(this);
+    protected override Task Navigate()
+    {
+        return Navigator.Navigate(this);
+    }
 
     /// <summary>
     /// A command to issue deletion of this <see cref="Observer{TModel}"/> object from the database.
@@ -180,8 +195,45 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     /// or pages that the object has been deleted, so they can respond accordingly.
     /// </remarks>
     [RelayCommand]
-    // ReSharper disable once UnusedMemberInSuper.Global the command is though so don't remove.
-    protected virtual Task Delete() => Task.FromResult(Messenger.Send(new Deleted(this)));
+    protected virtual async Task Delete()
+    {
+        if (PromptForDeletion)
+        {
+            var delete = await Prompter.PromptDelete(Name);
+            if (delete is not true) return;
+        }
+
+        var result = await DeleteItems([this]);
+        if (result.IsFailed) return;
+
+        Messenger.Send(new Deleted(this));
+    }
+
+    /// <summary>
+    /// Deletes the items that are return by the <see cref="SelectedItems"/> collection for this observer.
+    /// Therefore, this requires that some page is responding to the <see cref="GetSelected"/> message for this observer type.
+    /// This command will also prompt the user before deleting the selected items.
+    /// This command makes use of <see cref="DeleteItems"/> which deriving classes implement to update the database.
+    /// </summary>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    [RelayCommand]
+    protected virtual async Task DeleteSelected()
+    {
+        var selected = SelectedItems.ToList();
+
+        if (PromptForDeletion)
+        {
+            var message = selected.Count == 1 ? Name : $"{selected.Count.ToString()} selected items";
+            var delete = await Prompter.PromptDelete(message);
+            if (delete is not true) return;
+        }
+
+        var result = await DeleteItems(selected);
+        if (result.IsFailed) return;
+
+        foreach (var deleted in selected)
+            Messenger.Send(new Deleted(deleted));
+    }
 
     /// <summary>
     /// A command to duplicate the <see cref="Observer"/> object in the database and UI. The default
@@ -206,11 +258,13 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     [RelayCommand]
     private async Task Rename(string? name)
     {
+        //If empty prompt the user for a new name.
         if (string.IsNullOrEmpty(name))
         {
             name = await Prompter.PromptRename(this);
         }
 
+        //If still null or empty return.
         if (string.IsNullOrEmpty(name)) return;
 
         var result = await UpdateName(name);
@@ -237,6 +291,7 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
 
         if (Name != other.Name)
         {
+            //todo there is still a big with environment types here. It has to do with the order in which messages are received by objects.
             Name = other.Name;
             /*Messenger.Send(new Renamed(this));*/
         }
@@ -250,7 +305,7 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
 
     /// <summary>
     /// A message that indicates a new observer was created. This can be sent from various places and handled in pages
-    /// that need to respond/update to reflect the newly created observer
+    /// that need to respond/update to reflect the newly created observer.
     /// </summary>
     /// <param name="Observer">The observer that was created.</param>
     public record Created(Observer Observer);
@@ -343,6 +398,15 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     protected virtual Task<Result> UpdateName(string name) => Task.FromResult(Result.Ok());
 
     /// <summary>
+    /// The task to delete the provided items from the database if required by this observer. This is called by
+    /// the <see cref="DeleteCommand"/> and <see cref="DeleteSelectedCommand"/>. By default this simply returns an OK
+    /// result to allow deletion. Deriving classes implement this method to forward call to specific mediator request.
+    /// </summary>
+    /// <param name="observers">The observer instances to delete. This could be selected items or single item.</param>
+    /// <returns>A result indicating the success or failure of the update.</returns>
+    protected virtual Task<Result> DeleteItems(IEnumerable<Observer> observers) => Task.FromResult(Result.Ok());
+
+    /// <summary>
     /// Gets the configured collection of <see cref="MenuActionItem"/> to display in the UI.
     /// </summary>
     protected virtual IEnumerable<MenuActionItem> GenerateMenuItems() => Enumerable.Empty<MenuActionItem>();
@@ -375,4 +439,9 @@ public abstract class Observer<TModel> : Observer
     /// The underlying model object that is being wrapped by the observer.
     /// </summary>
     public TModel Model { get; }
+}
+
+public abstract class NullableObserver<TModel>(TModel? model) : Observer
+{
+    public TModel? Model { get; } = model;
 }

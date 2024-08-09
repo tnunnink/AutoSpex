@@ -19,6 +19,7 @@ namespace AutoSpex.Client.Observers;
 
 [PublicAPI]
 public partial class NodeObserver : Observer<Node>,
+    IRecipient<Observer.Created>,
     IRecipient<Observer.Deleted>,
     IRecipient<Observer.Request<NodeObserver>>,
     IRecipient<NodeObserver.Moved>,
@@ -39,6 +40,7 @@ public partial class NodeObserver : Observer<Node>,
     public Guid ParentId => Model.ParentId;
     public NodeObserver? Parent => Model.Parent is not null ? new NodeObserver(Model.Parent) : default;
     public NodeType Type => Model.Type;
+    public bool IsVirtual => Type != NodeType.Collection && ParentId == Guid.Empty;
 
     [Required]
     public override string Name
@@ -67,22 +69,6 @@ public partial class NodeObserver : Observer<Node>,
         return IsVisible;
     }
 
-    /// <summary>
-    /// Traverses the entire node tree to determine if it contains the provided node observer instance.
-    /// </summary>
-    /// <param name="observer">The node instance to find.</param>
-    /// <returns><c>true</c> if the node is in the tree, otherwise, <c>false</c>.</returns>
-    public bool HasNode(NodeObserver observer)
-    {
-        foreach (var node in Nodes)
-        {
-            if (node.Is(observer)) return true;
-            if (node.HasNode(observer)) return true;
-        }
-
-        return false;
-    }
-
     #region Commands
 
     [RelayCommand]
@@ -90,31 +76,6 @@ public partial class NodeObserver : Observer<Node>,
 
     [RelayCommand]
     private Task AddSpec() => AddNode(new NodeObserver(Node.NewSpec()) { IsNew = true });
-
-    /// <inheritdoc />
-    protected override async Task Delete()
-    {
-        if (!IsSelected) return;
-
-        var selected = SelectedItems.ToList();
-
-        if (selected.Count == 1)
-        {
-            var delete = await Prompter.PromptDeleteItem(Name);
-            if (delete is not true) return;
-        }
-        else
-        {
-            var delete = await Prompter.PromptDeleteItems($"{selected.Count.ToString()} selected items");
-            if (delete is not true) return;
-        }
-
-        var result = await Mediator.Send(new DeleteNodes(selected.Select(n => n.Id)));
-        if (result.IsFailed) return;
-
-        foreach (var deleted in selected)
-            Messenger.Send(new Deleted(deleted));
-    }
 
     /// <summary>
     /// Command to move the provided node and the selected items to this node container.
@@ -165,7 +126,7 @@ public partial class NodeObserver : Observer<Node>,
     private async Task MoveTo()
     {
         //Prompt the user to select the node instance to move the selected nodes to.
-        var parent = await Prompter.Show<NodeObserver?>(() => new SelectContainerPageModel());
+        var parent = await Prompter.Show<NodeObserver?>(() => new SaveToContainerPageModel());
         if (parent is null) return;
 
         //We want to get the selected items from this nodes container to ensure we move all selected nodes.
@@ -242,26 +203,35 @@ public partial class NodeObserver : Observer<Node>,
         await Navigator.Navigate(() => new RunDetailPageModel(run));
     }
 
+    /// <inheritdoc />
+    protected override async Task Duplicate()
+    {
+        var name = await Prompter.PromptNewName(this);
+        if (name is null) return;
+        
+        
+    }
+
     #endregion
 
     #region Handlers
 
-/*/// <summary>
-/// Will handle the creation of a node. Parent nodes need to ensure the object is added if it belongs as a child.
-/// Also, this is where we want to sort the children to ensure proper ordering. Also trigger the locate command
-/// to allow the UI to select and display this node in the tree.
-/// </summary>
-public void Receive(Created message)
-{
-    if (message.Observer is not NodeObserver node) return;
+    /// <summary>
+    /// Will handle the creation of a node. Parent nodes need to ensure the object is added if it belongs as a child.
+    /// Also, this is where we want to sort the children to ensure proper ordering. Also trigger the locate command
+    /// to allow the UI to select and display this node in the tree.
+    /// </summary>
+    public void Receive(Created message)
+    {
+        if (message.Observer is not NodeObserver node) return;
 
-    if (Id != node.ParentId) return;
-    if (Nodes.Any(n => n.Id == node.Id)) return;
+        if (Id != node.ParentId) return;
+        if (Nodes.Any(n => n.Id == node.Id)) return;
 
-    Nodes.Add(node);
-    Nodes.Sort(n => n.Name, StringComparer.OrdinalIgnoreCase);
-    Locate();
-}*/
+        Nodes.Add(node);
+        Nodes.Sort(n => n.Name, StringComparer.OrdinalIgnoreCase);
+        node.Locate();
+    }
 
     /// <summary>
     /// Will handle the removal of the node and/or child nodes as based on which observer object is received.
@@ -350,7 +320,16 @@ public void Receive(Created message)
     protected override Task<Result> UpdateName(string name)
     {
         Model.Name = name;
-        return Mediator.Send(new RenameNode(this));
+        //If this node has not been saved to the database, just return ok to allow the node to be renamed.
+        //Otherwise, send the request to update the database.
+        return IsVirtual ? Task.FromResult(Result.Ok()) : Mediator.Send(new RenameNode(this));
+    }
+
+    protected override Task<Result> DeleteItems(IEnumerable<Observer> observers)
+    {
+        //If this node has not been saved to the database, just return ok to allow the node to be deleted virtually.
+        //Otherwise, send the request to update the database.
+        return IsVirtual ? Task.FromResult(Result.Ok()) : Mediator.Send(new DeleteNodes(observers.Select(n => n.Id)));
     }
 
     private async Task AddNode(NodeObserver node)
@@ -380,7 +359,7 @@ public void Receive(Created message)
             Header = "Add Container",
             Icon = Resource.Find("IconThemedContainer"),
             Command = AddContainerCommand,
-            DetermineVisibility = () => IsSolelySelected && Type != NodeType.Spec
+            DetermineVisibility = () => HasSingleSelection && Type != NodeType.Spec
         };
 
         yield return new MenuActionItem
@@ -388,7 +367,7 @@ public void Receive(Created message)
             Header = "Add Spec",
             Icon = Resource.Find("IconThemedSpec"),
             Command = AddSpecCommand,
-            DetermineVisibility = () => IsSolelySelected && Type != NodeType.Spec
+            DetermineVisibility = () => HasSingleSelection && Type != NodeType.Spec
         };
 
         yield return new MenuActionItem
@@ -402,19 +381,19 @@ public void Receive(Created message)
         yield return new MenuActionItem
         {
             Header = "Open",
-            Icon = Resource.Find("IconLineLink"),
+            Icon = Resource.Find("IconLineLaunch"),
             Command = NavigateCommand,
             Gesture = new KeyGesture(Key.Enter),
-            DetermineVisibility = () => IsSolelySelected
+            DetermineVisibility = () => HasSingleSelection
         };
 
         yield return new MenuActionItem
         {
             Header = "Rename",
-            Icon = Resource.Find("IconFilledPencilAlt"),
+            Icon = Resource.Find("IconFilledPencil"),
             Command = RenameCommand,
             Gesture = new KeyGesture(Key.E, KeyModifiers.Control),
-            DetermineVisibility = () => IsSolelySelected
+            DetermineVisibility = () => HasSingleSelection
         };
 
         yield return new MenuActionItem
@@ -423,7 +402,7 @@ public void Receive(Created message)
             Icon = Resource.Find("IconFilledClone"),
             Command = DuplicateCommand,
             Gesture = new KeyGesture(Key.D, KeyModifiers.Control),
-            DetermineVisibility = () => IsSolelySelected
+            DetermineVisibility = () => HasSingleSelection
         };
 
         yield return new MenuActionItem

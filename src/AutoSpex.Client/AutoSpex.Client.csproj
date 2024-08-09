@@ -218,10 +218,6 @@
       </Compile>
       <Compile Remove="Pages\Tabs\SourceContentPage.axaml.cs" />
       <Compile Remove="Pages\Tabs\SourceContentPageModel.cs" />
-      <Compile Update="Pages\Navigation\NodesPage.axaml.cs">
-        <DependentUpon>CollectionTreePage.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
       <Compile Update="Resources\Controls\Section.cs">
         <DependentUpon>Section.axaml</DependentUpon>
         <SubType>Code</SubType>
@@ -236,14 +232,6 @@
       </Compile>
       <Compile Remove="Components\Runs\OutcomeTree.axaml.cs" />
       <Compile Remove="Components\Runs\**" />
-      <Compile Update="Pages\NavigationPage.axaml.cs">
-        <DependentUpon>NavigationPage.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Components\Menus\NavigationMenus.axaml.cs">
-        <DependentUpon>NavigationMenus.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
       <Compile Update="Components\Controls\DetailTabList.axaml.cs">
         <DependentUpon>DetailTabList.axaml</DependentUpon>
         <SubType>Code</SubType>

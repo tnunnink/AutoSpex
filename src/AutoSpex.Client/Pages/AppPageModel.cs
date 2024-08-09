@@ -13,45 +13,27 @@ namespace AutoSpex.Client.Pages;
 [UsedImplicitly]
 public partial class AppPageModel : PageViewModel, IRecipient<NavigationRequest>
 {
-    [ObservableProperty] private ObservableCollection<PageViewModel> _menus = [];
-
-    [ObservableProperty] private PageViewModel? _selectedMenu;
+    [ObservableProperty] private PageViewModel? _navigationPage;
 
     [ObservableProperty] private PageViewModel? _detailsPage;
-
-    [ObservableProperty] private PageViewModel? _footerPage;
-
-    [ObservableProperty] private bool _isNavigationOpen = true;
-
-    [ObservableProperty] private bool _isStatusDrawerOpen;
 
     /// <inheritdoc />
     public override async Task Load()
     {
-        await Navigator.Navigate<NodesPageModel>();
-        await Navigator.Navigate<EnvironmentsPageModel>();
+        await Navigator.Navigate<NavigationPageModel>();
         await Navigator.Navigate<DetailsPageModel>();
     }
 
     /// <inheritdoc />
     protected override void OnDeactivated()
     {
-        foreach (var menu in Menus.ToList())
-            Navigator.Close(menu);
+        if (NavigationPage is not null)
+            Navigator.Close(NavigationPage);
 
         if (DetailsPage is not null)
             Navigator.Close(DetailsPage);
 
         base.OnDeactivated();
-    }
-
-    /// <summary>
-    /// Toggles the navigation drawer view of the main project page.
-    /// </summary>
-    [RelayCommand]
-    private void ToggleNavigationDrawer()
-    {
-        IsNavigationOpen = !IsNavigationOpen;
     }
 
     /// <summary>
@@ -81,10 +63,8 @@ public partial class AppPageModel : PageViewModel, IRecipient<NavigationRequest>
     {
         switch (message.Page)
         {
-            case NodesPageModel or EnvironmentsPageModel:
-                if (!Menus.Contains(message.Page))
-                    Menus.Add(message.Page);
-                SelectedMenu ??= message.Page;
+            case NavigationPageModel:
+                NavigationPage = message.Page;
                 break;
             case DetailsPageModel:
                 DetailsPage = message.Page;
@@ -99,8 +79,8 @@ public partial class AppPageModel : PageViewModel, IRecipient<NavigationRequest>
     {
         switch (message.Page)
         {
-            case NodesPageModel:
-                Menus.Remove(message.Page);
+            case NavigationPageModel:
+                NavigationPage = null;
                 break;
             case DetailsPageModel:
                 DetailsPage = null;

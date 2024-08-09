@@ -5,22 +5,23 @@
                     xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
 
     <Design.PreviewWith>
-        <component:RenamePrompt />
+        <component:NamePrompt />
     </Design.PreviewWith>
 
-    <ControlTheme x:Key="{x:Type component:RenamePrompt}" TargetType="component:RenamePrompt">
+    <ControlTheme x:Key="{x:Type component:NamePrompt}" TargetType="component:NamePrompt">
         <Setter Property="Template">
             <ControlTemplate>
-                
-                <controls:Prompt Header="Rename"
-                                 HeaderIcon="{Binding Observer.Icon, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource KeyToIconConverter}, FallbackValue={x:Null}}"
-                                 CancelButtonTheme="{a:ControlTheme ButtonSoft}"
-                                 CancelCommandParameter="{x:Null}"
-                                 ActionButtonTheme="{a:ControlTheme ButtonSolid}"
-                                 ActionButtonText="OK"
-                                 ActionCommandParameter="{Binding #NameEntry.Text}"
-                                 Classes="accent"
-                                 MinWidth="500">
+
+                <controls:Prompt
+                    Header="{TemplateBinding Title}"
+                    HeaderIcon="{Binding Observer.Icon, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource KeyIconConverter}, FallbackValue={x:Null}}"
+                    CancelButtonTheme="{a:ControlTheme ButtonSoft}"
+                    CancelCommandParameter="{x:Null}"
+                    ActionButtonTheme="{a:ControlTheme ButtonSolid}"
+                    ActionButtonText="OK"
+                    ActionCommandParameter="{Binding #NameEntry.Text}"
+                    Classes="accent"
+                    MinWidth="500">
 
                     <controls:Prompt.Content>
                         <Border x:Name="Border" Focusable="True">

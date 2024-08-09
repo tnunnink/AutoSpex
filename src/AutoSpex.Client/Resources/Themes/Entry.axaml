@@ -87,7 +87,7 @@
                                 ScrollViewer.VerticalScrollBarVisibility="Disabled">
                                 <TextBox.InnerRightContent>
                                     <Button Theme="{a:ControlTheme ButtonSubtle}"
-                                            properties:Icon.Theme="{StaticResource IconChevronExpand}"
+                                            properties:Icon.Theme="{StaticResource IconLineExpand}"
                                             IsVisible="{Binding $parent[controls:Entry].UseExpander}"
                                             Margin="5 0" CornerRadius="10" />
                                 </TextBox.InnerRightContent>

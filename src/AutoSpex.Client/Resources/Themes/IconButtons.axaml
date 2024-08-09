@@ -18,7 +18,7 @@
                         properties:Icon.Theme="{StaticResource IconExclamation}"
                         Classes="warning" />
                 <Button Theme="{DynamicResource IconButton}"
-                        properties:Icon.Theme="{StaticResource IconOutlinedClipboard}"
+                        properties:Icon.Theme="{StaticResource IconLineClipboard}"
                         Classes="success" />
             </StackPanel>
             <StackPanel Spacing="10" Orientation="Horizontal">
@@ -34,7 +34,7 @@
                         properties:Icon.Theme="{StaticResource IconExclamation}"
                         Classes="warning" />
                 <Button Theme="{DynamicResource IconButtonSmall}"
-                        properties:Icon.Theme="{StaticResource IconOutlinedClipboard}"
+                        properties:Icon.Theme="{StaticResource IconLineClipboard}"
                         Classes="success" />
             </StackPanel>
             <StackPanel Spacing="10" Orientation="Horizontal">
@@ -54,7 +54,7 @@
                         Classes="warning"
                         IsEnabled="False" />
                 <Button Theme="{DynamicResource IconButton}"
-                        properties:Icon.Theme="{StaticResource IconOutlinedClipboard}"
+                        properties:Icon.Theme="{StaticResource IconLineClipboard}"
                         Classes="success"
                         IsEnabled="False" />
             </StackPanel>
@@ -72,7 +72,7 @@
                               properties:Icon.Theme="{StaticResource IconExclamation}" />
                 <ToggleButton Theme="{DynamicResource IconToggleButton}"
                               Classes="success"
-                              properties:Icon.Theme="{StaticResource IconOutlinedClipboard}" />
+                              properties:Icon.Theme="{StaticResource IconLineClipboard}" />
             </StackPanel>
             <StackPanel Spacing="10" Orientation="Horizontal">
                 <ToggleButton Theme="{DynamicResource IconToggleButton}"
@@ -126,7 +126,7 @@
                         properties:Icon.Theme="{StaticResource IconExclamation}"
                         Classes="warning" />
                 <Button Theme="{DynamicResource IconButtonPillRight}"
-                        properties:Icon.Theme="{StaticResource IconOutlinedClipboard}"
+                        properties:Icon.Theme="{StaticResource IconLineClipboard}"
                         Classes="success" />
             </StackPanel>
         </StackPanel>
@@ -135,7 +135,7 @@
     <!-- IconButton -->
     <ControlTheme x:Key="IconButtonBase" TargetType="Button" BasedOn="{actipro:ControlTheme ButtonSubtle}">
         <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushDefault}" />
-        <Setter Property="Padding" Value="5" />
+        <Setter Property="Padding" Value="0" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Border x:Name="border"

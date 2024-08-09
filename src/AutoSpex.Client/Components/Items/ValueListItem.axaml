@@ -1,0 +1,38 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+
+    <Design.PreviewWith>
+        <StackPanel>
+            <StackPanel Margin="50" Width="300">
+                <ListBoxItem
+                    Content="{x:Static components:DesignData.BooleanTrueValue}"
+                    ContentTemplate="{DynamicResource ValueItemTemplate}" />
+                <ListBoxItem
+                    Content="{x:Static components:DesignData.RadixValue}"
+                    ContentTemplate="{DynamicResource ValueItemTemplate}" />
+            </StackPanel>
+        </StackPanel>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="ValueItemTemplate" x:DataType="observers:ValueObserver">
+        <Grid ColumnDefinitions="30,*,Auto">
+            <PathIcon
+                Grid.Column="0"
+                Theme="{Binding Group, Converter={StaticResource TypeGroupIconConverter}}"
+                Classes="size-sm"
+                Margin="0 0 10 0" />
+            <ContentControl
+                Grid.Column="1"
+                Content="{Binding }"
+                ContentTemplate="{StaticResource ValueDisplay}" />
+            <TextBlock
+                Grid.Column="2"
+                Text="{Binding Type}"
+                Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                Margin="40 0 10 0" />
+        </Grid>
+    </DataTemplate>
+</ResourceDictionary>

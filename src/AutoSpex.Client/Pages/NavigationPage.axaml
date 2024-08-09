@@ -1,38 +1,105 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
              xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+             xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors"
              x:Class="AutoSpex.Client.Pages.NavigationPage"
-             x:DataType="pages:NavigationPageModel">
+             x:DataType="pages:NavigationPageModel"
+             Background="{a:ThemeResource Container2BackgroundBrush}">
 
-    <Design.Height>800</Design.Height>
-    <Design.Width>300</Design.Width>
+    <Design.Width>500</Design.Width>
+    <Design.Height>1080</Design.Height>
 
-    <Border
-        Background="{a:ThemeResource Container2BackgroundBrush}"
-        BorderBrush="{a:ThemeResource Container2BackgroundBrush}">
+    <DockPanel>
 
-        <Grid>
+        <Border
+            DockPanel.Dock="Left"
+            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+            BorderThickness="0 0 1 0" Padding="10">
 
-            <Expander DockPanel.Dock="Top" Header="Specs" BorderThickness="0 0 0 1" CornerRadius="0">
+            <DockPanel LastChildFill="False">
 
-            </Expander>
+                <StackPanel DockPanel.Dock="Top" Spacing="10">
 
-            <Expander BorderThickness="0 0 0 1" CornerRadius="0"
-                      Background="Transparent" VerticalContentAlignment="Stretch">
-                <Expander.Header>
-                    <Border>
-                        <StackPanel Orientation="Horizontal" Spacing="10">
-                            <PathIcon Theme="{StaticResource IconThemedEnvironment}" />
-                            <TextBlock Text="Environments"
-                                       FontSize="{a:ThemeResource DefaultFontSizeLarge}"
-                                       Margin="0 0 0 1" />
-                        </StackPanel>
-                    </Border>
-                </Expander.Header>
-                <ListBox></ListBox>
-            </Expander>
+                    <Button
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconAdd}"
+                        Classes="accent"
+                        ToolTip.Tip="Add">
+                        <Button.Flyout>
+                            <MenuFlyout
+                                Placement="RightEdgeAlignedTop"
+                                ItemContainerTheme="{StaticResource ContextMenuItem}">
+                                <MenuItem
+                                    Command="{Binding AddSpecCommand}"
+                                    Icon="{StaticResource IconThemedSpec}"
+                                    Header="Specification" />
+                                <MenuItem
+                                    Command="{Binding NewCollectionCommand}"
+                                    Header="Collection"
+                                    Icon="{StaticResource IconThemedCollection}" />
+                                <MenuItem
+                                    Command="{Binding AddEnvironmentCommand}"
+                                    Icon="{StaticResource IconThemedEnvironment}"
+                                    Header="Environment" />
+                            </MenuFlyout>
+                        </Button.Flyout>
+                    </Button>
 
+                    <Button
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconLineUpload}"
+                        ToolTip.Tip="Import" />
+
+                    <Button
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconLineSearch}"
+                        Padding="1 0 0 0"
+                        ToolTip.Tip="Search" />
+
+                    <Button
+                        Command="{Binding OpenExplorerCommand}"
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconFilledBinoculars}"
+                        HotKey="Ctrl+Shift+S"
+                        ToolTip.Tip="Source Explorer" />
+
+                    <Button
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconLineHistory}"
+                        HotKey="Ctrl+H"
+                        ToolTip.Tip="Run History" />
+
+                    <Button
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconLineAt}"
+                        ToolTip.Tip="Variables" />
+
+                </StackPanel>
+
+                <StackPanel DockPanel.Dock="Bottom" Spacing="10">
+                    <Button
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconLineQuestion}"
+                        ToolTip.Tip="Information" />
+                    <Button
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconLineSidebar}"
+                        ToolTip.Tip="Hide Navigation">
+                        <Interaction.Behaviors>
+                            <behaviors:ToggleDrawerOnClickBehavior />
+                        </Interaction.Behaviors>
+                    </Button>
+                </StackPanel>
+
+            </DockPanel>
+        </Border>
+
+        <Grid RowDefinitions="*,Auto">
+            <ContentControl Grid.Row="0" Content="{Binding NodeTree^}" />
+            <ContentControl Grid.Row="1" Content="{Binding EnvironmentList^}" />
         </Grid>
-    </Border>
+
+    </DockPanel>
 </UserControl>

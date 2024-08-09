@@ -29,4 +29,43 @@ public class GetSpecTests
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().BeEquivalentTo(spec);
     }
+    
+    [Test]
+    public async Task GetSpec_ConfiguredSpec_ShouldBeSuccess()
+    {
+        using var context = new TestContext();
+        var mediator = context.Resolve<IMediator>();
+        var node = Node.NewSpec();
+        await mediator.Send(new CreateNode(node));
+        
+        var spec = new Spec(node).Find(Element.Program)
+            .Where(Element.Program.Property("Name"), Operation.EqualTo, "SomeName")
+            .ShouldHave(Element.Program.Property("Disabled"), Operation.False);
+        await mediator.Send(new SaveSpec(spec));
+        
+        var result = await mediator.Send(new GetSpec(spec.SpecId));
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().BeEquivalentTo(spec);
+    }
+    
+    [Test]
+    public async Task GetSpec_SpecWithReferences_ShouldBeSuccess()
+    {
+        using var context = new TestContext();
+        var mediator = context.Resolve<IMediator>();
+        var node = Node.NewSpec();
+        await mediator.Send(new CreateNode(node));
+        
+        var spec = new Spec(node)
+            .Find(Element.Program)
+            .Where(Element.Program.Property("Name"), Operation.EqualTo, new Reference("SomeName"))
+            .ShouldHave(Element.Program.Property("Disabled"), Operation.False);
+        await mediator.Send(new SaveSpec(spec));
+
+        var result = await mediator.Send(new GetSpec(spec.SpecId));
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().BeEquivalentTo(spec);
+    }
 }

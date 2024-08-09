@@ -41,13 +41,13 @@
 
     <actipro:MathConverter x:Key="MathConverter" />
 
-    <converters:KeyResourceConverter x:Key="KeyToIconConverter">
+    <converters:KeyResourceConverter x:Key="KeyIconConverter">
         <converters:ValueResourceKey Value="Collections" Resource="IconFilledStack" />
         <converters:ValueResourceKey Value="Environments" Resource="IconFilledCog" />
-        <converters:ValueResourceKey Value="Specs" Resource="IconFilledClipboardAlt" />
+        <converters:ValueResourceKey Value="Specs" Resource="IconFilledClipboard" />
         <converters:ValueResourceKey Value="Sources" Resource="IconLineXml" />
         <converters:ValueResourceKey Value="Runs" Resource="IconFilledLightning" />
-        <converters:ValueResourceKey Value="Variables" Resource="IconLineBraces" />
+        <converters:ValueResourceKey Value="Variables" Resource="IconLineAt" />
         <converters:ValueResourceKey Value="Collection" Resource="IconThemedCollection" />
         <converters:ValueResourceKey Value="Container" Resource="IconThemedContainer" />
         <converters:ValueResourceKey Value="Spec" Resource="IconThemedSpec" />
@@ -63,10 +63,7 @@
         <converters:ValueResourceKey Value="Element" Resource="IconThemedElement" />
     </converters:KeyResourceConverter>
 
-    <converters:KeyResourceConverter x:Key="KeyToFontIconConverter">
-    </converters:KeyResourceConverter>
-
-    <converters:KeyResourceConverter x:Key="ResultStateToIconConverter">
+    <converters:KeyResourceConverter x:Key="ResultStateIconConverter">
         <converters:ValueResourceKey Value="{x:Static engine:ResultState.None}" Resource="IconThemedNone" />
         <converters:ValueResourceKey Value="{x:Static engine:ResultState.Pending}" Resource="IconThemedPending" />
         <converters:ValueResourceKey Value="{x:Static engine:ResultState.Running}" Resource="IconThemedRunning" />
@@ -77,7 +74,7 @@
         <converters:ValueResourceKey Value="{x:Static engine:ResultState.Error}" Resource="IconThemedError" />
     </converters:KeyResourceConverter>
 
-    <converters:KeyResourceConverter x:Key="TypeGroupToIconConverter">
+    <converters:KeyResourceConverter x:Key="TypeGroupIconConverter">
         <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Boolean}" Resource="IconThemedBoolean" />
         <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Number}" Resource="IconThemedNumber" />
         <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Text}" Resource="IconThemedText" />
@@ -86,6 +83,7 @@
         <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Element}" Resource="IconThemedElement" />
         <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Collection}" Resource="IconThemedArray" />
         <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Variable}" Resource="IconThemedVariable" />
+        <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Reference}" Resource="IconThemedVariable" />
     </converters:KeyResourceConverter>
 
 </ResourceDictionary>

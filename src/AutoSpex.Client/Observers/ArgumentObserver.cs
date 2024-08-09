@@ -56,7 +56,6 @@ public partial class ArgumentObserver : Observer<Argument>
     /// </summary>
     public Func<string?, CancellationToken, Task<IEnumerable<object>>> Suggestions => GetSuggestions;
 
-
     /// <inheritdoc />
     public override string ToString() => Value.ToString();
 
@@ -70,20 +69,21 @@ public partial class ArgumentObserver : Observer<Argument>
     [RelayCommand]
     private async Task UpdateValue(object? value)
     {
-        var criterion = FindInstance<CriterionObserver>();
+        var criterion = FindParent<CriterionObserver>();
         var group = criterion?.Property.Group;
 
         switch (value)
         {
-            case string text when text.StartsWith('{') && text.EndsWith('}'):
-                var variable = await GetVariable(text) ?? text;
-                Value = new ValueObserver(variable);
+            case string text when text.StartsWith(Reference.Prefix):
+                var reference = await ResolveReference(text);
+                Value = new ValueObserver(reference);
                 return;
             case string text when group?.TryParse(text, out var parsed) is true && parsed is not null:
                 Value = new ValueObserver(parsed);
                 return;
             case ValueObserver observer:
-                Value = observer;
+                //Set to the variable reference and not the actual variable object itself.
+                Value = observer.Model is Variable variable ? new ValueObserver(variable.Reference()) : observer;
                 return;
             default:
                 Value = new ValueObserver(value);
@@ -94,11 +94,11 @@ public partial class ArgumentObserver : Observer<Argument>
     /// <summary>
     /// Queries the database for a variable in scope with the specified name and returns it, or null if not found.
     /// </summary>
-    private async Task<object?> GetVariable(string name)
+    private async Task<object?> ResolveReference(string name)
     {
-        name = name.TrimStart('{').TrimEnd('}');
-        var result = await Mediator.Send(new GetScopedVariable(Id, name));
-        return result.IsSuccess ? new VariableObserver(result.Value) : default;
+        var scoped = await GetScopedVariables(string.Empty, CancellationToken.None);
+        var match = scoped.FirstOrDefault(v => v.Name == name) as object;
+        return match ?? new Reference(name);
     }
 
     /// <summary>
@@ -124,14 +124,14 @@ public partial class ArgumentObserver : Observer<Argument>
     /// </summary>
     private async Task<IEnumerable<ValueObserver>> GetScopedVariables(string? filter, CancellationToken token)
     {
-        var spec = FindInstance<SpecObserver>();
+        var spec = FindParent<SpecObserver>();
 
         if (spec is null) return Enumerable.Empty<ValueObserver>();
 
         var result = await Mediator.Send(new GetScopedVariables(spec.Id), token);
 
         return result.IsSuccess
-            ? result.Value.Select(v => new ValueObserver(new VariableObserver(v))).Where(v => v.Filter(filter))
+            ? result.Value.Select(v => new ValueObserver(v)).Where(v => v.Filter(filter))
             : Enumerable.Empty<ValueObserver>();
     }
 
@@ -140,7 +140,7 @@ public partial class ArgumentObserver : Observer<Argument>
     /// </summary>
     private IEnumerable<ValueObserver> GetOptions(string? filter)
     {
-        var criterion = FindInstance<CriterionObserver>();
+        var criterion = FindParent<CriterionObserver>();
         var type = criterion?.Property.Type;
         var group = criterion?.Property.Group;
 

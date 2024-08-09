@@ -50,7 +50,7 @@
     <ControlTheme x:Key="IconThemedSpec" TargetType="PathIcon" BasedOn="{StaticResource IconFilledClipboardAlt}">
         <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushSpec}" />
     </ControlTheme>
-    <ControlTheme x:Key="IconThemedEnvironment" TargetType="PathIcon" BasedOn="{StaticResource IconFilledCog}">
+    <ControlTheme x:Key="IconThemedEnvironment" TargetType="PathIcon" BasedOn="{StaticResource IconFilledCube}">
         <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushEnvironment}" />
     </ControlTheme>
     <ControlTheme x:Key="IconThemedRun" TargetType="PathIcon" BasedOn="{StaticResource IconFilledLightning}">
@@ -59,7 +59,7 @@
     <ControlTheme x:Key="IconThemedSource" TargetType="PathIcon" BasedOn="{StaticResource IconLineXml}">
         <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushSource}" />
     </ControlTheme>
-    <ControlTheme x:Key="IconThemedVariable" TargetType="PathIcon" BasedOn="{StaticResource IconLineBraces}">
+    <ControlTheme x:Key="IconThemedVariable" TargetType="PathIcon" BasedOn="{StaticResource IconLineAt}">
         <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
     </ControlTheme>
 
@@ -68,33 +68,9 @@
     </ControlTheme>
     <ControlTheme x:Key="IconThemedPending" TargetType="PathIcon" BasedOn="{StaticResource IconLineCircleHalfFill}">
         <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
-        <Style Selector="^">
-            <Style.Animations>
-                <Animation Duration="0:0:0.5" IterationCount="INFINITE">
-                    <KeyFrame Cue="0%">
-                        <Setter Property="RotateTransform.Angle" Value="0" />
-                    </KeyFrame>
-                    <KeyFrame Cue="100%">
-                        <Setter Property="RotateTransform.Angle" Value="360" />
-                    </KeyFrame>
-                </Animation>
-            </Style.Animations>
-        </Style>
     </ControlTheme>
     <ControlTheme x:Key="IconThemedRunning" TargetType="PathIcon" BasedOn="{StaticResource IconLineCircleHalfFill}">
         <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineSuccess}" />
-        <Style Selector="^">
-            <Style.Animations>
-                <Animation Duration="0:0:0.5" IterationCount="INFINITE">
-                    <KeyFrame Cue="0%">
-                        <Setter Property="RotateTransform.Angle" Value="0" />
-                    </KeyFrame>
-                    <KeyFrame Cue="100%">
-                        <Setter Property="RotateTransform.Angle" Value="360" />
-                    </KeyFrame>
-                </Animation>
-            </Style.Animations>
-        </Style>
     </ControlTheme>
     <ControlTheme x:Key="IconThemedInconclusive" TargetType="PathIcon" BasedOn="{StaticResource IconFilledQuestion}">
         <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
@@ -109,20 +85,20 @@
         <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineWarning}" />
     </ControlTheme>
 
-    <ControlTheme x:Key="IconThemedBoolean" TargetType="PathIcon" BasedOn="{StaticResource IconToggleOn}">
+    <ControlTheme x:Key="IconThemedBoolean" TargetType="PathIcon" BasedOn="{StaticResource IconFilledToggle}">
         <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushBoolean}" />
     </ControlTheme>
     <ControlTheme x:Key="IconThemedNumber" TargetType="PathIcon" BasedOn="{StaticResource IconLineHash}">
         <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushNumber}" />
-        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontSize" Value="13" />
     </ControlTheme>
     <ControlTheme x:Key="IconThemedText" TargetType="PathIcon" BasedOn="{StaticResource IconLineType}">
         <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushText}" />
-        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontSize" Value="13" />
     </ControlTheme>
     <ControlTheme x:Key="IconThemedDate" TargetType="PathIcon" BasedOn="{StaticResource IconLineCalendar}">
         <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushDate}" />
-        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontSize" Value="15" />
     </ControlTheme>
     <ControlTheme x:Key="IconThemedEnum" TargetType="PathIcon" BasedOn="{StaticResource IconFilledGear}">
         <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushEnum}" />
@@ -130,10 +106,10 @@
     </ControlTheme>
     <ControlTheme x:Key="IconThemedElement" TargetType="PathIcon" BasedOn="{StaticResource IconLineXml}">
         <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushElement}" />
-        <Setter Property="FontSize" Value="14" />
-    </ControlTheme>
-    <ControlTheme x:Key="IconThemedArray" TargetType="PathIcon" BasedOn="{StaticResource IconLineBoxes}">
-        <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushCollection}" />
         <Setter Property="FontSize" Value="15" />
+    </ControlTheme>
+    <ControlTheme x:Key="IconThemedArray" TargetType="PathIcon" BasedOn="{StaticResource IconLineList}">
+        <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushCollection}" />
+        <Setter Property="FontSize" Value="14" />
     </ControlTheme>
 </ResourceDictionary>

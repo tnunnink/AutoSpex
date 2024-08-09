@@ -23,20 +23,6 @@ public class Container
         return _container.GetInstance<T>();
     }
 
-    public static object Resolve(Type type)
-    {
-        if (_container is null)
-            throw new InvalidOperationException(
-                "Container is not initialized. Call build providing configuration before resolving.");
-
-        return _container.GetInstance(type);
-    }
-
-    public static T? TryResolve<T>() where T : class
-    {
-        return _container?.TryGetInstance<T>();
-    }
-
     public static void Build()
     {
         var registry = new ServiceRegistry();

@@ -1,10 +1,7 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
                     xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
-                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
-                    xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors"
                     xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
 
     <Design.PreviewWith>
@@ -20,7 +17,7 @@
         <Border>
             <StackPanel Orientation="Horizontal" Spacing="10">
 
-                <PathIcon Theme="{Binding Converter={StaticResource ResultStateToIconConverter}}" />
+                <PathIcon Theme="{Binding Converter={StaticResource ResultStateIconConverter}}" />
 
                 <TextBlock properties:StyleClasses.Classes="{Binding}">
                     <TextBlock.Styles>

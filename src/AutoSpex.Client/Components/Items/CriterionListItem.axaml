@@ -37,7 +37,7 @@
 
                 <Button
                     Grid.Column="1"
-                    properties:Icon.Theme="{StaticResource IconDots}"
+                    properties:Icon.Theme="{StaticResource IconEllipsis}"
                     Theme="{StaticResource IconButtonSmall}"
                     Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
                     Margin="5 0"

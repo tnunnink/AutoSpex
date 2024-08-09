@@ -19,8 +19,8 @@
                 <Template>
                     <StackPanel Orientation="Horizontal" Spacing="7">
                         <PathIcon Theme="{StaticResource IconThemedEnvironment}" />
-                        <TextBlock Text="{Binding Environment.Name, FallbackValue='---'}" Padding="0 0 0 1" />
-                        <PathIcon Theme="{StaticResource IconChevronExpand}" Classes="size-sm" />
+                        <TextBlock Text="{Binding Environment.Name, FallbackValue='---'}" />
+                        <PathIcon Theme="{StaticResource IconLineExpand}" Classes="size-sm" />
                     </StackPanel>
                 </Template>
             </Setter>
@@ -37,7 +37,7 @@
 
                         <StackPanel Orientation="Horizontal" Spacing="3" Margin="5 0 0 0">
                             <PathIcon
-                                Theme="{Binding Node.Type.Name, Converter={StaticResource KeyToIconConverter}}"
+                                Theme="{Binding Node.Type.Name, Converter={StaticResource KeyIconConverter}}"
                                 Classes="size-lg" />
                             <ContentControl
                                 HorizontalAlignment="Left"

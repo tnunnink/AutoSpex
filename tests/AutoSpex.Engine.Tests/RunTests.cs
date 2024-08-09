@@ -172,7 +172,7 @@ public class RunTests
         var run = new Run(environment);
         run.AddNode(spec.ToNode());
         
-        await run.ExecuteAsync([spec]);
+        await run.ExecuteAsync((ICollection<Spec>)[spec]);
 
         run.Result.Should().Be(ResultState.Passed);
         run.RanBy.Should().NotBeEmpty();
@@ -195,7 +195,7 @@ public class RunTests
         var run = new Run(environment);
         run.AddNode(spec.ToNode());
         
-        await run.ExecuteAsync([spec]);
+        await run.ExecuteAsync((ICollection<Spec>)[spec]);
 
         run.Result.Should().Be(ResultState.Passed);
         run.RanBy.Should().NotBeEmpty();

@@ -15,7 +15,7 @@
     <ControlTheme x:Key="{x:Type components:DeletePrompt}" TargetType="components:DeletePrompt">
         <Setter Property="Template">
             <ControlTemplate>
-                <controls:Prompt Header="{TemplateBinding Title}"
+                <controls:Prompt Header="Confirm content deletion"
                                  ActionButtonText="Delete"
                                  ActionButtonTheme="{actipro:ControlTheme ButtonSolid}"
                                  ActionCommandParameter="{StaticResource True}"

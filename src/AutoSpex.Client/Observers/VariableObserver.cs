@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoSpex.Client.Resources;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using Avalonia.Input;
@@ -37,12 +38,12 @@ public partial class VariableObserver : Observer<Variable>
     }
 
     public override Guid Id => Model.VariableId;
-    public NodeObserver? Node => FindInstance<NodeObserver>(Model.NodeId);
+    public NodeObserver? Node => FindObserver<NodeObserver>(Model.NodeId);
 
     public TypeGroup Group
     {
         get => Model.Group;
-        set => SetProperty(Model.Group, value, Model, (v, g) => v.ChangeGroup(g));
+        set => SetProperty(Model.Group, value, Model, (v, g) => v.Group = g);
     }
 
     [Required(ErrorMessage = "Name is a required field")]
@@ -53,7 +54,6 @@ public partial class VariableObserver : Observer<Variable>
         set => SetProperty(Model.Name, value, Model, (v, x) => v.Name = x, true);
     }
 
-    [Required]
     public ValueObserver Value
     {
         get => new(Model.Value);
@@ -62,17 +62,19 @@ public partial class VariableObserver : Observer<Variable>
 
     public Func<string?, CancellationToken, Task<IEnumerable<object>>> Suggestions => GetSuggestions;
 
+    /// <inheritdoc />
+    protected override bool PromptForDeletion => false;
 
     /// <summary>
     /// Updates the <see cref="Group"/> property for the variable indicating what type the value should be.
-    /// This will also reset value to the default for the type group.
+    /// This will also reset value to the default to make the usre enter a new value matching the type group.
     /// </summary>
     [RelayCommand]
     private void UpdateGroup(TypeGroup? group)
     {
         if (group is null) return;
         Group = group;
-        Value = new ValueObserver(group.DefaultValue);
+        Value = ValueObserver.Default;
     }
 
     /// <summary>
@@ -152,24 +154,55 @@ public partial class VariableObserver : Observer<Variable>
     }
 
     /// <inheritdoc />
-    protected override IEnumerable<MenuActionItem> GenerateMenuItems()
+    protected override IEnumerable<MenuActionItem> GenerateContextItems()
     {
         yield return new MenuActionItem
         {
-            Header = "Copy",
-            Gesture = new KeyGesture(Key.C, KeyModifiers.Control)
+            Header = "Explore",
+            Icon = Resource.Find("IconFilledBinoculars"),
+            DetermineVisibility = () => HasSingleSelection
         };
 
         yield return new MenuActionItem
         {
             Header = "Duplicate",
             Command = DuplicateCommand,
+            Icon = Resource.Find("IconFilledClone"),
+            Gesture = new KeyGesture(Key.D, KeyModifiers.Control),
+            DetermineVisibility = () => HasSingleSelection
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Delete",
+            Icon = Resource.Find("IconFilledTrash"),
+            Classes = "danger",
+            Command = DeleteSelectedCommand,
+            Gesture = new KeyGesture(Key.Delete)
+        };
+    }
+
+    /// <inheritdoc />
+    protected override IEnumerable<MenuActionItem> GenerateMenuItems()
+    {
+        yield return new MenuActionItem
+        {
+            Header = "Explore",
+            Icon = Resource.Find("IconFilledBinoculars"),
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Duplicate",
+            Command = DuplicateCommand,
+            Icon = Resource.Find("IconFilledClone"),
             Gesture = new KeyGesture(Key.D, KeyModifiers.Control)
         };
 
         yield return new MenuActionItem
         {
             Header = "Delete",
+            Icon = Resource.Find("IconFilledTrash"),
             Classes = "danger",
             Command = DeleteCommand,
             Gesture = new KeyGesture(Key.Delete)

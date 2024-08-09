@@ -21,11 +21,12 @@
 
     <DataTemplate x:Key="VariableListItem" x:DataType="observers:VariableObserver">
         <Border x:Name="Border" Focusable="True" Background="Transparent">
+            
             <Border.ContextFlyout>
                 <MenuFlyout
                     Placement="Bottom"
                     ItemContainerTheme="{StaticResource MenuActionItem}"
-                    ItemsSource="{Binding MenuItems}" />
+                    ItemsSource="{Binding ContextItems}" />
             </Border.ContextFlyout>
 
             <Grid ColumnDefinitions="*,Auto">
@@ -45,11 +46,11 @@
                         <StackPanel Orientation="Horizontal" Spacing="7">
                             <PathIcon
                                 x:Name="GroupIcon"
-                                Theme="{Binding Group, Converter={StaticResource TypeGroupToIconConverter}}" />
+                                Theme="{Binding Group, Converter={StaticResource TypeGroupIconConverter}}" />
                             <TextBlock
                                 Text="{Binding Group.Name}"
                                 FontFamily="{a:ThemeResource CodeFontFamily}" />
-                            <PathIcon Theme="{StaticResource IconChevronExpand}" Classes="size-sm" />
+                            <PathIcon Theme="{StaticResource IconLineExpand}" Classes="size-sm" />
                         </StackPanel>
                         <Button.Flyout>
                             <Flyout Placement="BottomEdgeAlignedLeft" HorizontalOffset="-8" VerticalOffset="2">
@@ -68,7 +69,7 @@
                                                 HorizontalContentAlignment="Stretch" Padding="5">
                                                 <Grid ColumnDefinitions="20,*">
                                                     <PathIcon
-                                                        Theme="{Binding Converter={StaticResource TypeGroupToIconConverter}}" />
+                                                        Theme="{Binding Converter={StaticResource TypeGroupIconConverter}}" />
                                                     <TextBlock
                                                         Grid.Column="1"
                                                         Text="{Binding Name}"
@@ -93,30 +94,24 @@
                         Value="{Binding Name}"
                         MinDropDownWidth="{Binding $self.Bounds.Width}"
                         IsEmpty="{Binding Name, Converter={x:Static StringConverters.IsNullOrEmpty}}" />
-
+                    
                     <controls:Entry
                         Grid.Column="2"
                         Watermark="Enter value"
                         Value="{Binding Value}"
-                        ValueTemplate="{StaticResource ValueTemplates}"
+                        ValueTemplate="{StaticResource ValueDisplay}"
                         ItemTemplate="{StaticResource ValueItemTemplate}"
                         CommitCommand="{Binding UpdateValueCommand}"
                         Populate="{Binding Suggestions}"
-                        MinDropDownWidth="{Binding $self.Bounds.Width}">
-                        <controls:Entry.IsEmpty>
-                            <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                                <Binding Path="Value" Converter="{x:Static ObjectConverters.IsNull}" />
-                                <Binding Path="Value" Converter="{x:Static StringConverters.IsNullOrEmpty}" />
-                            </MultiBinding>
-                        </controls:Entry.IsEmpty>
-                    </controls:Entry>
+                        IsEmpty="{Binding Value.IsEmpty}"
+                        MinDropDownWidth="{Binding $self.Bounds.Width}" />
 
                 </Grid>
 
                 <Button
                     Grid.Column="1"
                     Theme="{StaticResource IconButtonSmall}"
-                    properties:Icon.Theme="{StaticResource IconDots}"
+                    properties:Icon.Theme="{StaticResource IconEllipsis}"
                     ToolTip.Placement="BottomEdgeAlignedRight">
                     <Button.Flyout>
                         <MenuFlyout

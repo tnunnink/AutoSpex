@@ -12,17 +12,17 @@ public class Reference
     /// <summary>
     /// The prefix that identifies a vlaue as a reference to a variable.
     /// </summary>
-    private const string Prefix = "@";
+    public const char Prefix = '@';
     
     /// <summary>
-    /// Creates a new <inheritdoc cref="Reference"/> instance with the provided name and optional value.
+    /// Creates a new <see cref="Reference"/> instance with the provided name and optional value.
     /// </summary>
     /// <param name="name">The name of the reference that corresponds to a scoped variable name.</param>
     /// <param name="value">The optional value to use as the reference value.</param>
     /// <exception cref="ArgumentNullException"><c>name</c> is null.</exception>
     public Reference(string name, object? value = default)
     {
-        Name = name ?? throw new ArgumentNullException(nameof(name));
+        Name = name.TrimStart(Prefix) ?? throw new ArgumentNullException(nameof(name));
         Value = value;
     }
 
@@ -40,7 +40,7 @@ public class Reference
 
     /// <summary>
     /// The resolved value of the reference. This is not perisited and only set when resolving references to scoped
-    /// variables.
+    /// variables, or when initially created using an existing variable.
     /// </summary>
     [JsonIgnore]
     public object? Value { get; set; }

@@ -1,56 +1,92 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
-                    xmlns:core="clr-namespace:L5Sharp.Core;assembly=L5Sharp.Core"
-                    xmlns:system="clr-namespace:System;assembly=System.Runtime"
                     xmlns:components="clr-namespace:AutoSpex.Client.Components"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
-                    xmlns:collections="clr-namespace:System.Collections;assembly=System.Runtime">
-
-    <system:Double x:Key="TestDouble">1.234</system:Double>
-    <system:Int32 x:Key="TestInteger">34567</system:Int32>
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
 
     <Design.PreviewWith>
         <StackPanel>
             <StackPanel Spacing="10" Margin="50">
+
                 <StackPanel.Styles>
                     <Style Selector="Button">
                         <Setter Property="Theme" Value="{a:ControlTheme ButtonSubtle}" />
-                        <Setter Property="ContentTemplate" Value="{DynamicResource ValueTemplates}" />
+                        <Setter Property="ContentTemplate" Value="{DynamicResource ValueDisplay}" />
                     </Style>
                 </StackPanel.Styles>
-                <Button Content="{x:Null}" />
-                <Button Content="{StaticResource True}" />
-                <Button Content="{StaticResource TestDouble}" />
-                <Button Content="{StaticResource TestInteger}" />
-                <Button Content="{x:Static components:DesignData.BoolValue}" />
-                <Button Content="{x:Static components:DesignData.SintValue}" />
-                <Button Content="{x:Static components:DesignData.IntValue}" />
-                <Button Content="{x:Static components:DesignData.DintValue}" />
-                <Button Content="{x:Static components:DesignData.LintValue}" />
-                <Button Content="Something" />
-                <Button Content="{x:Static core:Radix.Decimal}" />
-                <Button Content="{x:Static components:DesignData.DataType}" />
-                <Button Content="{x:Static components:DesignData.Rung}" />
-                <Button Content="{x:Static components:DesignData.Rung}" />
-                <Button Content="{x:Static components:DesignData.Tag}" />
-                <Button Content="{x:Static components:DesignData.VariableObserver}" />
-            </StackPanel>
-            <StackPanel Margin="50" Width="300">
-                <ListBoxItem Content="{x:Static components:DesignData.BooleanValueObserver}"
-                             ContentTemplate="{DynamicResource ValueItemTemplate}" />
-                <ListBoxItem Content="{x:Static components:DesignData.RadixValueObserver}"
-                             ContentTemplate="{DynamicResource ValueItemTemplate}" />
+
+                <Button Content="{x:Static components:DesignData.NullValue}" />
+                <Button Content="{x:Static components:DesignData.BooleanTrueValue}" />
+                <Button Content="{x:Static components:DesignData.IntegerValue}" />
+                <Button Content="{x:Static components:DesignData.DoubleValue}" />
+                <Button Content="{x:Static components:DesignData.AtomicBoolValue}" />
+                <Button Content="{x:Static components:DesignData.AtomicSintValue}" />
+                <Button Content="{x:Static components:DesignData.AtomicIntValue}" />
+                <Button Content="{x:Static components:DesignData.AtomicDintValue}" />
+                <Button Content="{x:Static components:DesignData.AtomicLintValue}" />
+                <Button Content="{x:Static components:DesignData.TextValue}" />
+                <Button Content="{x:Static components:DesignData.RadixValue}" />
+                <Button Content="{x:Static components:DesignData.DataTypeValue}" />
+                <Button Content="{x:Static components:DesignData.RungValue}" />
+                <Button Content="{x:Static components:DesignData.TagValue}" />
+                <Button Content="{x:Static components:DesignData.VariableValue}" />
+                <Button Content="{x:Static components:DesignData.ReferenceValue}" />
+
             </StackPanel>
         </StackPanel>
     </Design.PreviewWith>
 
-    <a:TypedDataTemplateSelector x:Key="ValueTemplates">
+    <DataTemplate x:Key="ValueDisplay" x:DataType="observers:ValueObserver">
+
+        <TextBlock
+            Text="{Binding Text}"
+            TextTrimming="CharacterEllipsis"
+            properties:StyleClasses.Classes="{Binding Group}">
+
+            <TextBlock.Styles>
+                <Style Selector="TextBlock.Default">
+                    <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushDefault}" />
+                </Style>
+                <Style Selector="TextBlock.Boolean">
+                    <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushBoolean}" />
+                </Style>
+                <Style Selector="TextBlock.Number">
+                    <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushNumber}" />
+                </Style>
+                <Style Selector="TextBlock.Text">
+                    <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushText}" />
+                </Style>
+                <Style Selector="TextBlock.Date">
+                    <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushDate}" />
+                </Style>
+                <Style Selector="TextBlock.Enum">
+                    <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushEnum}" />
+                </Style>
+                <Style Selector="TextBlock.Element">
+                    <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushElement}" />
+                </Style>
+                <Style Selector="TextBlock.Collection">
+                    <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushCollection}" />
+                </Style>
+                <Style Selector="TextBlock.Variable">
+                    <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+                </Style>
+                <Style Selector="TextBlock.Reference">
+                    <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+                </Style>
+            </TextBlock.Styles>
+
+        </TextBlock>
+    </DataTemplate>
+
+    <!--<a:TypedDataTemplateSelector x:Key="ValueTemplates">
 
         <a:TypedDataTemplateSelector.DefaultTemplate>
             <DataTemplate DataType="system:Object">
-                <TextBlock Text="null"
-                           Foreground="{DynamicResource TypeGroupForegroundBrushDefault}" />
+                <TextBlock
+                    Text="null"
+                    Foreground="{DynamicResource TypeGroupForegroundBrushDefault}" />
             </DataTemplate>
         </a:TypedDataTemplateSelector.DefaultTemplate>
 
@@ -280,23 +316,7 @@
                 </ToolTip.Tip>
             </Panel>
         </DataTemplate>
-    </a:TypedDataTemplateSelector>
+    </a:TypedDataTemplateSelector>-->
 
-    <DataTemplate x:Key="ValueItemTemplate" x:DataType="observers:ValueObserver">
-        <Grid ColumnDefinitions="30,*,Auto">
-            <PathIcon
-                Grid.Column="0"
-                Theme="{Binding Group, Converter={StaticResource TypeGroupToIconConverter}}"
-                Margin="0 0 10 0" />
-            <ContentControl
-                Grid.Column="1"
-                Content="{Binding Value}"
-                ContentTemplate="{StaticResource ValueTemplates}" />
-            <TextBlock
-                Grid.Column="2"
-                Text="{Binding Type}"
-                Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
-                Margin="40 0 10 0" />
-        </Grid>
-    </DataTemplate>
+
 </ResourceDictionary>

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoSpex.Client.Resources;
-using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using AutoSpex.Persistence;
@@ -59,32 +58,6 @@ public partial class EnvironmentObserver : Observer<Environment>,
         Messenger.Send(new Targeted(this));
     }
 
-    /// <inheritdoc />
-    protected override async Task Delete()
-    {
-        if (!IsSelected) return;
-
-        var message = Messenger.Send(new GetSelected(this));
-        var selected = message.Responses.Where(x => x is EnvironmentObserver).Cast<EnvironmentObserver>().ToList();
-
-        if (selected.Count == 1)
-        {
-            var delete = await Prompter.PromptDeleteItem(Name);
-            if (delete is not true) return;
-        }
-        else
-        {
-            var delete = await Prompter.PromptDeleteItems($"{selected.Count.ToString()} selected items");
-            if (delete is not true) return;
-        }
-
-        var result = await Mediator.Send(new DeleteEnvironments(selected.Select(n => n.Id)));
-        if (result.IsFailed) return;
-
-        foreach (var deleted in selected)
-            Messenger.Send(new Deleted(deleted));
-    }
-
     /// <summary>
     /// Update the local <see cref="IsTarget"/> property when the message has been received to keep all instances in sync.
     /// </summary>
@@ -130,6 +103,12 @@ public partial class EnvironmentObserver : Observer<Environment>,
         return Mediator.Send(new RenameEnvironment(this));
     }
 
+    /// <inheritdoc />
+    protected override Task<Result> DeleteItems(IEnumerable<Observer> observers)
+    {
+        return Mediator.Send(new DeleteEnvironments(observers.Select(o => o.Id)));
+    }
+
     /// <summary>
     /// A message that notifies when an environment is selected as the target environment to be run.
     /// </summary>
@@ -148,20 +127,28 @@ public partial class EnvironmentObserver : Observer<Environment>,
 
         yield return new MenuActionItem
         {
+            Header = "Target",
+            Icon = Resource.Find("IconLineTarget"),
+            Command = TargetCommand,
+            DetermineVisibility = () => HasSingleSelection
+        };
+
+        yield return new MenuActionItem
+        {
             Header = "Open",
-            Icon = Resource.Find("IconLineLink"),
+            Icon = Resource.Find("IconLineLaunch"),
             Command = NavigateCommand,
             Gesture = new KeyGesture(Key.Enter),
-            DetermineVisibility = () => IsSolelySelected
+            DetermineVisibility = () => HasSingleSelection
         };
 
         yield return new MenuActionItem
         {
             Header = "Rename",
-            Icon = Resource.Find("IconFilledPencilAlt"),
+            Icon = Resource.Find("IconFilledPencil"),
             Command = RenameCommand,
             Gesture = new KeyGesture(Key.E, KeyModifiers.Control),
-            DetermineVisibility = () => IsSolelySelected
+            DetermineVisibility = () => HasSingleSelection
         };
 
         yield return new MenuActionItem
@@ -170,7 +157,57 @@ public partial class EnvironmentObserver : Observer<Environment>,
             Icon = Resource.Find("IconFilledClone"),
             Command = DuplicateCommand,
             Gesture = new KeyGesture(Key.D, KeyModifiers.Control),
-            DetermineVisibility = () => IsSolelySelected
+            DetermineVisibility = () => HasSingleSelection
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Delete",
+            Icon = Resource.Find("IconFilledTrash"),
+            Classes = "danger",
+            Command = DeleteSelectedCommand,
+            Gesture = new KeyGesture(Key.Delete)
+        };
+    }
+
+    /// <inheritdoc />
+    protected override IEnumerable<MenuActionItem> GenerateMenuItems()
+    {
+        yield return new MenuActionItem
+        {
+            Header = "Run",
+            Icon = Resource.Find("IconFilledLightning"),
+            Classes = "accent"
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Target",
+            Icon = Resource.Find("IconLineTarget"),
+            Command = TargetCommand
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Open",
+            Icon = Resource.Find("IconLineLaunch"),
+            Command = NavigateCommand
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Rename",
+            Icon = Resource.Find("IconFilledPencil"),
+            Command = RenameCommand,
+            Gesture = new KeyGesture(Key.E, KeyModifiers.Control)
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Duplicate",
+            Icon = Resource.Find("IconFilledClone"),
+            Command = DuplicateCommand,
+            Gesture = new KeyGesture(Key.D, KeyModifiers.Control)
         };
 
         yield return new MenuActionItem

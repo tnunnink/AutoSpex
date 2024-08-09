@@ -123,7 +123,7 @@
                         <Border
                             Grid.Column="0"
                             x:Name="SelectionBorder"
-                            Width="3" CornerRadius="5" Margin="5 7" />
+                            Width="3" CornerRadius="5" Margin="5 7 0 7" />
                         <ContentPresenter
                             Grid.Column="1"
                             x:Name="PART_ContentPresenter"

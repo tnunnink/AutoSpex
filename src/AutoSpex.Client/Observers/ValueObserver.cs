@@ -10,78 +10,66 @@ namespace AutoSpex.Client.Observers;
 /// value.
 /// </summary>
 /// <param name="value">The object value to wrap.</param>
-public class ValueObserver(object? value) : Observer
+public class ValueObserver(object? value) : NullableObserver<object>(value)
 {
-    /// <summary>
-    /// The internal model value of the observer instance.
-    /// </summary>
-    public object? Model { get; } = value;
-
     /// <summary>
     /// The value of the observer instance. 
     /// </summary>
     /// <remarks>
-    /// If the underlying value is a <see cref="Variable"/> or <see cref="Criterion"/>, then this value return a wrapped
-    /// observer instance of those types. Any other type is the direct value.
+    /// If the underlying value is a model that has a corresponding observer type, then this value returns a wrapped
+    /// observer instance of those types. Any other type is the direct type value.
     /// </remarks>
     public object? Value => GetValue();
 
     /// <summary>
     /// The text display for the value. This should be a common name that can be used to identify the value.
     /// </summary>
-    public override string Name => Model.ToText();
+    public string Text => Model.ToText();
 
     /// <summary>
     /// The user-friendly type name of the value.
     /// </summary>
-    public string Type => GetTypeName();
+    public string Type => Model?.GetType().CommonName() ?? string.Empty;
 
     /// <summary>
     /// The <see cref="TypeGroup"/> in which this value belongs. 
     /// </summary>
-    public TypeGroup Group => GetTypeGroup();
+    public TypeGroup Group => TypeGroup.FromType(Model?.GetType());
+
+    /// <summary>
+    /// Indicates that the value is empty (null or empty text).
+    /// </summary>
+    public bool IsEmpty => Value is null || (Value is string text && string.IsNullOrEmpty(text));
+
+    /// <summary>
+    /// A default or null value observer instance.
+    /// </summary>
+    public static ValueObserver Default => new(default);
 
     /// <inheritdoc />
     public override bool Filter(string? filter)
     {
         return base.Filter(filter)
-               || Name.Satisfies(filter)
+               || Text.Satisfies(filter)
                || Type.Satisfies(filter)
                || Group.Name.Satisfies(filter);
     }
 
+    /// <inheritdoc />
+    public override string ToString() => Model?.ToString() ?? string.Empty;
+
+    /// <summary>
+    /// Returns the wrapped model value if the model has a corresponding observer type.
+    /// </summary>
     private object? GetValue()
     {
         return Model switch
         {
             Variable variable => new VariableObserver(variable),
+            Reference reference => new ReferenceObserver(reference),
             Criterion criterion => new CriterionObserver(criterion),
             List<Argument> arguments => arguments.Select(a => new ArgumentObserver(a)),
             _ => Model
         };
-    }
-
-    private string GetTypeName()
-    {
-        var type = Model switch
-        {
-            Variable variable => variable.GetType(),
-            Criterion criterion => criterion.GetType(),
-            _ => Model?.GetType()
-        };
-
-        return type?.CommonName() ?? string.Empty;
-    }
-
-    private TypeGroup GetTypeGroup()
-    {
-        var type = Model switch
-        {
-            Variable variable => variable.GetType(),
-            Criterion criterion => criterion.GetType(),
-            _ => Model?.GetType()
-        };
-
-        return TypeGroup.FromType(type);
     }
 }

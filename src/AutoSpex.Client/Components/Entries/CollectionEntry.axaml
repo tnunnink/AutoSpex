@@ -8,7 +8,7 @@
     <Design.PreviewWith>
         <Border Padding="20" Height="300" Width="600">
             <ContentControl
-                Content="{x:Static components:DesignData.CollectionValueObserver}"
+                Content="{x:Static components:DesignData.CollectionValue}"
                 ContentTemplate="{DynamicResource CollectionEntry}"
                 VerticalAlignment="Center" HorizontalAlignment="Center" />
         </Border>
@@ -18,14 +18,15 @@
     <DataTemplate x:Key="CollectionEntry" x:DataType="observers:ValueObserver">
 
         <controls:Entry
-            Value="{Binding Value}">
+            Value="{Binding }"
+            ValueTemplate="{StaticResource ValueDisplay}">
 
             <controls:Entry.ItemTemplate>
                 <DataTemplate x:DataType="observers:ArgumentObserver">
                     <controls:Entry
                         Watermark="Enter value"
                         Value="{Binding Value}"
-                        ValueTemplate="{StaticResource ValueTemplates}"
+                        ValueTemplate="{StaticResource ValueDisplay}"
                         ItemTemplate="{StaticResource ValueItemTemplate}"
                         Populate="{Binding Suggestions}"
                         CommitCommand="{Binding UpdateValueCommand}">

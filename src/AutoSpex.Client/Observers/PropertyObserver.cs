@@ -25,7 +25,7 @@ public partial class PropertyObserver(Property model, ElementObserver element) :
     /// <summary>
     /// The property name.
     /// </summary>
-    public string Name => Model.Name;
+    public override string Name => Model.Name;
 
     /// <summary>
     /// The UI friendly type name of the current property.
@@ -35,7 +35,7 @@ public partial class PropertyObserver(Property model, ElementObserver element) :
     /// <summary>
     /// The value of the property retrieved from the instance help within <see cref="_element"/>. 
     /// </summary>
-    public object? Value => Model.GetValue(_element.Model);
+    public ValueObserver Value => new(Model.GetValue(_element.Model));
 
     /// <summary>
     /// Represents the path of the current <see cref="Property"/> object.

@@ -22,7 +22,8 @@ internal class GetContainerNodesHandler(IConnectionManager manager)
             UNION ALL
             SELECT n.NodeId, n.ParentId, n.Type, n.Name, t.Depth + 1 as Depth
             FROM Node n
-                    INNER JOIN Tree t ON n.ParentId = t.NodeId
+            INNER JOIN Tree t ON n.ParentId = t.NodeId
+            WHERE n.Type = 'Container'
         )
 
         SELECT NodeId, ParentId, Type, Name
@@ -34,19 +35,19 @@ internal class GetContainerNodesHandler(IConnectionManager manager)
     {
         using var connection = await manager.Connect(cancellationToken);
 
-        var records = await connection.QueryAsync<Node>(GetContainerNodes);
+        var containers = await connection.QueryAsync<Node>(GetContainerNodes);
 
         var lookup = new Dictionary<Guid, Node>();
 
-        foreach (var record in records)
+        foreach (var container in containers)
         {
-            lookup.Add(record.NodeId, record);
+            lookup.Add(container.NodeId, container);
 
-            if (lookup.TryGetValue(record.ParentId, out var parent))
-                parent.AddNode(record);
+            if (lookup.TryGetValue(container.ParentId, out var parent))
+                parent.AddNode(container);
         }
         
-        var results = lookup.Values.Where(x => x.Type == NodeType.Container).AsEnumerable();
+        var results = lookup.Values.OrderBy(x => x.Depth).AsEnumerable();
         return Result.Ok(results);
     }
 }

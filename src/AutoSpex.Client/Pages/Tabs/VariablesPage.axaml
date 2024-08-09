@@ -19,7 +19,7 @@
                           VerticalAlignment="Top">
 
             <controls:Section.Icon>
-                <PathIcon Theme="{StaticResource IconLineBraces}" />
+                <PathIcon Theme="{StaticResource IconLineAt}" />
             </controls:Section.Icon>
 
             <controls:Section.Action>

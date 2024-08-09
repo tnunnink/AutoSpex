@@ -24,7 +24,7 @@ public partial class OutcomeObserver : Observer<Outcome>,
 
     public override Guid Id => Model.SpecId;
     public override string Name => Model.Name;
-    public NodeObserver? Node => FindInstance<NodeObserver>();
+    public NodeObserver? Node => FindParent<NodeObserver>();
     public long Duration => Model.Duration;
 
     [ObservableProperty] private ResultState _result = ResultState.None;

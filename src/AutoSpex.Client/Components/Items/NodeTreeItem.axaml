@@ -34,7 +34,8 @@
             <Grid ColumnDefinitions="Auto,*">
                 <PathIcon
                     Grid.Column="0"
-                    Theme="{Binding Icon, Converter={StaticResource KeyToIconConverter}}"
+                    Theme="{Binding Icon, Converter={StaticResource KeyIconConverter}}"
+                    FontSize="14"
                     Margin="0 0 5 0" />
                 <controls:HighlightableTextBlock
                     Grid.Column="1"

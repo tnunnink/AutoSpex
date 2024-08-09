@@ -17,7 +17,7 @@
 
                 <Grid ColumnDefinitions="Auto,*,Auto">
                     <StackPanel Grid.Column="0" Spacing="5" HorizontalAlignment="Left" Orientation="Horizontal">
-                        <PathIcon Theme="{Binding Icon, Converter={StaticResource KeyToIconConverter}}"
+                        <PathIcon Theme="{Binding Icon, Converter={StaticResource KeyIconConverter}}"
                                   Classes="size-lg" />
                         <ContentControl
                             Content="{Binding Run}"
@@ -115,18 +115,18 @@
                         <Button
                             Command="{Binding Run.CollapseAllCommand}"
                             Theme="{StaticResource IconButtonPillCenter}"
-                            properties:Icon.Theme="{StaticResource IconChevronCollapse}"
+                            properties:Icon.Theme="{StaticResource IconLineCollapse}"
                             Classes="size-sm"
                             ToolTip.Tip="Collapse All" />
                         <Button
                             Command="{Binding Run.ExpandAllCommand}"
                             Theme="{StaticResource IconButtonPillCenter}"
-                            properties:Icon.Theme="{StaticResource IconChevronExpand}"
+                            properties:Icon.Theme="{StaticResource IconLineExpand}"
                             Classes="size-sm"
                             ToolTip.Tip="Expand All" />
                         <Button
                             Theme="{StaticResource IconButtonPillRight}"
-                            properties:Icon.Theme="{StaticResource IconDots}"
+                            properties:Icon.Theme="{StaticResource IconEllipsis}"
                             ToolTip.Tip="Options" />
                     </StackPanel>
 

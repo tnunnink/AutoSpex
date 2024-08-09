@@ -10,13 +10,15 @@ using AutoSpex.Persistence;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
 using L5Sharp.Core;
 
 namespace AutoSpex.Client.Pages;
 
 [UsedImplicitly]
-public partial class SourceExplorerPageModel(Element element) : PageViewModel
+public partial class SourceExplorerPageModel(Element element) : PageViewModel,
+    IRecipient<ElementObserver.Open>
 {
     public SourceExplorerPageModel() : this(Element.Tag)
     {
@@ -32,7 +34,7 @@ public partial class SourceExplorerPageModel(Element element) : PageViewModel
 
     [ObservableProperty] private string? _filterText;
 
-    [ObservableProperty] private int _pageSize = 30;
+    [ObservableProperty] private int _pageSize = 100;
 
     public ObservableCollection<SourceObserver> Sources { get; } = [];
     public ObservableCollection<ElementObserver> Elements { get; } = [];
@@ -67,23 +69,39 @@ public partial class SourceExplorerPageModel(Element element) : PageViewModel
         Element = element;
     }
 
-    protected override async void OnPropertyChanged(PropertyChangedEventArgs e)
+    public void Receive(ElementObserver.Open message)
+    {
+        SelectedElement = message.Element;
+    }
+
+    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
         base.OnPropertyChanged(e);
 
         if (e.PropertyName is nameof(Source) or nameof(FilterText) or nameof(Element))
         {
-            UpdateComponents();
+            UpdateElements();
         }
     }
 
-    private async void UpdateComponents()
+    /// <summary>
+    /// Kicks off the async query element method and provides it with a cancellation of 10 seconds to prevent overly
+    /// long processing times. In theory the page size limits should help precent cancellations.
+    /// </summary>
+    private async void UpdateElements()
     {
         var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(10));
-        await FindComponents(cancellation.Token);
-    }
 
-    private Task FindComponents(CancellationToken token)
+        try
+        {
+            await QueryElements(cancellation.Token);
+        }
+        catch (OperationCanceledException)
+        {
+        }
+    }
+    
+    private Task QueryElements(CancellationToken token)
     {
         return Task.Run(() =>
         {
@@ -111,7 +129,7 @@ public partial class SourceExplorerPageModel(Element element) : PageViewModel
                 Dispatcher.UIThread.Invoke(() => Elements.Refresh(results));
                 return;
             }
-            
+
             //If a tag and the tag name has members, we want to return the results that match.
             var tags = results
                 .Select(r => r.Model)
@@ -124,7 +142,6 @@ public partial class SourceExplorerPageModel(Element element) : PageViewModel
                 .ToList();
 
             Dispatcher.UIThread.Invoke(() => Elements.Refresh(tags));
-            
         }, token);
     }
 }

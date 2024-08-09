@@ -30,10 +30,10 @@ public class EvaluationObserver(Evaluation model) : Observer<Evaluation>(model)
         FilterText = filter;
 
         var passes = string.IsNullOrEmpty(filter)
-                    || Candidate.Name.Satisfies(filter)
+                    || Candidate.Filter(filter)
                     || Criteria.Satisfies(filter)
-                    || Expected.Any(e => e.Name.Satisfies(filter))
-                    || Actual.Name.Satisfies(filter)
+                    || Expected.Any(x => x.Filter(filter))
+                    || Actual.Filter(filter)
                     || Error is not null && Error.Message.Satisfies(filter)
                     || SourceName.Satisfies(filter);
 

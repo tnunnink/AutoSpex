@@ -20,6 +20,7 @@
         <DockPanel>
 
             <Border DockPanel.Dock="Top"
+                    IsVisible="{Binding Source, Converter={x:Static ObjectConverters.IsNotNull}}"
                     Background="{a:ThemeResource Container2BackgroundBrush}"
                     Padding="5">
 
@@ -115,7 +116,7 @@
                                         FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
                                     <PathIcon
                                         Theme="{StaticResource IconClose}"
-                                        Classes="size-sm" />
+                                        FontSize="8" />
                                 </StackPanel>
                             </DataTemplate>
                         </Button.ContentTemplate>
@@ -128,6 +129,7 @@
                 DockPanel.Dock="Top"
                 x:Name="NameTextBox"
                 Text="{Binding FilterText}"
+                IsVisible="{Binding Source, Converter={x:Static ObjectConverters.IsNotNull}}"
                 Watermark="Search source elements"
                 Background="Transparent"
                 BorderBrush="{a:ThemeResource Container1BorderBrush}"
@@ -145,18 +147,39 @@
                 </TextBox.Styles>
             </TextBox>
 
-            <ListBox
-                ItemsSource="{Binding Elements}"
-                ItemContainerTheme="{StaticResource ListBoxItemSimple}"
-                ItemTemplate="{StaticResource ElementListItem}"
-                Padding="5"
-                ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-            </ListBox>
+            <controls:DefaultMessage
+                DockPanel.Dock="Top"
+                Margin="0 200"
+                IsVisible="{Binding Source, Converter={x:Static ObjectConverters.IsNull}}"
+                HeaderIcon="{StaticResource IconThemedSource}"
+                HeaderText="No sources found"
+                CustomMessage="Add a source file to an environment to view content." />
+
+            <Panel IsVisible="{Binding Source, Converter={x:Static ObjectConverters.IsNotNull}}">
+
+                <ListBox
+                    ItemsSource="{Binding Elements}"
+                    ItemContainerTheme="{StaticResource ListBoxItemSimple}"
+                    ItemTemplate="{StaticResource ElementListItem}"
+                    IsVisible="{Binding SelectedElement, Converter={x:Static ObjectConverters.IsNull}}"
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                    Padding="5" />
+
+                <TreeView
+                    ItemsSource="{Binding SelectedElement.Properties, FallbackValue={x:Null}}"
+                    ItemContainerTheme="{StaticResource TreeViewItemSimple}"
+                    ItemTemplate="{StaticResource PropertyTreeItem}"
+                    IsVisible="{Binding SelectedElement, Converter={x:Static ObjectConverters.IsNotNull}}"
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                    Padding="5" />
+
+            </Panel>
 
         </DockPanel>
 
         <controls:Prompt.Footer>
-            <DockPanel LastChildFill="False">
+            <DockPanel LastChildFill="False"
+                       IsVisible="{Binding Source, Converter={x:Static ObjectConverters.IsNotNull}}">
                 <TextBlock
                     DockPanel.Dock="Left"
                     Text="{Binding Source.LocalPath, FallbackValue={x:Null}}"

@@ -15,6 +15,11 @@ public class Source
     //to it and the means for releasing its memory when done.
     private L5X? _content;
 
+    /// <summary>
+    /// The internal override lookup for this source.
+    /// </summary>
+    private Dictionary<Guid, Variable>? _overrides;
+
     [UsedImplicitly]
     public Source()
     {
@@ -86,13 +91,13 @@ public class Source
     /// </remarks>
     [JsonIgnore]
     public bool Exists => File.Exists(Uri.LocalPath);
-    
+
     /// <summary>
     /// Gets the collection of <see cref="Variable"/> objects representing the overrides that allow the user to
     /// change the input data to variables that are referenced on any node in the project.
     /// </summary>
     public List<Variable> Overrides { get; init; } = [];
-    
+
     /// <summary>
     /// Adds an override value for a specified variable in the environment.
     /// </summary>
@@ -126,6 +131,21 @@ public class Source
     {
         _content = null;
         GC.Collect();
+    }
+
+    /// <summary>
+    /// Overrides the values of the provided variables using the configured <see cref="Overrides"/> collection.
+    /// </summary>
+    /// <param name="variables">The variables whose values should be overridden.</param>
+    public void Override(IEnumerable<Variable> variables)
+    {
+        _overrides ??= Overrides.ToDictionary(x => x.VariableId);
+
+        foreach (var variable in variables)
+        {
+            if (!_overrides.TryGetValue(variable.VariableId, out var match)) continue;
+            variable.Value = match.Value;
+        }
     }
 
     /// <summary>

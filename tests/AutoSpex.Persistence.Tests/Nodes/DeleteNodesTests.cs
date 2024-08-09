@@ -1,28 +1,28 @@
 ﻿namespace AutoSpex.Persistence.Tests.Nodes;
 
 [TestFixture]
-public class DeleteNodeTests
+public class DeleteNodesTests
 {
     [Test]
-    public async Task DeleteNode_NonExistingNode_ShouldReturnSuccess()
+    public async Task DeleteNodes_SingleNonExistingNode_ShouldReturnSuccess()
     {
         var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
 
-        var result = await mediator.Send(new DeleteNode(Guid.NewGuid()));
+        var result = await mediator.Send(new DeleteNodes([Guid.NewGuid()]));
 
         result.IsSuccess.Should().BeTrue();
     }
 
     [Test]
-    public async Task DeleteNode_ContainerNode_ShouldReturnSuccess()
+    public async Task DeleteNodes_SingleContainerNode_ShouldReturnSuccess()
     {
         var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
         var node = Node.NewContainer();
         await mediator.Send(new CreateNode(node));
 
-        var deleted = await mediator.Send(new DeleteNode(node.NodeId));
+        var deleted = await mediator.Send(new DeleteNodes([node.NodeId]));
 
         deleted.IsSuccess.Should().BeTrue();
         var get = await mediator.Send(new GetNode(node.NodeId));
@@ -30,14 +30,14 @@ public class DeleteNodeTests
     }
 
     [Test]
-    public async Task DeleteNode_SpecNode_ShouldReturnSuccess()
+    public async Task DeleteNodes_SingleSpecNode_ShouldReturnSuccess()
     {
         var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
         var node = Node.NewSpec();
         await mediator.Send(new CreateNode(node));
 
-        var deleted = await mediator.Send(new DeleteNode(node.NodeId));
+        var deleted = await mediator.Send(new DeleteNodes([node.NodeId]));
 
         deleted.IsSuccess.Should().BeTrue();
         var get = await mediator.Send(new GetNode(node.NodeId));

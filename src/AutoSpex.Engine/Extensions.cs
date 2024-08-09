@@ -62,23 +62,23 @@ public static class Extensions
     }
 
     /// <summary>
-    /// Based on the object type return a UI friendly text representation for which we can identify this object.
+    /// Based on the object type return a UI friendly text representation for which we can identify this object value.
     /// </summary>
     public static string ToText(this object? candidate)
     {
         return candidate switch
         {
-            /*bool b => b.ToString().ToLowerInvariant(),*/
+            bool b => b.ToString().ToLowerInvariant(),
             Tag tag => tag.TagName,
             DataTypeMember member => member.Name,
             Parameter parameter => parameter.Name,
-            LogixCode code => $"{code.Container}/{code.Routine?.Name}/{code.Location}",
+            LogixCode code => code.Location,
             LogixComponent component => component.Name,
             LogixEnum enumeration => enumeration.Name,
             string text => text,
             IEnumerable enumerable =>
                 $"{string.Join(", ", enumerable.GetType().GetGenericArguments().Select(CommonName).ToArray())}s",
-            _ => candidate?.ToString() ?? string.Empty
+            _ => candidate?.ToString() ?? "null"
         };
     }
 
@@ -108,7 +108,7 @@ public static class Extensions
     /// <param name="typeName">The name of the type.</param>
     /// <returns>A <see cref="Type"/> object if found, otherwise null.</returns>
     /// <remarks>
-    /// This is a specialized extension which tries to get the Type form a string type which is how some data
+    /// This is a specialized extension which tries to get the Type form a string which is how some data
     /// will be persisted into the database. This method should work for standard .NET types, types defined in L5Sharp,
     /// as well as types defined in this AutoSpex.Engine project.
     /// </remarks>

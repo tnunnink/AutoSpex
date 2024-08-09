@@ -58,6 +58,24 @@ public class SaveSpecTests
 
         result.IsSuccess.Should().BeTrue();
     }
+
+    [Test]
+    public async Task SaveSpec_SpecWithReferences_ShouldBeSuccess()
+    {
+        using var context = new TestContext();
+        var mediator = context.Resolve<IMediator>();
+        var node = Node.NewSpec();
+        await mediator.Send(new CreateNode(node));
+        
+        var spec = new Spec(node)
+            .Find(Element.Program)
+            .Where(Element.Program.Property("Name"), Operation.EqualTo, new Reference("SomeName"))
+            .ShouldHave(Element.Program.Property("Disabled"), Operation.False);
+
+        var result = await mediator.Send(new SaveSpec(spec));
+
+        result.IsSuccess.Should().BeTrue();
+    }
     
     [Test]
     public async Task SaveSpec_SpecAlreadyExists_ShouldBeSuccess()

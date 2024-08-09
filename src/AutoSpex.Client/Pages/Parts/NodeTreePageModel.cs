@@ -13,16 +13,13 @@ using JetBrains.Annotations;
 namespace AutoSpex.Client.Pages;
 
 [UsedImplicitly]
-public partial class NodesPageModel : PageViewModel,
+public partial class NodeTreePageModel : PageViewModel,
     IRecipient<Observer.Created>,
     IRecipient<Observer.Deleted>,
     IRecipient<Observer.Renamed>,
     IRecipient<Observer.GetSelected>,
     IRecipient<NodeObserver.Moved>
 {
-    public override string Route => "Specs";
-    public override string Title => "Specs";
-    public override string Icon => "Specs";
     public ObserverCollection<Node, NodeObserver> Nodes { get; } = [];
     public ObservableCollection<NodeObserver> Selected { get; } = [];
 
@@ -37,26 +34,6 @@ public partial class NodesPageModel : PageViewModel,
 
         Nodes.Refresh(result.Value.Select(n => new NodeObserver(n)));
         Nodes.Sort(n => n.Name, StringComparer.OrdinalIgnoreCase);
-    }
-
-    [RelayCommand]
-    private async Task AddNode(NodeType? type)
-    {
-        if (type is null) return;
-
-        var node = Node.New(type);
-        var result = await Mediator.Send(new CreateNode(node));
-        if (result.IsFailed) return;
-
-        var observer = new NodeObserver(node) { IsNew = true };
-
-        Nodes.Add(observer);
-        Nodes.Sort(n => n.Name, StringComparer.OrdinalIgnoreCase);
-
-        Selected.Clear();
-        observer.Locate();
-
-        await Navigator.Navigate(observer);
     }
 
     /// <summary>
@@ -97,8 +74,8 @@ public partial class NodesPageModel : PageViewModel,
         if (message.Observer is not NodeObserver node) return;
         if (node.ParentId != Guid.Empty) return;
 
+        Nodes.Add(node);
         Nodes.Sort(n => n.Name, StringComparer.OrdinalIgnoreCase);
-        Selected.Clear();
         node.Locate();
     }
 

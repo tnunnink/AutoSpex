@@ -14,7 +14,6 @@ public class Variable : IEquatable<Variable>
     /// </summary>
     public Variable()
     {
-        ChangeGroup(TypeGroup.Text);
     }
 
     /// <summary>
@@ -33,7 +32,7 @@ public class Variable : IEquatable<Variable>
     /// <exception cref="ArgumentNullException"><paramref name="group"/> is <c>null</c>.</exception>
     public Variable(TypeGroup group)
     {
-        ChangeGroup(group);
+        Group = group ?? throw new ArgumentNullException(nameof(group));
     }
 
     /// <summary>
@@ -78,14 +77,14 @@ public class Variable : IEquatable<Variable>
     /// </summary>
     [JsonConverter(typeof(SmartEnumNameConverter<TypeGroup, int>))]
     [JsonInclude]
-    public TypeGroup Group { get; private set; } = TypeGroup.Default;
+    public TypeGroup Group { get; set; } = TypeGroup.Text;
 
     /// <summary>
     /// The object value of the <see cref="Variable"/>.
     /// </summary>
     [JsonConverter(typeof(JsonObjectConverter))]
     [JsonInclude]
-    public object? Value { get; set; }
+    public object? Value { get; set; } = string.Empty;
 
     /// <summary>
     /// The type of the variable value.
@@ -94,22 +93,12 @@ public class Variable : IEquatable<Variable>
     public Type? Type => Value?.GetType();
 
     /// <summary>
-    /// The <see cref="Engine.Reference"/> object that refers to the name of this Variable.
+    /// Creates a <see cref="Engine.Reference"/> object that refers to the name of this Variable.
     /// </summary>
-    /// <value>A <see cref="Engine.Reference"/> with the name of this variable.</value>
-    [JsonIgnore]
-    public Reference Reference => new(Name, Value);
-
-    /// <summary>
-    /// Updates the variable <see cref="Group"/> that the value represents.
-    /// </summary>
-    /// <param name="group">A <see cref="TypeGroup"/> type.</param>
-    /// <remarks>This also resets <see cref="Value"/> and <see cref="Type"/> based on the default value for the provided group.</remarks>
-    public void ChangeGroup(TypeGroup group)
-    {
-        Group = group ?? throw new ArgumentNullException(nameof(group));
-        Value = group.DefaultValue;
-    }
+    /// <returns>
+    /// A new <see cref="Engine.Reference"/> with the name and value of this variable.
+    /// </returns>
+    public Reference Reference() => new(Name, Value);
 
     /// <inheritdoc />
     public override string ToString() => Name;

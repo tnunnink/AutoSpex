@@ -26,6 +26,7 @@ public partial class SpecObserver : Observer<Spec>,
         Range = Model.Range.Criterion;
 
         Track(nameof(Element));
+        Track(nameof(ElementName));
         Track(nameof(FilterInclusion));
         Track(nameof(VerificationInclusion));
         Track(nameof(RangeEnabled));
@@ -207,6 +208,45 @@ public partial class SpecObserver : Observer<Spec>,
         foreach (var filter in selected)
             Verifications.Remove(filter);
     }
+    
+    /// <inheritdoc />
+    protected override IEnumerable<MenuActionItem> GenerateContextItems()
+    {
+        yield return new MenuActionItem
+        {
+            Header = "Open",
+            Icon = Resource.Find("IconLineLaunch"),
+            Command = NavigateCommand,
+            DetermineVisibility = () => HasSingleSelection
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Rename",
+            Icon = Resource.Find("IconFilledPencil"),
+            Command = RenameCommand,
+            Gesture = new KeyGesture(Key.E, KeyModifiers.Control),
+            DetermineVisibility = () => HasSingleSelection
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Duplicate",
+            Icon = Resource.Find("IconFilledClone"),
+            Command = DuplicateCommand,
+            Gesture = new KeyGesture(Key.D, KeyModifiers.Control),
+            DetermineVisibility = () => HasSingleSelection
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Delete",
+            Icon = Resource.Find("IconFilledTrash"),
+            Classes = "danger",
+            Command = DeleteCommand,
+            Gesture = new KeyGesture(Key.Delete)
+        };
+    }
 
     /// <inheritdoc />
     protected override IEnumerable<MenuActionItem> GenerateMenuItems()
@@ -214,14 +254,14 @@ public partial class SpecObserver : Observer<Spec>,
         yield return new MenuActionItem
         {
             Header = "Open",
-            Icon = Resource.Find("IconLineLink"),
+            Icon = Resource.Find("IconLineLaunch"),
             Command = NavigateCommand
         };
-        
+
         yield return new MenuActionItem
         {
             Header = "Rename",
-            Icon = Resource.Find("IconFilledPen"),
+            Icon = Resource.Find("IconFilledPencil"),
             Command = RenameCommand,
             Gesture = new KeyGesture(Key.E, KeyModifiers.Control)
         };
@@ -244,7 +284,6 @@ public partial class SpecObserver : Observer<Spec>,
         };
     }
 
-    public static SpecObserver Empty => new(new Spec());
     public static implicit operator SpecObserver(Spec model) => new(model);
     public static implicit operator Spec(SpecObserver observer) => observer.Model;
 }

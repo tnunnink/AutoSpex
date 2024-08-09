@@ -3,7 +3,8 @@
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
                     xmlns:components="clr-namespace:AutoSpex.Client.Components"
-                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers">
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
 
     <Design.PreviewWith>
         <Border MinHeight="300" MinWidth="300">
@@ -17,8 +18,12 @@
     </Design.PreviewWith>
 
     <DataTemplate x:Key="EnvironmentListItem" x:DataType="observers:EnvironmentObserver">
-        <Border x:Name="Border" Focusable="True" Background="Transparent" Padding="{a:ThemeResource ListItemPadding}">
-            
+        <Border
+            x:Name="Border"
+            Focusable="True"
+            Background="Transparent"
+            Padding="{a:ThemeResource ListItemPadding}">
+
             <Border.ContextFlyout>
                 <MenuFlyout
                     ItemsSource="{Binding ContextItems}"
@@ -26,10 +31,34 @@
                     Placement="Pointer" />
             </Border.ContextFlyout>
 
-            <StackPanel Orientation="Horizontal" Spacing="5">
-                <PathIcon Theme="{Binding Icon, Converter={StaticResource KeyToIconConverter}}" />
-                <controls:HighlightableTextBlock Text="{Binding Name}" HighlightedText="{Binding FilterText}" />
-            </StackPanel>
+            <DockPanel LastChildFill="False">
+
+                <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" Spacing="7">
+                    <Button
+                        Command="{Binding TargetCommand}"
+                        Theme="{StaticResource IconButtonSmall}"
+                        properties:Icon.Theme="{StaticResource IconLineTarget}"
+                        Classes.accent="{Binding IsTarget}"
+                        ToolTip.Tip="Target" />
+                    <PathIcon Theme="{Binding Icon, Converter={StaticResource KeyIconConverter}}" />
+                    <controls:HighlightableTextBlock Text="{Binding Name}" HighlightedText="{Binding FilterText}" />
+                </StackPanel>
+
+                <Button
+                    DockPanel.Dock="Right"
+                    Theme="{StaticResource IconButtonSmall}"
+                    properties:Icon.Theme="{StaticResource IconEllipsis}"
+                    IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}"
+                    ToolTip.Tip="Options">
+                    <Button.Flyout>
+                        <MenuFlyout
+                            Placement="BottomEdgeAlignedRight"
+                            ItemsSource="{Binding MenuItems}"
+                            ItemContainerTheme="{StaticResource MenuActionItem}" />
+                    </Button.Flyout>
+                </Button>
+                
+            </DockPanel>
 
             <Interaction.Behaviors>
                 <ExecuteCommandOnDoubleTappedBehavior
@@ -51,8 +80,10 @@
         </Border>
     </DataTemplate>
 
-    <ControlTheme x:Key="EnvironmentListItemTheme" x:DataType="observers:NodeObserver"
-                  TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemSimple}">
+    <ControlTheme x:Key="EnvironmentListItemTheme"
+                  TargetType="ListBoxItem"
+                  BasedOn="{StaticResource ListBoxItemSimple}"
+                  x:DataType="observers:NodeObserver">
         <Setter Property="Padding" Value="0" />
         <Setter Property="IsVisible" Value="{Binding IsVisible}" />
         <Setter Property="IsSelected" Value="{Binding IsSelected}" />

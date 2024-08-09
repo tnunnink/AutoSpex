@@ -2,9 +2,9 @@
 
 namespace AutoSpex.Client.Pages;
 
-public partial class EnvironmentsPage : UserControl
+public partial class EnvironmentListPage : UserControl
 {
-    public EnvironmentsPage()
+    public EnvironmentListPage()
     {
         InitializeComponent();
     }

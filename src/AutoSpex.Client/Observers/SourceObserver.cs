@@ -163,7 +163,7 @@ public partial class SourceObserver : Observer<Source>
         {
             Header = "Inspect",
             Icon = Resource.Find("IconFilledBinoculars"),
-            DetermineVisibility = () => IsSolelySelected && Exists
+            DetermineVisibility = () => HasSingleSelection && Exists
         };
 
         yield return new MenuActionItem
@@ -171,7 +171,7 @@ public partial class SourceObserver : Observer<Source>
             Header = "Open In Explorer",
             Icon = Resource.Find("IconFilledFolderOpen"),
             Command = LocateCommand,
-            DetermineVisibility = () => IsSolelySelected && Exists
+            DetermineVisibility = () => HasSingleSelection && Exists
         };
 
         yield return new MenuActionItem
@@ -180,7 +180,7 @@ public partial class SourceObserver : Observer<Source>
             Icon = Resource.Find("IconFilledPen"),
             Command = RenameCommand,
             Gesture = new KeyGesture(Key.E, KeyModifiers.Control),
-            DetermineVisibility = () => IsSolelySelected
+            DetermineVisibility = () => HasSingleSelection
         };
 
         yield return new MenuActionItem
@@ -189,7 +189,7 @@ public partial class SourceObserver : Observer<Source>
             Icon = Resource.Find("IconFilledClone"),
             Command = DuplicateCommand,
             Gesture = new KeyGesture(Key.D, KeyModifiers.Control),
-            DetermineVisibility = () => IsSolelySelected && Exists
+            DetermineVisibility = () => HasSingleSelection && Exists
         };
 
         yield return new MenuActionItem

@@ -141,7 +141,7 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
     /// <param name="selector">A function to select the property to sort on.</param>
     /// <param name="comparer">A comparer used to determine the sort order.</param>
     /// <typeparam name="TField">The type of the selected property.</typeparam>
-    public void Sort<TField>(Func<TObserver, TField> selector, IComparer<TField>? comparer)
+    public void Sort<TField>(Func<TObserver, TField> selector, IComparer<TField>? comparer = default)
     {
         var sorted = this.OrderBy(selector, comparer).ToList();
 

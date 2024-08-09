@@ -18,13 +18,20 @@
     </Design.PreviewWith>
 
     <ControlTheme x:Key="{x:Type controls:DefaultMessage}" TargetType="controls:DefaultMessage">
+
         <Setter Property="Template">
             <ControlTemplate>
-                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="20" Spacing="3">
 
-                    <PathIcon Theme="{TemplateBinding HeaderIcon}"
-                              Padding="0" Margin="0 5"
-                              IsVisible="{Binding HeaderIcon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                <StackPanel
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Margin="20"
+                    Spacing="3">
+
+                    <PathIcon
+                        Theme="{TemplateBinding HeaderIcon}"
+                        Margin="0 5"
+                        IsVisible="{Binding HeaderIcon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ObjectConverters.IsNotNull}}" />
 
                     <TextBlock
                         Text="{TemplateBinding HeaderText}"
@@ -50,12 +57,13 @@
                                    TextAlignment="Center" />
                     </StackPanel>
 
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
-                                IsVisible="{Binding CustomMessage, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
-                        <TextBlock Text="{TemplateBinding CustomMessage}"
-                                   Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
-                                   TextAlignment="Center"
-                                   TextWrapping="Wrap" />
+                    <StackPanel
+                        IsVisible="{Binding CustomMessage, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                        <TextBlock
+                            Text="{TemplateBinding CustomMessage}"
+                            Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                            TextAlignment="Center"
+                            TextWrapping="Wrap" />
                     </StackPanel>
                 </StackPanel>
             </ControlTemplate>

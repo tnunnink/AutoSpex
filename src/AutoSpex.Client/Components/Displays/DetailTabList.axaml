@@ -45,7 +45,7 @@
                                         <Grid ColumnDefinitions="Auto,*,Auto">
 
                                             <PathIcon Grid.Column="0"
-                                                      Theme="{Binding Icon, Converter={StaticResource KeyToIconConverter}}" />
+                                                      Theme="{Binding Icon, Converter={StaticResource KeyIconConverter}}" />
 
                                             <TextBlock Grid.Column="1"
                                                        Text="{Binding Title}"

@@ -9,6 +9,6 @@
         <ResourceInclude Source="ResultStateItem.axaml" />
         <ResourceInclude Source="ResultSummary.axaml" />
         <ResourceInclude Source="SpecActions.axaml" />
-        <ResourceInclude Source="ValueTemplates.axaml" />
+        <ResourceInclude Source="ValueDisplay.axaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

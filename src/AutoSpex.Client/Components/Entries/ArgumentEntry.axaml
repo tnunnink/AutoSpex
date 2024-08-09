@@ -7,14 +7,18 @@
     <Design.PreviewWith>
         <Border Padding="20" Height="300" Width="600">
             <StackPanel Spacing="10" VerticalAlignment="Center" HorizontalAlignment="Center">
-                <ContentControl Content="{x:Static components:DesignData.EmptyArgument}"
-                                ContentTemplate="{DynamicResource ArgumentEntry}" />
-                <ContentControl Content="{x:Static components:DesignData.EnumArgument}"
-                                ContentTemplate="{DynamicResource ArgumentEntry}" />
-                <ContentControl Content="{x:Static components:DesignData.TextArgument}"
-                                ContentTemplate="{DynamicResource ArgumentEntry}" />
-                <ContentControl Content="{x:Static components:DesignData.VariableArgument}"
-                                ContentTemplate="{DynamicResource ArgumentEntry}" />
+                <ContentControl
+                    Content="{x:Static components:DesignData.EmptyArgument}"
+                    ContentTemplate="{DynamicResource ArgumentEntry}" />
+                <ContentControl
+                    Content="{x:Static components:DesignData.EnumArgument}"
+                    ContentTemplate="{DynamicResource ArgumentEntry}" />
+                <ContentControl
+                    Content="{x:Static components:DesignData.TextArgument}"
+                    ContentTemplate="{DynamicResource ArgumentEntry}" />
+                <ContentControl
+                    Content="{x:Static components:DesignData.VariableArgument}"
+                    ContentTemplate="{DynamicResource ArgumentEntry}" />
             </StackPanel>
         </Border>
     </Design.PreviewWith>
@@ -23,15 +27,15 @@
     <DataTemplate x:Key="ArgumentEntry" x:DataType="observers:ArgumentObserver">
         <controls:Entry
             Watermark="Enter value"
-            Value="{Binding Value.Value}"
-            ValueTemplate="{StaticResource ValueTemplates}"
+            Value="{Binding Value}"
+            ValueTemplate="{StaticResource ValueDisplay}"
             ItemTemplate="{StaticResource ValueItemTemplate}"
             Populate="{Binding Suggestions}"
             CommitCommand="{Binding UpdateValueCommand}">
             <controls:Entry.IsEmpty>
                 <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                    <Binding Path="Value" Converter="{x:Static ObjectConverters.IsNull}" />
-                    <Binding Path="Value" Converter="{x:Static StringConverters.IsNullOrEmpty}" />
+                    <Binding Path="Value.Value" Converter="{x:Static ObjectConverters.IsNull}" />
+                    <Binding Path="Value.Value" Converter="{x:Static StringConverters.IsNullOrEmpty}" />
                 </MultiBinding>
             </controls:Entry.IsEmpty>
         </controls:Entry>

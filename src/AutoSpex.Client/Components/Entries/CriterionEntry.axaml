@@ -43,7 +43,7 @@
                     <controls:Entry.ValueTemplate>
                         <DataTemplate x:DataType="engine:Property">
                             <StackPanel Orientation="Horizontal" Spacing="10">
-                                <PathIcon Theme="{Binding Group, Converter={StaticResource TypeGroupToIconConverter}}" />
+                                <PathIcon Theme="{Binding Group, Converter={StaticResource TypeGroupIconConverter}}" />
                                 <TextBlock Text="{Binding Path}" FontFamily="{a:ThemeResource CodeFontFamily}" />
                             </StackPanel>
                         </DataTemplate>
@@ -53,7 +53,7 @@
                             <Grid ColumnDefinitions="Auto,*,Auto">
                                 <PathIcon
                                     Grid.Column="0"
-                                    Theme="{Binding Group, Converter={StaticResource TypeGroupToIconConverter}}"
+                                    Theme="{Binding Group, Converter={StaticResource TypeGroupIconConverter}}"
                                     Margin="0 0 10 0" />
                                 <TextBlock
                                     Grid.Column="1" Text="{Binding Name}"
@@ -127,7 +127,7 @@
                                     IsVisible="{Binding !IsCriterion}" />
 
                                 <ContentControl
-                                    Content="{Binding Value}"
+                                    Content="{Binding Value.Value}"
                                     ContentTemplate="{StaticResource CriterionEntry}"
                                     IsVisible="{Binding IsCriterion}" />
                             </Panel>
@@ -146,7 +146,7 @@
 
                 <StackPanel Orientation="Horizontal" Spacing="10" Margin="{a:ThemeResource ButtonPadding}">
                     <PathIcon
-                        Theme="{Binding Property.Group, Converter={StaticResource TypeGroupToIconConverter}}" />
+                        Theme="{Binding Property.Group, Converter={StaticResource TypeGroupIconConverter}}" />
                     <TextBlock
                         Text="{Binding Property.Name}"
                         FontFamily="{a:ThemeResource CodeFontFamily}" />

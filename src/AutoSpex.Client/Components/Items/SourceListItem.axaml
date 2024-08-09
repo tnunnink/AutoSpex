@@ -73,7 +73,7 @@
                                ToolTip.Tip="File Size" />
 
                     <Button Theme="{StaticResource IconButton}"
-                            properties:Icon.Theme="{StaticResource IconDots}"
+                            properties:Icon.Theme="{StaticResource IconEllipsis}"
                             ToolTip.Tip="Options">
                         <Button.Flyout>
                             <MenuFlyout

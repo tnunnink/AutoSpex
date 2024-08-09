@@ -60,7 +60,7 @@ public class PostRunTests
                 new Criterion(Element.DataTypeMember.Property("DataType"), Operation.EqualTo, "SimpleType"));
         var run = new Run(environment);
         run.AddNode(spec.ToNode());
-        await run.ExecuteAsync([spec]);
+        await run.ExecuteAsync((ICollection<Spec>)[spec]);
         await mediator.Send(new CreateEnvironment(run.Environment));
 
         var result = await mediator.Send(new PostRun(run));

@@ -2,9 +2,9 @@
 
 namespace AutoSpex.Client.Pages;
 
-public partial class NodesPage : UserControl
+public partial class NodeTreePage : UserControl
 {
-    public NodesPage()
+    public NodeTreePage()
     {
         InitializeComponent();
     }

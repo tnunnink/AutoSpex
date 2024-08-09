@@ -81,7 +81,6 @@ public class Run
         Action<Outcome>? running = default, Action<Outcome>? complete = default, CancellationToken token = default)
     {
         var sources = Environment.Sources.ToList();
-        //todo if the environment contains override we could resolve those here.
 
         foreach (var spec in specs)
         {

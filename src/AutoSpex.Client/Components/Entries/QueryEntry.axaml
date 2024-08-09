@@ -19,7 +19,7 @@
     <DataTemplate x:Key="QueryEntry" x:DataType="observers:SpecObserver">
         <Border
             x:Name="RootBorder"
-            Background="{a:ThemeResource Container2BackgroundBrush}"
+            Background="{a:ThemeResource Container1BackgroundBrush}"
             BorderBrush="{a:ThemeResource Container1BorderBrush}"
             BorderThickness="{a:ThemeResource ButtonBorderThickness}"
             CornerRadius="{a:ThemeResource ButtonCornerRadius}">
@@ -39,7 +39,7 @@
                             <StackPanel Orientation="Horizontal" Spacing="10">
                                 <PathIcon Theme="{StaticResource IconThemedSource}" />
                                 <TextBlock Text="{Binding Name}" FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
-                                <PathIcon Theme="{StaticResource IconChevronExpand}" Classes="size-sm" />
+                                <PathIcon Theme="{StaticResource IconLineExpand}" Classes="size-sm" />
                             </StackPanel>
                         </DataTemplate>
                     </Button.ContentTemplate>
@@ -78,7 +78,6 @@
                     IsEnabled="{Binding Element.IsComponent}"
                     Watermark="Enter component name (optional)"
                     BorderThickness="0" CornerRadius="0" Padding="15 9 15 8"
-                    Background="Transparent"
                     FontSize="{a:ThemeResource DefaultFontSizeSmall}"
                     FontFamily="{a:ThemeResource CodeFontFamily}">
                     <TextBox.Styles>
@@ -102,6 +101,7 @@
                     <Button
                         Command="{Binding OpenSourceExplorerCommand}"
                         IsEnabled="{Binding Element.IsComponent}"
+                        IsVisible="{Binding Element.IsComponent}"
                         Theme="{StaticResource IconButtonSmall}"
                         properties:Icon.Theme="{StaticResource IconFilledBinoculars}"
                         ToolTip.Tip="Source Explorer"

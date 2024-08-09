@@ -3,7 +3,8 @@
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
                     xmlns:components="clr-namespace:AutoSpex.Client.Components"
-                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
 
     <Design.PreviewWith>
         <ListBox
@@ -17,29 +18,54 @@
 
     <DataTemplate x:Key="SpecListItem" x:DataType="observers:SpecObserver">
         <Border x:Name="Border" Focusable="True" Background="Transparent">
-            <Grid ColumnDefinitions="Auto,*,Auto">
 
-                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5">
-                    <PathIcon
-                        Theme="{StaticResource IconThemedSpec}" />
-                    <ContentControl
-                        Content="{Binding Node}"
-                        ContentTemplate="{StaticResource NodePath}" />
+            <Border.ContextFlyout>
+                <MenuFlyout
+                    ItemsSource="{Binding ContextItems}"
+                    ItemContainerTheme="{StaticResource MenuActionItem}"
+                    Placement="Pointer" />
+            </Border.ContextFlyout>
+
+            <DockPanel LastChildFill="False">
+
+                <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" Spacing="5">
+                    <PathIcon Theme="{StaticResource IconThemedSpec}" />
+                    <controls:HighlightableTextBlock Text="{Binding Name}" HighlightedText="{Binding FilterText}" />
                 </StackPanel>
 
-                <Button
-                    Grid.Column="2"
-                    Theme="{StaticResource IconButtonSmall}"
-                    properties:Icon.Theme="{StaticResource IconDots}">
-                    <Button.Flyout>
-                        <MenuFlyout
-                            ItemsSource="{Binding MenuItems}"
-                            ItemContainerTheme="{StaticResource MenuActionItem}"
-                            Placement="BottomEdgeAlignedRight" HorizontalOffset="8" VerticalOffset="5" />
-                    </Button.Flyout>
-                </Button>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="5">
 
-            </Grid>
+                    <Button Theme="{a:ControlTheme ButtonSubtle}" Padding="5 0" Height="20">
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <PathIcon
+                                Theme="{Binding Node.Parent.Type.Name, FallbackValue={x:Null}, Converter={StaticResource KeyIconConverter}}"
+                                Classes="size-sm" />
+                            <controls:HighlightableTextBlock
+                                Text="{Binding Node.Parent.Name, FallbackValue={x:Null}}"
+                                HighlightedText="{Binding Node.FilterText}"
+                                Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button
+                        Theme="{StaticResource IconButtonSmall}"
+                        properties:Icon.Theme="{StaticResource IconLineLaunch}"
+                        Command="{Binding NavigateCommand}" />
+
+                    <Button
+                        Theme="{StaticResource IconButtonSmall}"
+                        properties:Icon.Theme="{StaticResource IconEllipsis}">
+                        <Button.Flyout>
+                            <MenuFlyout
+                                ItemsSource="{Binding MenuItems}"
+                                ItemContainerTheme="{StaticResource MenuActionItem}"
+                                Placement="BottomEdgeAlignedRight" HorizontalOffset="8" VerticalOffset="5" />
+                        </Button.Flyout>
+                    </Button>
+
+                </StackPanel>
+                
+            </DockPanel>
         </Border>
     </DataTemplate>
 </ResourceDictionary>

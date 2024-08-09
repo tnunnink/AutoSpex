@@ -60,7 +60,7 @@ public abstract partial class PageViewModel : TrackableViewModel, IEquatable<Pag
     public virtual Task<Result> Save() => Task.FromResult(Result.Ok());
 
     /// <summary>
-    /// Indicates whether the page can be saved or not. By default, this return true if <c>IsChanged</c> is true
+    /// Indicates whether the page can be saved or not. By default, this returns true if <c>IsChanged</c> is true
     /// and <c>IsErrored</c> is false, but deriving classes can override to specify different functionality.
     /// </summary>
     /// <returns><c>true</c> if the page can be saved, Otherwise, <c>false</c>.</returns>

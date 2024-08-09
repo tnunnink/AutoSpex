@@ -50,7 +50,7 @@ public class Spec()
     /// and verify L5X content.
     /// </summary>
     [JsonIgnore]
-    public Node Node { get; private init; } = Node.New(Guid.NewGuid(), "New Spec", NodeType.Spec);
+    public Node Node { get; private init; } = Node.New(Guid.Empty, "New Spec", NodeType.Spec);
 
     /// <summary>
     /// The settings used to specify which component item to search using the element lookup function instead of
@@ -292,8 +292,11 @@ public class Spec()
         try
         {
             var verifications = new List<Verification>();
+            
+            //0.1. Override any local node variables with the configured source overrides.
+            source.Override(Node.Variables);
 
-            //0. Resolve all argument reference value to the current node scope.
+            //0.2. Resolve all argument reference value to the current node scope.
             ResolveReferences();
 
             //1. Load source file.

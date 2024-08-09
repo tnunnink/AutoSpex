@@ -26,7 +26,7 @@
                     <StackPanel Orientation="Horizontal" Spacing="10">
                         <PathIcon Theme="{StaticResource IconThemedSource}" />
                         <TextBlock Text="{Binding Name}" FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
-                        <PathIcon Theme="{StaticResource IconChevronExpand}" Classes="size-sm" />
+                        <PathIcon Theme="{StaticResource IconLineExpand}" Classes="size-sm" />
                     </StackPanel>
                 </DataTemplate>
             </Button.ContentTemplate>

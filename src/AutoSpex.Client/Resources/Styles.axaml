@@ -90,6 +90,11 @@
     <Style Selector="TextBlock.caption">
         <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
         <Setter Property="FontSize" Value="13" />
+    </Style> 
+    
+    <Style Selector="TextBlock.heading">
+        <Setter Property="FontWeight" Value="{a:ThemeResource HeadingFontWeightMedium}" />
+        <Setter Property="FontSize" Value="15" />
     </Style>
     
     <Style Selector="TextBlock.faint">

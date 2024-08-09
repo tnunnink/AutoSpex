@@ -43,7 +43,7 @@
                         <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
 
                             <PathIcon
-                                Theme="{Binding Result, Converter={StaticResource ResultStateToIconConverter}}" />
+                                Theme="{Binding Result, Converter={StaticResource ResultStateIconConverter}}" />
 
                             <controls:HighlightableTextBlock
                                 Text="{Binding Name}"
@@ -96,11 +96,11 @@
                                 Command="{Binding NavigateCommand}"
                                 IsVisible="{Binding Node, Converter={x:Static ObjectConverters.IsNotNull}}"
                                 Theme="{StaticResource IconButtonSmall}"
-                                properties:Icon.Theme="{StaticResource IconLineLink}"
+                                properties:Icon.Theme="{StaticResource IconLineLaunch}"
                                 ToolTip.Tip="Open Spec" />
                             <Button
                                 Theme="{StaticResource IconButtonSmall}"
-                                properties:Icon.Theme="{StaticResource IconDots}"
+                                properties:Icon.Theme="{StaticResource IconEllipsis}"
                                 ToolTip.Tip="Options" />
 
                         </StackPanel>

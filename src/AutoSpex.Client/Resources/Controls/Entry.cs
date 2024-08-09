@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using AutoSpex.Client.Shared;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
@@ -404,11 +405,17 @@ public class Entry : TemplatedControl
         Suggestions.Clear();
 
         if (Populate is null) return;
-        var results = await Populate.Invoke(text, CancellationToken.None);
 
-        foreach (var result in results)
+        //todo Could make timeout configurable.
+        var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+
+        try
         {
-            Suggestions.Add(result);
+            var results = await Populate.Invoke(text, cancellation.Token);
+            Suggestions.Refresh(results);
+        }
+        catch (OperationCanceledException)
+        {
         }
     }
 

@@ -23,7 +23,7 @@
     <TreeDataTemplate x:Key="PropertyTreeItem" x:DataType="observers:PropertyObserver"
                       ItemsSource="{Binding Properties}">
         <Border x:Name="Border" Background="Transparent" Focusable="True">
-            
+
             <StackPanel Orientation="Horizontal" Spacing="5" ClipToBounds="True">
                 <TextBlock
                     Text="{Binding Name}" />
@@ -35,8 +35,9 @@
                     Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
                 <ContentControl
                     Content="{Binding Value}"
-                    ContentTemplate="{StaticResource ValueTemplates}" />
+                    ContentTemplate="{StaticResource ValueDisplay}" />
             </StackPanel>
+            
         </Border>
     </TreeDataTemplate>
 </ResourceDictionary>

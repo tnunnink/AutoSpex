@@ -19,7 +19,7 @@
                 <StackPanel Grid.Column="0" Spacing="5" HorizontalAlignment="Left" Orientation="Horizontal">
 
                     <PathIcon
-                        Theme="{Binding Icon, Converter={StaticResource KeyToIconConverter}}"
+                        Theme="{Binding Icon, Converter={StaticResource KeyIconConverter}}"
                         Classes="size-lg" />
 
                     <ContentControl

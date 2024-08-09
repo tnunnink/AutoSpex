@@ -19,11 +19,12 @@
 
     <DataTemplate x:Key="OverrideListItem" x:DataType="observers:VariableObserver">
         <Border x:Name="Border" Focusable="True" Background="Transparent">
+
             <Border.ContextFlyout>
                 <MenuFlyout
                     Placement="Bottom"
                     ItemContainerTheme="{StaticResource MenuActionItem}"
-                    ItemsSource="{Binding MenuItems}" />
+                    ItemsSource="{Binding ContextItems}" />
             </Border.ContextFlyout>
 
             <Grid ColumnDefinitions="*,Auto">
@@ -38,18 +39,20 @@
                     <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="7" Margin="10 0">
                         <PathIcon
                             x:Name="GroupIcon"
-                            Theme="{Binding Group, Converter={StaticResource TypeGroupToIconConverter}}" />
+                            Theme="{Binding Group, Converter={StaticResource TypeGroupIconConverter}}" />
                         <TextBlock
                             Text="{Binding Group.Name}"
                             FontFamily="{a:ThemeResource CodeFontFamily}" />
                     </StackPanel>
 
-                    <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10 0">
-                        <ContentControl
-                            Content="{Binding Node}"
-                            ContentTemplate="{StaticResource BreadcrumbRoute}" />
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10 0" Spacing="5">
+                        <controls:HighlightableTextBlock
+                            Text="{Binding Node.Name, FallbackValue={x:Null}}"
+                            HighlightedText="{Binding Node.FilterText, FallbackValue={x:Null}}"
+                            Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                            FontFamily="{a:ThemeResource CodeFontFamily}" />
                         <TextBlock
-                            Text="."
+                            Text="/"
                             Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
                             FontFamily="{a:ThemeResource CodeFontFamily}" />
                         <TextBlock
@@ -61,7 +64,7 @@
                         Grid.Column="2"
                         Watermark="Enter value"
                         Value="{Binding Value}"
-                        ValueTemplate="{StaticResource ValueTemplates}"
+                        ValueTemplate="{StaticResource ValueDisplay}"
                         ItemTemplate="{StaticResource ValueItemTemplate}"
                         CommitCommand="{Binding UpdateValueCommand}"
                         Populate="{Binding Suggestions}"
@@ -80,7 +83,7 @@
                 <Button
                     Grid.Column="1"
                     Theme="{StaticResource IconButtonSmall}"
-                    properties:Icon.Theme="{StaticResource IconDots}"
+                    properties:Icon.Theme="{StaticResource IconEllipsis}"
                     ToolTip.Placement="BottomEdgeAlignedRight">
                     <Button.Flyout>
                         <MenuFlyout

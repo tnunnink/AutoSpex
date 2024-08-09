@@ -4,7 +4,6 @@
         <ResourceInclude Source="Displays/All.axaml" />
         <ResourceInclude Source="Entries/All.axaml" />
         <ResourceInclude Source="Items/All.axaml" />
-        <ResourceInclude Source="Menus/All.axaml" />
         <ResourceInclude Source="Prompts/All.axaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

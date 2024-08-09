@@ -43,7 +43,7 @@ public class LoadSpecsTests
         await mediator.Send(new CreateNode(node));
         //Create variable to reference node
         var variable = new Variable("MyVar", "SomeValue");
-        var reference = variable.Reference;
+        var reference = variable.Reference();
         await mediator.Send(new SaveVariables(node.NodeId, [variable]));
         //Create spec that uses variable
         var spec = new Spec(node);

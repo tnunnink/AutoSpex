@@ -21,7 +21,7 @@
                           VerticalAlignment="Top">
 
             <controls:Section.Icon>
-                <PathIcon Theme="{StaticResource IconLineBraces}" />
+                <PathIcon Theme="{StaticResource IconLineAt}" />
             </controls:Section.Icon>
 
             <controls:Section.Action>
@@ -42,7 +42,7 @@
                                 <StackPanel Orientation="Horizontal" Spacing="10">
                                     <PathIcon Theme="{StaticResource IconThemedSource}" />
                                     <TextBlock Text="{Binding Name}" />
-                                    <PathIcon Theme="{StaticResource IconChevronExpand}" Classes="size-sm" />
+                                    <PathIcon Theme="{StaticResource IconLineExpand}" Classes="size-sm" />
                                 </StackPanel>
                             </DataTemplate>
                         </Button.ContentTemplate>

@@ -43,6 +43,7 @@
         <Setter Property="FooterBackground" Value="{a:ThemeResource Container3BackgroundBrush}" />
         <Setter Property="CornerRadius" Value="10" />
         <Setter Property="Padding" Value="20" />
+
         <Setter Property="Template">
             <ControlTemplate>
                 <a:ShadowChrome Elevation="22">
@@ -51,6 +52,7 @@
                             Background="{TemplateBinding Background}"
                             CornerRadius="{TemplateBinding CornerRadius}"
                             a:BorderChildClipConverter.ClipToContainingBorder="True">
+
                         <DockPanel>
 
                             <!--Header-->
@@ -101,10 +103,10 @@
                             </Border>
 
                             <!--Buttons-->
-                            <Border DockPanel.Dock="Bottom"
-                                    x:Name="ButtonBorder"
-                                    IsVisible="{TemplateBinding UseButtonPanel}"
-                                    Padding="{TemplateBinding Padding}">
+                            <Border
+                                DockPanel.Dock="Bottom"
+                                IsVisible="{TemplateBinding UseButtonPanel}"
+                                Padding="20">
                                 <Grid ColumnDefinitions="Auto,*,Auto">
                                     <Button x:Name="AlternateButton"
                                             IsVisible="{TemplateBinding UseAlternateButton}"
@@ -137,12 +139,13 @@
                             </Border>
 
                             <!--Content-->
-                            <ContentPresenter x:Name="PART_ContentPresenter"
-                                              Content="{TemplateBinding Content}"
-                                              ContentTemplate="{TemplateBinding ContentTemplate}"
-                                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                              Margin="{TemplateBinding Padding}" />
+                            <ContentPresenter
+                                x:Name="PART_ContentPresenter"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Margin="{TemplateBinding Padding}" />
                         </DockPanel>
                     </Border>
                 </a:ShadowChrome>

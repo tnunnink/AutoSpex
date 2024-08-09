@@ -12,6 +12,7 @@ using FluentResults;
 namespace AutoSpex.Client.Pages;
 
 public partial class VariablesPageModel : PageViewModel,
+    IRecipient<Observer.GetSelected>,
     IRecipient<Observer.Deleted>,
     IRecipient<VariableObserver.GetNames>
 {
@@ -48,35 +49,26 @@ public partial class VariablesPageModel : PageViewModel,
         Variables.Add(new VariableObserver(_node));
     }
 
-    /*[RelayCommand(CanExecute = nameof(VariablesSelected))]
-    private async Task CopyVariables()
-    {
-        var clipboard = Shell.Clipboard;
-        if (clipboard is null) return;
-
-        var selected = Selected.ToList();
-
-        var data = new DataObject();
-        data.Set("Variables", selected);
-
-        await clipboard.SetDataObjectAsync(data);
-    }*/
-
     public void Receive(Observer.Deleted message)
     {
         if (message.Observer is not VariableObserver variable) return;
-        if (!Variables.Contains(variable)) return;
-
-        var selected = Selected.ToList();
-
-        foreach (var observer in selected)
-            Variables.Remove(observer);
+        Variables.Remove(variable);
     }
 
     public void Receive(VariableObserver.GetNames message)
     {
+        if (message.HasReceivedResponse) return;
         if (message.Variable.Node?.Id != _node.Id) return;
         var names = Variables.Where(v => v.Id != message.Variable.Id).Select(v => v.Name);
         message.Reply(names);
+    }
+
+    public void Receive(Observer.GetSelected message)
+    {
+        if (message.Observer is not VariableObserver variable) return;
+        if (!Variables.Any(v => v.Is(variable))) return;
+
+        foreach (var selected in Selected.ToList())
+            message.Reply(selected);
     }
 }

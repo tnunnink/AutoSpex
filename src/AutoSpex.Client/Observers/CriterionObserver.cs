@@ -54,6 +54,8 @@ public partial class CriterionObserver : Observer<Criterion>,
     public Func<string?, CancellationToken, Task<IEnumerable<object>>> PopulateProperties => GetProperties;
     public Func<string?, CancellationToken, Task<IEnumerable<object>>> PopulateOperations => GetOperations;
 
+    /// <inheritdoc />
+    protected override bool PromptForDeletion => false;
 
     /// <inheritdoc />
     /// <remarks>
@@ -207,6 +209,24 @@ public partial class CriterionObserver : Observer<Criterion>,
     {
         var filtered = Operation.Supporting(Property);
         return Task.FromResult(filtered.Cast<object>());
+    }
+    
+    protected override IEnumerable<MenuActionItem> GenerateContextItems()
+    {
+       yield return new MenuActionItem
+        {
+            Header = "Duplicate",
+            Command = DuplicateCommand,
+            Gesture = new KeyGesture(Key.D, KeyModifiers.Control)
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Delete",
+            Classes = "danger",
+            Command = DeleteCommand,
+            Gesture = new KeyGesture(Key.Delete)
+        };
     }
 
     protected override IEnumerable<MenuActionItem> GenerateMenuItems()

@@ -96,7 +96,7 @@ public class CriterionTests
     {
         var tag = new Tag { Name = "MyTestTag" };
         var variable = new Variable("MyVar", "Test");
-        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Containing, variable.Reference);
+        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Containing, variable.Reference());
 
         var eval = criterion.Evaluate(tag);
 
@@ -108,7 +108,7 @@ public class CriterionTests
     {
         var tag = new Tag { Name = "MyTestTag", Value = 123 };
         var variable = new Variable("MyVar", "Decimal");
-        var criterion = new Criterion(Element.Tag.Property("Radix"), Operation.EqualTo, variable.Reference);
+        var criterion = new Criterion(Element.Tag.Property("Radix"), Operation.EqualTo, variable.Reference());
 
         var eval = criterion.Evaluate(tag);
 
@@ -120,7 +120,7 @@ public class CriterionTests
     {
         var tag = new Tag { Name = "TestTag", Value = 1.21f };
         var variable = new Variable("Value", "1.221");
-        var criterion = new Criterion(Element.Tag.Property("Value"), Operation.GreaterThan, variable.Reference);
+        var criterion = new Criterion(Element.Tag.Property("Value"), Operation.GreaterThan, variable.Reference());
 
         var eval = criterion.Evaluate(tag);
 
@@ -132,7 +132,7 @@ public class CriterionTests
     {
         var tag = new Tag { Name = "TestTag", Value = 1.2345f };
         var variable = new Variable("Value", new REAL(1.2345f));
-        var criterion = new Criterion(Element.Tag.Property("Value"), Operation.EqualTo, variable.Reference);
+        var criterion = new Criterion(Element.Tag.Property("Value"), Operation.EqualTo, variable.Reference());
 
         var eval = criterion.Evaluate(tag);
 
@@ -183,7 +183,7 @@ public class CriterionTests
     [Test]
     public void ToString_NestedVariable_ShouldBeExpected()
     {
-        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Like, new Variable("Test", "%Test_%").Reference);
+        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Like, new Variable("Test", "%Test_%").Reference());
 
         var result = criterion.ToString();
 

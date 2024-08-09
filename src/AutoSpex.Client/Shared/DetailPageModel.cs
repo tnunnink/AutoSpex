@@ -76,7 +76,7 @@ public abstract partial class DetailPageModel : PageViewModel,
     /// </summary>
     /// <returns>The <see cref="Task"/> which can await the flag indicating whether the page was closed or not.</returns>
     /// <remarks>
-    /// This will first check for changes, and if any exists and the AlwaysDiscardChanges is not enabled, will
+    /// This will first check for changes, and if any exist and the AlwaysDiscardChanges is not enabled, will
     /// prompt the user whether they want to save, cancel, or discard changes. If they select an option which results
     /// in the page closing, this method will return <c>true</c>, otherwise it will return <c>false</c>.
     /// </remarks>
@@ -156,9 +156,6 @@ public abstract partial class DetailPageModel : PageViewModel,
                 Forget(page);
                 break;
             case NavigationAction.Replace:
-                var index = Tabs.IndexOf(page);
-                if (index < 0) break;
-                Tabs[index] = message.Page;
                 break;
             default:
                 throw new ArgumentOutOfRangeException($"Navigation action {message.Action} not supported");

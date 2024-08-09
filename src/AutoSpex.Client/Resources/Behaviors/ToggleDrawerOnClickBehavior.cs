@@ -6,7 +6,7 @@ using Avalonia.Xaml.Interactivity;
 
 namespace AutoSpex.Client.Resources.Behaviors;
 
-public class HideDrawerOnClickBehavior : Behavior<Button>
+public class ToggleDrawerOnClickBehavior : Behavior<Button>
 {
     protected override void OnAttachedToVisualTree()
     {
@@ -25,6 +25,6 @@ public class HideDrawerOnClickBehavior : Behavior<Button>
         if (e.Source is not Control control) return;
         var drawer = control.FindAncestorOfType<DrawerView>();
         if (drawer is null) return;
-        drawer.IsDrawerOpen = false;
+        drawer.IsDrawerOpen = !drawer.IsDrawerOpen;
     }
 }

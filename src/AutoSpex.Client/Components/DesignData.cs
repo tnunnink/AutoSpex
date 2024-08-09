@@ -5,7 +5,6 @@ using System.Linq;
 using AutoSpex.Client.Observers;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
-using AutoSpex.Persistence;
 using JetBrains.Annotations;
 using L5Sharp.Core;
 using Argument = AutoSpex.Engine.Argument;
@@ -87,18 +86,21 @@ public static class DesignData
                 .ShouldHave(Element.Tag.Property("Value"), Operation.EqualTo, 123)
         ));
 
-    public static VariableObserver VariableObserver = new DesignVariableObserver();
+    #region Variables
 
-    public static Variable Variable = new("MyVar", "123");
+    public static Variable Variable = new("MyVar", "This is a test");
+
+    public static VariableObserver VariableObserver = new(Variable);
 
     public static ObservableCollection<VariableObserver> Variables =
     [
-        new DesignVariableObserver(),
-        new DesignVariableObserver(),
-        new DesignVariableObserver(),
-        new DesignVariableObserver(),
-        new DesignVariableObserver()
+        new VariableObserver(new Variable("flag", true)),
+        new VariableObserver(new Variable("numeric", 123)),
     ];
+
+    #endregion
+
+    #region Arguments
 
     public static ArgumentObserver EmptyArgument = new(new Argument(string.Empty));
 
@@ -116,6 +118,8 @@ public static class DesignData
 
     public static ObservableCollection<Argument> RadixOptions =>
         new(LogixEnum.Options<Radix>().Select(e => new Argument(e)));
+
+    #endregion
 
     #region Source
 
@@ -164,6 +168,7 @@ public static class DesignData
 
     #endregion
 
+    #region Properties
 
     public static PropertyObserver RadixPropertyObserver => new DesignRadixPropertyObserver();
 
@@ -172,6 +177,8 @@ public static class DesignData
 
     public static PropertyObserver MembersPropertyObserver => new(new DesignMembersProperty(),
         new ElementObserver(new Tag { Name = "MyTag", Value = new TIMER() }));
+
+    #endregion
 
     #region Nodes
 
@@ -273,26 +280,31 @@ public static class DesignData
 
     #endregion
 
+    #region Values
 
-    public static BOOL BoolValue = new(true);
-    public static SINT SintValue = new(12);
-    public static INT IntValue = new(123);
-    public static DINT DintValue = new(123123);
-    public static LINT LintValue = new(123123123);
+    public static ValueObserver NullValue = new(null);
+    public static ValueObserver BooleanTrueValue = new(true);
+    public static ValueObserver BooleanFalseValue = new(false);
+    public static ValueObserver IntegerValue = new(34567);
+    public static ValueObserver DoubleValue = new(1.234);
+    public static ValueObserver TextValue = new("SomeTestValue");
 
-    public static ValueObserver BooleanValueObserver = new(true);
-    public static ValueObserver RadixValueObserver = new(Radix.Float);
-    public static ValueObserver CollectionValueObserver = new(new List<Argument> { new(), new(), new() });
+    public static ValueObserver AtomicBoolValue = new(new BOOL(true));
+    public static ValueObserver AtomicSintValue = new(new SINT(12));
+    public static ValueObserver AtomicIntValue = new(new INT(123));
+    public static ValueObserver AtomicDintValue = new(new DINT(123123));
+    public static ValueObserver AtomicLintValue = new(new LINT(123123123));
 
+    public static ValueObserver RadixValue = new(Radix.Float);
+    public static ValueObserver DataTypeValue = new(DataType);
+    public static ValueObserver RungValue = new(Rung);
+    public static ValueObserver TagValue = new(Tag);
 
-    public static ChangeLogObserver ChangeLog = new(new ChangeLog
-        {
-            Command = "SaveSpec",
-            Message = "Save specification with nane 'Test spec' with 2 filters and 1 verification.",
-            ChangedOn = DateTime.Now,
-            ChangedBy = "tnunnink"
-        }
-    );
+    public static ValueObserver CollectionValue = new(new List<Argument> { new(), new(), new() });
+    public static ValueObserver VariableValue = new(Variable);
+    public static ValueObserver ReferenceValue = new(new Reference("test_ref"));
+
+    #endregion
 }
 
 public class TestPageModel : PageViewModel
@@ -320,5 +332,3 @@ public class DesignMembersProperty() : Property("Members", typeof(IEnumerable<Ta
 
 public class DesignRadixPropertyObserver()
     : PropertyObserver(new DesignRadixProperty(), new ElementObserver(new Tag()));
-
-public class DesignVariableObserver() : VariableObserver(new Variable("MyVar", "123"));
