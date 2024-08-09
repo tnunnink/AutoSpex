@@ -36,7 +36,7 @@ public class ChangeLogBehavior<TRequest, TResponse>(IConnectionManager manager) 
             Duration = stopwatch.ElapsedMilliseconds
         };
 
-        using var connection = await manager.Connect(Database.Project, cancellationToken);
+        using var connection = await manager.Connect(cancellationToken);
         await connection.ExecuteAsync(InsertLog, log);
         return result;
     }

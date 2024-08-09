@@ -1,0 +1,100 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+             x:Class="AutoSpex.Client.Pages.CriteriaPage"
+             x:DataType="pages:CriteriaPageModel"
+             Background="{a:ThemeResource Container1BackgroundBrush}">
+
+    <Design.Height>800</Design.Height>
+    <Design.Width>1200</Design.Width>
+
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Padding="20">
+
+        <StackPanel Spacing="20">
+
+            <controls:Section Header="Query"
+                              Description="Select the element to query when this spec is run.">
+                <controls:Section.Icon>
+                    <PathIcon Theme="{StaticResource IconFilledBinoculars}" />
+                </controls:Section.Icon>
+
+                <ContentControl
+                    Content="{Binding Spec}"
+                    ContentTemplate="{StaticResource QueryEntry}" />
+            </controls:Section>
+
+            <controls:Section Header="Filter"
+                              Description="Configure criteria to filter the queried data to candidates for verification."
+                              Action="{Binding Spec}"
+                              ActionTemplate="{StaticResource FilterActions}"
+                              ShowContent="{Binding Spec.Filters.Count}">
+                <controls:Section.Icon>
+                    <PathIcon Theme="{StaticResource IconFilledFunnel}" />
+                </controls:Section.Icon>
+
+                <ListBox
+                    ItemsSource="{Binding Spec.Filters}"
+                    ItemTemplate="{StaticResource CriterionListItem}"
+                    SelectionMode="Multiple"
+                    BorderThickness="1" BorderBrush="{a:ThemeResource Container1BorderBrush}" CornerRadius="5"
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListBox.ItemContainerTheme>
+                        <ControlTheme TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemSection}"
+                                      x:DataType="observers:CriterionObserver">
+                            <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+                        </ControlTheme>
+                    </ListBox.ItemContainerTheme>
+                </ListBox>
+            </controls:Section>
+
+            <controls:Section Header="Verify"
+                              Description="Configure criteria to verify all filtered data satisfy specific requirements."
+                              Action="{Binding Spec}"
+                              ActionTemplate="{StaticResource VerificationActions}"
+                              ShowContent="{Binding Spec.Verifications.Count}">
+                <controls:Section.Icon>
+                    <PathIcon Theme="{StaticResource IconFilledPatch}" />
+                </controls:Section.Icon>
+
+                <ListBox
+                    ItemsSource="{Binding Spec.Verifications}"
+                    ItemTemplate="{StaticResource CriterionListItem}"
+                    SelectionMode="Multiple"
+                    BorderThickness="1" BorderBrush="{a:ThemeResource Container1BorderBrush}" CornerRadius="5"
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListBox.ItemContainerTheme>
+                        <ControlTheme TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemSection}"
+                                      x:DataType="observers:CriterionObserver">
+                            <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+                        </ControlTheme>
+                    </ListBox.ItemContainerTheme>
+                </ListBox>
+            </controls:Section>
+
+            <controls:Section Header="Range"
+                              Description="Optionally configure an expected range to ensure a required number of candidates."
+                              ShowContent="{Binding Spec.RangeEnabled}">
+                <controls:Section.Icon>
+                    <PathIcon Theme="{StaticResource IconFilledPatch}" />
+                </controls:Section.Icon>
+                <controls:Section.Action>
+                    <ToggleSwitch
+                        IsChecked="{Binding Spec.RangeEnabled}"
+                        Theme="{a:ControlTheme ToggleSwitchOutline}"
+                        Classes="size-sm accent"
+                        OnContent="{x:Null}" OffContent="{x:Null}" />
+                </controls:Section.Action>
+
+                <Border BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                        BorderThickness="1" CornerRadius="5" Padding="15 5 5 5">
+                    <ContentControl
+                        Content="{Binding Spec.Range}"
+                        ContentTemplate="{StaticResource CriterionRange}" />
+                </Border>
+            </controls:Section>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

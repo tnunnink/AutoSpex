@@ -4,7 +4,9 @@ public abstract class BinaryOperation(string name) : Operation(name)
 {
     public override bool Execute(object? input, params object[] values)
     {
-        if (values is null) throw new ArgumentNullException(nameof(values));
+        if (values is null) 
+            throw new ArgumentNullException(nameof(values));
+        
         if (values.Length != 1)
             throw new ArgumentException("Binary operations require exactly one value", nameof(values));
 

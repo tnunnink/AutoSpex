@@ -1,0 +1,59 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
+                    xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors">
+
+    <Design.PreviewWith>
+        <Border Padding="30" Width="400" Height="300">
+            <ContentControl
+                Content="{x:Static engine:Element.Tag}"
+                ContentTemplate="{DynamicResource ElementSelector}"
+                VerticalAlignment="Top" HorizontalAlignment="Left" />
+        </Border>
+    </Design.PreviewWith>
+
+
+    <DataTemplate x:Key="ElementSelector" x:DataType="engine:Element">
+        <Button
+            x:Name="SelectorButton"
+            Grid.Column="0"
+            Content="{Binding }"
+            Theme="{a:ControlTheme ButtonSubtle}"
+            Background="Transparent">
+            <Button.ContentTemplate>
+                <DataTemplate x:DataType="engine:Element">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <PathIcon Theme="{StaticResource IconThemedSource}" />
+                        <TextBlock Text="{Binding Name}" FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
+                        <PathIcon Theme="{StaticResource IconLineExpand}" Classes="size-sm" />
+                    </StackPanel>
+                </DataTemplate>
+            </Button.ContentTemplate>
+            <Button.Flyout>
+                <Flyout Placement="BottomEdgeAlignedLeft" HorizontalOffset="-8" VerticalOffset="5">
+                    <ItemsControl
+                        Theme="{a:ControlTheme ItemsControlScrollable}"
+                        ItemsSource="{x:Static engine:Element.Selectable}"
+                        MaxHeight="200" MinWidth="200" Margin="5">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="engine:Element">
+                                <Button
+                                    Theme="{a:ControlTheme ButtonSubtle}"
+                                    HorizontalContentAlignment="Stretch">
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <PathIcon Theme="{StaticResource IconThemedSource}" />
+                                        <TextBlock Text="{Binding Name}" />
+                                    </StackPanel>
+                                    <Interaction.Behaviors>
+                                        <!--<behaviors:HideFlyoutOnClickedBehavior />-->
+                                    </Interaction.Behaviors>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Flyout>
+            </Button.Flyout>
+        </Button>
+    </DataTemplate>
+</ResourceDictionary>

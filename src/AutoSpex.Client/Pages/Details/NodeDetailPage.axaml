@@ -1,0 +1,126 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:shared="clr-namespace:AutoSpex.Client.Shared"
+             xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+             xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors"
+             x:Class="AutoSpex.Client.Pages.NodeDetailPage"
+             x:DataType="pages:NodeDetailPageModel">
+
+    <Design.Width>1400</Design.Width>
+    <Design.Height>900</Design.Height>
+
+    <UserControl.Styles>
+        <Style Selector="Button.environment-selector">
+            <Setter Property="Theme" Value="{a:ControlTheme ButtonSoft}" />
+            <Setter Property="CornerRadius" Value="4 0 0 4" />
+            <Setter Property="Content">
+                <Template>
+                    <StackPanel Orientation="Horizontal" Spacing="7">
+                        <PathIcon Theme="{StaticResource IconThemedEnvironment}" />
+                        <TextBlock Text="{Binding Environment.Name, FallbackValue='---'}" />
+                        <PathIcon Theme="{StaticResource IconLineExpand}" Classes="size-sm" />
+                    </StackPanel>
+                </Template>
+            </Setter>
+        </Style>
+    </UserControl.Styles>
+
+    <DockPanel>
+        <Border DockPanel.Dock="Top" Padding="20" Background="{a:ThemeResource Container2BackgroundBrush}">
+
+            <StackPanel Spacing="5">
+                <Grid ColumnDefinitions="Auto,*,Auto">
+
+                    <StackPanel Grid.Column="0" Spacing="3">
+
+                        <StackPanel Orientation="Horizontal" Spacing="3" Margin="5 0 0 0">
+                            <PathIcon
+                                Theme="{Binding Node.Type.Name, Converter={StaticResource KeyIconConverter}}"
+                                Classes="size-lg" />
+                            <ContentControl
+                                HorizontalAlignment="Left"
+                                Content="{Binding Node}"
+                                ContentTemplate="{StaticResource NameEntry}" />
+                        </StackPanel>
+
+                        <ContentControl
+                            Content="{Binding Node}"
+                            ContentTemplate="{StaticResource BreadcrumbLink}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+
+                        <Button
+                            Command="{Binding SaveCommand}"
+                            Classes="save" />
+
+                        <StackPanel Orientation="Horizontal">
+                            <Button Classes="environment-selector">
+                                <Button.Flyout>
+                                    <Flyout Placement="BottomEdgeAlignedRight" HorizontalOffset="8" VerticalOffset="5">
+                                        <ListBox
+                                            ItemsSource="{Binding Environments^}"
+                                            ItemContainerTheme="{StaticResource ListBoxItemSimple}"
+                                            Padding="5" MinWidth="200">
+                                            <ListBox.ItemTemplate>
+                                                <DataTemplate x:DataType="observers:EnvironmentObserver">
+                                                    <Button Command="{Binding TargetCommand}"
+                                                            Theme="{a:ControlTheme ButtonInvisible}"
+                                                            HorizontalAlignment="Stretch"
+                                                            HorizontalContentAlignment="Left">
+                                                        <StackPanel Orientation="Horizontal" Spacing="10">
+                                                            <PathIcon Theme="{StaticResource IconThemedEnvironment}" />
+                                                            <TextBlock Text="{Binding Name}" />
+                                                        </StackPanel>
+                                                        <Interaction.Behaviors>
+                                                            <behaviors:HideFlyoutOnClickedBehavior />
+                                                        </Interaction.Behaviors>
+                                                    </Button>
+                                                </DataTemplate>
+                                            </ListBox.ItemTemplate>
+                                        </ListBox>
+                                    </Flyout>
+                                </Button.Flyout>
+                            </Button>
+
+                            <Button
+                                Command="{Binding RunCommand}"
+                                Classes="run accent" />
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <DockPanel>
+            <TabStrip
+                DockPanel.Dock="Top"
+                ItemsSource="{Binding Tabs}"
+                SelectedItem="{Binding Tab}"
+                ItemContainerTheme="{StaticResource TabItemStandard}"
+                Background="{a:ThemeResource Container2BackgroundBrush}"
+                BorderThickness="0"
+                Padding="20 0">
+                <TabStrip.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" Spacing="20" />
+                    </ItemsPanelTemplate>
+                </TabStrip.ItemsPanel>
+                <TabStrip.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Title}" />
+                    </DataTemplate>
+                </TabStrip.ItemTemplate>
+            </TabStrip>
+            <ContentControl Content="{Binding Tab}">
+                <ContentControl.ContentTemplate>
+                    <DataTemplate x:DataType="shared:PageViewModel">
+                        <ContentControl Content="{Binding}" />
+                    </DataTemplate>
+                </ContentControl.ContentTemplate>
+            </ContentControl>
+        </DockPanel>
+    </DockPanel>
+</UserControl>

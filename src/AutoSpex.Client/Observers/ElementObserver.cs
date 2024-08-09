@@ -13,19 +13,22 @@ namespace AutoSpex.Client.Observers;
 public partial class ElementObserver(LogixElement model) : Observer<LogixElement>(model)
 {
     public Guid SourceId => DetermineSourceId();
-    public string Name => DetermineName();
+    public override string Name => DetermineName();
     public string? Description => DetermineDescription();
+    public string? Container => DetermineContainer();
     public Element Element => Element.FromName(Model.GetType().Name);
+    public IEnumerable<PropertyObserver> Properties => GetProperties();
 
-    public IEnumerable<PropertyObserver> Properties =>
-        Element.This.Properties.Select(p => new PropertyObserver(p, this));
+    #region Commands
 
-    public ICollection<PropertyObserver> DisplayProperties => GetDisplayProperties();
-    public int PropertyCount => DisplayProperties.Count + 2;
-
-
-    [RelayCommand]
-    private void ViewElement() => Messenger.Send(new View(this));
+    /// <inheritdoc />
+    /// <remarks>
+    /// </remarks>
+    protected override Task Navigate()
+    {
+        Messenger.Send(new Open(this));
+        return Task.CompletedTask;
+    }
 
     [RelayCommand]
     private async Task CopyElement()
@@ -37,12 +40,26 @@ public partial class ElementObserver(LogixElement model) : Observer<LogixElement
         data.Set(nameof(ElementObserver), this);
         await clipboard.SetDataObjectAsync(data);
     }
+    
+    [RelayCommand]
+    private async Task CopyName()
+    {
+        var clipboard = Shell.Clipboard;
+        if (clipboard is null) return;
+
+        var data = new DataObject();
+        data.Set(nameof(Name), Name);
+
+        await clipboard.SetDataObjectAsync(data);
+    }
 
     [RelayCommand]
     private Task CreateVariable()
     {
         throw new NotImplementedException();
     }
+
+    #endregion
 
     /// <summary>
     /// Filters this element observer using the provide filter text. This filter will check if this element has any
@@ -52,14 +69,10 @@ public partial class ElementObserver(LogixElement model) : Observer<LogixElement
     /// <returns><c>true</c> if this observer passes the filter, otherwise, <c>false</c></returns>
     public override bool Filter(string? filter)
     {
-        return string.IsNullOrEmpty(filter) ||
-               Model.Serialize().ToString().Contains(filter, StringComparison.OrdinalIgnoreCase);
+        return base.Filter(filter) || Container.Satisfies(filter);
     }
 
     public override string ToString() => DetermineName();
-    public static implicit operator LogixElement(ElementObserver observer) => observer.Model;
-    public static implicit operator ElementObserver(LogixElement element) => new(element);
-
 
     private Guid DetermineSourceId()
     {
@@ -93,19 +106,23 @@ public partial class ElementObserver(LogixElement model) : Observer<LogixElement
         };
     }
 
-    private ICollection<PropertyObserver> GetDisplayProperties()
+    private string? DetermineContainer()
     {
-        var properties = new List<PropertyObserver>();
-
-        foreach (var name in Element.DisplayProperties)
-        {
-            var property = Properties.FirstOrDefault(p => p.Model.Path == name);
-            if (property is null) continue;
-            properties.Add(property);
-        }
-
-        return properties;
+        return Model is LogixObject element ? element.Container : default;
     }
 
-    public record View(ElementObserver Element);
+    private IEnumerable<PropertyObserver> GetProperties()
+    {
+        return Element.This.Properties.Select(p => new PropertyObserver(p, this));
+    }
+
+    public static implicit operator LogixElement(ElementObserver observer) => observer.Model;
+    public static implicit operator ElementObserver(LogixElement element) => new(element);
+
+    /// <summary>
+    /// A message to be sent to a containing page to allow this element observer to be opened.
+    /// Opening an element just involves viewing its property tree to see the data from the interface.
+    /// </summary>
+    /// <param name="Element">The element to open</param>
+    public record Open(ElementObserver Element);
 }

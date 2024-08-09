@@ -20,7 +20,7 @@ internal class MoveNodeHandler(IConnectionManager manager) : IRequestHandler<Mov
 
     public async Task<Result> Handle(MoveNode request, CancellationToken cancellationToken)
     {
-        using var connection = await manager.Connect(Database.Project, cancellationToken);
+        using var connection = await manager.Connect(cancellationToken);
         await connection.ExecuteAsync(SetParent, request.Node);
         return Result.Ok();
     }

@@ -1,0 +1,88 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+        <Border Padding="20">
+            <StackPanel Spacing="10">
+                <Button Classes="run accent" />
+                <Button Classes="run accent" IsEnabled="False" />
+                <Button Classes="cancel" />
+                <Button Classes="cancel" IsEnabled="False" />
+                <Button Classes="save" />
+                <Button Classes="save" IsEnabled="False" />
+                <Button Classes="export" />
+                <Button Classes="export" IsEnabled="False" />
+            </StackPanel>
+        </Border>
+    </Design.PreviewWith>
+
+    <Style Selector="Button.run">
+        <Setter Property="Theme" Value="{a:ControlTheme ButtonSolid}" />
+        <Setter Property="CornerRadius" Value="0 4 4 0" />
+        <Setter Property="Content">
+            <Template>
+                <StackPanel Orientation="Horizontal" Spacing="7">
+                    <PathIcon Theme="{StaticResource IconFilledLightning}" />
+                    <TextBlock Text="Run" Padding="0 0 0 1" FontSize="{a:ThemeResource DefaultFontSizeMedium}" />
+                </StackPanel>
+            </Template>
+        </Setter>
+        <Style Selector="^:disabled PathIcon">
+            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSolidAccentDisabled}" />
+        </Style>
+        <Style Selector="^:not(:disabled) PathIcon">
+            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSolidAccent}" />
+        </Style>
+    </Style>
+    
+    <Style Selector="Button.cancel">
+        <Setter Property="Theme" Value="{a:ControlTheme ButtonSoft}" />
+        <Setter Property="CornerRadius" Value="{a:ThemeResource ButtonCornerRadius}" />
+        <Setter Property="Content">
+            <Template>
+                <Panel>
+                    <StackPanel Orientation="Horizontal" Spacing="7">
+                        <PathIcon Theme="{StaticResource IconFilledStop}" FontSize="14" />
+                        <TextBlock Text="Cancel" Padding="0 0 0 1" FontSize="{a:ThemeResource DefaultFontSizeMedium}" />
+                    </StackPanel>
+                </Panel>
+            </Template>
+        </Setter>
+        <Style Selector="^:disabled PathIcon">
+            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftDangerDisabled}" />
+        </Style>
+        <Style Selector="^:not(:disabled) PathIcon">
+            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftDanger}" />
+        </Style>
+    </Style>
+
+    <Style Selector="Button.save">
+        <Setter Property="Theme" Value="{a:ControlTheme ButtonSoft}" />
+        <Setter Property="Content">
+            <Template>
+                <StackPanel Orientation="Horizontal" Spacing="7">
+                    <PathIcon Theme="{StaticResource IconFilledArrowUp}" />
+                    <TextBlock Text="Save" Padding="0 0 0 1" FontSize="{a:ThemeResource DefaultFontSizeMedium}" />
+                </StackPanel>
+            </Template>
+        </Setter>
+        <Style Selector="^:disabled PathIcon">
+            <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+        </Style>
+    </Style>
+    
+    <Style Selector="Button.export">
+        <Setter Property="Theme" Value="{a:ControlTheme ButtonSoft}" />
+        <Setter Property="Content">
+            <Template>
+                <StackPanel Orientation="Horizontal" Spacing="7">
+                    <PathIcon Theme="{StaticResource IconFilledArrowDown}" />
+                    <TextBlock Text="Export" Padding="0 0 0 1" FontSize="{a:ThemeResource DefaultFontSizeMedium}" />
+                </StackPanel>
+            </Template>
+        </Setter>
+        <Style Selector="^:disabled PathIcon">
+            <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+        </Style>
+    </Style>
+</Styles>

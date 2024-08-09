@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
-using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace AutoSpex.Client.Observers;
 
@@ -12,16 +11,17 @@ namespace AutoSpex.Client.Observers;
 /// This class helps with formatting and filtering the returned data.
 /// </summary>
 /// <param name="model">The <see cref="Evaluation"/> object to wrap.</param>
-public partial class EvaluationObserver(Evaluation model) : Observer<Evaluation>(model)
+public class EvaluationObserver(Evaluation model) : Observer<Evaluation>(model)
 {
     public ResultState Result => Model.Result;
-    public string Candidate => Model.Candidate;
+    public ValueObserver Candidate => new(Model.Candidate);
     public string Criteria => Model.Criteria;
-    public string Expected => Model.Expected;
-    public string Actual => Model.Actual;
-    public string Error => Model.Error;
-
-    [ObservableProperty] private string? _filterText;
+    public ObservableCollection<ValueObserver> Expected => new(Model.Expected.Select(x => new ValueObserver(x)));
+    public ValueObserver Actual => new(Model.Actual);
+    public Exception? Error => Model.Error;
+    public Guid SourceId => Model.SourceId;
+    public string SourceName => Model.SourceName;
+    public string SourcePath => Model.SourcePath;
 
 
     /// <inheritdoc />
@@ -29,12 +29,15 @@ public partial class EvaluationObserver(Evaluation model) : Observer<Evaluation>
     {
         FilterText = filter;
 
-        return string.IsNullOrEmpty(filter)
-               || Candidate.PassesFilter(filter)
-               || Criteria.PassesFilter(filter)
-               || Expected.PassesFilter(filter)
-               || Actual.PassesFilter(filter)
-               || Error.PassesFilter(filter);
+        var passes = string.IsNullOrEmpty(filter)
+                    || Candidate.Filter(filter)
+                    || Criteria.Satisfies(filter)
+                    || Expected.Any(x => x.Filter(filter))
+                    || Actual.Filter(filter)
+                    || Error is not null && Error.Message.Satisfies(filter)
+                    || SourceName.Satisfies(filter);
+
+        return passes;
     }
 
     public static implicit operator Evaluation(EvaluationObserver observer) => observer.Model;

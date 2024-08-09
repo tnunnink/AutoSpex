@@ -1,0 +1,105 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
+
+    <Design.PreviewWith>
+        <Border Padding="10" Height="400" Width="800">
+            <ListBox ItemsSource="{x:Static components:DesignData.Variables}"
+                     ItemTemplate="{DynamicResource OverrideListItem}"
+                     ItemContainerTheme="{StaticResource ListBoxItemSection}"
+                     BorderThickness="1"
+                     BorderBrush="{a:ThemeResource Container1BackgroundBrush}"
+                     CornerRadius="4" />
+        </Border>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="OverrideListItem" x:DataType="observers:VariableObserver">
+        <Border x:Name="Border" Focusable="True" Background="Transparent">
+
+            <Border.ContextFlyout>
+                <MenuFlyout
+                    Placement="Bottom"
+                    ItemContainerTheme="{StaticResource MenuActionItem}"
+                    ItemsSource="{Binding ContextItems}" />
+            </Border.ContextFlyout>
+
+            <Grid ColumnDefinitions="*,Auto">
+
+                <Grid Grid.Column="0" Margin="0 0 10 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="TypeGroup" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="PathGroup" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="ValueGroup" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="7" Margin="10 0">
+                        <PathIcon
+                            x:Name="GroupIcon"
+                            Theme="{Binding Group, Converter={StaticResource TypeGroupIconConverter}}" />
+                        <TextBlock
+                            Text="{Binding Group.Name}"
+                            FontFamily="{a:ThemeResource CodeFontFamily}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10 0" Spacing="5">
+                        <controls:HighlightableTextBlock
+                            Text="{Binding Node.Name, FallbackValue={x:Null}}"
+                            HighlightedText="{Binding Node.FilterText, FallbackValue={x:Null}}"
+                            Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                            FontFamily="{a:ThemeResource CodeFontFamily}" />
+                        <TextBlock
+                            Text="/"
+                            Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                            FontFamily="{a:ThemeResource CodeFontFamily}" />
+                        <TextBlock
+                            Text="{Binding Name}"
+                            FontFamily="{a:ThemeResource CodeFontFamily}" />
+                    </StackPanel>
+
+                    <controls:Entry
+                        Grid.Column="2"
+                        Watermark="Enter value"
+                        Value="{Binding Value}"
+                        ValueTemplate="{StaticResource ValueDisplay}"
+                        ItemTemplate="{StaticResource ValueItemTemplate}"
+                        CommitCommand="{Binding UpdateValueCommand}"
+                        Populate="{Binding Suggestions}"
+                        MinDropDownWidth="{Binding $self.Bounds.Width}"
+                        Margin="10 0">
+                        <controls:Entry.IsEmpty>
+                            <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                <Binding Path="Value" Converter="{x:Static ObjectConverters.IsNull}" />
+                                <Binding Path="Value" Converter="{x:Static StringConverters.IsNullOrEmpty}" />
+                            </MultiBinding>
+                        </controls:Entry.IsEmpty>
+                    </controls:Entry>
+
+                </Grid>
+
+                <Button
+                    Grid.Column="1"
+                    Theme="{StaticResource IconButtonSmall}"
+                    properties:Icon.Theme="{StaticResource IconEllipsis}"
+                    ToolTip.Placement="BottomEdgeAlignedRight">
+                    <Button.Flyout>
+                        <MenuFlyout
+                            Placement="BottomEdgeAlignedRight" HorizontalOffset="8"
+                            ItemsSource="{Binding MenuItems}"
+                            ItemContainerTheme="{StaticResource MenuActionItem}" />
+                    </Button.Flyout>
+                </Button>
+            </Grid>
+
+            <Interaction.Behaviors>
+                <ExecuteCommandOnKeyDownBehavior
+                    Key="Delete" Command="{Binding DeleteCommand}" MarkAsHandled="True" FocusControl="Border" />
+                <ExecuteCommandOnKeyDownBehavior
+                    Gesture="Ctrl+D" Command="{Binding DuplicateCommand}" MarkAsHandled="True" />
+            </Interaction.Behaviors>
+        </Border>
+    </DataTemplate>
+</ResourceDictionary>

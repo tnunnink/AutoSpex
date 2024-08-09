@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Data.Converters;
 using Avalonia.Metadata;
 
@@ -24,9 +22,7 @@ public class KeyResourceConverter : IValueConverter
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         var entry = Map.FirstOrDefault(x => Equals(value, x.Value));
-        return entry != null  
-            ? Application.Current?.FindResource(entry.Resource)
-            : AvaloniaProperty.UnsetValue;
+        return Resource.Find(entry?.Resource);
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
@@ -34,4 +30,3 @@ public class KeyResourceConverter : IValueConverter
         throw new NotSupportedException($"{GetType().Name} does not support ConvertBack.");
     }
 }
-

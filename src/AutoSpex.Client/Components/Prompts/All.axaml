@@ -4,7 +4,6 @@
         <ResourceInclude Source="ErrorPrompt.axaml" />
         <ResourceInclude Source="DeletePrompt.axaml" />
         <ResourceInclude Source="SaveChangesPrompt.axaml" />
-        <ResourceInclude Source="MigratePrompt.axaml" />
-        <ResourceInclude Source="DisconnectionPrompt.axaml" /> 
+        <ResourceInclude Source="NamePrompt.axaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

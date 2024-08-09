@@ -1,79 +1,210 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
+using AutoSpex.Client.Resources;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
+using Avalonia.Input;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using FluentResults;
 using L5Sharp.Core;
 
 namespace AutoSpex.Client.Observers;
 
 public partial class SourceObserver : Observer<Source>
 {
+    private readonly FileSystemWatcher? _watcher;
+    private readonly FileInfo _info;
+
+    /// <inheritdoc/>
     public SourceObserver(Source source) : base(source)
     {
-        Track(nameof(TargetName));
-        Track(nameof(TargetType));
-        Track(nameof(ExportedBy));
-        Track(nameof(ExportedOn));
+        Overrides = new ObserverCollection<Variable, VariableObserver>(Model.Overrides, v => new VariableObserver(v));
+        Track(nameof(Name));
+        Track(Overrides);
+
+        _watcher = source.CreateWatcher();
+        _info = new FileInfo(Model.Uri.LocalPath);
+
+        if (_watcher is null) return;
+        _watcher.Renamed += OnRenamed;
+        _watcher.Deleted += OnDeleted;
+        _watcher.Created += OnCreated;
     }
 
     public override Guid Id => Model.SourceId;
-    public string Name => Model.Name;
-    public bool HasContent => !string.IsNullOrEmpty(Model.Content);
-    public string TargetName => Model.TargetName;
-    public string TargetType => Model.TargetType;
-    public string ExportedBy => Model.ExportedBy;
-    public DateTime ExportedOn => Model.ExportedOn;
-    public string Size => $"{ComputeSize():N0} KB";
-    public string Compressed => $"{ComputeCompressedSize():N0} KB";
-    public static SourceObserver Empty(Guid id = default) => new(new Source(id));
+    public override string Icon => nameof(Source);
 
-    /// <summary>
-    /// Updates the content of the Source with the specified L5X data and applies optional scrubbing.
-    /// </summary>
-    /// <param name="content">The L5X data to update the Source with.</param>
-    /// <param name="scrub">A flag indicating whether to apply scrubbing during the update.</param>
-    /// <exception cref="ArgumentNullException">Thrown when the content parameter is null.</exception>
-    public void Update(L5X content, bool scrub)
+    public override string Name
     {
-        if (content is null)
-            throw new ArgumentNullException(nameof(content));
+        get => Model.Name;
+        set => SetProperty(Model.Name, value, Model, (s, v) => s.Name = v);
+    }
 
-        Model.Update(content, scrub);
+    public string LocalPath => Model.Uri.LocalPath;
+    public bool Exists => Model.Exists;
+    public string Size => _info.Exists ? $"{_info.Length / 1024:N0} KB" : string.Empty;
+    public string CreatedOn => _info.Exists ? File.GetCreationTime(Model.Uri.LocalPath).ToString("g") : string.Empty;
+    public ObserverCollection<Variable, VariableObserver> Overrides { get; }
 
-        //Will trigger property change event for all source properties to notify the UI.
-        Refresh();
-        Messenger.Send(new Updated(this));
+    public override bool Filter(string? filter)
+    {
+        FilterText = filter;
+        return Name.Satisfies(filter) || LocalPath.Satisfies(filter);
+    }
+
+    public Task<Result<L5X>> LoadContent()
+    {
+        return Task.Run(() =>
+        {
+            try
+            {
+                if (!Exists) return Result.Fail("Source does not exist");
+                var content = Model.Load();
+                return Result.Ok(content);
+            }
+            catch (Exception e)
+            {
+                return Result.Fail(e.Message);
+            }
+        });
     }
 
     [RelayCommand]
-    private Task Search()
+    private async Task Locate()
     {
-        throw new NotImplementedException();
+        if (string.IsNullOrEmpty(Model.Directory)) return;
+        await Shell.StorageProvider.ShowInExplorer(Model.Directory);
     }
 
-    private decimal ComputeSize()
+    [RelayCommand]
+    private async Task CopyPath()
     {
-        if (!HasContent) return 0;
-        var data = Model.L5X.ToString();
-        var bytes = System.Text.Encoding.UTF8.GetByteCount(data);
-        return (decimal)bytes / 1024;
+        if (string.IsNullOrEmpty(Model.Directory)) return;
+        if (Shell.Clipboard is null) return;
+        await Shell.Clipboard.SetTextAsync(Model.Directory);
     }
 
-    private decimal ComputeCompressedSize()
+    protected override Task Duplicate()
     {
-        if (!HasContent) return 0;
-        var data = Model.Content;
-        var bytes = System.Text.Encoding.UTF8.GetByteCount(data);
-        return (decimal)bytes / 1024;
+        var duplicate = new SourceObserver(new Source(Model.Uri));
+        Messenger.Send(new Duplicated(this, duplicate));
+        return Task.CompletedTask;
     }
 
-    public static implicit operator Source(SourceObserver observer) => observer.Model;
-    public static implicit operator SourceObserver(Source source) => new(source);
+    protected override Task Delete()
+    {
+        IsActive = false;
+        Messenger.Send(new Deleted(this));
+        return Task.CompletedTask;
+    }
 
-    /// <summary>
-    /// A message send when this source object has its content updated. 
-    /// </summary>
-    /// <param name="Source">The updated <see cref="SourceObserver"/></param>
-    public record Updated(SourceObserver Source);
+    protected override void OnDeactivated()
+    {
+        base.OnDeactivated();
+
+        if (_watcher is null) return;
+        _watcher.Renamed -= OnRenamed;
+        _watcher.Deleted -= OnDeleted;
+        _watcher.Created -= OnDeleted;
+
+        Model.Release();
+    }
+
+    protected override IEnumerable<MenuActionItem> GenerateMenuItems()
+    {
+        yield return new MenuActionItem
+        {
+            Header = "Inspect",
+            Icon = Resource.Find("IconFilledBinoculars"),
+            DetermineVisibility = () => Exists
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Open In Explorer",
+            Icon = Resource.Find("IconFilledFolder"),
+            Command = LocateCommand,
+            DetermineVisibility = () => Exists
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Rename",
+            Icon = Resource.Find("IconLineInputText"),
+            Command = RenameCommand,
+            Gesture = new KeyGesture(Key.E, KeyModifiers.Control),
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Duplicate",
+            Icon = Resource.Find("IconFilledClone"),
+            Command = DuplicateCommand,
+            Gesture = new KeyGesture(Key.D, KeyModifiers.Control),
+            DetermineVisibility = () => Exists
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Delete",
+            Icon = Resource.Find("IconFilledTrash"),
+            Classes = "danger",
+            Command = DeleteCommand,
+            Gesture = new KeyGesture(Key.Delete)
+        };
+    }
+
+    protected override IEnumerable<MenuActionItem> GenerateContextItems()
+    {
+        yield return new MenuActionItem
+        {
+            Header = "Inspect",
+            Icon = Resource.Find("IconFilledBinoculars"),
+            DetermineVisibility = () => HasSingleSelection && Exists
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Open In Explorer",
+            Icon = Resource.Find("IconFilledFolderOpen"),
+            Command = LocateCommand,
+            DetermineVisibility = () => HasSingleSelection && Exists
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Rename",
+            Icon = Resource.Find("IconFilledPen"),
+            Command = RenameCommand,
+            Gesture = new KeyGesture(Key.E, KeyModifiers.Control),
+            DetermineVisibility = () => HasSingleSelection
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Duplicate",
+            Icon = Resource.Find("IconFilledClone"),
+            Command = DuplicateCommand,
+            Gesture = new KeyGesture(Key.D, KeyModifiers.Control),
+            DetermineVisibility = () => HasSingleSelection && Exists
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Delete",
+            Icon = Resource.Find("IconFilledTrash"),
+            Classes = "danger",
+            Command = DeleteCommand,
+            Gesture = new KeyGesture(Key.Delete)
+        };
+    }
+
+    private void OnRenamed(object sender, RenamedEventArgs e) => OnPropertyChanged(nameof(Exists));
+
+    private void OnDeleted(object sender, FileSystemEventArgs e) => OnPropertyChanged(nameof(Exists));
+
+    private void OnCreated(object sender, FileSystemEventArgs e) => OnPropertyChanged(nameof(Exists));
 }

@@ -5,16 +5,19 @@ using System.Linq;
 using AutoSpex.Client.Observers;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
-using AutoSpex.Persistence;
 using JetBrains.Annotations;
 using L5Sharp.Core;
 using Argument = AutoSpex.Engine.Argument;
+using Environment = AutoSpex.Engine.Environment;
+using Range = AutoSpex.Engine.Range;
 
 namespace AutoSpex.Client.Components;
 
 [PublicAPI]
 public static class DesignData
 {
+    private const string TestSource = @"C:\Users\tnunn\Documents\L5X\Test.L5X";
+
     public static readonly ObservableCollection<DetailPageModel> Tabs =
     [
         new TestDetailPageModel(),
@@ -35,31 +38,23 @@ public static class DesignData
         new TestPageModel()
     ];
 
-    public static ProjectObserver RealProject = new DesignRealProjectObserver();
-    public static ProjectObserver FakeProject = new DesignFakeProjectObserver();
-
-    public static readonly ObserverCollection<Project, ProjectObserver> Projects =
-    [
-        new DesignRealProjectObserver(),
-        new DesignFakeProjectObserver(),
-        new DesignRealProjectObserver()
-    ];
-
     public static readonly CriterionObserver BoolCriterion =
-        new(new Criterion(Element.Tag.Property("Constant"), Operation.IsTrue));
+        new(new Criterion(Element.Tag.Property("Constant"), Operation.True));
 
     public static readonly CriterionObserver NumberCriterion =
-        new(new Criterion(Element.Tag.Property("Dimensions"), Operation.GreaterThanOrEqual, new Argument(10)));
+        new(new Criterion(Element.Tag.Property("Dimensions"), Operation.GreaterThanOrEqualTo, new Argument(10)));
 
     public static readonly CriterionObserver TextCriterion =
-        new(new Criterion(Element.Tag.Property("Name"), Operation.Equal, "Test"));
+        new(new Criterion(Element.Tag.Property("Name"), Operation.EqualTo, "Test"));
 
     public static readonly CriterionObserver EnumCriterion =
-        new(new Criterion(Element.Tag.Property("Radix"), Operation.Equal, Radix.Binary));
+        new(new Criterion(Element.Tag.Property("Radix"), Operation.EqualTo, Radix.Binary));
 
     public static readonly CriterionObserver InnerCriterion =
         new(new Criterion(Element.Tag.Property("Members"), Operation.Any,
             new Criterion(Element.Tag.Property("TagName"), Operation.Like, "%MemberName")));
+
+    public static readonly CriterionObserver RangeCriterion = new Range().Criterion;
 
     public static readonly ObservableCollection<CriterionObserver> Criteria =
     [
@@ -70,32 +65,42 @@ public static class DesignData
 
     public static Property Property = new DesignRadixProperty();
 
-    public static NodeObserver SpecNode = SpecNodeObserver();
-    public static NodeObserver SourceNode = new(Node.NewSource());
 
-    public static ObservableCollection<NodeObserver> Nodes = new(GenerateNodes().Select(n => new NodeObserver(n)));
+    public static EnvironmentObserver EnvironmentItemDefault = new(Environment.Default);
 
-    public static ObservableCollection<NodeObserver> Specs = new(GenerateSpecs().Select(n => new NodeObserver(n)));
+    public static EnvironmentObserver EnvironmentItemTest = new(new Environment
+    {
+        Name = "Some Test Config",
+        Comment = "This config is for testing the interface.",
+        IsTarget = false
+    });
+
+    public static ObservableCollection<EnvironmentObserver> Environments =
+        [EnvironmentItemDefault, EnvironmentItemTest];
+
 
     public static SpecObserver SpecObserver =
         new(Spec.Configure(c =>
-            c.Query(Element.Tag)
-                .Where(Element.Tag.Property("TagName"), Operation.Contains, "TestTag")
-                .Verify(Element.Tag.Property("Value"), Operation.Equal, 123)
+            c.Find(Element.Tag)
+                .Where(Element.Tag.Property("TagName"), Operation.Containing, "TestTag")
+                .ShouldHave(Element.Tag.Property("Value"), Operation.EqualTo, 123)
         ));
 
-    public static VariableObserver VariableObserver = new DesignVariableObserver();
+    #region Variables
 
-    public static Variable Variable = new("MyVar", "123");
+    public static Variable Variable = new("MyVar", "This is a test");
+
+    public static VariableObserver VariableObserver = new(Variable);
 
     public static ObservableCollection<VariableObserver> Variables =
     [
-        new DesignVariableObserver(),
-        new DesignVariableObserver(),
-        new DesignVariableObserver(),
-        new DesignVariableObserver(),
-        new DesignVariableObserver()
+        new VariableObserver(new Variable("flag", true)),
+        new VariableObserver(new Variable("numeric", 123)),
     ];
+
+    #endregion
+
+    #region Arguments
 
     public static ArgumentObserver EmptyArgument = new(new Argument(string.Empty));
 
@@ -114,51 +119,56 @@ public static class DesignData
     public static ObservableCollection<Argument> RadixOptions =>
         new(LogixEnum.Options<Radix>().Select(e => new Argument(e)));
 
-    //todo should we get something better than pointing to local disc
-    public static L5X Content = L5X.Load(@"C:\Users\tnunn\Documents\L5X\Test.L5X");
+    #endregion
 
-    //todo should we get something better than pointing to local disc
-    public static SourceObserver Source = new(new Source(L5X.Load(@"C:\Users\tnunn\Documents\L5X\Test.L5X")));
+    #region Source
 
-    public static ObservableCollection<SourceObserver> Sources =
-    [
-        new SourceObserver(new Source(L5X.Load(@"C:\Users\tnunn\Documents\L5X\Test.L5X"))),
-        new SourceObserver(new Source(L5X.Load(@"C:\Users\tnunn\Documents\L5X\Test.L5X"))),
-        new SourceObserver(new Source(L5X.Load(@"C:\Users\tnunn\Documents\L5X\Test.L5X"))),
-    ];
+    public static SourceObserver SourceTest = new(new Source(new Uri(@"C:\Users\tnunn\Documents\L5X\Test.L5X")));
 
-    public static LogixComponent DataType = new DesignSourceObserver().Model.L5X.DataTypes.First();
+    public static SourceObserver SourceFake = new(new Source(new Uri(@"C:\Users\tnunn\Documents\L5X\Fake.L5X")));
 
-    public static ObservableCollection<LogixElement> DataTypes = new(new DesignSourceObserver().Model.L5X.DataTypes);
+    public static ObservableCollection<SourceObserver> Sources = [SourceTest, SourceTest, SourceFake];
+
+    #endregion
+
+    #region LogixElements
+
+    public static LogixComponent DataType = SourceTest.Model.Load().DataTypes.First();
+
+    public static ObservableCollection<LogixElement> DataTypes = new(SourceTest.Model.Load().DataTypes);
 
     public static ObservableCollection<ElementObserver> DataTypeElements =
-        new(new DesignSourceObserver().Model.L5X.DataTypes.Select(t => new ElementObserver(t)));
+        new(SourceTest.Model.Load().DataTypes.Select(t => new ElementObserver(t)));
 
-    public static ObservableCollection<ElementObserver> Tags = new(new DesignSourceObserver().Model.L5X.Query<Tag>()
-        .Where(t => t.Description is not null).SelectMany(t => t.Members()).Select(x => new ElementObserver(x)));
+    public static ObservableCollection<ElementObserver> Tags = new(SourceTest.Model.Load().Query<Tag>()
+        .Where(t => t.Description is not null).Select(x => new ElementObserver(x)));
 
     public static LogixCode Rung = DesignRung();
 
     private static LogixCode DesignRung()
     {
-        var rung = new DesignSourceObserver().Model.L5X.Query<Rung>().First();
+        var rung = SourceTest.Model.Load().Query<Rung>().First();
         rung.Text = "XIC(Some_Tag_Name)[GRT(MyTag,1)NEQ(AnotherTag.Member,0)]MOV(0,OutputTag);";
         rung.Comment = "This is a test rung that we are using to mock the look of the UI.";
         return rung;
     }
 
     public static ObservableCollection<ElementObserver> Rungs =
-        new(new DesignSourceObserver().Model.L5X.Query<Rung>().Select(x => new ElementObserver(x)));
+        new(SourceTest.Model.Load().Query<Rung>().Select(x => new ElementObserver(x)));
 
-    public static string? RawData = new DesignSourceObserver().Model.L5X.Tags.FirstOrDefault()?.Serialize().ToString();
+    public static string? RawData = SourceTest.Model.Load().Tags.FirstOrDefault()?.Serialize().ToString();
 
-    public static LogixElement? Tag = new DesignSourceObserver().Model.L5X.Tags.Find("TestSimpleTag");
+    public static LogixElement? Tag = SourceTest.Model.Load().Tags.Find("TestSimpleTag");
 
-    public static LogixElement? Module = new DesignSourceObserver().Model.L5X.Modules.Find("RackIO");
+    public static LogixElement? Module = SourceTest.Model.Load().Modules.Find("RackIO");
 
-    public static LogixElement? Program = new DesignSourceObserver().Model.L5X.Programs.Find("MainProgram");
+    public static LogixElement? Program = SourceTest.Model.Load().Programs.Find("MainProgram");
 
     public static ElementObserver TagObserver = new(Tag!);
+
+    #endregion
+
+    #region Properties
 
     public static PropertyObserver RadixPropertyObserver => new DesignRadixPropertyObserver();
 
@@ -168,16 +178,24 @@ public static class DesignData
     public static PropertyObserver MembersPropertyObserver => new(new DesignMembersProperty(),
         new ElementObserver(new Tag { Name = "MyTag", Value = new TIMER() }));
 
-    public static RunObserver Run => new(new Run());
+    #endregion
+
+    #region Nodes
+
+    public static NodeObserver SpecNode = SpecNodeObserver();
+
+    public static ObservableCollection<NodeObserver> Nodes = new(GenerateNodes().Select(n => new NodeObserver(n)));
+
+    public static ObservableCollection<NodeObserver> SpecsNodes = new(GenerateSpecs().Select(n => new NodeObserver(n)));
 
     private static IEnumerable<Node> GenerateNodes()
     {
-        var collection = Node.NewContainer();
+        var collection = Node.NewCollection();
         var folder = collection.AddContainer();
         collection.AddSpec();
         folder.AddSpec();
         yield return collection;
-        yield return Node.NewContainer();
+        yield return Node.NewCollection();
     }
 
     private static IEnumerable<Node> GenerateSpecs()
@@ -190,82 +208,109 @@ public static class DesignData
         folder.AddSpec("Test Folder");
         folder.AddSpec("Sub Spec");
         folder.AddSpec("Contained Spec");
-        return collection.Descendents(NodeType.Spec);
+        return collection.Descendants(NodeType.Spec);
     }
 
     private static NodeObserver SpecNodeObserver()
     {
-        var collection = Node.NewContainer();
+        var collection = Node.NewCollection();
         var folder = collection.AddContainer();
         var spec = folder.AddSpec();
         return new NodeObserver(spec);
     }
 
-    public static BOOL BoolValue = new(true);
-    public static SINT SintValue = new(12);
-    public static INT IntValue = new(123);
-    public static DINT DintValue = new(123123);
-    public static LINT LintValue = new(123123123);
+    #endregion
 
-    public static ValueObserver BooleanValueObserver = new(true);
-    public static ValueObserver RadixValueObserver = new(Radix.Float);
+    #region Specs
+
+    public static ObservableCollection<SpecObserver> Specs =
+        new(GenerateSpecs().Select(n => new SpecObserver(new Spec(n))));
+
+    #endregion
+
+    #region Runs
+
+    public static RunObserver Run => new(new Run());
+    public static RunObserver ExecutedRun = GenerateExecutedRun();
+
+    private static RunObserver GenerateExecutedRun()
+    {
+        var environment = new Environment();
+        environment.Add(new Uri(TestSource));
+
+        var spec = new Spec();
+        spec.Find(Element.Module).ShouldHave(Element.Module.Property("Inhibited"), Operation.False);
+
+        var run = new Run(environment);
+        run.AddNode(spec.ToNode());
+
+        run.Execute([spec]);
+
+        return new RunObserver(run);
+    }
+
+    #endregion
+
+    #region Outcomes
+
+    public static OutcomeObserver DefaultOutcome = new(new Outcome(SpecNode));
+
+    public static IEnumerable<OutcomeObserver> DefaultOutcomes = [DefaultOutcome, DefaultOutcome, DefaultOutcome];
 
     public static EvaluationObserver PassedEvaluation = new(
-        Evaluation.Passed(new Criterion(Element.Tag.Property("DataType"), Operation.Equal, "MyType"),
-            new Tag { Name = "Custom_Tag_Name" }, "MyType"));
+        Evaluation.Passed(new Criterion(Element.Tag.Property("DataType"), Operation.EqualTo, "MyType"),
+            new Tag("TestTag", "MyType"),
+            "MyType")
+    );
 
     public static EvaluationObserver FailedEvaluation = new(
-        Evaluation.Failed(new Criterion(Element.Tag.Property("DataType"), Operation.Contains, "Pump"),
-            new Tag { Name = "MyProgram:Local_Tag_Name_01.Control.Value" }, "ValveType"));
+        Evaluation.Failed(new Criterion(Element.Tag.Property("DataType"), Operation.Containing, "Pump"),
+            new Tag("TestTag", "MyType"),
+            "ValveType")
+    );
 
     public static EvaluationObserver ErroredEvaluation = new(
-        Evaluation.Errored(new Criterion(Element.Tag.Property("DataType"), Operation.Equal, "MyType"),
-            new Tag { Name = "Custom_Tag_Name" },
-            new ArgumentException("Could not execute code due to this throw exception")));
+        Evaluation.Errored(new Criterion(Element.Tag.Property("DataType"), Operation.EqualTo, "MyType"),
+            new Tag("TestTag", "MyType"),
+            new ArgumentException("Could not execute code due to this throw exception"))
+    );
 
     public static ObservableCollection<EvaluationObserver> Evaluations =
         new(new[] { PassedEvaluation, FailedEvaluation, ErroredEvaluation });
 
-    public static OutcomeObserver OutcomePassed = new(new Outcome("Spec That Passed", "Source that ran",
-        [PassedEvaluation, PassedEvaluation, PassedEvaluation]));
+    #endregion
 
-    public static OutcomeObserver OutcomeFailed = new(new Outcome("Spec That Failed", "Source that ran",
-        [PassedEvaluation, FailedEvaluation, FailedEvaluation]));
+    #region Values
 
-    public static OutcomeObserver OutcomeErrored = new(new Outcome("Spec That Errored", "Source that ran",
-        [PassedEvaluation, ErroredEvaluation, FailedEvaluation]));
+    public static ValueObserver NullValue = new(null);
+    public static ValueObserver BooleanTrueValue = new(true);
+    public static ValueObserver BooleanFalseValue = new(false);
+    public static ValueObserver IntegerValue = new(34567);
+    public static ValueObserver DoubleValue = new(1.234);
+    public static ValueObserver TextValue = new("SomeTestValue");
 
-    public static ObservableCollection<OutcomeObserver> Outcomes = [OutcomePassed, OutcomeFailed, OutcomeErrored];
+    public static ValueObserver AtomicBoolValue = new(new BOOL(true));
+    public static ValueObserver AtomicSintValue = new(new SINT(12));
+    public static ValueObserver AtomicIntValue = new(new INT(123));
+    public static ValueObserver AtomicDintValue = new(new DINT(123123));
+    public static ValueObserver AtomicLintValue = new(new LINT(123123123));
 
-    public static RunObserver RunObserver = BuildRunObserver();
+    public static ValueObserver RadixValue = new(Radix.Float);
+    public static ValueObserver DataTypeValue = new(DataType);
+    public static ValueObserver RungValue = new(Rung);
+    public static ValueObserver TagValue = new(Tag);
 
-    private static RunObserver BuildRunObserver()
-    {
-        var run = new RunObserver(new Run(Node.NewRun()));
-        var outcomes = Outcomes.Select(x => x.Model);
+    public static ValueObserver CollectionValue = new(new List<Argument> { new(), new(), new() });
+    public static ValueObserver VariableValue = new(Variable);
+    public static ValueObserver ReferenceValue = new(new Reference("test_ref"));
 
-        foreach (var outcome in outcomes)
-        {
-            run.Outcomes.Add(outcome);
-        }
-
-        return run;
-    }
-
-    public static ChangeLogObserver ChangeLog = new(new ChangeLog
-        {
-            Command = "SaveSpec",
-            Message = "Save specification with nane 'Test spec' with 2 filters and 1 verification.",
-            ChangedOn = DateTime.Now,
-            ChangedBy = "tnunnink"
-        }
-    );
+    #endregion
 }
 
 public class TestPageModel : PageViewModel
 {
     public override string Title => "Test Page";
-    public override string Icon => "Container";
+    public override string Icon => "Collections";
 }
 
 public class TestDetailPageModel : DetailPageModel
@@ -274,13 +319,8 @@ public class TestDetailPageModel : DetailPageModel
     public override string Icon => "Container";
 }
 
-public class DesignRealProjectObserver()
-    : ProjectObserver(new Project(@"C:\Users\tnunn\Documents\Spex\New Project.spex"));
-
-public class DesignFakeProjectObserver() : ProjectObserver(new Project(@"C:\Users\tnunn\Documents\Spex\Fake.spex"));
-
 public class DesignCriterionObserver()
-    : CriterionObserver(new Criterion(Element.Tag.Property("Name"), Operation.Equal, "Test"));
+    : CriterionObserver(new Criterion(Element.Tag.Property("Name"), Operation.EqualTo, "Test"));
 
 public class DesignArgumentObserver() : ArgumentObserver(new Argument("Literal Text Value"));
 
@@ -292,8 +332,3 @@ public class DesignMembersProperty() : Property("Members", typeof(IEnumerable<Ta
 
 public class DesignRadixPropertyObserver()
     : PropertyObserver(new DesignRadixProperty(), new ElementObserver(new Tag()));
-
-public class DesignVariableObserver() : VariableObserver(new Variable("MyVar", "123"));
-
-public class DesignSourceObserver()
-    : SourceObserver(new Source(L5X.Load(@"C:\Users\tnunn\Documents\L5X\Test.L5X")));

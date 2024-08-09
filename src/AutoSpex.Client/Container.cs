@@ -23,20 +23,6 @@ public class Container
         return _container.GetInstance<T>();
     }
 
-    public static object Resolve(Type type)
-    {
-        if (_container is null)
-            throw new InvalidOperationException(
-                "Container is not initialized. Call build providing configuration before resolving.");
-
-        return _container.GetInstance(type);
-    }
-
-    public static T? TryResolve<T>() where T : class
-    {
-        return _container?.TryGetInstance<T>();
-    }
-
     public static void Build()
     {
         var registry = new ServiceRegistry();
@@ -50,9 +36,7 @@ public class Container
         registry.RegisterPrompter();
         registry.RegisterPages();
 
-        var container = new Lamar.Container(registry);
-
-        _container = container;
+        _container = new Lamar.Container(registry);
     }
 
     public static void Dispose()
@@ -96,7 +80,7 @@ internal static class RegistrationExtensions
     {
         registry.For<Notifier>().Use<Notifier>().Singleton();
     }
-    
+
     internal static void RegisterPrompter(this ServiceRegistry registry)
     {
         registry.For<Prompter>().Use<Prompter>().Singleton();

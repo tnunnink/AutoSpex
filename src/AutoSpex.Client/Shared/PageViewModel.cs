@@ -27,6 +27,14 @@ public abstract partial class PageViewModel : TrackableViewModel, IEquatable<Pag
     public virtual string Icon => "None";
 
     /// <summary>
+    /// Gets or sets a value indicating whether the page should be kept alive in the navigation stack.
+    /// </summary>
+    /// <value>
+    /// <c>true</c> if the page should be kept alive; otherwise, <c>false</c>.
+    /// </value>
+    public virtual bool KeepAlive => true;
+
+    /// <summary>
     /// A command to initiate the loading of data from external resources in order to populate this page with it's
     /// required content.
     /// </summary>
@@ -52,7 +60,7 @@ public abstract partial class PageViewModel : TrackableViewModel, IEquatable<Pag
     public virtual Task<Result> Save() => Task.FromResult(Result.Ok());
 
     /// <summary>
-    /// Indicates whether the page can be saved or not. By default, this return true if <c>IsChanged</c> is true
+    /// Indicates whether the page can be saved or not. By default, this returns true if <c>IsChanged</c> is true
     /// and <c>IsErrored</c> is false, but deriving classes can override to specify different functionality.
     /// </summary>
     /// <returns><c>true</c> if the page can be saved, Otherwise, <c>false</c>.</returns>

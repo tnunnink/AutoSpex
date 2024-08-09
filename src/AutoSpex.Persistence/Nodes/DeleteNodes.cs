@@ -13,7 +13,7 @@ internal class DeleteNodesHandler(IConnectionManager manager) : IRequestHandler<
 {
     public async Task<Result> Handle(DeleteNodes request, CancellationToken cancellationToken)
     {
-        var connection = await manager.Connect(Database.Project, cancellationToken);
+        var connection = await manager.Connect(cancellationToken);
         var ids = request.NodeIds.Select(n => n.ToString()).ToList();
         await connection.ExecuteAsync("DELETE FROM Node WHERE NodeId IN @Ids", new {Ids = ids});
         return Result.Ok();

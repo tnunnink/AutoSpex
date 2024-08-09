@@ -29,6 +29,7 @@ public sealed class Prompter(Shell shell)
         var page = factory();
         var dialog = new DialogShell { Content = page };
         await page.Load();
+        page.IsActive = true;
 
         shell.DialogOpen = true;
         var result = await dialog.ShowDialog<TResult>(shell);
@@ -42,6 +43,7 @@ public sealed class Prompter(Shell shell)
         var page = factory();
         var dialog = new DialogShell { Content = page };
         await page.Load();
+        page.IsActive = true;
 
         shell.DialogOpen = true;
         await dialog.ShowDialog(shell);
@@ -58,33 +60,37 @@ public static class PromptExtensions
         return prompter.Show<bool?>(control);
     }
 
-    public static Task<bool?> PromptDeleteItem(this Prompter prompter, string name)
-    {
-        var control = new DeletePrompt { Title = $"Delete {name}?", Message = name };
-        return prompter.Show<bool?>(control);
-    }
-
-    public static Task<bool?> PromptDeleteItems(this Prompter prompter, string message)
-    {
-        var control = new DeletePrompt { Title = "Delete items?", Message = message };
-        return prompter.Show<bool?>(control);
-    }
-
     public static Task<string?> PromptSave(this Prompter prompter, string name)
     {
         var control = new SaveChangesPrompt { ItemName = name };
         return prompter.Show<string?>(control);
     }
 
-    public static Task<bool?> PromptMigrate(this Prompter prompter, string name)
+    public static Task<bool?> PromptDelete(this Prompter prompter, string message)
     {
-        var control = new MigratePrompt { ProjectName = name };
+        var control = new DeletePrompt { Message = message };
         return prompter.Show<bool?>(control);
     }
 
-    public static Task<bool?> PromptDisconnection(this Prompter prompter, string path)
+    public static Task<string?> PromptRename(this Prompter prompter, Observer observer)
     {
-        var control = new DisconnectionPrompt { ProjectPath = path };
-        return prompter.Show<bool?>(control);
+        var control = new NamePrompt
+        {
+            Title = $"Rename {observer.Icon}",
+            Observer = observer
+        };
+        
+        return prompter.Show<string?>(control);
+    }
+    
+    public static Task<string?> PromptNewName(this Prompter prompter, Observer observer)
+    {
+        var control = new NamePrompt
+        {
+            Title = $"Duplicate {observer.Icon}",
+            Observer = observer
+        };
+        
+        return prompter.Show<string?>(control);
     }
 }

@@ -9,21 +9,27 @@
             <components:DeletePrompt Title="Delete MySpec?" Message="MySpec" />
             <components:DeletePrompt Title="Delete Content?" Message="6 Items" />
         </StackPanel>
-        
+
     </Design.PreviewWith>
 
     <ControlTheme x:Key="{x:Type components:DeletePrompt}" TargetType="components:DeletePrompt">
         <Setter Property="Template">
             <ControlTemplate>
-                <controls:Prompt Header="{TemplateBinding Title}"
-                                 HeaderIcon="{StaticResource IconWarningFilled}"
+                <controls:Prompt Header="Confirm content deletion"
                                  ActionButtonText="Delete"
                                  ActionButtonTheme="{actipro:ControlTheme ButtonSolid}"
                                  ActionCommandParameter="{StaticResource True}"
                                  CancelButtonTheme="{actipro:ControlTheme ButtonSoft}"
                                  CancelCommandParameter="{StaticResource False}"
                                  Classes="danger"
-                                 MaxWidth="500" Padding="20">
+                                 MaxWidth="500">
+                    <controls:Prompt.HeaderIcon>
+                        <ControlTheme TargetType="PathIcon" BasedOn="{StaticResource IconFilledWarning}">
+                            <Setter Property="Foreground"
+                                    Value="{actipro:ThemeResource ControlForegroundBrushOutlineDanger}" />
+                            <Setter Property="FontSize" Value="20" />
+                        </ControlTheme>
+                    </controls:Prompt.HeaderIcon>
                     <controls:Prompt.Content>
                         <TextBlock TextWrapping="Wrap">
                             <TextBlock.Inlines>
@@ -40,5 +46,5 @@
             </ControlTemplate>
         </Setter>
     </ControlTheme>
-    
+
 </ResourceDictionary>

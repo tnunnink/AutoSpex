@@ -6,49 +6,58 @@ public class SourceTests
     [Test]
     public void New_ValidFile_ShouldBeExpected()
     {
-        var file = L5X.Load(Known.Test);
+        var file = new Uri(Known.Test);
         var source = new Source(file);
 
         source.Should().NotBeNull();
         source.SourceId.Should().NotBeEmpty();
-        source.TargetName.Should().Be(file.Info.TargetName);
-        source.TargetType.Should().Be(file.Info.TargetType);
-        source.ExportedBy.Should().Be(file.Info.Owner);
-        source.ExportedOn.Should().Be(file.Info.ExportDate);
-        source.Content.Should().NotBeEmpty();
-        source.L5X.Should().NotBeNull();
-        source.L5X.Serialize().Attribute("SourceId")?.Value.Should().Be(source.SourceId.ToString());
-        source.L5X.Serialize().Descendants(L5XName.Data)
-            .Where(e => e.Attribute(L5XName.Format)?.Value == DataFormat.L5K).Should().BeEmpty();
+        source.Uri.Should().Be(file);
+        source.Name.Should().Be("Test");
+        source.FileName.Should().Be("Test.xml");
+        source.Directory.Should().NotBeEmpty();
+        source.Exists.Should().BeTrue();
+        source.Overrides.Should().BeEmpty();
     }
 
     [Test]
-    public void UpdateSource_WhenCalled_ShouldUpdateProperties()
+    public void LoadFile_WhenCalled_ShouldReturnNotNullL5X()
     {
-        var test = L5X.Load(Known.Test);
-        var source = new Source(test);
+        var file = new Uri(Known.Test);
+        var source = new Source(file);
 
-        var example = L5X.Load(Known.Example);
-        source.Update(example, true);
+        var content = source.Load();
 
-        source.TargetName.Should().Be(example.Info.TargetName);
-        source.TargetType.Should().Be(example.Info.TargetType);
-        source.ExportedBy.Should().Be(example.Info.Owner);
-        source.ExportedOn.Should().Be(example.Info.ExportDate);
-        source.Content.Should().NotBeEmpty();
-        source.L5X.Should().NotBeNull();
-        source.L5X.Serialize().Attribute("SourceId")?.Value.Should().Be(source.SourceId.ToString());
-        source.L5X.Serialize().Descendants(L5XName.Data)
-            .Where(e => e.Attribute(L5XName.Format)?.Value == DataFormat.L5K).Should().BeEmpty();
+        content.Should().NotBeNull();
     }
 
     [Test]
-    public void SaveScrubbedSourceToSeeSizeDifferenceOnDisc()
+    public void CreateWatcher_WhenCalled_ShouldReturnNotNull()
     {
-        var test = L5X.Load(Known.Test);
-        
-        var source = new Source(test);
+        var file = new Uri(Known.Test);
+        var source = new Source(file);
 
-        source.L5X.Save(@"C:\Users\tnunn\Documents\L5X\Test_Scrubbed.L5X");
+        var watcher = source.CreateWatcher();
+
+        watcher.Should().NotBeNull();
+    }
+    
+    [Test]
+    public void AddOverride_ValidVariable_ShouldHaveExpectedCount()
+    {
+        var file = new Uri(Known.Test);
+        var source = new Source(file);
+
+        source.Add(new Variable("TestVar", 123));
+
+        source.Overrides.Should().HaveCount(1);
+    }
+
+    [Test]
+    public void AddOverride_Null_ShouldThrowException()
+    {
+        var file = new Uri(Known.Test);
+        var source = new Source(file);
+
+        FluentActions.Invoking(() => source.Add(null!)).Should().Throw<ArgumentNullException>();
     }
 }

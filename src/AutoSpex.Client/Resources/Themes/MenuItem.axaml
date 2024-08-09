@@ -2,57 +2,60 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:converters="using:Avalonia.Controls.Converters"
-                    xmlns:primitives="clr-namespace:ActiproSoftware.UI.Avalonia.Controls.Primitives;assembly=ActiproSoftware.Avalonia.Shared">
+                    xmlns:primitives="clr-namespace:ActiproSoftware.UI.Avalonia.Controls.Primitives;assembly=ActiproSoftware.Avalonia.Shared"
+                    xmlns:shared="clr-namespace:AutoSpex.Client.Shared"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
 
     <Design.PreviewWith>
-        <Button Content="Test"
-                Margin="500">
-            <Button.ContextFlyout>
-                <MenuFlyout>
-                    <MenuItem Theme="{DynamicResource ContextMenuItem}"
-                              Header="Delete Item" />
-                    <MenuItem Theme="{DynamicResource ContextMenuItem}"
-                              Header="Add Item" />
-                    <MenuItem Theme="{DynamicResource ContextMenuItem}"
-                              Header="Play Item" />
-                </MenuFlyout>
-            </Button.ContextFlyout>
-            <Button.Flyout>
-                <MenuFlyout>
-                    <MenuItem Theme="{DynamicResource ContextMenuItem}"
-                              Header="Delete Item" />
-                    <MenuItem Icon="{StaticResource IconCopyOutlined}"
-                              Theme="{DynamicResource ContextMenuItem}"
-                              Header="Add Item" />
-                    <MenuItem Icon="{StaticResource IconPlayOutlined}"
-                              Theme="{DynamicResource ContextMenuItem}"
-                              Header="Play Item"
-                              InputGesture="Shift+R"
-                              Classes="success"/>
-                    <MenuItem Header="-" />
-                    <MenuItem Theme="{DynamicResource ContextMenuItem}"
-                              Icon="{StaticResource IconFloppyOutlined}"
-                              Header="Add Item">
+        <Border Height="400" Width="400">
+            <Button Content="Test" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="20">
+                <Button.ContextFlyout>
+                    <MenuFlyout>
                         <MenuItem Theme="{DynamicResource ContextMenuItem}"
                                   Header="Delete Item" />
-                        <MenuItem Icon="{StaticResource IconAdd}"
+                        <MenuItem Theme="{DynamicResource ContextMenuItem}"
+                                  Header="Add Item" />
+                        <MenuItem Theme="{DynamicResource ContextMenuItem}"
+                                  Header="Play Item" />
+                    </MenuFlyout>
+                </Button.ContextFlyout>
+                <Button.Flyout>
+                    <MenuFlyout>
+                        <MenuItem Theme="{DynamicResource ContextMenuItem}"
+                                  Header="Delete Item" />
+                        <MenuItem Icon="{StaticResource IconFilledClipboard}"
                                   Theme="{DynamicResource ContextMenuItem}"
                                   Header="Add Item" />
-                        <MenuItem Icon="{StaticResource IconPlayOutlined}"
+                        <MenuItem Icon="{StaticResource IconFilledLightning}"
                                   Theme="{DynamicResource ContextMenuItem}"
                                   Header="Play Item"
-                                  InputGesture="Shift+R" />
-                    </MenuItem>
-                    <MenuItem Header="-" />
-                    <MenuItem Theme="{DynamicResource ContextMenuItem}"
-                              Icon="{StaticResource IconTrashOutlined}"
-                              Header="Delete Item"
-                              Classes="danger"
-                              InputGesture="Delete" />
+                                  InputGesture="Shift+R"
+                                  Classes="success" />
+                        <MenuItem Header="-" />
+                        <MenuItem Theme="{DynamicResource ContextMenuItem}"
+                                  Icon="{StaticResource IconFilledArrowUp}"
+                                  Header="Add Item">
+                            <MenuItem Theme="{DynamicResource ContextMenuItem}"
+                                      Header="Delete Item" />
+                            <MenuItem Icon="{StaticResource IconAdd}"
+                                      Theme="{DynamicResource ContextMenuItem}"
+                                      Header="Add Item" />
+                            <MenuItem Icon="{StaticResource IconFilledLightning}"
+                                      Theme="{DynamicResource ContextMenuItem}"
+                                      Header="Play Item"
+                                      InputGesture="Shift+R" />
+                        </MenuItem>
+                        <MenuItem Header="-" />
+                        <MenuItem Theme="{DynamicResource ContextMenuItem}"
+                                  Icon="{StaticResource IconFilledTrash}"
+                                  Header="Delete Item"
+                                  Classes="danger"
+                                  InputGesture="Delete" />
 
-                </MenuFlyout>
-            </Button.Flyout>
-        </Button>
+                    </MenuFlyout>
+                </Button.Flyout>
+            </Button>
+        </Border>
     </Design.PreviewWith>
 
     <ControlTheme x:Key="ContextMenuItem" TargetType="MenuItem" BasedOn="{actipro:ControlTheme MenuItem}">
@@ -78,14 +81,14 @@
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="3" />
 
-                    <Viewbox x:Name="iconHost" 
-                             Grid.Column="0"
-                             IsVisible="{TemplateBinding Icon, Converter={x:Static ObjectConverters.IsNotNull}}"
-                             Margin="7 0 0 0" Width="20" Height="20"
-                             HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <PathIcon Theme="{TemplateBinding Icon}"
-                                  Height="20" Width="20" Padding="3" />
-                    </Viewbox>
+                    <PathIcon
+                        x:Name="iconHost"
+                        Grid.Column="0"
+                        Theme="{TemplateBinding Icon}"
+                        IsVisible="{TemplateBinding Icon, Converter={x:Static ObjectConverters.IsNotNull}}"
+                        FontSize="14"
+                        Margin="7 0 0 0"
+                        HorizontalAlignment="Center" VerticalAlignment="Center" />
 
                     <ContentPresenter
                         x:Name="headerPresenter"
@@ -192,7 +195,7 @@
         </Style>
 
         <Style Selector="^:disabled">
-            <Style Selector="^ /template/ Viewbox#iconHost">
+            <Style Selector="^ /template/ PathIcon#iconHost">
                 <Setter Property="Opacity" Value="0.4" />
             </Style>
             <Style Selector="^ /template/ ContentPresenter#headerPresenter">
@@ -205,9 +208,9 @@
                 <Setter Property="Foreground" Value="{actipro:ThemeResource MenuItemForegroundBrushDisabled}" />
             </Style>
         </Style>
-        
+
         <Style Selector="^.accent">
-            <Style Selector="^ /template/ Viewbox#iconHost PathIcon">
+            <Style Selector="^ /template/ PathIcon#iconHost">
                 <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushSoftAccent}" />
             </Style>
             <Style Selector="^ /template/ ContentPresenter#headerPresenter">
@@ -220,7 +223,7 @@
         </Style>
 
         <Style Selector="^.danger">
-            <Style Selector="^ /template/ Viewbox#iconHost PathIcon">
+            <Style Selector="^ /template/ PathIcon#iconHost">
                 <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushSoftDanger}" />
             </Style>
             <Style Selector="^ /template/ ContentPresenter#headerPresenter">
@@ -231,9 +234,9 @@
                 <Setter Property="BorderBrush" Value="{actipro:ThemeResource ControlBackgroundBrushSoftDanger}" />
             </Style>
         </Style>
-        
+
         <Style Selector="^.success">
-            <Style Selector="^ /template/ Viewbox#iconHost PathIcon">
+            <Style Selector="^ /template/ PathIcon#iconHost">
                 <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushSoftSuccess}" />
             </Style>
             <Style Selector="^ /template/ ContentPresenter#headerPresenter">
@@ -244,9 +247,9 @@
                 <Setter Property="BorderBrush" Value="{actipro:ThemeResource ControlBackgroundBrushSoftSuccess}" />
             </Style>
         </Style>
-        
+
         <Style Selector="^.warning">
-            <Style Selector="^ /template/ Viewbox#iconHost PathIcon">
+            <Style Selector="^ /template/ PathIcon#iconHost">
                 <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushSoftWarning}" />
             </Style>
             <Style Selector="^ /template/ ContentPresenter#headerPresenter">
@@ -257,5 +260,20 @@
                 <Setter Property="BorderBrush" Value="{actipro:ThemeResource ControlBackgroundBrushSoftWarning}" />
             </Style>
         </Style>
+    </ControlTheme>
+
+    <ControlTheme x:Key="MenuActionItem"
+                  TargetType="MenuItem"
+                  BasedOn="{StaticResource ContextMenuItem}"
+                  x:DataType="shared:MenuActionItem">
+        <Setter Property="Header" Value="{Binding Header}" />
+        <Setter Property="Icon" Value="{Binding Icon}" />
+        <Setter Property="Command" Value="{Binding Command}" />
+        <Setter Property="CommandParameter" Value="{Binding CommandParameter}" />
+        <Setter Property="InputGesture" Value="{Binding Gesture}" />
+        <Setter Property="IsVisible" Value="{Binding IsVisible}" />
+        <Setter Property="HotKey" Value="{Binding Gesture}" />
+        <Setter Property="ItemsSource" Value="{Binding Items}" />
+        <Setter Property="(properties:StyleClasses.Classes)" Value="{Binding Classes}" />
     </ControlTheme>
 </ResourceDictionary>

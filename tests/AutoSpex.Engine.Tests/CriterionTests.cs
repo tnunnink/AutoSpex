@@ -32,7 +32,7 @@ public class CriterionTests
     public void New_InnerCriterionArgument_ShouldHaveExpected()
     {
         var criterion = new Criterion(Element.Tag.Property("Members"), Operation.Any,
-            new Criterion(Element.Tag.Property("Name"), Operation.Contains, "Test"));
+            new Criterion(Element.Tag.Property("Name"), Operation.Containing, "Test"));
 
         criterion.Type.Should().Be(typeof(Tag));
         criterion.Property.Should().Be(Element.Tag.Property("Members"));
@@ -46,7 +46,7 @@ public class CriterionTests
     {
         var tag = new Tag { Name = "Test" };
 
-        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Equal, "Test");
+        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.EqualTo, "Test");
 
         var evaluation = criterion.Evaluate(tag);
 
@@ -54,7 +54,7 @@ public class CriterionTests
     }
 
     [Test]
-    public void Evaluate_InvalidOperationForPropertyType_ShouldHaveFailedEvaluation()
+    public void Evaluate_StringPropertyWithNumericArguments_ShouldHaveFailedButNotErrorBecauseTheArgumentsAreConverted()
     {
         var tag = new Tag { Name = "Test" };
 
@@ -62,8 +62,7 @@ public class CriterionTests
 
         var evaluation = criterion.Evaluate(tag);
 
-        evaluation.Result.Should().Be(ResultState.Error);
-        evaluation.Error.Should().NotBeEmpty();
+        evaluation.Result.Should().Be(ResultState.Failed);
     }
 
     [Test]
@@ -83,10 +82,9 @@ public class CriterionTests
     {
         var tag = new Tag { Name = "Test" };
 
-        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Equal, "Test");
+        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.EqualTo, "Test");
 
-
-        var expression = (Expression<Func<object?, bool>>)criterion;
+        var expression = (Expression<Func<object, bool>>)criterion;
         var func = expression.Compile();
 
         var result = func(tag);
@@ -98,7 +96,7 @@ public class CriterionTests
     {
         var tag = new Tag { Name = "MyTestTag" };
         var variable = new Variable("MyVar", "Test");
-        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Contains, variable);
+        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Containing, variable.Reference());
 
         var eval = criterion.Evaluate(tag);
 
@@ -110,7 +108,7 @@ public class CriterionTests
     {
         var tag = new Tag { Name = "MyTestTag", Value = 123 };
         var variable = new Variable("MyVar", "Decimal");
-        var criterion = new Criterion(Element.Tag.Property("Radix"), Operation.Equal, variable);
+        var criterion = new Criterion(Element.Tag.Property("Radix"), Operation.EqualTo, variable.Reference());
 
         var eval = criterion.Evaluate(tag);
 
@@ -122,7 +120,7 @@ public class CriterionTests
     {
         var tag = new Tag { Name = "TestTag", Value = 1.21f };
         var variable = new Variable("Value", "1.221");
-        var criterion = new Criterion(Element.Tag.Property("Value"), Operation.GreaterThan, variable);
+        var criterion = new Criterion(Element.Tag.Property("Value"), Operation.GreaterThan, variable.Reference());
 
         var eval = criterion.Evaluate(tag);
 
@@ -133,8 +131,8 @@ public class CriterionTests
     public void VariableArgument_LogixTypeFloatEquals_ShouldRunCorrectly()
     {
         var tag = new Tag { Name = "TestTag", Value = 1.2345f };
-        var variable = new Variable("Value", 1.2345f);
-        var criterion = new Criterion(Element.Tag.Property("Value"), Operation.Equal, variable);
+        var variable = new Variable("Value", new REAL(1.2345f));
+        var criterion = new Criterion(Element.Tag.Property("Value"), Operation.EqualTo, variable.Reference());
 
         var eval = criterion.Evaluate(tag);
 
@@ -144,27 +142,27 @@ public class CriterionTests
     [Test]
     public void ToString_SimpleStringArgument_ShouldBeExpected()
     {
-        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Equal, "Test");
+        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.EqualTo, "Test");
 
         var result = criterion.ToString();
 
-        result.Should().Be("Name Equal Test");
+        result.Should().Be("Name Is Equal To Test");
     }
 
     [Test]
     public void ToString_SimpleEnumArgument_ShouldBeExpected()
     {
-        var criterion = new Criterion(Element.Tag.Property("Radix"), Operation.Equal, Radix.Ascii);
+        var criterion = new Criterion(Element.Tag.Property("Radix"), Operation.EqualTo, Radix.Ascii);
 
         var result = criterion.ToString();
 
-        result.Should().Be("Radix Equal Ascii");
+        result.Should().Be("Radix Is Equal To Ascii");
     }
 
     [Test]
     public void ToString_SimpleUnaryOperation_ShouldBeExpected()
     {
-        var criterion = new Criterion(Element.Tag.Property("Constant"), Operation.IsFalse);
+        var criterion = new Criterion(Element.Tag.Property("Constant"), Operation.False);
 
         var result = criterion.ToString();
 
@@ -175,20 +173,20 @@ public class CriterionTests
     public void ToString_NestedCriterion_ShouldBeExpected()
     {
         var criterion = new Criterion(Element.Tag.Property("Members"), Operation.Any,
-            new Criterion(Element.Tag.Property("TagName"), Operation.Contains, "SomeValue"));
+            new Criterion(Element.Tag.Property("TagName"), Operation.Containing, "SomeValue"));
 
         var result = criterion.ToString();
 
-        result.Should().Be("Members Any TagName Contains SomeValue");
+        result.Should().Be("Members Is Any TagName Is Containing SomeValue");
     }
 
     [Test]
     public void ToString_NestedVariable_ShouldBeExpected()
     {
-        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Like, new Variable("Test", "%Test_%"));
+        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Like, new Variable("Test", "%Test_%").Reference());
 
         var result = criterion.ToString();
 
-        result.Should().Be("Name Like %Test_%");
+        result.Should().Be("Name Is Like %Test_%");
     }
 }

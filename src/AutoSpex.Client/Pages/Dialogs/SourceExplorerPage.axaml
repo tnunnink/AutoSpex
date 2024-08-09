@@ -1,0 +1,197 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+             xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
+             x:Class="AutoSpex.Client.Pages.SourceExplorerPage"
+             x:DataType="pages:SourceExplorerPageModel"
+             Background="{a:ThemeResource Container1BackgroundBrush}"
+             CornerRadius="{a:ThemeResource PopupCornerRadius}"
+             Height="700" Width="800">
+
+
+    <controls:Prompt UseButtonPanel="False" Padding="0"
+                     HeaderIcon="{StaticResource IconThemedSource}"
+                     Header="Source Explorer">
+
+        <DockPanel>
+
+            <Border DockPanel.Dock="Top"
+                    IsVisible="{Binding Source, Converter={x:Static ObjectConverters.IsNotNull}}"
+                    Background="{a:ThemeResource Container2BackgroundBrush}"
+                    Padding="5">
+
+                <StackPanel Orientation="Horizontal" Spacing="5" Margin="10 0">
+
+                    <Button
+                        Content="{Binding Source.Name, FallbackValue={x:Null}}"
+                        Theme="{a:ControlTheme ButtonSubtle}"
+                        FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                        Padding="5">
+                        <Button.Flyout>
+                            <Flyout Placement="BottomEdgeAlignedLeft" HorizontalOffset="-8" VerticalOffset="5">
+                                <ItemsControl
+                                    Theme="{a:ControlTheme ItemsControlScrollable}"
+                                    ItemsSource="{Binding Sources}"
+                                    MaxHeight="200" MinWidth="200" Margin="5">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate DataType="observers:SourceObserver">
+                                            <Button
+                                                Command="{Binding $parent[UserControl].((pages:SourceExplorerPageModel)DataContext).ChangeSourceCommand, FallbackValue={x:Null}}"
+                                                CommandParameter="{Binding}"
+                                                Theme="{a:ControlTheme ButtonSubtle}"
+                                                HorizontalContentAlignment="Stretch">
+                                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                                    <PathIcon Theme="{StaticResource IconThemedSource}"
+                                                              Classes="size-sm" />
+                                                    <TextBlock Text="{Binding Name}" />
+                                                </StackPanel>
+                                                <Interaction.Behaviors>
+                                                    <behaviors:HideFlyoutOnClickedBehavior />
+                                                </Interaction.Behaviors>
+                                            </Button>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+
+                    <TextBlock
+                        Text="/"
+                        Margin="0 0 0 1"
+                        Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+
+                    <Button
+                        Content="{Binding Element.Name}"
+                        Theme="{a:ControlTheme ButtonSubtle}"
+                        FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                        Padding="5">
+                        <Button.Flyout>
+                            <Flyout Placement="BottomEdgeAlignedLeft" HorizontalOffset="-8" VerticalOffset="5">
+                                <ItemsControl
+                                    Theme="{a:ControlTheme ItemsControlScrollable}"
+                                    ItemsSource="{x:Static engine:Element.Selectable}"
+                                    MaxHeight="200" MinWidth="200" Margin="5">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate DataType="engine:Element">
+                                            <Button
+                                                Command="{Binding $parent[ItemsControl].((pages:SourceExplorerPageModel)DataContext).ChangeElementCommand, FallbackValue={x:Null}}"
+                                                CommandParameter="{Binding}"
+                                                Theme="{a:ControlTheme ButtonSubtle}"
+                                                HorizontalContentAlignment="Stretch">
+                                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                                    <PathIcon Theme="{StaticResource IconThemedSource}"
+                                                              Classes="size-sm" />
+                                                    <TextBlock Text="{Binding Name}" />
+                                                </StackPanel>
+                                                <Interaction.Behaviors>
+                                                    <behaviors:HideFlyoutOnClickedBehavior />
+                                                </Interaction.Behaviors>
+                                            </Button>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+
+                    <TextBlock
+                        Text="/"
+                        Margin="0 0 0 1"
+                        Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+
+                    <Button
+                        IsVisible="{Binding SelectedElement, Converter={x:Static ObjectConverters.IsNotNull}}"
+                        Content="{Binding SelectedElement}"
+                        Theme="{a:ControlTheme ButtonSubtle}">
+                        <Button.ContentTemplate>
+                            <DataTemplate x:DataType="observers:ElementObserver">
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <TextBlock
+                                        Text="{Binding Name}"
+                                        FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
+                                    <PathIcon
+                                        Theme="{StaticResource IconClose}"
+                                        FontSize="8" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </Button.ContentTemplate>
+                    </Button>
+
+                </StackPanel>
+            </Border>
+
+            <TextBox
+                DockPanel.Dock="Top"
+                x:Name="NameTextBox"
+                Text="{Binding FilterText}"
+                IsVisible="{Binding Source, Converter={x:Static ObjectConverters.IsNotNull}}"
+                Watermark="Search source elements"
+                Background="Transparent"
+                BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                BorderThickness="0 0 0 1" CornerRadius="0" Padding="10 11 10 10"
+                FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                FontFamily="{a:ThemeResource CodeFontFamily}">
+                <TextBox.InnerLeftContent>
+                    <PathIcon Theme="{StaticResource IconLineSearch}" Classes="size-sm" Margin="10 0 0 0"
+                              Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}" />
+                </TextBox.InnerLeftContent>
+                <TextBox.Styles>
+                    <Style Selector="TextBox:empty">
+                        <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                    </Style>
+                </TextBox.Styles>
+            </TextBox>
+
+            <controls:DefaultMessage
+                DockPanel.Dock="Top"
+                Margin="0 200"
+                IsVisible="{Binding Source, Converter={x:Static ObjectConverters.IsNull}}"
+                HeaderIcon="{StaticResource IconThemedSource}"
+                HeaderText="No sources found"
+                CustomMessage="Add a source file to an environment to view content." />
+
+            <Panel IsVisible="{Binding Source, Converter={x:Static ObjectConverters.IsNotNull}}">
+
+                <ListBox
+                    ItemsSource="{Binding Elements}"
+                    ItemContainerTheme="{StaticResource ListBoxItemSimple}"
+                    ItemTemplate="{StaticResource ElementListItem}"
+                    IsVisible="{Binding SelectedElement, Converter={x:Static ObjectConverters.IsNull}}"
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                    Padding="5" />
+
+                <TreeView
+                    ItemsSource="{Binding SelectedElement.Properties, FallbackValue={x:Null}}"
+                    ItemContainerTheme="{StaticResource TreeViewItemSimple}"
+                    ItemTemplate="{StaticResource PropertyTreeItem}"
+                    IsVisible="{Binding SelectedElement, Converter={x:Static ObjectConverters.IsNotNull}}"
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                    Padding="5" />
+
+            </Panel>
+
+        </DockPanel>
+
+        <controls:Prompt.Footer>
+            <DockPanel LastChildFill="False"
+                       IsVisible="{Binding Source, Converter={x:Static ObjectConverters.IsNotNull}}">
+                <TextBlock
+                    DockPanel.Dock="Left"
+                    Text="{Binding Source.LocalPath, FallbackValue={x:Null}}"
+                    Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                <Button
+                    DockPanel.Dock="Right"
+                    Content="Show In Explorer"
+                    Command="{Binding Source.LocateCommand, FallbackValue={x:Null}}"
+                    Theme="{a:ControlTheme ButtonLink}"
+                    Classes="accent"
+                    Padding="0" />
+            </DockPanel>
+        </controls:Prompt.Footer>
+    </controls:Prompt>
+</UserControl>

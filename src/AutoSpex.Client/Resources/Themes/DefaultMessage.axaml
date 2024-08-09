@@ -1,0 +1,72 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
+
+    <Design.PreviewWith>
+        <StackPanel Spacing="10">
+            <controls:DefaultMessage
+                HeaderIcon="{StaticResource IconThemedSpec}"
+                HeaderText="No criteria defined"
+                MessageIcon="{StaticResource IconAdd}"
+                MessageText="add a new criteria to this spec." />
+            <controls:DefaultMessage
+                HeaderIcon="{StaticResource IconThemedSpec}"
+                HeaderText="No criteria defined"
+                CustomMessage="This is a custom message that the user needs to see that will or perhaps should wrap around so that it does no just go on forever" />
+        </StackPanel>
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type controls:DefaultMessage}" TargetType="controls:DefaultMessage">
+
+        <Setter Property="Template">
+            <ControlTemplate>
+
+                <StackPanel
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Margin="20"
+                    Spacing="3">
+
+                    <PathIcon
+                        Theme="{TemplateBinding HeaderIcon}"
+                        Margin="0 5"
+                        IsVisible="{Binding HeaderIcon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
+                    <TextBlock
+                        Text="{TemplateBinding HeaderText}"
+                        Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                        FontWeight="SemiBold"
+                        HorizontalAlignment="Center" />
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
+                                IsVisible="{Binding MessageText, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                        <TextBlock
+                            Text="Click the "
+                            Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                            TextAlignment="Center" />
+                        <PathIcon
+                            Theme="{TemplateBinding MessageIcon}"
+                            Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
+                            Margin="4 0" Classes="size-sm" />
+                        <TextBlock Text="button to "
+                                   Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                                   TextAlignment="Center" />
+                        <TextBlock Text="{TemplateBinding MessageText}"
+                                   Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                                   TextAlignment="Center" />
+                    </StackPanel>
+
+                    <StackPanel
+                        IsVisible="{Binding CustomMessage, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                        <TextBlock
+                            Text="{TemplateBinding CustomMessage}"
+                            Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                            TextAlignment="Center"
+                            TextWrapping="Wrap" />
+                    </StackPanel>
+                </StackPanel>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

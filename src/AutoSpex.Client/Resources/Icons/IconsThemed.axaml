@@ -1,0 +1,115 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui">
+
+    <Design.PreviewWith>
+        <StackPanel Width="1000" Height="100" Margin="10" Orientation="Horizontal">
+            <StackPanel.Styles>
+                <Styles>
+                    <Style Selector="PathIcon">
+                        <Setter Property="Height" Value="30" />
+                        <Setter Property="Width" Value="30" />
+                        <Setter Property="Margin" Value="5" />
+                        <Setter Property="BorderThickness" Value="1" />
+                        <Setter Property="BorderBrush" Value="{a:ThemeResource Container3BorderBrush}" />
+                    </Style>
+                </Styles>
+            </StackPanel.Styles>
+
+            <a:ToggleThemeButton Height="30" Width="30" Theme="{a:ControlTheme ToggleThemeButtonSubtle}" />
+            <PathIcon Theme="{DynamicResource IconThemedContainer}" />
+            <PathIcon Theme="{DynamicResource IconThemedCollection}" />
+            <PathIcon Theme="{DynamicResource IconThemedSpec}" />
+            <PathIcon Theme="{DynamicResource IconThemedEnvironment}" />
+            <PathIcon Theme="{DynamicResource IconThemedSource}" />
+            <PathIcon Theme="{DynamicResource IconThemedRun}" />
+            <PathIcon Theme="{DynamicResource IconThemedVariable}" />
+            <PathIcon Theme="{DynamicResource IconThemedNone}" />
+            <PathIcon Theme="{DynamicResource IconThemedPending}" />
+            <PathIcon Theme="{DynamicResource IconThemedRunning}" />
+            <PathIcon Theme="{DynamicResource IconThemedInconclusive}" />
+            <PathIcon Theme="{DynamicResource IconThemedPassed}" />
+            <PathIcon Theme="{DynamicResource IconThemedFailed}" />
+            <PathIcon Theme="{DynamicResource IconThemedError}" />
+            <PathIcon Theme="{DynamicResource IconThemedBoolean}" />
+            <PathIcon Theme="{DynamicResource IconThemedNumber}" />
+            <PathIcon Theme="{DynamicResource IconThemedText}" />
+            <PathIcon Theme="{DynamicResource IconThemedDate}" />
+            <PathIcon Theme="{DynamicResource IconThemedEnum}" />
+            <PathIcon Theme="{DynamicResource IconThemedElement}" />
+            <PathIcon Theme="{DynamicResource IconThemedArray}" />
+        </StackPanel>
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="IconThemedCollection" TargetType="PathIcon" BasedOn="{StaticResource IconFilledStack}">
+        <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushCollection}" />
+    </ControlTheme>
+    <ControlTheme x:Key="IconThemedContainer" TargetType="PathIcon" BasedOn="{StaticResource IconFilledFolder}">
+        <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushContainer}" />
+    </ControlTheme>
+    <ControlTheme x:Key="IconThemedSpec" TargetType="PathIcon" BasedOn="{StaticResource IconFilledClipboardAlt}">
+        <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushSpec}" />
+    </ControlTheme>
+    <ControlTheme x:Key="IconThemedEnvironment" TargetType="PathIcon" BasedOn="{StaticResource IconFilledCube}">
+        <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushEnvironment}" />
+    </ControlTheme>
+    <ControlTheme x:Key="IconThemedRun" TargetType="PathIcon" BasedOn="{StaticResource IconFilledLightning}">
+        <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+    </ControlTheme>
+    <ControlTheme x:Key="IconThemedSource" TargetType="PathIcon" BasedOn="{StaticResource IconLineXml}">
+        <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushSource}" />
+    </ControlTheme>
+    <ControlTheme x:Key="IconThemedVariable" TargetType="PathIcon" BasedOn="{StaticResource IconLineAt}">
+        <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+    </ControlTheme>
+
+    <ControlTheme x:Key="IconThemedNone" TargetType="PathIcon" BasedOn="{StaticResource IconLineCircle}">
+        <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+    </ControlTheme>
+    <ControlTheme x:Key="IconThemedPending" TargetType="PathIcon" BasedOn="{StaticResource IconLineCircleHalfFill}">
+        <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+    </ControlTheme>
+    <ControlTheme x:Key="IconThemedRunning" TargetType="PathIcon" BasedOn="{StaticResource IconLineCircleHalfFill}">
+        <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineSuccess}" />
+    </ControlTheme>
+    <ControlTheme x:Key="IconThemedInconclusive" TargetType="PathIcon" BasedOn="{StaticResource IconFilledQuestion}">
+        <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+    </ControlTheme>
+    <ControlTheme x:Key="IconThemedPassed" TargetType="PathIcon" BasedOn="{StaticResource IconFilledCheck}">
+        <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftSuccess}" />
+    </ControlTheme>
+    <ControlTheme x:Key="IconThemedFailed" TargetType="PathIcon" BasedOn="{StaticResource IconFilledCross}">
+        <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineDanger}" />
+    </ControlTheme>
+    <ControlTheme x:Key="IconThemedError" TargetType="PathIcon" BasedOn="{StaticResource IconFilledExclamation}">
+        <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineWarning}" />
+    </ControlTheme>
+
+    <ControlTheme x:Key="IconThemedBoolean" TargetType="PathIcon" BasedOn="{StaticResource IconFilledToggle}">
+        <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushBoolean}" />
+    </ControlTheme>
+    <ControlTheme x:Key="IconThemedNumber" TargetType="PathIcon" BasedOn="{StaticResource IconLineHash}">
+        <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushNumber}" />
+        <Setter Property="FontSize" Value="13" />
+    </ControlTheme>
+    <ControlTheme x:Key="IconThemedText" TargetType="PathIcon" BasedOn="{StaticResource IconLineType}">
+        <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushText}" />
+        <Setter Property="FontSize" Value="13" />
+    </ControlTheme>
+    <ControlTheme x:Key="IconThemedDate" TargetType="PathIcon" BasedOn="{StaticResource IconLineCalendar}">
+        <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushDate}" />
+        <Setter Property="FontSize" Value="15" />
+    </ControlTheme>
+    <ControlTheme x:Key="IconThemedEnum" TargetType="PathIcon" BasedOn="{StaticResource IconFilledGear}">
+        <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushEnum}" />
+        <Setter Property="FontSize" Value="15" />
+    </ControlTheme>
+    <ControlTheme x:Key="IconThemedElement" TargetType="PathIcon" BasedOn="{StaticResource IconLineXml}">
+        <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushElement}" />
+        <Setter Property="FontSize" Value="15" />
+    </ControlTheme>
+    <ControlTheme x:Key="IconThemedArray" TargetType="PathIcon" BasedOn="{StaticResource IconLineList}">
+        <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushCollection}" />
+        <Setter Property="FontSize" Value="14" />
+    </ControlTheme>
+</ResourceDictionary>

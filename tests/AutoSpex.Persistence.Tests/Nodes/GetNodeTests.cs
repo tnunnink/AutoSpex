@@ -9,7 +9,7 @@ public class GetNodeTests
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
         var node = Node.NewContainer("MyContainer");
-        await mediator.Send(new CreateNode(node, NodeType.Spec));
+        await mediator.Send(new CreateNode(node));
 
         var result = await mediator.Send(new GetNode(node.NodeId));
         
@@ -30,34 +30,6 @@ public class GetNodeTests
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().BeEquivalentTo(node);
     }
-    
-    [Test]
-    public async Task GetNode_SourceNode_ShouldBeSuccess()
-    {
-        using var context = new TestContext();
-        var mediator = context.Resolve<IMediator>();
-        var node = Node.NewSource("MySource");
-        await mediator.Send(new CreateNode(node));
-
-        var result = await mediator.Send(new GetNode(node.NodeId));
-        
-        result.IsSuccess.Should().BeTrue();
-        result.Value.Should().BeEquivalentTo(node);
-    }
-    
-    [Test]
-    public async Task GetNode_RunNode_ShouldBeSuccess()
-    {
-        using var context = new TestContext();
-        var mediator = context.Resolve<IMediator>();
-        var node = Node.NewRun("MyRun");
-        await mediator.Send(new CreateNode(node));
-
-        var result = await mediator.Send(new GetNode(node.NodeId));
-        
-        result.IsSuccess.Should().BeTrue();
-        result.Value.Should().BeEquivalentTo(node);
-    }
 
     [Test]
     public async Task GetNode_MultipleSeededNodes_ShouldBeAllBeSuccess()
@@ -67,9 +39,9 @@ public class GetNodeTests
         var collection = Node.NewContainer();
         var folder = collection.AddContainer();
         var spec = folder.AddSpec();
-        await mediator.Send(new CreateNode(collection, NodeType.Spec));
-        await mediator.Send(new CreateNode(folder, NodeType.Spec));
-        await mediator.Send(new CreateNode(spec, NodeType.Spec));
+        await mediator.Send(new CreateNode(collection));
+        await mediator.Send(new CreateNode(folder));
+        await mediator.Send(new CreateNode(spec));
         
 
         var getCollection = await mediator.Send(new GetNode(collection.NodeId));

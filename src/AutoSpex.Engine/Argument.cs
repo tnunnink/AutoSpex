@@ -1,13 +1,12 @@
-﻿using L5Sharp.Core;
-
-// ReSharper disable ConvertIfStatementToReturnStatement
+﻿using System.Text.Json.Serialization;
+using L5Sharp.Core;
 
 namespace AutoSpex.Engine;
 
 public class Argument : IEquatable<Argument>
 {
     /// <summary>
-    /// Creates a new <see cref="Argument"/> with the empty string default value.
+    /// Creates a new <see cref="Argument"/> with the null value.
     /// </summary>
     public Argument()
     {
@@ -23,40 +22,18 @@ public class Argument : IEquatable<Argument>
     }
 
     /// <summary>
-    /// Creates a new argument with the provided object value. 
-    /// </summary>
-    /// <param name="argumentId">The guid identifying the argument instance.</param>
-    /// <param name="value">The value of the argument.</param>
-    public Argument(Guid argumentId, object? value)
-    {
-        ArgumentId = argumentId;
-        Value = value;
-    }
-
-    /// <summary>
     /// A <see cref="Guid"/> that uniquely identifies this object.
     /// </summary>
-    public Guid ArgumentId { get; } = Guid.NewGuid();
+    [JsonInclude]
+    public Guid ArgumentId { get; private init; } = Guid.NewGuid();
 
     /// <summary>
-    /// The value of the argument.
+    /// The value of the argument, which is just a generic object, since the user can enter primitive or complex types.
+    /// This value is persisted and materialized using a custom JSON serializer.
     /// </summary>
+    [JsonConverter(typeof(JsonObjectConverter))]
+    [JsonInclude]
     public object? Value { get; set; }
-
-    /// <summary>
-    /// The type of the argument's value.
-    /// </summary>
-    public Type? Type => Value?.GetType();
-
-    /// <summary>
-    /// The friendly type name of the argument value.
-    /// </summary>
-    public string? Identifier => Type?.CommonName();
-
-    /// <summary>
-    /// The <see cref="TypeGroup"/> which this argument value belongs to.
-    /// </summary>
-    public TypeGroup Group => TypeGroup.FromType(Type);
 
     /// <summary>
     /// Resolves the underlying argument value to the specified type if possible.
@@ -71,36 +48,37 @@ public class Argument : IEquatable<Argument>
     /// </remarks>
     public object ResolveAs(Type? type)
     {
-        //If a variable was provided, take the inner variable value, otherwise take this value.
-        var value = Value is Variable variable ? variable.Value : Value;
+        var value = Value is Reference reference ? reference.Value : Value;
 
-        //If a criterion was provided, just return that. Nested arguments will get resolved here too.
-        if (value is Criterion criterion) return criterion;
+        var typed = value switch
+        {
+            Criterion criterion => criterion,
+            IEnumerable<Argument> arguments => arguments.Select(a => a.ResolveAs(type)),
+            string text when type is not null && type != typeof(string) => text.TryParse(type),
+            not string when type is not null && type != value?.GetType() && value is IConvertible convertible =>
+                convertible.ToType(type, null),
+            _ => value
+        };
 
-        //From here we expect some immediate value.
-        //If the type is not specified or value is null or not text, the only option is to return what we have.
-        //Exceptions will get caught in evaluation, so we don't need to worry about null reference.
-        if (type is null || value is not string text) return value!;
-
-        //Text is a special case because the user may enter value as text, and we can attempt to parse it to get
-        //the equality methods to work as expected. If not parsed then return value.
-        return text.TryParse(type) ?? value;
+        return (typed ?? value)!;
     }
 
     /// <summary>
     /// Traverses the argument value and retrieves the final expected argument value(s).
-    /// Since an argument value can be a <see cref="Variable"/> or inner <see cref="Criterion"/> we want to check
-    /// them and get the values which are going to be used in the operation.
+    /// Since an argument value can be a <see cref="Reference"/> or inner <see cref="Criterion"/> or a collection of
+    /// inner <see cref="Argument"/> we want to check them and get the values which are going to be used in the operation.
     /// </summary>
     /// <returns>A collection of object values that represent the final arguments.</returns>
     public IEnumerable<object> Expected()
     {
-        var value = Value is Variable variable ? variable.Value : Value;
+        var value = Value is Reference reference ? reference.Value : Value;
 
-        if (value is Criterion criterion)
-            return criterion.Arguments.SelectMany(a => a.Expected());
-        
-        return value is not null ? [value] : Enumerable.Empty<object>();
+        return value switch
+        {
+            Criterion criterion => criterion.Arguments.SelectMany(a => a.Expected()),
+            IEnumerable<Argument> arguments => arguments.SelectMany(a => a.Expected()),
+            _ => value is not null ? [value] : Enumerable.Empty<object>()
+        };
     }
 
     /// <inheritdoc />
@@ -123,6 +101,8 @@ public class Argument : IEquatable<Argument>
     public static implicit operator Argument(string value) => new(value);
     public static implicit operator Argument(DateTime value) => new(value);
     public static implicit operator Argument(LogixEnum value) => new(value);
+    public static implicit operator Argument(LogixElement value) => new(value);
+    public static implicit operator Argument(List<Argument> value) => new(value);
     public static implicit operator Argument(Criterion value) => new(value);
-    public static implicit operator Argument(Variable value) => new(value);
+    public static implicit operator Argument(Reference value) => new(value);
 }

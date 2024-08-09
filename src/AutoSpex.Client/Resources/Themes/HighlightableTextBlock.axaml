@@ -15,11 +15,11 @@
 
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Light">
-            <SolidColorBrush x:Key="HighlightTextBackgroundBrush" Color="#fee6b1" />
+            <SolidColorBrush x:Key="HighlightTextBackgroundBrush" Color="#9ee5ff" />
             <SolidColorBrush x:Key="HighlightTextForegroundBrush" Color="#070004" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Dark">
-            <SolidColorBrush x:Key="HighlightTextBackgroundBrush" Color="#ba9752" />
+            <SolidColorBrush x:Key="HighlightTextBackgroundBrush" Color="#2d687d" />
             <SolidColorBrush x:Key="HighlightTextForegroundBrush" Color="#070004" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>

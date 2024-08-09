@@ -1,0 +1,63 @@
+﻿{
+  Query: {
+    Element: Tag,
+    Name: null
+  },
+  Filters: [
+    {
+      CriterionId: Guid_1,
+      Type: L5Sharp.Core.Tag,
+      Property: {
+        Origin: L5Sharp.Core.Tag,
+        Path: Name
+      },
+      Operation: Containing,
+      Arguments: [
+        {
+          ArgumentId: Guid_2,
+          Value: {
+            Type: System.String,
+            Data: Test
+          }
+        }
+      ],
+      Negation: Is
+    }
+  ],
+  Verifications: [
+    {
+      CriterionId: Guid_3,
+      Type: L5Sharp.Core.Tag,
+      Property: {
+        Origin: L5Sharp.Core.Tag,
+        Path: DataType
+      },
+      Operation: Null Or Empty,
+      Negation: Not
+    }
+  ],
+  Range: {
+    Enabled: false,
+    Criterion: {
+      CriterionId: Guid_4,
+      Type: System.Collections.Generic.List`1[[L5Sharp.Core.LogixElement, L5Sharp.Core, Version=3.2.0.0, Culture=neutral, PublicKeyToken=null]],
+      Property: {
+        Origin: System.Collections.Generic.List`1[[L5Sharp.Core.LogixElement, L5Sharp.Core, Version=3.2.0.0, Culture=neutral, PublicKeyToken=null]],
+        Path: Count
+      },
+      Operation: Greater Than,
+      Arguments: [
+        {
+          ArgumentId: Guid_5,
+          Value: {
+            Type: System.Int32,
+            Data: 0
+          }
+        }
+      ],
+      Negation: Is
+    }
+  },
+  FilterInclusion: 0,
+  VerificationInclusion: 0
+}

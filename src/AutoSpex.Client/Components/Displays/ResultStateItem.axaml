@@ -1,0 +1,42 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+
+    <Design.PreviewWith>
+        <StackPanel Spacing="20" Margin="20" Width="200" Height="300">
+            <a:ToggleThemeButton Theme="{a:ControlTheme ToggleThemeButtonSoft}" />
+            <ComboBox ItemsSource="{x:Static engine:ResultState.List}"
+                      SelectedItem="{x:Static engine:ResultState.None}"
+                      ItemTemplate="{DynamicResource ResultStateItem}" />
+        </StackPanel>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="ResultStateItem" x:DataType="engine:ResultState">
+        <Border>
+            <StackPanel Orientation="Horizontal" Spacing="10">
+
+                <PathIcon Theme="{Binding Converter={StaticResource ResultStateIconConverter}}" />
+
+                <TextBlock properties:StyleClasses.Classes="{Binding}">
+                    <TextBlock.Styles>
+                        <Style Selector="TextBlock.None">
+                            <Setter Property="Text" Value="All" />
+                        </Style>
+                        <Style Selector="TextBlock.Passed">
+                            <Setter Property="Text" Value="Passed" />
+                        </Style>
+                        <Style Selector="TextBlock.Failed">
+                            <Setter Property="Text" Value="Failed" />
+                        </Style>
+                        <Style Selector="TextBlock.Error">
+                            <Setter Property="Text" Value="Errored" />
+                        </Style>
+                    </TextBlock.Styles>
+                </TextBlock>
+
+            </StackPanel>
+        </Border>
+    </DataTemplate>
+</ResourceDictionary>

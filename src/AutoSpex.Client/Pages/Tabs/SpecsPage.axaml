@@ -1,0 +1,60 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             x:Class="AutoSpex.Client.Pages.SpecsPage"
+             x:DataType="pages:SpecsPageModel"
+             Background="{a:ThemeResource Container1BackgroundBrush}"
+             Padding="20">
+
+    <Design.Height>800</Design.Height>
+    <Design.Width>1200</Design.Width>
+
+    <DockPanel>
+        <Grid DockPanel.Dock="Top" ColumnDefinitions="Auto,*,Auto" Margin="0 0 0 10">
+
+            <TextBox
+                Grid.Column="0"
+                Text="{Binding Filter}"
+                Watermark="Filter specs"
+                Theme="{StaticResource TextBoxOutlineHighlight}"
+                BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                MinWidth="300">
+                <TextBox.InnerLeftContent>
+                    <PathIcon Theme="{StaticResource IconLineFilter}" Margin="10 0 0 0" />
+                </TextBox.InnerLeftContent>
+            </TextBox>
+
+            <Button
+                Grid.Column="2"
+                Command="{Binding Node.AddSpecCommand}"
+                properties:Icon.Theme="{StaticResource IconAdd}"
+                Theme="{StaticResource IconButtonPill}"
+                BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                Classes="accent"
+                ToolTip.Tip="Add spec" />
+
+        </Grid>
+
+        <ListBox
+            DockPanel.Dock="Top"
+            ItemsSource="{Binding Specs}"
+            SelectedItems="{Binding Selected}"
+            IsVisible="{Binding Specs.Count}"
+            ItemTemplate="{StaticResource SpecListItem}"
+            ItemContainerTheme="{StaticResource ListBoxItemSection}"
+            SelectionMode="Multiple"
+            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+            BorderThickness="1"
+            CornerRadius="4" />
+
+        <controls:DefaultMessage
+            HeaderIcon="{StaticResource IconThemedSpec}"
+            HeaderText="No specs configured"
+            MessageIcon="{StaticResource IconAdd}"
+            MessageText="add a new spec to this collection or container."
+            IsVisible="{Binding !Specs.Count}" />
+    </DockPanel>
+</UserControl>

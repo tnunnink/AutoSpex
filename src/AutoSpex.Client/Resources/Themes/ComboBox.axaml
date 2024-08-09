@@ -1,11 +1,27 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:primitives="clr-namespace:ActiproSoftware.UI.Avalonia.Controls.Primitives;assembly=ActiproSoftware.Avalonia.Shared">
+                    xmlns:primitives="clr-namespace:ActiproSoftware.UI.Avalonia.Controls.Primitives;assembly=ActiproSoftware.Avalonia.Shared"
+                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine">
 
+    <Design.PreviewWith>
+        <StackPanel Spacing="10" Margin="30" Width="100" Height="400">
+            <StackPanel.Styles>
+                <Style Selector="ComboBox">
+                    <Setter Property="Theme" Value="{DynamicResource ComboBoxSubtle}" />
+                </Style>
+            </StackPanel.Styles>
+            <ComboBox ItemsSource="{x:Static engine:TypeGroup.List}" />
+            <ComboBox ItemsSource="{x:Static engine:Element.List}" />
+        </StackPanel>
+    </Design.PreviewWith>
 
-    <!-- ComboBoxBase -->
-    <ControlTheme x:Key="ComboBoxTheme" TargetType="ComboBox">
+    <!-- ComboBoxSubtle -->
+    <ControlTheme x:Key="ComboBoxSubtle" TargetType="ComboBox" BasedOn="{a:ControlTheme ComboBoxBase}">
+        <Setter Property="Background" Value="{a:ThemeResource Container1BackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{a:ThemeResource Container1BorderBrush}" />
+        <Setter Property="Foreground" Value="{a:ThemeResource EditForegroundBrush}" />
+        <Setter Property="PlaceholderForeground" Value="{a:ThemeResource EditForegroundBrush}" />
         <Setter Property="BorderThickness" Value="{a:ThemeResource ButtonBorderThickness}" />
         <Setter Property="CornerRadius" Value="{a:ThemeResource ButtonCornerRadius}" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -65,10 +81,12 @@
                                     IsLightDismissEnabled="True"
                                     IsOpen="{TemplateBinding IsDropDownOpen, Mode=TwoWay}"
                                     MaxChildHeight="{TemplateBinding MaxDropDownHeight}"
+                                    OverlayDismissEventPassThrough="{a:ThemeResource PopupCanDismissPassThrough}"
                                     PlacementTarget="{Binding #border}">
                                     <ScrollViewer
                                         HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
                                         VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                                        IsDeferredScrollingEnabled="{TemplateBinding (ScrollViewer.IsDeferredScrollingEnabled)}"
                                         a:ThemeProperties.CopyClassesFilter="theme-scroll-.*"
                                         a:ThemeProperties.CopyClassesFrom="{TemplateBinding}"
                                         a:ThemeProperties.ScrollBarHasLineButtons="{TemplateBinding a:ThemeProperties.ScrollBarHasLineButtons}">
@@ -85,11 +103,23 @@
         </Setter>
 
         <Style Selector="^ /template/ primitives|ChromedPopup#PART_Popup">
-            <Setter Property="Placement" Value="BottomEdgeAlignedLeft" />
-            <Setter Property="MinChildWidth" Value="150" />
+            <Setter Property="Placement" Value="BottomEdgeAlignedRight" />
+            <Setter Property="MinChildWidth" Value="200" />
         </Style>
+
         <Style Selector="^:focus-within /template/ TextBlock#placeholder">
             <Setter Property="Opacity" Value="{DynamicResource {a:ThemeResourceKey EditWatermarkOpacityFocused}}" />
+        </Style>
+
+        <Style Selector="^:pointerover /template/ Border#border">
+            <Setter Property="Background" Value="{a:ThemeResource ButtonBackgroundBrushOutlinePointerOver}" />
+        </Style>
+        <Style Selector="^:pressed /template/ Border#border, ^:dropdownopen /template/ Border#border">
+            <Setter Property="Background" Value="{a:ThemeResource ButtonBackgroundBrushOutlinePressed}" />
+        </Style>
+        <Style Selector="^:disabled /template/ Border#border">
+            <Setter Property="Background" Value="{a:ThemeResource EditBackgroundBrushDisabled}" />
+            <Setter Property="TextElement.Foreground" Value="{a:ThemeResource EditForegroundBrushDisabled}" />
         </Style>
     </ControlTheme>
 </ResourceDictionary>

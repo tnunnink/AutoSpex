@@ -12,7 +12,6 @@
         <Setter Property="Template">
             <ControlTemplate>
                 <controls:Prompt Header="Do you want to save changes?"
-                                 HeaderIcon="{StaticResource IconWarningFilled}"
                                  ActionButtonText="Save"
                                  ActionButtonTheme="{a:ControlTheme ButtonSolid}"
                                  ActionCommandParameter="Save"
@@ -23,7 +22,14 @@
                                  AlternateButtonTheme="{a:ControlTheme ButtonSoft}"
                                  AlternateCommandParameter="Discard"
                                  Classes="warning"
-                                 MaxWidth="500" Padding="20">
+                                 MaxWidth="500">
+                    <controls:Prompt.HeaderIcon>
+                        <ControlTheme TargetType="PathIcon" BasedOn="{StaticResource IconFilledWarning}">
+                            <Setter Property="Foreground"
+                                    Value="{a:ThemeResource ControlForegroundBrushOutlineWarning}" />
+                            <Setter Property="FontSize" Value="20" />
+                        </ControlTheme>
+                    </controls:Prompt.HeaderIcon>
                     <controls:Prompt.Content>
                         <StackPanel Spacing="10">
                             <TextBlock TextWrapping="Wrap">

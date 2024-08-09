@@ -1,0 +1,64 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+             x:Class="AutoSpex.Client.Pages.SourcesPage"
+             x:DataType="pages:SourcesPageModel"
+             Background="{a:ThemeResource Container1BackgroundBrush}"
+             Padding="20">
+
+    <Design.Height>800</Design.Height>
+    <Design.Width>1200</Design.Width>
+
+    <DockPanel>
+        <Grid DockPanel.Dock="Top" ColumnDefinitions="Auto,*,Auto" Margin="0 0 0 10">
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10">
+                <TextBox
+                    Text="{Binding Filter}"
+                    Watermark="Filter sources"
+                    Theme="{StaticResource TextBoxOutlineHighlight}"
+                    BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                    MinWidth="300">
+                    <TextBox.InnerLeftContent>
+                        <PathIcon Theme="{StaticResource IconLineFilter}" Margin="10 0 0 0" />
+                    </TextBox.InnerLeftContent>
+                </TextBox>
+            </StackPanel>
+
+            <StackPanel Grid.Column="2" Orientation="Horizontal">
+                <Button
+                    Command="{Binding AddSourceCommand}"
+                    properties:Icon.Theme="{StaticResource IconAdd}"
+                    Theme="{StaticResource IconButtonPill}"
+                    Classes="accent"
+                    ToolTip.Tip="Add source" />
+            </StackPanel>
+        </Grid>
+        
+        <ListBox
+            DockPanel.Dock="Top"
+            ItemsSource="{Binding Environment.Sources}"
+            SelectedItems="{Binding Selected}"
+            ItemTemplate="{StaticResource SourceListItem}"
+            IsVisible="{Binding Environment.Sources.Count}"
+            SelectionMode="Multiple"
+            BorderThickness="1" BorderBrush="{a:ThemeResource Container1BorderBrush}" CornerRadius="5">
+            <ListBox.ItemContainerTheme>
+                <ControlTheme BasedOn="{StaticResource ListBoxItemSection}" TargetType="ListBoxItem"
+                              x:DataType="observers:SourceObserver">
+                    <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+                </ControlTheme>
+            </ListBox.ItemContainerTheme>
+        </ListBox>
+
+        <controls:DefaultMessage
+            IsVisible="{Binding !Environment.Sources.Count}"
+            HeaderIcon="{StaticResource IconThemedSource}"
+            HeaderText="No sources configured"
+            MessageIcon="{StaticResource IconAdd}"
+            MessageText="add a new source to this environment." />
+    </DockPanel>
+</UserControl>

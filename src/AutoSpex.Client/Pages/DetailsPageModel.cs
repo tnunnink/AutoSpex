@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
-using AutoSpex.Client.Observers;
 using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -11,11 +10,8 @@ using JetBrains.Annotations;
 namespace AutoSpex.Client.Pages;
 
 [UsedImplicitly]
-public partial class DetailsPageModel(string project) : PageViewModel, IRecipient<NavigationRequest>
+public partial class DetailsPageModel : PageViewModel, IRecipient<NavigationRequest>
 {
-    public override string Route => $"{project}/Details";
-    public override bool IsChanged => Pages.Any(p => p.IsChanged);
-
     [ObservableProperty] private ObservableCollection<DetailPageModel> _pages = [];
 
     [ObservableProperty] private PageViewModel? _selected;
@@ -30,21 +26,13 @@ public partial class DetailsPageModel(string project) : PageViewModel, IRecipien
         base.OnDeactivated();
     }
 
-    [RelayCommand]
-    private async Task CreateSpec()
-    {
-        var spec = await Prompter.Show<NodeObserver?>(() => new AddSpecPageModel());
-        if (spec is null) return;
-        await Navigator.Navigate(spec);
-    }
-
     public void Receive(NavigationRequest message)
     {
         if (message.Page is not DetailPageModel detail) return;
 
         if (message.Action == NavigationAction.Close)
         {
-            CloseTab(detail);
+            ClosePage(detail);
             return;
         }
 
@@ -56,16 +44,94 @@ public partial class DetailsPageModel(string project) : PageViewModel, IRecipien
             return;
         }
 
-        OpenTab(detail);
+        OpenPage(detail);
     }
 
-    private void OpenTab(DetailPageModel page)
+    [RelayCommand]
+    private static async Task CloseTab(DetailPageModel? page)
+    {
+        if (page is null) return;
+        await page.Close(); //todo we might not need this command and just use the bound page/tab close command.
+    }
+
+    [RelayCommand]
+    private async Task CloseAllTabs()
+    {
+        var pages = Pages.ToList();
+
+        foreach (var page in pages)
+        {
+            await page.Close();
+        }
+
+        pages.Clear();
+    }
+
+    [RelayCommand]
+    private async Task CloseOtherTabs(PageViewModel? page)
+    {
+        if (page is null) return;
+
+        var pages = Pages.Where(p => p != page).ToList();
+
+        foreach (var closable in pages)
+        {
+            await closable.Close();
+        }
+
+        pages.Clear();
+    }
+
+    [RelayCommand]
+    private async Task CloseRightTabs(DetailPageModel? page)
+    {
+        if (page is null) return;
+
+        var pages = Pages.ToList();
+        var start = pages.IndexOf(page) + 1;
+
+        for (var i = start; i < pages.Count; i++)
+        {
+            var closable = pages[i];
+            await closable.Close();
+        }
+    }
+
+    [RelayCommand]
+    private async Task CloseLeftTabs(DetailPageModel? page)
+    {
+        if (page is null) return;
+
+        var pages = Pages.ToList();
+        var start = pages.IndexOf(page) - 1;
+
+        for (var i = start; i >= 0; i--)
+        {
+            var closable = pages[i];
+            await closable.Close();
+        }
+    }
+
+    [RelayCommand]
+    private void ForceCloseAllTabs()
+    {
+        var pages = Pages.ToList();
+
+        foreach (var page in pages)
+        {
+            page.ForceCloseCommand.Execute(null);
+        }
+
+        pages.Clear();
+    }
+
+    private void OpenPage(DetailPageModel page)
     {
         Pages.Add(page);
         Selected = page;
     }
 
-    private void CloseTab(DetailPageModel page)
+    private void ClosePage(DetailPageModel page)
     {
         Pages.Remove(page);
 

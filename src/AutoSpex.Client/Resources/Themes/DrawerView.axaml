@@ -39,8 +39,7 @@
                                     x:Name="StackPanel"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center">
-                            <PathIcon x:Name="MyIcon"
-                                      Theme="{StaticResource IconClipboardFilled}" />
+                            <PathIcon x:Name="MyIcon" Theme="{StaticResource IconClipboardFilled}" />
                             <PathIcon Theme="{StaticResource IconClipboardFilled}" />
                             <PathIcon Theme="{StaticResource IconClipboardFilled}" />
                         </StackPanel>

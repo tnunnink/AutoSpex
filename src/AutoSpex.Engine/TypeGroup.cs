@@ -14,9 +14,19 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
     {
     }
 
-    public abstract Type DefaultType { get; }
-    public abstract object? DefaultValue { get; }
-    protected abstract bool Belongs(Type type);
+    /// <summary>
+    /// Determines if this <see cref="TypeGroup"/> applies to the specficied <see cref="Type"/>.
+    /// </summary>
+    /// <param name="type">The type to check.</param>
+    /// <returns><c>true</c> if this group applies to the secified type; otherwise, <c>false</c>.</returns>
+    protected abstract bool AppliesTo(Type type);
+
+    /// <summary>
+    /// Tries to parse the specified text into an object of this TypeGroup.
+    /// </summary>
+    /// <param name="text">The text to parse.</param>
+    /// <param name="value">The parsed object if the parsing was successful, otherwise null.</param>
+    /// <returns>True if the parsing was successful; otherwise, false.</returns>
     public abstract bool TryParse(string text, out object? value);
 
     public static readonly TypeGroup Default = new DefaultTypeGroup();
@@ -37,10 +47,14 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
 
     public static readonly TypeGroup Criterion = new CriterionTypeGroup();
 
+    public static readonly TypeGroup Argument = new ArgumentTypeGroup();
+
     public static readonly TypeGroup Variable = new VariableTypeGroup();
 
+    public static readonly TypeGroup Reference = new ReferenceTypeGroup();
 
-    private static readonly List<TypeGroup> Exclusions = [Default, Criterion, Variable, Collection];
+    private static readonly List<TypeGroup> Exclusions =
+        [Default, Criterion, Argument, Variable, Reference, Collection];
 
     public static IEnumerable<TypeGroup> Selectable =>
         List.Where(t => Exclusions.All(e => e != t)).OrderBy(x => x.Value);
@@ -48,23 +62,23 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
     public static TypeGroup FromType(Type? type)
     {
         if (type is null) return Default;
-        if (Boolean.Belongs(type)) return Boolean;
-        if (Number.Belongs(type)) return Number;
-        if (Text.Belongs(type)) return Text;
-        if (Date.Belongs(type)) return Date;
-        if (Enum.Belongs(type)) return Enum;
-        if (Collection.Belongs(type)) return Collection;
-        if (Element.Belongs(type)) return Element;
-        if (Criterion.Belongs(type)) return Criterion;
-        if (Variable.Belongs(type)) return Variable;
+        if (Boolean.AppliesTo(type)) return Boolean;
+        if (Number.AppliesTo(type)) return Number;
+        if (Text.AppliesTo(type)) return Text;
+        if (Date.AppliesTo(type)) return Date;
+        if (Enum.AppliesTo(type)) return Enum;
+        if (Collection.AppliesTo(type)) return Collection;
+        if (Element.AppliesTo(type)) return Element;
+        if (Criterion.AppliesTo(type)) return Criterion;
+        if (Argument.AppliesTo(type)) return Argument;
+        if (Variable.AppliesTo(type)) return Variable;
+        if (Reference.AppliesTo(type)) return Reference;
         return Default;
     }
 
     private class DefaultTypeGroup() : TypeGroup(nameof(Default), 0)
     {
-        public override Type DefaultType => typeof(object);
-        public override object? DefaultValue => default;
-        protected override bool Belongs(Type? type) => type is null;
+        protected override bool AppliesTo(Type? type) => type is null;
 
         public override bool TryParse(string text, out object? value)
         {
@@ -75,10 +89,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
 
     private class BooleanTypeGroup() : TypeGroup(nameof(Boolean), 1)
     {
-        public override Type DefaultType => typeof(bool);
-        public override object DefaultValue => default(bool);
-
-        protected override bool Belongs(Type type)
+        protected override bool AppliesTo(Type type)
         {
             type = Nullable.GetUnderlyingType(type) ?? type;
             return type == typeof(bool) || type == typeof(BOOL);
@@ -108,16 +119,15 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
             typeof(Watchdog),
             typeof(TaskPriority),
             typeof(ScanRate),
+            typeof(LogixData),
             typeof(AtomicData),
             typeof(Dimensions),
             typeof(ProductType),
             typeof(Vendor)
         ];
 
-        public override Type DefaultType => typeof(int);
-        public override object DefaultValue => default(int);
 
-        protected override bool Belongs(Type type)
+        protected override bool AppliesTo(Type type)
         {
             type = Nullable.GetUnderlyingType(type) ?? type;
             return NumericTypes.Contains(type);
@@ -151,10 +161,8 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
             typeof(ComponentKey)
         ];
 
-        public override Type DefaultType => typeof(string);
-        public override object DefaultValue => string.Empty;
 
-        protected override bool Belongs(Type type)
+        protected override bool AppliesTo(Type type)
         {
             type = Nullable.GetUnderlyingType(type) ?? type;
             return TextTypes.Contains(type);
@@ -169,10 +177,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
 
     private class DateTypeGroup() : TypeGroup(nameof(Date), 4)
     {
-        public override Type DefaultType => typeof(DateTime);
-        public override object DefaultValue => DateTime.Today;
-
-        protected override bool Belongs(Type type)
+        protected override bool AppliesTo(Type type)
         {
             type = Nullable.GetUnderlyingType(type) ?? type;
             return type == typeof(DateTime);
@@ -193,10 +198,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
 
     private class EnumTypeGroup() : TypeGroup(nameof(Enum), 5)
     {
-        public override Type DefaultType => typeof(LogixEnum);
-        public override object? DefaultValue => default(LogixEnum);
-
-        protected override bool Belongs(Type type)
+        protected override bool AppliesTo(Type type)
         {
             type = Nullable.GetUnderlyingType(type) ?? type;
             return type.IsEnum || type.IsAssignableTo(typeof(LogixEnum));
@@ -213,10 +215,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
 
     private class CollectionTypeGroup() : TypeGroup(nameof(Collection), 6)
     {
-        public override Type DefaultType => typeof(List<object>);
-        public override object DefaultValue => new List<object>();
-
-        protected override bool Belongs(Type type)
+        protected override bool AppliesTo(Type type)
         {
             type = Nullable.GetUnderlyingType(type) ?? type;
             return (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>)) ||
@@ -233,10 +232,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
 
     private class ElementTypeGroup() : TypeGroup(nameof(Element), 7)
     {
-        public override Type DefaultType => typeof(LogixElement);
-        public override object? DefaultValue => default(LogixElement);
-
-        protected override bool Belongs(Type type)
+        protected override bool AppliesTo(Type type)
         {
             type = Nullable.GetUnderlyingType(type) ?? type;
             return type.IsAssignableTo(typeof(LogixElement));
@@ -265,9 +261,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
 
     private class CriterionTypeGroup() : TypeGroup(nameof(Criterion), 8)
     {
-        public override Type DefaultType => typeof(Criterion);
-        public override object DefaultValue => new Criterion();
-        protected override bool Belongs(Type type) => type == typeof(Criterion);
+        protected override bool AppliesTo(Type type) => type == typeof(Criterion);
 
         public override bool TryParse(string text, out object? value)
         {
@@ -276,16 +270,36 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
         }
     }
 
-    private class VariableTypeGroup() : TypeGroup(nameof(Variable), 9)
+    private class ArgumentTypeGroup() : TypeGroup(nameof(Argument), 9)
     {
-        public override Type DefaultType => typeof(Variable);
-        public override object DefaultValue => new Variable();
-        protected override bool Belongs(Type type) => type == typeof(Variable);
+        protected override bool AppliesTo(Type type) => type == typeof(Argument);
+
+        public override bool TryParse(string text, out object? value)
+        {
+            value = new Argument(text);
+            return true;
+        }
+    }
+
+    private class VariableTypeGroup() : TypeGroup(nameof(Variable), 10)
+    {
+        protected override bool AppliesTo(Type type) => type == typeof(Variable);
 
         public override bool TryParse(string text, out object? value)
         {
             value = null;
             return false;
+        }
+    }
+
+    private class ReferenceTypeGroup() : TypeGroup(nameof(Reference), 11)
+    {
+        protected override bool AppliesTo(Type type) => type == typeof(Reference);
+
+        public override bool TryParse(string text, out object? value)
+        {
+            value = new Reference(text);
+            return true;
         }
     }
 }

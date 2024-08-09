@@ -8,8 +8,10 @@
 
 
     <Design.PreviewWith>
-        <Border Padding="30" Height="400" Width="400">
+        <Border Padding="30" Height="400" Width="400"
+                Background="{a:ThemeResource Container1BackgroundBrush}">
             <StackPanel Spacing="10">
+                <a:ToggleThemeButton Theme="{a:ControlTheme ToggleThemeButtonSubtle}" />
                 <controls:Entry Watermark="Enter value" />
                 <controls:Entry Watermark="Enter value" Value="This is a test" />
                 <controls:Entry Watermark="Enter value" Value="Test"
@@ -44,13 +46,11 @@
                                 Text="{TemplateBinding Watermark}"
                                 IsVisible="{Binding IsEmpty, RelativeSource={RelativeSource TemplatedParent}}"
                                 Opacity="{a:ThemeResource EditWatermarkOpacity}"
-                                FontStyle="Italic"
-                                Margin="0 1 0 0" />
+                                FontStyle="Italic" />
                             <ContentPresenter
                                 x:Name="PART_ContentPresenter"
-                                Content="{Binding Content, RelativeSource={RelativeSource TemplatedParent}}"
-                                ContentTemplate="{Binding ContentTemplate, RelativeSource={RelativeSource TemplatedParent}}"
-                                Margin="0 1 0 0" />
+                                Content="{Binding Value, RelativeSource={RelativeSource TemplatedParent}}"
+                                ContentTemplate="{Binding ValueTemplate, RelativeSource={RelativeSource TemplatedParent}}" />
                         </Panel>
                     </Button>
 
@@ -64,7 +64,7 @@
                         MinChildWidth="{TemplateBinding MinDropDownWidth}"
                         PlacementTarget="{Binding #PART_Button}"
                         Placement="BottomEdgeAlignedLeft"
-                        VerticalOffset="{Binding #PART_Button.Bounds.Height, Converter={StaticResource MathConverter}, ConverterParameter='(x * -1) -4'}"
+                        VerticalOffset="{Binding #PART_Button.Bounds.Height, Converter={StaticResource MathConverter}, ConverterParameter='(x * -1) -6'}"
                         BorderThickness="2">
 
                         <Grid RowDefinitions="Auto,Auto,*">
@@ -73,20 +73,21 @@
                                 Grid.Row="0"
                                 Text="{TemplateBinding Text, Mode=TwoWay}"
                                 Watermark="{TemplateBinding Watermark}"
+                                FontFamily="{TemplateBinding FontFamily}"
+                                FontSize="{TemplateBinding FontSize}"
+                                FontWeight="{TemplateBinding FontWeight}"
                                 Theme="{a:ControlTheme TextBoxOutline}"
                                 BorderThickness="0"
                                 Margin="0 1 0 0"
                                 CornerRadius="0 0 4 4"
                                 MinHeight="30"
-                                FontFamily="{TemplateBinding FontFamily}"
-                                FontSize="{TemplateBinding FontSize}"
                                 VerticalContentAlignment="Center"
                                 a:ThemeProperties.CopyClassesFrom="{TemplateBinding}"
                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                 ScrollViewer.VerticalScrollBarVisibility="Disabled">
                                 <TextBox.InnerRightContent>
-                                    <Button Theme="{StaticResource IconButtonSmall}"
-                                            properties:ButtonIcon.Theme="{StaticResource IconChevronExpand}"
+                                    <Button Theme="{a:ControlTheme ButtonSubtle}"
+                                            properties:Icon.Theme="{StaticResource IconLineExpand}"
                                             IsVisible="{Binding $parent[controls:Entry].UseExpander}"
                                             Margin="5 0" CornerRadius="10" />
                                 </TextBox.InnerRightContent>
@@ -106,7 +107,7 @@
                                     <DataTemplate x:DataType="system:Object">
                                         <StackPanel Orientation="Horizontal" Spacing="5" ClipToBounds="True">
                                             <PathIcon
-                                                Theme="{StaticResource IconExclamationOutlined}"
+                                                Theme="{StaticResource IconFilledExclamation}"
                                                 Foreground="{a:ThemeResource ControlForegroundBrushSoftDanger}" />
                                             <TextBlock
                                                 Text="{Binding }"

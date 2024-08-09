@@ -7,7 +7,7 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record ListNodes(NodeType Type) : IDbQuery<Result<IEnumerable<Node>>>;
+public record ListNodes : IDbQuery<Result<IEnumerable<Node>>>;
 
 [UsedImplicitly]
 internal class ListNodesHandler(IConnectionManager manager) : IRequestHandler<ListNodes, Result<IEnumerable<Node>>>
@@ -17,7 +17,7 @@ internal class ListNodesHandler(IConnectionManager manager) : IRequestHandler<Li
         WITH Tree AS (
             SELECT NodeId, ParentId, Type, Name, 0 as Depth
             FROM Node
-            WHERE ParentId is null and Type = @Type
+            WHERE ParentId is null
             UNION ALL
             SELECT n.NodeId, n.ParentId, n.Type, n.Name, t.Depth + 1 as Depth
             FROM Node n
@@ -32,9 +32,9 @@ internal class ListNodesHandler(IConnectionManager manager) : IRequestHandler<Li
     public async Task<Result<IEnumerable<Node>>> Handle(ListNodes request,
         CancellationToken cancellationToken)
     {
-        var connection = await manager.Connect(Database.Project, cancellationToken);
+        var connection = await manager.Connect(cancellationToken);
 
-        var nodes = await connection.QueryAsync<Node>(GetNodeTree, new { request.Type });
+        var nodes = await connection.QueryAsync<Node>(GetNodeTree);
 
         var lookup = new Dictionary<Guid, Node>();
 
@@ -46,8 +46,8 @@ internal class ListNodesHandler(IConnectionManager manager) : IRequestHandler<Li
                 parent.AddNode(node);
         }
 
-        //Nodes at depth 0 are the root "feature" nodes, and we don't want to show those.
-        var results = lookup.Values.Where(x => x.Depth == 1).AsEnumerable();
+        //Nodes at depth 0 are the root collection nodes, and should all contain the loaded children.
+        var results = lookup.Values.Where(x => x.Depth == 0).AsEnumerable();
         return Result.Ok(results);
     }
 }

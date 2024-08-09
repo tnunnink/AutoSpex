@@ -1,0 +1,97 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+             xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors"
+             x:Class="AutoSpex.Client.Pages.OverridesPage"
+             x:DataType="pages:OverridesPageModel"
+             Background="{a:ThemeResource Container1BackgroundBrush}">
+
+    <Design.Height>800</Design.Height>
+    <Design.Width>1200</Design.Width>
+
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Padding="20">
+
+        <controls:Section Header="Overrides"
+                          Description="Add overrides to change variable values when a source is run."
+                          ShowContent="{Binding SelectedSource.Overrides.Count, FallbackValue={x:False}}"
+                          VerticalAlignment="Top">
+
+            <controls:Section.Icon>
+                <PathIcon Theme="{StaticResource IconLineAt}" />
+            </controls:Section.Icon>
+
+            <controls:Section.Action>
+
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="10">
+
+                    <Button
+                        DockPanel.Dock="Right"
+                        x:Name="SelectorButton"
+                        Height="30"
+                        Content="{Binding SelectedSource}"
+                        IsVisible="{Binding Environment.Sources.Count}"
+                        Theme="{a:ControlTheme ButtonSubtle}"
+                        Background="{a:ThemeResource Container1BackgroundBrush}"
+                        BorderBrush="{a:ThemeResource Container1BorderBrush}">
+                        <Button.ContentTemplate>
+                            <DataTemplate x:DataType="observers:SourceObserver">
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <PathIcon Theme="{StaticResource IconThemedSource}" />
+                                    <TextBlock Text="{Binding Name}" />
+                                    <PathIcon Theme="{StaticResource IconLineExpand}" Classes="size-sm" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </Button.ContentTemplate>
+                        <Button.Flyout>
+                            <Flyout Placement="BottomEdgeAlignedRight" HorizontalOffset="8" VerticalOffset="5">
+                                <ItemsControl
+                                    Theme="{a:ControlTheme ItemsControlScrollable}"
+                                    ItemsSource="{Binding Environment.Sources}"
+                                    MaxHeight="300" MinWidth="200" Margin="5">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate DataType="observers:SourceObserver">
+                                            <Button
+                                                Command="{Binding $parent[ItemsControl].((pages:OverridesPageModel)DataContext).SelectSourceCommand, FallbackValue={x:Null}}"
+                                                CommandParameter="{Binding}"
+                                                Theme="{a:ControlTheme ButtonSubtle}"
+                                                HorizontalContentAlignment="Stretch">
+                                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                                    <PathIcon Theme="{StaticResource IconThemedSource}" />
+                                                    <TextBlock Text="{Binding Name}" />
+                                                </StackPanel>
+                                                <Interaction.Behaviors>
+                                                    <behaviors:HideFlyoutOnClickedBehavior />
+                                                </Interaction.Behaviors>
+                                            </Button>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Button
+                            Command="{Binding AddOverrideCommand}"
+                            properties:Icon.Theme="{StaticResource IconAdd}"
+                            Theme="{StaticResource IconButtonPill}"
+                            Classes="accent"
+                            ToolTip.Tip="Add override" />
+                    </StackPanel>
+
+                </StackPanel>
+            </controls:Section.Action>
+
+            <ListBox
+                ItemsSource="{Binding SelectedSource.Overrides, FallbackValue={x:Null}}"
+                ItemTemplate="{StaticResource OverrideListItem}"
+                ItemContainerTheme="{StaticResource ListBoxItemSection}"
+                SelectionMode="Multiple"
+                BorderThickness="1" BorderBrush="{a:ThemeResource Container1BorderBrush}" CornerRadius="5" />
+        </controls:Section>
+    </ScrollViewer>
+</UserControl>

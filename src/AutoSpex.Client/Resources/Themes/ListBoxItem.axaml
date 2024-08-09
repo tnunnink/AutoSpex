@@ -3,16 +3,9 @@
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui">
     <Design.PreviewWith>
         <Border Padding="20">
-            <StackPanel>
+            <StackPanel Spacing="30" Height="600">
                 <ListBox Height="100" Width="300"
                          ItemContainerTheme="{DynamicResource ListBoxItemSimple}">
-                    <ListBoxItem Content="Item 1" />
-                    <ListBoxItem Content="Item 2" />
-                    <ListBoxItem Content="Item 3" />
-                </ListBox>
-
-                <ListBox Height="100" Width="300"
-                         ItemContainerTheme="{DynamicResource ListBoxItemSection}">
                     <ListBoxItem Content="Item 1" />
                     <ListBoxItem Content="Item 2" />
                     <ListBoxItem Content="Item 3" />
@@ -26,81 +19,32 @@
                 </ListBox>
 
                 <ListBox Height="100" Width="300"
-                         ItemContainerTheme="{DynamicResource ListBoxItemEntry}">
+                         BorderThickness="1" CornerRadius="5"
+                         a:BorderChildClipConverter.ClipToContainingBorder="True"
+                         BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                         ItemContainerTheme="{DynamicResource ListBoxItemSection}"
+                         SelectionMode="Multiple">
                     <ListBoxItem Content="Item 1" />
                     <ListBoxItem Content="Item 2" />
                     <ListBoxItem Content="Item 3" IsEnabled="False" />
-                    <ListBoxItem Content="Item 3" IsEnabled="False" IsSelected="True" />
-                </ListBox>
-
-                <ListBox Height="100" Width="300"
-                         ItemContainerTheme="{DynamicResource ListBoxItemInvisible}">
-                    <ListBoxItem Content="Item 1" />
-                    <ListBoxItem Content="Item 2" />
-                    <ListBoxItem Content="Item 3" />
                 </ListBox>
             </StackPanel>
-
         </Border>
+
     </Design.PreviewWith>
 
     <!-- ListBoxItemSimple -->
     <ControlTheme x:Key="ListBoxItemSimple" TargetType="ListBoxItem" BasedOn="{a:ControlTheme ListBoxItem}">
-        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-        <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Background" Value="{a:ThemeResource ListItemBackgroundBrushPointerOver}" />
-        </Style>
-        <Style Selector="^:pressed /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Background" Value="{a:ThemeResource ListItemBackgroundBrushPointerOver}" />
-        </Style>
-        <Style Selector="^:disabled /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Foreground" Value="{a:ThemeResource ListItemForegroundBrushDisabled}" />
-        </Style>
-        <Style Selector="^:selected /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushOutlinePointerOver}" />
-            <Setter Property="Foreground" Value="{a:ThemeResource ListItemForegroundBrush}" />
-        </Style>
-        <Style Selector="^:selected:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Background" Value="{a:ThemeResource ListItemBackgroundBrushPointerOver}" />
-        </Style>
-        <Style Selector="^:selected:pressed /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Background" Value="{a:ThemeResource ListItemBackgroundBrushPointerOver}" />
-        </Style>
-        <Style Selector="^:selected:disabled /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Foreground" Value="{a:ThemeResource ListItemForegroundBrushSelectedDisabled}" />
-        </Style>
-    </ControlTheme>
-
-    <!-- SectionListItem -->
-    <ControlTheme x:Key="ListBoxItemSection" TargetType="ListBoxItem" BasedOn="{a:ControlTheme ListBoxItem}">
-        <Setter Property="BorderThickness" Value="0 0 0 1" />
-        <Setter Property="BorderBrush" Value="{a:ThemeResource Container1BorderBrush}" />
-        <Setter Property="Padding" Value="4" />
-
-        <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Background" Value="{a:ThemeResource Container2BackgroundBrush}" />
-        </Style>
-        <Style Selector="^:selected /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Background" Value="{a:ThemeResource Container2BackgroundBrush}" />
-            <Setter Property="TextElement.Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
-
-            <Style Selector="^:focus-within">
-                <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftPointerOver}" />
-            </Style>
-        </Style>
-        <Style Selector="^:nth-last-child(-n+1)">
-            <Setter Property="BorderThickness" Value="0" />
-        </Style>
-    </ControlTheme>
-
-    <!-- ListBoxItemInvisible -->
-    <ControlTheme x:Key="ListBoxItemInvisible" TargetType="ListBoxItem">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{a:ThemeResource ListItemForegroundBrush}" />
         <Setter Property="Padding" Value="{a:ThemeResource ListItemPadding}" />
+        <Setter Property="CornerRadius" Value="5" />
+        <Setter Property="Margin" Value="0 3 0 0" />
+        <Setter Property="FocusAdorner" Value="{x:Null}" />
 
         <Setter Property="Template">
             <ControlTemplate>
+
                 <ContentPresenter
                     x:Name="PART_ContentPresenter"
                     Background="{TemplateBinding Background}"
@@ -113,8 +57,23 @@
                     HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                     Padding="{TemplateBinding Padding}"
                     VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+
             </ControlTemplate>
         </Setter>
+
+        <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{a:ThemeResource ListItemBackgroundBrushPointerOver}" />
+        </Style>
+        <Style Selector="^:disabled /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Foreground" Value="{a:ThemeResource ListItemForegroundBrushDisabled}" />
+        </Style>
+        <Style Selector="^:selected /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{a:ThemeResource ListItemBackgroundBrushPointerOver}" />
+            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+        </Style>
+        <Style Selector="^:selected:disabled /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Foreground" Value="{a:ThemeResource ListItemForegroundBrushSelectedDisabled}" />
+        </Style>
     </ControlTheme>
 
     <!-- ListBoxItemSubtle -->
@@ -142,13 +101,13 @@
         </Style>
     </ControlTheme>
 
-    <!-- ListBoxItemEntry -->
-    <ControlTheme x:Key="ListBoxItemEntry" TargetType="ListBoxItem">
+    <!-- ListBoxItemSection -->
+    <ControlTheme x:Key="ListBoxItemSection" TargetType="ListBoxItem">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="BorderThickness" Value="0 0 0 1" />
-        <Setter Property="BorderBrush" Value="{a:ThemeResource Container1BorderBrush}" />
         <Setter Property="Foreground" Value="{a:ThemeResource ListItemForegroundBrush}" />
-        <Setter Property="Padding" Value="4" />
+        <Setter Property="BorderBrush" Value="{a:ThemeResource Container1BorderBrush}" />
+        <Setter Property="BorderThickness" Value="0 0 0 1" />
+        <Setter Property="Padding" Value="{a:ThemeResource ListItemPadding}" />
 
         <Setter Property="Template">
             <ControlTemplate>
@@ -161,12 +120,10 @@
                     CornerRadius="{TemplateBinding CornerRadius}">
 
                     <Grid ColumnDefinitions="Auto,*">
-
                         <Border
                             Grid.Column="0"
                             x:Name="SelectionBorder"
-                            Width="5" Height="15" CornerRadius="5" Margin="5" />
-
+                            Width="3" CornerRadius="5" Margin="5 7 0 7" />
                         <ContentPresenter
                             Grid.Column="1"
                             x:Name="PART_ContentPresenter"
@@ -178,7 +135,6 @@
                             VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
                     </Grid>
                 </Border>
-
             </ControlTemplate>
         </Setter>
 
@@ -194,11 +150,11 @@
         <Style Selector="^:selected /template/ Border#RootBorder">
             <Setter Property="Background" Value="{a:ThemeResource Container2BackgroundBrush}" />
         </Style>
-        <Style Selector="^:selected /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Foreground" Value="{a:ThemeResource ListItemForegroundBrushSelected}" />
-        </Style>
         <Style Selector="^:selected:disabled /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Foreground" Value="{a:ThemeResource ListItemForegroundBrushSelectedDisabled}" />
+            <Setter Property="Foreground" Value="{a:ThemeResource ListItemForegroundBrushDisabled}" />
+        </Style>
+        <Style Selector="^:nth-last-child(-n+1)">
+            <Setter Property="BorderThickness" Value="0" />
         </Style>
     </ControlTheme>
 </ResourceDictionary>

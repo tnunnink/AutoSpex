@@ -1,6 +1,6 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
                     xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
 
@@ -10,10 +10,10 @@
                          MinHeight="200"
                          MaxWidth="500"
                          Header="This is the prompt title"
-                         HeaderIcon="{StaticResource IconWarningFilled}"
+                         HeaderIcon="{StaticResource IconFilledWarning}"
                          ActionButtonText="Delete"
-                         ActionButtonTheme="{actipro:ControlTheme ButtonSoft}"
-                         AlternateButtonTheme="{actipro:ControlTheme ButtonSoft}"
+                         ActionButtonTheme="{a:ControlTheme ButtonSoft}"
+                         AlternateButtonTheme="{a:ControlTheme ButtonSoft}"
                          Classes="danger"
                          UseAlternateButton="True"
                          Footer="This is some footer content that could go at the bottom">
@@ -26,33 +26,33 @@
     </Design.PreviewWith>
 
     <ControlTheme x:Key="CloseDialogButton" TargetType="Button" BasedOn="{StaticResource IconButton}">
-        <Setter Property="properties:ButtonIcon.Theme" Value="{StaticResource IconClose}" />
-        <Setter Property="Padding" Value="10" />
-        <Setter Property="Foreground" Value="{actipro:ThemeResource DefaultForegroundBrushTertiary}" />
-        <Style Selector="^:pointerover /template/ Border#border">
-            <Setter Property="Background" Value="{actipro:ThemeResource Container4BackgroundBrush}" />
-        </Style>
+        <Setter Property="properties:Icon.Theme" Value="{StaticResource IconClose}" />
+        <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+        <Setter Property="FontSize" Value="10" />
     </ControlTheme>
 
-    <actipro:ThicknessConverter x:Key="HeaderThicknessConverter" Filter="Left, Top" BaseThickness="0,0,5,5" />
+    <a:ThicknessConverter x:Key="HeaderThicknessConverter" Filter="Left, Top" BaseThickness="0,0,5,5" />
 
     <!--Base Prompt-->
     <ControlTheme x:Key="{x:Type controls:Prompt}" TargetType="controls:Prompt">
-        <Setter Property="Background" Value="{actipro:ThemeResource PopupBackgroundBrush}" />
-        <Setter Property="BorderBrush" Value="{actipro:ThemeResource PopupBorderBrush}" />
+        <Setter Property="Background" Value="{a:ThemeResource PopupBackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{a:ThemeResource PopupBorderBrush}" />
         <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="HeaderBackground" Value="{actipro:ThemeResource Container3BackgroundBrush}" />
-        <Setter Property="HeaderForeground" Value="{actipro:ThemeResource DefaultForegroundBrush}" />
-        <Setter Property="FooterBackground" Value="{actipro:ThemeResource Container3BackgroundBrush}" />
+        <Setter Property="HeaderBackground" Value="{a:ThemeResource Container3BackgroundBrush}" />
+        <Setter Property="HeaderForeground" Value="{a:ThemeResource DefaultForegroundBrush}" />
+        <Setter Property="FooterBackground" Value="{a:ThemeResource Container3BackgroundBrush}" />
         <Setter Property="CornerRadius" Value="10" />
-        <Setter Property="Padding" Value="10" />
+        <Setter Property="Padding" Value="20" />
+
         <Setter Property="Template">
             <ControlTemplate>
-                <actipro:ShadowChrome Elevation="22">
+                <a:ShadowChrome Elevation="22">
                     <Border BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             Background="{TemplateBinding Background}"
-                            CornerRadius="{TemplateBinding CornerRadius}">
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            a:BorderChildClipConverter.ClipToContainingBorder="True">
+
                         <DockPanel>
 
                             <!--Header-->
@@ -63,17 +63,22 @@
                                     ClipToBounds="True"
                                     Padding="10">
                                 <Grid ColumnDefinitions="*,Auto">
-                                    <StackPanel Orientation="Horizontal"
-                                                Spacing="10">
-                                        <PathIcon x:Name="HeaderIcon"
-                                                  Theme="{TemplateBinding HeaderIcon}"
-                                                  Foreground="{actipro:ThemeResource DefaultForegroundBrushTertiary}"
-                                                  actipro:ThemeProperties.CopyClassesFrom="{Binding $parent[controls:Prompt]}"
-                                                  IsVisible="{Binding HeaderIcon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ObjectConverters.IsNotNull}}"
-                                                  Padding="4" />
-                                        <TextBlock x:Name="HeaderText"
-                                                   Text="{TemplateBinding Header}"
-                                                   FontWeight="{actipro:ThemeResource HeadingFontWeightMedium}" />
+                                    <StackPanel Orientation="Horizontal" Spacing="10" Margin="5 0">
+                                        <PathIcon
+                                            x:Name="HeaderIcon"
+                                            Theme="{TemplateBinding HeaderIcon}"
+                                            IsVisible="{Binding HeaderIcon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                                        <ContentPresenter
+                                            x:Name="PART_HeaderPresenter"
+                                            Content="{TemplateBinding Header}"
+                                            ContentTemplate="{TemplateBinding HeaderTemplate}">
+                                            <ContentPresenter.Styles>
+                                                <Style Selector="TextBlock">
+                                                    <Setter Property="FontSize"
+                                                            Value="{a:ThemeResource DefaultFontSizeMedium}" />
+                                                </Style>
+                                            </ContentPresenter.Styles>
+                                        </ContentPresenter>
                                     </StackPanel>
 
                                     <Button Grid.Column="1"
@@ -98,10 +103,10 @@
                             </Border>
 
                             <!--Buttons-->
-                            <Border DockPanel.Dock="Bottom"
-                                    x:Name="ButtonBorder"
-                                    IsVisible="{TemplateBinding UseButtonPanel}"
-                                    Padding="{TemplateBinding Padding}">
+                            <Border
+                                DockPanel.Dock="Bottom"
+                                IsVisible="{TemplateBinding UseButtonPanel}"
+                                Padding="20">
                                 <Grid ColumnDefinitions="Auto,*,Auto">
                                     <Button x:Name="AlternateButton"
                                             IsVisible="{TemplateBinding UseAlternateButton}"
@@ -127,22 +132,23 @@
                                                 Theme="{TemplateBinding ActionButtonTheme}"
                                                 Command="{TemplateBinding ActionCommand}"
                                                 CommandParameter="{TemplateBinding ActionCommandParameter}"
-                                                actipro:ThemeProperties.CopyClassesFrom="{Binding $parent[controls:Prompt]}"
+                                                a:ThemeProperties.CopyClassesFrom="{Binding $parent[controls:Prompt]}"
                                                 MinWidth="80" />
                                     </StackPanel>
                                 </Grid>
                             </Border>
 
                             <!--Content-->
-                            <ContentPresenter x:Name="PART_ContentPresenter"
-                                              Content="{TemplateBinding Content}"
-                                              ContentTemplate="{TemplateBinding ContentTemplate}"
-                                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                              Margin="{TemplateBinding Padding}" />
+                            <ContentPresenter
+                                x:Name="PART_ContentPresenter"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Margin="{TemplateBinding Padding}" />
                         </DockPanel>
                     </Border>
-                </actipro:ShadowChrome>
+                </a:ShadowChrome>
             </ControlTemplate>
         </Setter>
     </ControlTheme>

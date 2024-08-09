@@ -62,7 +62,7 @@ public static class Extensions
     }
 
     /// <summary>
-    /// Based on the object type return a UI friendly text representation for which we can identify this object.
+    /// Based on the object type return a UI friendly text representation for which we can identify this object value.
     /// </summary>
     public static string ToText(this object? candidate)
     {
@@ -72,26 +72,13 @@ public static class Extensions
             Tag tag => tag.TagName,
             DataTypeMember member => member.Name,
             Parameter parameter => parameter.Name,
-            LogixCode code => $"{code.Container}/{code.Routine?.Name}/{code.Location}",
+            LogixCode code => code.Location,
             LogixComponent component => component.Name,
             LogixEnum enumeration => enumeration.Name,
-            _ => candidate?.ToString() ?? string.Empty
-        };
-    }
-
-    /// <summary>
-    /// Based on the object type return a UI friendly text representation for which we can identify this object.
-    /// </summary>
-    public static string ToData(this object? candidate)
-    {
-        return candidate switch
-        {
-            bool b => b.ToString().ToLowerInvariant(),
-            LogixEnum enumeration => enumeration.Name,
-            AtomicData v => v.ToString(), //atomic data is a logix element, but we want the value not the XML.
-            LogixElement element => element.Serialize().ToString(),
-            IEnumerable enumerable => $"[{string.Join(", ", from object? item in enumerable select item.ToData())}]",
-            _ => candidate?.ToString() ?? string.Empty
+            string text => text,
+            IEnumerable enumerable =>
+                $"{string.Join(", ", enumerable.GetType().GetGenericArguments().Select(CommonName).ToArray())}s",
+            _ => candidate?.ToString() ?? "null"
         };
     }
 
@@ -121,7 +108,7 @@ public static class Extensions
     /// <param name="typeName">The name of the type.</param>
     /// <returns>A <see cref="Type"/> object if found, otherwise null.</returns>
     /// <remarks>
-    /// This is a specialized extension which tries to get the Type form a string type which is how some data
+    /// This is a specialized extension which tries to get the Type form a string which is how some data
     /// will be persisted into the database. This method should work for standard .NET types, types defined in L5Sharp,
     /// as well as types defined in this AutoSpex.Engine project.
     /// </remarks>
@@ -184,26 +171,32 @@ public static class Extensions
     }
 
     /// <summary>
-    /// Just determines if this and another string are equal using the ordinal ignore case comparer.
+    /// Determines whether the input string satisfies the given filter text.
     /// </summary>
-    /// <param name="input">This string text.</param>
-    /// <param name="text">The other string to compare against.</param>
-    /// <returns>true if equal, otherwise, false.</returns>
-    public static bool ContainsText(this string input, string text)
+    /// <param name="input">The input string to evaluate.</param>
+    /// <param name="text">The filter text to check against the input string.</param>
+    /// <returns>True if the input string satisfies the filter text, false otherwise.</returns>
+    public static bool Satisfies(this string? input, string? text)
     {
-        return input.Contains(text, StringComparison.OrdinalIgnoreCase);
-    }
-
-    public static bool PassesFilter(this string input, string? text)
-    {
+        if (input is null) return false;
         return string.IsNullOrEmpty(text) || input.Contains(text, StringComparison.OrdinalIgnoreCase);
     }
 
+    /// <summary>
+    /// Determines whether the given type is enumerable.
+    /// </summary>
+    /// <param name="type">The type to evaluate.</param>
+    /// <returns>True if the type is enumerable, false otherwise.</returns>
     private static bool IsEnumerable(this Type type)
     {
         return type.IsAssignableTo(typeof(IEnumerable)) || type.GetInterfaces()
             .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>));
     }
 
+    /// <summary>
+    /// Determines if the specified type is nullable.
+    /// </summary>
+    /// <param name="type">The type to evaluate.</param>
+    /// <returns>True if the type is nullable, false otherwise.</returns>
     private static bool IsNullable(this Type type) => Nullable.GetUnderlyingType(type) is not null;
 }

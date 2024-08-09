@@ -9,7 +9,7 @@ public class ListNodesTests
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
 
-        var result = await mediator.Send(new ListNodes(NodeType.Spec));
+        var result = await mediator.Send(new ListNodes());
 
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().BeEmpty();
@@ -20,11 +20,11 @@ public class ListNodesTests
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-        await mediator.Send(new CreateNode(Node.NewContainer(), NodeType.Spec));
-        await mediator.Send(new CreateNode(Node.NewContainer(), NodeType.Spec));
+        await mediator.Send(new CreateNode(Node.NewContainer()));
+        await mediator.Send(new CreateNode(Node.NewContainer()));
         await mediator.Send(new CreateNode(Node.NewSpec()));
 
-        var result = await mediator.Send(new ListNodes(NodeType.Spec));
+        var result = await mediator.Send(new ListNodes());
 
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().HaveCount(3);
@@ -36,11 +36,11 @@ public class ListNodesTests
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
         var collection = Node.NewContainer();
-        await mediator.Send(new CreateNode(collection, NodeType.Spec));
-        await mediator.Send(new CreateNode(collection.AddContainer(), NodeType.Spec));
+        await mediator.Send(new CreateNode(collection));
+        await mediator.Send(new CreateNode(collection.AddContainer()));
         await mediator.Send(new CreateNode(collection.AddSpec()));
 
-        var result = await mediator.Send(new ListNodes(NodeType.Spec));
+        var result = await mediator.Send(new ListNodes());
 
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().HaveCount(1);

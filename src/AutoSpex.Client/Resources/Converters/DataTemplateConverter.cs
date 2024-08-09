@@ -9,12 +9,14 @@ namespace AutoSpex.Client.Resources.Converters;
 
 public class DataTemplateConverter : Dictionary<string, IDataTemplate>, IValueConverter
 {
+    public IDataTemplate? DefaultTemplate { get; set; }
+    
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value is string key && TryGetValue(key, out var template))
             return template;
         
-        return AvaloniaProperty.UnsetValue;
+        return DefaultTemplate ?? AvaloniaProperty.UnsetValue;
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) 

@@ -2,38 +2,133 @@
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Design.PreviewWith>
-        <Border Padding="100">
-            <TabStrip ItemContainerTheme="{DynamicResource TabStripItemStatusBar}"
-                      BorderThickness="0" Height="40"
-                      Background="{a:ThemeResource StatusBarBackgroundBrush}">
-                <TabStrip.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal" />
-                    </ItemsPanelTemplate>
-                </TabStrip.ItemsPanel>
-                <TabStripItem Content="Item 1" />
-                <TabStripItem Content="Item 2" />
-                <TabStripItem Content="Item 3" />
-                <TabStripItem Content="Disabled" IsEnabled="False" />
-            </TabStrip>
+        <Border Padding="20">
+            <StackPanel Spacing="10">
+                <a:ToggleThemeButton Theme="{a:ControlTheme ToggleThemeButtonSubtle}" />
+
+                <TabStrip ItemContainerTheme="{DynamicResource TabStripItemSoft}"
+                          BorderThickness="0" Height="40" Padding="5 0"
+                          Background="{a:ThemeResource Container2BackgroundBrush}">
+                    <TabStrip.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" Spacing="5" />
+                        </ItemsPanelTemplate>
+                    </TabStrip.ItemsPanel>
+                    <TabStripItem Content="Item 1" />
+                    <TabStripItem Content="Item 2" />
+                    <TabStripItem Content="Item 3" />
+                </TabStrip>
+
+                <Border Padding="20">
+                    <TabStrip ItemContainerTheme="{DynamicResource TabItemStandard}"
+                              BorderThickness="0">
+                        <TabStrip.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" Spacing="10" />
+                            </ItemsPanelTemplate>
+                        </TabStrip.ItemsPanel>
+                        <TabStripItem Content="Item 1" />
+                        <TabStripItem Content="Item 2" />
+                        <TabStripItem Content="Item 3" />
+                    </TabStrip>
+                </Border>
+
+                <Border Padding="20">
+                    <TabStrip ItemContainerTheme="{DynamicResource TabItemTitleBar}"
+                              BorderThickness="0" Padding="5"
+                              Background="{a:ThemeResource TitleBarBackgroundBrush}">
+                        <TabStrip.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" Spacing="5" />
+                            </ItemsPanelTemplate>
+                        </TabStrip.ItemsPanel>
+                        <TabStripItem>
+                            <PathIcon
+                                Theme="{StaticResource IconFilledClipboard}"
+                                Foreground="{Binding $parent[TabStripItem].Foreground}" />
+                        </TabStripItem>
+                        <TabStripItem>
+                            <PathIcon
+                                Theme="{StaticResource IconFilledCog}"
+                                Foreground="{Binding $parent[TabStripItem].Foreground}" />
+                        </TabStripItem>
+                        <TabStripItem>
+                            <PathIcon
+                                Theme="{StaticResource IconLineHistory}"
+                                Foreground="{Binding $parent[TabStripItem].Foreground}" />
+                        </TabStripItem>
+                    </TabStrip>
+                </Border>
+            </StackPanel>
+
         </Border>
     </Design.PreviewWith>
 
-
-    <!-- TabStripItemSubtle -->
-    <ControlTheme x:Key="TabStripItemStatusBar" TargetType="TabStripItem">
-        <ControlTheme.Resources>
-            <a:ThicknessConverter x:Key="PaddingConverter" Filter="Vertical" />
-        </ControlTheme.Resources>
-
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="BorderThickness" Value="00" />
-        <Setter Property="FontSize" Value="{a:ThemeResource TabItemFontSizeSubtle}" />
-        <Setter Property="FontWeight" Value="{a:ThemeResource TabItemFontWeightSubtle}" />
-        <Setter Property="Foreground" Value="{a:ThemeResource TitleBarForegroundBrush}" />
-        <Setter Property="Padding" Value="{a:ThemeResource TabItemPaddingSubtle}" />
+    <ControlTheme x:Key="TabStripItemSoft" TargetType="TabStripItem">
+        <Setter Property="Background" Value="{a:ThemeResource Container2BackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{a:ThemeResource Container2BackgroundBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="{a:ThemeResource TabItemCornerRadiusOutline}" />
+        <Setter Property="Padding" Value="10 7" />
+        <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+        <Setter Property="FontSize" Value="{a:ThemeResource TabItemFontSizeOutline}" />
+        <Setter Property="FontWeight" Value="{a:ThemeResource TabItemFontWeightOutline}" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border
+                    x:Name="PART_LayoutRoot"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="{TemplateBinding CornerRadius}"
+                    Padding="{TemplateBinding Padding}">
+                    <ContentPresenter
+                        x:Name="PART_ContentPresenter"
+                        Content="{TemplateBinding Content}"
+                        ContentTemplate="{TemplateBinding ContentTemplate}"
+                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                </Border>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="{a:ThemeResource Container4BackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{a:ThemeResource Container4BackgroundBrush}" />
+            <Setter Property="Foreground" Value="{a:ThemeResource TabItemForegroundBrushOutlinePointerOver}" />
+        </Style>
+        <Style Selector="^:selected">
+            <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoft}" />
+            <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBackgroundBrushSoft}" />
+            <Setter Property="Foreground" Value="{a:ThemeResource TabItemForegroundBrushOutlineSelected}" />
+
+            <Style Selector="^:pointerover">
+                <Setter Property="Background"
+                        Value="{a:ThemeResource Container4BackgroundBrush}" />
+                <Setter Property="BorderBrush"
+                        Value="{a:ThemeResource Container4BackgroundBrush}" />
+                <Setter Property="Foreground"
+                        Value="{a:ThemeResource TabItemForegroundBrushOutlineSelectedPointerOver}" />
+            </Style>
+        </Style>
+        <Style Selector="^:disabled">
+            <Setter Property="Foreground" Value="{a:ThemeResource TabItemForegroundBrushOutlineDisabled}" />
+        </Style>
+    </ControlTheme>
+
+    <ControlTheme x:Key="TabItemStandard" TargetType="TabStripItem">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="{a:ThemeResource TabItemBorderBrushSubtle}" />
+        <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeSmall}" />
+        <Setter Property="FontWeight" Value="{a:ThemeResource TabItemFontWeightSubtle}" />
+        <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Padding" Value="7" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Panel>
@@ -53,35 +148,68 @@
                     </Border>
                     <Border
                         x:Name="PART_SelectedPipe"
+                        Background="{TemplateBinding BorderBrush}"
                         Height="3" ZIndex="100"
-                        VerticalAlignment="Top"
-                        IsVisible="False" />
-                    <Border
-                        Background="{a:ThemeResource StatusBarBorderBrush}"
-                        Width="1" Margin="0 12" ZIndex="100"
-                        HorizontalAlignment="Right" />
-                    <Border
-                        Background="{a:ThemeResource StatusBarBorderBrush}"
-                        Width="1" Margin="-1 12" ZIndex="100"
-                        HorizontalAlignment="Left" />
+                        VerticalAlignment="Bottom"
+                        IsVisible="False">
+                    </Border>
                 </Panel>
-
             </ControlTemplate>
         </Setter>
 
         <Style Selector="^:pointerover">
+            <Setter Property="Foreground" Value="{a:ThemeResource TabItemForegroundBrushOutlinePointerOver}" />
+        </Style>
+
+        <Style Selector="^:selected">
+            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+            <Setter Property="BorderBrush" Value="{a:ThemeResource TabItemBorderBrushSubtleSelected}" />
             <Style Selector="^ /template/ Border#PART_SelectedPipe">
                 <Setter Property="IsVisible" Value="True" />
-                <Setter Property="Background" Value="{a:ThemeResource Container5BorderBrush}" />
+            </Style>
+            <Style Selector="^:disabled">
+                <Setter Property="BorderBrush" Value="{a:ThemeResource TabItemBorderBrushSubtleSelectedDisabled}" />
             </Style>
         </Style>
-        <Style Selector="^:selected">
-            <Setter Property="Foreground" Value="{a:ThemeResource TitleBarForegroundBrushActive}" />
 
-            <Style Selector="^ /template/ Border#PART_SelectedPipe">
-                <Setter Property="IsVisible" Value="True" />
-                <Setter Property="Background" Value="{a:ThemeResource TabItemBorderBrushSubtleSelected}" />
-            </Style>
+        <Style Selector="^:disabled">
+            <Setter Property="Foreground" Value="{a:ThemeResource TabItemForegroundBrushSubtleDisabled}" />
+        </Style>
+    </ControlTheme>
+
+    <ControlTheme x:Key="TabItemTitleBar" TargetType="TabStripItem">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="FontSize" Value="{a:ThemeResource TabItemFontSizeSubtle}" />
+        <Setter Property="FontWeight" Value="{a:ThemeResource TabItemFontWeightSubtle}" />
+        <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushDefault}" />
+        <Setter Property="CornerRadius" Value="{a:ThemeResource ButtonCornerRadius}" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Padding" Value="10 5" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border
+                    x:Name="PART_LayoutRoot"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="{TemplateBinding CornerRadius}"
+                    Padding="{TemplateBinding Padding}">
+                    <ContentPresenter
+                        x:Name="PART_ContentPresenter"
+                        Content="{TemplateBinding Content}"
+                        ContentTemplate="{TemplateBinding ContentTemplate}"
+                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                </Border>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="{a:ThemeResource TitleBarButtonBackgroundBrushPointerOver}" />
+        </Style>
+        <Style Selector="^:selected">
+            <Setter Property="Background" Value="{a:ThemeResource TitleBarButtonBackgroundBrushPointerOver}" />
         </Style>
         <Style Selector="^:disabled">
             <Setter Property="Foreground" Value="{a:ThemeResource TabItemForegroundBrushSubtleDisabled}" />

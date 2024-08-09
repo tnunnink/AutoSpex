@@ -34,7 +34,7 @@ public class SaveVariablesTests
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
         var node = Node.NewContainer();
-        await mediator.Send(new CreateNode(node, NodeType.Spec));
+        await mediator.Send(new CreateNode(node));
         var variable = new Variable("Var01", "Test");
 
         var result = await mediator.Send(new SaveVariables(node.NodeId, [variable]));
@@ -48,7 +48,7 @@ public class SaveVariablesTests
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
         var node = Node.NewContainer();
-        await mediator.Send(new CreateNode(node, NodeType.Spec));
+        await mediator.Send(new CreateNode(node));
         var var02 = new Variable("Var02", "Test");
         var var01 = new Variable("Var01", "Test");
         var var03 = new Variable("Var03", "Test");
@@ -65,10 +65,10 @@ public class SaveVariablesTests
         var mediator = context.Resolve<IMediator>();
 
         var container = Node.NewContainer();
-        await mediator.Send(new CreateNode(container, NodeType.Spec));
+        await mediator.Send(new CreateNode(container));
 
         var folder = container.AddContainer();
-        await mediator.Send(new CreateNode(folder, NodeType.Spec));
+        await mediator.Send(new CreateNode(folder));
 
         var var01 = new Variable("Var01", "Test");
         var var02 = new Variable("Var01", "Test");
@@ -76,7 +76,7 @@ public class SaveVariablesTests
 
         var result1 = await mediator.Send(new SaveVariables(container.NodeId, [var01]));
         result1.IsSuccess.Should().BeTrue();
-        
+
         var result2 = await mediator.Send(new SaveVariables(folder.NodeId, [var02, var03]));
         result2.IsSuccess.Should().BeTrue();
     }

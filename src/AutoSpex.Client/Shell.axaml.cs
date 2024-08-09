@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Windows.Input;
 using AutoSpex.Client.Pages;
 using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
@@ -8,7 +7,6 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform;
-using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
 
@@ -29,16 +27,11 @@ public partial class Shell : Window, IRecipient<NavigationRequest>
         AvaloniaProperty.RegisterDirect<Shell, PageViewModel?>(
             nameof(CurrentPage), o => o.CurrentPage, (o, v) => o.CurrentPage = v);
 
-    public static readonly DirectProperty<Shell, ICommand?> NavigateHomeCommandProperty =
-        AvaloniaProperty.RegisterDirect<Shell, ICommand?>(
-            nameof(NavigateHomeCommand), o => o.NavigateHomeCommand, (o, v) => o.NavigateHomeCommand = v);
-
     #endregion
 
     private readonly Navigator? _navigator;
     private bool _dialogOpen;
     private PageViewModel? _currentPage;
-    private ICommand? _navigateHomeCommand;
 
     public Shell()
     {
@@ -52,8 +45,6 @@ public partial class Shell : Window, IRecipient<NavigationRequest>
 
         messenger.RegisterAll(this);
         _navigator = navigator;
-
-        NavigateHomeCommand = new AsyncRelayCommand(NavigateHome);
 
         //This is a workaround to solve the window covering the task bar when maximizing while we are using custom title bar 
         this.GetPropertyChangedObservable(WindowStateProperty).AddClassHandler<Visual>((_, args) =>
@@ -83,12 +74,6 @@ public partial class Shell : Window, IRecipient<NavigationRequest>
         set => SetAndRaise(CurrentPageProperty, ref _currentPage, value);
     }
 
-    public ICommand? NavigateHomeCommand
-    {
-        get => _navigateHomeCommand;
-        set => SetAndRaise(NavigateHomeCommandProperty, ref _navigateHomeCommand, value);
-    }
-
     public bool DialogOpen
     {
         get => _dialogOpen;
@@ -101,26 +86,13 @@ public partial class Shell : Window, IRecipient<NavigationRequest>
     private void OnLoaded(object? sender, RoutedEventArgs e)
     {
         ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.SystemChrome;
-    }
-
-    /// <summary>
-    /// Navigates the <see cref="HomePageModel"/> instance into the view of the application shell.
-    /// </summary>
-    private async Task NavigateHome()
-    {
-        if (_navigator is null) return;
-        if (CurrentPage is not null && CurrentPage.Route.Equals(nameof(HomePageModel))) return;
-        await _navigator.NavigateHome();
+        _navigator?.Navigate<AppPageModel>();
     }
 
     public void Receive(NavigationRequest message)
     {
-        if (message.Page is not HomePageModel and not ProjectPageModel) return;
+        if (message.Page is not AppPageModel) return;
         if (message.Action != NavigationAction.Open) return;
-        
-        if (CurrentPage is not null)
-            _navigator?.Close(CurrentPage);
-            
         CurrentPage = message.Page;
     }
 

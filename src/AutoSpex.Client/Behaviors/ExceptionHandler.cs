@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Threading;
 using AutoSpex.Client.Services;
-using Avalonia.Controls.Notifications;
-using CommunityToolkit.Mvvm.Messaging;
 using FluentResults;
 using MediatR.Pipeline;
 
@@ -22,12 +20,11 @@ public class ExceptionBehavior<TRequest, TResponse, TException>(Notifier notifie
     {
         var error = new Error(Message).CausedBy(exception);
 
-        var notification = new Notification("Request Error", error.Message, NotificationType.Error);
-        notifier.Notify(notification);
+        notifier.NotifyError("Request Error", error.Message);
 
         var response = new TResponse();
         response.Reasons.Add(error);
-        
+
         state.SetHandled(response);
         return Task.CompletedTask;
     }

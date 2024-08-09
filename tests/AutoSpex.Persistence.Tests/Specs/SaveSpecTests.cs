@@ -20,7 +20,7 @@ public class SaveSpecTests
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-        var spec = new Spec(Guid.NewGuid());
+        var spec = new Spec(Node.NewSpec());
 
         var result = await mediator.Send(new SaveSpec(spec));
 
@@ -34,7 +34,7 @@ public class SaveSpecTests
         var mediator = context.Resolve<IMediator>();
         var node = Node.NewSpec();
         await mediator.Send(new CreateNode(node));
-        var spec = new Spec(node.NodeId);
+        var spec = new Spec(node);
 
         var result = await mediator.Send(new SaveSpec(spec));
 
@@ -49,10 +49,28 @@ public class SaveSpecTests
         var node = Node.NewSpec();
         await mediator.Send(new CreateNode(node));
         
-        var spec = new Spec(node.NodeId)
-            .Query(Element.Program)
-            .Where(Element.Program.Property("Name"), Operation.Equal, "SomeName")
-            .Verify(Element.Program.Property("Disabled"), Operation.IsFalse);
+        var spec = new Spec(node)
+            .Find(Element.Program)
+            .Where(Element.Program.Property("Name"), Operation.EqualTo, "SomeName")
+            .ShouldHave(Element.Program.Property("Disabled"), Operation.False);
+
+        var result = await mediator.Send(new SaveSpec(spec));
+
+        result.IsSuccess.Should().BeTrue();
+    }
+
+    [Test]
+    public async Task SaveSpec_SpecWithReferences_ShouldBeSuccess()
+    {
+        using var context = new TestContext();
+        var mediator = context.Resolve<IMediator>();
+        var node = Node.NewSpec();
+        await mediator.Send(new CreateNode(node));
+        
+        var spec = new Spec(node)
+            .Find(Element.Program)
+            .Where(Element.Program.Property("Name"), Operation.EqualTo, new Reference("SomeName"))
+            .ShouldHave(Element.Program.Property("Disabled"), Operation.False);
 
         var result = await mediator.Send(new SaveSpec(spec));
 
@@ -66,10 +84,10 @@ public class SaveSpecTests
         var mediator = context.Resolve<IMediator>();
         var node = Node.NewSpec();
         await mediator.Send(new CreateNode(node));
-        var spec = new Spec(node.NodeId);
+        var spec = new Spec(node);
         await mediator.Send(new SaveSpec(spec));
 
-        spec.Query(Element.Tag).Where(Element.Tag.Property("Name"), Operation.Contains, "TagName");
+        spec.Find(Element.Tag).Where(Element.Tag.Property("Name"), Operation.Containing, "TagName");
         
         var result = await mediator.Send(new SaveSpec(spec));
 

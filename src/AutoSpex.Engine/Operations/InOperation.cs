@@ -1,10 +1,15 @@
-﻿namespace AutoSpex.Engine;
+﻿using System.Collections;
 
-public class InOperation() : Operation("In")
+namespace AutoSpex.Engine;
+
+public class InOperation() : BinaryOperation("In")
 {
-    public override bool Execute(object? input, params object[] values)
+    protected override bool Evaluate(object? input, object value)
     {
-        return input is not null && values.Length != 0 && values.Contains(input);
+        if (value is not IEnumerable enumerable)
+            throw new ArgumentException("In operation require an enumerable argument value", nameof(value));
+
+        return input is not null && enumerable.Cast<object>().Contains(input);
     }
 
     protected override bool Supports(TypeGroup group) => group != TypeGroup.Collection && group != TypeGroup.Boolean;

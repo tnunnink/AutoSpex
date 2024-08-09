@@ -7,163 +7,149 @@
         <StackPanel Margin="20" Spacing="5">
             <StackPanel Spacing="10" Orientation="Horizontal">
                 <Button Theme="{DynamicResource IconButton}"
-                        properties:ButtonIcon.Theme="{StaticResource IconAdd}" />
+                        properties:Icon.Theme="{StaticResource IconAdd}" />
                 <Button Theme="{DynamicResource IconButton}"
-                        properties:ButtonIcon.Theme="{StaticResource IconAdd}"
+                        properties:Icon.Theme="{StaticResource IconAdd}"
                         Classes="accent" />
                 <Button Theme="{DynamicResource IconButton}"
-                        properties:ButtonIcon.Theme="{StaticResource IconClose}"
-                        Padding="9"
+                        properties:Icon.Theme="{StaticResource IconClose}"
                         Classes="danger" />
                 <Button Theme="{DynamicResource IconButton}"
-                        properties:ButtonIcon.Theme="{StaticResource IconExclamation}"
+                        properties:Icon.Theme="{StaticResource IconExclamation}"
                         Classes="warning" />
                 <Button Theme="{DynamicResource IconButton}"
-                        properties:ButtonIcon.Theme="{StaticResource IconClipboardOutlined}"
+                        properties:Icon.Theme="{StaticResource IconLineClipboard}"
                         Classes="success" />
             </StackPanel>
             <StackPanel Spacing="10" Orientation="Horizontal">
                 <Button Theme="{DynamicResource IconButtonSmall}"
-                        properties:ButtonIcon.Theme="{StaticResource IconAdd}" />
+                        properties:Icon.Theme="{StaticResource IconAdd}" />
                 <Button Theme="{DynamicResource IconButtonSmall}"
-                        properties:ButtonIcon.Theme="{StaticResource IconAdd}"
+                        properties:Icon.Theme="{StaticResource IconAdd}"
                         Classes="accent" />
                 <Button Theme="{DynamicResource IconButtonSmall}"
-                        properties:ButtonIcon.Theme="{StaticResource IconClose}"
+                        properties:Icon.Theme="{StaticResource IconClose}"
                         Classes="danger" />
                 <Button Theme="{DynamicResource IconButtonSmall}"
-                        properties:ButtonIcon.Theme="{StaticResource IconExclamation}"
+                        properties:Icon.Theme="{StaticResource IconExclamation}"
                         Classes="warning" />
                 <Button Theme="{DynamicResource IconButtonSmall}"
-                        properties:ButtonIcon.Theme="{StaticResource IconClipboardOutlined}"
+                        properties:Icon.Theme="{StaticResource IconLineClipboard}"
                         Classes="success" />
             </StackPanel>
             <StackPanel Spacing="10" Orientation="Horizontal">
                 <Button Theme="{DynamicResource IconButton}"
-                        properties:ButtonIcon.Theme="{StaticResource IconAdd}"
+                        properties:Icon.Theme="{StaticResource IconAdd}"
                         IsEnabled="False" />
                 <Button Theme="{DynamicResource IconButton}"
-                        properties:ButtonIcon.Theme="{StaticResource IconAdd}"
+                        properties:Icon.Theme="{StaticResource IconAdd}"
                         Classes="accent"
                         IsEnabled="False" />
                 <Button Theme="{DynamicResource IconButton}"
-                        properties:ButtonIcon.Theme="{StaticResource IconClose}"
-                        Padding="10"
+                        properties:Icon.Theme="{StaticResource IconClose}"
                         Classes="danger"
                         IsEnabled="False" />
                 <Button Theme="{DynamicResource IconButton}"
-                        properties:ButtonIcon.Theme="{StaticResource IconExclamation}"
+                        properties:Icon.Theme="{StaticResource IconExclamation}"
                         Classes="warning"
                         IsEnabled="False" />
                 <Button Theme="{DynamicResource IconButton}"
-                        properties:ButtonIcon.Theme="{StaticResource IconClipboardOutlined}"
+                        properties:Icon.Theme="{StaticResource IconLineClipboard}"
                         Classes="success"
                         IsEnabled="False" />
             </StackPanel>
             <StackPanel Spacing="10" Orientation="Horizontal">
                 <ToggleButton Theme="{DynamicResource IconToggleButton}"
-                              properties:ButtonIcon.Theme="{StaticResource IconAdd}" />
+                              properties:Icon.Theme="{StaticResource IconAdd}" />
                 <ToggleButton Theme="{DynamicResource IconToggleButton}"
                               Classes="accent"
-                              properties:ButtonIcon.Theme="{StaticResource IconAdd}" />
+                              properties:Icon.Theme="{StaticResource IconAdd}" />
                 <ToggleButton Theme="{DynamicResource IconToggleButton}"
                               Classes="danger"
-                              Padding="10"
-                              properties:ButtonIcon.Theme="{StaticResource IconClose}" />
+                              properties:Icon.Theme="{StaticResource IconClose}" />
                 <ToggleButton Theme="{DynamicResource IconToggleButton}"
                               Classes="warning"
-                              properties:ButtonIcon.Theme="{StaticResource IconExclamation}" />
+                              properties:Icon.Theme="{StaticResource IconExclamation}" />
                 <ToggleButton Theme="{DynamicResource IconToggleButton}"
                               Classes="success"
-                              properties:ButtonIcon.Theme="{StaticResource IconClipboardOutlined}" />
+                              properties:Icon.Theme="{StaticResource IconLineClipboard}" />
             </StackPanel>
             <StackPanel Spacing="10" Orientation="Horizontal">
                 <ToggleButton Theme="{DynamicResource IconToggleButton}"
-                              properties:ButtonIcon.Theme="{StaticResource IconAdd}"
+                              properties:Icon.Theme="{StaticResource IconAdd}"
                               IsEnabled="False" />
                 <ToggleButton Theme="{DynamicResource IconToggleButton}"
                               Classes="accent"
-                              properties:ButtonIcon.Theme="{StaticResource IconAdd}"
+                              properties:Icon.Theme="{StaticResource IconAdd}"
                               IsEnabled="False" />
                 <ToggleButton Theme="{DynamicResource IconToggleButton}"
                               Classes="danger"
-                              Padding="10"
-                              properties:ButtonIcon.Theme="{StaticResource IconClose}"
+                              properties:Icon.Theme="{StaticResource IconClose}"
                               IsEnabled="False" />
                 <ToggleButton Theme="{DynamicResource IconToggleButton}"
                               Classes="warning"
-                              properties:ButtonIcon.Theme="{StaticResource IconExclamation}"
+                              properties:Icon.Theme="{StaticResource IconExclamation}"
                               IsEnabled="False" />
             </StackPanel>
             <StackPanel Spacing="10" Orientation="Horizontal">
                 <ToggleButton Theme="{DynamicResource IconToggleButton}"
-                              properties:ButtonIcon.Theme="{StaticResource IconAdd}"
+                              properties:Icon.Theme="{StaticResource IconAdd}"
                               IsEnabled="False"
                               IsChecked="True" />
                 <ToggleButton Theme="{DynamicResource IconToggleButton}"
                               Classes="accent"
-                              properties:ButtonIcon.Theme="{StaticResource IconAdd}"
+                              properties:Icon.Theme="{StaticResource IconAdd}"
                               IsEnabled="False"
                               IsChecked="True" />
                 <ToggleButton Theme="{DynamicResource IconToggleButton}"
                               Classes="danger"
-                              Padding="10"
-                              properties:ButtonIcon.Theme="{StaticResource IconClose}"
+                              properties:Icon.Theme="{StaticResource IconClose}"
                               IsEnabled="False"
                               IsChecked="True" />
                 <ToggleButton Theme="{DynamicResource IconToggleButton}"
                               Classes="warning"
-                              properties:ButtonIcon.Theme="{StaticResource IconExclamation}"
+                              properties:Icon.Theme="{StaticResource IconExclamation}"
                               IsEnabled="False"
                               IsChecked="True" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Button Theme="{DynamicResource IconButtonPillLeft}"
-                        properties:ButtonIcon.Theme="{StaticResource IconAdd}" />
+                        properties:Icon.Theme="{StaticResource IconAdd}" />
                 <Button Theme="{DynamicResource IconButtonPillCenter}"
-                        properties:ButtonIcon.Theme="{StaticResource IconAdd}"
+                        properties:Icon.Theme="{StaticResource IconAdd}"
                         Classes="accent" />
                 <Button Theme="{DynamicResource IconButtonPillCenter}"
-                        properties:ButtonIcon.Theme="{StaticResource IconClose}"
-                        Padding="10"
+                        properties:Icon.Theme="{StaticResource IconClose}"
+                        FontSize="10"
                         Classes="danger" />
                 <Button Theme="{DynamicResource IconButtonPillCenter}"
-                        properties:ButtonIcon.Theme="{StaticResource IconExclamation}"
+                        properties:Icon.Theme="{StaticResource IconExclamation}"
                         Classes="warning" />
                 <Button Theme="{DynamicResource IconButtonPillRight}"
-                        properties:ButtonIcon.Theme="{StaticResource IconClipboardOutlined}"
+                        properties:Icon.Theme="{StaticResource IconLineClipboard}"
                         Classes="success" />
             </StackPanel>
         </StackPanel>
     </Design.PreviewWith>
 
     <!-- IconButton -->
-    <ControlTheme x:Key="IconButtonBase" TargetType="Button">
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="BorderBrush" Value="Transparent" />
+    <ControlTheme x:Key="IconButtonBase" TargetType="Button" BasedOn="{actipro:ControlTheme ButtonSubtle}">
         <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushDefault}" />
-        <Setter Property="BorderThickness" Value="{actipro:ThemeResource ButtonBorderThickness}" />
-        <Setter Property="CornerRadius" Value="{actipro:ThemeResource ButtonCornerRadius}" />
-        <Setter Property="HorizontalContentAlignment" Value="Center" />
-        <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="HorizontalAlignment" Value="Center" />
-        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Padding" Value="0" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Border x:Name="border"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding CornerRadius}"
-                        HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
-                        VerticalAlignment="{TemplateBinding VerticalAlignment}">
-                    <PathIcon Theme="{TemplateBinding properties:ButtonIcon.Theme}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
+                    <PathIcon Theme="{TemplateBinding properties:Icon.Theme}"
+                              FontSize="{TemplateBinding FontSize}"
                               Foreground="{TemplateBinding Foreground}"
-                              Padding="{TemplateBinding Padding}"
+                              Margin="{TemplateBinding Padding}"
                               HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                               VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                              actipro:ThemeProperties.CopyClassesFrom="{TemplateBinding }"
-                              actipro:ThemeProperties.CopyClassesFilter="icon-.*" />
+                              actipro:ThemeProperties.CopyClassesFrom="{TemplateBinding }" />
                 </Border>
             </ControlTemplate>
         </Setter>
@@ -200,32 +186,29 @@
     <ControlTheme x:Key="IconButton" TargetType="Button" BasedOn="{StaticResource IconButtonBase}">
         <Setter Property="Height" Value="26" />
         <Setter Property="Width" Value="26" />
-        <Setter Property="Padding" Value="8" />
     </ControlTheme>
 
     <!-- IconButtonSmall -->
     <ControlTheme x:Key="IconButtonSmall" TargetType="Button" BasedOn="{StaticResource IconButtonBase}">
         <Setter Property="Height" Value="20" />
         <Setter Property="Width" Value="20" />
-        <Setter Property="Padding" Value="10" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="FontSize" Value="12" />
     </ControlTheme>
 
     <!-- IconButtonPill -->
     <ControlTheme x:Key="IconButtonPill" TargetType="Button" BasedOn="{StaticResource IconButton}">
-        <Setter Property="BorderBrush" Value="{actipro:ThemeResource ButtonBorderBrushOutline}" />
+        <Setter Property="BorderBrush" Value="{actipro:ThemeResource Container1BorderBrush}" />
         <Setter Property="CornerRadius" Value="{actipro:ThemeResource ButtonCornerRadius}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Height" Value="30" />
         <Setter Property="Width" Value="30" />
-        <Setter Property="Padding" Value="8" />
 
         <Style Selector="^:pointerover /template/ Border#border">
             <Setter Property="Background" Value="{actipro:ThemeResource ButtonBackgroundBrushSubtlePointerOver}" />
-            <Setter Property="BorderBrush" Value="{actipro:ThemeResource ButtonBorderBrushOutline}" />
         </Style>
         <Style Selector="^:pressed /template/ Border#border">
             <Setter Property="Background" Value="{actipro:ThemeResource ButtonBackgroundBrushSubtlePressed}" />
-            <Setter Property="BorderBrush" Value="{actipro:ThemeResource ButtonBorderBrushOutline}" />
         </Style>
         <Style Selector="^:disabled /template/ PathIcon">
             <Setter Property="Foreground" Value="{actipro:ThemeResource ButtonForegroundBrushDisabled}" />
@@ -237,8 +220,6 @@
             <Style Selector="^:pointerover /template/ Border#border">
                 <Setter Property="Background"
                         Value="{actipro:ThemeResource ControlBackgroundBrushSubtleAccentPointerOver}" />
-                <Setter Property="BorderBrush"
-                        Value="{actipro:ThemeResource ButtonBorderBrushOutline}" />
                 <Style Selector="^ PathIcon">
                     <Setter Property="Foreground"
                             Value="{actipro:ThemeResource ControlForegroundBrushOutlineAccentPointerOver}" />
@@ -247,8 +228,6 @@
             <Style Selector="^:pressed /template/ Border#border">
                 <Setter Property="Background"
                         Value="{actipro:ThemeResource ControlBackgroundBrushSubtleAccentPressed}" />
-                <Setter Property="BorderBrush"
-                        Value="{actipro:ThemeResource ButtonBorderBrushOutline}" />
                 <Style Selector="^ PathIcon">
                     <Setter Property="Foreground"
                             Value="{actipro:ThemeResource ControlForegroundBrushOutlineAccentPressed}" />
@@ -262,12 +241,9 @@
 
         <Style Selector="^.danger">
             <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushOutlineDanger}" />
-
             <Style Selector="^:pointerover /template/ Border#border">
                 <Setter Property="Background"
                         Value="{actipro:ThemeResource ControlBackgroundBrushSubtleDangerPointerOver}" />
-                <Setter Property="BorderBrush"
-                        Value="{actipro:ThemeResource ButtonBorderBrushOutline}" />
                 <Style Selector="^ PathIcon">
                     <Setter Property="Foreground"
                             Value="{actipro:ThemeResource ControlForegroundBrushOutlineDangerPointerOver}" />
@@ -276,8 +252,6 @@
             <Style Selector="^:pressed /template/ Border#border">
                 <Setter Property="Background"
                         Value="{actipro:ThemeResource ControlBackgroundBrushSubtleDangerPressed}" />
-                <Setter Property="BorderBrush"
-                        Value="{actipro:ThemeResource ButtonBorderBrushOutline}" />
                 <Style Selector="^ PathIcon">
                     <Setter Property="Foreground"
                             Value="{actipro:ThemeResource ControlForegroundBrushOutlineDangerPressed}" />
@@ -291,12 +265,9 @@
 
         <Style Selector="^.warning">
             <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushOutlineWarning}" />
-
             <Style Selector="^:pointerover /template/ Border#border">
                 <Setter Property="Background"
                         Value="{actipro:ThemeResource ControlBackgroundBrushSubtleWarningPointerOver}" />
-                <Setter Property="BorderBrush"
-                        Value="{actipro:ThemeResource ButtonBorderBrushOutline}" />
                 <Style Selector="^ PathIcon">
                     <Setter Property="Foreground"
                             Value="{actipro:ThemeResource ControlForegroundBrushOutlineWarningPointerOver}" />
@@ -305,8 +276,6 @@
             <Style Selector="^:pressed /template/ Border#border">
                 <Setter Property="Background"
                         Value="{actipro:ThemeResource ControlBackgroundBrushSubtleWarningPressed}" />
-                <Setter Property="BorderBrush"
-                        Value="{actipro:ThemeResource ButtonBorderBrushOutline}" />
                 <Style Selector="^ PathIcon">
                     <Setter Property="Foreground"
                             Value="{actipro:ThemeResource ControlForegroundBrushOutlineWarningPressed}" />
@@ -320,12 +289,9 @@
 
         <Style Selector="^.success">
             <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushOutlineSuccess}" />
-
             <Style Selector="^:pointerover /template/ Border#border">
                 <Setter Property="Background"
                         Value="{actipro:ThemeResource ControlBackgroundBrushSubtleSuccessPointerOver}" />
-                <Setter Property="BorderBrush"
-                        Value="{actipro:ThemeResource ButtonBorderBrushOutline}" />
                 <Style Selector="^ PathIcon">
                     <Setter Property="Foreground"
                             Value="{actipro:ThemeResource ControlForegroundBrushOutlineSuccessPointerOver}" />
@@ -334,8 +300,6 @@
             <Style Selector="^:pressed /template/ Border#border">
                 <Setter Property="Background"
                         Value="{actipro:ThemeResource ControlBackgroundBrushSubtleSuccessPressed}" />
-                <Setter Property="BorderBrush"
-                        Value="{actipro:ThemeResource ButtonBorderBrushOutline}" />
                 <Style Selector="^ PathIcon">
                     <Setter Property="Foreground"
                             Value="{actipro:ThemeResource ControlForegroundBrushOutlineSuccessPressed}" />
@@ -367,14 +331,13 @@
     </ControlTheme>
 
     <!--ToggleIconButton-->
-    <ControlTheme x:Key="IconToggleButton" TargetType="ToggleButton">
+    <ControlTheme x:Key="IconToggleButton" TargetType="ToggleButton"
+                  BasedOn="{actipro:ControlTheme ToggleButtonSubtle}">
         <Setter Property="CornerRadius" Value="{actipro:ThemeResource ButtonCornerRadius}" />
         <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushDefault}" />
-        <Setter Property="HorizontalAlignment" Value="Center" />
-        <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="Height" Value="26" />
         <Setter Property="Width" Value="26" />
-        <Setter Property="Padding" Value="9" />
+        <Setter Property="Padding" Value="0" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Border x:Name="Border"
@@ -385,11 +348,13 @@
                         HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
                         VerticalAlignment="{TemplateBinding VerticalAlignment}">
                     <PathIcon x:Name="Icon"
-                              Theme="{TemplateBinding properties:ButtonIcon.Theme}"
-                              Padding="{TemplateBinding Padding}"
+                              Theme="{TemplateBinding properties:Icon.Theme}"
+                              FontSize="{TemplateBinding FontSize}"
+                              Margin="{TemplateBinding Padding}"
                               Foreground="{TemplateBinding Foreground}"
                               HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                              actipro:ThemeProperties.CopyClassesFrom="{TemplateBinding }" />
                 </Border>
             </ControlTemplate>
         </Setter>

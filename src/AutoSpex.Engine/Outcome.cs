@@ -1,89 +1,78 @@
-﻿namespace AutoSpex.Engine;
+﻿using System.Text.Json.Serialization;
+using Ardalis.SmartEnum.SystemTextJson;
+
+namespace AutoSpex.Engine;
 
 /// <summary>
 /// An object containing the resulting data from running a <see cref="Spec"/> against a given <see cref="Source"/>.
 /// </summary>
-public class Outcome : IEquatable<Outcome>
+public class Outcome
 {
-    private List<Evaluation> _evaluations = [];
-
-    public Outcome()
-    {
-    }
-
-    public Outcome(string spec, string source, IEnumerable<Evaluation> evaluations)
-    {
-        Spec = Node.NewSpec(spec);
-        Source = Node.NewSource(source);
-        _evaluations = [..evaluations];
-    }
-
     public Outcome(Node node)
     {
         ArgumentNullException.ThrowIfNull(node);
 
-        if (node.Type == NodeType.Spec)
-            ConfigureSpec(node);
-        if (node.Type == NodeType.Source)
-            ConfigureSource(node);
+        if (node.Type != NodeType.Spec)
+            throw new ArgumentException("Node type invalid for outcome object.");
+
+        SpecId = node.NodeId;
+        Name = node.Name;
+        Result = ResultState.None;
+        Verifications = [];
     }
 
-    public Outcome(Node? spec, Node? source)
+    public Outcome(Spec spec, long duration, ICollection<Verification> verifications)
     {
-        ConfigureSpec(spec);
-        ConfigureSource(source);
-    }
-
-    public Outcome(Spec spec, Source source, ICollection<Verification> verifications, long duration)
-    {
-        if (spec is null) throw new ArgumentNullException(nameof(spec));
-        if (source is null) throw new ArgumentNullException(nameof(source));
-
-        Spec = Node.Create(spec.SpecId, NodeType.Spec, spec.Name);
-        Source = Node.Create(source.SourceId, NodeType.Source, source.Name);
-        Result = verifications.Count > 0 ? verifications.Max(r => r.Result) : ResultState.None;
-        Duration = duration;
-        _evaluations = verifications.SelectMany(v => v.Evaluations).ToList();
-    }
-
-    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global needs to be set by Dapper
-    public Guid OutcomeId { get; init; } = Guid.NewGuid();
-    public Node? Spec { get; private set; }
-    public Node? Source { get; private set; }
-    public ResultState Result { get; private set; }
-    public long Duration { get; private set; }
-    public IEnumerable<Evaluation> Evaluations => _evaluations.AsReadOnly();
-
-    public Outcome ConfigureSpec(Node? node)
-    {
-        Spec = node is not null ? Node.Create(node.NodeId, NodeType.Spec, node.Name) : default;
-        return this;
-    }
-
-    public Outcome ConfigureSource(Node? node)
-    {
-        Source = node is not null ? Node.Create(node.NodeId, NodeType.Source, node.Name) : default;
-        return this;
-    }
-
-    public async Task Run(Source source, Spec spec, CancellationToken token = default)
-    {
-        ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(spec);
-
-        if (Source?.NodeId != source.SourceId)
-            throw new ArgumentException("The provided source id does not match the configured Outcome source id.");
-
-        if (Spec?.NodeId != spec.SpecId)
-            throw new ArgumentException("The provided spec id does not match the configured Outcome spec id.");
-
-        var outcome = await spec.Run(source, token);
-        Result = outcome.Result;
-        Duration = outcome.Duration;
-        _evaluations = [..outcome.Evaluations];
+        SpecId = spec.SpecId;
+        Name = spec.Name;
+        Result = ResultState.MaxOrDefault(verifications.Select(x => x.Result).ToList());
+        Duration = duration;
+        Verifications = verifications;
     }
 
-    public bool Equals(Outcome? other) => OutcomeId.Equals(other?.OutcomeId);
-    public override bool Equals(object? obj) => obj is Outcome outcome && Equals(outcome);
-    public override int GetHashCode() => OutcomeId.GetHashCode();
+    /// <summary>
+    /// The <see cref="Guid"/> which represents the Spec configuration this outcome was produced by.
+    /// </summary>
+    [JsonInclude]
+    public Guid SpecId { get; private set; }
+
+    /// <summary>
+    /// The name of the spec that this outcome represents.
+    /// </summary>
+    [JsonInclude]
+    public string Name { get; private set; }
+
+    /// <summary>
+    /// The result of the outcome. This represents if the spec passed, failed, errored, etc.
+    /// </summary>
+    [JsonConverter(typeof(SmartEnumNameConverter<ResultState, int>))]
+    [JsonInclude]
+    public ResultState Result { get; private set; }
+
+    /// <summary>
+    /// Represents the duration of running a spec against a given source or collection of sources.
+    /// </summary>
+    [JsonInclude]
+    public long Duration { get; private set; }
+
+    /// <summary>
+    /// the collection of <see cref="Verification"/> that contain the detailed checks and corresponding result and source
+    /// information. This data is not serialized and persisted to conserve space.
+    /// </summary>
+    [JsonIgnore]
+    public IEnumerable<Verification> Verifications { get; private set; }
+
+    /// <summary>
+    /// Updates the current Outcome object with the values from the provided Outcome object.
+    /// </summary>
+    /// <param name="result">The Outcome object containing the updated values.</param>
+    public void Update(Outcome result)
+    {
+        ArgumentNullException.ThrowIfNull(result);
+
+        Result = result.Result;
+        Duration = result.Duration;
+        Verifications = result.Verifications;
+    }
 }

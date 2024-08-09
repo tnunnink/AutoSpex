@@ -24,7 +24,7 @@ public class GetNodeVariablesTests
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
         var node = Node.NewContainer();
-        await mediator.Send(new CreateNode(node, NodeType.Spec));
+        await mediator.Send(new CreateNode(node));
         var var01 = new Variable("Var01", "Test");
         var var02 = new Variable("Var02", "Test");
         var var03 = new Variable("Var03", "Test");
@@ -38,7 +38,6 @@ public class GetNodeVariablesTests
         result.Value.Should().AllSatisfy(v => v.Name.Should().Contain("Var"));
         result.Value.Should().AllSatisfy(v => v.Type.Should().Be(typeof(string)));
         result.Value.Should().AllSatisfy(v => v.Value.Should().Be("Test"));
-        result.Value.Should().AllSatisfy(v => v.Data.Should().Be("Test"));
     }
 
     [Test]
@@ -47,7 +46,7 @@ public class GetNodeVariablesTests
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
         var node = Node.NewContainer();
-        await mediator.Send(new CreateNode(node, NodeType.Spec));
+        await mediator.Send(new CreateNode(node));
         var tag = new Tag { Name = "Test", Value = 100 };
         var variable = new Variable("TagVariable", tag);
         await mediator.Send(new SaveVariables(node.NodeId, new[] { variable }));
@@ -61,6 +60,5 @@ public class GetNodeVariablesTests
         result.Value.Should().AllSatisfy(v => v.Type.Should().Be(typeof(Tag)));
         result.Value.Should().AllSatisfy(v => v.Value.Should().BeOfType<Tag>());
         result.Value.Should().AllSatisfy(v => v.Value.Should().BeEquivalentTo(tag));
-        result.Value.Should().AllSatisfy(v => v.Data.Should().Be(tag.Serialize().ToString()));
     }
 }

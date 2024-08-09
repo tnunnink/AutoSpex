@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using AutoSpex.Client.Shared;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
@@ -17,13 +18,17 @@ using Avalonia.VisualTree;
 namespace AutoSpex.Client.Resources.Controls;
 
 [PseudoClasses(ClassEmpty)]
-public class Entry : ContentControl
+public class Entry : TemplatedControl
 {
     #region Properties
 
     public static readonly StyledProperty<object?> ValueProperty =
         AvaloniaProperty.Register<Entry, object?>(
             nameof(Value), defaultBindingMode: BindingMode.TwoWay, enableDataValidation: true);
+
+    public static readonly StyledProperty<IDataTemplate?> ValueTemplateProperty =
+        AvaloniaProperty.Register<Entry, IDataTemplate?>(
+            nameof(ValueTemplate));
 
     public static readonly StyledProperty<string?> TextProperty =
         AvaloniaProperty.Register<Entry, string?>(
@@ -91,6 +96,12 @@ public class Entry : ContentControl
     {
         get => GetValue(ValueProperty);
         set => SetValue(ValueProperty, value);
+    }
+
+    public IDataTemplate? ValueTemplate
+    {
+        get => GetValue(ValueTemplateProperty);
+        set => SetValue(ValueTemplateProperty, value);
     }
 
     public string? Text
@@ -386,7 +397,7 @@ public class Entry : ContentControl
     }
 
     /// <summary>
-    /// Executes the attached populate funtion and updates the local <see cref="Suggestions"/> collection with the results.
+    /// Executes the attached populate function and updates the local <see cref="Suggestions"/> collection with the results.
     /// </summary>
     /// <param name="text">The current text to filter the returned suggestions.</param>
     private async void UpdateSuggestions(string? text)
@@ -394,11 +405,17 @@ public class Entry : ContentControl
         Suggestions.Clear();
 
         if (Populate is null) return;
-        var results = await Populate.Invoke(text, CancellationToken.None);
 
-        foreach (var result in results)
+        //todo Could make timeout configurable.
+        var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+
+        try
         {
-            Suggestions.Add(result);
+            var results = await Populate.Invoke(text, cancellation.Token);
+            Suggestions.Refresh(results);
+        }
+        catch (OperationCanceledException)
+        {
         }
     }
 

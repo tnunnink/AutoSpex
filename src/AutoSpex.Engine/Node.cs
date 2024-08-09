@@ -6,6 +6,7 @@ namespace AutoSpex.Engine;
 public class Node : IEquatable<Node>
 {
     private readonly List<Node> _nodes = [];
+    private readonly Dictionary<string, Variable> _variables = [];
 
     private Node()
     {
@@ -21,35 +22,15 @@ public class Node : IEquatable<Node>
     public Guid ParentId { get; private set; }
     public Node? Parent { get; private set; }
     public NodeType Type { get; private init; }
-    public NodeType Feature => GetNodeFeature();
     public string Name { get; set; }
+    public string? Comment { get; set; }
     public int Depth { get; private set; }
     public string Path => GetPath();
-    public Node Base => GetBaseNode();
+    public string Route => $"{Path}/{Name}".Trim('/');
     public IEnumerable<Node> Nodes => _nodes;
+    public IEnumerable<Variable> Variables => _variables.Values;
 
-    public static Node Root(NodeType feature) => new()
-    {
-        NodeId = Guid.NewGuid(),
-        ParentId = Guid.Empty,
-        Parent = default,
-        Type = feature,
-        Name = "Root"
-    };
-    
-    public static Node Create(Guid id, NodeType type, string name, Node? parent = null)
-    {
-        return new Node
-        {
-            NodeId = id,
-            ParentId = parent?.NodeId ?? Guid.Empty,
-            Parent = parent,
-            Type = type,
-            Name = name
-        };
-    }
-
-    public static Node NewNode(NodeType type, string? name = default)
+    public static Node New(NodeType type)
     {
         return new Node
         {
@@ -57,7 +38,31 @@ public class Node : IEquatable<Node>
             ParentId = Guid.Empty,
             Parent = default,
             Type = type,
-            Name = name ?? $"New {type}"
+            Name = $"New {type}"
+        };
+    }
+
+    public static Node New(Guid id, string name, NodeType type)
+    {
+        return new Node
+        {
+            NodeId = id,
+            ParentId = Guid.Empty,
+            Parent = default,
+            Type = type,
+            Name = name
+        };
+    }
+
+    public static Node NewCollection(string? name = default)
+    {
+        return new Node
+        {
+            NodeId = Guid.NewGuid(),
+            ParentId = Guid.Empty,
+            Parent = default,
+            Type = NodeType.Collection,
+            Name = name ?? "New Collection"
         };
     }
 
@@ -85,34 +90,10 @@ public class Node : IEquatable<Node>
         };
     }
 
-    public static Node NewSource(string? name = default)
-    {
-        return new Node
-        {
-            NodeId = Guid.NewGuid(),
-            ParentId = Guid.Empty,
-            Parent = default,
-            Type = NodeType.Source,
-            Name = name ?? "New Source"
-        };
-    }
-
-    public static Node NewRun(string? name = default)
-    {
-        return new Node
-        {
-            NodeId = Guid.NewGuid(),
-            ParentId = Guid.Empty,
-            Parent = default,
-            Type = NodeType.Run,
-            Name = name ?? "New Run"
-        };
-    }
-
     public Node AddContainer(string? name = default)
     {
-        if (Parent is not null && Type != NodeType.Container)
-            throw new ArgumentException($"Can not add a folder to a {Type} node.");
+        if (Type == NodeType.Spec)
+            throw new InvalidOperationException("Can not add a folder to a spec node.");
 
         var node = new Node
         {
@@ -120,7 +101,7 @@ public class Node : IEquatable<Node>
             ParentId = NodeId,
             Parent = this,
             Type = NodeType.Container,
-            Name = name ?? "New Folder",
+            Name = name ?? "New Container",
             Depth = Depth + 1
         };
 
@@ -130,8 +111,8 @@ public class Node : IEquatable<Node>
 
     public Node AddSpec(string? name = default)
     {
-        if (Parent is not null && Type != NodeType.Container)
-            throw new ArgumentException($"Can not add content to a {Type} node.");
+        if (Type == NodeType.Spec)
+            throw new InvalidOperationException("Can not add a folder to a spec node.");
 
         var node = new Node
         {
@@ -140,44 +121,6 @@ public class Node : IEquatable<Node>
             Parent = this,
             Type = NodeType.Spec,
             Name = name ?? "New Spec",
-            Depth = Depth + 1
-        };
-
-        _nodes.Add(node);
-        return node;
-    }
-
-    public Node AddSource(string? name = default)
-    {
-        if (Parent is not null && Type != NodeType.Container)
-            throw new ArgumentException($"Can not add content to a {Type} node.");
-
-        var node = new Node
-        {
-            NodeId = Guid.NewGuid(),
-            ParentId = NodeId,
-            Parent = this,
-            Type = NodeType.Source,
-            Name = name ?? "New Source",
-            Depth = Depth + 1
-        };
-
-        _nodes.Add(node);
-        return node;
-    }
-
-    public Node AddRun(string? name = default)
-    {
-        if (Parent is not null && Type != NodeType.Container)
-            throw new ArgumentException($"Can not add content to a {Type} node.");
-
-        var node = new Node
-        {
-            NodeId = Guid.NewGuid(),
-            ParentId = NodeId,
-            Parent = this,
-            Type = NodeType.Run,
-            Name = name ?? "New Run",
             Depth = Depth + 1
         };
 
@@ -222,13 +165,17 @@ public class Node : IEquatable<Node>
         _nodes.Clear();
     }
 
+    /// <summary>
+    /// Gets all ancestor nodes of this node.
+    /// </summary>
+    /// <returns>A collection of <see cref="Node"/> that are immediate and/or nested parents of this node.</returns>
     public IEnumerable<Node> Ancestors()
     {
         var nodes = new List<Node>();
 
         var current = Parent;
-        //The node with a null parent should be the root feature node which we don't want to include.
-        while (current?.Parent is not null)
+
+        while (current is not null)
         {
             nodes.Add(current);
             current = current.Parent;
@@ -237,13 +184,20 @@ public class Node : IEquatable<Node>
         return nodes.OrderBy(n => n.Depth);
     }
 
+    /// <summary>
+    /// Gets all ancestor nodes of this node, including itself.
+    /// </summary>
+    /// <returns>
+    /// A collection of <see cref="Node"/> objects that are immediate and/or nested parents of this node,
+    /// including itself.
+    /// </returns>
     public IEnumerable<Node> AncestorsAndSelf()
     {
         var nodes = new List<Node>();
 
         var current = this;
-        //The node with a null parent should be the root feature node which we don't want to include.
-        while (current?.Parent is not null)
+
+        while (current is not null)
         {
             nodes.Add(current);
             current = current.Parent;
@@ -256,14 +210,14 @@ public class Node : IEquatable<Node>
     /// Gets all descendant nodes of this node.
     /// </summary>
     /// <returns>A collection of <see cref="Node"/> that are immediate and/or nested children of this node.</returns>
-    public IEnumerable<Node> Descendents()
+    public IEnumerable<Node> Descendants()
     {
         List<Node> nodes = [];
 
         foreach (var node in _nodes)
         {
             nodes.Add(node);
-            nodes.AddRange(node.Descendents());
+            nodes.AddRange(node.Descendants());
         }
 
         return nodes;
@@ -273,47 +227,41 @@ public class Node : IEquatable<Node>
     /// Gets all descendant nodes of this node.
     /// </summary>
     /// <returns>A collection of <see cref="Node"/> that are immediate and/or nested children of this node.</returns>
-    public IEnumerable<Node> Descendents(NodeType type)
+    public IEnumerable<Node> Descendants(NodeType type)
     {
         List<Node> nodes = [];
 
         if (Type == type) nodes.Add(this);
-        nodes.AddRange(_nodes.SelectMany(n => n.Descendents(type)));
+        nodes.AddRange(_nodes.SelectMany(n => n.Descendants(type)));
 
         return nodes;
     }
 
     /// <summary>
-    /// Gets the base node containing this node. This is not the root node but the node immediately after this node.
+    /// Adds the provided variable to this node and sets the NodeId of the variable to match.
     /// </summary>
-    private Node GetBaseNode()
+    /// <param name="variable">The <see cref="Variable"/> instance to add.</param>
+    public void AddVariable(Variable variable)
     {
-        var current = this;
+        if (variable is null)
+            throw new ArgumentNullException(nameof(variable));
 
-        //just look to the parent's parent, so we can stop a node before that.
-        while (current.Parent?.Parent is not null)
-        {
-            current = current.Parent;
-        }
+        if (variable.NodeId != NodeId)
+            throw new ArgumentException("Variable does not have valid node id.");
 
-        return current;
+        _variables[variable.Name] = variable;
     }
 
     /// <summary>
-    /// All nodes should have a root feature node which is seeded into the database for each project.
-    /// Each root node will have a null parent, and this method will travers the parents until this node is reached, and
-    /// return it.
+    /// Resolves the provided reference to a named variable by traversing up this node tree until it finds the first
+    /// mating variable name, and returns that variable's value. If not variable is found, meaning unresolvable, then
+    /// this method returns null.
     /// </summary>
-    private NodeType GetNodeFeature()
+    /// <param name="reference">The reference to a scoped variable to resolve.</param>
+    /// <returns>The value of the referenced variable if found, otherwise, <c>null</c></returns>
+    public object? Resolve(Reference reference)
     {
-        var current = this;
-
-        while (current.Parent is not null)
-        {
-            current = current.Parent;
-        }
-
-        return current.Type;
+        return _variables.TryGetValue(reference.Name, out var variable) ? variable.Value : Parent?.Resolve(reference);
     }
 
     /// <summary>
@@ -325,9 +273,9 @@ public class Node : IEquatable<Node>
         var path = string.Empty;
         var current = Parent;
 
-        while (current?.Parent is not null)
+        while (current is not null)
         {
-            path = !string.IsNullOrEmpty(path) ? $"{current.Name}/{path}" : $"{current.Name}";
+            path = !string.IsNullOrEmpty(path) ? string.Concat(current.Name, "/", path) : current.Name;
             current = current.Parent;
         }
 

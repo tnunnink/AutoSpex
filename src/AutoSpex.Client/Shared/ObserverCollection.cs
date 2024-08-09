@@ -51,7 +51,6 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
     }
 
     public bool IsChanged => _changed || this.Any(o => o.IsChanged);
-    public bool IsRefreshing { get; private set; }
     public bool HasErrors => this.Any(o => o.IsErrored);
     public event PropertyChangedEventHandler? ItemPropertyChanged;
     public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
@@ -85,19 +84,23 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
     /// If not provided uses the internal refresh callback.
     /// If neither produce items, then the collection is cleared.
     /// </param>
-    public void Refresh(IEnumerable<TObserver>? observers = default)
+    /// <param name="cascade">Whether to cascade the refresh down to the individual observer items.</param>
+    public void Refresh(IEnumerable<TObserver>? observers = default, bool cascade = false)
     {
         _refreshing = true;
 
         ClearItems();
 
         var collection = observers ?? _refresh();
-        
+
         foreach (var observer in collection)
             Add(observer);
 
-        foreach (var observer in this)
-            observer.Refresh();
+        if (cascade)
+        {
+            foreach (var observer in this)
+                observer.Refresh();
+        }
 
         _refreshing = false;
         _changed = false;
@@ -138,7 +141,7 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
     /// <param name="selector">A function to select the property to sort on.</param>
     /// <param name="comparer">A comparer used to determine the sort order.</param>
     /// <typeparam name="TField">The type of the selected property.</typeparam>
-    public void Sort<TField>(Func<TObserver, TField> selector, IComparer<TField>? comparer)
+    public void Sort<TField>(Func<TObserver, TField> selector, IComparer<TField>? comparer = default)
     {
         var sorted = this.OrderBy(selector, comparer).ToList();
 
@@ -147,6 +150,42 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
 
         _changed = false;
         OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsChanged)));
+    }
+
+    /// <summary>
+    /// Uses the provided filter function to get a subset of the underlying model collection that pass the provided filter
+    /// criteria. Then refreshes this observable collection with the filtered items. Since refresh pauses change
+    /// notification, this will update the collection without registering changes.
+    /// </summary>
+    /// <param name="filter">The filter function to apply to each item in the underlying collection.</param>
+    public void Filter(Func<TObserver, bool> filter)
+    {
+        var collection = _refresh.Invoke().Where(filter).ToList();
+        Refresh(collection);
+    }
+
+    /// <summary>
+    /// Filters the ovserver collection based on the provided text by calling each observer's Filter method.
+    /// </summary>
+    /// <param name="filter">The text input used to filter the observers.</param>
+    public void Filter(string? filter)
+    {
+        var collection = _refresh.Invoke().Where(x => x.Filter(filter)).ToList();
+        Refresh(collection);
+    }
+
+    /// <summary>
+    /// Removes any observer items from the collection that match the specified predicate.
+    /// </summary>
+    /// <param name="predicate">The function used to determine if an observer item should be removed.</param>
+    public void RemoveAny(Func<TObserver, bool> predicate)
+    {
+        var targets = this.Where(predicate).ToList();
+
+        foreach (var target in targets)
+        {
+            Remove(target);
+        }
     }
 
     /// <summary>
@@ -165,7 +204,7 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
         base.OnCollectionChanged(e);
 
         //Don't notify change when refreshing since it is intended to sync to the underlying collection.
-        if (IsRefreshing) return;
+        if (_refreshing) return;
 
         //When the collection changes just set a flag to indicate for IsChanged.
         _changed = true;
@@ -179,7 +218,7 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
         Attach(observer);
 
         //Abort if refreshing to avoid circular calls.
-        if (IsRefreshing) return;
+        if (_refreshing) return;
 
         if (index == Count - 1)
         {
@@ -198,7 +237,7 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
         Detach(observer);
 
         //Abort if refreshing to avoid circular calls.
-        if (IsRefreshing) return;
+        if (_refreshing) return;
         _remove?.Invoke(index, observer.Model);
     }
 
@@ -209,7 +248,7 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
         Detach(this);
 
         //Abort if refreshing to avoid circular calls.
-        if (IsRefreshing) return;
+        if (_refreshing) return;
         _clear?.Invoke();
     }
 
