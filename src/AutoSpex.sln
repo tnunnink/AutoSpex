@@ -17,8 +17,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoSpex.Persistence", "Aut
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoSpex.Persistence.Tests", "..\tests\AutoSpex.Persistence.Tests\AutoSpex.Persistence.Tests.csproj", "{7857D401-5D5C-40A1-8B33-B936F2A3DC7D}"
 EndProject
-Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "AutoSpex.Packaging", "AutoSpex.Packaging\AutoSpex.Packaging.wapproj", "{C05D9194-748A-4106-A31B-91837C5D50E6}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -153,36 +151,6 @@ Global
 		{7857D401-5D5C-40A1-8B33-B936F2A3DC7D}.Release|x64.Build.0 = Release|Any CPU
 		{7857D401-5D5C-40A1-8B33-B936F2A3DC7D}.Release|x86.ActiveCfg = Release|Any CPU
 		{7857D401-5D5C-40A1-8B33-B936F2A3DC7D}.Release|x86.Build.0 = Release|Any CPU
-		{C05D9194-748A-4106-A31B-91837C5D50E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C05D9194-748A-4106-A31B-91837C5D50E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C05D9194-748A-4106-A31B-91837C5D50E6}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{C05D9194-748A-4106-A31B-91837C5D50E6}.Debug|ARM.ActiveCfg = Debug|ARM
-		{C05D9194-748A-4106-A31B-91837C5D50E6}.Debug|ARM.Build.0 = Debug|ARM
-		{C05D9194-748A-4106-A31B-91837C5D50E6}.Debug|ARM.Deploy.0 = Debug|ARM
-		{C05D9194-748A-4106-A31B-91837C5D50E6}.Debug|ARM64.ActiveCfg = Debug|ARM64
-		{C05D9194-748A-4106-A31B-91837C5D50E6}.Debug|ARM64.Build.0 = Debug|ARM64
-		{C05D9194-748A-4106-A31B-91837C5D50E6}.Debug|ARM64.Deploy.0 = Debug|ARM64
-		{C05D9194-748A-4106-A31B-91837C5D50E6}.Debug|x64.ActiveCfg = Debug|x64
-		{C05D9194-748A-4106-A31B-91837C5D50E6}.Debug|x64.Build.0 = Debug|x64
-		{C05D9194-748A-4106-A31B-91837C5D50E6}.Debug|x64.Deploy.0 = Debug|x64
-		{C05D9194-748A-4106-A31B-91837C5D50E6}.Debug|x86.ActiveCfg = Debug|x86
-		{C05D9194-748A-4106-A31B-91837C5D50E6}.Debug|x86.Build.0 = Debug|x86
-		{C05D9194-748A-4106-A31B-91837C5D50E6}.Debug|x86.Deploy.0 = Debug|x86
-		{C05D9194-748A-4106-A31B-91837C5D50E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C05D9194-748A-4106-A31B-91837C5D50E6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C05D9194-748A-4106-A31B-91837C5D50E6}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{C05D9194-748A-4106-A31B-91837C5D50E6}.Release|ARM.ActiveCfg = Release|ARM
-		{C05D9194-748A-4106-A31B-91837C5D50E6}.Release|ARM.Build.0 = Release|ARM
-		{C05D9194-748A-4106-A31B-91837C5D50E6}.Release|ARM.Deploy.0 = Release|ARM
-		{C05D9194-748A-4106-A31B-91837C5D50E6}.Release|ARM64.ActiveCfg = Release|ARM64
-		{C05D9194-748A-4106-A31B-91837C5D50E6}.Release|ARM64.Build.0 = Release|ARM64
-		{C05D9194-748A-4106-A31B-91837C5D50E6}.Release|ARM64.Deploy.0 = Release|ARM64
-		{C05D9194-748A-4106-A31B-91837C5D50E6}.Release|x64.ActiveCfg = Release|x64
-		{C05D9194-748A-4106-A31B-91837C5D50E6}.Release|x64.Build.0 = Release|x64
-		{C05D9194-748A-4106-A31B-91837C5D50E6}.Release|x64.Deploy.0 = Release|x64
-		{C05D9194-748A-4106-A31B-91837C5D50E6}.Release|x86.ActiveCfg = Release|x86
-		{C05D9194-748A-4106-A31B-91837C5D50E6}.Release|x86.Build.0 = Release|x86
-		{C05D9194-748A-4106-A31B-91837C5D50E6}.Release|x86.Deploy.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
