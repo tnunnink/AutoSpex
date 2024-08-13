@@ -29,24 +29,17 @@
             <DockPanel LastChildFill="False">
 
                 <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" Spacing="5">
-                    <PathIcon Theme="{StaticResource IconThemedSpec}" />
-                    <controls:HighlightableTextBlock Text="{Binding Name}" HighlightedText="{Binding FilterText}" />
+                    <PathIcon
+                        Theme="{StaticResource IconThemedSpec}" />
+                    <controls:HighlightableTextBlock
+                        Text="{Binding Name}"
+                        HighlightedText="{Binding FilterText}" />
+                    <ContentControl
+                        Content="{Binding Node}"
+                        ContentTemplate="{StaticResource BreadcrumbLabel}" />
                 </StackPanel>
 
                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="5">
-
-                    <Button Theme="{a:ControlTheme ButtonSubtle}" Padding="5 0" Height="20">
-                        <StackPanel Orientation="Horizontal" Spacing="5">
-                            <PathIcon
-                                Theme="{Binding Node.Parent.Type.Name, FallbackValue={x:Null}, Converter={StaticResource KeyIconConverter}}"
-                                Classes="size-sm" />
-                            <controls:HighlightableTextBlock
-                                Text="{Binding Node.Parent.Name, FallbackValue={x:Null}}"
-                                HighlightedText="{Binding Node.FilterText}"
-                                Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
-                        </StackPanel>
-                    </Button>
-
                     <Button
                         Theme="{StaticResource IconButtonSmall}"
                         properties:Icon.Theme="{StaticResource IconLineLaunch}"
@@ -64,7 +57,7 @@
                     </Button>
 
                 </StackPanel>
-                
+
             </DockPanel>
         </Border>
     </DataTemplate>

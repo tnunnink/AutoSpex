@@ -14,16 +14,19 @@
 
     <DockPanel>
         <Grid DockPanel.Dock="Top" ColumnDefinitions="Auto,*,Auto" Margin="0 0 0 10">
-
+            
             <TextBox
                 Grid.Column="0"
                 Text="{Binding Filter}"
-                Watermark="Filter specs"
+                Watermark="Search specs"
                 Theme="{StaticResource TextBoxOutlineHighlight}"
                 BorderBrush="{a:ThemeResource Container1BorderBrush}"
                 MinWidth="300">
                 <TextBox.InnerLeftContent>
-                    <PathIcon Theme="{StaticResource IconLineFilter}" Margin="10 0 0 0" />
+                    <PathIcon
+                        Theme="{StaticResource IconLineSearch}"
+                        Margin="10 0 0 0"
+                        Classes="size-sm" />
                 </TextBox.InnerLeftContent>
             </TextBox>
 

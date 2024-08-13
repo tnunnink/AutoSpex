@@ -105,11 +105,11 @@
                             Text="/"
                             Padding="4 0 0 1"
                             IsVisible="{Binding Parent, Converter={x:Static ObjectConverters.IsNotNull}}"
-                            Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                            Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
                         <controls:HighlightableTextBlock
                             Text="{Binding Name}"
                             HighlightedText="{Binding FilterText}"
-                            Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                            Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
                     </StackPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
