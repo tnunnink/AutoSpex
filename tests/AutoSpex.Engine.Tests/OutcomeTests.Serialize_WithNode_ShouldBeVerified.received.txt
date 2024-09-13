@@ -1,0 +1,10 @@
+﻿{
+  OutcomeId: Guid_1,
+  NodeId: Guid_2,
+  Name: MySpec,
+  Result: {
+    Name: None,
+    Value: 0
+  },
+  Duration: 0
+}

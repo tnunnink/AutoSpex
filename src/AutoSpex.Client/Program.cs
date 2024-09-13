@@ -2,6 +2,7 @@
 using Avalonia;
 using Avalonia.Logging;
 using JetBrains.Annotations;
+using Velopack;
 
 namespace AutoSpex.Client;
 
@@ -14,7 +15,10 @@ public static class Program
     /// <param name="args">The string arguments.</param>
     [STAThread]
     public static void Main(string[] args)
-        => BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+    {
+        VelopackApp.Build().Run();
+        BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+    }
 
     /// <summary>
     /// Creates an Avalonia application builder.
@@ -24,6 +28,6 @@ public static class Program
     {
         return AppBuilder.Configure<App>()
             .UsePlatformDetect()
-            .LogToTrace(LogEventLevel.Verbose);
+            .LogToTrace();
     }
 }
