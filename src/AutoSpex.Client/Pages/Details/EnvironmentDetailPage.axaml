@@ -16,6 +16,7 @@
         <Border DockPanel.Dock="Top" Padding="20" Background="{a:ThemeResource Container2BackgroundBrush}">
 
             <Grid ColumnDefinitions="Auto,*,Auto">
+
                 <StackPanel Grid.Column="0" Spacing="5" HorizontalAlignment="Left" Orientation="Horizontal">
 
                     <PathIcon
@@ -40,6 +41,7 @@
                             </Flyout>
                         </Button.Flyout>
                     </Button>
+
                 </StackPanel>
 
                 <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10">
@@ -58,28 +60,35 @@
                 DockPanel.Dock="Top"
                 ItemsSource="{Binding Tabs}"
                 SelectedItem="{Binding Tab}"
-                ItemContainerTheme="{StaticResource TabItemStandard}"
+                ItemContainerTheme="{StaticResource TabStripItemStandard}"
                 Background="{a:ThemeResource Container2BackgroundBrush}"
                 BorderThickness="0"
                 Padding="20 0">
+
                 <TabStrip.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal" Spacing="20" />
+                        <StackPanel Orientation="Horizontal" Spacing="10" />
                     </ItemsPanelTemplate>
                 </TabStrip.ItemsPanel>
+
                 <TabStrip.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Title}" />
                     </DataTemplate>
                 </TabStrip.ItemTemplate>
+
             </TabStrip>
+
             <ContentControl Content="{Binding Tab}">
                 <ContentControl.ContentTemplate>
                     <DataTemplate x:DataType="shared:PageViewModel">
-                        <ContentControl Content="{Binding}" />
+                        <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+                            <ContentControl Content="{Binding}" Margin="20" />
+                        </ScrollViewer>
                     </DataTemplate>
                 </ContentControl.ContentTemplate>
             </ContentControl>
+
         </DockPanel>
     </DockPanel>
 </UserControl>

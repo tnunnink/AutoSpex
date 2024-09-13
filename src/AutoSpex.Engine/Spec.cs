@@ -1,7 +1,5 @@
 ﻿using System.Diagnostics;
-using System.Text.Json;
 using System.Text.Json.Serialization;
-using JetBrains.Annotations;
 using L5Sharp.Core;
 using Task = System.Threading.Tasks.Task;
 
@@ -14,43 +12,13 @@ namespace AutoSpex.Engine;
 /// filter those resulting element, and verify the candidate element all using the configured <see cref="Criterion"/>
 /// objects. This object is persisted to the database to be reloaded and executed against source files as needed.
 /// </summary>
-[PublicAPI]
-public class Spec()
+public class Spec : IEquatable<Spec>
 {
     /// <summary>
-    /// Creates a new <see cref="Spec"/> with the provided node id.
+    /// The unique id that indietifies this spec aprart from others.
     /// </summary>
-    /// <param name="node">The <see cref="Node"/> that this spec is attached to.</param>
-    public Spec(Node node) : this()
-    {
-        ArgumentNullException.ThrowIfNull(node);
-
-        if (node.Type != NodeType.Spec)
-            throw new ArgumentException("Can only create spec with a spec type node.");
-
-        Node = node;
-    }
-
-    /// <summary>
-    /// The unique identifier of the spec. This is the NodeId property of the associated Node object.
-    /// </summary>
-    [JsonIgnore]
-    public Guid SpecId => Node.NodeId;
-
-    /// <summary>
-    /// The name of the spec. This is the same as the name of the provided/configured node.
-    /// </summary>
-    [JsonIgnore]
-    public string Name => Node.Name;
-
-    /// <summary>
-    /// Represents a configuration that defines the specification to run against a given source.
-    /// A spec is basically a definition for how to get data from an L5X file and check the values
-    /// for the returned data to verify its content. This is the primary means through which we set up
-    /// and verify L5X content.
-    /// </summary>
-    [JsonIgnore]
-    public Node Node { get; private init; } = Node.New(Guid.Empty, "New Spec", NodeType.Spec);
+    [JsonInclude]
+    public Guid SpecId { get; private init; } = Guid.NewGuid();
 
     /// <summary>
     /// The settings used to specify which component item to search using the element lookup function instead of
@@ -73,13 +41,6 @@ public class Spec()
     public List<Criterion> Verifications { get; init; } = [];
 
     /// <summary>
-    /// Contains the configuration for verifying the candidate range of the specification. Range is an optional check
-    /// that allow the user to specify a specific number of objects that should be returned from the query.
-    /// </summary>
-    [JsonInclude]
-    public Range Range { get; private set; } = new();
-
-    /// <summary>
     /// The <see cref="Inclusion"/> specifying how to evaluate the filters of the spec (All/Any).
     /// </summary>
     [JsonInclude]
@@ -90,68 +51,6 @@ public class Spec()
     /// </summary>
     [JsonInclude]
     public Inclusion VerificationInclusion { get; set; } = Inclusion.All;
-
-    /// <summary>
-    /// Runs the Spec on the given L5X content and returns the outcome.
-    /// </summary>
-    /// <param name="source"></param>
-    /// <param name="token"></param>
-    /// <returns>The outcome of the Spec run.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when the content parameter is null.</exception>
-    public async Task<Outcome> RunAsync(Source source, CancellationToken token = default)
-    {
-        var stopwatch = Stopwatch.StartNew();
-        var verifications = await RunSpecAsync(source, token);
-        stopwatch.Stop();
-
-        return new Outcome(this, stopwatch.ElapsedMilliseconds, verifications);
-    }
-
-    /// <summary>
-    /// Runs the Spec on the given L5X content and returns the outcome.
-    /// </summary>
-    /// <param name="sources"></param>
-    /// <param name="token"></param>
-    /// <returns>The outcome of the Spec run.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when the content parameter is null.</exception>
-    public async Task<Outcome> RunAllAsync(IEnumerable<Source> sources, CancellationToken token = default)
-    {
-        var verifications = new List<Verification>();
-        var stopwatch = Stopwatch.StartNew();
-
-        foreach (var source in sources)
-        {
-            token.ThrowIfCancellationRequested();
-            var results = await RunSpecAsync(source, token);
-            verifications.AddRange(results);
-        }
-
-        stopwatch.Stop();
-
-        return new Outcome(this, stopwatch.ElapsedMilliseconds, verifications);
-    }
-
-    /// <summary>
-    /// Runs the Spec on the given L5X content and returns the outcome.
-    /// </summary>
-    /// <param name="sources"></param>
-    /// <returns>The outcome of the Spec run.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when the content parameter is null.</exception>
-    public Outcome RunAll(IEnumerable<Source> sources)
-    {
-        var verifications = new List<Verification>();
-        var stopwatch = Stopwatch.StartNew();
-
-        foreach (var source in sources)
-        {
-            var results = RunSpec(source);
-            verifications.AddRange(results);
-        }
-
-        stopwatch.Stop();
-
-        return new Outcome(this, stopwatch.ElapsedMilliseconds, verifications);
-    }
 
     /// <summary>
     /// Creates a new <see cref="Spec"/> with the provided configuration.
@@ -166,32 +65,11 @@ public class Spec()
     }
 
     /// <summary>
-    /// Configures this spec with the data from the provided spec object.
-    /// </summary>
-    /// <param name="config">The spec to apply to the this spec.</param>
-    /// <returns>A <see cref="Spec"/> with the updated config.</returns>
-    /// <remarks>This is so I can update the data returned from the database while maintaining the node.</remarks>
-    public Spec Update(Spec? config)
-    {
-        if (config is null) return this;
-
-        Query = config.Query;
-        Filters.Clear();
-        Filters.AddRange(config.Filters);
-        Verifications.Clear();
-        Verifications.AddRange(config.Verifications);
-        Range = config.Range;
-        FilterInclusion = config.FilterInclusion;
-        VerificationInclusion = config.VerificationInclusion;
-
-        return this;
-    }
-
-    /// <summary>
     /// Configures the <see cref="Query"/> for which this specification will find data.
     /// </summary>
     /// <param name="element">The <see cref="Engine.Element"/> option to query.</param>
     /// <param name="name">The optional name of the element to find to optimize the query and scope to a single component.</param>
+    /// <returns>The configured spec instance.</returns>
     public Spec Find(Element element, string? name = default)
     {
         Query = new Query(element, name);
@@ -204,9 +82,10 @@ public class Spec()
     /// <param name="property">The property name to select for the filter criterion.</param>
     /// <param name="operation">The <see cref="Operation"/> the criterion will perform.</param>
     /// <param name="args">The collection of <see cref="Argument"/> to supply to the criterion operation.</param>
-    public Spec Where(Property? property, Operation operation, params Argument[] args)
+    /// <returns>The configured spec instance.</returns>
+    public Spec Filter(string? property, Operation operation, params Argument[] args)
     {
-        Filters.Add(new Criterion(property, operation, args));
+        Filters.Add(new Criterion(Query.Element.Property(property), operation, args));
         return this;
     }
 
@@ -216,9 +95,10 @@ public class Spec()
     /// <param name="property">The property name to select for the filter criterion.</param>
     /// <param name="operation">The <see cref="Operation"/> the criterion will perform.</param>
     /// <param name="args">The collection of <see cref="Argument"/> to supply to the criterion operation.</param>
-    public Spec ShouldHave(Property? property, Operation operation, params Argument[] args)
+    /// <returns>The configured spec instance.</returns>
+    public Spec Verify(string? property, Operation operation, params Argument[] args)
     {
-        Verifications.Add(new Criterion(property, operation, args));
+        Verifications.Add(new Criterion(Query.Element.Property(property), operation, args));
         return this;
     }
 
@@ -226,102 +106,103 @@ public class Spec()
     /// Simply adds a new <see cref="Criterion"/> to the <see cref="Verifications"/> collection with the specified arguments.
     /// </summary>
     /// <param name="property">The property name to select for the filter criterion.</param>
+    /// <param name="negation">The negation option to use for the vierifcation.</param>
     /// <param name="operation">The <see cref="Operation"/> the criterion will perform.</param>
     /// <param name="args">The collection of <see cref="Argument"/> to supply to the criterion operation.</param>
-    public Spec ShouldNotHave(Property? property, Operation operation, params Argument[] args)
+    /// <returns>The configured spec instance.</returns>
+    public Spec Verify(string? property, Negation negation, Operation operation, params Argument[] args)
     {
-        Verifications.Add(new Criterion(property, operation, args) { Negation = Negation.Not });
+        Verifications.Add(new Criterion(Query.Element.Property(property), operation, args) { Negation = negation });
         return this;
     }
 
     /// <summary>
-    /// 
+    /// Adds a custom count <see cref="Criterion"/> to the <see cref="Verifications"/> collection which will
+    /// verify the candidate elements based on the provided parameters.
     /// </summary>
-    /// <param name="operation"></param>
-    /// <param name="args"></param>
-    /// <returns></returns>
-    public Spec ShouldReturn(Operation operation, params Argument[] args)
+    /// <param name="operation">The operation to use for evaluation.</param>
+    /// <param name="args">the set of arguments required by the operation.</param>
+    /// <returns>The configured spec instance.</returns>
+    public Spec Count(Operation operation, params Argument[] args)
     {
-        Range.Enabled = true;
-        Range.Criterion.Operation = operation;
-        Range.Criterion.Arguments.Clear();
-        Range.Criterion.Arguments.AddRange(args);
+        var property = Property.This(typeof(List<LogixElement>)).GetProperty("Count")!;
+        var criterion = new Criterion(property, operation, args);
+        Verifications.Add(criterion);
         return this;
     }
 
     /// <summary>
-    /// Deserializes the provided specification string into a Spec object.
+    /// Creates a new <see cref="Spec"/> with the same configuration but default id and node properties.
     /// </summary>
-    /// <param name="spec">The specification string to deserialize.</param>
-    /// <returns>A Spec object representing the deserialized specification string.</returns>
-    /// <exception cref="ArgumentException">Thrown when the provided data cannot be deserialized into a valid specification.</exception>
-    public static Spec? Deserialize(string spec) => JsonSerializer.Deserialize<Spec>(spec);
-
-    /// <summary>
-    /// Serializes the Spec object to JSON using custom converters.
-    /// </summary>
-    /// <returns>A JSON string representation of the Spec object.</returns>
-    public string Serialize() => JsonSerializer.Serialize(this);
-
-    /// <summary>
-    /// Creates a orphaned node instance that represents the spec node for this <see cref="Spec"/> object.
-    /// </summary>
-    /// <returns>A new <see cref="Node"/> object configured with the correct id, name, and type.</returns>
-    public Node ToNode() => Node.New(SpecId, Name, NodeType.Spec);
-
-    /// <summary>
-    /// Executes the configured specification against the provided L5X content.
-    /// </summary>
-    /// <param name="source">The L5X representing the content to verify.</param>
-    /// <param name="token">A token for canceling the run.</param>
-    /// <returns>A collection of <see cref="Verification"/> objects indicating the result data.</returns>
-    private Task<ICollection<Verification>> RunSpecAsync(Source source, CancellationToken token = default)
+    /// <returns>A new <see cref="Spec"/> object.</returns>
+    public Spec Duplicate()
     {
-        return Task.Run(() => RunSpec(source), token);
+        return new Spec
+        {
+            Query = Query,
+            Filters = Filters.Select(x => x.Duplicate()).ToList(),
+            Verifications = Verifications.Select(x => x.Duplicate()).ToList(),
+            FilterInclusion = FilterInclusion,
+            VerificationInclusion = VerificationInclusion
+        };
+    }
+
+    /// <summary>
+    /// Runs the configured specification against the provided L5X content and returns a verification result.
+    /// </summary>
+    /// <param name="content">The L5X content to run this specification against.</param>
+    /// <returns>The <see cref="Verification"/> containing the specification results.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when the content parameter is null.</exception>
+    public Verification Run(L5X content)
+    {
+        return RunSpec(content);
+    }
+
+    /// <summary>
+    /// Runs the configured spec against the provided L5X content and returns a verification result.
+    /// </summary>
+    /// <param name="content">The L5X content to run this specification against.</param>
+    /// <param name="token">The optional cancellation token to stop the run.</param>
+    /// <returns>The <see cref="Verification"/> containing the specification results.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when the content parameter is null.</exception>
+    public Task<Verification> RunAsync(L5X content, CancellationToken token = default)
+    {
+        return Task.Run(() => RunSpec(content), token);
     }
 
     /// <summary>
     /// Executes the configured specification against the provided source content.
     /// </summary>
-    /// <param name="source">The source file representing the content to verify.</param>
-    /// <returns>A collection of <see cref="Verification"/> objects indicating the result data.</returns>
-    private ICollection<Verification> RunSpec(Source source)
+    /// <param name="content">The L5X content to run this spec against.</param>
+    /// <returns>A <see cref="Verification"/> indicating the result of the specification.</returns>
+    private Verification RunSpec(L5X content)
     {
-        ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(content);
 
         try
         {
+            var stopwatch = Stopwatch.StartNew();
             var verifications = new List<Verification>();
-            
-            //0.1. Override any local node variables with the configured source overrides.
-            source.Override(Node.Variables);
 
-            //0.2. Resolve all argument reference value to the current node scope.
-            ResolveReferences();
-
-            //1. Load source file.
-            var content = source.Load();
-
-            //2. Query data from the source file.
+            //1. Execute the configured query.
             var elements = Query.Execute(content);
 
-            //3. Filter data based on configured criteria.
-            var filtered = elements.Where(Filter).ToList();
+            //2. Filter the resulting elements.
+            var candidates = elements.Where(FilterElement).ToList();
 
-            //4. If configured, verify the resulting candidate range.
-            if (Range.Enabled)
-                verifications.Add(VerifyRange(filtered));
-
-            //5. Process all configured verification criteria and return the results.
-            verifications.AddRange(filtered.Select(VerifyElement));
-
-            return verifications;
+            //3. Verify the candidates elements.
+            verifications.Add(VerifyCount(candidates));
+            verifications.AddRange(candidates.Select(VerifyElement));
+            
+            stopwatch.Stop();
+            
+            //Merge/flatten into single verification object.
+            return Verification.Merge(verifications, stopwatch.ElapsedMilliseconds);
         }
         catch (Exception e)
         {
-            //If anything fails just return a single failed evaluation with the exception.
-            var verification = Verification.For(Evaluation.Errored(e));
-            return [verification];
+            //If anything fails just return a single failed verification with the exception message.
+            return Verification.For(Evaluation.Errored(e));
         }
     }
 
@@ -332,7 +213,7 @@ public class Spec()
     /// <param name="target">An object for which to filter.</param>
     /// <returns><c>true</c> if this target object passes the specified criterion filters. The target can pass any or
     /// all filters as defined by the <see cref="FilterInclusion"/> of the spec.</returns>
-    private bool Filter(LogixElement target)
+    private bool FilterElement(LogixElement target)
     {
         var evaluations = Filters.Select(f => f.Evaluate(target)).ToList();
 
@@ -345,12 +226,14 @@ public class Spec()
     /// Given a candidate object, runs the configured <see cref="Verifications"/> to evaluate whether this object
     /// passes or fails the defined specification.
     /// </summary>
-    /// <param name="candidate">An object for which to verify.</param>
+    /// <param name="candidate">A <see cref="LogixElement"/> for which to verify.</param>
     /// <returns>A <see cref="Verification"/> which is a grouped set of <see cref="Evaluation"/> results for a single
     /// candidate object.</returns>
     private Verification VerifyElement(LogixElement candidate)
     {
-        var evaluations = Verifications.Select(v => v.Evaluate(candidate)).ToArray();
+        var evaluations = Verifications
+            .Where(c => c.Type == candidate.GetType())
+            .Select(v => v.Evaluate(candidate)).ToArray();
 
         return VerificationInclusion == Inclusion.All
             ? Verification.All(evaluations)
@@ -363,20 +246,23 @@ public class Spec()
     /// </summary>
     /// <param name="collection">The collection of candidate object that passed the filter step.</param>
     /// <returns>A <see cref="Verification"/> representing the result of the range criterion.</returns>
-    private Verification VerifyRange(List<LogixElement> collection)
+    private Verification VerifyCount(List<LogixElement> collection)
     {
-        var evaluation = Range.Criterion.Evaluate(collection);
-        return Verification.For(evaluation);
+        var evaluations = Verifications
+            .Where(c => c.Type == typeof(List<LogixElement>))
+            .Select(v => v.Evaluate(collection)).ToArray();
+
+        return VerificationInclusion == Inclusion.All
+            ? Verification.All(evaluations)
+            : Verification.Any(evaluations);
     }
 
-    /// <summary>
-    /// Iterates all filter and verification criterion to resolve any argument reference value to the variables in the
-    /// scope of this spec's node. This is called prior to running a spec to ensure we update all argument values
-    /// correctly.
-    /// </summary>
-    private void ResolveReferences()
+    public bool Equals(Spec? other)
     {
-        Filters.ForEach(c => c.Resolve(Node));
-        Verifications.ForEach(c => c.Resolve(Node));
+        if (ReferenceEquals(null, other)) return false;
+        return ReferenceEquals(this, other) || SpecId.Equals(other.SpecId);
     }
+
+    public override bool Equals(object? obj) => obj is Spec other && Equals(other);
+    public override int GetHashCode() => SpecId.GetHashCode();
 }

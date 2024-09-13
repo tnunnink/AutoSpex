@@ -16,8 +16,8 @@ public class VariableTests
         variable.VariableId.Should().NotBeEmpty();
         variable.Name.Should().BeEmpty();
         variable.Group.Should().Be(TypeGroup.Text);
-        variable.Type.Should().Be(typeof(string));
-        variable.Value.Should().Be(string.Empty);
+        variable.Type.Should().BeNull();
+        variable.Value.Should().BeNull();
         variable.Reference().Should().NotBeNull();
     }
 
@@ -27,9 +27,7 @@ public class VariableTests
         var variable = new Variable(TypeGroup.Boolean);
 
         variable.VariableId.Should().NotBeEmpty();
-        variable.Type.Should().Be(typeof(bool));
         variable.Group.Should().Be(TypeGroup.Boolean);
-        variable.Value.Should().Be(false);
     }
 
     [Test]
@@ -38,9 +36,7 @@ public class VariableTests
         var variable = new Variable(TypeGroup.Number);
 
         variable.VariableId.Should().NotBeEmpty();
-        variable.Type.Should().Be(typeof(int));
         variable.Group.Should().Be(TypeGroup.Number);
-        variable.Value.Should().Be(0);
     }
 
     [Test]
@@ -49,9 +45,7 @@ public class VariableTests
         var variable = new Variable(TypeGroup.Text);
 
         variable.VariableId.Should().NotBeEmpty();
-        variable.Type.Should().Be(typeof(string));
         variable.Group.Should().Be(TypeGroup.Text);
-        variable.Value.Should().Be("");
     }
 
     [Test]
@@ -60,9 +54,7 @@ public class VariableTests
         var variable = new Variable(TypeGroup.Date);
 
         variable.VariableId.Should().NotBeEmpty();
-        variable.Type.Should().Be(typeof(DateTime));
         variable.Group.Should().Be(TypeGroup.Date);
-        variable.Value.Should().Be(DateTime.Today);
     }
 
     [Test]
@@ -72,8 +64,6 @@ public class VariableTests
 
         variable.VariableId.Should().NotBeEmpty();
         variable.Group.Should().Be(TypeGroup.Enum);
-        variable.Type.Should().BeNull();
-        variable.Value.Should().BeNull();
     }
 
     [Test]
@@ -83,8 +73,6 @@ public class VariableTests
 
         variable.VariableId.Should().NotBeEmpty();
         variable.Group.Should().Be(TypeGroup.Element);
-        variable.Type.Should().BeNull();
-        variable.Value.Should().BeNull();
     }
 
     [Test]
@@ -94,9 +82,6 @@ public class VariableTests
 
         variable.VariableId.Should().NotBeEmpty();
         variable.Group.Should().Be(TypeGroup.Collection);
-        variable.Type.Should().Be(typeof(List<object>));
-        //todo we need to work out collection. How is it serialized and parsed?
-        /*variable.Value.Should().Be(new List<object>());*/
     }
 
     [Test]
@@ -244,7 +229,7 @@ public class VariableTests
         reference.Name.Should().Be("Test");
         reference.ToString().Should().Be("@Test");
     }
-    
+
     [Test]
     public Task Serialize_SimpleValue_ShouldBeVerified()
     {

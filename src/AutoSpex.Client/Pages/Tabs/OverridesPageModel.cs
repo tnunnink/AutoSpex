@@ -12,7 +12,7 @@ namespace AutoSpex.Client.Pages;
 public partial class OverridesPageModel : PageViewModel
 {
     /// <inheritdoc/>
-    public OverridesPageModel(EnvironmentObserver environment)
+    public OverridesPageModel(EnvironmentObserver environment) : base("Overrides")
     {
         Environment = environment;
         Environment.Sources.CollectionChanged += SourcesOnCollectionChanged;
@@ -20,7 +20,6 @@ public partial class OverridesPageModel : PageViewModel
     }
 
     public override string Route => $"{nameof(Environment)}/{Environment.Id}/{Title}";
-    public override string Title => "Overrides";
     public EnvironmentObserver Environment { get; }
 
     [ObservableProperty] private SourceObserver? _selectedSource;

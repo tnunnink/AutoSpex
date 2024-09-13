@@ -289,7 +289,7 @@ public class NodeTests
     }
 
     [Test]
-    public void SDescendants_SpecNode_ShouldHaveExpectedCount()
+    public void Descendants_SpecNode_ShouldHaveExpectedCount()
     {
         var spec = Node.NewSpec();
 
@@ -297,4 +297,115 @@ public class NodeTests
 
         specs.Should().HaveCount(1);
     }
+    
+    [Test]
+    public void IsDescendantOf_Null_ShouldThrowException()
+    {
+        var spec = Node.NewSpec();
+
+        FluentActions.Invoking(() => spec.IsDescendantOf(null!)).Should().Throw<ArgumentNullException>();
+    }
+    
+    [Test]
+    public void IsDescendantOf_SeparateNodes_ShouldBeFalse()
+    {
+        var collection = Node.NewCollection();
+        var separate = Node.NewSpec();
+
+        var result = separate.IsDescendantOf(collection);
+
+        result.Should().BeFalse();
+    }
+    
+    [Test]
+    public void IsDescendantOf_DirectChild_ShouldBeTrue()
+    {
+        var collection = Node.NewCollection();
+        var spec = collection.AddSpec();
+
+        var result = spec.IsDescendantOf(collection);
+
+        result.Should().BeTrue();
+    }
+    
+    [Test]
+    public void IsDescendantOf_NestedSpecNode_ShouldBeTrue()
+    {
+        var collection = Node.NewCollection();
+        var first = collection.AddContainer();
+        var second = first.AddContainer();
+        var spec = second.AddSpec();
+
+        var result = spec.IsDescendantOf(collection);
+
+        result.Should().BeTrue();
+    }
+    
+    [Test]
+    public void IsDescendantOf_Itself_ShouldBeFalse()
+    {
+        var collection = Node.NewCollection();
+        var spec = collection.AddSpec();
+
+        var result = spec.IsDescendantOf(spec);
+
+        result.Should().BeFalse();
+    }
+
+    [Test]
+    public void AddSpec_ValidConfig_ShouldHaveExpectedCount()
+    {
+        var node = Node.NewSpec();
+
+        node.AddSpec(c =>
+        {
+            c.Find(Element.Program);
+            c.Filter("Name", Operation.Like, "%Test");
+            c.Verify("Disabled", Operation.False);
+        });
+
+        node.Specs.Should().HaveCount(1);
+        var spec = node.Specs.FirstOrDefault();
+        spec.Should().NotBeNull();
+    }
+
+    [Test]
+    public void AddSpec_NullConfig_ShouldThrowException()
+    {
+        var node = Node.NewSpec();
+
+        FluentActions.Invoking(() => node.AddSpec((Action<Spec>)null!)).Should().Throw<ArgumentNullException>();
+    }
+
+    [Test]
+    public void AddSpec_ValidSpec_ShouldHaveExpectedCount()
+    {
+        var node = Node.NewSpec();
+
+        node.AddSpec(new Spec());
+
+        node.Specs.Should().HaveCount(1);
+    }
+
+    [Test]
+    public void AddSpec_NullSpec_ShouldThrowException()
+    {
+        var node = Node.NewSpec();
+
+        FluentActions.Invoking(() => node.AddSpec((Spec)null!)).Should().Throw<ArgumentNullException>();
+    }
+
+    [Test]
+    public void RemoveSpec_ValidSpec_ShouldHaveExpectedCount()
+    {
+        var node = Node.NewSpec();
+        var spec = new Spec();
+        node.AddSpec(spec);
+
+        node.RemoveSpec(spec);
+
+        node.Specs.Should().BeEmpty();
+    }
+    
+    
 }

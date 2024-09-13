@@ -47,6 +47,8 @@
         <converters:ValueResourceKey Value="Specs" Resource="IconFilledClipboard" />
         <converters:ValueResourceKey Value="Sources" Resource="IconLineXml" />
         <converters:ValueResourceKey Value="Runs" Resource="IconFilledLightning" />
+        <converters:ValueResourceKey Value="Filters" Resource="IconFilledFunnel" />
+        <converters:ValueResourceKey Value="Verifications" Resource="IconFilledPatch" />
         <converters:ValueResourceKey Value="Variables" Resource="IconLineAt" />
         <converters:ValueResourceKey Value="Collection" Resource="IconThemedCollection" />
         <converters:ValueResourceKey Value="Container" Resource="IconThemedContainer" />
@@ -71,7 +73,7 @@
                                      Resource="IconThemedInconclusive" />
         <converters:ValueResourceKey Value="{x:Static engine:ResultState.Passed}" Resource="IconThemedPassed" />
         <converters:ValueResourceKey Value="{x:Static engine:ResultState.Failed}" Resource="IconThemedFailed" />
-        <converters:ValueResourceKey Value="{x:Static engine:ResultState.Error}" Resource="IconThemedError" />
+        <converters:ValueResourceKey Value="{x:Static engine:ResultState.Errored}" Resource="IconThemedError" />
     </converters:KeyResourceConverter>
 
     <converters:KeyResourceConverter x:Key="TypeGroupIconConverter">

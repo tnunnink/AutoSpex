@@ -34,20 +34,10 @@ internal class ListNodesHandler(IConnectionManager manager) : IRequestHandler<Li
     {
         var connection = await manager.Connect(cancellationToken);
 
-        var nodes = await connection.QueryAsync<Node>(GetNodeTree);
+        var nodes = (await connection.QueryAsync<Node>(GetNodeTree)).BuildTree();
 
-        var lookup = new Dictionary<Guid, Node>();
+        var results = nodes.Values.Where(x => x.Depth == 0).AsEnumerable();
 
-        foreach (var node in nodes)
-        {
-            lookup.Add(node.NodeId, node);
-
-            if (lookup.TryGetValue(node.ParentId, out var parent))
-                parent.AddNode(node);
-        }
-
-        //Nodes at depth 0 are the root collection nodes, and should all contain the loaded children.
-        var results = lookup.Values.Where(x => x.Depth == 0).AsEnumerable();
         return Result.Ok(results);
     }
 }

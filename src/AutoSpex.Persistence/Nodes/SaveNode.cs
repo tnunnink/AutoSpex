@@ -12,51 +12,46 @@ public record SaveNode(Node Node) : IDbCommand<Result>;
 [UsedImplicitly]
 internal class SaveNodeHandler(IConnectionManager manager) : IRequestHandler<SaveNode, Result>
 {
-    private const string UpsertNode =
-        "INSERT INTO Node(NodeId, ParentId, NodeType, Name, Depth, Ordinal) " +
-        "VALUES (@NodeId, @ParentId, @NodeType, @Name, @Depth, @Ordinal) " +
-        "ON CONFLICT DO UPDATE " +
-        "SET NodeId = @NodeId, ParentId = @ParentId, NodeType = @NodeType, Name = @Name, Depth = @Depth, Ordinal = @Ordinal;";
+    private const string NodeExists =
+        "SELECT COUNT() FROM Node WHERE NodeId = @NodeId";
 
-    private const string UpsertSpec =
-        "INSERT INTO Spec(NodeId, Specification) VALUES (@NodeId, @Specification) " +
-        "ON CONFLICT DO UPDATE SET Specification = @Specification;";
+    private const string DeleteSpecs =
+        "DELETE FROM Spec WHERE NodeId = @NodeId";
 
-    private const string UpsertVariable =
-        "INSERT INTO Variable(VariableId, NodeId, Name, Value) " +
-        "VALUES (@VariableId, @NodeId, @Name, @Value) " +
-        "ON CONFLICT DO UPDATE " +
-        "SET NodeId = @NodeId, Name = @Name, Value = @Value;";
+    private const string DeleteVariables =
+        "DELETE FROM Variable WHERE NodeId = @NodeId";
 
-    private const string DeleteOrphanedVariables =
-        "DELETE FROM Variable WHERE NodeId = @NodeId AND VariableId NOT IN @VarIds";
+    private const string InsertSpec =
+        """
+        INSERT INTO Spec ([SpecId], [NodeId], [Config])
+        VALUES (@SpecId, @NodeId, @Config)
+        """;
+
+    private const string InsertVariable =
+        """
+        INSERT INTO Variable ([VariableId], [NodeId], [Name], [Group], [Value])
+        VALUES (@VariableId, @NodeId, @Name, @Group, @Value)
+        """;
 
     public async Task<Result> Handle(SaveNode request, CancellationToken cancellationToken)
     {
-        using var connection = await manager.Connect(Database.Project, cancellationToken);
-
+        using var connection = await manager.Connect(cancellationToken);
         using var transaction = connection.BeginTransaction();
 
-        var node = request.Node;
+        var exists = await connection.QuerySingleAsync<int>(NodeExists, new { request.Node.NodeId });
+        if (exists != 1)
+            return Result.Fail($"Node not found: {request.Node.NodeId}");
 
-        /*todo figure how why this won't work - await connection.ExecuteAsync(UpsertNode, new {node});*/
-        await connection.ExecuteAsync(UpsertNode,
-            new {node.NodeId, node.ParentId, node.NodeType, node.Name, node.Depth, node.Ordinal}, transaction);
+        await connection.ExecuteAsync(DeleteSpecs, new { request.Node.NodeId }, transaction);
+        await connection.ExecuteAsync(DeleteVariables, new { request.Node.NodeId }, transaction);
 
-        if (node.Spec is not null)
-        {
-            var record = new {node.NodeId, Specification = node.Spec.Serialize()};
-            await connection.ExecuteAsync(UpsertSpec, record, transaction);
-        }
+        await connection.ExecuteAsync(InsertSpec,
+            request.Node.Specs.Select(s => new { s.SpecId, request.Node.NodeId, Config = s }),
+            transaction);
 
-        foreach (var variable in node.Variables)
-        {
-            var record = new {variable.VariableId, node.NodeId, variable.Name, variable.Value};
-            await connection.ExecuteAsync(UpsertVariable, record, transaction);    
-        }
-
-        var ids = node.Variables.Select(v => v.VariableId.ToString()).ToList();
-        await connection.ExecuteAsync(DeleteOrphanedVariables, new {node.NodeId, VarIds = ids}, transaction);
+        await connection.ExecuteAsync(InsertVariable,
+            request.Node.Variables.Select(v => new { v.VariableId, request.Node.NodeId, v.Name, v.Group, v.Value }),
+            transaction);
 
         transaction.Commit();
 

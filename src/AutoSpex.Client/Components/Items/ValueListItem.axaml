@@ -8,10 +8,10 @@
         <StackPanel>
             <StackPanel Margin="50" Width="300">
                 <ListBoxItem
-                    Content="{x:Static components:DesignData.BooleanTrueValue}"
+                    Content="{x:Static components:TestData.BooleanTrueValue}"
                     ContentTemplate="{DynamicResource ValueItemTemplate}" />
                 <ListBoxItem
-                    Content="{x:Static components:DesignData.RadixValue}"
+                    Content="{x:Static components:TestData.RadixValue}"
                     ContentTemplate="{DynamicResource ValueItemTemplate}" />
             </StackPanel>
         </StackPanel>

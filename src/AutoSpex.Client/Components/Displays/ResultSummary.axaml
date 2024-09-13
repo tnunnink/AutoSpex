@@ -10,9 +10,6 @@
             <ContentControl
                 Content="{x:Static components:DesignData.Run}"
                 ContentTemplate="{DynamicResource ResultSummary}" />
-            <ContentControl
-                Content="{x:Static components:DesignData.ExecutedRun}"
-                ContentTemplate="{DynamicResource ResultSummary}" />
         </StackPanel>
     </Design.PreviewWith>
 
@@ -51,7 +48,7 @@
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Spacing="10" IsVisible="{Binding HasResult}">
-                
+
                 <StackPanel Orientation="Horizontal" Spacing="5" IsVisible="{Binding Passed}">
                     <PathIcon Theme="{StaticResource IconThemedPassed}" />
                     <TextBlock Text="{Binding Passed}" />
@@ -69,7 +66,6 @@
                     <TextBlock Text="{Binding Errored}" />
                     <ToolTip.Tip>Errored</ToolTip.Tip>
                 </StackPanel>
-
 
             </StackPanel>
         </StackPanel>

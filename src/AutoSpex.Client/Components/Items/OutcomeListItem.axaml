@@ -9,12 +9,12 @@
     <Design.PreviewWith>
         <ListBox
             Margin="20" Width="700" Height="300"
-            ItemsSource="{x:Static components:DesignData.DefaultOutcomes}"
+            ItemsSource="{x:Static components:TestData.DefaultOutcomes}"
             ItemTemplate="{DynamicResource OutcomeListItem}"
             BorderBrush="{a:ThemeResource Container1BorderBrush}"
             BorderThickness="1" CornerRadius="5" VerticalAlignment="Top">
             <ListBox.ItemContainerTheme>
-                <ControlTheme TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemSection}"
+                <ControlTheme TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemEntry}"
                               x:DataType="observers:OutcomeObserver">
 
                     <Style Selector="^:pointerover /template/ Border#RootBorder">
@@ -110,12 +110,12 @@
                 <Expander.Content>
                     <Panel>
                         <controls:DefaultMessage
-                            IsVisible="{Binding !Results.Count}"
-                            HeaderText="No results available"
-                            CustomMessage="Result will appear after executing this run." />
+                            IsVisible="{Binding !Evaluations.Count}"
+                            Header="No results available"
+                            Message="Result will appear after executing this run." />
 
                         <ListBox
-                            ItemsSource="{Binding Results}"
+                            ItemsSource="{Binding Evaluations}"
                             ItemTemplate="{StaticResource EvaluationListItem}"
                             SelectionMode="Multiple"
                             VerticalAlignment="Top"

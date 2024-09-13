@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using AutoSpex.Client.Observers;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
@@ -6,6 +7,7 @@ using AutoSpex.Persistence;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
+using Environment = AutoSpex.Engine.Environment;
 
 namespace AutoSpex.Client.Pages;
 
@@ -17,6 +19,9 @@ public partial class NavigationPageModel : PageViewModel
 
     #region Commands
 
+    /// <summary>
+    /// Command to quickly create a new collection node.
+    /// </summary>
     [RelayCommand]
     private async Task NewCollection()
     {
@@ -30,6 +35,11 @@ public partial class NavigationPageModel : PageViewModel
         await Navigator.Navigate(observer);
     }
 
+    /// <summary>
+    /// Command to quickly create a new spec node and open the details for the user to configure.
+    /// This will be a virtual node until the user attempts to save it, in which case they should get prompted where
+    /// to save it.
+    /// </summary>
     [RelayCommand]
     private async Task AddSpec()
     {
@@ -38,24 +48,50 @@ public partial class NavigationPageModel : PageViewModel
         await Navigator.Navigate(observer);
     }
 
+    /// <summary>
+    /// Command to quickly create a new environment and open the details for in the detail view.
+    /// </summary>
     [RelayCommand]
     private async Task AddEnvironment()
     {
         var environment = new Environment();
+        
         var result = await Mediator.Send(new CreateEnvironment(environment));
         if (result.IsFailed) return;
 
         var observer = new EnvironmentObserver(environment) { IsNew = true };
         Messenger.Send(new Observer.Created(observer));
-
         await Navigator.Navigate(observer);
     }
 
+    /// <summary>
+    /// Command to import new package into the application.
+    /// </summary>
     [RelayCommand]
-    private Task Import()
+    private async Task Import()
     {
-        //todo
-        return Task.CompletedTask;
+        var package = await Prompter.Show<Package?>(() => new OpenPackagePageModel());
+        if (package is null) return;
+
+        var action = ImportAction.None;
+        var exists = await Mediator.Send(new HaveNode(package.Collection.Name, NodeType.Collection));
+
+        if (exists)
+        {
+            action = await Prompter.Show<ImportAction?>(() => new ImportConflictPageModel(package));
+        }
+
+        if (action is null || action == ImportAction.Cancel) return;
+
+        var import = await Mediator.Send(new ImportNode(package, action));
+        if (Notifier.ShowIfFailed(import)) return;
+        
+        Messenger.Send(new Observer.Created(new NodeObserver(import.Value)));
+        
+        Notifier.ShowSuccess(
+            "Import request complete",
+            $"Import of {import.Value.Name} completed successfully @ {DateTime.Now}"
+        );
     }
 
     [RelayCommand]

@@ -183,10 +183,71 @@ public class CriterionTests
     [Test]
     public void ToString_NestedVariable_ShouldBeExpected()
     {
-        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Like, new Variable("Test", "%Test_%").Reference());
+        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Like,
+            new Variable("Test", "%Test_%").Reference());
 
         var result = criterion.ToString();
 
         result.Should().Be("Name Is Like %Test_%");
+    }
+
+    [Test]
+    public void True_WhenEvaluatedWithSomeString_ShouldBePassed()
+    {
+        var criterion = Criterion.True;
+
+        var evaluation = criterion.Evaluate("This should not matter");
+
+        evaluation.Result.Should().Be(ResultState.Passed);
+    }
+    
+    [Test]
+    public void True_WhenEvaluatedWithFalse_ShouldBePassed()
+    {
+        var criterion = Criterion.True;
+
+        var evaluation = criterion.Evaluate(false);
+
+        evaluation.Result.Should().Be(ResultState.Passed);
+    }
+    
+    [Test]
+    public void True_WhenEvaluatedWithNull_ShouldBePassed()
+    {
+        var criterion = Criterion.True;
+
+        var evaluation = criterion.Evaluate(null!);
+
+        evaluation.Result.Should().Be(ResultState.Passed);
+    }
+    
+    [Test]
+    public void False_WhenEvaluatedWithSomeString_ShouldBeFailed()
+    {
+        var criterion = Criterion.False;
+
+        var evaluation = criterion.Evaluate("This should not matter");
+
+        evaluation.Result.Should().Be(ResultState.Failed);
+    }
+    
+    [Test]
+    public void False_WhenEvaluatedWithFalse_ShouldBeFailed()
+    {
+        var criterion = Criterion.False;
+
+        var evaluation = criterion.Evaluate(false);
+
+        evaluation.Result.Should().Be(ResultState.Failed);
+    }
+    
+    [Test]
+    public void False_WhenEvaluatedWithNull_ShouldBeFailed()
+    {
+        var criterion = Criterion.False;
+
+        var evaluation = criterion.Evaluate(null!);
+
+        evaluation.Result.Should().Be(ResultState.Failed);
     }
 }

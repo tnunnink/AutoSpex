@@ -17,7 +17,6 @@
 
             <a:ToggleThemeButton Height="30" Width="30" Theme="{a:ControlTheme ToggleThemeButtonSubtle}" />
             <PathIcon Theme="{DynamicResource IconFilledClipboard}" />
-            <PathIcon Theme="{DynamicResource IconFilledClipboardAlt}" />
             <PathIcon Theme="{DynamicResource IconFilledPic}" />
             <PathIcon Theme="{DynamicResource IconFilledAdd}" />
             <PathIcon Theme="{DynamicResource IconFilledSquareCheck}" />
@@ -47,30 +46,16 @@
             <PathIcon Theme="{DynamicResource IconFilledStop}" />
             <PathIcon Theme="{DynamicResource IconFilledToggle}" />
             <PathIcon Theme="{DynamicResource IconFilledQuote}" />
+            <PathIcon Theme="{DynamicResource IconFilledFile}" />
         </WrapPanel>
     </Design.PreviewWith>
 
     <ControlTheme x:Key="IconFilledClipboard" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
         <Setter Property="Data">
             <GeometryGroup>
-                <StreamGeometry>M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5z</StreamGeometry>
-                <StreamGeometry>M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z</StreamGeometry>
-            </GeometryGroup>
-        </Setter>
-    </ControlTheme>
-
-    <ControlTheme x:Key="IconFilledClipboardAlt" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
-        <Setter Property="Data">
-            <GeometryGroup>
                 <StreamGeometry>
                     M192 0c-41.8 0-77.4 26.7-90.5 64L64 64C28.7 64 0 92.7 0 128L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-320c0-35.3-28.7-64-64-64l-37.5 0C269.4 26.7 233.8 0 192 0zm0 64a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM112 192l160 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-160 0c-8.8 0-16-7.2-16-16s7.2-16 16-16z
                 </StreamGeometry>
-                <!--<StreamGeometry>
-                    M10 .5a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5.5.5 0 0 1-.5.5.5.5 0 0 0-.5.5V2a.5.5 0 0 0 .5.5h5A.5.5 0 0 0 11 2v-.5a.5.5 0 0 0-.5-.5.5.5 0 0 1-.5-.5
-                </StreamGeometry>
-                <StreamGeometry>
-                    M4.085 1H3.5A1.5 1.5 0 0 0 2 2.5v12A1.5 1.5 0 0 0 3.5 16h9a1.5 1.5 0 0 0 1.5-1.5v-12A1.5 1.5 0 0 0 12.5 1h-.585q.084.236.085.5V2a1.5 1.5 0 0 1-1.5 1.5h-5A1.5 1.5 0 0 1 4 2v-.5q.001-.264.085-.5m6.769 6.854-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708.708
-                </StreamGeometry>-->
             </GeometryGroup>
         </Setter>
     </ControlTheme>
@@ -330,6 +315,14 @@
         <Setter Property="Data">
             <StreamGeometry>
                 M0 216C0 149.7 53.7 96 120 96l8 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-8 0c-30.9 0-56 25.1-56 56l0 8 64 0c35.3 0 64 28.7 64 64l0 64c0 35.3-28.7 64-64 64l-64 0c-35.3 0-64-28.7-64-64l0-32 0-32 0-72zm256 0c0-66.3 53.7-120 120-120l8 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-8 0c-30.9 0-56 25.1-56 56l0 8 64 0c35.3 0 64 28.7 64 64l0 64c0 35.3-28.7 64-64 64l-64 0c-35.3 0-64-28.7-64-64l0-32 0-32 0-72z
+            </StreamGeometry>
+        </Setter>
+    </ControlTheme>
+
+    <ControlTheme x:Key="IconFilledFile" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
+        <Setter Property="Data">
+            <StreamGeometry>
+                M64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-288-128 0c-17.7 0-32-14.3-32-32L224 0 64 0zM256 0l0 128 128 0L256 0zM112 256l160 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-160 0c-8.8 0-16-7.2-16-16s7.2-16 16-16zm0 64l160 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-160 0c-8.8 0-16-7.2-16-16s7.2-16 16-16zm0 64l160 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-160 0c-8.8 0-16-7.2-16-16s7.2-16 16-16z
             </StreamGeometry>
         </Setter>
     </ControlTheme>

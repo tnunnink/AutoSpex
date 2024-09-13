@@ -1,30 +1,27 @@
 ﻿using Avalonia;
 using Avalonia.Controls.Primitives;
+using Avalonia.Controls.Templates;
 using Avalonia.Styling;
 
 namespace AutoSpex.Client.Resources.Controls;
 
-public class DefaultMessage : TemplatedControl
+public class DefaultMessage : HeaderedContentControl
 {
     public static readonly StyledProperty<ControlTheme> HeaderIconProperty =
         AvaloniaProperty.Register<DefaultMessage, ControlTheme>(
             nameof(HeaderIcon));
 
-    public static readonly StyledProperty<string> HeaderTextProperty =
-        AvaloniaProperty.Register<DefaultMessage, string>(
-            nameof(HeaderText));
-
-    public static readonly StyledProperty<ControlTheme> MessageIconProperty =
-        AvaloniaProperty.Register<DefaultMessage, ControlTheme>(
-            nameof(MessageIcon));
-
-    public static readonly StyledProperty<string> MessageTextProperty =
-        AvaloniaProperty.Register<DefaultMessage, string>(
-            nameof(MessageText));
-
-    public static readonly StyledProperty<string?> CustomMessageProperty =
+    public static readonly StyledProperty<string?> MessageProperty =
         AvaloniaProperty.Register<DefaultMessage, string?>(
-            nameof(CustomMessage));
+            nameof(Message));
+    
+    public static readonly StyledProperty<object?> ActionProperty =
+        AvaloniaProperty.Register<Section, object?>(
+            nameof(Action));
+
+    public static readonly StyledProperty<IDataTemplate?> ActionTemplateProperty =
+        AvaloniaProperty.Register<Section, IDataTemplate?>(
+            nameof(ActionTemplate));
 
     public ControlTheme HeaderIcon
     {
@@ -32,27 +29,21 @@ public class DefaultMessage : TemplatedControl
         set => SetValue(HeaderIconProperty, value);
     }
 
-    public string HeaderText
+    public string? Message
     {
-        get => GetValue(HeaderTextProperty);
-        set => SetValue(HeaderTextProperty, value);
+        get => GetValue(MessageProperty);
+        set => SetValue(MessageProperty, value);
+    }
+    
+    public object? Action
+    {
+        get => GetValue(ActionProperty);
+        set => SetValue(ActionProperty, value);
     }
 
-    public ControlTheme MessageIcon
+    public IDataTemplate? ActionTemplate
     {
-        get => GetValue(MessageIconProperty);
-        set => SetValue(MessageIconProperty, value);
-    }
-
-    public string MessageText
-    {
-        get => GetValue(MessageTextProperty);
-        set => SetValue(MessageTextProperty, value);
-    }
-
-    public string? CustomMessage
-    {
-        get => GetValue(CustomMessageProperty);
-        set => SetValue(CustomMessageProperty, value);
+        get => GetValue(ActionTemplateProperty);
+        set => SetValue(ActionTemplateProperty, value);
     }
 }

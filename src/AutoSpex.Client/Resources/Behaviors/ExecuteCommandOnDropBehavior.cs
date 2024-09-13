@@ -33,12 +33,20 @@ public class ExecuteCommandOnDropBehavior : Behavior<Control>
         set => SetValue(CommandProperty, value);
     }
 
+    /// <summary>
+    /// The data format of the expected drag event args object. This can be used to get the specific data from
+    /// the <see cref="DragEventArgs"/>. The default is "Context". 
+    /// </summary>
     public string DataFormat
     {
         get => GetValue(DataFormatProperty);
         set => SetValue(DataFormatProperty, value);
     }
 
+    /// <summary>
+    /// The element to apply the styled "dragover" class to when the drag over is active. If not specified this will
+    /// default to the AssociatedObject
+    /// </summary>
     public StyledElement? StyleElement
     {
         get => GetValue(StyleElementProperty);
@@ -76,9 +84,9 @@ public class ExecuteCommandOnDropBehavior : Behavior<Control>
     private void DragEnter(object? sender, DragEventArgs e)
     {
         var source = e.Data.Get(DataFormat);
-        
+
         if (Command?.CanExecute(source) is not true) return;
-        
+
         UpdateStyledElement(true);
     }
 
@@ -90,19 +98,19 @@ public class ExecuteCommandOnDropBehavior : Behavior<Control>
     private void DragOver(object? sender, DragEventArgs e)
     {
         var source = e.Data.Get(DataFormat);
-        
+
         if (Command?.CanExecute(source) is not true) return;
-        
+
         UpdateStyledElement(true);
     }
 
     private void Drop(object? sender, DragEventArgs e)
     {
         var source = e.Data.Get(DataFormat);
-        
+
         if (Command?.CanExecute(source) is not true) return;
         Command.Execute(source);
-        
+
         UpdateStyledElement(false);
     }
 

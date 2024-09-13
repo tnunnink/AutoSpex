@@ -110,8 +110,8 @@
 
                             <controls:DefaultMessage
                                 IsVisible="{Binding !Environments.Count}"
-                                HeaderText="No Environments Found"
-                                CustomMessage="What exactly do you think you are doing?" />
+                                Header="No Environments Found"
+                                Message="What exactly do you think you are doing?" />
                         </Panel>
                     </DockPanel>
                 </Flyout>

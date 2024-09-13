@@ -28,6 +28,7 @@
     </UserControl.Styles>
 
     <DockPanel>
+        
         <Border DockPanel.Dock="Top" Padding="20" Background="{a:ThemeResource Container2BackgroundBrush}">
 
             <StackPanel Spacing="5">
@@ -37,7 +38,7 @@
 
                         <StackPanel Orientation="Horizontal" Spacing="3" Margin="5 0 0 0">
                             <PathIcon
-                                Theme="{Binding Node.Type.Name, Converter={StaticResource KeyIconConverter}}"
+                                Theme="{Binding Node.Icon, Converter={StaticResource KeyIconConverter}}"
                                 Classes="size-lg" />
                             <ContentControl
                                 HorizontalAlignment="Left"
@@ -95,32 +96,40 @@
         </Border>
 
         <DockPanel>
+
             <TabStrip
                 DockPanel.Dock="Top"
                 ItemsSource="{Binding Tabs}"
                 SelectedItem="{Binding Tab}"
-                ItemContainerTheme="{StaticResource TabItemStandard}"
+                ItemContainerTheme="{StaticResource TabStripItemStandard}"
                 Background="{a:ThemeResource Container2BackgroundBrush}"
                 BorderThickness="0"
                 Padding="20 0">
+
                 <TabStrip.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal" Spacing="20" />
+                        <StackPanel Orientation="Horizontal" Spacing="10" />
                     </ItemsPanelTemplate>
                 </TabStrip.ItemsPanel>
+
                 <TabStrip.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Title}" />
                     </DataTemplate>
                 </TabStrip.ItemTemplate>
+                
             </TabStrip>
+
             <ContentControl Content="{Binding Tab}">
                 <ContentControl.ContentTemplate>
                     <DataTemplate x:DataType="shared:PageViewModel">
-                        <ContentControl Content="{Binding}" />
+                        <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+                            <ContentControl Content="{Binding}" Margin="20"/>
+                        </ScrollViewer>
                     </DataTemplate>
                 </ContentControl.ContentTemplate>
             </ContentControl>
+
         </DockPanel>
     </DockPanel>
 </UserControl>

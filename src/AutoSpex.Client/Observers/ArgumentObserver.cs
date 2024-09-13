@@ -130,6 +130,9 @@ public partial class ArgumentObserver : Observer<Argument>
 
         var result = await Mediator.Send(new GetScopedVariables(spec.Id), token);
 
+        //Remove the prefix '@' so we can return all variables we want to reference.
+        filter = filter?.TrimStart(Reference.Prefix);
+
         return result.IsSuccess
             ? result.Value.Select(v => new ValueObserver(v)).Where(v => v.Filter(filter))
             : Enumerable.Empty<ValueObserver>();

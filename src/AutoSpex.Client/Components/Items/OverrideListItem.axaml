@@ -8,9 +8,9 @@
 
     <Design.PreviewWith>
         <Border Padding="10" Height="400" Width="800">
-            <ListBox ItemsSource="{x:Static components:DesignData.Variables}"
+            <ListBox ItemsSource="{x:Static components:TestData.Variables}"
                      ItemTemplate="{DynamicResource OverrideListItem}"
-                     ItemContainerTheme="{StaticResource ListBoxItemSection}"
+                     ItemContainerTheme="{StaticResource ListBoxItemEntry}"
                      BorderThickness="1"
                      BorderBrush="{a:ThemeResource Container1BackgroundBrush}"
                      CornerRadius="4" />
@@ -47,8 +47,8 @@
 
                     <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10 0" Spacing="5">
                         <controls:HighlightableTextBlock
-                            Text="{Binding Node.Name, FallbackValue={x:Null}}"
-                            HighlightedText="{Binding Node.FilterText, FallbackValue={x:Null}}"
+                            Text="{Binding Node^.Name, FallbackValue={x:Null}}"
+                            HighlightedText="{Binding Node^.FilterText, FallbackValue={x:Null}}"
                             Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
                             FontFamily="{a:ThemeResource CodeFontFamily}" />
                         <TextBlock

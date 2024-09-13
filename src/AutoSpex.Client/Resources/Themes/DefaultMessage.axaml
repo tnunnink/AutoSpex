@@ -4,16 +4,22 @@
                     xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
 
     <Design.PreviewWith>
-        <StackPanel Spacing="10">
+        <StackPanel Spacing="10" Margin="50">
             <controls:DefaultMessage
                 HeaderIcon="{StaticResource IconThemedSpec}"
-                HeaderText="No criteria defined"
-                MessageIcon="{StaticResource IconAdd}"
-                MessageText="add a new criteria to this spec." />
+                Header="No criteria defined"
+                Message="Add a new criteria to this spec.">
+                <controls:DefaultMessage.Action>
+                    <Button
+                        Theme="{a:ControlTheme ButtonLink}"
+                        Classes="accent"
+                        Content="Add criteria"/>
+                </controls:DefaultMessage.Action>
+            </controls:DefaultMessage>
             <controls:DefaultMessage
                 HeaderIcon="{StaticResource IconThemedSpec}"
-                HeaderText="No criteria defined"
-                CustomMessage="This is a custom message that the user needs to see that will or perhaps should wrap around so that it does no just go on forever" />
+                Header="No criteria defined"
+                Message="This is a custom message that the user needs to see that will or perhaps should wrap around so that it does no just go on forever" />
         </StackPanel>
     </Design.PreviewWith>
 
@@ -22,49 +28,43 @@
         <Setter Property="Template">
             <ControlTemplate>
 
-                <StackPanel
-                    VerticalAlignment="Center"
-                    HorizontalAlignment="Center"
-                    Margin="20"
-                    Spacing="3">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="3">
 
                     <PathIcon
                         Theme="{TemplateBinding HeaderIcon}"
                         Margin="0 5"
                         IsVisible="{Binding HeaderIcon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ObjectConverters.IsNotNull}}" />
 
+                    <!-- Header -->
+                    <ContentPresenter
+                        x:Name="PART_HeaderPresenter"
+                        Content="{TemplateBinding Header}"
+                        ContentTemplate="{TemplateBinding HeaderTemplate}"
+                        IsVisible="{TemplateBinding Header, Converter={x:Static ObjectConverters.IsNotNull}}"
+                        HorizontalAlignment="Center">
+                        <ContentPresenter.Styles>
+                            <Style Selector="TextBlock">
+                                <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                                <Setter Property="FontWeight" Value="{a:ThemeResource HeadingFontWeightSmall}" />
+                            </Style>
+                        </ContentPresenter.Styles>
+                    </ContentPresenter>
+
                     <TextBlock
-                        Text="{TemplateBinding HeaderText}"
-                        Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
-                        FontWeight="SemiBold"
-                        HorizontalAlignment="Center" />
+                        Text="{TemplateBinding Message}"
+                        IsVisible="{Binding Message, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                        Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                        TextAlignment="Center"
+                        TextWrapping="Wrap" />
 
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
-                                IsVisible="{Binding MessageText, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
-                        <TextBlock
-                            Text="Click the "
-                            Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
-                            TextAlignment="Center" />
-                        <PathIcon
-                            Theme="{TemplateBinding MessageIcon}"
-                            Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
-                            Margin="4 0" Classes="size-sm" />
-                        <TextBlock Text="button to "
-                                   Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
-                                   TextAlignment="Center" />
-                        <TextBlock Text="{TemplateBinding MessageText}"
-                                   Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
-                                   TextAlignment="Center" />
-                    </StackPanel>
+                    <!-- Action -->
+                    <ContentPresenter
+                        x:Name="PART_ActionPresenter"
+                        Content="{TemplateBinding Action}"
+                        ContentTemplate="{TemplateBinding ActionTemplate}"
+                        HorizontalAlignment="Center" VerticalAlignment="Center"
+                        IsVisible="{TemplateBinding Action, Converter={x:Static ObjectConverters.IsNotNull}}" />
 
-                    <StackPanel
-                        IsVisible="{Binding CustomMessage, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
-                        <TextBlock
-                            Text="{TemplateBinding CustomMessage}"
-                            Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
-                            TextAlignment="Center"
-                            TextWrapping="Wrap" />
-                    </StackPanel>
                 </StackPanel>
             </ControlTemplate>
         </Setter>

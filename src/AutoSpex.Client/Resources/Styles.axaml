@@ -48,13 +48,13 @@
     <Style Selector="MenuFlyoutPresenter">
         <Setter Property="Padding" Value="5" />
     </Style>
-    
+
     <Style Selector="MenuFlyout.flyout-aligned-right">
         <Setter Property="Placement" Value="BottomEdgeAlignedRight" />
         <Setter Property="HorizontalOffset" Value="8" />
         <Setter Property="VerticalOffset" Value="5" />
     </Style>
-    
+
     <Style Selector="MenuFlyout.flyout-aligned-left">
         <Setter Property="Placement" Value="BottomEdgeAlignedLeft" />
         <Setter Property="HorizontalOffset" Value="-8" />
@@ -71,7 +71,7 @@
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeSmall}" />
     </Style>
-    
+
     <Style Selector="controls|HighlightableTextBlock">
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeSmall}" />
@@ -83,6 +83,10 @@
         <Setter Property="Padding" Value="0 1 0 0" />
     </Style>
 
+    <Style Selector="PathIcon.centered">
+        <Setter Property="Margin" Value="0 1 0 0" />
+    </Style>
+
     <Style Selector="Label">
         <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
@@ -90,13 +94,13 @@
     <Style Selector="TextBlock.caption">
         <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
         <Setter Property="FontSize" Value="13" />
-    </Style> 
-    
+    </Style>
+
     <Style Selector="TextBlock.heading">
         <Setter Property="FontWeight" Value="{a:ThemeResource HeadingFontWeightMedium}" />
         <Setter Property="FontSize" Value="15" />
     </Style>
-    
+
     <Style Selector="TextBlock.faint">
         <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushDisabled}" />
         <Setter Property="FontSize" Value="13" />
@@ -116,7 +120,7 @@
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
     </Style>
-    
+
     <Style Selector="TreeView">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />

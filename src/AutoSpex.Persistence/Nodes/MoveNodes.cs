@@ -19,8 +19,7 @@ internal class MoveNodesHandler(IConnectionManager manager) : IRequestHandler<Mo
         using var connection = await manager.Connect(cancellationToken);
 
         var ids = request.Nodes.Select(n => n.NodeId.ToString());
-        var parentId = request.ParentId.ToString();
-        await connection.ExecuteAsync(SetParents, new { Ids = ids, ParentId = parentId });
+        await connection.ExecuteAsync(SetParents, new { Ids = ids, request.ParentId });
         
         return Result.Ok();
     }

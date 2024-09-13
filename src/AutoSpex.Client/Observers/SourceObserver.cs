@@ -22,6 +22,7 @@ public partial class SourceObserver : Observer<Source>
     public SourceObserver(Source source) : base(source)
     {
         Overrides = new ObserverCollection<Variable, VariableObserver>(Model.Overrides, v => new VariableObserver(v));
+
         Track(nameof(Name));
         Track(Overrides);
 
@@ -36,6 +37,7 @@ public partial class SourceObserver : Observer<Source>
 
     public override Guid Id => Model.SourceId;
     public override string Icon => nameof(Source);
+    protected override bool PromptForDeletion => false;
 
     public override string Name
     {
@@ -87,18 +89,11 @@ public partial class SourceObserver : Observer<Source>
         await Shell.Clipboard.SetTextAsync(Model.Directory);
     }
 
-    protected override Task Duplicate()
+    protected override Task<Result> DeleteItems(IEnumerable<Observer> observers)
     {
-        var duplicate = new SourceObserver(new Source(Model.Uri));
-        Messenger.Send(new Duplicated(this, duplicate));
-        return Task.CompletedTask;
-    }
-
-    protected override Task Delete()
-    {
+        //We want to deactivate the source to unsucscribe the watcher event handlers.
         IsActive = false;
-        Messenger.Send(new Deleted(this));
-        return Task.CompletedTask;
+        return base.DeleteItems(observers);
     }
 
     protected override void OnDeactivated()
@@ -109,8 +104,6 @@ public partial class SourceObserver : Observer<Source>
         _watcher.Renamed -= OnRenamed;
         _watcher.Deleted -= OnDeleted;
         _watcher.Created -= OnDeleted;
-
-        Model.Release();
     }
 
     protected override IEnumerable<MenuActionItem> GenerateMenuItems()
@@ -133,7 +126,7 @@ public partial class SourceObserver : Observer<Source>
         yield return new MenuActionItem
         {
             Header = "Rename",
-            Icon = Resource.Find("IconLineInputText"),
+            Icon = Resource.Find("IconFilledPencil"),
             Command = RenameCommand,
             Gesture = new KeyGesture(Key.E, KeyModifiers.Control),
         };
@@ -177,7 +170,7 @@ public partial class SourceObserver : Observer<Source>
         yield return new MenuActionItem
         {
             Header = "Rename",
-            Icon = Resource.Find("IconFilledPen"),
+            Icon = Resource.Find("IconFilledPencil"),
             Command = RenameCommand,
             Gesture = new KeyGesture(Key.E, KeyModifiers.Control),
             DetermineVisibility = () => HasSingleSelection
@@ -197,7 +190,7 @@ public partial class SourceObserver : Observer<Source>
             Header = "Delete",
             Icon = Resource.Find("IconFilledTrash"),
             Classes = "danger",
-            Command = DeleteCommand,
+            Command = DeleteSelectedCommand,
             Gesture = new KeyGesture(Key.Delete)
         };
     }

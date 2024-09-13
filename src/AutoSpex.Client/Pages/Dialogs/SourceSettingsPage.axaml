@@ -34,15 +34,25 @@
 
             <controls:Section
                 Header="Location"
-                Description="The physical location of the source L5X file."
-                ShowContent="False">
+                Description="The location on disc of the source L5X file.">
+                
                 <controls:Section.Action>
-                    <TextBox
-                        Text="{Binding Source.Name}"
-                        MinWidth="200"
-                        Theme="{StaticResource TextBoxOutlineHighlight}"
-                        BorderBrush="{a:ThemeResource Container1BorderBrush}" />
+                    <Button
+                        Theme="{a:ControlTheme ButtonSoft}"
+                        Width="100" Height="30">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <PathIcon Theme="{StaticResource IconFilledFolderOpen}" />
+                            <TextBlock
+                                Text="Browse"
+                                FontWeight="{a:ThemeResource HeadingFontWeightSmall}"
+                                Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}" />
+                        </StackPanel>
+                    </Button>
                 </controls:Section.Action>
+
+                <TextBlock 
+                    Text="{Binding Location}" />
+
             </controls:Section>
 
         </StackPanel>

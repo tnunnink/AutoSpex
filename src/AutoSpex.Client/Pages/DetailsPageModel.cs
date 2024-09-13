@@ -1,7 +1,10 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using AutoSpex.Client.Observers;
 using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
+using AutoSpex.Engine;
+using AutoSpex.Persistence;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -26,27 +29,54 @@ public partial class DetailsPageModel : PageViewModel, IRecipient<NavigationRequ
         base.OnDeactivated();
     }
 
-    public void Receive(NavigationRequest message)
+    /// <summary>
+    /// Command to quickly create a new collection node.
+    /// </summary>
+    [RelayCommand]
+    private async Task NewCollection()
     {
-        if (message.Page is not DetailPageModel detail) return;
+        var node = Node.NewCollection();
 
-        if (message.Action == NavigationAction.Close)
-        {
-            ClosePage(detail);
-            return;
-        }
+        var result = await Mediator.Send(new CreateNode(node));
+        if (Notifier.ShowIfFailed(result, "Failed to create new collection. See notifications for details.")) return;
 
-        if (SelectExistingIfOpen(detail)) return;
-
-        if (message.Action == NavigationAction.Replace)
-        {
-            ShowOrReplace(detail);
-            return;
-        }
-
-        OpenPage(detail);
+        var observer = new NodeObserver(node) { IsNew = true };
+        Messenger.Send(new Observer.Created(observer));
+        await Navigator.Navigate(observer);
     }
 
+    /// <summary>
+    /// Command to quickly create a new spec node and open the details for the user to configure.
+    /// This will be a virtual node until the user attempts to save it, in which case they should get prompted where
+    /// to save it.
+    /// </summary>
+    [RelayCommand]
+    private async Task NewSpec()
+    {
+        var node = Node.NewSpec();
+        var observer = new NodeObserver(node) { IsNew = true };
+        await Navigator.Navigate(observer);
+    }
+
+    /// <summary>
+    /// Command to quickly create a new environment and open the details for in the detail view.
+    /// </summary>
+    [RelayCommand]
+    private async Task NewEnvironment()
+    {
+        var environment = new Environment();
+        
+        var result = await Mediator.Send(new CreateEnvironment(environment));
+        if (Notifier.ShowIfFailed(result, "Failed to create new environment. See notifications for details.")) return;
+
+        var observer = new EnvironmentObserver(environment) { IsNew = true };
+        Messenger.Send(new Observer.Created(observer));
+        await Navigator.Navigate(observer);
+    }
+
+    /// <summary>
+    /// Command to close the provided tab page from the details view.
+    /// </summary>
     [RelayCommand]
     private static async Task CloseTab(DetailPageModel? page)
     {
@@ -54,6 +84,9 @@ public partial class DetailsPageModel : PageViewModel, IRecipient<NavigationRequ
         await page.Close(); //todo we might not need this command and just use the bound page/tab close command.
     }
 
+    /// <summary>
+    /// Command to close all current open tabs from teh details view.
+    /// </summary>
     [RelayCommand]
     private async Task CloseAllTabs()
     {
@@ -123,6 +156,31 @@ public partial class DetailsPageModel : PageViewModel, IRecipient<NavigationRequ
         }
 
         pages.Clear();
+    }
+
+    /// <summary>
+    /// Handle the reception of the navigation request for a detail page model object. Either open (add to pages) or
+    /// close (remove from pages) depending on the action. Also don't open duplicate detail pages.
+    /// </summary>
+    public void Receive(NavigationRequest message)
+    {
+        if (message.Page is not DetailPageModel detail) return;
+
+        if (message.Action == NavigationAction.Close)
+        {
+            ClosePage(detail);
+            return;
+        }
+
+        if (SelectExistingIfOpen(detail)) return;
+
+        if (message.Action == NavigationAction.Replace)
+        {
+            ShowOrReplace(detail);
+            return;
+        }
+
+        OpenPage(detail);
     }
 
     private void OpenPage(DetailPageModel page)

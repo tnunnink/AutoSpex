@@ -15,10 +15,10 @@ public class LoadEnvironmentTests
         var environment = new Environment();
 
         var result = await mediator.Send(new LoadEnvironment(environment.EnvironmentId));
-        
+
         result.IsFailed.Should().BeTrue();
     }
-    
+
     [Test]
     public async Task GetEnvironment_Seeded_ShouldBeSuccessAndEquivalent()
     {
@@ -28,7 +28,7 @@ public class LoadEnvironmentTests
         await mediator.Send(new CreateEnvironment(environment));
 
         var result = await mediator.Send(new LoadEnvironment(environment.EnvironmentId));
-        
+
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().BeEquivalentTo(environment);
     }
@@ -45,27 +45,24 @@ public class LoadEnvironmentTests
         await mediator.Send(new SaveEnvironment(environment));
 
         var result = await mediator.Send(new LoadEnvironment(environment.EnvironmentId));
-        
+
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().BeEquivalentTo(environment);
     }
-    
+
     [Test]
     public async Task GetEnvironment_WithSourceWithOverrides_ShouldBeSuccessAndExpected()
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-        
+
         //Create node.
         var container = Node.NewContainer();
+        var var01 = container.AddVariable("TestVar", 123);
+        var var02 = container.AddVariable("AnotherVar", Radix.Decimal);
+        var var03 = container.AddVariable("ComplexVar", new Tag("Test", new TIMER()));
         await mediator.Send(new CreateNode(container));
-       
-        //Create variables.
-        var var01 = new Variable("TestVar", 123);
-        var var02 = new Variable("AnotherVar", Radix.Decimal);
-        var var03 = new Variable("ComplexVar", new Tag("Test", new TIMER()));
-        await mediator.Send(new SaveVariables(container.NodeId, new[] { var01, var02, var03 }));
-        
+
         //Create environment.
         var environment = new Environment();
         await mediator.Send(new CreateEnvironment(environment));
@@ -77,7 +74,7 @@ public class LoadEnvironmentTests
         await mediator.Send(new SaveEnvironment(environment));
 
         var result = await mediator.Send(new LoadEnvironment(environment.EnvironmentId));
-        
+
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().BeEquivalentTo(environment);
     }

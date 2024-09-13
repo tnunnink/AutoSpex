@@ -25,7 +25,8 @@
     </ResourceDictionary.ThemeDictionaries>
 
     <ControlTheme x:Key="{x:Type controls:HighlightableTextBlock}" TargetType="controls:HighlightableTextBlock">
-        <Setter Property="SelectionBrush" Value="{DynamicResource HighlightTextBackgroundBrush}" />
+        <Setter Property="SelectionBrush" Value="{a:ThemeResource EditSelectionBackgroundBrush}" />
+        <Setter Property="SelectionForegroundBrush" Value="{a:ThemeResource EditSelectionForegroundBrush}" />
         <Setter Property="VerticalAlignment" Value="Center" />
 
         <Setter Property="IsEnabled" Value="False" />

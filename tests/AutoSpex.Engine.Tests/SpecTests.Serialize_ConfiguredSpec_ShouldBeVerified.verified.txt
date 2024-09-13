@@ -1,11 +1,12 @@
 ﻿{
+  SpecId: Guid_1,
   Query: {
     Element: Tag,
     Name: null
   },
   Filters: [
     {
-      CriterionId: Guid_1,
+      CriterionId: Guid_2,
       Type: L5Sharp.Core.Tag,
       Property: {
         Origin: L5Sharp.Core.Tag,
@@ -14,7 +15,7 @@
       Operation: Containing,
       Arguments: [
         {
-          ArgumentId: Guid_2,
+          ArgumentId: Guid_3,
           Value: {
             Type: System.String,
             Data: Test
@@ -26,7 +27,7 @@
   ],
   Verifications: [
     {
-      CriterionId: Guid_3,
+      CriterionId: Guid_4,
       Type: L5Sharp.Core.Tag,
       Property: {
         Origin: L5Sharp.Core.Tag,
@@ -36,28 +37,6 @@
       Negation: Not
     }
   ],
-  Range: {
-    Enabled: false,
-    Criterion: {
-      CriterionId: Guid_4,
-      Type: System.Collections.Generic.List`1[[L5Sharp.Core.LogixElement, L5Sharp.Core, Version=3.2.0.0, Culture=neutral, PublicKeyToken=null]],
-      Property: {
-        Origin: System.Collections.Generic.List`1[[L5Sharp.Core.LogixElement, L5Sharp.Core, Version=3.2.0.0, Culture=neutral, PublicKeyToken=null]],
-        Path: Count
-      },
-      Operation: Greater Than,
-      Arguments: [
-        {
-          ArgumentId: Guid_5,
-          Value: {
-            Type: System.Int32,
-            Data: 0
-          }
-        }
-      ],
-      Negation: Is
-    }
-  },
   FilterInclusion: 0,
   VerificationInclusion: 0
 }

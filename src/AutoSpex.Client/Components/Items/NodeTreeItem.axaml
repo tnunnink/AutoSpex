@@ -9,7 +9,7 @@
     <Design.PreviewWith>
         <StackPanel Width="300" Height="400">
             <TreeView
-                ItemsSource="{x:Static components:DesignData.Nodes}"
+                ItemsSource="{x:Static components:TestData.Nodes}"
                 ItemContainerTheme="{DynamicResource NodeTreeItemTheme}"
                 ItemTemplate="{DynamicResource NodeTreeItem}"
                 SelectionMode="Multiple"

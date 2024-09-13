@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoSpex.Client.Resources;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using Avalonia.Input;
@@ -14,7 +15,7 @@ using CommunityToolkit.Mvvm.Messaging;
 namespace AutoSpex.Client.Observers;
 
 public partial class CriterionObserver : Observer<Criterion>,
-    IRecipient<Observer.Request<CriterionObserver>>
+    IRecipient<Observer.Get<CriterionObserver>>
 {
     public CriterionObserver(Criterion model) : base(model)
     {
@@ -77,13 +78,6 @@ public partial class CriterionObserver : Observer<Criterion>,
         }
     }
 
-    /// <inheritdoc />
-    protected override Task Duplicate()
-    {
-        Messenger.Send(new Duplicated(this, new CriterionObserver(Model)));
-        return Task.CompletedTask;
-    }
-
     /// <summary>
     /// Command to update the configured <see cref="Property"/> for this Criterion given the input object.
     /// This input can be text that the user types or a selected property from the suggestion popup.
@@ -133,7 +127,7 @@ public partial class CriterionObserver : Observer<Criterion>,
     /// <summary>
     /// Reply with this criterion observer instance if the id matches or the id is that of a child argument.
     /// </summary>
-    public void Receive(Request<CriterionObserver> message)
+    public void Receive(Get<CriterionObserver> message)
     {
         if (message.HasReceivedResponse) return;
         if (Id != message.Id && Arguments.All(a => a.Id != message.Id)) return;
@@ -149,12 +143,12 @@ public partial class CriterionObserver : Observer<Criterion>,
     {
         Arguments.Clear();
 
-        //We need to make the argument value a list of inner arguments to get the correct UI display.
+        /*//We need to make the argument value a list of inner arguments to get the correct UI display.
         if (Operation == Operation.In)
         {
             Arguments.Add(new ArgumentObserver(new Argument(new List<Argument> { new() })));
             return;
-        }
+        }*/
 
         if (Operation is BinaryOperation)
         {
@@ -210,12 +204,13 @@ public partial class CriterionObserver : Observer<Criterion>,
         var filtered = Operation.Supporting(Property);
         return Task.FromResult(filtered.Cast<object>());
     }
-    
+
     protected override IEnumerable<MenuActionItem> GenerateContextItems()
     {
-       yield return new MenuActionItem
+        yield return new MenuActionItem
         {
             Header = "Duplicate",
+            Icon = Resource.Find("IconFilledClone"),
             Command = DuplicateCommand,
             Gesture = new KeyGesture(Key.D, KeyModifiers.Control)
         };
@@ -223,32 +218,9 @@ public partial class CriterionObserver : Observer<Criterion>,
         yield return new MenuActionItem
         {
             Header = "Delete",
+            Icon = Resource.Find("IconFilledTrash"),
             Classes = "danger",
-            Command = DeleteCommand,
-            Gesture = new KeyGesture(Key.Delete)
-        };
-    }
-
-    protected override IEnumerable<MenuActionItem> GenerateMenuItems()
-    {
-        yield return new MenuActionItem
-        {
-            Header = "Copy",
-            Gesture = new KeyGesture(Key.C, KeyModifiers.Control)
-        };
-
-        yield return new MenuActionItem
-        {
-            Header = "Duplicate",
-            Command = DuplicateCommand,
-            Gesture = new KeyGesture(Key.D, KeyModifiers.Control)
-        };
-
-        yield return new MenuActionItem
-        {
-            Header = "Delete",
-            Classes = "danger",
-            Command = DeleteCommand,
+            Command = DeleteSelectedCommand,
             Gesture = new KeyGesture(Key.Delete)
         };
     }

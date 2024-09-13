@@ -10,13 +10,13 @@
     <Design.PreviewWith>
         <StackPanel Width="700" Height="200">
             <ListBoxItem Padding="0"
-                         Content="{x:Static components:DesignData.PassedEvaluation}"
+                         Content="{x:Static components:TestData.PassedEvaluation}" 
                          ContentTemplate="{DynamicResource EvaluationListItem}" />
             <ListBoxItem Padding="0"
-                         Content="{x:Static components:DesignData.ErroredEvaluation}"
+                         Content="{x:Static components:TestData.ErroredEvaluation}"
                          ContentTemplate="{DynamicResource EvaluationListItem}" />
             <ListBoxItem Padding="0"
-                         Content="{x:Static components:DesignData.FailedEvaluation}"
+                         Content="{x:Static components:TestData.FailedEvaluation}"
                          ContentTemplate="{DynamicResource EvaluationListItem}" />
         </StackPanel>
     </Design.PreviewWith>
@@ -34,7 +34,7 @@
                 <Style Selector="Border.Failed">
                     <Setter Property="BorderBrush" Value="{a:ThemeResource ControlForegroundBrushOutlineDanger}" />
                 </Style>
-                <Style Selector="Border.Error">
+                <Style Selector="Border.Errored">
                     <Setter Property="BorderBrush" Value="{a:ThemeResource ControlForegroundBrushOutlineWarning}" />
                 </Style>
 
@@ -106,7 +106,7 @@
 
                 <StackPanel
                     Orientation="Horizontal" Spacing="5"
-                    IsVisible="{Binding Result, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:ResultState.Error}}">
+                    IsVisible="{Binding Result, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:ResultState.Errored}}">
 
                     <TextBlock
                         IsVisible="{Binding Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Passed}}"
@@ -122,7 +122,7 @@
 
                 <StackPanel
                     Orientation="Horizontal" Spacing="5"
-                    IsVisible="{Binding Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Error}}">
+                    IsVisible="{Binding Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Errored}}">
 
                     <TextBlock
                         Text="but got error" />

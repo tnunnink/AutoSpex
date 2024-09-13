@@ -16,22 +16,22 @@
                     </Style>
                 </StackPanel.Styles>
 
-                <Button Content="{x:Static components:DesignData.NullValue}" />
-                <Button Content="{x:Static components:DesignData.BooleanTrueValue}" />
-                <Button Content="{x:Static components:DesignData.IntegerValue}" />
-                <Button Content="{x:Static components:DesignData.DoubleValue}" />
-                <Button Content="{x:Static components:DesignData.AtomicBoolValue}" />
-                <Button Content="{x:Static components:DesignData.AtomicSintValue}" />
-                <Button Content="{x:Static components:DesignData.AtomicIntValue}" />
-                <Button Content="{x:Static components:DesignData.AtomicDintValue}" />
-                <Button Content="{x:Static components:DesignData.AtomicLintValue}" />
-                <Button Content="{x:Static components:DesignData.TextValue}" />
-                <Button Content="{x:Static components:DesignData.RadixValue}" />
-                <Button Content="{x:Static components:DesignData.DataTypeValue}" />
-                <Button Content="{x:Static components:DesignData.RungValue}" />
-                <Button Content="{x:Static components:DesignData.TagValue}" />
-                <Button Content="{x:Static components:DesignData.VariableValue}" />
-                <Button Content="{x:Static components:DesignData.ReferenceValue}" />
+                <Button Content="{x:Static components:TestData.NullValue}" />
+                <Button Content="{x:Static components:TestData.BooleanTrueValue}" />
+                <Button Content="{x:Static components:TestData.IntegerValue}" />
+                <Button Content="{x:Static components:TestData.DoubleValue}" />
+                <Button Content="{x:Static components:TestData.AtomicBoolValue}" />
+                <Button Content="{x:Static components:TestData.AtomicSintValue}" />
+                <Button Content="{x:Static components:TestData.AtomicIntValue}" />
+                <Button Content="{x:Static components:TestData.AtomicDintValue}" />
+                <Button Content="{x:Static components:TestData.AtomicLintValue}" />
+                <Button Content="{x:Static components:TestData.TextValue}" />
+                <Button Content="{x:Static components:TestData.RadixValue}" />
+                <Button Content="{x:Static components:TestData.DataTypeValue}" />
+                <Button Content="{x:Static components:TestData.RungValue}" />
+                <!--<Button Content="{x:Static components:TestData.TagValue}" />-->
+                <Button Content="{x:Static components:TestData.VariableValue}" />
+                <Button Content="{x:Static components:TestData.ReferenceValue}" />
 
             </StackPanel>
         </StackPanel>

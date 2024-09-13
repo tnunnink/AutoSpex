@@ -14,7 +14,7 @@
                             <TreeViewItem Header="Level 4" />
                         </TreeViewItem>
                     </TreeViewItem>
-                    <TreeViewItem Header="Level 2.2" IsEnabled="False" />
+                    <TreeViewItem Header="Level 2.2" />
                 </TreeViewItem>
             </TreeView>
         </StackPanel>
@@ -77,23 +77,22 @@
                         </Grid>
                     </Border>
 
-                    <Panel>
-                        <a:AnimatedExpanderDecorator
-                            x:Name="expanderDecorator"
-                            IsExpanded="{TemplateBinding IsExpanded}"
-                            IsAnimationEnabled="{TemplateBinding a:ThemeProperties.IsAnimationEnabled}">
+                    <a:AnimatedExpanderDecorator
+                        x:Name="expanderDecorator"
+                        IsExpanded="{TemplateBinding IsExpanded}"
+                        IsAnimationEnabled="{TemplateBinding a:ThemeProperties.IsAnimationEnabled}">
+                        <Panel>
+                            <Border Margin="9.5 5 0 0">
+                                <Border
+                                    x:Name="IndentBorder"
+                                    Width="2"
+                                    HorizontalAlignment="Left"
+                                    CornerRadius="{a:ThemeResource ButtonCornerRadius}"
+                                    Margin="{TemplateBinding Level, Converter={StaticResource LeftMarginConverter}}" />
+                            </Border>
                             <ItemsPresenter ItemsPanel="{TemplateBinding ItemsPanel}" />
-                        </a:AnimatedExpanderDecorator>
-
-                        <Border Margin="9.5 0 0 0">
-                            <Border
-                                x:Name="IndentBorder"
-                                Width="2" 
-                                HorizontalAlignment="Left"
-                                CornerRadius="{a:ThemeResource ButtonCornerRadius}"
-                                Margin="{TemplateBinding Level, Converter={StaticResource LeftMarginConverter}}" />
-                        </Border>
-                    </Panel>
+                        </Panel>
+                    </a:AnimatedExpanderDecorator>
 
                 </StackPanel>
             </ControlTemplate>
@@ -104,6 +103,10 @@
         </Style>
 
         <Style Selector="^:empty /template/ ToggleButton">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+        
+        <Style Selector="^:empty /template/ Border#IndentBorder">
             <Setter Property="IsVisible" Value="False" />
         </Style>
 
@@ -122,33 +125,4 @@
         </Style>
     </ControlTheme>
 
-    <!-- TreeViewItemSubtle -->
-    <ControlTheme x:Key="TreeViewItemSubtle" TargetType="TreeViewItem" BasedOn="{a:ControlTheme TreeViewItem}">
-        <Setter Property="BorderThickness" Value="3 0 0 0" />
-        <Setter Property="BorderBrush" Value="Transparent" />
-        <Setter Property="Padding" Value="5" />
-        <Setter Property="FocusAdorner" Value="{x:Null}" />
-
-        <Style Selector="^:empty /template/ ToggleButton">
-            <Setter Property="IsVisible" Value="False" />
-        </Style>
-
-        <Style Selector="^:pointerover /template/ Border#border:pointerover">
-            <Setter Property="Background" Value="{a:ThemeResource ListItemBackgroundBrushPointerOver}" />
-            <Setter Property="BorderBrush" Value="{a:ThemeResource Container4BorderBrush}" />
-        </Style>
-        <Style Selector="^:disabled /template/ Border#border">
-            <Setter Property="TextElement.Foreground" Value="{a:ThemeResource ListItemForegroundBrushDisabled}" />
-            <Setter Property="Opacity" Value="{a:ThemeResource EditWatermarkOpacity}" />
-        </Style>
-        <Style Selector="^:selected /template/ Border#border">
-            <Setter Property="Background" Value="{a:ThemeResource ListItemBackgroundBrushPointerOver}" />
-            <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBackgroundBrushSolidAccent}" />
-            <Setter Property="TextElement.Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
-
-            <Style Selector="^:focus-within">
-                <Setter Property="Background" Value="{a:ThemeResource ListItemBackgroundBrushPointerOver}" />
-            </Style>
-        </Style>
-    </ControlTheme>
 </ResourceDictionary>

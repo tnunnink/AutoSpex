@@ -5,7 +5,7 @@
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/../tests/AutoSpex.Persistence.Tests/bin/Debug/net7.0/app.db</jdbc-url>
+      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/../tests/AutoSpex.Persistence.Tests/bin/Debug/net8.0/app.db</jdbc-url>
       <jdbc-additional-properties>
         <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />
       </jdbc-additional-properties>
@@ -15,21 +15,27 @@
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/AutoSpex.Client/bin/Debug/net7.0/win-x64/settings.db</jdbc-url>
+      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/AutoSpex.Client/bin/Debug/net8.0/win-x64/settings.db</jdbc-url>
+      <jdbc-additional-properties>
+        <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />
+      </jdbc-additional-properties>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
     <data-source source="LOCAL" name="spex.db" uuid="15767df4-1033-4e47-81d8-d2c6b91dff85">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/AutoSpex.Client/bin/Debug/net7.0/win-x64/spex.db</jdbc-url>
+      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/AutoSpex.Client/bin/Debug/net8.0/win-x64/spex.db</jdbc-url>
+      <jdbc-additional-properties>
+        <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />
+      </jdbc-additional-properties>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
     <data-source source="LOCAL" name="persistence-spex.db" uuid="607d4197-a3fe-4130-9ee7-45a6d1543324">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/../tests/AutoSpex.Persistence.Tests/bin/Debug/net7.0/spex.db</jdbc-url>
+      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/../tests/AutoSpex.Persistence.Tests/bin/Debug/net8.0/spex.db</jdbc-url>
       <jdbc-additional-properties>
         <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />
       </jdbc-additional-properties>

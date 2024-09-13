@@ -47,7 +47,7 @@
     <ControlTheme x:Key="IconThemedContainer" TargetType="PathIcon" BasedOn="{StaticResource IconFilledFolder}">
         <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushContainer}" />
     </ControlTheme>
-    <ControlTheme x:Key="IconThemedSpec" TargetType="PathIcon" BasedOn="{StaticResource IconFilledClipboardAlt}">
+    <ControlTheme x:Key="IconThemedSpec" TargetType="PathIcon" BasedOn="{StaticResource IconFilledClipboard}">
         <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushSpec}" />
     </ControlTheme>
     <ControlTheme x:Key="IconThemedEnvironment" TargetType="PathIcon" BasedOn="{StaticResource IconFilledCube}">
@@ -87,6 +87,7 @@
 
     <ControlTheme x:Key="IconThemedBoolean" TargetType="PathIcon" BasedOn="{StaticResource IconFilledToggle}">
         <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushBoolean}" />
+        <Setter Property="FontSize" Value="16" />
     </ControlTheme>
     <ControlTheme x:Key="IconThemedNumber" TargetType="PathIcon" BasedOn="{StaticResource IconLineHash}">
         <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushNumber}" />

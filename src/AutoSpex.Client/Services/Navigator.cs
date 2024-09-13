@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoSpex.Client.Observers;
 using AutoSpex.Client.Pages;
 using AutoSpex.Client.Shared;
+using AutoSpex.Engine;
 using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
 
@@ -182,6 +183,7 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
         {
             NodeObserver node => () => new NodeDetailPageModel(node),
             EnvironmentObserver environment => () => new EnvironmentDetailPageModel(environment),
+            RunObserver run => () => new RunDetailPageModel(run),
             _ => throw new NotSupportedException($"The observer type {observer.GetType()} does not support navigation")
         };
     }

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
 
@@ -42,6 +42,9 @@
       </None>
       <None Update="SpecTests.Serialize_ConfiguredSpec_ShouldBeVerified.verified.txt">
         <DependentUpon>SpecTests.cs</DependentUpon>
+      </None>
+      <None Update="PackageTests.ShouldBeVerifiedWhenSerialized.verified.txt">
+        <DependentUpon>PackageTests.cs</DependentUpon>
       </None>
     </ItemGroup>
 

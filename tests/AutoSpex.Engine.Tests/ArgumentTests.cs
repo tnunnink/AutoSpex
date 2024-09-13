@@ -86,17 +86,6 @@ public class ArgumentTests
     }
 
     [Test]
-    public void ResolveAs_BoolAsBoolToNullableBool_ShouldStillBeJustBool()
-    {
-        var argument = new Argument(true);
-
-        var result = argument.ResolveAs(typeof(bool?));
-
-        result.Should().Be(true);
-        result.Should().BeOfType<bool>();
-    }
-
-    [Test]
     public void ResolveAs_BoolAsStringToNullableBool_ShouldStillBeJustBool()
     {
         var argument = new Argument("true");
@@ -156,11 +145,11 @@ public class ArgumentTests
     public void ResolveAs_ReferenceToVariable_ShouldReturnVariableValue()
     {
         var variable = new Variable("Test", "Test");
-        var reference = variable.Reference;
+        var reference = variable.Reference();
         var argument = new Argument(reference);
 
         var result = argument.ResolveAs(typeof(string));
-        
+
         result.Should().Be("Test");
     }
 

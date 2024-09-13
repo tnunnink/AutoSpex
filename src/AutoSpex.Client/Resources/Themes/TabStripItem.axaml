@@ -20,7 +20,7 @@
                 </TabStrip>
 
                 <Border Padding="20">
-                    <TabStrip ItemContainerTheme="{DynamicResource TabItemStandard}"
+                    <TabStrip ItemContainerTheme="{DynamicResource TabStripItemStandard}"
                               BorderThickness="0">
                         <TabStrip.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -34,7 +34,7 @@
                 </Border>
 
                 <Border Padding="20">
-                    <TabStrip ItemContainerTheme="{DynamicResource TabItemTitleBar}"
+                    <TabStrip ItemContainerTheme="{DynamicResource TabStripItemTitleBar}"
                               BorderThickness="0" Padding="5"
                               Background="{a:ThemeResource TitleBarBackgroundBrush}">
                         <TabStrip.ItemsPanel>
@@ -120,7 +120,7 @@
         </Style>
     </ControlTheme>
 
-    <ControlTheme x:Key="TabItemStandard" TargetType="TabStripItem">
+    <ControlTheme x:Key="TabStripItemStandard" TargetType="TabStripItem">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderBrush" Value="{a:ThemeResource TabItemBorderBrushSubtle}" />
         <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeSmall}" />
@@ -128,7 +128,7 @@
         <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="Padding" Value="7" />
+        <Setter Property="Padding" Value="5 7" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Panel>
@@ -177,7 +177,7 @@
         </Style>
     </ControlTheme>
 
-    <ControlTheme x:Key="TabItemTitleBar" TargetType="TabStripItem">
+    <ControlTheme x:Key="TabStripItemTitleBar" TargetType="TabStripItem">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="FontSize" Value="{a:ThemeResource TabItemFontSizeSubtle}" />
         <Setter Property="FontWeight" Value="{a:ThemeResource TabItemFontWeightSubtle}" />

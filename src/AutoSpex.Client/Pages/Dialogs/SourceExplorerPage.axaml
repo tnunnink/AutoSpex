@@ -152,8 +152,8 @@
                 Margin="0 200"
                 IsVisible="{Binding Source, Converter={x:Static ObjectConverters.IsNull}}"
                 HeaderIcon="{StaticResource IconThemedSource}"
-                HeaderText="No sources found"
-                CustomMessage="Add a source file to an environment to view content." />
+                Header="No sources found"
+                Message="Add a source file to an environment to view content." />
 
             <Panel IsVisible="{Binding Source, Converter={x:Static ObjectConverters.IsNotNull}}">
 

@@ -17,14 +17,11 @@
                         <Setter Property="Padding" Value="5" />
                     </Style>
                 </StackPanel.Styles>
-                <ContentControl Content="{x:Static components:DesignData.BoolCriterion}" Classes="criterion" />
-                <ContentControl Content="{x:Static components:DesignData.NumberCriterion}" Classes="criterion" />
-                <ContentControl Content="{x:Static components:DesignData.RangeCriterion}"
-                                Classes="criterion"
-                                ContentTemplate="{DynamicResource CriterionRange}" />
-                <ContentControl Content="{x:Static components:DesignData.TextCriterion}" Classes="criterion" />
-                <ContentControl Content="{x:Static components:DesignData.EnumCriterion}" Classes="criterion" />
-                <ContentControl Content="{x:Static components:DesignData.InnerCriterion}" Classes="criterion" />
+                <ContentControl Content="{x:Static components:TestData.BoolCriterion}" Classes="criterion" />
+                <ContentControl Content="{x:Static components:TestData.NumberCriterion}" Classes="criterion" />
+                <ContentControl Content="{x:Static components:TestData.TextCriterion}" Classes="criterion" />
+                <ContentControl Content="{x:Static components:TestData.EnumCriterion}" Classes="criterion" />
+                <ContentControl Content="{x:Static components:TestData.InnerCriterion}" Classes="criterion" />
             </StackPanel>
         </StackPanel>
     </Design.PreviewWith>
@@ -42,7 +39,7 @@
                     CommitCommand="{Binding UpdatePropertyCommand}">
                     <controls:Entry.ValueTemplate>
                         <DataTemplate x:DataType="engine:Property">
-                            <StackPanel Orientation="Horizontal" Spacing="10">
+                            <StackPanel Orientation="Horizontal" Spacing="7">
                                 <PathIcon Theme="{Binding Group, Converter={StaticResource TypeGroupIconConverter}}" />
                                 <TextBlock Text="{Binding Path}" FontFamily="{a:ThemeResource CodeFontFamily}" />
                             </StackPanel>
@@ -144,7 +141,7 @@
 
             <StackPanel Orientation="Horizontal" Spacing="5">
 
-                <StackPanel Orientation="Horizontal" Spacing="10" Margin="{a:ThemeResource ButtonPadding}">
+                <StackPanel Orientation="Horizontal" Spacing="7" Margin="{a:ThemeResource ButtonPadding}">
                     <PathIcon
                         Theme="{Binding Property.Group, Converter={StaticResource TypeGroupIconConverter}}" />
                     <TextBlock

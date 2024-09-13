@@ -23,6 +23,7 @@
                                  AlternateCommandParameter="Discard"
                                  Classes="warning"
                                  MaxWidth="500">
+                    
                     <controls:Prompt.HeaderIcon>
                         <ControlTheme TargetType="PathIcon" BasedOn="{StaticResource IconFilledWarning}">
                             <Setter Property="Foreground"
@@ -30,6 +31,7 @@
                             <Setter Property="FontSize" Value="20" />
                         </ControlTheme>
                     </controls:Prompt.HeaderIcon>
+                    
                     <controls:Prompt.Content>
                         <StackPanel Spacing="10">
                             <TextBlock TextWrapping="Wrap">
@@ -54,6 +56,7 @@
                             </StackPanel>
                         </StackPanel>
                     </controls:Prompt.Content>
+                    
                 </controls:Prompt>
             </ControlTemplate>
         </Setter>

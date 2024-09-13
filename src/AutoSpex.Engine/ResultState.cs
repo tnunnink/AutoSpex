@@ -15,7 +15,7 @@ public class ResultState : SmartEnum<ResultState, int>
     public static readonly ResultState Inconclusive = new(nameof(Inconclusive), 3);
     public static readonly ResultState Passed = new(nameof(Passed), 4);
     public static readonly ResultState Failed = new(nameof(Failed), 5);
-    public static readonly ResultState Error = new(nameof(Error), 6);
+    public static readonly ResultState Errored = new(nameof(Errored), 6);
 
     /// <summary>
     /// Gets the maximum value of a collection of ResultState values or returns a default value if the collection is empty.

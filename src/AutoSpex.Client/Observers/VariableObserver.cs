@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using AutoSpex.Client.Resources;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
+using AutoSpex.Persistence;
 using Avalonia.Input;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -27,18 +28,8 @@ public partial class VariableObserver : Observer<Variable>
         Track(nameof(Group));
     }
 
-    /// <summary>
-    /// This is intended to be used for creating new in memory variables where we don't want to immediately set
-    /// name or value. to allow the user to input these fields and have them validated.
-    /// </summary>
-    /// <param name="node">The parent node that this variable belongs to.</param>
-    // ReSharper disable once SuggestBaseTypeForParameterInConstructor must be node.
-    public VariableObserver(NodeObserver node) : this(new Variable(node.Id))
-    {
-    }
-
     public override Guid Id => Model.VariableId;
-    public NodeObserver? Node => FindObserver<NodeObserver>(Model.NodeId);
+    public Task<NodeObserver> Node => FetchNode();
 
     public TypeGroup Group
     {
@@ -151,6 +142,15 @@ public partial class VariableObserver : Observer<Variable>
         var request = new GetNames(this);
         Messenger.Send(request);
         return request.HasReceivedResponse ? request.Response : Enumerable.Empty<string>();
+    }
+
+    /// <summary>
+    /// Gets the node this variable belongs to from the database.
+    /// </summary>
+    private async Task<NodeObserver> FetchNode()
+    {
+        var node = await Mediator.Send(new FindOwningNode(Id));
+        return new NodeObserver(node);
     }
 
     /// <inheritdoc />

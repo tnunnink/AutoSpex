@@ -10,31 +10,11 @@ public class EnvironmentTests
 
         environment.Should().NotBeNull();
     }
-
-    [Test]
-    public void Default_WhenCalled_ShouldNotBeNull()
-    {
-        var environment = Environment.Default;
-
-        environment.Should().NotBeNull();
-    }
-
-    [Test]
-    public void Default_ShouldHaveExpected()
-    {
-        var environment = Environment.Default;
-
-        environment.EnvironmentId.Should().NotBeEmpty();
-        environment.Name.Should().Be("Default");
-        environment.Comment.Should().NotBeEmpty();
-        environment.IsTarget.Should().BeTrue();
-        environment.Sources.Should().BeEmpty();
-    }
-
+    
     [Test]
     public void AddSource_ValidUri_ShouldHaveExpectedCount()
     {
-        var environment = Environment.Default;
+        var environment = new Environment();
 
         var source = environment.Add(new Uri(Known.Test));
 
@@ -45,15 +25,15 @@ public class EnvironmentTests
     [Test]
     public void AddSource_Null_ShouldThrowException()
     {
-        var environment = Environment.Default;
+        var environment = new Environment();
 
-        FluentActions.Invoking(() => environment.Add((Uri)default!)).Should().Throw<ArgumentNullException>();
+        FluentActions.Invoking(() => environment.Add(default!)).Should().Throw<ArgumentNullException>();
     }
 
     [Test]
     public void Serialize_WhenCalled_ShouldNotBeEmpty()
     {
-        var environment = Environment.Default;
+        var environment = new Environment();
 
         var data = environment.Serialize();
 
@@ -63,8 +43,10 @@ public class EnvironmentTests
     [Test]
     public void Serialize_Configured_ShouldNotBeEmpty()
     {
-        var environment = Environment.Default;
-        environment.Name = "My Config";
+        var environment = new Environment
+        {
+            Name = "My Config"
+        };
         var source = new Source(new Uri(Known.Test));
         source.Add(new Variable("TestVar", 123));
         source.Add(new Variable("AnotherVar", Radix.Decimal));
@@ -79,8 +61,10 @@ public class EnvironmentTests
     [Test]
     public void Deserialize_WhenCalled_ShouldHaveExpected()
     {
-        var environment = Environment.Default;
-        environment.Name = "MyConfig";
+        var environment = new Environment
+        {
+            Name = "MyConfig"
+        };
         var source = new Source(new Uri(Known.Test));
         source.Add(new Variable("TestVar", 123));
         source.Add(new Variable("AnotherVar", Radix.Decimal));

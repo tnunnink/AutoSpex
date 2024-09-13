@@ -19,9 +19,9 @@ public class Migration10000 : AutoReversingMigration
             .WithColumn("Comment").AsString().Nullable();
 
         Create.Table("Spec")
-            .WithColumn("SpecId").AsString().PrimaryKey().ForeignKey("Node", "NodeId").OnDelete(Rule.Cascade)
-            .WithColumn("Element").AsString().NotNullable().WithDefaultValue(Element.Default)
-            .WithColumn("Specification").AsString().NotNullable().WithDefaultValue(new Spec().Serialize());
+            .WithColumn("SpecId").AsString().PrimaryKey()
+            .WithColumn("NodeId").AsString().NotNullable().ForeignKey("Node", "NodeId").OnDelete(Rule.Cascade)
+            .WithColumn("Config").AsString().NotNullable();
 
         Create.Table("Variable")
             .WithColumn("VariableId").AsString().PrimaryKey()
@@ -57,10 +57,17 @@ public class Migration10000 : AutoReversingMigration
             .WithColumn("EnvironmentId").AsString().ForeignKey("Environment", "EnvironmentId").OnDelete(Rule.Cascade)
             .WithColumn("Result").AsString().Nullable().WithDefaultValue(ResultState.None)
             .WithColumn("RanOn").AsString().Nullable()
-            .WithColumn("RanBy").AsString().Nullable()
-            .WithColumn("Outcomes").AsString().Nullable();
+            .WithColumn("RanBy").AsString().Nullable();
 
-        Create.Table("ChangeLog")
+        Create.Table("Outcome")
+            .WithColumn("OutcomeId").AsString().PrimaryKey()
+            .WithColumn("RunId").AsString().ForeignKey("Run", "RunId").OnDelete(Rule.Cascade)
+            .WithColumn("NodeId").AsString().ForeignKey("Node", "NodeId").OnDelete(Rule.Cascade)
+            .WithColumn("Result").AsString().Nullable().WithDefaultValue(ResultState.None)
+            .WithColumn("Duration").AsInt32().Nullable().WithDefaultValue(0)
+            .WithColumn("Evaluations").AsString().Nullable();
+
+        /*Create.Table("ChangeLog")
             .WithColumn("ChangeId").AsString().PrimaryKey()
             .WithColumn("NodeId").AsString().NotNullable().ForeignKey("Node", "NodeId").OnDelete(Rule.Cascade)
             .WithColumn("Command").AsString().NotNullable()
@@ -68,6 +75,6 @@ public class Migration10000 : AutoReversingMigration
             .WithColumn("ChangedOn").AsString().NotNullable()
             .WithColumn("ChangedBy").AsString().NotNullable()
             .WithColumn("Machine").AsInt64().NotNullable()
-            .WithColumn("Duration").AsInt64().NotNullable();
+            .WithColumn("Duration").AsInt64().NotNullable();*/
     }
 }

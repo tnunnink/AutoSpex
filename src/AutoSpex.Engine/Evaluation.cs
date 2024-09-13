@@ -8,6 +8,9 @@ public record Evaluation
 {
     private Evaluation(ResultState result, Criterion criterion, object candidate, object? actual)
     {
+        ArgumentNullException.ThrowIfNull(result);
+        ArgumentNullException.ThrowIfNull(criterion);
+
         Result = result;
         Candidate = candidate;
         Criteria = criterion.GetCriteria();
@@ -17,102 +20,100 @@ public record Evaluation
 
     private Evaluation(ResultState result, Criterion criterion, object candidate, Exception exception)
     {
+        ArgumentNullException.ThrowIfNull(result);
+        ArgumentNullException.ThrowIfNull(criterion);
+
         Result = result;
         Candidate = candidate;
         Criteria = criterion.GetCriteria();
         Expected = criterion.GetExpected();
         Error = exception;
     }
-    
+
     private Evaluation(ResultState result, Exception exception)
     {
+        ArgumentNullException.ThrowIfNull(result);
+
         Result = result;
         Error = exception;
     }
 
     public ResultState Result { get; } = ResultState.None;
-    public string? Message { get; }
-    public object Candidate { get; }
-    public string Criteria { get; }
-    public IEnumerable<object> Expected { get; }
+    public object? Candidate { get; }
+    public string Criteria { get; } = string.Empty;
+    public IEnumerable<object> Expected { get; } = [];
     public object? Actual { get; }
     public Exception? Error { get; }
-    public Guid SourceId => GetSourceId();
-    public string SourceName => GetSourceName();
-    public string SourcePath => GetSourcePath();
+    public Guid SourceId => GetSourceId(Candidate);
+    public string SourceName => GetSourceName(Candidate);
+    public string SourcePath => GetSourcePath(Candidate);
 
 
-    /// <summary>
-    /// Creates a new Passed evaluation instance with the provided data.
-    /// </summary>
-    /// <param name="criterion"></param>
-    /// <param name="candidate"></param>
-    /// <param name="actual"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentNullException"></exception>
-    public static Evaluation Passed(Criterion criterion, object candidate, object? actual)
-    {
-        if (criterion is null)
-            throw new ArgumentNullException(nameof(criterion));
+    public static Evaluation Passed(Criterion criterion, object candidate, object? actual) =>
+        new(ResultState.Passed, criterion, candidate, actual);
 
-        return new Evaluation(ResultState.Passed, criterion, candidate, actual);
-    }
+    public static Evaluation Failed(Criterion criterion, object candidate, object? actual) =>
+        new(ResultState.Failed, criterion, candidate, actual);
 
-    public static Evaluation Failed(Criterion criterion, object candidate, object? actual)
-    {
-        if (criterion is null)
-            throw new ArgumentNullException(nameof(criterion));
+    public static Evaluation Errored(Criterion criterion, object candidate, Exception exception) =>
+        new(ResultState.Errored, criterion, candidate, exception);
 
-        return new Evaluation(ResultState.Failed, criterion, candidate, actual);
-    }
+    public static Evaluation Errored(Exception exception) =>
+        new(ResultState.Errored, exception);
 
-    public static Evaluation Errored(Criterion criterion, object candidate, Exception exception)
-    {
-        if (criterion is null)
-            throw new ArgumentNullException(nameof(criterion));
-
-        return new Evaluation(ResultState.Error, criterion, candidate, exception);
-    }
-
-    public static Evaluation Errored(Exception exception)
-    {
-        return new Evaluation(ResultState.Error, exception);
-    }
+    /// <inheritdoc />
+    public override string ToString() => $"Expected: {Criteria} {Expected} Found: {Actual};";
 
     public static implicit operator bool(Evaluation evaluation) => evaluation.Result == ResultState.Passed;
-
-    public override string ToString() => $"Expected: {Criteria} {Expected} Found: {Actual};";
 
     /// <summary>
     /// Tries to get the injected source name from the candidate logix element to be used as addition information
     /// indicating which source this evaluation belongs to.
     /// </summary>
-    private string GetSourceName()
+    private static string GetSourceName(object? candidate)
     {
-        return Candidate is LogixElement element
-            ? element.L5X?.Serialize().Attribute("SourceName")?.Value ?? string.Empty
-            : string.Empty;
+        while (true)
+        {
+            if (candidate is not List<LogixElement> collection)
+                return candidate is LogixElement element
+                    ? element.L5X?.Serialize().Attribute("SourceName")?.Value ?? string.Empty
+                    : string.Empty;
+
+            candidate = collection.FirstOrDefault();
+        }
     }
 
     /// <summary>
     /// Tries to get the injected source id from the candidate logix element to be used as addition information
     /// indicating which source this evaluation belongs to.
     /// </summary>
-    private Guid GetSourceId()
+    private static Guid GetSourceId(object? candidate)
     {
-        return Candidate is LogixElement element
-            ? element.L5X?.Serialize().Attribute("SourceId")?.Value.Parse<Guid>() ?? Guid.Empty
-            : Guid.Empty;
+        while (true)
+        {
+            if (candidate is not List<LogixElement> collection)
+                return candidate is LogixElement element
+                    ? element.L5X?.Serialize().Attribute("SourceId")?.Value.Parse<Guid>() ?? Guid.Empty
+                    : Guid.Empty;
+
+            candidate = collection.FirstOrDefault();
+        }
     }
 
     /// <summary>
     /// Tries to get the injected source file path from the candidate logix element to be used as addition information
     /// indicating which source this evaluation belongs to.
     /// </summary>
-    private string GetSourcePath()
+    private static string GetSourcePath(object? candidate)
     {
-        return Candidate is LogixElement element
-            ? element.L5X?.Serialize().Attribute("SourcePath")?.Value ?? string.Empty
-            : string.Empty;
+        while (true)
+        {
+            if (candidate is not List<LogixElement> collection)
+                return candidate is LogixElement element
+                    ? element.L5X?.Serialize().Attribute("SourcePath")?.Value ?? string.Empty
+                    : string.Empty;
+
+            candidate = collection.FirstOrDefault();
+        }
     }
 }

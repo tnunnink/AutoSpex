@@ -1,0 +1,61 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+
+    <Design.PreviewWith>
+        <Border Padding="30" Width="800" Height="300">
+            <ContentControl
+                Content="{x:Static components:TestData.SpecObserver}"
+                ContentTemplate="{DynamicResource FilterEntry}" />
+        </Border>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="FilterEntry" x:DataType="observers:SpecObserver">
+
+        <StackPanel>
+
+            <ListBox
+                IsVisible="{Binding Filters.Count}"
+                ItemsSource="{Binding Filters}"
+                ItemTemplate="{StaticResource CriterionListItem}"
+                ItemContainerTheme="{StaticResource ListBoxItemEntry}"
+                SelectionMode="Multiple"
+                BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                BorderThickness="0 0 0 1"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
+
+            <DockPanel LastChildFill="False">
+
+                <Button
+                    Command="{Binding AddFilterCommand}"
+                    Theme="{a:ControlTheme ButtonSubtle}"
+                    Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
+                    HorizontalAlignment="Left" Margin="4">
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <PathIcon
+                            Theme="{StaticResource IconAdd}"
+                            Foreground="{Binding $parent[Button].Foreground}"
+                            Classes="size-sm" />
+                        <TextBlock Text="Add" />
+                    </StackPanel>
+                </Button>
+
+                <TextBlock
+                    DockPanel.Dock="Left"
+                    Text="Add filters to target specific candidates for verification."
+                    Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+
+                <ContentControl
+                    DockPanel.Dock="Right"
+                    Content="{Binding}"
+                    ContentTemplate="{StaticResource FilterInclusion}" />
+
+            </DockPanel>
+
+        </StackPanel>
+
+    </DataTemplate>
+</ResourceDictionary>

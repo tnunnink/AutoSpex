@@ -8,11 +8,11 @@
     <Design.PreviewWith>
         <StackPanel Spacing="5" Margin="50">
             <ContentControl
-                Content="{x:Static components:DesignData.SpecNode}"
+                Content="{x:Static components:TestData.SpecNode}"
                 ContentTemplate="{DynamicResource NameEntry}"
                 Padding="10" />
             <ContentControl
-                Content="{x:Static components:DesignData.SpecNode}"
+                Content="{x:Static components:TestData.SpecNode}"
                 ContentTemplate="{DynamicResource NameEntry}"
                 Padding="10" />
         </StackPanel>

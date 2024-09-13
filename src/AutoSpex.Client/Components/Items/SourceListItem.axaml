@@ -10,7 +10,7 @@
         <Border Padding="30" Width="700" Height="400">
             <ListBox ItemsSource="{x:Static components:DesignData.Sources}"
                      ItemTemplate="{DynamicResource SourceListItem}"
-                     ItemContainerTheme="{StaticResource ListBoxItemSection}"
+                     ItemContainerTheme="{StaticResource ListBoxItemEntry}"
                      CornerRadius="5" BorderThickness="1" BorderBrush="{a:ThemeResource Container1BorderBrush}"
                      SelectionMode="Multiple"
                      VerticalAlignment="Top" />

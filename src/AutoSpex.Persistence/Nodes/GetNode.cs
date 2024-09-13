@@ -12,39 +12,53 @@ public record GetNode(Guid NodeId) : IDbQuery<Result<Node>>;
 [UsedImplicitly]
 internal class GetNodeHandler(IConnectionManager manager) : IRequestHandler<GetNode, Result<Node>>
 {
-    private const string GetNodes =
+    private const string GetParents =
         """
-        WITH Tree AS (
+        WITH Parents AS (
             SELECT NodeId, ParentId, Type, Name, 0 as Distance
             FROM Node
             WHERE NodeId = @NodeId
             UNION ALL
-            SELECT n.NodeId, n.ParentId, n.Type, n.Name, t.Distance + 1 as Distance
+            SELECT n.NodeId, n.ParentId, n.Type, n.Name, p.Distance + 1 as Distance
             FROM Node n
-                    INNER JOIN Tree t ON t.ParentId = n.NodeId
+            INNER JOIN Parents p ON p.ParentId = n.NodeId
         )
 
         SELECT NodeId, ParentId, Type, Name
-        FROM Tree
-        ORDER BY Distance DESC;
+        FROM Parents
+        ORDER BY Distance DESC
+        """;
+
+    private const string GetChildren =
+        """
+        WITH Children AS (
+            SELECT NodeId, ParentId, Type, Name, 0 as Depth 
+            FROM Node
+            WHERE ParentId = @NodeId
+            UNION ALL
+            SELECT n.NodeId, n.ParentId, n.Type, n.Name, c.Depth + 1 as Depth
+            FROM Node n
+            INNER JOIN Children c ON c.NodeId = n.ParentId
+        )
+
+        SELECT NodeId, ParentId, Type, Name
+        FROM Children
+        ORDEr BY Depth
         """;
 
     public async Task<Result<Node>> Handle(GetNode request, CancellationToken cancellationToken)
     {
         using var connection = await manager.Connect(cancellationToken);
-        
-        var nodes = await connection.QueryAsync<Node>(GetNodes, new { request.NodeId });
 
-        var lookup = new Dictionary<Guid, Node>();
-        foreach (var node in nodes)
-        {
-            lookup.Add(node.NodeId, node);
+        var parents = (await connection.QueryAsync<Node>(GetParents, new { request.NodeId })).BuildTree();
+        var children = (await connection.QueryAsync<Node>(GetChildren, new { request.NodeId })).BuildTree();
 
-            if (lookup.TryGetValue(node.ParentId, out var parent))
-                parent.AddNode(node);
-        }
+        if (!parents.TryGetValue(request.NodeId, out var node))
+            return Result.Fail($"Node node found: {request.NodeId}");
 
-        var target = lookup.GetValueOrDefault(request.NodeId);
-        return target is not null ? Result.Ok(target) : Result.Fail($"Node Not Found: {request.NodeId}");
+        foreach (var descendent in children.Values.Where(d => d.Parent is null))
+            node.AddNode(descendent);
+
+        return Result.Ok(node);
     }
 }

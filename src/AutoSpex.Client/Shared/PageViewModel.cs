@@ -1,15 +1,19 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Threading.Tasks;
-using AutoSpex.Client.Services;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FluentResults;
 using MediatR;
 
 namespace AutoSpex.Client.Shared;
 
-public abstract partial class PageViewModel : TrackableViewModel, IEquatable<PageViewModel>
+public abstract partial class PageViewModel() : TrackableViewModel, IEquatable<PageViewModel>
 {
+    protected PageViewModel(string title) : this()
+    {
+        Title = title;
+    }
+    
     /// <summary>
     /// A resource identifier that identifies this page relative to any other. The default implementation is this
     /// type name but derived classes can override to indicate how a given page should be identified.
@@ -19,7 +23,7 @@ public abstract partial class PageViewModel : TrackableViewModel, IEquatable<Pag
     /// <summary>
     /// The name of the page that can be used to display in a tab or other control.
     /// </summary>
-    public virtual string Title => "Title";
+    [ObservableProperty] private string _title = "Title";
 
     /// <summary>
     /// The string key of the icon that this page corresponds to.
@@ -46,7 +50,7 @@ public abstract partial class PageViewModel : TrackableViewModel, IEquatable<Pag
     /// </remarks>
     [RelayCommand]
     public virtual Task Load() => Task.CompletedTask;
-    
+
     /// <summary>
     /// A command to initiate a save of the current state of the page.
     /// </summary>
@@ -65,7 +69,7 @@ public abstract partial class PageViewModel : TrackableViewModel, IEquatable<Pag
     /// </summary>
     /// <returns><c>true</c> if the page can be saved, Otherwise, <c>false</c>.</returns>
     public virtual bool CanSave() => IsChanged && !IsErrored;
-    
+
     /// <inheritdoc />
     protected override Task Navigate() => Navigator.Navigate(() => this);
 

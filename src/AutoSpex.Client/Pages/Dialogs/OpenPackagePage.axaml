@@ -1,0 +1,82 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors"
+             x:Class="AutoSpex.Client.Pages.OpenPackagePage"
+             x:DataType="pages:OpenPackagePageModel"
+             Width="650">
+
+    <controls:Prompt
+        Header="Import Collection"
+        HeaderIcon="{StaticResource IconThemedCollection}"
+        CancelButtonTheme="{a:ControlTheme ButtonSoft}"
+        CancelCommandParameter="{x:Null}"
+        ActionButtonText="Import"
+        ActionButtonTheme="{a:ControlTheme ButtonSolid}"
+        ActionCommand="{Binding ImportCommand}"
+        ActionCommandParameter="{Binding $parent[Window]}"
+        Classes="accent">
+
+        <controls:Section
+            Header="Select file"
+            Description="Select the file from disc to import.">
+
+            <controls:Section.Icon>
+                <PathIcon Theme="{StaticResource IconFilledFile}" />
+            </controls:Section.Icon>
+
+            <controls:Section.Action>
+                <Button
+                    Command="{Binding BrowseCommand}"
+                    Theme="{a:ControlTheme ButtonSoft}"
+                    Width="100" Height="30">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <PathIcon Theme="{StaticResource IconFilledFolderOpen}" />
+                        <TextBlock
+                            Text="Browse"
+                            FontWeight="{a:ThemeResource HeadingFontWeightSmall}"
+                            Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}" />
+                    </StackPanel>
+                </Button>
+            </controls:Section.Action>
+
+            <Border
+                Background="{a:ThemeResource Container2BackgroundBrush}"
+                BorderBrush="{a:ThemeResource Container2BackgroundBrush}"
+                BorderThickness="1"
+                CornerRadius="5"
+                MinHeight="200">
+
+                <Border.Styles>
+                    <Style Selector="Border.dragover">
+                        <Setter Property="BorderBrush" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+                    </Style>
+                </Border.Styles>
+
+                <Interaction.Behaviors>
+                    <behaviors:ExecuteCommandOnDropBehavior
+                        DataFormat="{x:Static DataFormats.Files}"
+                        Command="{Binding DropCommand}" />
+                </Interaction.Behaviors>
+
+                <Panel>
+                    <controls:DefaultMessage
+                        IsVisible="{Binding File, Converter={x:Static ObjectConverters.IsNull}}"
+                        HeaderIcon="{StaticResource IconLineUpload}"
+                        Header="Drop here to import"
+                        Message="Drag and drop a file from the exporer to start an import." />
+
+                    <controls:DefaultMessage
+                        IsVisible="{Binding File, Converter={x:Static ObjectConverters.IsNotNull}}"
+                        HeaderIcon="{StaticResource IconThemedCollection}"
+                        Header="{Binding File.Name, FallbackValue={x:Null}}"
+                        Message="{Binding File.DirectoryName, FallbackValue={x:Null}}" />
+                </Panel>
+
+            </Border>
+        </controls:Section>
+
+    </controls:Prompt>
+</UserControl>

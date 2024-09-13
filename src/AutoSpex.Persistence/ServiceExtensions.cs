@@ -13,10 +13,10 @@ public static class ServiceExtensions
         services.AddMediatR(c =>
             c.RegisterServicesFromAssembly(typeof(ServiceExtensions).Assembly)
                 .AddOpenBehavior(typeof(NotificationBehavior<,>))
-                .AddOpenBehavior(typeof(ChangeLogBehavior<,>))
+                /*.AddOpenBehavior(typeof(ChangeLogBehavior<,>))*/
         );
 
-        services.AddSingleton<IConnectionManager, ConnectionManager>();
+        services.AddTransient<IConnectionManager, ConnectionManager>();
 
         SqlMapper.RemoveTypeMap(typeof(Guid));
         SqlMapper.RemoveTypeMap(typeof(Guid?));
@@ -25,8 +25,9 @@ public static class ServiceExtensions
         SqlMapper.AddTypeHandler(new SqlTypeHandler());
         SqlMapper.AddTypeHandler(new SqlUriHandler());
         SqlMapper.AddTypeHandler(new SqlObjectHandler());
+        SqlMapper.AddTypeHandler(new SqlSpecHandler());
         SqlMapper.AddTypeHandler(new SmartEnumByNameTypeHandler<Element, string>());
-        SqlMapper.AddTypeHandler(new SmartEnumByValueTypeHandler<Operation, string>());
+        SqlMapper.AddTypeHandler(new SmartEnumByNameTypeHandler<Operation, string>());
         SqlMapper.AddTypeHandler(new SmartEnumByNameTypeHandler<NodeType, int>());
         SqlMapper.AddTypeHandler(new SmartEnumByNameTypeHandler<TypeGroup, int>());
         SqlMapper.AddTypeHandler(new SmartEnumByNameTypeHandler<ResultState, int>());

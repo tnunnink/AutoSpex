@@ -1,0 +1,38 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
+             x:Class="AutoSpex.Client.Pages.ImportConflictPage"
+             x:DataType="pages:ImportConflictPageModel"
+             MaxWidth="480">
+
+    <controls:Prompt
+        Header="Import Conflict"
+        HeaderIcon="{StaticResource IconLineMerge}"
+        CancelButtonTheme="{a:ControlTheme ButtonSoft}"
+        CancelCommandParameter="{x:Static engine:ImportAction.Cancel}"
+        ActionButtonText="Replace"
+        ActionButtonTheme="{a:ControlTheme ButtonSolid}"
+        ActionCommandParameter="{x:Static engine:ImportAction.Repalce}"
+        UseAlternateButton="True"
+        AlternateButtonText="Import Copy"
+        AlternateButtonTheme="{a:ControlTheme ButtonSoft}"
+        AlternateCommandParameter="{x:Static engine:ImportAction.Copy}"
+        Classes="warning">
+
+        <TextBlock FontSize="{a:ThemeResource DefaultFontSizeMedium}"
+                   TextWrapping="Wrap">
+            <TextBlock.Inlines>
+                <Run Text="The collection" />
+                <Run Text="{Binding Package.Collection.Name}"
+                     FontWeight="SemiBold"
+                     Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+                <Run
+                    Text="already exists. How would you like to handle this conflict?" />
+            </TextBlock.Inlines>
+        </TextBlock>
+
+    </controls:Prompt>
+</UserControl>

@@ -11,7 +11,7 @@ public class RunTests
         var run = new Run();
 
         run.RunId.Should().NotBeEmpty();
-        run.Environment.Should().BeEquivalentTo(Environment.Default, x => x.Excluding(e => e.EnvironmentId));
+        run.Environment.Should().NotBeNull();
         run.Result.Should().Be(ResultState.None);
         run.RanBy.Should().BeEmpty();
         run.RanOn.Should().Be(default);
@@ -26,7 +26,7 @@ public class RunTests
 
         run.Environment.Should().BeEquivalentTo(environment);
     }
-    
+
     [Test]
     public void New_EnvironmentAndSeed_ShouldHaveExpectedValue()
     {
@@ -35,18 +35,18 @@ public class RunTests
         container.AddSpec();
         container.AddSpec();
         var environment = new Environment();
-        
+
         var run = new Run(environment, container);
 
         run.Environment.Should().BeEquivalentTo(environment);
         run.Outcomes.Should().HaveCount(3);
     }
-    
+
     [Test]
     public void AddNode_NullNode_ShouldThrowException()
     {
         var run = new Run();
-        
+
         FluentActions.Invoking(() => run.AddNode(null!)).Should().Throw<ArgumentNullException>();
     }
 
@@ -60,7 +60,7 @@ public class RunTests
 
         run.Outcomes.Should().HaveCount(1);
     }
-    
+
     [Test]
     public void AddNode_EmptyCollectionNode_ShouldHaveExpectedOutcomeCount()
     {
@@ -87,7 +87,7 @@ public class RunTests
     }
 
     [Test]
-    public void AddNodes_ManySpecNodes_ShouldHaveExpectedOutcomeCount()
+    public void AddNodes_ManySpecOutcomes_ShouldHaveExpectedOutcomeCount()
     {
         var run = new Run();
 
@@ -95,9 +95,9 @@ public class RunTests
 
         run.Outcomes.Should().HaveCount(3);
     }
-    
+
     [Test]
-    public void AddNodes_ManyDifferentNodes_ShouldHaveExpectedOutcomeCount()
+    public void AddNodes_ManyDifferentOutcomes_ShouldHaveExpectedOutcomeCount()
     {
         var run = new Run();
 
@@ -111,7 +111,7 @@ public class RunTests
     {
         var run = new Run();
         run.AddNodes([Node.NewSpec(), Node.NewSpec(), Node.NewSpec()]);
-        
+
         run.Clear();
 
         run.Outcomes.Should().BeEmpty();
@@ -121,7 +121,7 @@ public class RunTests
     public void RemoveNode_NullNode_ShouldThrowException()
     {
         var run = new Run();
-        
+
         FluentActions.Invoking(() => run.RemoveNode(null!)).Should().Throw<ArgumentNullException>();
     }
 
@@ -129,7 +129,7 @@ public class RunTests
     public void RemoveNode_NoOutcomes_ShouldHaveExpectedCount()
     {
         var run = new Run();
-        
+
         run.RemoveNode(Node.NewSpec());
 
         run.Outcomes.Should().BeEmpty();
@@ -140,10 +140,10 @@ public class RunTests
     {
         var run = new Run();
         var spec = Node.NewSpec();
-        
+
         run.AddNode(spec);
         run.Outcomes.Should().HaveCount(1);
-        
+
         run.RemoveNode(spec);
         run.Outcomes.Should().BeEmpty();
     }
@@ -154,30 +154,31 @@ public class RunTests
         var spec = Node.NewSpec();
         var run = new Run();
         run.AddNodes([spec, Node.NewSpec(), Node.NewSpec()]);
-        
+
         run.RemoveNodes([spec, Node.NewSpec(), Node.NewSpec()]);
 
         run.Outcomes.Should().HaveCount(2);
     }
-    
+
     [Test]
     public async Task Execute_SimpleCheck_ShouldHaveExpectedResults()
     {
         var environment = new Environment();
         environment.Add(new Uri(Known.Test));
 
-        var spec = new Spec();
-        spec.Find(Element.Module).ShouldHave(Element.Module.Property("Inhibited"), Operation.False);
-        
+        var spec = Node.NewSpec("Test",
+            s => { s.Find(Element.Module).Verify("Inhibited", Operation.False); });
+
+
         var run = new Run(environment);
-        run.AddNode(spec.ToNode());
-        
-        await run.ExecuteAsync((ICollection<Spec>)[spec]);
+        run.AddNode(spec);
+
+        await run.Execute([spec]);
 
         run.Result.Should().Be(ResultState.Passed);
         run.RanBy.Should().NotBeEmpty();
         run.RanOn.Should().BeWithin(TimeSpan.FromSeconds(1));
-        run.Outcomes.First().Verifications.Should().NotBeEmpty();
+        run.Outcomes.First().Evaluations.Should().NotBeEmpty();
     }
 
     [Test]
@@ -186,20 +187,22 @@ public class RunTests
         var environment = new Environment();
         environment.Add(new Uri(Known.Test));
 
-        var spec = new Spec();
-        spec.Find(Element.DataType)
-            .Where(Element.DataType.Property("Name"), Operation.EqualTo, "ComplexType")
-            .ShouldHave(Element.DataType.Property("Members"), Operation.Any,
-                new Criterion(Element.DataTypeMember.Property("DataType"), Operation.EqualTo, "SimpleType"));
-        
+        var spec = Node.NewSpec("Test", s =>
+        {
+            s.Find(Element.DataType)
+                .Filter("Name", Operation.EqualTo, "ComplexType")
+                .Verify("Members", Operation.Any,
+                    new Criterion(Element.DataTypeMember.Property("DataType"), Operation.EqualTo, "SimpleType"));
+        });
+
         var run = new Run(environment);
-        run.AddNode(spec.ToNode());
-        
-        await run.ExecuteAsync((ICollection<Spec>)[spec]);
+        run.AddNode(spec);
+
+        await run.Execute([spec]);
 
         run.Result.Should().Be(ResultState.Passed);
         run.RanBy.Should().NotBeEmpty();
         run.RanOn.Should().BeWithin(TimeSpan.FromSeconds(1));
-        run.Outcomes.First().Verifications.Should().NotBeEmpty();
+        run.Outcomes.First().Evaluations.Should().NotBeEmpty();
     }
 }

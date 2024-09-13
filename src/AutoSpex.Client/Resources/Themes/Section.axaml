@@ -25,7 +25,7 @@
                     <controls:Section.Icon>
                         <PathIcon Theme="{StaticResource IconFilledFunnel}" />
                     </controls:Section.Icon>
-                    <ListBox ItemContainerTheme="{StaticResource ListBoxItemSection}"
+                    <ListBox ItemContainerTheme="{StaticResource ListBoxItemEntry}"
                              BorderThickness="1" CornerRadius="5"
                              BorderBrush="{a:ThemeResource Container1BorderBrush}">
                         <ListBoxItem Content="Some Items" />

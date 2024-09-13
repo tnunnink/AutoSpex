@@ -42,9 +42,9 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
     public ObserverCollection(IList<TModel> models, Func<TModel, TObserver> wrapper) : base(Initialize(models, wrapper))
     {
         _refresh = () => models.Select(wrapper).ToList();
-        _add = models.Insert;
+        _add = (_, m) => models.Add(m);
         _insert = models.Insert;
-        _remove = (i, _) => models.RemoveAt(i);
+        _remove = (_, m) => models.Remove(m);
         _clear = models.Clear;
 
         Attach(this);
@@ -52,6 +52,7 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
 
     public bool IsChanged => _changed || this.Any(o => o.IsChanged);
     public bool HasErrors => this.Any(o => o.IsErrored);
+    public bool HasItems => _refresh.Invoke().Count > 0;
     public event PropertyChangedEventHandler? ItemPropertyChanged;
     public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
@@ -67,45 +68,40 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
         OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsChanged)));
     }
 
-    public void AddRange(IEnumerable<TObserver> observers)
+    /// <summary>
+    /// Tries to add the specified observer to the <see cref="ObserverCollection{TModel, TObserver}"/>.
+    /// If an observer with the same ID already exists in the collection, it will not be added.
+    /// </summary>
+    /// <param name="observer">The observer to add to the collection.</param>
+    /// <returns>
+    /// <see langword="true"/> if the observer was added to the collection;
+    /// <see langword="false"/> if an observer with the same Id already exists in the collection.</returns>
+    public bool TryAdd(TObserver observer)
     {
-        foreach (var observer in observers)
+        if (this.Any(x => x.Id == observer.Id)) return false;
+        Add(observer);
+        return true;
+    }
+
+    /// <summary>
+    /// Removes any observer items from the collection that match the specified predicate.
+    /// </summary>
+    /// <param name="predicate">The function used to determine if an observer item should be removed.</param>
+    public void RemoveAny(Func<TObserver, bool> predicate)
+    {
+        var targets = this.Where(predicate).ToList();
+
+        foreach (var target in targets)
         {
-            Add(observer);
+            Remove(target);
         }
     }
 
     /// <summary>
-    /// Refreshes the state of this <see cref="ObserverCollection{TModel,TObserver}"/> to the underlying model collection
-    /// and clears any changes to this collection. 
+    /// Refreshes the state of this <see cref="ObserverCollection{TModel,TObserver}"/> to the underlying
+    /// model collection by invoking the refresh delegate. 
     /// </summary>
-    /// <param name="observers">
-    /// Optional set of observer items to sync this collection to.
-    /// If not provided uses the internal refresh callback.
-    /// If neither produce items, then the collection is cleared.
-    /// </param>
-    /// <param name="cascade">Whether to cascade the refresh down to the individual observer items.</param>
-    public void Refresh(IEnumerable<TObserver>? observers = default, bool cascade = false)
-    {
-        _refreshing = true;
-
-        ClearItems();
-
-        var collection = observers ?? _refresh();
-
-        foreach (var observer in collection)
-            Add(observer);
-
-        if (cascade)
-        {
-            foreach (var observer in this)
-                observer.Refresh();
-        }
-
-        _refreshing = false;
-        _changed = false;
-        OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsChanged)));
-    }
+    public void Refresh() => RefreshCollection(_refresh());
 
     /// <summary>
     /// Sync will find all changes in the underlying collection and update this <see cref="ObserverCollection{TModel,TObserver}"/>
@@ -161,7 +157,7 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
     public void Filter(Func<TObserver, bool> filter)
     {
         var collection = _refresh.Invoke().Where(filter).ToList();
-        Refresh(collection);
+        RefreshCollection(collection);
     }
 
     /// <summary>
@@ -171,21 +167,7 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
     public void Filter(string? filter)
     {
         var collection = _refresh.Invoke().Where(x => x.Filter(filter)).ToList();
-        Refresh(collection);
-    }
-
-    /// <summary>
-    /// Removes any observer items from the collection that match the specified predicate.
-    /// </summary>
-    /// <param name="predicate">The function used to determine if an observer item should be removed.</param>
-    public void RemoveAny(Func<TObserver, bool> predicate)
-    {
-        var targets = this.Where(predicate).ToList();
-
-        foreach (var target in targets)
-        {
-            Remove(target);
-        }
+        RefreshCollection(collection);
     }
 
     /// <summary>
@@ -223,10 +205,13 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
         if (index == Count - 1)
         {
             _add?.Invoke(index, observer.Model);
-            return;
+        }
+        else
+        {
+            _insert?.Invoke(index, observer.Model);
         }
 
-        _insert?.Invoke(index, observer.Model);
+        OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasItems)));
     }
 
     /// <inheritdoc />
@@ -238,7 +223,10 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
 
         //Abort if refreshing to avoid circular calls.
         if (_refreshing) return;
+
         _remove?.Invoke(index, observer.Model);
+
+        OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasItems)));
     }
 
     /// <summary>Removes all items from the collection.</summary>
@@ -249,7 +237,10 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
 
         //Abort if refreshing to avoid circular calls.
         if (_refreshing) return;
+
         _clear?.Invoke();
+
+        OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasItems)));
     }
 
     /// <summary>
@@ -257,9 +248,33 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
     /// </summary>
     private static IEnumerable<TObserver> Initialize(ICollection<TModel> models, Func<TModel, TObserver> wrapper)
     {
-        if (models is null) throw new ArgumentNullException(nameof(models));
-        if (wrapper is null) throw new ArgumentNullException(nameof(wrapper));
+        ArgumentNullException.ThrowIfNull(models);
+        ArgumentNullException.ThrowIfNull(wrapper);
         return models.Select(wrapper);
+    }
+
+    /// <summary>
+    /// Refreshes the underlying observable collection with the provided collection.
+    /// </summary>
+    /// <param name="collection">The collection to repalce the underlying collection with.</param>
+    private void RefreshCollection(IEnumerable<TObserver> collection)
+    {
+        _refreshing = true;
+
+        ClearItems();
+
+        foreach (var observer in collection)
+            Add(observer);
+
+        /*if (cascade)
+        {
+            foreach (var observer in this)
+                observer.Refresh();
+        }*/
+
+        _refreshing = false;
+        _changed = false;
+        OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsChanged)));
     }
 
     /// <summary>

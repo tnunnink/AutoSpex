@@ -4,9 +4,7 @@ using FluentResults;
 namespace AutoSpex.Persistence;
 
 /// <summary>
-/// An interface for managing the database connection for this layer. This interface allows connection and migration
-/// of the application database. External classes don't really need to worry about this because it is only required
-/// for the persistence layer requests.
+/// An interface for managing the database connection for this layer.
 /// </summary>
 public interface IConnectionManager
 {

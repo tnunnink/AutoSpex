@@ -9,13 +9,12 @@ namespace AutoSpex.Client.Pages;
 public class EnvironmentDetailPageModel : DetailPageModel
 {
     /// <inheritdoc/>
-    public EnvironmentDetailPageModel(EnvironmentObserver environment)
+    public EnvironmentDetailPageModel(EnvironmentObserver environment) : base(environment.Name)
     {
         Environment = environment;
     }
 
     public override string Route => $"{nameof(Environment)}/{Environment.Id}";
-    public override string Title => Environment.Name;
     public override string Icon => nameof(Environment);
     public EnvironmentObserver Environment { get; private set; }
 
@@ -33,7 +32,7 @@ public class EnvironmentDetailPageModel : DetailPageModel
     public override async Task<Result> Save()
     {
         var result = await Mediator.Send(new SaveEnvironment(Environment));
-        
+
         if (result.IsFailed)
         {
             NotifySaveFailed(result);

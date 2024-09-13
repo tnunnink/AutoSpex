@@ -20,7 +20,7 @@ public class ExceptionBehavior<TRequest, TResponse, TException>(Notifier notifie
     {
         var error = new Error(Message).CausedBy(exception);
 
-        notifier.NotifyError("Request Error", error.Message);
+        notifier.ShowError("Request Error", error.Message);
 
         var response = new TResponse();
         response.Reasons.Add(error);

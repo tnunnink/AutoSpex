@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using AutoSpex.Client.Pages;
 using AutoSpex.Client.Resources;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using Avalonia.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
@@ -13,7 +15,7 @@ namespace AutoSpex.Client.Observers;
 
 public partial class SpecObserver : Observer<Spec>,
     IRecipient<Observer.Deleted>,
-    IRecipient<Observer.Request<SpecObserver>>
+    IRecipient<Observer.MakeCopy>
 {
     public SpecObserver(Spec model) : base(model)
     {
@@ -23,21 +25,13 @@ public partial class SpecObserver : Observer<Spec>,
         Verifications = new ObserverCollection<Criterion, CriterionObserver>(
             Model.Verifications, m => new CriterionObserver(m));
 
-        Range = Model.Range.Criterion;
-
         Track(nameof(Element));
         Track(nameof(ElementName));
         Track(nameof(FilterInclusion));
         Track(nameof(VerificationInclusion));
-        Track(nameof(RangeEnabled));
         Track(Filters);
         Track(Verifications);
-        Track(Range);
     }
-
-    public override Guid Id => Model.SpecId;
-    public NodeObserver Node => Model.Node;
-    public override string Name => Model.Name;
 
     public Element Element
     {
@@ -63,24 +57,18 @@ public partial class SpecObserver : Observer<Spec>,
         set => SetProperty(Model.VerificationInclusion, value, Model, (s, v) => s.VerificationInclusion = v);
     }
 
-    public bool RangeEnabled
-    {
-        get => Model.Range.Enabled;
-        set => SetProperty(Model.Range.Enabled, value, Model, (s, b) => s.Range.Enabled = b);
-    }
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowVerifications))]
+    [NotifyPropertyChangedFor(nameof(ShowFilters))]
+    private int _index;
 
+    public bool ShowVerifications => Index == 0;
+    public bool ShowFilters => Index == 1;
     public ObserverCollection<Criterion, CriterionObserver> Filters { get; }
     public ObserverCollection<Criterion, CriterionObserver> Verifications { get; }
-    public CriterionObserver Range { get; }
 
-    /// <inheritdoc />
-    /// <remarks>
-    /// Override to navigated the loaded node observer.
-    /// </remarks>
-    protected override Task Navigate()
-    {
-        return Navigator.Navigate(Node);
-    }
+    public ObservableCollection<CriterionObserver> SelectedFilters { get; } = [];
+    public ObservableCollection<CriterionObserver> SelectedVerifications { get; } = [];
 
     /// <summary>
     /// Updates the specification query element type and resets all the criteria. We may not do this in the future
@@ -110,11 +98,25 @@ public partial class SpecObserver : Observer<Spec>,
         Filters.Add(new CriterionObserver(new Criterion(Element.Type)));
     }
 
+    private void RemoveFilters(IEnumerable<CriterionObserver> criteria)
+    {
+    }
+
     /// <summary>
     /// Adds a verification to the specification.
     /// </summary>
     [RelayCommand(CanExecute = nameof(CanAddCriteria))]
     private void AddVerification()
+    {
+        if (Element == Element.Default) return;
+        Verifications.Add(new CriterionObserver(new Criterion(Element.Type)));
+    }
+
+    /// <summary>
+    /// Adds a verification to the specification.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanAddCriteria))]
+    private void AddRange()
     {
         if (Element == Element.Default) return;
         Verifications.Add(new CriterionObserver(new Criterion(Element.Type)));
@@ -159,93 +161,28 @@ public partial class SpecObserver : Observer<Spec>,
     {
         if (message.Observer is not CriterionObserver observer) return;
 
-        RemoveSelectedFilters(observer);
-        RemoveSelectedVerifications(observer);
+        //Removes only if it exists, so we don't need to perform checks first.
+        Filters.RemoveAny(x => x.Id == observer.Id);
+        Verifications.RemoveAny(x => x.Id == observer.Id);
     }
 
     /// <summary>
-    /// If the request matches the requirements then return this spec observer instance.
-    /// We want to handle requests for the spec id, or and id of a nested criterion or argument.
+    /// Handle reception of the make copy command by duplicating the recieved criterion and adding the copy to the
+    /// appropriate filters or verifications collections.
     /// </summary>
-    public void Receive(Request<SpecObserver> message)
+    public void Receive(MakeCopy message)
     {
-        if (message.HasReceivedResponse) return;
+        if (message.Observer is not CriterionObserver criterion) return;
 
-        if (Id == message.Id)
+        if (Filters.Any(x => x.Is(criterion)))
         {
-            message.Reply(this);
+            Filters.Add(new CriterionObserver(criterion.Model.Duplicate()));
         }
 
-        if (Filters.Any(c => c.Id == message.Id) ||
-            Filters.SelectMany(x => x.Arguments).Any(a => a.Id == message.Id))
+        if (Verifications.Any(x => x.Is(criterion)))
         {
-            message.Reply(this);
+            Filters.Add(new CriterionObserver(criterion.Model.Duplicate()));
         }
-
-        if (Verifications.Any(c => c.Id == message.Id) ||
-            Verifications.SelectMany(x => x.Arguments).Any(a => a.Id == message.Id))
-        {
-            message.Reply(this);
-        }
-    }
-
-    private void RemoveSelectedFilters(CriterionObserver observer)
-    {
-        if (!Filters.Contains(observer)) return;
-
-        var selected = Filters.Where(x => x.IsSelected).ToList();
-
-        foreach (var filter in selected)
-            Filters.Remove(filter);
-    }
-
-    private void RemoveSelectedVerifications(CriterionObserver observer)
-    {
-        if (!Verifications.Contains(observer)) return;
-
-        var selected = Verifications.Where(x => x.IsSelected).ToList();
-
-        foreach (var filter in selected)
-            Verifications.Remove(filter);
-    }
-    
-    /// <inheritdoc />
-    protected override IEnumerable<MenuActionItem> GenerateContextItems()
-    {
-        yield return new MenuActionItem
-        {
-            Header = "Open",
-            Icon = Resource.Find("IconLineLaunch"),
-            Command = NavigateCommand,
-            DetermineVisibility = () => HasSingleSelection
-        };
-
-        yield return new MenuActionItem
-        {
-            Header = "Rename",
-            Icon = Resource.Find("IconFilledPencil"),
-            Command = RenameCommand,
-            Gesture = new KeyGesture(Key.E, KeyModifiers.Control),
-            DetermineVisibility = () => HasSingleSelection
-        };
-
-        yield return new MenuActionItem
-        {
-            Header = "Duplicate",
-            Icon = Resource.Find("IconFilledClone"),
-            Command = DuplicateCommand,
-            Gesture = new KeyGesture(Key.D, KeyModifiers.Control),
-            DetermineVisibility = () => HasSingleSelection
-        };
-
-        yield return new MenuActionItem
-        {
-            Header = "Delete",
-            Icon = Resource.Find("IconFilledTrash"),
-            Classes = "danger",
-            Command = DeleteCommand,
-            Gesture = new KeyGesture(Key.Delete)
-        };
     }
 
     /// <inheritdoc />
@@ -260,10 +197,9 @@ public partial class SpecObserver : Observer<Spec>,
 
         yield return new MenuActionItem
         {
-            Header = "Rename",
+            Header = "Copy",
             Icon = Resource.Find("IconFilledPencil"),
             Command = RenameCommand,
-            Gesture = new KeyGesture(Key.E, KeyModifiers.Control)
         };
 
         yield return new MenuActionItem
@@ -285,5 +221,6 @@ public partial class SpecObserver : Observer<Spec>,
     }
 
     public static implicit operator SpecObserver(Spec model) => new(model);
+
     public static implicit operator Spec(SpecObserver observer) => observer.Model;
 }

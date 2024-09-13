@@ -63,17 +63,4 @@ public class TargetEnvironmentTests
         var others = list.Value.Where(e => e.EnvironmentId != target.EnvironmentId).ToList();
         others.Should().AllSatisfy(e => e.IsTarget.Should().BeFalse());
     }
-
-    [Test]
-    public async Task TargetEnvironment_Default_ShouldReturnSuccess()
-    {
-        using var context = new TestContext();
-        var mediator = context.Resolve<IMediator>();
-        var list = await mediator.Send(new ListEnvironments());
-        var target = list.Value.First();
-
-        var result = await mediator.Send(new TargetEnvironment(target.EnvironmentId));
-
-        result.IsSuccess.Should().BeTrue();
-    }
 }

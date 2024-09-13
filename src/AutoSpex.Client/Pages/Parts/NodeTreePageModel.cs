@@ -50,7 +50,7 @@ public partial class NodeTreePageModel : PageViewModel,
         //Indicate we have expanded all and toggles the state to the collapse button.
         IsExpanded = true;
     }
-    
+
     /// <summary>
     /// Collapses all nodes in the tree. This is implemented through the node IsExpanded property.
     /// </summary>
@@ -61,7 +61,7 @@ public partial class NodeTreePageModel : PageViewModel,
         {
             node.CollapseAll();
         }
-        
+
         //Indicate we have collapsed all and toggles the state to the expand button.
         IsExpanded = false;
     }
@@ -111,9 +111,12 @@ public partial class NodeTreePageModel : PageViewModel,
     public void Receive(Observer.GetSelected message)
     {
         if (message.Observer is not NodeObserver) return;
+        if (!Selected.Any(x => x.Is(message.Observer))) return;
 
         foreach (var observer in Selected)
+        {
             message.Reply(observer);
+        }
     }
 
     /// <summary>

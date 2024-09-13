@@ -24,7 +24,6 @@
                 <resources:AppThemeDefinition />
             </a:ModernTheme.Definition>
         </a:ModernTheme>
-        <StyleInclude Source="avares://AvaloniaEdit/Themes/Fluent/AvaloniaEdit.xaml" />
         <StyleInclude Source="Resources/Styles.axaml" />
         <StyleInclude Source="Components/Styles/AppButtons.axaml" />
     </Application.Styles>

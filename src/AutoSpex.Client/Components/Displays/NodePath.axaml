@@ -2,12 +2,13 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:components="using:AutoSpex.Client.Components"
-                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers">
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
 
     <Design.PreviewWith>
         <Border Padding="20">
             <ContentControl
-                Content="{x:Static components:DesignData.SpecNode}"
+                Content="{x:Static components:TestData.SpecNode}"
                 ContentTemplate="{DynamicResource NodePath}" />
         </Border>
     </Design.PreviewWith>
@@ -23,8 +24,9 @@
                     <Setter Property="Padding" Value="3" />
                     <Setter Property="Content">
                         <Template>
-                            <TextBlock
+                            <controls:HighlightableTextBlock
                                 Text="{Binding Name}"
+                                HighlightedText="{Binding FilterText}"
                                 Foreground="{Binding $parent[Button].Foreground}" />
                         </Template>
                     </Setter>

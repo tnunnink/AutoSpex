@@ -60,13 +60,10 @@ public class SaveEnvironmentTests
         
         //Create node.
         var container = Node.NewContainer();
+        var var01 = container.AddVariable("TestVar", 123);
+        var var02 = container.AddVariable("AnotherVar", Radix.Decimal);
+        var var03 = container.AddVariable("ComplexVar", new Tag("Test", new TIMER()));
         await mediator.Send(new CreateNode(container));
-       
-        //Create variables.
-        var var01 = new Variable("TestVar", 123);
-        var var02 = new Variable("AnotherVar", Radix.Decimal);
-        var var03 = new Variable("ComplexVar", new Tag("Test", new TIMER()));
-        await mediator.Send(new SaveVariables(container.NodeId, new[] { var01, var02, var03 }));
         
         //Create environment.
         var environment = new Environment();

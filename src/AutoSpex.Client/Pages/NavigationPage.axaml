@@ -32,13 +32,13 @@
                                 Placement="RightEdgeAlignedTop"
                                 ItemContainerTheme="{StaticResource ContextMenuItem}">
                                 <MenuItem
-                                    Command="{Binding AddSpecCommand}"
-                                    Icon="{StaticResource IconThemedSpec}"
-                                    Header="Specification" />
-                                <MenuItem
                                     Command="{Binding NewCollectionCommand}"
                                     Header="Collection"
                                     Icon="{StaticResource IconThemedCollection}" />
+                                <MenuItem
+                                    Command="{Binding AddSpecCommand}"
+                                    Icon="{StaticResource IconThemedSpec}"
+                                    Header="Specification" />
                                 <MenuItem
                                     Command="{Binding AddEnvironmentCommand}"
                                     Icon="{StaticResource IconThemedEnvironment}"
@@ -48,41 +48,45 @@
                     </Button>
 
                     <Button
+                        Command="{Binding ImportCommand}"
                         Theme="{StaticResource IconButton}"
                         properties:Icon.Theme="{StaticResource IconLineUpload}"
                         ToolTip.Tip="Import" />
 
-                    <Button
+                    <!--<Button
+                        Command="{Binding SearchCommand}"
                         Theme="{StaticResource IconButton}"
                         properties:Icon.Theme="{StaticResource IconLineSearch}"
                         Padding="1 0 0 0"
-                        ToolTip.Tip="Search" />
+                        ToolTip.Tip="Search" />-->
 
                     <Button
                         Command="{Binding OpenExplorerCommand}"
                         Theme="{StaticResource IconButton}"
                         properties:Icon.Theme="{StaticResource IconFilledBinoculars}"
                         HotKey="Ctrl+Shift+S"
-                        ToolTip.Tip="Source Explorer" />
+                        ToolTip.Tip="Explorer" />
 
-                    <Button
+                    <!--<Button
+                        Command="{Binding OpenHistoryCommand}"
                         Theme="{StaticResource IconButton}"
                         properties:Icon.Theme="{StaticResource IconLineHistory}"
                         HotKey="Ctrl+H"
-                        ToolTip.Tip="Run History" />
+                        ToolTip.Tip="History" />-->
 
-                    <Button
+                    <!--<Button
+                        Command="{Binding OpenVariablesCommand}"
                         Theme="{StaticResource IconButton}"
                         properties:Icon.Theme="{StaticResource IconLineAt}"
-                        ToolTip.Tip="Variables" />
+                        ToolTip.Tip="Variables" />-->
 
                 </StackPanel>
 
                 <StackPanel DockPanel.Dock="Bottom" Spacing="10">
                     <Button
                         Theme="{StaticResource IconButton}"
-                        properties:Icon.Theme="{StaticResource IconLineQuestion}"
-                        ToolTip.Tip="Information" />
+                        properties:Icon.Theme="{StaticResource IconFilledCog}"
+                        ToolTip.Tip="Settings" />
                     <Button
                         Theme="{StaticResource IconButton}"
                         properties:Icon.Theme="{StaticResource IconLineSidebar}"

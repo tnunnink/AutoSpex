@@ -21,19 +21,9 @@
             </a:ChromedTitleBar.LeftContent>
 
             <a:ChromedTitleBar.RightContent>
-                <StackPanel Orientation="Horizontal" Margin="5 0">
-
-                    <a:ToggleThemeButton
-                        Theme="{a:ControlTheme TitleBarToggleThemeButton}"
-                        ToolTip.Tip="Toggle Theme" />
-
-                    <Button Theme="{a:ControlTheme TitleBarButton}"
-                            ToolTip.Tip="Settings">
-                        <PathIcon Theme="{StaticResource IconLineGear}"
-                                  Foreground="{Binding $parent[Button].Foreground}" />
-                    </Button>
-
-                </StackPanel>
+                <a:ToggleThemeButton
+                    Theme="{a:ControlTheme TitleBarToggleThemeButton}"
+                    ToolTip.Tip="Toggle Theme" />
             </a:ChromedTitleBar.RightContent>
         </a:ChromedTitleBar>
 

@@ -38,16 +38,6 @@ public class Environment
     public List<Source> Sources { get; init; } = [];
 
     /// <summary>
-    /// A default/empty environment instance.
-    /// </summary>
-    public static Environment Default => new()
-    {
-        Name = "Default",
-        Comment = "A default environment config.",
-        IsTarget = true
-    };
-
-    /// <summary>
     /// Deserializes a JSON string representation into an Environment object.
     /// </summary>
     /// <param name="configuration">The JSON string representation of the Environment object.</param>

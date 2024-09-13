@@ -7,8 +7,12 @@
         <ResourceInclude Source="ArgumentEntry.axaml" />
         <ResourceInclude Source="CollectionEntry.axaml" />
         <ResourceInclude Source="CriterionEntry.axaml" />
+        <ResourceInclude Source="ElementEntry.axaml" />
+        <ResourceInclude Source="FilterEntry.axaml" />
         <ResourceInclude Source="NameEntry.axaml" />
         <ResourceInclude Source="QueryEntry.axaml" />
+        <ResourceInclude Source="SpecEntry.axaml" />
+        <ResourceInclude Source="VerificationEntry.axaml" />
     </ResourceDictionary.MergedDictionaries>
 
     <converters:DataTemplateConverter

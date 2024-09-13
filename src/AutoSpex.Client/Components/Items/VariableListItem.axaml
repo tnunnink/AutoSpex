@@ -10,9 +10,9 @@
 
     <Design.PreviewWith>
         <Border Padding="10" Height="400" Width="800">
-            <ListBox ItemsSource="{x:Static components:DesignData.Variables}"
+            <ListBox ItemsSource="{x:Static components:TestData.Variables}"
                      ItemTemplate="{DynamicResource VariableListItem}"
-                     ItemContainerTheme="{StaticResource ListBoxItemSection}"
+                     ItemContainerTheme="{StaticResource ListBoxItemEntry}"
                      BorderThickness="1"
                      BorderBrush="{a:ThemeResource Container1BackgroundBrush}"
                      CornerRadius="4" />
@@ -31,7 +31,7 @@
 
             <Grid ColumnDefinitions="*,Auto">
 
-                <Grid Grid.Column="0" Margin="0 0 10 0">
+                <Grid Grid.Column="0" Margin="0 0 10 0" Grid.IsSharedSizeScope="True">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" SharedSizeGroup="TypeGroup" />
                         <ColumnDefinition Width="Auto" SharedSizeGroup="NameGroup" />
@@ -124,9 +124,14 @@
 
             <Interaction.Behaviors>
                 <ExecuteCommandOnKeyDownBehavior
-                    Key="Delete" Command="{Binding DeleteCommand}" MarkAsHandled="True" FocusControl="Border" />
+                    Key="Delete" 
+                    Command="{Binding DeleteSelectedCommand}" 
+                    MarkAsHandled="True" 
+                    FocusControl="Border" />
                 <ExecuteCommandOnKeyDownBehavior
-                    Gesture="Ctrl+D" Command="{Binding DuplicateCommand}" MarkAsHandled="True" />
+                    Gesture="Ctrl+D" 
+                    Command="{Binding DuplicateCommand}" 
+                    MarkAsHandled="True" />
             </Interaction.Behaviors>
         </Border>
     </DataTemplate>

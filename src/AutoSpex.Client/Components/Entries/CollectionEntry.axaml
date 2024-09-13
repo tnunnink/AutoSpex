@@ -8,7 +8,7 @@
     <Design.PreviewWith>
         <Border Padding="20" Height="300" Width="600">
             <ContentControl
-                Content="{x:Static components:DesignData.CollectionValue}"
+                Content="{x:Static components:TestData.CollectionValue}"
                 ContentTemplate="{DynamicResource CollectionEntry}"
                 VerticalAlignment="Center" HorizontalAlignment="Center" />
         </Border>
@@ -23,6 +23,7 @@
 
             <controls:Entry.ItemTemplate>
                 <DataTemplate x:DataType="observers:ArgumentObserver">
+                    
                     <controls:Entry
                         Watermark="Enter value"
                         Value="{Binding Value}"
@@ -37,6 +38,7 @@
                             </MultiBinding>
                         </controls:Entry.IsEmpty>
                     </controls:Entry>
+                    
                 </DataTemplate>
             </controls:Entry.ItemTemplate>
         </controls:Entry>

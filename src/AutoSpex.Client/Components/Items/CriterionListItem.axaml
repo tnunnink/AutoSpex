@@ -1,21 +1,21 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
-                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
-                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
 
     <Design.PreviewWith>
         <ListBox
-            ItemsSource="{x:Static components:DesignData.Criteria}"
+            ItemsSource="{x:Static components:TestData.Criteria}"
             ItemTemplate="{DynamicResource CriterionListItem}"
-            ItemContainerTheme="{StaticResource ListBoxItemSection}"
+            ItemContainerTheme="{StaticResource ListBoxItemEntry}"
             SelectionMode="Multiple"
             BorderBrush="{a:ThemeResource Container1BorderBrush}"
             BorderThickness="1"
             CornerRadius="5"
             Background="Transparent"
-            Width="400" Height="200" Margin="10"/>
+            Width="600" Height="200" Margin="10" />
     </Design.PreviewWith>
 
     <DataTemplate x:Key="CriterionListItem" x:DataType="observers:CriterionObserver">
@@ -25,17 +25,17 @@
                 <MenuFlyout
                     Placement="Bottom"
                     ItemContainerTheme="{StaticResource MenuActionItem}"
-                    ItemsSource="{Binding MenuItems}" />
+                    ItemsSource="{Binding ContextItems}" />
             </Border.ContextFlyout>
 
             <Grid ColumnDefinitions="*,Auto">
-                
+
                 <ContentControl
                     Grid.Column="0"
                     Content="{Binding}"
                     ContentTemplate="{StaticResource CriterionEntry}" />
 
-                <Button
+                <!--<Button
                     Grid.Column="1"
                     properties:Icon.Theme="{StaticResource IconEllipsis}"
                     Theme="{StaticResource IconButtonSmall}"
@@ -49,15 +49,19 @@
                             ItemsSource="{Binding MenuItems}"
                             ItemContainerTheme="{StaticResource MenuActionItem}" />
                     </Button.Flyout>
-                </Button>
+                </Button>-->
             </Grid>
-
+            
             <Interaction.Behaviors>
                 <ExecuteCommandOnKeyDownBehavior
-                    Key="Delete"
-                    Command="{Binding DeleteCommand}"
-                    MarkAsHandled="True"
+                    Key="Delete" 
+                    Command="{Binding DeleteSelectedCommand}" 
+                    MarkAsHandled="True" 
                     FocusControl="Border" />
+                <ExecuteCommandOnKeyDownBehavior
+                    Gesture="Ctrl+D" 
+                    Command="{Binding DuplicateCommand}" 
+                    MarkAsHandled="True" />
             </Interaction.Behaviors>
         </Border>
     </DataTemplate>

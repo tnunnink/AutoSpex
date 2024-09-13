@@ -17,10 +17,10 @@ internal class GetReferenceVariableHandler(IConnectionManager manager)
     /// Will find the node id for the spec that contains the provided reference id.
     /// </summary>
     private const string GetNodeId =
-        "SELECT SpecId as NodeId FROM Spec WHERE Specification LIKE '%' || @ReferenceId || '%'";
+        "SELECT NodeId FROM Spec WHERE Config LIKE '%' || @ReferenceId || '%'";
 
     /// <summary>
-    /// Gets all nodes from the found node id and joins the variables defined for them.
+    /// Gets all node variables that are inherited by the provided node id.
     /// We use this to build the list of scoped variables by name.
     /// </summary>
     private const string GetInheritedVariables =
@@ -47,16 +47,16 @@ internal class GetReferenceVariableHandler(IConnectionManager manager)
 
         var nodeId = await connection.QuerySingleOrDefaultAsync<Guid>(GetNodeId, new { ReferenceId = id });
         if (nodeId == Guid.Empty)
-            return Result.Fail($"No node containing id was found: {id}");
+            return Result.Fail($"No spec containing id was found: {id}");
 
         var inherited = await connection.QueryAsync<Variable>(GetInheritedVariables, new { NodeId = nodeId });
-        
+
         var scoped = new Dictionary<string, Variable>();
         foreach (var variable in inherited)
             scoped.TryAdd(variable.Name, variable);
 
         return !scoped.TryGetValue(request.Reference.Name, out var target)
-            ? Result.Fail($"Variable '{request.Reference.Name}' not found in the scope of requesting id: {id}")
+            ? Result.Fail($"Variable '{request.Reference.Name}' not found in the scope of requesting reference: {id}")
             : Result.Ok(target);
     }
 }

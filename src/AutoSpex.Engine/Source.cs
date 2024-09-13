@@ -1,6 +1,5 @@
 ﻿using System.Text.Json.Serialization;
 using System.Xml.Linq;
-using JetBrains.Annotations;
 using L5Sharp.Core;
 
 namespace AutoSpex.Engine;
@@ -11,16 +10,8 @@ namespace AutoSpex.Engine;
 /// </summary>
 public class Source
 {
-    //The loaded L5X content. Once loaded, we don't want to reload each time a spec is run, so I am providing a reference
-    //to it and the means for releasing its memory when done.
-    private L5X? _content;
-
-    /// <summary>
-    /// The internal override lookup for this source.
-    /// </summary>
     private Dictionary<Guid, Variable>? _overrides;
 
-    [UsedImplicitly]
     public Source()
     {
         Uri = default!;
@@ -116,21 +107,21 @@ public class Source
     /// <returns>An instance of L5X representing the content of the source.</returns>
     public L5X Load()
     {
-        if (_content is not null)
-            return _content;
-
-        _content = L5X.Load(Uri.LocalPath);
-        InjectMetadata(_content);
-        return _content;
+        var file = L5X.Load(Uri.LocalPath);
+        InjectMetadata(file);
+        return file;
     }
-
+    
     /// <summary>
-    /// Releases the loaded content of the source, freeing up memory.
+    /// Loads the content of the source from the specified file path and returns it as an instance of L5X.
+    /// If the content has already been loaded, it is returned from memory without loading it again from the file.
     /// </summary>
-    public void Release()
+    /// <returns>An instance of L5X representing the content of the source.</returns>
+    public async Task<L5X> LoadAsync(CancellationToken token)
     {
-        _content = null;
-        GC.Collect();
+        var file = await L5X.LoadAsync(Uri.LocalPath, token);
+        InjectMetadata(file);
+        return file;
     }
 
     /// <summary>

@@ -16,15 +16,14 @@ namespace AutoSpex.Client.Pages;
 public partial class NodeDetailPageModel : DetailPageModel, IRecipient<EnvironmentObserver.Targeted>
 {
     /// <inheritdoc/>
-    public NodeDetailPageModel(NodeObserver node)
+    public NodeDetailPageModel(NodeObserver node) : base(node.Name)
     {
         Node = node;
     }
 
     public override string Route => $"{Node.Type}/{Node.Id}";
-    public override string Title => Node.Name;
     public override string Icon => Node.Type.Name;
-    public NodeObserver Node { get; }
+    public NodeObserver Node { get; private set; }
 
     [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(RunCommand))]
     private EnvironmentObserver? _environment;
@@ -34,31 +33,19 @@ public partial class NodeDetailPageModel : DetailPageModel, IRecipient<Environme
     /// <inheritdoc />
     public override async Task Load()
     {
-        await base.Load();
+        await LoadNode();
         await LoadTargetEnvironment();
-        SaveCommand.NotifyCanExecuteChanged();
+        await base.Load();
     }
 
     /// <inheritdoc />
-    public override async Task<Result> Save()
+    /// <remarks>
+    /// Check if the node is "virtual" (has no parent) and therfore not saved to the database
+    /// (this only applies to spec or container nodes). Create node if virtual. Otherwise, continue saving.
+    /// </remarks>
+    public override Task<Result> Save()
     {
-        //If this node is a collection or has an assigned parent already, we can continue saving.
-        if (Node.Type == NodeType.Collection || Node.ParentId != Guid.Empty) return await base.Save();
-
-        //If this node is virtual with no parent we need to select a parent and create then node before saving anything.
-        var parent = await Prompter.Show<NodeObserver?>(() => new SaveToContainerPageModel());
-        if (parent is null) return Result.Fail("Node requires parent to be saved.");
-
-        parent.Nodes.Add(Node);
-        var result = await Mediator.Send(new CreateNode(Node));
-        if (result.IsSuccess)
-        {
-            Messenger.Send(new Observer.Created(Node));
-            return await base.Save();
-        }
-
-        NotifySaveFailed(result);
-        return result;
+        return Node.IsVirtual ? CreateNode() : SaveNode();
     }
 
     /// <inheritdoc />
@@ -70,7 +57,7 @@ public partial class NodeDetailPageModel : DetailPageModel, IRecipient<Environme
 
     /// <summary>
     /// Runs this node against the target environment. This involves loading the environment and creating a new run
-    /// instance with this node (and all descendant nodes if a container). Then navigates the run detail page into view
+    /// instance with this node (and all descendant spec nodes if a container). Then navigates the run detail page into view
     /// which will execute the created run instance. 
     /// </summary>
     [RelayCommand(CanExecute = nameof(CanRun))]
@@ -79,13 +66,17 @@ public partial class NodeDetailPageModel : DetailPageModel, IRecipient<Environme
         if (Environment is null) return;
 
         //We need to load the full environment to get sources and overrides.
-        var result = await Mediator.Send(new LoadEnvironment(Environment.Id));
-        if (result.IsFailed) return;
-        var environment = new EnvironmentObserver(result.Value);
+        var loadEnvironment = await Mediator.Send(new LoadEnvironment(Environment.Id));
+        if (Notifier.ShowIfFailed(loadEnvironment, $"Failed to load the target environment {Environment.Name}")) return;
+        
+        //We also need to get the full node tree loaded to make sure to add descendants (which the local Node does not have).
+        var getNode = await Mediator.Send(new GetNode(Node.Id));
+        if (Notifier.ShowIfFailed(getNode)) return;
+        
+        //Build the run object.
+        var run = new RunObserver(new Run(loadEnvironment.Value, getNode.Value));
 
-        //Create new run instance with the target environment and current node.
-        var run = new Run(environment, Node);
-
+        //Navigate the run page model to run the container/spec.
         await Navigator.Navigate(() => new RunDetailPageModel(run));
     }
 
@@ -123,10 +114,21 @@ public partial class NodeDetailPageModel : DetailPageModel, IRecipient<Environme
     private async Task<IEnumerable<EnvironmentObserver>> FetchEnvironments()
     {
         var result = await Mediator.Send(new ListEnvironments());
+        return result.IsSuccess ? result.Value.Select(e => new EnvironmentObserver(e)) : [];
+    }
 
-        return result.IsSuccess
-            ? result.Value.Select(e => new EnvironmentObserver(e))
-            : Enumerable.Empty<EnvironmentObserver>();
+    /// <summary>
+    /// Loads the full node into the application, replacing the current node instance.
+    /// Nofitys changes and then starts tracking for changes.
+    /// </summary>
+    private async Task LoadNode()
+    {
+        var result = await Mediator.Send(new LoadNode(Node.Id));
+        if (result.IsFailed) return;
+
+        Node = new NodeObserver(result.Value);
+        OnPropertyChanged(nameof(Node));
+        Track(Node);
     }
 
     /// <summary>
@@ -137,5 +139,52 @@ public partial class NodeDetailPageModel : DetailPageModel, IRecipient<Environme
         var result = await Mediator.Send(new GetTargetEnvironment());
         if (result.IsFailed) return;
         Environment = new EnvironmentObserver(result.Value);
+    }
+
+    /// <summary>
+    /// Creates this node in the database by prompting the user to select a parent container, and then sending the
+    /// CreateNode request with the update node parent id. This should only be used for virtual nodes that have not
+    /// yet been saved to the database.
+    /// </summary>
+    private async Task<Result> CreateNode()
+    {
+        var parent = await Prompter.Show<NodeObserver?>(() => new SaveToContainerPageModel());
+
+        if (parent is null)
+            return Result.Fail("Node requires parent to be saved.");
+
+        parent.Nodes.Add(Node);
+
+        var result = await Mediator.Send(new CreateNode(Node));
+
+        if (result.IsSuccess)
+        {
+            Messenger.Send(new Observer.Created(Node));
+            NotifySaveSuccess();
+            AcceptChanges();
+            return Result.Ok();
+        }
+
+        NotifySaveFailed(result);
+        return result;
+    }
+
+    /// <summary>
+    /// Saves the content of this node to the database. This method is called assuming the node is not virtual
+    /// (i.e. has a parent node) so that we can find and update it's content. 
+    /// </summary>
+    private async Task<Result> SaveNode()
+    {
+        var result = await Mediator.Send(new SaveNode(Node));
+
+        if (result.IsSuccess)
+        {
+            NotifySaveSuccess();
+            AcceptChanges();
+            return Result.Ok();
+        }
+
+        NotifySaveFailed(result);
+        return result;
     }
 }

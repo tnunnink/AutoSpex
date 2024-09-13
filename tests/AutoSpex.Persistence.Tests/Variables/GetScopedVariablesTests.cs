@@ -1,5 +1,4 @@
 ﻿using L5Sharp.Core;
-using Argument = AutoSpex.Engine.Argument;
 using Task = System.Threading.Tasks.Task;
 
 namespace AutoSpex.Persistence.Tests.Variables;
@@ -25,9 +24,8 @@ public class GetScopedVariablesTests
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
         var node = Node.NewContainer();
+        node.AddVariable("MyVar", "Test Value");
         await mediator.Send(new CreateNode(node));
-        var variable = new Variable("MyVar", "Test Value");
-        await mediator.Send(new SaveVariables(node.NodeId, [variable]));
 
         var result = await mediator.Send(new GetScopedVariables(node.NodeId));
 
@@ -41,11 +39,10 @@ public class GetScopedVariablesTests
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
         var node = Node.NewContainer();
+        node.AddVariable("Var01", "Test");
+        node.AddVariable("Var02", "Test");
+        node.AddVariable("Var03", "Test");
         await mediator.Send(new CreateNode(node));
-        var var01 = new Variable("Var01", "Test");
-        var var02 = new Variable("Var02", "Test");
-        var var03 = new Variable("Var03", "Test");
-        await mediator.Send(new SaveVariables(node.NodeId, [var01, var02, var03]));
 
         var result = await mediator.Send(new GetScopedVariables(node.NodeId));
 
@@ -59,14 +56,14 @@ public class GetScopedVariablesTests
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
         var collection = Node.NewContainer();
+        collection.AddVariable("CollectionVar", 123);
         var folder = collection.AddContainer();
+        folder.AddVariable("FolderVar", "Test Value");
         var spec = folder.AddSpec();
+        spec.AddVariable("SpecVar", TagType.Base);
         await mediator.Send(new CreateNode(collection));
         await mediator.Send(new CreateNode(folder));
         await mediator.Send(new CreateNode(spec));
-        await mediator.Send(new SaveVariables(collection.NodeId, [new Variable("CollectionVar", 123)]));
-        await mediator.Send(new SaveVariables(folder.NodeId, [new Variable("FolderVar", "Test Value")]));
-        await mediator.Send(new SaveVariables(spec.NodeId, [new Variable("SpecVar", TagType.Base)]));
 
         var result = await mediator.Send(new GetScopedVariables(spec.NodeId));
 
@@ -80,14 +77,14 @@ public class GetScopedVariablesTests
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
         var collection = Node.NewContainer();
+        collection.AddVariable("MyVar01", 123);
         var folder = collection.AddContainer();
+        folder.AddVariable("MyVar01", "Test Value");
         var spec = folder.AddSpec();
+        spec.AddVariable("MyVar01", TagType.Base);
         await mediator.Send(new CreateNode(collection));
         await mediator.Send(new CreateNode(folder));
         await mediator.Send(new CreateNode(spec));
-        await mediator.Send(new SaveVariables(collection.NodeId, [new Variable("MyVar01", 123)]));
-        await mediator.Send(new SaveVariables(folder.NodeId, [new Variable("MyVar01", "Test Value")]));
-        await mediator.Send(new SaveVariables(spec.NodeId, [new Variable("MyVar01", TagType.Base)]));
 
         var result = await mediator.Send(new GetScopedVariables(spec.NodeId));
 

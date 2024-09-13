@@ -10,7 +10,7 @@ public class DeleteEnvironmentsTests
     {
         var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-        var environment = Environment.Default;
+        var environment = new Environment();
 
         var result = await mediator.Send(new DeleteEnvironments([environment.EnvironmentId]));
 
@@ -22,9 +22,9 @@ public class DeleteEnvironmentsTests
     {
         var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-        var first = Environment.Default;
-        var second = Environment.Default;
-        var third = Environment.Default;
+        var first = new Environment();
+        var second = new Environment();
+        var third = new Environment();
         await mediator.Send(new CreateEnvironment(first));
         await mediator.Send(new CreateEnvironment(second));
         await mediator.Send(new CreateEnvironment(third));

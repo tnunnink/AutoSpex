@@ -21,18 +21,29 @@ namespace AutoSpex.Client.Observers;
 public partial class NodeObserver : Observer<Node>,
     IRecipient<Observer.Created>,
     IRecipient<Observer.Deleted>,
-    IRecipient<Observer.Request<NodeObserver>>,
+    IRecipient<Observer.MakeCopy>,
+    IRecipient<Observer.Get<NodeObserver>>,
+    IRecipient<Observer.Find<NodeObserver>>,
     IRecipient<NodeObserver.Moved>,
     IRecipient<NodeObserver.ExpandTo>
 {
     public NodeObserver(Node node) : base(node)
     {
         Nodes = new ObserverCollection<Node, NodeObserver>(
-            () => Model.Nodes.Select(n => new NodeObserver(n)).ToList(),
-            (_, n) => Model.AddNode(n),
-            (_, n) => Model.AddNode(n),
-            (_, n) => Model.RemoveNode(n),
-            () => Model.ClearNodes());
+            refresh: () => Model.Nodes.Select(n => new NodeObserver(n)).ToList(),
+            add: (_, n) => Model.AddNode(n),
+            remove: (_, n) => Model.RemoveNode(n),
+            clear: () => Model.ClearNodes());
+
+        Nodes.Sort(n => n.Name, StringComparer.OrdinalIgnoreCase);
+
+        Specs = new ObserverCollection<Spec, SpecObserver>(
+            refresh: () => Model.Specs.Select(m => new SpecObserver(m)).ToList(),
+            add: (_, m) => Model.AddSpec(m),
+            remove: (_, n) => Model.RemoveSpec(n),
+            clear: () => Model.ClearSpecs());
+
+        Track(Specs);
     }
 
     public override Guid Id => Model.NodeId;
@@ -50,6 +61,7 @@ public partial class NodeObserver : Observer<Node>,
     }
 
     public ObserverCollection<Node, NodeObserver> Nodes { get; }
+    public ObserverCollection<Spec, SpecObserver> Specs { get; }
     public IEnumerable<NodeObserver> Crumbs => Model.Ancestors().Select(n => new NodeObserver(n));
     public IEnumerable<NodeObserver> Path => Model.AncestorsAndSelf().Select(n => new NodeObserver(n));
 
@@ -69,11 +81,27 @@ public partial class NodeObserver : Observer<Node>,
         return IsVisible;
     }
 
+    public bool FilterSingle(string? filter)
+    {
+        FilterText = filter;
+        return string.IsNullOrEmpty(filter) || Name.Satisfies(filter);
+    }
+
     #region Commands
 
+    /// <summary>
+    /// Adds a container node to the collection of nodes.
+    /// </summary>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     [RelayCommand]
     private Task AddContainer() => AddNode(new NodeObserver(Node.NewContainer()) { IsNew = true });
 
+    /// <summary>
+    /// Adds a new spec node to the list of child nodes.
+    /// </summary>
+    /// <returns>
+    /// A Task representing the asynchronous operation.
+    /// </returns>
     [RelayCommand]
     private Task AddSpec() => AddNode(new NodeObserver(Node.NewSpec()) { IsNew = true });
 
@@ -92,17 +120,15 @@ public partial class NodeObserver : Observer<Node>,
 
         //Update the database parent id for the selected node.
         var result = await Mediator.Send(new MoveNodes(selected.Select(n => n.Model), Id));
-        if (result.IsFailed) return;
+        if (Notifier.ShowIfFailed(result, $"Failed to move selected node to parent {Name}")) return;
 
-        //Add the selected nodes to the parent to update the parent id correctly.
         foreach (var moved in selected)
         {
-            if (Nodes.Contains(moved)) continue;
-            Nodes.Add(moved);
+            //Add the selected nodes to the parent to update the parent id correctly.
+            Nodes.TryAdd(node);
+            //Sends the message to other nodes to remove the moved nodes from their child nodes collection.
+            Messenger.Send(new Moved(moved));
         }
-
-        //Sends the message to other nodes to remove the moved nodes from their child nodes collection.
-        Messenger.Send(new Moved());
     }
 
     /// <summary>
@@ -120,7 +146,7 @@ public partial class NodeObserver : Observer<Node>,
     }
 
     /// <summary>
-    /// Command to allow the user to select a node to move the selected nodes to.
+    /// Command to allow the user to select a new node to move the selected nodes to.
     /// </summary>
     [RelayCommand]
     private async Task MoveTo()
@@ -131,21 +157,91 @@ public partial class NodeObserver : Observer<Node>,
 
         //We want to get the selected items from this nodes container to ensure we move all selected nodes.
         var selected = SelectedItems.Where(o => o is NodeObserver).Cast<NodeObserver>().ToList();
-        if (selected.Any(n => !Type.CanContain(n.Type) || Id == n.Id)) return;
+        if (selected.Any(n => !parent.Type.CanContain(n.Type) || parent.Id == n.Id)) return;
 
         //Update the database parent id for the selected node.
         var result = await Mediator.Send(new MoveNodes(selected.Select(n => n.Model), parent.Id));
-        if (result.IsFailed) return;
+        if (Notifier.ShowIfFailed(result, $"Failed to move selected node to parent {parent.Name}")) return;
 
-        //Add the selected nodes to the parent to update the parent id correctly.
-        foreach (var moved in selected)
+        foreach (var node in selected)
         {
-            if (parent.Nodes.Contains(moved)) continue;
-            parent.Nodes.Add(moved);
+            //Add the selected nodes to the parent to update the parent id correctly.
+            parent.Nodes.TryAdd(node);
+            //Sends the message to other nodes to remove the moved nodes from their child nodes collection.
+            Messenger.Send(new Moved(node));
+        }
+    }
+
+    /// <summary>
+    /// Command to run only selected specs from the parent container.
+    /// </summary>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    /// <remarks>
+    /// This command will allow the user to select which specs or nodes to run instead of running all descendants.
+    /// </remarks>
+    [RelayCommand]
+    private async Task Run()
+    {
+        //We need to load the full environment to get sources and overrides.
+        var loadEnvironment = await Mediator.Send(new LoadTargetEnvironment());
+        if (Notifier.ShowIfFailed(loadEnvironment, "Failed to load the target environment.")) return;
+
+        //Get selected node from the same container as this node.
+        var selected = SelectedItems.Where(x => x is NodeObserver).Cast<NodeObserver>().Select(n => n.Model);
+
+        //Build the run object.
+        var run = new Run(loadEnvironment.Value);
+        run.AddNodes(selected);
+
+        //Navigate the run page model which will then trigger the run process
+        await Navigator.Navigate(() => new RunDetailPageModel(run));
+    }
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// For a node we wil prompt the user for a new name, then duplicate the entire node instance, including
+    /// all variables, specs, and child nodes.
+    /// </remarks>
+    protected override async Task Duplicate()
+    {
+        var name = await Prompter.PromptNewName(this);
+        if (name is null) return;
+
+        var load = await Mediator.Send(new LoadNode(Id));
+        if (Notifier.ShowIfFailed(load)) return;
+
+        var duplicate = load.Value.Duplicate(name);
+
+        var result = await Mediator.Send(new CreateNode(duplicate));
+        if (Notifier.ShowIfFailed(result)) return;
+
+        Messenger.Send(new Created(new NodeObserver(duplicate)));
+        Notifier.ShowSuccess(
+            "Create node request complete",
+            $"{duplicate.Name} was successfully created @ {DateTime.Now}"
+        );
+    }
+
+    /// <summary>
+    /// A command to export the current node content to a package that the user can then transfer to different apps. 
+    /// </summary>
+    [RelayCommand]
+    private async Task Export()
+    {
+        if (Type != NodeType.Collection) return;
+
+        var export = await Mediator.Send(new ExportNode(Id));
+        if (export.IsFailed)
+        {
+            Notifier.NofityExportFailed(Name, export.Errors.Select(e => e.Message));
+            return;
         }
 
-        //Sends the message to other nodes to remove the moved nodes from their child nodes collection.
-        Messenger.Send(new Moved());
+        var result = await Shell.StorageProvider.ExportPackage(export.Value);
+        if (result.IsFailed)
+        {
+            Notifier.NofityExportFailed(Name, export.Errors.Select(e => e.Message));
+        }
     }
 
     /// <summary>
@@ -184,32 +280,6 @@ public partial class NodeObserver : Observer<Node>,
         {
             node.CollapseAll();
         }
-    }
-
-    /// <summary>
-    /// A command to run this node and all child specifications.
-    /// </summary>
-    [RelayCommand]
-    private async Task Run()
-    {
-        //We need to load the full environment to get sources and overrides.
-        var result = await Mediator.Send(new GetTargetEnvironment());
-        if (result.IsFailed) return;
-        var environment = new EnvironmentObserver(result.Value);
-
-        //Create new run instance with the target environment and current node.
-        var run = new Run(environment, this);
-
-        await Navigator.Navigate(() => new RunDetailPageModel(run));
-    }
-
-    /// <inheritdoc />
-    protected override async Task Duplicate()
-    {
-        var name = await Prompter.PromptNewName(this);
-        if (name is null) return;
-        
-        
     }
 
     #endregion
@@ -253,6 +323,19 @@ public partial class NodeObserver : Observer<Node>,
         Messenger.UnregisterAll(this);
     }
 
+    /// <summary>
+    /// Handle reception of messages to make a copy of a given spec instance. Check that the instance comes from
+    /// this node object, and that it is indeed a spec, and then create and add the duplicate.
+    /// </summary>
+    public void Receive(MakeCopy message)
+    {
+        if (message.Observer is not SpecObserver spec) return;
+        if (!Specs.Any(s => s.Is(spec))) return;
+
+        var duplicate = new SpecObserver(spec.Model.Duplicate());
+        Specs.Add(duplicate);
+    }
+
     /// <inheritdoc />
     public override void Receive(Renamed message)
     {
@@ -266,16 +349,14 @@ public partial class NodeObserver : Observer<Node>,
     }
 
     /// <summary>
-    /// Handles the observer moved message by removing from the old parent and adding to the new parent if the sent
+    /// Handles the observer moved message by removing from the old parent if the recieved
     /// node is a child of the old or new node.
     /// </summary>
     public void Receive(Moved message)
     {
-        //Remove any children that this node is no longer the parent of.
-        Nodes.RemoveAny(x => x.ParentId != Id);
-
-        //Resort to ensure proper order.
-        Nodes.Sort(n => n.Name, StringComparer.OrdinalIgnoreCase);
+        if (!Nodes.Contains(message.Node)) return;
+        if (message.Node.ParentId == Id) return;
+        Nodes.Remove(message.Node);
     }
 
     /// <summary>
@@ -292,11 +373,22 @@ public partial class NodeObserver : Observer<Node>,
     /// <summary>
     /// Respond to the request message of a node observer instance if the id matches this node's id.
     /// </summary>
-    public void Receive(Request<NodeObserver> message)
+    public void Receive(Get<NodeObserver> message)
     {
         if (message.HasReceivedResponse) return;
         if (Id != message.Id) return;
         message.Reply(this);
+    }
+
+    /// <summary>
+    /// Respond the to find request message for a node observer instance by checking the provided predicate.
+    /// </summary>
+    public void Receive(Find<NodeObserver> message)
+    {
+        if (message.Predicate.Invoke(this) && message.Responses.All(x => x.Id != Id))
+        {
+            message.Reply(this);
+        }
     }
 
     #endregion
@@ -307,7 +399,7 @@ public partial class NodeObserver : Observer<Node>,
     /// A message to be sent when nodes are moved to a different parent container. This is so that
     /// other node instances can respond by removing the moved node from its node children.
     /// </summary>
-    public record Moved;
+    public record Moved(NodeObserver Node);
 
     /// <summary>
     /// A message that informs the parent nodes to expand their container if the provided node is a child of the
@@ -320,6 +412,7 @@ public partial class NodeObserver : Observer<Node>,
     protected override Task<Result> UpdateName(string name)
     {
         Model.Name = name;
+
         //If this node has not been saved to the database, just return ok to allow the node to be renamed.
         //Otherwise, send the request to update the database.
         return IsVirtual ? Task.FromResult(Result.Ok()) : Mediator.Send(new RenameNode(this));
@@ -338,8 +431,7 @@ public partial class NodeObserver : Observer<Node>,
         Nodes.Add(node);
 
         var result = await Mediator.Send(new CreateNode(node));
-
-        if (result.IsFailed)
+        if (Notifier.ShowIfFailed(result, $"Failed to create new {node.Type} {node.Name}."))
         {
             Nodes.Remove(node);
             return;
@@ -389,6 +481,14 @@ public partial class NodeObserver : Observer<Node>,
 
         yield return new MenuActionItem
         {
+            Header = "Export",
+            Icon = Resource.Find("IconLineDownload"),
+            Command = ExportCommand,
+            DetermineVisibility = () => HasSingleSelection && IsSelected && Type == NodeType.Collection
+        };
+
+        yield return new MenuActionItem
+        {
             Header = "Rename",
             Icon = Resource.Find("IconFilledPencil"),
             Command = RenameCommand,
@@ -409,7 +509,8 @@ public partial class NodeObserver : Observer<Node>,
         {
             Header = "Move",
             Icon = Resource.Find("IconLineMove"),
-            Command = MoveToCommand
+            Command = MoveToCommand,
+            DetermineVisibility = () => Type != NodeType.Collection
         };
 
         yield return new MenuActionItem
@@ -417,7 +518,7 @@ public partial class NodeObserver : Observer<Node>,
             Header = "Delete",
             Icon = Resource.Find("IconFilledTrash"),
             Classes = "danger",
-            Command = DeleteCommand,
+            Command = DeleteSelectedCommand,
             Gesture = new KeyGesture(Key.Delete)
         };
     }

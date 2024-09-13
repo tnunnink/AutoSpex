@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoSpex.Client.Pages;
 using AutoSpex.Client.Resources;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
@@ -17,7 +18,8 @@ namespace AutoSpex.Client.Observers;
 public partial class EnvironmentObserver : Observer<Environment>,
     IRecipient<EnvironmentObserver.Targeted>,
     IRecipient<Observer.Deleted>,
-    IRecipient<Observer.Duplicated>
+    IRecipient<Observer.MakeCopy>
+    
 {
     /// <inheritdoc/>
     public EnvironmentObserver(Environment model) : base(model)
@@ -50,12 +52,38 @@ public partial class EnvironmentObserver : Observer<Environment>,
 
     public ObserverCollection<Source, SourceObserver> Sources { get; }
 
+    /// <summary>
+    /// Sends a target environment command to the mediator and notifies observers of the target.
+    /// </summary>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    /// <exception cref="Exception">An exception that occurred while sending the target environment command.</exception>
+    /// <remarks>
+    /// This method sends a target environment command to the mediator using the <see cref="TargetEnvironment"/> command object.
+    /// It awaits the command result and checks if it is failed. If the result is successful, it sends a <see cref="Targeted"/> message to the observers using the <see cref="Messenger"/> object.
+    /// </remarks>
     [RelayCommand]
     private async Task Target()
     {
         var result = await Mediator.Send(new TargetEnvironment(Id));
         if (result.IsFailed) return;
         Messenger.Send(new Targeted(this));
+    }
+
+    /// <summary>
+    /// Command to create and navigate a new run object using this environment observer instance.
+    /// </summary>
+    [RelayCommand]
+    private async Task Run()
+    {
+        //We need to load the full environment to get sources and overrides.
+        var load = await Mediator.Send(new LoadEnvironment(Id));
+        if (Notifier.ShowIfFailed(load, $"Failed to load environment {Name}.")) return;
+        
+        //Build the run object.
+        var run = new Run(load.Value);
+
+        //Navigate the run page model which will then trigger the run process
+        await Navigator.Navigate(() => new RunDetailPageModel(run));
     }
 
     /// <summary>
@@ -73,27 +101,25 @@ public partial class EnvironmentObserver : Observer<Environment>,
     }
 
     /// <summary>
-    /// Remove the source when requested.
+    /// Remove the source when the deleted message is recieved and the observer is a source.
     /// </summary>
     public void Receive(Deleted message)
     {
         if (message.Observer is not SourceObserver source) return;
-        Sources.Remove(source);
+        Sources.RemoveAny(s => s.Id == source.Id);
     }
 
     /// <summary>
     /// Handles the duplication of a child source observer.
     /// </summary>
     /// <param name="message"></param>
-    public void Receive(Duplicated message)
+    public void Receive(MakeCopy message)
     {
-        if (message.Source is not SourceObserver source) return;
-        if (message.Duplicate is not SourceObserver duplicate) return;
-
-        if (Sources.Contains(source) && !Sources.Contains(duplicate))
-        {
-            Sources.Add(duplicate);
-        }
+        if (message.Observer is not SourceObserver source) return;
+        if (!Sources.Any(s => s.Is(source))) return;
+        
+        var duplicate = new SourceObserver(new Source(source.Model.Uri));
+        Sources.Add(duplicate);
     }
 
     /// <inheritdoc />

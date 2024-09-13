@@ -1,0 +1,155 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
+                    xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
+
+    <Design.PreviewWith>
+        <Border Padding="30" Width="800" Height="300">
+            <ContentControl
+                Content="{x:Static components:TestData.SpecObserver}"
+                ContentTemplate="{DynamicResource SpecEntry}" />
+        </Border>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="SpecEntry" x:DataType="observers:SpecObserver">
+        <Border
+            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+            BorderThickness="{a:ThemeResource ButtonBorderThickness}"
+            CornerRadius="{a:ThemeResource ButtonCornerRadius}">
+
+            <StackPanel>
+                <Border
+                    Background="{a:ThemeResource Container2BackgroundBrush}"
+                    BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                    BorderThickness="0 0 0 1"
+                    CornerRadius="4 4 0 0"
+                    Padding="5">
+
+                    <Grid ColumnDefinitions="Auto,*,Auto">
+
+                        <ContentControl
+                            Grid.Column="0"
+                            Content="{Binding}"
+                            ContentTemplate="{StaticResource ElementEntry}"
+                            IsVisible="{Binding Element, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Element.Default}}"
+                            Margin="0 0 5 0" />
+
+                        <TabStrip
+                            x:Name="TabStrip"
+                            Grid.Column="1"
+                            BorderThickness="0"
+                            SelectedIndex="{Binding Index}"
+                            IsVisible="{Binding Element, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Element.Default}}">
+
+                            <TabStrip.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" Spacing="5" />
+                                </ItemsPanelTemplate>
+                            </TabStrip.ItemsPanel>
+
+                            <TabStrip.ItemContainerTheme>
+                                <ControlTheme BasedOn="{StaticResource TabStripItemSoft}" TargetType="TabStripItem">
+                                    <Setter Property="Padding" Value="5" />
+
+                                    <Style Selector="^:not(:selected)">
+                                        <Setter Property="Opacity" Value="0.7" />
+                                    </Style>
+                                </ControlTheme>
+                            </TabStrip.ItemContainerTheme>
+
+                            <TabStripItem>
+                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                    <PathIcon
+                                        Theme="{StaticResource IconFilledPatch}"
+                                        Classes="size-sm" />
+                                    <TextBlock
+                                        Text="Verifications" />
+                                    <ContentControl
+                                        Content="{Binding Verifications.Count}"
+                                        ContentTemplate="{StaticResource CountBubble}"
+                                        IsVisible="{Binding Verifications.Count}" />
+                                </StackPanel>
+                            </TabStripItem>
+
+                            <TabStripItem>
+                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                    <PathIcon
+                                        Theme="{StaticResource IconFilledFunnel}"
+                                        Classes="size-sm" />
+                                    <TextBlock
+                                        Text="Filters" />
+                                    <ContentControl
+                                        Content="{Binding Filters.Count}"
+                                        ContentTemplate="{StaticResource CountBubble}"
+                                        IsVisible="{Binding Filters.Count}" />
+                                </StackPanel>
+                            </TabStripItem>
+
+                        </TabStrip>
+
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="5" Margin="5 0">
+
+                            <Button
+                                Theme="{StaticResource IconButton}"
+                                properties:Icon.Theme="{StaticResource IconEllipsis}">
+
+                            </Button>
+
+                        </StackPanel>
+
+                    </Grid>
+                </Border>
+
+                <Panel>
+
+                    <controls:DefaultMessage
+                        VerticalAlignment="Center" Margin="10"
+                        IsVisible="{Binding Element, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:Element.Default}}"
+                        HeaderIcon="{StaticResource IconLineXml}"
+                        Header="Select target element"
+                        Message="Choose an element type to target for this criteria.">
+                        <controls:DefaultMessage.Action>
+                            <ContentControl
+                                Content="{Binding}"
+                                ContentTemplate="{StaticResource ElementEntry}"
+                                Margin="0 10" />
+                        </controls:DefaultMessage.Action>
+                    </controls:DefaultMessage>
+
+                    <ContentControl
+                        Content="{Binding}"
+                        ContentTemplate="{StaticResource VerificationEntry}">
+                        <ContentControl.IsVisible>
+                            <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                <Binding Path="ShowVerifications" />
+                                <Binding Path="Element"
+                                         Converter="{StaticResource NotEqualToConverter}"
+                                         ConverterParameter="{x:Static engine:Element.Default}" />
+                            </MultiBinding>
+                        </ContentControl.IsVisible>
+                    </ContentControl>
+
+                    <ContentControl
+                        Content="{Binding}"
+                        ContentTemplate="{StaticResource FilterEntry}">
+                        <ContentControl.IsVisible>
+                            <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                <Binding Path="ShowFilters" />
+                                <Binding Path="Element"
+                                         Converter="{StaticResource NotEqualToConverter}"
+                                         ConverterParameter="{x:Static engine:Element.Default}" />
+                            </MultiBinding>
+                        </ContentControl.IsVisible>
+                    </ContentControl>
+
+                </Panel>
+
+            </StackPanel>
+        </Border>
+    </DataTemplate>
+</ResourceDictionary>

@@ -14,7 +14,7 @@ public class ListEnvironmentTests
         var result = await mediator.Send(new ListEnvironments());
 
         result.IsSuccess.Should().BeTrue();
-        result.Value.Should().HaveCount(1);
+        result.Value.Should().BeEmpty();
     }
     
     [Test]
@@ -22,13 +22,13 @@ public class ListEnvironmentTests
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-        await mediator.Send(new CreateEnvironment(Environment.Default));
-        await mediator.Send(new CreateEnvironment(Environment.Default));
-        await mediator.Send(new CreateEnvironment(Environment.Default));
+        await mediator.Send(new CreateEnvironment(new Environment()));
+        await mediator.Send(new CreateEnvironment(new Environment()));
+        await mediator.Send(new CreateEnvironment(new Environment()));
 
         var result = await mediator.Send(new ListEnvironments());
 
         result.IsSuccess.Should().BeTrue();
-        result.Value.Should().HaveCount(4);
+        result.Value.Should().HaveCount(3);
     }
 }

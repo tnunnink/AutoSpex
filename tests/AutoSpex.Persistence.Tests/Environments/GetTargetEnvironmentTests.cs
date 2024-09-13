@@ -6,15 +6,14 @@ namespace AutoSpex.Persistence.Tests.Environments;
 public class GetTargetEnvironmentTests
 {
     [Test]
-    public async Task TargetEnvironment_NoSeed_ShouldReturnSuccessWithDefaultInstance()
+    public async Task TargetEnvironment_NoSeed_ShouldReturnFailed()
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
 
         var result = await mediator.Send(new GetTargetEnvironment());
 
-        result.IsSuccess.Should().BeTrue();
-        result.Value.Should().BeEquivalentTo(Environment.Default, options => options.Excluding(e => e.EnvironmentId));
+        result.IsFailed.Should().BeTrue();
     }
 
     [Test]

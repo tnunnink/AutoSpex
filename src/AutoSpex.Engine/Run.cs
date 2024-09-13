@@ -19,10 +19,15 @@ public class Run
         if (seed is not null)
             AddNodeTree(seed);
     }
+    
+    public Run(Environment environment, IEnumerable<Node> nodes)
+    {
+        Environment = environment;
+    }
 
     public Guid RunId { get; private set; } = Guid.NewGuid();
     public string Name => $"{Environment.Name} - Run Results";
-    public Environment Environment { get; set; } = Environment.Default;
+    public Environment Environment { get; set; } = new();
     public ResultState Result { get; private set; } = ResultState.None;
     public DateTime RanOn { get; private set; }
     public string RanBy { get; private set; } = string.Empty;
@@ -69,64 +74,57 @@ public class Run
     }
 
     /// <summary>
-    /// Executes the provided <see cref="Spec"/> objects against the configured Environment for this Run.
+    /// Executes the provided nodes against the configured environment for this run.
     /// </summary>
-    /// <param name="specs">The specifications to run.</param>
+    /// <param name="nodes">The specification nodes to run. These nodes should have any variables and specs loaded.</param>
     /// <param name="running">A callback prior to running each spec.
     /// This action give the outcome instance that is about to be run so that the UI can respond and update the result state.</param>
     /// <param name="complete">A callback after the spec has been run to completion.
     /// This action provides the outcome instance that ran so that the UI can respond and update the result state and result data.</param>
     /// <param name="token">The cancellation token to cancel the execution of this run.</param>
-    public async Task ExecuteAsync(IEnumerable<Spec> specs,
-        Action<Outcome>? running = default, Action<Outcome>? complete = default, CancellationToken token = default)
+    public async Task Execute(ICollection<Node> nodes,
+        Action<Outcome>? running = default,
+        Action<Outcome>? complete = default,
+        CancellationToken token = default)
     {
+        ClearOutcomes();
+        
         var sources = Environment.Sources.ToList();
-
-        foreach (var spec in specs)
+        
+        foreach (var source in sources)
         {
-            token.ThrowIfCancellationRequested();
-            if (!_outcomes.TryGetValue(spec.SpecId, out var outcome)) continue;
-
-            running?.Invoke(outcome);
-
-            var result = await spec.RunAllAsync(sources, token);
-            outcome.Update(result);
-
-            complete?.Invoke(outcome);
+            source.Override(nodes.SelectMany(n => n.Variables));
+            await RunAllNodes(nodes, source, running, complete, token);
         }
 
         Result = ResultState.MaxOrDefault(_outcomes.Select(o => o.Value.Result).ToList());
         RanOn = DateTime.Now;
         RanBy = System.Environment.UserName;
-
-        //After running, I want to try and release references to the L5X files that were loaded as we ran.
-        foreach (var source in sources)
-            source.Release();
     }
 
     /// <summary>
-    /// Executes the provided <see cref="Spec"/> objects against the configured Environment for this Run.
+    /// Iterates the provided node and runs the configured specification agains the provided source L5X file.
+    /// Executes the callbacks if provided. Throws exception on calcellation requested.
     /// </summary>
-    /// <param name="specs">The specifications to run.</param>
-    public void Execute(IEnumerable<Spec> specs)
+    private async Task RunAllNodes(IEnumerable<Node> nodes, Source source,
+        Action<Outcome>? running,
+        Action<Outcome>? complete,
+        CancellationToken token)
     {
-        var sources = Environment.Sources.ToList();
-        //todo if the environment contains override we could resolve those here.
+        var content = await source.LoadAsync(token);
 
-        foreach (var spec in specs)
+        foreach (var node in nodes)
         {
-            if (!_outcomes.TryGetValue(spec.SpecId, out var outcome)) continue;
+            token.ThrowIfCancellationRequested();
 
-            var result = spec.RunAll(sources);
-            outcome.Update(result);
+            if (!_outcomes.TryGetValue(node.NodeId, out var outcome))
+                continue; //todo this should probably never happen but if so then we want to report it not just pass up.
+
+            running?.Invoke(outcome);
+            var verification = await node.RunAll(content, token);
+            outcome.Add(verification);
+            complete?.Invoke(outcome);
         }
-
-        Result = ResultState.MaxOrDefault(_outcomes.Select(o => o.Value.Result).ToList());
-        RanOn = DateTime.Now;
-        RanBy = System.Environment.UserName;
-
-        foreach (var source in sources)
-            source.Release();
     }
 
     /// <summary>
@@ -163,6 +161,17 @@ public class Run
     private void AddOutcomeInternal(Outcome outcome)
     {
         ArgumentNullException.ThrowIfNull(outcome);
-        _outcomes.TryAdd(outcome.SpecId, outcome);
+        _outcomes.TryAdd(outcome.NodeId, outcome);
+    }
+
+    /// <summary>
+    /// Clears all outcome results prior to running.
+    /// </summary>
+    private void ClearOutcomes()
+    {
+        foreach (var outcome in _outcomes.Values)
+        {
+            outcome.Clear();
+        }
     }
 }

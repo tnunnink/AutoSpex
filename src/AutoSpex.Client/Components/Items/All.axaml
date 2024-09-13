@@ -10,7 +10,7 @@
         <ResourceInclude Source="OverrideListItem.axaml" />
         <ResourceInclude Source="PropertyTreeItem.axaml" />
         <ResourceInclude Source="SourceListItem.axaml" />
-        <ResourceInclude Source="SpecListItem.axaml" />
+        <ResourceInclude Source="NodeListItem.axaml" />
         <ResourceInclude Source="ValueListItem.axaml" />
         <ResourceInclude Source="VariableListItem.axaml" />
     </ResourceDictionary.MergedDictionaries>

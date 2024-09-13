@@ -23,7 +23,7 @@
                 Content="{x:Static engine:ResultState.Failed}"
                 ContentTemplate="{DynamicResource ResultPill}" />
             <ContentControl
-                Content="{x:Static engine:ResultState.Error}"
+                Content="{x:Static engine:ResultState.Errored}"
                 ContentTemplate="{DynamicResource ResultPill}" />
         </StackPanel>
     </Design.PreviewWith>

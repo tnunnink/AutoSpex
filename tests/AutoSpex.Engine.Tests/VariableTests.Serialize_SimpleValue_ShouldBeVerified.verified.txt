@@ -1,6 +1,5 @@
 ﻿{
   VariableId: Guid_1,
-  NodeId: Guid_Empty,
   Name: Test,
   Group: Number,
   Value: {

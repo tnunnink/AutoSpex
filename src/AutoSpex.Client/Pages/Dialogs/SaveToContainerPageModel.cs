@@ -1,30 +1,39 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using AutoSpex.Client.Observers;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
-using AutoSpex.Persistence;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 
 namespace AutoSpex.Client.Pages;
 
 public partial class SaveToContainerPageModel : PageViewModel
 {
+    private readonly List<NodeObserver> _container = [];
     public override bool KeepAlive => false;
-    public ObserverCollection<Node, NodeObserver> Containers { get; private set; } = [];
+    public ObservableCollection<NodeObserver> Containers { get; } = [];
 
     [ObservableProperty] private NodeObserver? _selected;
 
     [ObservableProperty] private string? _filter;
 
-    public override async Task Load()
+    public override Task Load()
     {
-        var result = await Mediator.Send(new GetContainerNodes());
-        if (result.IsFailed) return;
-        Containers = new ObserverCollection<Node, NodeObserver>(result.Value.ToList(), x => new NodeObserver(x));
+        var containers = Messenger.Send(new Observer.Find<NodeObserver>(n => n.Type != NodeType.Spec));
+
+        _container.Clear();
+        _container.AddRange(containers);
+
+        Containers.Refresh(_container);
+
+        return Task.CompletedTask;
     }
 
     partial void OnFilterChanged(string? value)
     {
-        Containers.Filter(x => x.Name.Satisfies(value));
+        var filtered = _container.Where(n => n.Name.Satisfies(value));
+        Containers.Refresh(filtered);
     }
 }

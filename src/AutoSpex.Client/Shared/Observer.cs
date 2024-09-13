@@ -138,10 +138,31 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
         IsVisible = string.IsNullOrEmpty(filter) || Name.Satisfies(filter);
         return IsVisible;
     }
+    
+    /// <summary>
+    /// Attempts to find an observer instance of the specified type using the provided <see cref="Id"/>.
+    /// This would allow an observer/page to request data from another observer/page assuming it is in memory.
+    /// This allows for loose coupling of parent child relationships and the ability to get a references to a specific
+    /// object from across pages in the application.
+    /// </summary>
+    /// <typeparam name="TObserver">The observer type to find.</typeparam>
+    /// <returns>
+    /// The observer instance of the specified type that contains (depending on how handler logic) the provided id.
+    /// </returns>
+    /// <remarks>
+    /// If the instance is not in memory, and therefore the message has no response, this method returns
+    /// null, and it is up to the caller to handle this situation.
+    /// </remarks>
+    protected TObserver? GetObserver<TObserver>(Guid id) where TObserver : Observer
+    {
+        var request = new Get<TObserver>(id);
+        Messenger.Send(request);
+        return request.HasReceivedResponse ? request.Response : default;
+    }
 
     /// <summary>
     /// Attempts to find a parent observer instance of the specified type using the current observer <see cref="Id"/>.
-    /// This would allow observer or page to request it's parent from another observer/page assuming it is in memory.
+    /// This would allow observer or page to request its parent from another observer/page assuming it is in memory.
     /// This allows for loose coupling of parent child relationships and the ability to get a references to a specific
     /// object from across pages in the application.
     /// </summary>
@@ -155,25 +176,7 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     /// </remarks>
     protected TObserver? FindParent<TObserver>() where TObserver : Observer
     {
-        var request = new Request<TObserver>(Id);
-        Messenger.Send(request);
-        return request.HasReceivedResponse ? request.Response : default;
-    }
-
-    /// <summary>
-    /// Attempts to find an observer instance of the specified type using the provided observer id.
-    /// This would allow one observer to request another observer type assuming it is in memory.
-    /// This allows for loose coupling of observer types and the ability to get a reference to a specific object from
-    /// different pages or observers in the application.
-    /// </summary>
-    /// <param name="id">The unique <see cref="Guid"/> id of the observer to find.</param>
-    /// <typeparam name="TObserver">The observer type to find.</typeparam>
-    /// <returns>
-    /// If found, the observer instance of the specified type having the provided id; otherwise, <c>null</c>.
-    /// </returns>
-    protected TObserver? FindObserver<TObserver>(Guid id) where TObserver : Observer
-    {
-        var request = new Request<TObserver>(id);
+        var request = new Get<TObserver>(Id);
         Messenger.Send(request);
         return request.HasReceivedResponse ? request.Response : default;
     }
@@ -195,7 +198,7 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     /// or pages that the object has been deleted, so they can respond accordingly.
     /// </remarks>
     [RelayCommand]
-    protected virtual async Task Delete()
+    private async Task Delete()
     {
         if (PromptForDeletion)
         {
@@ -204,7 +207,8 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
         }
 
         var result = await DeleteItems([this]);
-        if (result.IsFailed) return;
+        if (Notifier.ShowIfFailed(result,
+                $"Failed to delete {Name} due to {result.Reasons.FirstOrDefault()?.Message}")) return;
 
         Messenger.Send(new Deleted(this));
     }
@@ -217,7 +221,7 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     /// </summary>
     /// <returns>A task representing the asynchronous operation.</returns>
     [RelayCommand]
-    protected virtual async Task DeleteSelected()
+    private async Task DeleteSelected()
     {
         var selected = SelectedItems.ToList();
 
@@ -236,22 +240,6 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     }
 
     /// <summary>
-    /// A command to duplicate the <see cref="Observer"/> object in the database and UI. The default
-    /// implementation does nothing and not all observers may need this, but it will be supported by more than one so
-    /// this is to consolidate the code. 
-    /// </summary>
-    /// <returns>The <see cref="Task"/> representing the async function to perform.</returns>
-    [RelayCommand]
-    protected virtual Task Duplicate() => Task.CompletedTask;
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <returns></returns>
-    [RelayCommand]
-    protected virtual Task Export() => Task.CompletedTask;
-
-    /// <summary>
     /// A command that updates the name of the underlying item model and sends a command to update the persisted value.
     /// </summary>
     /// <param name="name">The new name of the item.</param>
@@ -268,10 +256,28 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
         if (string.IsNullOrEmpty(name)) return;
 
         var result = await UpdateName(name);
-        if (result.IsFailed) return;
+        if (Notifier.ShowIfFailed(result, $"Failed to rename item: {result.Reasons}")) return;
 
         Name = name;
         Messenger.Send(new Renamed(this));
+        IsNew = false;
+    }
+
+    /// <summary>
+    /// A command to duplicate the <see cref="Observer"/> object in the database and UI. The default
+    /// implementation does nothing and not all observers may need this, but it will be supported by more than one so
+    /// this is to consolidate the code. 
+    /// </summary>
+    /// <returns>The <see cref="Task"/> representing the async function to perform.</returns>
+    [RelayCommand]
+    protected virtual Task Duplicate() => Task.FromResult(Messenger.Send(new MakeCopy(this)));
+
+    /// <summary>
+    /// A command to reset the IsNew state of...
+    /// </summary>
+    [RelayCommand]
+    private void ResetIsNew()
+    {
         IsNew = false;
     }
 
@@ -285,15 +291,11 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     /// </summary>
     public virtual void Receive(Renamed message)
     {
-        var other = message.Observer;
+        if (Id != message.Observer.Id) return;
 
-        if (Id != other.Id) return;
-
-        if (Name != other.Name)
+        if (Name != message.Observer.Name)
         {
-            //todo there is still a big with environment types here. It has to do with the order in which messages are received by objects.
-            Name = other.Name;
-            /*Messenger.Send(new Renamed(this));*/
+            Name = message.Observer.Name;
         }
 
         OnPropertyChanged(nameof(Name));
@@ -324,22 +326,33 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     public record Renamed(Observer Observer);
 
     /// <summary>
-    /// A message that indicates the observer was duplicated and a new instance was created. This can be handled by
-    /// parent observers or pages to refresh the UI to show the newly duplicated instance.
+    /// A message that indicates the observer needs to be duplicated or copied.
+    /// This can be handled by parent observers or pages to refresh the UI to show the newly duplicated instance.
+    /// This is by default what the <see cref="Shared.Observer.DuplicateCommand"/> sends.
     /// </summary>
-    /// <param name="Source">The original observer instance that was the source of duplication.</param>
-    /// <param name="Duplicate">The new observer instance that represents the duplicate.</param>
-    public record Duplicated(Observer Source, Observer Duplicate);
+    /// <param name="Observer">The observer instance that needs to be duplicated.</param>
+    public record MakeCopy(Observer Observer);
 
     /// <summary>
-    /// A request for an in memory instance of an observer that has an id equal to the provided id, or a child observer
+    /// A request to get an in memory instance of an observer that has an id equal to the provided id, or a child observer
     /// equal to the provided id, depending on how the recipient logic is implemented.
     /// </summary>
     /// <param name="id">The observer id which either requested the instance or is the id of the instance to return.</param>
     /// <typeparam name="TObserver">The instance of the observer that matches the request criteria.</typeparam>
-    public class Request<TObserver>(Guid id) : RequestMessage<TObserver> where TObserver : Observer
+    public class Get<TObserver>(Guid id) : RequestMessage<TObserver> where TObserver : Observer
     {
         public Guid Id { get; } = id;
+    }
+
+    /// <summary>
+    /// A request to retrieve in memory instances of an observer that satisfy the provided predicate.
+    /// </summary>
+    /// <param name="predicate">The predicate the observer must satisfy.</param>
+    /// <typeparam name="TObserver">The type of observer the request is representing.</typeparam>
+    public class Find<TObserver>(Func<TObserver, bool> predicate)
+        : CollectionRequestMessage<TObserver> where TObserver : Observer
+    {
+        public Func<TObserver, bool> Predicate { get; } = predicate;
     }
 
     /// <summary>
@@ -399,7 +412,7 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
 
     /// <summary>
     /// The task to delete the provided items from the database if required by this observer. This is called by
-    /// the <see cref="DeleteCommand"/> and <see cref="DeleteSelectedCommand"/>. By default this simply returns an OK
+    /// the <see cref="DeleteCommand"/> and <see cref="DeleteSelectedCommand"/>. By default, this simply returns an OK
     /// result to allow deletion. Deriving classes implement this method to forward call to specific mediator request.
     /// </summary>
     /// <param name="observers">The observer instances to delete. This could be selected items or single item.</param>
@@ -409,12 +422,12 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     /// <summary>
     /// Gets the configured collection of <see cref="MenuActionItem"/> to display in the UI.
     /// </summary>
-    protected virtual IEnumerable<MenuActionItem> GenerateMenuItems() => Enumerable.Empty<MenuActionItem>();
+    protected virtual IEnumerable<MenuActionItem> GenerateMenuItems() => [];
 
     /// <summary>
     /// Gets the configured collection of <see cref="MenuActionItem"/> to display in the UI.
     /// </summary>
-    protected virtual IEnumerable<MenuActionItem> GenerateContextItems() => Enumerable.Empty<MenuActionItem>();
+    protected virtual IEnumerable<MenuActionItem> GenerateContextItems() => [];
 }
 
 /// <summary>

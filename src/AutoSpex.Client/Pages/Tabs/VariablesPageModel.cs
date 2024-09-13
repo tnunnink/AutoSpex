@@ -1,68 +1,77 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
 using AutoSpex.Client.Observers;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
-using AutoSpex.Persistence;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using FluentResults;
 
 namespace AutoSpex.Client.Pages;
 
 public partial class VariablesPageModel : PageViewModel,
-    IRecipient<Observer.GetSelected>,
     IRecipient<Observer.Deleted>,
-    IRecipient<VariableObserver.GetNames>
+    IRecipient<Observer.MakeCopy>,
+    IRecipient<Observer.GetSelected>
 {
     private readonly NodeObserver _node;
 
     /// <inheritdoc/>
-    public VariablesPageModel(NodeObserver node)
+    public VariablesPageModel(NodeObserver node) : base("Variables")
     {
         _node = node;
-    }
 
-    public override string Route => $"{_node.Type}/{_node.Id}/{Title}";
-    public override string Title => "Variables";
-    public ObserverCollection<Variable, VariableObserver> Variables { get; } = [];
-    public ObservableCollection<VariableObserver> Selected { get; } = [];
+        Variables = new ObserverCollection<Variable, VariableObserver>(
+            refresh: () => _node.Model.Variables.Select(v => new VariableObserver(v)).ToList(),
+            add: (_, v) => _node.Model.AddVariable(v),
+            remove: (_, v) => _node.Model.RemoveVariable(v)
+        );
 
-    public override async Task Load()
-    {
-        var result = await Mediator.Send(new GetNodeVariables(_node.Id));
-        if (result.IsFailed) return;
-        Variables.Refresh(result.Value.Select(v => new VariableObserver(v)));
         Track(Variables);
     }
 
-    public override Task<Result> Save()
-    {
-        var variables = Variables.Select(v => v.Model);
-        return Mediator.Send(new SaveVariables(_node.Id, variables));
-    }
+    public override string Route => $"{_node.Type}/{_node.Id}/{Title}";
+    public override string Icon => Title;
+    public ObserverCollection<Variable, VariableObserver> Variables { get; }
+    public ObservableCollection<VariableObserver> Selected { get; } = [];
 
+    /// <summary>
+    /// Command to add a new variable to the node. Perform sort after to ensure proper order.
+    /// </summary>
     [RelayCommand]
     private void AddVariable()
     {
-        Variables.Add(new VariableObserver(_node));
+        Variables.Add(new VariableObserver(new Variable()));
+        Variables.Sort(x => x.Name, StringComparer.OrdinalIgnoreCase);
     }
 
+    /// <summary>
+    /// Handle reception of the delete message. If the observer is a variable remove any instance with the matching id.
+    /// </summary>
     public void Receive(Observer.Deleted message)
     {
         if (message.Observer is not VariableObserver variable) return;
-        Variables.Remove(variable);
+        Variables.RemoveAny(v => v.Id == variable.Id);
     }
-
-    public void Receive(VariableObserver.GetNames message)
+    
+    /// <summary>
+    /// Handle reception of messages to make a copy of a given spec instance. Check that the instance comes from
+    /// this node object, and that it is indeed a spec, and then create and add the duplicate.
+    /// </summary>
+    public void Receive(Observer.MakeCopy message)
     {
-        if (message.HasReceivedResponse) return;
-        if (message.Variable.Node?.Id != _node.Id) return;
-        var names = Variables.Where(v => v.Id != message.Variable.Id).Select(v => v.Name);
-        message.Reply(names);
+        if (message.Observer is not VariableObserver variable) return;
+        if (!Variables.Any(x => x.Is(variable))) return;
+
+        var duplicate = new VariableObserver(variable.Model.Duplicate());
+        Variables.Add(duplicate);
+        Variables.Sort(x => x.Name, StringComparer.OrdinalIgnoreCase);
     }
 
+    /// <summary>
+    /// Handle reception of the get selected variables message. If this page contains the instance return the bound
+    /// selected collection of variables.
+    /// </summary>
     public void Receive(Observer.GetSelected message)
     {
         if (message.Observer is not VariableObserver variable) return;

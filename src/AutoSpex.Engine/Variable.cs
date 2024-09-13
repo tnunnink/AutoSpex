@@ -16,14 +16,14 @@ public class Variable : IEquatable<Variable>
     {
     }
 
-    /// <summary>
+    /*/// <summary>
     /// Creates a new <see cref="Variable"/> having the provided node id.
     /// </summary>
     /// <param name="nodeId">The id of the node this variable belongs to.</param>
     public Variable(Guid nodeId) : this()
     {
         NodeId = nodeId;
-    }
+    }*/
 
     /// <summary>
     /// Creates a new <see cref="Variable"/> with the provided type group.
@@ -56,13 +56,13 @@ public class Variable : IEquatable<Variable>
     [JsonInclude]
     public Guid VariableId { get; private init; } = Guid.NewGuid();
 
-    /// <summary>
+    /*/// <summary>
     /// The <see cref="Guid"/> that identifies the node this variable is defined for.
     /// By default, this is an empty guid, but should be set upon retrieval from the database so that the object can
     /// identify which node it is scoped to.
     /// </summary>
     [JsonInclude]
-    public Guid NodeId { get; private set; } = Guid.Empty;
+    public Guid NodeId { get; private set; } = Guid.Empty;*/
 
     /// <summary>
     /// The string name used to identify the <see cref="Variable"/>.
@@ -84,13 +84,30 @@ public class Variable : IEquatable<Variable>
     /// </summary>
     [JsonConverter(typeof(JsonObjectConverter))]
     [JsonInclude]
-    public object? Value { get; set; } = string.Empty;
+    public object? Value { get; set; }
 
     /// <summary>
     /// The type of the variable value.
     /// </summary>
     [JsonIgnore]
     public Type? Type => Value?.GetType();
+
+    /// <summary>
+    /// Returns a new instance of the <see cref="Variable"/> class with the same name, group, and value
+    /// as the current instance. 
+    /// </summary>
+    /// <returns>
+    /// A new instance of the <see cref="Variable"/> class with the same values as the current instance.
+    /// </returns>
+    public Variable Duplicate()
+    {
+        return new Variable
+        {
+            Name = Name,
+            Group = Group,
+            Value = Value
+        };
+    }
 
     /// <summary>
     /// Creates a <see cref="Engine.Reference"/> object that refers to the name of this Variable.

@@ -132,6 +132,7 @@
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <StackPanel.Styles>
                             <Style Selector="Button">
+                                <Setter Property="Theme" Value="{a:ControlTheme ButtonSubtle}" />
                                 <Setter Property="Margin" Value="5" />
                                 <Setter Property="Width" Value="40" />
                                 <Setter Property="Height" Value="40" />
@@ -139,6 +140,25 @@
                                 <Setter Property="HorizontalAlignment" Value="Center" />
                             </Style>
                         </StackPanel.Styles>
+
+                        <Button
+                            Command="{Binding NewCollectionCommand}"
+                            ToolTip.Tip="New Collection">
+                            <PathIcon Theme="{StaticResource IconThemedCollection}" />
+                        </Button>
+
+                        <Button
+                            Command="{Binding NewSpecCommand}"
+                            ToolTip.Tip="New Specification">
+                            <PathIcon Theme="{StaticResource IconThemedSpec}" />
+                        </Button>
+
+                        <Button
+                            Command="{Binding NewEnvironmentCommand}"
+                            ToolTip.Tip="New Environment">
+                            <PathIcon Theme="{StaticResource IconThemedEnvironment}" />
+                        </Button>
+                        
                     </StackPanel>
                 </StackPanel>
             </StackPanel>

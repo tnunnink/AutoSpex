@@ -19,7 +19,6 @@ public class EvaluationObserver(Evaluation model) : Observer<Evaluation>(model)
     public ObservableCollection<ValueObserver> Expected => new(Model.Expected.Select(x => new ValueObserver(x)));
     public ValueObserver Actual => new(Model.Actual);
     public Exception? Error => Model.Error;
-    public Guid SourceId => Model.SourceId;
     public string SourceName => Model.SourceName;
     public string SourcePath => Model.SourcePath;
 

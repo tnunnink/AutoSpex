@@ -12,7 +12,7 @@ using FluentResults;
 
 namespace AutoSpex.Client.Shared;
 
-public abstract partial class DetailPageModel : PageViewModel,
+public abstract partial class DetailPageModel(string? title) : PageViewModel(title),
     IRecipient<Observer.Renamed>,
     IRecipient<Observer.Deleted>,
     IRecipient<NavigationRequest>
@@ -131,7 +131,7 @@ public abstract partial class DetailPageModel : PageViewModel,
     public void Receive(Observer.Renamed message)
     {
         if (!Route.Contains(message.Observer.Id.ToString())) return;
-        OnPropertyChanged(nameof(Title));
+        Title = message.Observer.Name;
     }
 
     /// <summary>
@@ -174,7 +174,7 @@ public abstract partial class DetailPageModel : PageViewModel,
     {
         var title = $"{Icon} Saved";
         var message = $"{Title} was saved successfully @ {DateTime.Now.ToShortTimeString()}";
-        Notifier.NotifySuccess(title, message);
+        Notifier.ShowSuccess(title, message);
     }
 
     /// <summary>
@@ -184,7 +184,7 @@ public abstract partial class DetailPageModel : PageViewModel,
     {
         const string title = "Saved Failed";
         var message = $"{Title} failed to save @ {DateTime.Now.ToShortTimeString()} {result.Reasons}";
-        Notifier.NotifyError(title, message);
+        Notifier.ShowError(title, message);
     }
 
     //We need to notify the SaveCommand when the IsChange property changes since that is what it is controlled on.

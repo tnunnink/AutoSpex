@@ -81,6 +81,12 @@ public class Argument : IEquatable<Argument>
         };
     }
 
+    /// <summary>
+    /// Creates a new <see cref="Argument"/> with the same value as the current instance.
+    /// </summary>
+    /// <returns>A new <see cref="Argument"/> instance with the same value.</returns>
+    public Argument Duplicate() => new(Value);
+
     /// <inheritdoc />
     public override string ToString() => Value.ToText();
 

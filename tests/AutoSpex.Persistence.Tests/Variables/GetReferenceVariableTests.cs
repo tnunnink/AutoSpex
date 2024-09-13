@@ -22,22 +22,23 @@ public class GetReferenceVariableTests
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
+
         var node = Node.NewContainer();
-        var spec = node.AddSpec();
+        node.AddVariable("MyVar", "MyTagName");
         await mediator.Send(new CreateNode(node));
+
+        var reference = new Reference("MyVar");
+        var spec = node.AddSpec("Test",
+            s => s.Verify("TagName", Operation.Containing, reference)
+        );
         await mediator.Send(new CreateNode(spec));
-        var variable = new Variable("MyVar", "MyTagName");
-        await mediator.Send(new SaveVariables(node.NodeId, [variable]));
-        var specification = new Spec(spec);
-        var reference = variable.Reference();
-        specification.ShouldHave(Element.Tag.Property("TagName"), Operation.Containing, reference);
-        await mediator.Send(new SaveSpec(specification));
 
         var result = await mediator.Send(new GetReferenceVariable(reference));
 
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().NotBeNull();
-        result.Value.Should().BeEquivalentTo(variable);
+        result.Value.Name.Should().Be("MyVar");
+        result.Value.Value.Should().Be("MyTagName");
     }
 
     [Test]
@@ -46,24 +47,28 @@ public class GetReferenceVariableTests
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
         var collection = Node.NewContainer();
+        collection.AddVariable("CollectionVar", 123);
         var folder = collection.AddContainer();
+        folder.AddVariable("FolderVar", "Test Value");
         var spec = folder.AddSpec();
+        spec.AddVariable("SpecVar", TagType.Base);
         await mediator.Send(new CreateNode(collection));
         await mediator.Send(new CreateNode(folder));
         await mediator.Send(new CreateNode(spec));
-        await mediator.Send(new SaveVariables(collection.NodeId, [new Variable("CollectionVar", 123)]));
-        await mediator.Send(new SaveVariables(folder.NodeId, [new Variable("FolderVar", "Test Value")]));
-        await mediator.Send(new SaveVariables(spec.NodeId, [new Variable("SpecVar", TagType.Base)]));
-        var specification = new Spec(spec);
+
         var reference = new Reference("SpecVar");
-        specification.ShouldHave(Element.Tag.Property("TagType"), Operation.EqualTo, reference);
-        await mediator.Send(new SaveSpec(specification));
+        spec.AddSpec(c =>
+        {
+            c.Find(Element.Tag);
+            c.Filter("Name", Operation.EqualTo, "SomeName");
+            c.Verify("TagType", Operation.EqualTo, reference);
+        });
+        await mediator.Send(new SaveNode(spec));
 
         var result = await mediator.Send(new GetReferenceVariable(reference));
 
         result.IsSuccess.Should().BeTrue();
         result.Value.VariableId.Should().NotBeEmpty();
-        result.Value.NodeId.Should().Be(spec.NodeId);
         result.Value.Name.Should().Be("SpecVar");
         result.Value.Value.Should().Be(TagType.Base);
         result.Value.Type.Should().Be(typeof(TagType));
@@ -76,24 +81,28 @@ public class GetReferenceVariableTests
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
         var collection = Node.NewContainer();
+        collection.AddVariable("MyVar01", 123);
         var folder = collection.AddContainer();
+        folder.AddVariable("MyVar01", "Test Value");
         var spec = folder.AddSpec();
+        spec.AddVariable("MyVar01", TagType.Base);
         await mediator.Send(new CreateNode(collection));
         await mediator.Send(new CreateNode(folder));
         await mediator.Send(new CreateNode(spec));
-        await mediator.Send(new SaveVariables(collection.NodeId, [new Variable("MyVar01", 123)]));
-        await mediator.Send(new SaveVariables(folder.NodeId, [new Variable("MyVar01", "Test Value")]));
-        await mediator.Send(new SaveVariables(spec.NodeId, [new Variable("MyVar01", TagType.Base)]));
-        var specification = new Spec(spec);
+
         var reference = new Reference("MyVar01");
-        specification.ShouldHave(Element.Tag.Property("TagType"), Operation.EqualTo, reference);
-        await mediator.Send(new SaveSpec(specification));
+        spec.AddSpec(c =>
+        {
+            c.Find(Element.Tag);
+            c.Filter("Name", Operation.EqualTo, "SomeName");
+            c.Verify("TagType", Operation.EqualTo, reference);
+        });
+        await mediator.Send(new SaveNode(spec));
 
         var result = await mediator.Send(new GetReferenceVariable(reference));
 
         result.IsSuccess.Should().BeTrue();
         result.Value.VariableId.Should().NotBeEmpty();
-        result.Value.NodeId.Should().Be(spec.NodeId);
         result.Value.Name.Should().Be("MyVar01");
         result.Value.Value.Should().Be(TagType.Base);
         result.Value.Type.Should().Be(typeof(TagType));

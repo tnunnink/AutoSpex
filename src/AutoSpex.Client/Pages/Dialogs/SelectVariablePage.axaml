@@ -74,8 +74,8 @@
             <controls:DefaultMessage
                 IsVisible="{Binding !Variables.Count}"
                 HeaderIcon="{StaticResource IconThemedVariable}"
-                HeaderText="No variables defined"
-                CustomMessage="Variables can be defined for any container or spec under 'Variables'." />
+                Header="No variables defined"
+                Message="Variables can be defined for any container or spec under 'Variables'." />
         </DockPanel>
 
         <Interaction.Behaviors>

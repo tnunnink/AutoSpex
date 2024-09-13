@@ -6,7 +6,7 @@ public class DeleteNodesTests
     [Test]
     public async Task DeleteNodes_SingleNonExistingNode_ShouldReturnSuccess()
     {
-        var context = new TestContext();
+        using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
 
         var result = await mediator.Send(new DeleteNodes([Guid.NewGuid()]));
@@ -17,7 +17,7 @@ public class DeleteNodesTests
     [Test]
     public async Task DeleteNodes_SingleContainerNode_ShouldReturnSuccess()
     {
-        var context = new TestContext();
+        using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
         var node = Node.NewContainer();
         await mediator.Send(new CreateNode(node));
@@ -32,7 +32,7 @@ public class DeleteNodesTests
     [Test]
     public async Task DeleteNodes_SingleSpecNode_ShouldReturnSuccess()
     {
-        var context = new TestContext();
+        using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
         var node = Node.NewSpec();
         await mediator.Send(new CreateNode(node));

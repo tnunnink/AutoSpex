@@ -1,5 +1,4 @@
 ﻿using System.Text.Json.Serialization;
-using Ardalis.SmartEnum.SystemTextJson;
 
 namespace AutoSpex.Engine;
 
@@ -8,71 +7,85 @@ namespace AutoSpex.Engine;
 /// </summary>
 public class Outcome
 {
+    private readonly List<Verification> _verifications = [];
+
     public Outcome(Node node)
     {
         ArgumentNullException.ThrowIfNull(node);
-
-        if (node.Type != NodeType.Spec)
-            throw new ArgumentException("Node type invalid for outcome object.");
-
-        SpecId = node.NodeId;
+        NodeId = node.NodeId;
         Name = node.Name;
-        Result = ResultState.None;
-        Verifications = [];
-    }
-
-    public Outcome(Spec spec, long duration, ICollection<Verification> verifications)
-    {
-        ArgumentNullException.ThrowIfNull(spec);
-        SpecId = spec.SpecId;
-        Name = spec.Name;
-        Result = ResultState.MaxOrDefault(verifications.Select(x => x.Result).ToList());
-        Duration = duration;
-        Verifications = verifications;
     }
 
     /// <summary>
-    /// The <see cref="Guid"/> which represents the Spec configuration this outcome was produced by.
+    /// The <see cref="Guid"/> that uniquely represents this outcome object.
     /// </summary>
-    [JsonInclude]
-    public Guid SpecId { get; private set; }
+    public Guid OutcomeId { get; private init; } = Guid.NewGuid();
+
+    /// <summary>
+    /// The id of the node that this outcome represents. 
+    /// </summary>
+    public Guid NodeId { get; private init; }
 
     /// <summary>
     /// The name of the spec that this outcome represents.
     /// </summary>
-    [JsonInclude]
-    public string Name { get; private set; }
+    public string Name { get; private init; }
 
     /// <summary>
     /// The result of the outcome. This represents if the spec passed, failed, errored, etc.
     /// </summary>
-    [JsonConverter(typeof(SmartEnumNameConverter<ResultState, int>))]
-    [JsonInclude]
-    public ResultState Result { get; private set; }
+    public ResultState Result { get; private set; } = ResultState.None;
 
     /// <summary>
     /// Represents the duration of running a spec against a given source or collection of sources.
     /// </summary>
-    [JsonInclude]
     public long Duration { get; private set; }
 
     /// <summary>
-    /// the collection of <see cref="Verification"/> that contain the detailed checks and corresponding result and source
-    /// information. This data is not serialized and persisted to conserve space.
+    /// The evaluations associated with the Outcome object.
     /// </summary>
-    [JsonIgnore]
-    public IEnumerable<Verification> Verifications { get; private set; }
+    /// <remarks>
+    /// This property represents the evaluations performed by the Verifications associated with the Outcome object. Evaluations are generated based on the criteria defined in the Spec and the data from the Source.
+    /// </remarks>
+    public IEnumerable<Evaluation> Evaluations => _verifications.SelectMany(v => v.Evaluations);
 
     /// <summary>
-    /// Updates the current Outcome object with the values from the provided Outcome object.
+    /// Adds a verification to the collection of verifications for the outcome and updates the local result state.
     /// </summary>
-    /// <param name="result">The Outcome object containing the updated values.</param>
-    public void Update(Outcome result)
+    /// <param name="verification">The verification to be added.</param>
+    public void Add(Verification verification)
     {
-        ArgumentNullException.ThrowIfNull(result);
+        ArgumentNullException.ThrowIfNull(verification);
+        _verifications.Add(verification);
+        UpdateResult();
+    }
 
-        Result = result.Result;
-        Duration = result.Duration;
-        Verifications = result.Verifications;
+    /// <summary>
+    /// Removes a verification from the collection of verifications for the outcome and updates the local result state.
+    /// </summary>
+    /// <param name="verification">The verification to be removed.</param>
+    public void Reomve(Verification verification)
+    {
+        ArgumentNullException.ThrowIfNull(verification);
+        _verifications.Remove(verification);
+        UpdateResult();
+    }
+
+    /// <summary>
+    /// Clears the collection of verifications for the outcome and updates the local result state.
+    /// </summary>
+    public void Clear()
+    {
+        _verifications.Clear();
+        UpdateResult();
+    }
+
+    /// <summary>
+    /// Updates the local result state of the outcome using the current collection of verifications.
+    /// </summary>
+    private void UpdateResult()
+    {
+        Result = ResultState.MaxOrDefault(_verifications.Select(v => v.Result).ToList());
+        Duration = _verifications.Sum(v => v.Duration);
     }
 }
