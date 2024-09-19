@@ -138,27 +138,6 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
         IsVisible = string.IsNullOrEmpty(filter) || Name.Satisfies(filter);
         return IsVisible;
     }
-    
-    /// <summary>
-    /// Attempts to find an observer instance of the specified type using the provided <see cref="Id"/>.
-    /// This would allow an observer/page to request data from another observer/page assuming it is in memory.
-    /// This allows for loose coupling of parent child relationships and the ability to get a references to a specific
-    /// object from across pages in the application.
-    /// </summary>
-    /// <typeparam name="TObserver">The observer type to find.</typeparam>
-    /// <returns>
-    /// The observer instance of the specified type that contains (depending on how handler logic) the provided id.
-    /// </returns>
-    /// <remarks>
-    /// If the instance is not in memory, and therefore the message has no response, this method returns
-    /// null, and it is up to the caller to handle this situation.
-    /// </remarks>
-    protected TObserver? GetObserver<TObserver>(Guid id) where TObserver : Observer
-    {
-        var request = new Get<TObserver>(id);
-        Messenger.Send(request);
-        return request.HasReceivedResponse ? request.Response : default;
-    }
 
     /// <summary>
     /// Attempts to find a parent observer instance of the specified type using the current observer <see cref="Id"/>.
@@ -174,9 +153,9 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     /// If the instance is not in memory, and therefore the message has no response, this method returns
     /// null, and it is up to the caller to handle this situation.
     /// </remarks>
-    protected TObserver? FindParent<TObserver>() where TObserver : Observer
+    protected TObserver? GetObserver<TObserver>(Func<TObserver, bool> predicate) where TObserver : Observer
     {
-        var request = new Get<TObserver>(Id);
+        var request = new Get<TObserver>(predicate);
         Messenger.Send(request);
         return request.HasReceivedResponse ? request.Response : default;
     }
@@ -334,18 +313,23 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     public record MakeCopy(Observer Observer);
 
     /// <summary>
-    /// A request to get an in memory instance of an observer that has an id equal to the provided id, or a child observer
-    /// equal to the provided id, depending on how the recipient logic is implemented.
+    /// A request to get an in memory instance of an observer that satisfies the provided condition. This will return
+    /// a single observer instance, and if multiple are in memory, should return the first instance that recieves the
+    /// message.
     /// </summary>
-    /// <param name="id">The observer id which either requested the instance or is the id of the instance to return.</param>
-    /// <typeparam name="TObserver">The instance of the observer that matches the request criteria.</typeparam>
-    public class Get<TObserver>(Guid id) : RequestMessage<TObserver> where TObserver : Observer
+    /// <param name="predicate">The predicate the observer must satisfy.</param>
+    /// <typeparam name="TObserver">The type of observer the request is representing.</typeparam>
+    /// <remarks>
+    /// This is in contrast to <see cref="Find{TObserver}"/> which can return all observers that satisfy
+    /// the provided predicate.
+    /// </remarks>
+    public class Get<TObserver>(Func<TObserver, bool> predicate) : RequestMessage<TObserver> where TObserver : Observer
     {
-        public Guid Id { get; } = id;
+        public Func<TObserver, bool> Predicate { get; } = predicate;
     }
 
     /// <summary>
-    /// A request to retrieve in memory instances of an observer that satisfy the provided predicate.
+    /// A request to retrieve all in memory instances of and observer that satisfy the provided predicate.
     /// </summary>
     /// <param name="predicate">The predicate the observer must satisfy.</param>
     /// <typeparam name="TObserver">The type of observer the request is representing.</typeparam>

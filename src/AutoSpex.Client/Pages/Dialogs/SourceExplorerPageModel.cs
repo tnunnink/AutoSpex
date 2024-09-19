@@ -43,7 +43,7 @@ public partial class SourceExplorerPageModel(Element element) : PageViewModel,
     public override async Task Load()
     {
         var result = await Mediator.Send(new ListAllSources());
-        if (result.IsFailed) return;
+        if (Notifier.ShowIfFailed(result)) return;
 
         Sources.Refresh(result.Value.Select(s => new SourceObserver(s)));
         await ChangeSource(Sources.FirstOrDefault());
@@ -52,8 +52,7 @@ public partial class SourceExplorerPageModel(Element element) : PageViewModel,
     [RelayCommand]
     private async Task ChangeSource(SourceObserver? source)
     {
-        if (source is null)
-            return;
+        if (source is null) return;
 
         if (Source is not null)
             Source.IsActive = false;

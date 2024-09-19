@@ -20,7 +20,7 @@
 
             <DockPanel LastChildFill="False">
 
-                <StackPanel DockPanel.Dock="Top" Spacing="10">
+                <StackPanel DockPanel.Dock="Top" Spacing="15">
 
                     <Button
                         Theme="{StaticResource IconButton}"
@@ -53,43 +53,38 @@
                         properties:Icon.Theme="{StaticResource IconLineUpload}"
                         ToolTip.Tip="Import" />
 
-                    <!--<Button
-                        Command="{Binding SearchCommand}"
-                        Theme="{StaticResource IconButton}"
-                        properties:Icon.Theme="{StaticResource IconLineSearch}"
-                        Padding="1 0 0 0"
-                        ToolTip.Tip="Search" />-->
-
                     <Button
                         Command="{Binding OpenExplorerCommand}"
                         Theme="{StaticResource IconButton}"
-                        properties:Icon.Theme="{StaticResource IconFilledBinoculars}"
+                        properties:Icon.Theme="{StaticResource IconLineSearch}"
                         HotKey="Ctrl+Shift+S"
-                        ToolTip.Tip="Explorer" />
+                        ToolTip.Tip="Search" />
 
-                    <!--<Button
+                    <Button
                         Command="{Binding OpenHistoryCommand}"
                         Theme="{StaticResource IconButton}"
                         properties:Icon.Theme="{StaticResource IconLineHistory}"
                         HotKey="Ctrl+H"
-                        ToolTip.Tip="History" />-->
+                        ToolTip.Tip="History" />
 
-                    <!--<Button
+                    <Button
                         Command="{Binding OpenVariablesCommand}"
                         Theme="{StaticResource IconButton}"
                         properties:Icon.Theme="{StaticResource IconLineAt}"
-                        ToolTip.Tip="Variables" />-->
+                        ToolTip.Tip="Variables" />
 
                 </StackPanel>
 
-                <StackPanel DockPanel.Dock="Bottom" Spacing="10">
+                <StackPanel DockPanel.Dock="Bottom" Spacing="15">
                     <Button
+                        Command="{Binding OpenSettingsCommand}"
                         Theme="{StaticResource IconButton}"
                         properties:Icon.Theme="{StaticResource IconFilledCog}"
                         ToolTip.Tip="Settings" />
                     <Button
                         Theme="{StaticResource IconButton}"
                         properties:Icon.Theme="{StaticResource IconLineSidebar}"
+                        FontSize="14"
                         ToolTip.Tip="Hide Navigation">
                         <Interaction.Behaviors>
                             <behaviors:ToggleDrawerOnClickBehavior />

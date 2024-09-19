@@ -66,4 +66,10 @@ public class ProofTests
 
         verification.Result.Should().Be(ResultState.Passed);
     }
+
+    [Test]
+    public void METHOD()
+    {
+        
+    }
 }

@@ -21,7 +21,6 @@ namespace AutoSpex.Client.Observers;
 public partial class NodeObserver : Observer<Node>,
     IRecipient<Observer.Created>,
     IRecipient<Observer.Deleted>,
-    IRecipient<Observer.MakeCopy>,
     IRecipient<Observer.Get<NodeObserver>>,
     IRecipient<Observer.Find<NodeObserver>>,
     IRecipient<NodeObserver.Moved>,
@@ -36,14 +35,6 @@ public partial class NodeObserver : Observer<Node>,
             clear: () => Model.ClearNodes());
 
         Nodes.Sort(n => n.Name, StringComparer.OrdinalIgnoreCase);
-
-        Specs = new ObserverCollection<Spec, SpecObserver>(
-            refresh: () => Model.Specs.Select(m => new SpecObserver(m)).ToList(),
-            add: (_, m) => Model.AddSpec(m),
-            remove: (_, n) => Model.RemoveSpec(n),
-            clear: () => Model.ClearSpecs());
-
-        Track(Specs);
     }
 
     public override Guid Id => Model.NodeId;
@@ -61,7 +52,6 @@ public partial class NodeObserver : Observer<Node>,
     }
 
     public ObserverCollection<Node, NodeObserver> Nodes { get; }
-    public ObserverCollection<Spec, SpecObserver> Specs { get; }
     public IEnumerable<NodeObserver> Crumbs => Model.Ancestors().Select(n => new NodeObserver(n));
     public IEnumerable<NodeObserver> Path => Model.AncestorsAndSelf().Select(n => new NodeObserver(n));
 
@@ -298,7 +288,7 @@ public partial class NodeObserver : Observer<Node>,
         if (Id != node.ParentId) return;
         if (Nodes.Any(n => n.Id == node.Id)) return;
 
-        Nodes.Add(node);
+        Nodes.Add(new NodeObserver(node));
         Nodes.Sort(n => n.Name, StringComparer.OrdinalIgnoreCase);
         node.Locate();
     }
@@ -321,19 +311,6 @@ public partial class NodeObserver : Observer<Node>,
         if (Id != node.Id) return;
         Nodes.ToList().ForEach(n => Messenger.Send(new Deleted(n)));
         Messenger.UnregisterAll(this);
-    }
-
-    /// <summary>
-    /// Handle reception of messages to make a copy of a given spec instance. Check that the instance comes from
-    /// this node object, and that it is indeed a spec, and then create and add the duplicate.
-    /// </summary>
-    public void Receive(MakeCopy message)
-    {
-        if (message.Observer is not SpecObserver spec) return;
-        if (!Specs.Any(s => s.Is(spec))) return;
-
-        var duplicate = new SpecObserver(spec.Model.Duplicate());
-        Specs.Add(duplicate);
     }
 
     /// <inheritdoc />
@@ -376,8 +353,11 @@ public partial class NodeObserver : Observer<Node>,
     public void Receive(Get<NodeObserver> message)
     {
         if (message.HasReceivedResponse) return;
-        if (Id != message.Id) return;
-        message.Reply(this);
+
+        if (message.Predicate.Invoke(this))
+        {
+            message.Reply(this);
+        }
     }
 
     /// <summary>

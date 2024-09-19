@@ -228,6 +228,7 @@ public class Node : IEquatable<Node>
     public void AddNode(Node node)
     {
         ArgumentNullException.ThrowIfNull(node);
+        if (_nodes.Contains(node)) return;
 
         node.Parent?.RemoveNode(node);
 
@@ -536,10 +537,17 @@ public class Node : IEquatable<Node>
         //todo there is potential to configure how the node runs the set of specs. Otherwise it just runs each ony and merges results into a single verification.
         //todo there might also be consideration to run descendent specs from a given node, but not sure...
         ResolveReferences();
-        var verifications = await Task.WhenAll(Specs.Select(s => s.RunAsync(content, token)));
+
+        var verifications = new List<Verification>();
+
+        foreach (var spec in _specs)
+        {
+            var verification = await spec.RunAsync(content, token);
+            verifications.Add(verification);
+        }
+        
         return Verification.Merge(verifications);
     }
-
 
     /// <inheritdoc />
     public override string ToString() => Name;

@@ -15,7 +15,9 @@ namespace AutoSpex.Client.Observers;
 
 public partial class SpecObserver : Observer<Spec>,
     IRecipient<Observer.Deleted>,
-    IRecipient<Observer.MakeCopy>
+    IRecipient<Observer.MakeCopy>,
+    IRecipient<Observer.GetSelected>,
+    IRecipient<Observer.Get<SpecObserver>>
 {
     public SpecObserver(Spec model) : base(model)
     {
@@ -32,6 +34,9 @@ public partial class SpecObserver : Observer<Spec>,
         Track(Filters);
         Track(Verifications);
     }
+
+    public override Guid Id => Model.SpecId;
+    protected override bool PromptForDeletion => false;
 
     public Element Element
     {
@@ -57,18 +62,12 @@ public partial class SpecObserver : Observer<Spec>,
         set => SetProperty(Model.VerificationInclusion, value, Model, (s, v) => s.VerificationInclusion = v);
     }
 
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(ShowVerifications))]
-    [NotifyPropertyChangedFor(nameof(ShowFilters))]
-    private int _index;
-
-    public bool ShowVerifications => Index == 0;
-    public bool ShowFilters => Index == 1;
     public ObserverCollection<Criterion, CriterionObserver> Filters { get; }
     public ObserverCollection<Criterion, CriterionObserver> Verifications { get; }
-
     public ObservableCollection<CriterionObserver> SelectedFilters { get; } = [];
     public ObservableCollection<CriterionObserver> SelectedVerifications { get; } = [];
+
+    [ObservableProperty] private bool _showFilters;
 
     /// <summary>
     /// Updates the specification query element type and resets all the criteria. We may not do this in the future
@@ -98,10 +97,6 @@ public partial class SpecObserver : Observer<Spec>,
         Filters.Add(new CriterionObserver(new Criterion(Element.Type)));
     }
 
-    private void RemoveFilters(IEnumerable<CriterionObserver> criteria)
-    {
-    }
-
     /// <summary>
     /// Adds a verification to the specification.
     /// </summary>
@@ -126,6 +121,15 @@ public partial class SpecObserver : Observer<Spec>,
     /// Determines if we can add and filter or verifications which should depend on if an element is selected.
     /// </summary>
     private bool CanAddCriteria() => Element != Element.Default;
+
+    /// <summary>
+    /// Changes the state of the filter inclusion property to the opposite value.
+    /// </summary>
+    [RelayCommand]
+    private void ToggleCriteriaView()
+    {
+        ShowFilters = !ShowFilters;
+    }
 
     /// <summary>
     /// Changes the state of the filter inclusion property to the opposite value.
@@ -185,16 +189,41 @@ public partial class SpecObserver : Observer<Spec>,
         }
     }
 
+    /// <summary>
+    /// Handle reception of the get selected message by replying with the parent's selected filters or verifications
+    /// depending on the recieved observer instance.
+    /// </summary>
+    public void Receive(GetSelected message)
+    {
+        if (message.Observer is not CriterionObserver criterion) return;
+
+        if (Filters.Any(x => x.Is(criterion)))
+        {
+            foreach (var filter in SelectedFilters)
+                message.Reply(filter);
+        }
+
+        // ReSharper disable once InvertIf don't care
+        if (Verifications.Any(x => x.Is(criterion)))
+        {
+            foreach (var filter in SelectedVerifications)
+                message.Reply(filter);
+        }
+    }
+
+    public void Receive(Get<SpecObserver> message)
+    {
+        if (message.HasReceivedResponse) return;
+
+        if (message.Predicate.Invoke(this))
+        {
+            message.Reply(this);
+        }
+    }
+
     /// <inheritdoc />
     protected override IEnumerable<MenuActionItem> GenerateMenuItems()
     {
-        yield return new MenuActionItem
-        {
-            Header = "Open",
-            Icon = Resource.Find("IconLineLaunch"),
-            Command = NavigateCommand
-        };
-
         yield return new MenuActionItem
         {
             Header = "Copy",
@@ -221,6 +250,5 @@ public partial class SpecObserver : Observer<Spec>,
     }
 
     public static implicit operator SpecObserver(Spec model) => new(model);
-
     public static implicit operator Spec(SpecObserver observer) => observer.Model;
 }

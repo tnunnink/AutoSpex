@@ -74,7 +74,7 @@ public partial class NodeTreePageModel : PageViewModel,
         if (message.Observer is not NodeObserver node) return;
         if (node.ParentId != Guid.Empty) return;
 
-        Nodes.Add(node);
+        Nodes.Add(new NodeObserver(node));
         Nodes.Sort(n => n.Name, StringComparer.OrdinalIgnoreCase);
         node.Locate();
     }

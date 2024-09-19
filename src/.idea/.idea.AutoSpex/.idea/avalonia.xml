@@ -461,6 +461,7 @@
         <entry key="AutoSpex.Client/Pages/Dialogs/SaveToContainerPage.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Pages/Dialogs/SelectContainerPage.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Pages/Dialogs/SelectVariablePage.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
+        <entry key="AutoSpex.Client/Pages/Dialogs/SettingsPage.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Pages/Dialogs/SourceExplorerPage.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Pages/Dialogs/SourcePropertiesPage.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Pages/Dialogs/SourceSettingsPage.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
@@ -503,6 +504,7 @@
         <entry key="AutoSpex.Client/Pages/Runs/RunListPage.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Pages/Runs/RunPage.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Pages/Runs/Test.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
+        <entry key="AutoSpex.Client/Pages/SettingsPage.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Pages/Sources/AddSourcePage.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Pages/Sources/QueryPage.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Pages/Sources/SourceContentPage.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
@@ -544,6 +546,8 @@
         <entry key="AutoSpex.Client/Pages/Tabs/OverridesPage.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Pages/Tabs/RunConfigPage.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Pages/Tabs/RunResultsPage.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
+        <entry key="AutoSpex.Client/Pages/Tabs/SettingsAboutPage.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
+        <entry key="AutoSpex.Client/Pages/Tabs/SettingsGeneralPage.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Pages/Tabs/SourceAddContentPage.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Pages/Tabs/SourceAddContentPageModel.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Pages/Tabs/SourceContentPage.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />

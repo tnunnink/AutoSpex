@@ -23,7 +23,7 @@ public partial class OutcomeObserver : Observer<Outcome>,
 
     public override Guid Id => Model.OutcomeId;
     public override string Name => Model.Name;
-    public NodeObserver? Node => GetObserver<NodeObserver>(Model.NodeId);
+    public NodeObserver? Node => GetObserver<NodeObserver>(x => x.Id == Model.NodeId);
     public long Duration => Model.Duration;
 
     [ObservableProperty] private ResultState _result = ResultState.None;

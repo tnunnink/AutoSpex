@@ -57,6 +57,40 @@ public class LoadNodesTests
     }
 
     [Test]
+    public async Task LoadNodes_NodeWithSeveralSpecsConfiged_ShouldBeSuccessAndExpectedCount()
+    {
+        using var context = new TestContext();
+        var mediator = context.Resolve<IMediator>();
+        var node = Node.NewSpec("Test");
+        node.AddSpec(c =>
+        {
+            c.Find(Element.Tag);
+            c.Filter("TagName", Operation.Containing, "SomeValue");
+            c.Verify("Comment", Operation.EqualTo, "SomeValue");
+        });
+        node.AddSpec(c =>
+        {
+            c.Find(Element.Tag);
+            c.Filter("TagName", Operation.Containing, "SomeValue");
+            c.Verify("Comment", Operation.EqualTo, "SomeValue");
+        });
+        node.AddSpec(c =>
+        {
+            c.Find(Element.Tag);
+            c.Filter("TagName", Operation.Containing, "SomeValue");
+            c.Verify("Comment", Operation.EqualTo, "SomeValue");
+        });
+
+        await mediator.Send(new CreateNode(node));
+
+        var result = await mediator.Send(new LoadNodes([node.NodeId]));
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().HaveCount(1);
+        result.Value.First().Specs.Should().HaveCount(3);
+    }
+
+    [Test]
     public async Task LoadSpecs_SeededSpecWithVariableUpdateValue_ShouldBeSuccessAndHaveCorrectVariableValue()
     {
         using var context = new TestContext();
@@ -65,9 +99,12 @@ public class LoadNodesTests
         var node = Node.NewSpec("Test");
         var variable = node.AddVariable("MyVar", "SomeValue");
         var reference = variable.Reference();
-        /*node.Spec.Find(Element.Tag)
-            .Where(Element.Tag.Property("TagName"), Operation.Containing, reference)
-            .Verify(Element.Tag.Property("Comment"), Operation.EqualTo, reference);*/
+        node.AddSpec(c =>
+        {
+            c.Find(Element.Tag);
+            c.Filter("TagName", Operation.Containing, reference);
+            c.Verify("Comment", Operation.EqualTo, reference);
+        });
         await mediator.Send(new CreateNode(node));
 
         variable.Value = "MostRecentValue";
@@ -78,28 +115,17 @@ public class LoadNodesTests
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().HaveCount(1);
 
-        var target = result.Value.First();
+        var targetSpec = result.Value.First().Specs.First();
 
-        /*target.Spec.Filters[0].Arguments[0]
+        targetSpec.Filters[0].Arguments[0]
             .As<Argument>().Value
             .As<Reference>()
             .Should()
             .BeEquivalentTo(reference, o => o.Excluding(r => r.Value));
 
-        target.Spec.Verifications[0].Arguments[0]
+        targetSpec.Verifications[0].Arguments[0]
             .As<Argument>().Value
             .As<Reference>()
             .Should().BeEquivalentTo(reference, o => o.Excluding(r => r.Value));
-
-        //Resolve variable and check value.
-        target.ResolveReferences();
-
-        target.Spec.Filters[0].Arguments[0]
-            .As<Argument>().Value
-            .As<Reference>().Value.Should().Be("MostRecentValue");
-
-        target.Spec.Verifications[0].Arguments[0]
-            .As<Argument>().Value
-            .As<Reference>().Value.Should().Be("MostRecentValue");*/
     }
 }

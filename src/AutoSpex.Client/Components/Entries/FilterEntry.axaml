@@ -2,7 +2,6 @@
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
-                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
                     xmlns:components="clr-namespace:AutoSpex.Client.Components">
 
     <Design.PreviewWith>
@@ -20,42 +19,43 @@
             <ListBox
                 IsVisible="{Binding Filters.Count}"
                 ItemsSource="{Binding Filters}"
+                SelectedItems="{Binding SelectedFilters}"
                 ItemTemplate="{StaticResource CriterionListItem}"
                 ItemContainerTheme="{StaticResource ListBoxItemEntry}"
                 SelectionMode="Multiple"
                 BorderBrush="{a:ThemeResource Container1BorderBrush}"
-                BorderThickness="0 0 0 1"
-                ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
+                BorderThickness="0 0 0 1" CornerRadius="4 4 0 0"
+                a:BorderChildClipConverter.ClipToContainingBorder="True" />
 
-            <DockPanel LastChildFill="False">
+            <Button
+                Command="{Binding AddFilterCommand}"
+                Theme="{a:ControlTheme ButtonSubtle}"
+                Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Left"
+                Padding="10"
+                BorderThickness="0"
+                CornerRadius="4"
+                a:BorderChildClipConverter.ClipToContainingBorder="True">
 
-                <Button
-                    Command="{Binding AddFilterCommand}"
-                    Theme="{a:ControlTheme ButtonSubtle}"
-                    Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
-                    HorizontalAlignment="Left" Margin="4">
-                    <StackPanel Orientation="Horizontal" Spacing="5">
-                        <PathIcon
-                            Theme="{StaticResource IconAdd}"
-                            Foreground="{Binding $parent[Button].Foreground}"
-                            Classes="size-sm" />
-                        <TextBlock Text="Add" />
-                    </StackPanel>
-                </Button>
+                <StackPanel Orientation="Horizontal" Spacing="5">
+                    <PathIcon
+                        Theme="{StaticResource IconAdd}"
+                        Classes="size-sm accent" />
+                    <TextBlock
+                        Text="Add Filter" />
+                    <TextBlock
+                        Text="to target specific candidates for verification."
+                        Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                </StackPanel>
 
-                <TextBlock
-                    DockPanel.Dock="Left"
-                    Text="Add filters to target specific candidates for verification."
-                    Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
-
-                <ContentControl
-                    DockPanel.Dock="Right"
-                    Content="{Binding}"
-                    ContentTemplate="{StaticResource FilterInclusion}" />
-
-            </DockPanel>
+                <Button.Styles>
+                    <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+                        <Setter Property="Background" Value="{a:ThemeResource Container2BackgroundBrush}" />
+                    </Style>
+                </Button.Styles>
+            </Button>
 
         </StackPanel>
-
     </DataTemplate>
 </ResourceDictionary>

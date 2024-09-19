@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace AutoSpex.Engine;
+﻿namespace AutoSpex.Engine;
 
 /// <summary>
 /// An object containing the resulting data from running a <see cref="Spec"/> against a given <see cref="Source"/>.

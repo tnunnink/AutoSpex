@@ -65,7 +65,7 @@ public partial class DetailsPageModel : PageViewModel, IRecipient<NavigationRequ
     private async Task NewEnvironment()
     {
         var environment = new Environment();
-        
+
         var result = await Mediator.Send(new CreateEnvironment(environment));
         if (Notifier.ShowIfFailed(result, "Failed to create new environment. See notifications for details.")) return;
 

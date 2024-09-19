@@ -7,7 +7,7 @@
         <Border Padding="20">
             <StackPanel Orientation="Vertical" Spacing="10">
                 <PathIcon Theme="{StaticResource IconLineGear}" />
-                <PathIcon Theme="{StaticResource IconLineCube}" Classes="accent" />
+                <PathIcon Theme="{StaticResource IconFilledCube}" Classes="accent" />
                 <PathIcon Theme="{StaticResource IconThemedSpec}" />
                 <PathIcon Theme="{StaticResource IconThemedSpec}" Classes="size-sm" />
 

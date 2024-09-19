@@ -37,13 +37,6 @@ public abstract class Operation(string name, string value) : SmartEnum<Operation
     public static IEnumerable<Operation> Supporting(Property property) => List.Where(x => x.Supports(property.Group));
 
     /// <summary>
-    /// Returns a list of operations that support the specified type group.
-    /// </summary>
-    /// <param name="group">The type group for which to retrieve the supporting operations.</param>
-    /// <returns>A list of operations that support the specified type group.</returns>
-    public static IEnumerable<Operation> Supporting(TypeGroup group) => List.Where(x => x.Supports(group));
-
-    /// <summary>
     /// Determines whether the given TypeGroup is supported by the Operation.
     /// </summary>
     /// <param name="group">The TypeGroup to check.</param>
@@ -63,11 +56,6 @@ public abstract class Operation(string name, string value) : SmartEnum<Operation
     /// type of the input value.
     /// </summary>
     public static readonly Operation EqualTo = new EqualToOperation();
-
-    /// <summary>
-    /// Represents an operation that checks whether two values are equivalent.
-    /// </summary>
-    public static readonly Operation EquivalentTo = new EquivalentToOperation();
 
     /// <summary>
     /// Represents a greater than operation. The operation checks if the input value 

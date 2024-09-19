@@ -8,17 +8,6 @@ namespace AutoSpex.Client.Observers;
 
 public class ReferenceObserver(Reference model) : Observer<Reference>(model)
 {
-    private readonly VariableObserver? _variable;
-
-    /// <summary>
-    /// Creates a <see cref="ReferenceObserver"/> given an existing <see cref="VariableObserver"/> object.
-    /// </summary>
-    /// <param name="variable">The variable to create the reference for.</param>
-    public ReferenceObserver(VariableObserver variable) : this(variable.Model.Reference())
-    {
-        _variable = variable;
-    }
-
     /// <inheritdoc />
     public override Guid Id => Model.ReferenceId;
 
@@ -40,10 +29,6 @@ public class ReferenceObserver(Reference model) : Observer<Reference>(model)
     /// </summary>
     private async Task<VariableObserver?> ResolveReferenceVariable()
     {
-        //If created from a variable in memory, we would have the reference to use, so return that.
-        if (_variable is not null) return _variable;
-
-        //If this was loaded as part of a spec argument, we should be able to resolve it through the database.
         var result = await Mediator.Send(new GetReferenceVariable(Model));
         return result.IsSuccess ? new VariableObserver(result.Value) : default;
     }

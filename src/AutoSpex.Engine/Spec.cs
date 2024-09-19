@@ -117,21 +117,6 @@ public class Spec : IEquatable<Spec>
     }
 
     /// <summary>
-    /// Adds a custom count <see cref="Criterion"/> to the <see cref="Verifications"/> collection which will
-    /// verify the candidate elements based on the provided parameters.
-    /// </summary>
-    /// <param name="operation">The operation to use for evaluation.</param>
-    /// <param name="args">the set of arguments required by the operation.</param>
-    /// <returns>The configured spec instance.</returns>
-    public Spec Count(Operation operation, params Argument[] args)
-    {
-        var property = Property.This(typeof(List<LogixElement>)).GetProperty("Count")!;
-        var criterion = new Criterion(property, operation, args);
-        Verifications.Add(criterion);
-        return this;
-    }
-
-    /// <summary>
     /// Creates a new <see cref="Spec"/> with the same configuration but default id and node properties.
     /// </summary>
     /// <returns>A new <see cref="Spec"/> object.</returns>
@@ -182,8 +167,7 @@ public class Spec : IEquatable<Spec>
         try
         {
             var stopwatch = Stopwatch.StartNew();
-            var verifications = new List<Verification>();
-
+            
             //1. Execute the configured query.
             var elements = Query.Execute(content);
 
@@ -191,13 +175,12 @@ public class Spec : IEquatable<Spec>
             var candidates = elements.Where(FilterElement).ToList();
 
             //3. Verify the candidates elements.
-            verifications.Add(VerifyCount(candidates));
-            verifications.AddRange(candidates.Select(VerifyElement));
+            var verifications = candidates.Select(VerifyElement);
             
             stopwatch.Stop();
             
             //Merge/flatten into single verification object.
-            return Verification.Merge(verifications, stopwatch.ElapsedMilliseconds);
+            return Verification.Merge(verifications.ToList(), stopwatch.ElapsedMilliseconds);
         }
         catch (Exception e)
         {
@@ -231,26 +214,7 @@ public class Spec : IEquatable<Spec>
     /// candidate object.</returns>
     private Verification VerifyElement(LogixElement candidate)
     {
-        var evaluations = Verifications
-            .Where(c => c.Type == candidate.GetType())
-            .Select(v => v.Evaluate(candidate)).ToArray();
-
-        return VerificationInclusion == Inclusion.All
-            ? Verification.All(evaluations)
-            : Verification.Any(evaluations);
-    }
-
-    /// <summary>
-    /// Given the filtered candidate collection, verify the configured range criterion as defined by the
-    /// <see cref="Range"/> settings. 
-    /// </summary>
-    /// <param name="collection">The collection of candidate object that passed the filter step.</param>
-    /// <returns>A <see cref="Verification"/> representing the result of the range criterion.</returns>
-    private Verification VerifyCount(List<LogixElement> collection)
-    {
-        var evaluations = Verifications
-            .Where(c => c.Type == typeof(List<LogixElement>))
-            .Select(v => v.Evaluate(collection)).ToArray();
+        var evaluations = Verifications.Select(v => v.Evaluate(candidate)).ToArray();
 
         return VerificationInclusion == Inclusion.All
             ? Verification.All(evaluations)

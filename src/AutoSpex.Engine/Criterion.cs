@@ -142,9 +142,27 @@ public class Criterion : IEquatable<Criterion>
     /// Otherwise, <c>false</c>.
     /// </returns>
     /// <remarks>This allows us to determine if one criterion "owns" another.</remarks>
-    public bool Contains(Criterion other) =>
-        Arguments.Any(a => a.Value is Criterion criterion &&
-                           (criterion.CriterionId == other.CriterionId || criterion.Contains(other)));
+    public bool Contains(Criterion other)
+    {
+        return Arguments.Any(a => a.Value is Criterion criterion &&
+                                  (criterion.CriterionId == other.CriterionId || criterion.Contains(other)));
+    }
+
+    /// <summary>
+    /// Determines whether this or a nested criterion contains the specified argument ID.
+    /// </summary>
+    /// <param name="argumentId">The argument ID to search for.</param>
+    /// <returns>True if a criterion with the specified argument ID is found, otherwise false.</returns>
+    public bool Contains(Guid argumentId)
+    {
+        foreach (var argument in Arguments)
+        {
+            if (argument.ArgumentId == argumentId) return true;
+            if (argument.Value is Criterion criterion) return criterion.Contains(argumentId);
+        }
+
+        return false;
+    }
 
     /// <summary>
     /// Creates a duplicate of the current <see cref="Criterion"/> instance.

@@ -1,4 +1,6 @@
-﻿namespace AutoSpex.Engine.Tests;
+﻿using Task = System.Threading.Tasks.Task;
+
+namespace AutoSpex.Engine.Tests;
 
 [TestFixture]
 public class NodeTests
@@ -406,6 +408,47 @@ public class NodeTests
 
         node.Specs.Should().BeEmpty();
     }
+
+    [Test]
+    public async Task RunAll_SingleConfiguredSpec_ShouldReturnExpectedResult()
+    {
+        var content = L5X.Load(Known.Test);
+        
+        var node = Node.NewSpec("Test", c =>
+        {
+            c.Find(Element.Tag);
+            c.Filter("TagName", Operation.EqualTo, "TestSimpleTag");
+            c.Verify("DataType", Operation.EqualTo, "SimpleType");
+        });
+
+        var verification = await node.RunAll(content);
+
+        verification.Result.Should().Be(ResultState.Passed);
+        verification.Evaluations.Should().NotBeEmpty();
+        verification.Duration.Should().BeGreaterThan(0);
+    }
     
-    
+    [Test]
+    public async Task RunAll_MultipleConfiguredSpec_ShouldReturnExpectedResult()
+    {
+        var content = L5X.Load(Known.Test);
+        var node = Node.NewSpec("Test");
+        node.AddSpec(c =>
+        {
+            c.Find(Element.Tag);
+            c.Filter("TagName", Operation.EqualTo, "TestSimpleTag");
+            c.Verify("DataType", Operation.EqualTo, "SimpleType");
+        });
+        node.AddSpec(c =>
+        {
+            c.Find(Element.Program);
+            c.Verify("Disabled", Operation.False);
+        });
+
+        var verification = await node.RunAll(content);
+
+        verification.Result.Should().Be(ResultState.Passed);
+        verification.Evaluations.Should().HaveCountGreaterThan(2);
+        verification.Duration.Should().BeGreaterThan(0);
+    }
 }

@@ -1,0 +1,131 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:versioning="clr-namespace:NuGet.Versioning;assembly=NuGet.Versioning"
+             x:Class="AutoSpex.Client.Pages.SettingsAboutPage"
+             x:DataType="pages:SettingsAboutPageModel">
+
+    <Design.Height>600</Design.Height>
+    <Design.Width>800</Design.Width>
+
+    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="10">
+
+        <Image Source="../../Resources/Images/logo.png"
+               Height="60" Width="60" />
+
+        <Label
+            Content="AutoSpex"
+            FontSize="{a:ThemeResource HeadingFontSizeLarge}"
+            FontWeight="{a:ThemeResource HeadingFontWeightLarge}"
+            HorizontalContentAlignment="Center" />
+
+        <StackPanel Spacing="5" HorizontalAlignment="Center">
+            <Label
+                Content="Version"
+                Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                Classes="size-sm" />
+            <SelectableTextBlock
+                Text="{Binding CurrentVersion}"
+                TextAlignment="Center"
+                Classes="size-sm"
+                FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
+        </StackPanel>
+
+        <StackPanel Spacing="5" HorizontalAlignment="Center" Margin="0 20">
+
+            <Button
+                Command="{Binding CheckForUpdtaesCommand}"
+                IsVisible="{Binding NewVersion, Converter={x:Static ObjectConverters.IsNull}}"
+                Theme="{a:ControlTheme ButtonSoft}"
+                Classes="accent">
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <PathIcon
+                        Theme="{StaticResource IconFilledBinoculars}"
+                        Foreground="{Binding $parent[Button].Foreground}"
+                        FontSize="12" />
+                    <TextBlock Text="Check for updates" />
+                </StackPanel>
+            </Button>
+
+            <Button
+                Command="{Binding UpdateAppCommand}"
+                IsVisible="{Binding NewVersion, Converter={x:Static ObjectConverters.IsNotNull}}"
+                Theme="{a:ControlTheme ButtonSolid}"
+                Classes="accent">
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <PathIcon
+                        Theme="{StaticResource IconLineArrowUp}"
+                        Foreground="{Binding $parent[Button].Foreground}"
+                        FontSize="12" />
+                    <ContentControl Content="{Binding NewVersion.TargetFullRelease.Version, FallbackValue={x:Null}}">
+                        <ContentControl.ContentTemplate>
+                            <DataTemplate x:DataType="versioning:SemanticVersion">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Update to version" />
+                                    <TextBlock Text="{Binding}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ContentControl.ContentTemplate>
+                    </ContentControl>
+                </StackPanel>
+            </Button>
+
+            <Button
+                Command="{Binding NavigateWebsiteCommand}"
+                Theme="{a:ControlTheme ButtonSubtle}"
+                Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}">
+                <StackPanel Orientation="Horizontal" Spacing="5">
+                    <TextBlock
+                        Text="Website" />
+                    <PathIcon
+                        Theme="{StaticResource IconLineArrowUp}"
+                        Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                        Classes="size-xs centered">
+                        <PathIcon.RenderTransform>
+                            <RotateTransform Angle="45" />
+                        </PathIcon.RenderTransform>
+                    </PathIcon>
+                </StackPanel>
+            </Button>
+
+            <Button
+                Command="{Binding NavigateReleaseNotesCommand}"
+                Theme="{a:ControlTheme ButtonSubtle}"
+                Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}">
+                <StackPanel Orientation="Horizontal" Spacing="5">
+                    <TextBlock
+                        Text="Release notes" />
+                    <PathIcon
+                        Theme="{StaticResource IconLineArrowUp}"
+                        Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                        Classes="size-xs centered">
+                        <PathIcon.RenderTransform>
+                            <RotateTransform Angle="45" />
+                        </PathIcon.RenderTransform>
+                    </PathIcon>
+                </StackPanel>
+            </Button>
+
+            <Button
+                Command="{Binding NavigateIssuesCommand}"
+                Theme="{a:ControlTheme ButtonSubtle}"
+                Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}">
+                <StackPanel Orientation="Horizontal" Spacing="5">
+                    <TextBlock
+                        Text="Report an issue" />
+                    <PathIcon
+                        Theme="{StaticResource IconLineArrowUp}"
+                        Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                        Classes="size-xs centered">
+                        <PathIcon.RenderTransform>
+                            <RotateTransform Angle="45" />
+                        </PathIcon.RenderTransform>
+                    </PathIcon>
+                </StackPanel>
+            </Button>
+
+        </StackPanel>
+
+    </StackPanel>
+</UserControl>

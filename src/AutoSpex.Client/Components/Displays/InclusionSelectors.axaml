@@ -27,8 +27,8 @@
                 Content="{Binding FilterInclusion}"
                 Command="{Binding ToggleFilterInclusionCommand}"
                 FontSize="{a:ThemeResource DefaultFontSizeSmall}"
-                Theme="{a:ControlTheme ToggleButtonLink}"
-                Classes="accent" Padding="0" />
+                Theme="{a:ControlTheme ToggleButtonSubtle}"
+                Classes="accent" Padding="2" />
             <TextBlock
                 Text="Filters"
                 Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}">
@@ -45,8 +45,8 @@
                 Content="{Binding VerificationInclusion}"
                 Command="{Binding ToggleVerificationInclusionCommand}"
                 FontSize="{a:ThemeResource DefaultFontSizeSmall}"
-                Theme="{a:ControlTheme ToggleButtonLink}"
-                Classes="accent" Padding="0" />
+                Theme="{a:ControlTheme ToggleButtonSubtle}"
+                Classes="accent" Padding="2" />
             <TextBlock
                 Text="Verifications"
                 Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}">

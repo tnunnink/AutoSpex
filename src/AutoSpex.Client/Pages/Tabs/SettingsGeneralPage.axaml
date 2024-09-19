@@ -1,0 +1,11 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             x:Class="AutoSpex.Client.Pages.SettingsGeneralPage"
+             x:DataType="pages:SettingsGeneralPageModel"
+             HorizontalAlignment="Center"
+             VerticalAlignment="Center">
+    
+    Building apps is hard. Someday this will have settings to configure. Thanks for your patience.
+</UserControl>

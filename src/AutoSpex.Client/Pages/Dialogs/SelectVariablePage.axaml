@@ -20,14 +20,14 @@
             <TextBox
                 DockPanel.Dock="Top"
                 Text="{Binding Filter}"
-                Watermark="Filter variables"
+                Watermark="Search variables"
                 Theme="{a:ControlTheme TextBoxOutline}"
                 BorderBrush="{a:ThemeResource Container1BorderBrush}"
                 BorderThickness="0 0 0 1" CornerRadius="0" Padding="0 10"
                 VerticalContentAlignment="Center"
                 Classes="has-clear-button">
                 <TextBox.InnerLeftContent>
-                    <PathIcon Theme="{StaticResource IconLineFilter}" Margin="15 0" />
+                    <PathIcon Theme="{StaticResource IconLineSearch}" Classes="size-sm" Margin="15 0 10 0" />
                 </TextBox.InnerLeftContent>
             </TextBox>
 

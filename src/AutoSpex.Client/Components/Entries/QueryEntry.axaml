@@ -19,95 +19,141 @@
     <DataTemplate x:Key="QueryEntry" x:DataType="observers:SpecObserver">
         <Border
             x:Name="RootBorder"
-            Background="{a:ThemeResource Container2BackgroundBrush}"
             BorderBrush="{a:ThemeResource Container1BorderBrush}"
             BorderThickness="{a:ThemeResource ButtonBorderThickness}"
             CornerRadius="{a:ThemeResource ButtonCornerRadius}">
 
-            <Grid ColumnDefinitions="Auto,*,Auto">
+            <StackPanel>
 
-                <Button
-                    x:Name="SelectorButton"
-                    Grid.Column="0"
-                    Content="{Binding Element}"
-                    Theme="{a:ControlTheme ButtonSubtle}"
-                    BorderThickness="0 0 1 0" CornerRadius="4 0 0 4"
-                    BorderBrush="{a:ThemeResource Container1BorderBrush}">
-                    <Button.ContentTemplate>
-                        <DataTemplate x:DataType="engine:Element">
-                            <StackPanel Orientation="Horizontal" Spacing="10">
-                                <PathIcon Theme="{StaticResource IconThemedSource}" />
-                                <TextBlock Text="{Binding Name}" FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
-                                <PathIcon Theme="{StaticResource IconLineExpand}" Classes="size-sm" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </Button.ContentTemplate>
-                    <Button.Flyout>
-                        <Flyout Placement="BottomEdgeAlignedLeft" HorizontalOffset="-8" VerticalOffset="5">
-                            <ItemsControl
-                                Theme="{a:ControlTheme ItemsControlScrollable}"
-                                ItemsSource="{x:Static engine:Element.Selectable}"
-                                MaxHeight="260" MinWidth="200" Margin="5">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate DataType="engine:Element">
-                                        <Button
-                                            Command="{Binding $parent[ItemsControl].((observers:SpecObserver)DataContext).UpdateElementCommand, FallbackValue={x:Null}}"
-                                            CommandParameter="{Binding}"
-                                            Theme="{a:ControlTheme ButtonSubtle}"
-                                            HorizontalContentAlignment="Stretch">
-                                            <StackPanel Orientation="Horizontal" Spacing="10">
-                                                <PathIcon Theme="{StaticResource IconThemedSource}" />
-                                                <TextBlock Text="{Binding Name}" />
-                                            </StackPanel>
-                                            <Interaction.Behaviors>
-                                                <behaviors:HideFlyoutOnClickedBehavior />
-                                            </Interaction.Behaviors>
-                                        </Button>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </Flyout>
-                    </Button.Flyout>
-                </Button>
+                <Border Background="{a:ThemeResource Container2BackgroundBrush}"
+                        a:BorderChildClipConverter.ClipToContainingBorder="True"
+                        MinHeight="40">
 
-                <TextBox
-                    Grid.Column="1"
-                    x:Name="NameTextBox"
-                    Text="{Binding ElementName}"
-                    IsEnabled="{Binding Element.IsComponent}"
-                    Watermark="Enter component name (optional)"
-                    Background="Transparent"
-                    BorderThickness="0" CornerRadius="0" Padding="15 9 15 8"
-                    FontSize="{a:ThemeResource DefaultFontSizeSmall}"
-                    FontFamily="{a:ThemeResource CodeFontFamily}">
-                    <TextBox.Styles>
-                        <Style Selector="TextBox:empty">
-                            <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
-                        </Style>
-                    </TextBox.Styles>
-                </TextBox>
+                    <Grid ColumnDefinitions="Auto,*,Auto">
 
-                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="5" Margin="5 0">
-                    <Button
-                        Theme="{StaticResource IconButtonSmall}"
-                        properties:Icon.Theme="{StaticResource IconClose}" FontSize="9"
-                        IsVisible="{Binding #NameTextBox.Text, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
-                        <Interaction.Behaviors>
-                            <EventTriggerBehavior EventName="Click">
-                                <ChangePropertyAction TargetObject="NameTextBox" PropertyName="Text" Value="" />
-                            </EventTriggerBehavior>
-                        </Interaction.Behaviors>
-                    </Button>
-                    <Button
-                        Command="{Binding OpenSourceExplorerCommand}"
-                        IsEnabled="{Binding Element.IsComponent}"
-                        IsVisible="{Binding Element.IsComponent}"
-                        Theme="{StaticResource IconButtonSmall}"
-                        properties:Icon.Theme="{StaticResource IconFilledBinoculars}"
-                        ToolTip.Tip="Source Explorer"
-                        ToolTip.Placement="BottomEdgeAlignedRight" />
-                </StackPanel>
-            </Grid>
+                        <Button
+                            x:Name="SelectorButton"
+                            Grid.Column="0"
+                            Content="{Binding Element}"
+                            Theme="{a:ControlTheme ButtonSubtle}"
+                            BorderThickness="0 0 1 0" CornerRadius="4 0 0 0"
+                            BorderBrush="{a:ThemeResource Container1BorderBrush}">
+                            <Button.ContentTemplate>
+                                <DataTemplate x:DataType="engine:Element">
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <PathIcon Theme="{StaticResource IconThemedSource}" />
+                                        <TextBlock Text="{Binding Name}"
+                                                   FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
+                                        <PathIcon Theme="{StaticResource IconLineExpand}" Classes="size-sm" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </Button.ContentTemplate>
+                            <Button.Flyout>
+                                <Flyout Placement="BottomEdgeAlignedLeft" HorizontalOffset="-8" VerticalOffset="5">
+                                    <ItemsControl
+                                        Theme="{a:ControlTheme ItemsControlScrollable}"
+                                        ItemsSource="{x:Static engine:Element.Selectable}"
+                                        MaxHeight="260" MinWidth="200" Margin="5">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate DataType="engine:Element">
+                                                <Button
+                                                    Command="{Binding $parent[ItemsControl].((observers:SpecObserver)DataContext).UpdateElementCommand, FallbackValue={x:Null}}"
+                                                    CommandParameter="{Binding}"
+                                                    Theme="{a:ControlTheme ButtonSubtle}"
+                                                    HorizontalContentAlignment="Stretch">
+                                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                                        <PathIcon
+                                                            Theme="{StaticResource IconThemedSource}" />
+                                                        <TextBlock
+                                                            Text="{Binding Name}"
+                                                            FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
+                                                    </StackPanel>
+                                                    <Interaction.Behaviors>
+                                                        <behaviors:HideFlyoutOnClickedBehavior />
+                                                    </Interaction.Behaviors>
+                                                </Button>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Flyout>
+                            </Button.Flyout>
+                        </Button>
+
+                        <TextBox
+                            Grid.Column="1"
+                            x:Name="NameTextBox"
+                            Text="{Binding ElementName}"
+                            IsEnabled="{Binding Element.IsComponent}"
+                            Watermark="Enter element name"
+                            Background="Transparent"
+                            BorderThickness="0" CornerRadius="0"
+                            VerticalContentAlignment="Center"
+                            FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                            FontFamily="{a:ThemeResource CodeFontFamily}">
+                            <TextBox.Styles>
+                                <Style Selector="TextBox:empty">
+                                    <Setter Property="Foreground"
+                                            Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                                </Style>
+                            </TextBox.Styles>
+                        </TextBox>
+
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="5" Margin="5 0">
+
+                            <Button
+                                Command="{Binding OpenSourceExplorerCommand}"
+                                Theme="{StaticResource IconButton}"
+                                properties:Icon.Theme="{StaticResource IconLineSearch}"
+                                ToolTip.Tip="Search"
+                                ToolTip.Placement="BottomEdgeAlignedRight" />
+
+                            <Button
+                                Theme="{StaticResource IconButton}"
+                                properties:Icon.Theme="{StaticResource IconFilledFunnel}"
+                                Classes.accent="{Binding Filters.Count}"
+                                ToolTip.Tip="Filters"
+                                ToolTip.Placement="BottomEdgeAlignedRight">
+                                <Button.Flyout>
+                                    <Flyout Placement="BottomEdgeAlignedRight" HorizontalOffset="8">
+                                        <ContentControl
+                                            Content="{Binding }"
+                                            ContentTemplate="{StaticResource FilterEntry}"
+                                            MinWidth="400"/>
+                                    </Flyout>
+                                </Button.Flyout>
+                            </Button>
+
+                            <Button
+                                Theme="{StaticResource IconButton}"
+                                properties:Icon.Theme="{StaticResource IconEllipsis}"
+                                ToolTip.Tip="Options"
+                                ToolTip.Placement="BottomEdgeAlignedRight">
+                                <Button.Flyout>
+                                    <MenuFlyout
+                                        Placement="BottomEdgeAlignedRight"
+                                        HorizontalOffset="8"
+                                        ItemsSource="{Binding MenuItems}"
+                                        ItemContainerTheme="{StaticResource MenuActionItem}" />
+                                </Button.Flyout>
+                            </Button>
+
+                        </StackPanel>
+                    </Grid>
+
+                </Border>
+
+                <Border
+                    Background="{a:ThemeResource Container1BorderBrush}"
+                    IsVisible="{Binding Element, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Element.Default}}"
+                    Height="1" />
+
+                <ContentControl
+                    Content="{Binding}"
+                    ContentTemplate="{StaticResource VerificationEntry}"
+                    IsVisible="{Binding Element, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Element.Default}}" />
+
+            </StackPanel>
         </Border>
+
     </DataTemplate>
 </ResourceDictionary>

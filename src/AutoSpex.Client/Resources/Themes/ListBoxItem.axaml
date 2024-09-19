@@ -131,6 +131,9 @@
             </ControlTemplate>
         </Setter>
 
+        <Style Selector="^:pointerover /template/ Border#RootBorder">
+            <Setter Property="Background" Value="{a:ThemeResource Container2BackgroundBrush}" />
+        </Style>
         <Style Selector="^:disabled /template/ ContentPresenter#PART_ContentPresenter">
             <Setter Property="Foreground" Value="{a:ThemeResource ListItemForegroundBrushDisabled}" />
         </Style>

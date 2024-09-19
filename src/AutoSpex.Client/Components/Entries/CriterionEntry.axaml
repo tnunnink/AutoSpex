@@ -41,23 +41,25 @@
                         <DataTemplate x:DataType="engine:Property">
                             <StackPanel Orientation="Horizontal" Spacing="7">
                                 <PathIcon Theme="{Binding Group, Converter={StaticResource TypeGroupIconConverter}}" />
-                                <TextBlock Text="{Binding Path}" FontFamily="{a:ThemeResource CodeFontFamily}" />
+                                <TextBlock Text="{Binding Path}" />
                             </StackPanel>
                         </DataTemplate>
                     </controls:Entry.ValueTemplate>
                     <controls:Entry.ItemTemplate>
                         <DataTemplate x:DataType="engine:Property">
-                            <Grid ColumnDefinitions="Auto,*,Auto">
+                            <Grid ColumnDefinitions="Auto,*,Auto" Margin="2">
                                 <PathIcon
                                     Grid.Column="0"
                                     Theme="{Binding Group, Converter={StaticResource TypeGroupIconConverter}}"
                                     Margin="0 0 10 0" />
                                 <TextBlock
-                                    Grid.Column="1" Text="{Binding Name}"
+                                    Grid.Column="1" 
+                                    Text="{Binding Name}"
                                     Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
                                     FontFamily="{a:ThemeResource CodeFontFamily}" />
                                 <TextBlock
-                                    Grid.Column="2" Text="{Binding Identifier}"
+                                    Grid.Column="2" 
+                                    Text="{Binding Identifier}"
                                     Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
                                     FontFamily="{a:ThemeResource CodeFontFamily}"
                                     Margin="20 0 10 0" FontSize="12" />
@@ -95,7 +97,8 @@
                             <TextBlock
                                 Text="{Binding Name}"
                                 Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
-                                FontFamily="{a:ThemeResource CodeFontFamily}" />
+                                FontFamily="{a:ThemeResource CodeFontFamily}" 
+                                Margin="2"/>
                         </DataTemplate>
                     </controls:Entry.ItemTemplate>
                     <controls:Entry.IsEmpty>

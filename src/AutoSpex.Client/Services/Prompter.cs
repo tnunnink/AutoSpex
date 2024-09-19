@@ -28,8 +28,8 @@ public sealed class Prompter(Shell shell)
     {
         var page = factory();
         var dialog = new DialogShell { Content = page };
-        await page.Load();
         page.IsActive = true;
+        await page.Load();
 
         shell.DialogOpen = true;
         var result = await dialog.ShowDialog<TResult>(shell);
@@ -42,8 +42,8 @@ public sealed class Prompter(Shell shell)
     {
         var page = factory();
         var dialog = new DialogShell { Content = page };
-        await page.Load();
         page.IsActive = true;
+        await page.Load();
 
         shell.DialogOpen = true;
         await dialog.ShowDialog(shell);

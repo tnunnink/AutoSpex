@@ -58,7 +58,7 @@ public partial class SpecsPageModel(NodeObserver node) : PageViewModel("Specs"),
         if (message.Observer is not NodeObserver observer) return;
         if (!observer.Model.IsDescendantOf(node)) return;
         if (Specs.Contains(observer)) return;
-        Specs.Add(observer);
+        Specs.Add(new NodeObserver(observer));
     }
 
     /// <summary>

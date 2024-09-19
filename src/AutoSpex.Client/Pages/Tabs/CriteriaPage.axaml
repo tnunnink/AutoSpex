@@ -13,7 +13,7 @@
 
         <controls:DefaultMessage
             VerticalAlignment="Top" Margin="20"
-            IsVisible="{Binding !Node.Specs.Count}"
+            IsVisible="{Binding !Specs.HasItems}"
             HeaderIcon="{StaticResource IconFilledClipboard}"
             Header="No criteria defined"
             Message="Add criteria to define what this specification verifies.">
@@ -34,11 +34,11 @@
             </controls:DefaultMessage.Action>
         </controls:DefaultMessage>
 
-        <StackPanel Spacing="20" IsVisible="{Binding Node.Specs.Count}">
+        <StackPanel Spacing="20" IsVisible="{Binding Specs.Count}">
 
             <ItemsControl
-                ItemsSource="{Binding Node.Specs}"
-                ItemTemplate="{StaticResource SpecEntry}"
+                ItemsSource="{Binding Specs}"
+                ItemTemplate="{StaticResource QueryEntry}"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>

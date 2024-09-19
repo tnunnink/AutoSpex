@@ -69,7 +69,7 @@ public partial class ArgumentObserver : Observer<Argument>
     [RelayCommand]
     private async Task UpdateValue(object? value)
     {
-        var criterion = FindParent<CriterionObserver>();
+        var criterion = GetObserver<CriterionObserver>(x => x.Arguments.Any(a => a.Id == Id));
         var group = criterion?.Property.Group;
 
         switch (value)
@@ -97,8 +97,10 @@ public partial class ArgumentObserver : Observer<Argument>
     private async Task<object?> ResolveReference(string name)
     {
         var scoped = await GetScopedVariables(string.Empty, CancellationToken.None);
-        var match = scoped.FirstOrDefault(v => v.Name == name) as object;
-        return match ?? new Reference(name);
+        
+        return scoped.FirstOrDefault(v => v.Name == name)?.Model is Variable match
+            ? match.Reference()
+            : new Reference(name);
     }
 
     /// <summary>
@@ -119,23 +121,25 @@ public partial class ArgumentObserver : Observer<Argument>
 
     /// <summary>
     /// Query the database for variables that are in scope of this argument. These are variables that belong to or are
-    /// inherited by the parent spec object. Therefore, we first request the parent spec and the use it's id to fetch
+    /// inherited by the parent node object. Therefore, we first request the parent node and the use it's id to fetch
     /// variable objects as suggestions to plug into the argument value for the user.
     /// </summary>
     private async Task<IEnumerable<ValueObserver>> GetScopedVariables(string? filter, CancellationToken token)
     {
-        var spec = FindParent<SpecObserver>();
-
-        if (spec is null) return Enumerable.Empty<ValueObserver>();
-
-        var result = await Mediator.Send(new GetScopedVariables(spec.Id), token);
-
         //Remove the prefix '@' so we can return all variables we want to reference.
         filter = filter?.TrimStart(Reference.Prefix);
 
-        return result.IsSuccess
-            ? result.Value.Select(v => new ValueObserver(v)).Where(v => v.Filter(filter))
-            : Enumerable.Empty<ValueObserver>();
+        //Find the node to which this argument belongs.
+        //This should be in memory since page rendering this argument contains the node,
+        //but if not found will just return empty collection.
+        //Remember we are doing in memory retrieval of this node id becuause this data may not yet be persisted.
+        var node = GetObserver<NodeObserver>(x =>
+            x.Model.Specs.Any(s => s.Filters.Any(f => f.Contains(Id)) || s.Verifications.Any(v => v.Contains(Id))));
+
+        if (node is null) return [];
+
+        var variables = await Mediator.Send(new GetScopedVariables(node.Id), token);
+        return variables.Select(v => new ValueObserver(v)).Where(v => v.Filter(filter));
     }
 
     /// <summary>
@@ -143,19 +147,18 @@ public partial class ArgumentObserver : Observer<Argument>
     /// </summary>
     private IEnumerable<ValueObserver> GetOptions(string? filter)
     {
-        var criterion = FindParent<CriterionObserver>();
+        var criterion = GetObserver<CriterionObserver>(x => x.Arguments.Any(a => a.Id == Id));
         var type = criterion?.Property.Type;
         var group = criterion?.Property.Group;
 
-        if (type is null)
-            return Enumerable.Empty<ValueObserver>();
+        if (type is null) return [];
 
         if (group == TypeGroup.Boolean)
             return type.GetOptions().Select(x => new ValueObserver(x));
 
         return group == TypeGroup.Enum
             ? type.GetOptions().Select(x => new ValueObserver(x)).Where(v => v.Filter(filter))
-            : Enumerable.Empty<ValueObserver>();
+            : [];
     }
 
     public static implicit operator Argument(ArgumentObserver observer) => observer.Model;

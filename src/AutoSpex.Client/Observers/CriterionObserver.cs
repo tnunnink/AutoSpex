@@ -130,8 +130,11 @@ public partial class CriterionObserver : Observer<Criterion>,
     public void Receive(Get<CriterionObserver> message)
     {
         if (message.HasReceivedResponse) return;
-        if (Id != message.Id && Arguments.All(a => a.Id != message.Id)) return;
-        message.Reply(this);
+        
+        if (message.Predicate.Invoke(this))
+        {
+            message.Reply(this);
+        }
     }
 
     /// <summary>

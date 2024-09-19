@@ -10,312 +10,303 @@
         <LangVersion>12</LangVersion>
         <ApplicationIcon>Resources\Images\logo.ico</ApplicationIcon>
         <Platforms>AnyCPU;x64;x86</Platforms>
+        <Version>0.2.0</Version>
+        <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     </PropertyGroup>
 
-    <!--<Choose>
-        <When Condition="'$(Configuration)' == 'Debug'">
-            <ItemGroup>
-                <None Include="appsettings.dev.json" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
-                <None Include="appsettings.prod.json" CopyToOutputDirectory="Never" CopyToPublishDirectory="Never" />
-            </ItemGroup>
-        </When>
-        <When Condition="'$(Configuration)' == 'Release'">
-            <ItemGroup>
-                <None Include="appsettings.dev.json" CopyToOutputDirectory="Never" CopyToPublishDirectory="Never" />
-                <None Include="appsettings.prod.json" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
-            </ItemGroup>
-        </When>
-    </Choose>-->
-
     <ItemGroup>
-        <TrimmerRootAssembly Include="Avalonia.Themes.Fluent" />
+        <TrimmerRootAssembly Include="Avalonia.Themes.Fluent"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="ActiproSoftware.Controls.Avalonia" Version="24.2.0" />
-        <PackageReference Include="ActiproSoftware.Controls.Avalonia.Pro" Version="24.2.0" />
-        <PackageReference Include="ActiproSoftware.Controls.Avalonia.Themes.ColorPicker" Version="24.2.0" />
-        <PackageReference Include="ActiproSoftware.Controls.Avalonia.Themes.DataGrid" Version="24.2.0" />
-        <PackageReference Include="Avalonia" Version="11.1.3" />
-        <PackageReference Include="Avalonia.Controls.ColorPicker" Version="11.1.3" />
-        <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.1.3" />
-        <PackageReference Include="Avalonia.Controls.TreeDataGrid" Version="11.0.10" />
-        <PackageReference Include="Avalonia.Desktop" Version="11.1.3" />
+        <PackageReference Include="ActiproSoftware.Controls.Avalonia" Version="24.2.0"/>
+        <PackageReference Include="ActiproSoftware.Controls.Avalonia.Pro" Version="24.2.0"/>
+        <PackageReference Include="ActiproSoftware.Controls.Avalonia.Themes.ColorPicker" Version="24.2.0"/>
+        <PackageReference Include="ActiproSoftware.Controls.Avalonia.Themes.DataGrid" Version="24.2.0"/>
+        <PackageReference Include="Avalonia" Version="11.2.0-beta2"/>
+        <PackageReference Include="Avalonia.Controls.ColorPicker" Version="11.2.0-beta2"/>
+        <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.2.0-beta2"/>
+        <PackageReference Include="Avalonia.Controls.TreeDataGrid" Version="11.0.10"/>
+        <PackageReference Include="Avalonia.Desktop" Version="11.2.0-beta2"/>
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.1.3" />
-        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.1.3" />
-        <PackageReference Include="Avalonia.Xaml.Behaviors" Version="11.1.0.3" />
-        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
-        <PackageReference Include="FluentResults" Version="3.16.0" />
-        <PackageReference Include="JetBrains.Annotations" Version="2024.2.0" />
-        <PackageReference Include="Lamar" Version="13.0.4" />
-        <PackageReference Include="MediatR" Version="12.4.1" />
-        <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
-        <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
-        <PackageReference Include="Serilog.Sinks.SQLite" Version="6.0.0" />
-        <PackageReference Include="Velopack" Version="0.0.594" />
+        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.2.0-beta2"/>
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.0-beta2"/>
+        <PackageReference Include="Avalonia.Xaml.Behaviors" Version="11.1.0.3"/>
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2"/>
+        <PackageReference Include="FluentResults" Version="3.16.0"/>
+        <PackageReference Include="JetBrains.Annotations" Version="2024.2.0"/>
+        <PackageReference Include="Lamar" Version="13.1.0"/>
+        <PackageReference Include="MediatR" Version="12.4.1"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0"/>
+        <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0"/>
+        <PackageReference Include="Serilog.Sinks.SQLite" Version="6.0.0"/>
+        <PackageReference Include="Velopack" Version="0.0.594"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\AutoSpex.Engine\AutoSpex.Engine.csproj" />
-      <ProjectReference Include="..\AutoSpex.Persistence\AutoSpex.Persistence.csproj" />
+        <ProjectReference Include="..\AutoSpex.Engine\AutoSpex.Engine.csproj"/>
+        <ProjectReference Include="..\AutoSpex.Persistence\AutoSpex.Persistence.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="Features\Shared\DetailsView.axaml.cs">
-        <DependentUpon>DetailsView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Parts\NavigationView.axaml.cs">
-        <DependentUpon>NavigationView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Parts\DetailsView.axaml.cs">
-        <DependentUpon>DetailsView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Parts\AppView.axaml.cs">
-        <DependentUpon>AppView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Pages\AppView.axaml.cs">
-        <DependentUpon>AppView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Pages\LauncherView.axaml.cs">
-        <DependentUpon>LauncherView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Windows\ShellView.axaml.cs">
-        <DependentUpon>ShellView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Remove="Resources\Controls\SplitGrid.axaml.cs" />
-      <Compile Update="Feautres\Nodes\NodeTreeView.axaml.cs">
-        <DependentUpon>NodeTreeView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Features\Specs\SpecificationView.axaml.cs">
-        <DependentUpon>SpecificationView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Features\Specs\CollectionView.axaml.cs">
-        <DependentUpon>CollectionView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Features\Specs\FolderView.axaml.cs">
-        <DependentUpon>FolderView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Features\Specs\ElementMenuView.axaml.cs">
-        <DependentUpon>ElementMenuView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Features\Specs\CriterionView.axaml.cs">
-        <DependentUpon>CriterionView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Features\Projects\ProjectStartupView.axaml.cs">
-        <DependentUpon>ProjectStartupView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Features\Projects\ProjectListView.axaml.cs">
-        <DependentUpon>ProjectListView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Features\Sources\AddSourceView.axaml.cs">
-        <DependentUpon>AddSourceView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Features\Sources\QueryBuilderView.axaml.cs">
-        <DependentUpon>QueryBuilderView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Features\Sources\SourceListView.axaml.cs">
-        <DependentUpon>SourceListView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Features\Sources\SourceView.axaml.cs">
-        <DependentUpon>SourceView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Features\StatusBar\ProcessIndicatorVew.axaml.cs">
-        <DependentUpon>ProcessIndicatorVew.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Features\StatusBar\StatusBarView.axaml.cs">
-        <DependentUpon>StatusBarView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Features\Common\DetailsView.axaml.cs">
-        <DependentUpon>DetailsView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Features\Common\NavigationView.axaml.cs">
-        <DependentUpon>NavigationView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Features\Specs\BreadcrumbView.axaml.cs">
-        <DependentUpon>BreadcrumbView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Features\Specs\NodeTreeView.axaml.cs">
-        <DependentUpon>NodeTreeView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Features\Projects\ProjectLaunchView.axaml.cs">
-        <DependentUpon>LauncherView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Remove="ShellView.axaml.cs" />
-      <Compile Update="Pages\Project\DetailsPage.axaml.cs">
-        <DependentUpon>DetailsPage.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Pages\Project\ProjectPage.axaml.cs">
-        <DependentUpon>ProjectPage.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Pages\Project\SourcesPage.axaml.cs">
-        <DependentUpon>SourcesPage.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Pages\Project\SpecsPage.axaml.cs">
-        <DependentUpon>SpecsPage.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Components\Criterion\PropertyEntry.axaml.cs">
-        <DependentUpon>PropertyEntry.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Components\Criterion\PropertyFlyout.axaml.cs">
-        <DependentUpon>PropertyFlyout.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Components\Criterion\CriterionEntry.axaml.cs">
-        <DependentUpon>CriterionEntry.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Components\Criterion\CriteriaList.axaml.cs">
-        <DependentUpon>CriteriaList.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Components\Prompts\DeletePrompt.axaml.cs">
-        <DependentUpon>DeletePrompt.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Pages\AppPage.axaml.cs">
-        <DependentUpon>ProjectPage.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Pages\DetailsPage.axaml.cs">
-        <DependentUpon>DetailsPage.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Remove="Pages\Tabs\SourceContentPage.axaml.cs" />
-      <Compile Remove="Pages\Tabs\SourceContentPageModel.cs" />
-      <Compile Update="Resources\Controls\Section.cs">
-        <DependentUpon>Section.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Resources\Controls\DefaultMessage.cs">
-        <DependentUpon>DefaultMessage.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Components\ResultPill.axaml.cs">
-        <DependentUpon>ResultPill.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Remove="Components\Runs\OutcomeTree.axaml.cs" />
-      <Compile Remove="Components\Runs\**" />
-      <Compile Update="Components\Controls\DetailTabList.axaml.cs">
-        <DependentUpon>DetailTabList.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
+        <Compile Update="Features\Shared\DetailsView.axaml.cs">
+            <DependentUpon>DetailsView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Parts\NavigationView.axaml.cs">
+            <DependentUpon>NavigationView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Parts\DetailsView.axaml.cs">
+            <DependentUpon>DetailsView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Parts\AppView.axaml.cs">
+            <DependentUpon>AppView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Pages\AppView.axaml.cs">
+            <DependentUpon>AppView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Pages\LauncherView.axaml.cs">
+            <DependentUpon>LauncherView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Windows\ShellView.axaml.cs">
+            <DependentUpon>ShellView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Remove="Resources\Controls\SplitGrid.axaml.cs"/>
+        <Compile Update="Feautres\Nodes\NodeTreeView.axaml.cs">
+            <DependentUpon>NodeTreeView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Features\Specs\SpecificationView.axaml.cs">
+            <DependentUpon>SpecificationView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Features\Specs\CollectionView.axaml.cs">
+            <DependentUpon>CollectionView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Features\Specs\FolderView.axaml.cs">
+            <DependentUpon>FolderView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Features\Specs\ElementMenuView.axaml.cs">
+            <DependentUpon>ElementMenuView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Features\Specs\CriterionView.axaml.cs">
+            <DependentUpon>CriterionView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Features\Projects\ProjectStartupView.axaml.cs">
+            <DependentUpon>ProjectStartupView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Features\Projects\ProjectListView.axaml.cs">
+            <DependentUpon>ProjectListView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Features\Sources\AddSourceView.axaml.cs">
+            <DependentUpon>AddSourceView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Features\Sources\QueryBuilderView.axaml.cs">
+            <DependentUpon>QueryBuilderView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Features\Sources\SourceListView.axaml.cs">
+            <DependentUpon>SourceListView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Features\Sources\SourceView.axaml.cs">
+            <DependentUpon>SourceView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Features\StatusBar\ProcessIndicatorVew.axaml.cs">
+            <DependentUpon>ProcessIndicatorVew.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Features\StatusBar\StatusBarView.axaml.cs">
+            <DependentUpon>StatusBarView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Features\Common\DetailsView.axaml.cs">
+            <DependentUpon>DetailsView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Features\Common\NavigationView.axaml.cs">
+            <DependentUpon>NavigationView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Features\Specs\BreadcrumbView.axaml.cs">
+            <DependentUpon>BreadcrumbView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Features\Specs\NodeTreeView.axaml.cs">
+            <DependentUpon>NodeTreeView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Features\Projects\ProjectLaunchView.axaml.cs">
+            <DependentUpon>LauncherView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Remove="ShellView.axaml.cs"/>
+        <Compile Update="Pages\Project\DetailsPage.axaml.cs">
+            <DependentUpon>DetailsPage.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Pages\Project\ProjectPage.axaml.cs">
+            <DependentUpon>ProjectPage.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Pages\Project\SourcesPage.axaml.cs">
+            <DependentUpon>SourcesPage.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Pages\Project\SpecsPage.axaml.cs">
+            <DependentUpon>SpecsPage.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Components\Criterion\PropertyEntry.axaml.cs">
+            <DependentUpon>PropertyEntry.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Components\Criterion\PropertyFlyout.axaml.cs">
+            <DependentUpon>PropertyFlyout.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Components\Criterion\CriterionEntry.axaml.cs">
+            <DependentUpon>CriterionEntry.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Components\Criterion\CriteriaList.axaml.cs">
+            <DependentUpon>CriteriaList.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Components\Prompts\DeletePrompt.axaml.cs">
+            <DependentUpon>DeletePrompt.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Pages\AppPage.axaml.cs">
+            <DependentUpon>ProjectPage.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Pages\DetailsPage.axaml.cs">
+            <DependentUpon>DetailsPage.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Remove="Pages\Tabs\SourceContentPage.axaml.cs"/>
+        <Compile Remove="Pages\Tabs\SourceContentPageModel.cs"/>
+        <Compile Update="Resources\Controls\Section.cs">
+            <DependentUpon>Section.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Resources\Controls\DefaultMessage.cs">
+            <DependentUpon>DefaultMessage.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Components\ResultPill.axaml.cs">
+            <DependentUpon>ResultPill.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Remove="Components\Runs\OutcomeTree.axaml.cs"/>
+        <Compile Remove="Components\Runs\**"/>
+        <Compile Update="Components\Controls\DetailTabList.axaml.cs">
+            <DependentUpon>DetailTabList.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Pages\Dialogs\SettingsPage.axaml.cs">
+            <DependentUpon>SettingsPage.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="appsettings.json">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Remove="AutoSpex.Client.csproj.DotSettings" />
-      <None Remove="Components\Runs\**" />
+        <None Update="appsettings.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Remove="AutoSpex.Client.csproj.DotSettings"/>
+        <None Remove="Components\Runs\**"/>
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="Shared\Assets\Images\logo.png" />
+        <None Remove="Shared\Assets\Images\logo.png"/>
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="Resources\Images\box-arrow-up-right.svg" />
-      <None Remove="Resources\Images\clipboard-filled-32.png" />
-      <None Remove="Resources\Images\clipboard-outlined-32.png" />
-      <None Remove="Resources\Images\clipboard-outlined-64.png" />
-      <None Remove="Resources\Images\icons8-clipboard-64.png" />
-      <None Remove="Resources\Images\icons8-clipboard-ok-62.png" />
-      <None Remove="Resources\Images\icons8-inspection-94.png" />
-      <None Remove="Resources\Images\icons8-clipboard-64 (1).png" />
-      <None Remove="Resources\Images\icons8-clipboard-64 (2).png" />
-      <None Remove="Resources\Images\icons8-inspection-96 (2).png" />
-      <AvaloniaXaml Remove="Features\Specifications\Resources\CollectionContextMenu.axaml" />
-      <None Remove="Resources\Images\Icons\link.svg" />
-      <AvaloniaXaml Remove="Resources\Controls\SplitGrid.axaml" />
-      <None Remove="Resources\Images\icons8-inspection-96 (4).png" />
-      <AvaloniaXaml Remove="ShellView.axaml" />
-      <None Remove="Resources\Images\icons8-true-false-96.png" />
-      <None Remove="Resources\Images\inspect-code.png" />
-      <AvaloniaResource Include="Resources\Images\inspect-code.png" />
-      <AvaloniaXaml Remove="Resources\Icons\FilledIcons.axaml" />
-      <AvaloniaXaml Remove="Resources\Icons\OutlinedIcons.axaml" />
-      <AvaloniaXaml Remove="Resources\Icons\RegularIcons.axaml" />
-      <None Remove="Resources\Images\logo_simple.png" />
-      <None Remove="Resources\Images\logo.png" />
-      <AvaloniaResource Include="Resources\Images\logo.png">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </AvaloniaResource>
-      <None Remove="Resources\Images\logo.ico" />
-      <AvaloniaResource Include="Resources\Images\logo.ico">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </AvaloniaResource>
-      <AvaloniaXaml Remove="Pages\Tabs\SourceContentPage.axaml" />
-      <None Remove="Resources\Svgs\clipboard-check.svg" />
-      <AvaloniaXaml Remove="Components\Runs\All.axaml" />
-      <AvaloniaXaml Remove="Components\Runs\**" />
-      <AvaloniaResource Remove="Components\Runs\**" />
+        <None Remove="Resources\Images\box-arrow-up-right.svg"/>
+        <None Remove="Resources\Images\clipboard-filled-32.png"/>
+        <None Remove="Resources\Images\clipboard-outlined-32.png"/>
+        <None Remove="Resources\Images\clipboard-outlined-64.png"/>
+        <None Remove="Resources\Images\icons8-clipboard-64.png"/>
+        <None Remove="Resources\Images\icons8-clipboard-ok-62.png"/>
+        <None Remove="Resources\Images\icons8-inspection-94.png"/>
+        <None Remove="Resources\Images\icons8-clipboard-64 (1).png"/>
+        <None Remove="Resources\Images\icons8-clipboard-64 (2).png"/>
+        <None Remove="Resources\Images\icons8-inspection-96 (2).png"/>
+        <AvaloniaXaml Remove="Features\Specifications\Resources\CollectionContextMenu.axaml"/>
+        <None Remove="Resources\Images\Icons\link.svg"/>
+        <AvaloniaXaml Remove="Resources\Controls\SplitGrid.axaml"/>
+        <None Remove="Resources\Images\icons8-inspection-96 (4).png"/>
+        <AvaloniaXaml Remove="ShellView.axaml"/>
+        <None Remove="Resources\Images\icons8-true-false-96.png"/>
+        <None Remove="Resources\Images\inspect-code.png"/>
+        <AvaloniaResource Include="Resources\Images\inspect-code.png"/>
+        <AvaloniaXaml Remove="Resources\Icons\FilledIcons.axaml"/>
+        <AvaloniaXaml Remove="Resources\Icons\OutlinedIcons.axaml"/>
+        <AvaloniaXaml Remove="Resources\Icons\RegularIcons.axaml"/>
+        <None Remove="Resources\Images\logo_simple.png"/>
+        <None Remove="Resources\Images\logo.png"/>
+        <AvaloniaResource Include="Resources\Images\logo.png">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </AvaloniaResource>
+        <None Remove="Resources\Images\logo.ico"/>
+        <AvaloniaResource Include="Resources\Images\logo.ico">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </AvaloniaResource>
+        <AvaloniaXaml Remove="Pages\Tabs\SourceContentPage.axaml"/>
+        <None Remove="Resources\Svgs\clipboard-check.svg"/>
+        <AvaloniaXaml Remove="Components\Runs\All.axaml"/>
+        <AvaloniaXaml Remove="Components\Runs\**"/>
+        <AvaloniaResource Remove="Components\Runs\**"/>
     </ItemGroup>
 
     <ItemGroup>
-      <UpToDateCheckInput Remove="Features\Specifications\Resources\All.axaml" />
-      <UpToDateCheckInput Remove="Components\Specs\Resources\CollectionMenu.axaml" />
-      <UpToDateCheckInput Remove="Components\Specs\Resources\FolderMenu.axaml" />
-      <UpToDateCheckInput Remove="Components\Specs\Resources\Merged.axaml" />
-      <UpToDateCheckInput Remove="Components\Specs\Resources\NodeIcons.axaml" />
-      <UpToDateCheckInput Remove="Components\Specs\Resources\SpecMenu.axaml" />
-      <UpToDateCheckInput Remove="Resources\Styles\TextBoxStyles.axaml" />
-      <UpToDateCheckInput Remove="Pages\Runs\RunListPage.axaml" />
-      <UpToDateCheckInput Remove="Pages\Runs\RunPage.axaml" />
-      <UpToDateCheckInput Remove="Pages\Sources\QueryPage.axaml" />
-      <UpToDateCheckInput Remove="Components\Breadcrumb\All.axaml" />
-      <UpToDateCheckInput Remove="Components\Templates\All.axaml" />
-      <UpToDateCheckInput Remove="Components\Sources\All.axaml" />
-      <UpToDateCheckInput Remove="Components\Sources\SourceLoader.axaml" />
-      <UpToDateCheckInput Remove="Components\Sources\SourceSearchBar.axaml" />
-      <UpToDateCheckInput Remove="Components\Sources\SourceTemplates.axaml" />
-      <UpToDateCheckInput Remove="Components\Sources\XmlEditor.axaml" />
-      <UpToDateCheckInput Remove="Components\Variables\All.axaml" />
-      <UpToDateCheckInput Remove="Components\Observers\All.axaml" />
-      <UpToDateCheckInput Remove="Components\Navigation\All.axaml" />
-      <UpToDateCheckInput Remove="Components\Specs\All.axaml" />
-      <UpToDateCheckInput Remove="Components\Details\All.axaml" />
-      <UpToDateCheckInput Remove="Components\Entries\All.axaml" />
+        <UpToDateCheckInput Remove="Features\Specifications\Resources\All.axaml"/>
+        <UpToDateCheckInput Remove="Components\Specs\Resources\CollectionMenu.axaml"/>
+        <UpToDateCheckInput Remove="Components\Specs\Resources\FolderMenu.axaml"/>
+        <UpToDateCheckInput Remove="Components\Specs\Resources\Merged.axaml"/>
+        <UpToDateCheckInput Remove="Components\Specs\Resources\NodeIcons.axaml"/>
+        <UpToDateCheckInput Remove="Components\Specs\Resources\SpecMenu.axaml"/>
+        <UpToDateCheckInput Remove="Resources\Styles\TextBoxStyles.axaml"/>
+        <UpToDateCheckInput Remove="Pages\Runs\RunListPage.axaml"/>
+        <UpToDateCheckInput Remove="Pages\Runs\RunPage.axaml"/>
+        <UpToDateCheckInput Remove="Pages\Sources\QueryPage.axaml"/>
+        <UpToDateCheckInput Remove="Components\Breadcrumb\All.axaml"/>
+        <UpToDateCheckInput Remove="Components\Templates\All.axaml"/>
+        <UpToDateCheckInput Remove="Components\Sources\All.axaml"/>
+        <UpToDateCheckInput Remove="Components\Sources\SourceLoader.axaml"/>
+        <UpToDateCheckInput Remove="Components\Sources\SourceSearchBar.axaml"/>
+        <UpToDateCheckInput Remove="Components\Sources\SourceTemplates.axaml"/>
+        <UpToDateCheckInput Remove="Components\Sources\XmlEditor.axaml"/>
+        <UpToDateCheckInput Remove="Components\Variables\All.axaml"/>
+        <UpToDateCheckInput Remove="Components\Observers\All.axaml"/>
+        <UpToDateCheckInput Remove="Components\Navigation\All.axaml"/>
+        <UpToDateCheckInput Remove="Components\Specs\All.axaml"/>
+        <UpToDateCheckInput Remove="Components\Details\All.axaml"/>
+        <UpToDateCheckInput Remove="Components\Entries\All.axaml"/>
     </ItemGroup>
 
     <ItemGroup>
-      <EmbeddedResource Remove="Components\Runs\**" />
+        <EmbeddedResource Remove="Components\Runs\**"/>
     </ItemGroup>
 
     <ItemGroup>
-      <AdditionalFiles Remove="Components\Runs\**" />
+        <AdditionalFiles Remove="Components\Runs\**"/>
     </ItemGroup>
 </Project>

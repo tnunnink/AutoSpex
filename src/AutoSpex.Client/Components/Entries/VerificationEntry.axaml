@@ -2,7 +2,6 @@
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
-                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
                     xmlns:components="clr-namespace:AutoSpex.Client.Components">
 
     <Design.PreviewWith>
@@ -20,44 +19,45 @@
             <ListBox
                 IsVisible="{Binding Verifications.Count}"
                 ItemsSource="{Binding Verifications}"
+                SelectedItems="{Binding SelectedVerifications}"
                 ItemTemplate="{StaticResource CriterionListItem}"
                 ItemContainerTheme="{StaticResource ListBoxItemEntry}"
                 SelectionMode="Multiple"
                 BorderBrush="{a:ThemeResource Container1BorderBrush}"
-                BorderThickness="0 0 0 1"
-                ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
+                BorderThickness="0 0 0 1" />
 
-            <DockPanel LastChildFill="False">
+            <Button
+                Command="{Binding AddVerificationCommand}"
+                Theme="{a:ControlTheme ButtonSubtle}"
+                Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Left"
+                Padding="15 10" BorderThickness="0" CornerRadius="0 0 4 4">
 
-                <Button
-                    DockPanel.Dock="Left"
-                    Command="{Binding AddVerificationCommand}"
-                    Theme="{a:ControlTheme ButtonSubtle}"
-                    Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
-                    HorizontalAlignment="Left" Margin="4">
-                    <StackPanel Orientation="Horizontal" Spacing="5">
-                        <PathIcon
-                            Theme="{StaticResource IconAdd}"
-                            Foreground="{Binding $parent[Button].Foreground}"
-                            Classes="size-sm" />
-                        <TextBlock Text="Add" />
-                    </StackPanel>
-                </Button>
+                <StackPanel Orientation="Horizontal" Spacing="5">
+                    <PathIcon
+                        Theme="{StaticResource IconAdd}"
+                        Classes="size-sm accent" />
+                    <TextBlock
+                        Text="Add Verification" />
+                    <TextBlock
+                        Text="to filter or verify elements."
+                        Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                </StackPanel>
 
-                <TextBlock
-                    DockPanel.Dock="Left"
-                    Text="Add verifications to check candidate data."
-                    Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                <Button.Flyout>
 
-                <ContentControl
-                    DockPanel.Dock="Right"
-                    Content="{Binding}"
-                    ContentTemplate="{StaticResource VerificationInclusion}" />
+                </Button.Flyout>
 
-            </DockPanel>
+                <Button.Styles>
+                    <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+                        <Setter Property="Background" Value="{a:ThemeResource Container2BackgroundBrush}" />
+                    </Style>
+                </Button.Styles>
+            </Button>
 
         </StackPanel>
-
+        
     </DataTemplate>
 
 </ResourceDictionary>

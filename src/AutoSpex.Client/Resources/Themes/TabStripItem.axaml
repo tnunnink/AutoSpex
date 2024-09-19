@@ -32,6 +32,20 @@
                         <TabStripItem Content="Item 3" />
                     </TabStrip>
                 </Border>
+                
+                <Border Padding="20">
+                    <TabStrip ItemContainerTheme="{DynamicResource TabStripItemSimple}"
+                              BorderThickness="0">
+                        <TabStrip.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" Spacing="10" />
+                            </ItemsPanelTemplate>
+                        </TabStrip.ItemsPanel>
+                        <TabStripItem Content="Item 1" />
+                        <TabStripItem Content="Item 2" />
+                        <TabStripItem Content="Item 3" />
+                    </TabStrip>
+                </Border>
 
                 <Border Padding="20">
                     <TabStrip ItemContainerTheme="{DynamicResource TabStripItemTitleBar}"
@@ -167,6 +181,53 @@
             <Style Selector="^ /template/ Border#PART_SelectedPipe">
                 <Setter Property="IsVisible" Value="True" />
             </Style>
+            <Style Selector="^:disabled">
+                <Setter Property="BorderBrush" Value="{a:ThemeResource TabItemBorderBrushSubtleSelectedDisabled}" />
+            </Style>
+        </Style>
+
+        <Style Selector="^:disabled">
+            <Setter Property="Foreground" Value="{a:ThemeResource TabItemForegroundBrushSubtleDisabled}" />
+        </Style>
+    </ControlTheme>
+    
+    <ControlTheme x:Key="TabStripItemSimple" TargetType="TabStripItem">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="{a:ThemeResource TabItemBorderBrushSubtle}" />
+        <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeSmall}" />
+        <Setter Property="FontWeight" Value="{a:ThemeResource TabItemFontWeightSubtle}" />
+        <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Padding" Value="5" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Panel>
+                    <Border
+                        x:Name="PART_LayoutRoot"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        Padding="{TemplateBinding Padding}">
+                        <ContentPresenter
+                            x:Name="PART_ContentPresenter"
+                            Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    </Border>
+                </Panel>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^:pointerover">
+            <Setter Property="Foreground" Value="{a:ThemeResource TabItemForegroundBrushOutlinePointerOver}" />
+        </Style>
+
+        <Style Selector="^:selected">
+            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+            <Setter Property="BorderBrush" Value="{a:ThemeResource TabItemBorderBrushSubtleSelected}" />
             <Style Selector="^:disabled">
                 <Setter Property="BorderBrush" Value="{a:ThemeResource TabItemBorderBrushSubtleSelectedDisabled}" />
             </Style>

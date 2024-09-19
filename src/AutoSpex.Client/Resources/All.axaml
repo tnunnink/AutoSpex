@@ -63,6 +63,7 @@
         <converters:ValueResourceKey Value="Date" Resource="IconThemedDate" />
         <converters:ValueResourceKey Value="Enum" Resource="IconThemedEnum" />
         <converters:ValueResourceKey Value="Element" Resource="IconThemedElement" />
+        <converters:ValueResourceKey Value="Settings" Resource="IconFilledCog" />
     </converters:KeyResourceConverter>
 
     <converters:KeyResourceConverter x:Key="ResultStateIconConverter">

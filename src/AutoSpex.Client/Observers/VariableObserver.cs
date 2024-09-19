@@ -116,7 +116,7 @@ public partial class VariableObserver : Observer<Variable>
                 .SelectMany(x => x.Value)
                 .Select(x => new ValueObserver(x))
                 .Where(x => x.Filter(filter))
-            : Enumerable.Empty<ValueObserver>();
+            : [];
     }
 
     /// <summary>

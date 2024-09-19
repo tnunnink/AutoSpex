@@ -59,4 +59,17 @@ public class EqualToOperationTests
 
         result.Should().BeFalse();
     }
+    
+    [Test]
+    public void Execute_TagMemebers_ShouldBeTrue()
+    {
+        var content = L5X.Load(Known.Test);
+        var first = content.Get<Tag>("TestComplexTag").Clone();
+        var second = content.Get<Tag>("TestComplexTag").Clone();
+        second.Description = "Testing...";
+
+        var result = Operation.EqualTo.Execute(first["SimpleMember"].Value, second["SimpleMember"].Value);
+
+        result.Should().BeTrue();
+    }
 }

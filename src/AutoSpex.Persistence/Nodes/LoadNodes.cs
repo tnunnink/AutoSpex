@@ -45,9 +45,13 @@ internal class LoadNodesHandler(IConnectionManager manager) : IRequestHandler<Lo
         await connection.QueryAsync<Node, Spec?, Variable?, Node>(LoadNodes,
             (node, spec, variable) =>
             {
-                lookup.TryAdd(node.NodeId, node);
+                //Try to add or get the existing instance that is already partially configured.
+                if (!lookup.TryAdd(node.NodeId, node))
+                {
+                    node = lookup[node.NodeId];
+                }
 
-                if (lookup.TryGetValue(node.ParentId, out var parent) && parent.Nodes.All(c => c.NodeId != node.NodeId))
+                if (lookup.TryGetValue(node.ParentId, out var parent))
                     parent.AddNode(node);
                 
                 if (spec is not null)

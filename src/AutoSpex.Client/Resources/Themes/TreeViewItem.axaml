@@ -82,9 +82,11 @@
                         IsExpanded="{TemplateBinding IsExpanded}"
                         IsAnimationEnabled="{TemplateBinding a:ThemeProperties.IsAnimationEnabled}">
                         <Panel>
-                            <Border Margin="9.5 5 0 0">
+                            <Border
+                                x:Name="IndentBorder"
+                                Margin="9.5 5 0 0">
                                 <Border
-                                    x:Name="IndentBorder"
+                                    x:Name="HighlightBorder"
                                     Width="2"
                                     HorizontalAlignment="Left"
                                     CornerRadius="{a:ThemeResource ButtonCornerRadius}"
@@ -98,7 +100,7 @@
             </ControlTemplate>
         </Setter>
 
-        <Style Selector="^ /template/ Border#IndentBorder">
+        <Style Selector="^ /template/ Border#HighlightBorder">
             <Setter Property="Background" Value="{a:ThemeResource Container1BorderBrush}" />
         </Style>
 
@@ -120,7 +122,7 @@
             <Setter Property="Background" Value="{a:ThemeResource ListItemBackgroundBrushPointerOver}" />
             <Setter Property="TextElement.Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
         </Style>
-        <Style Selector="^:selected /template/ Border#IndentBorder">
+        <Style Selector="^:selected /template/ Border#HighlightBorder">
             <Setter Property="Background" Value="{a:ThemeResource ControlForegroundBrushOutlineAccentDisabled}" />
         </Style>
     </ControlTheme>

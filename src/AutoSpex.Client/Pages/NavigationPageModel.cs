@@ -120,6 +120,12 @@ public partial class NavigationPageModel : PageViewModel
         //todo
         return Task.CompletedTask;
     }
+    
+    [RelayCommand]
+    private Task OpenSettings()
+    {
+        return Prompter.Show(() => new SettingsPageModel());
+    }
 
     #endregion
 }

@@ -18,12 +18,11 @@
     </Design.PreviewWith>
 
     <DataTemplate x:Key="ValueItemTemplate" x:DataType="observers:ValueObserver">
-        <Grid ColumnDefinitions="30,*,Auto">
+        <Grid ColumnDefinitions="30,*,Auto" Margin="2">
             <PathIcon
                 Grid.Column="0"
                 Theme="{Binding Group, Converter={StaticResource TypeGroupIconConverter}}"
-                Classes="size-sm"
-                Margin="0 0 10 0" />
+                Margin="0 1 10 0" />
             <ContentControl
                 Grid.Column="1"
                 Content="{Binding }"

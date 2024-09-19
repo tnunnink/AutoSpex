@@ -1,0 +1,81 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:shared="clr-namespace:AutoSpex.Client.Shared"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             x:Class="AutoSpex.Client.Pages.SettingsPage"
+             x:DataType="pages:SettingsPageModel">
+
+    <Design.Height>800</Design.Height>
+    <Design.Width>1000</Design.Width>
+
+    <controls:Prompt
+        Header="Settings"
+        HeaderIcon="{StaticResource IconFilledCog}"
+        CancelCommandParameter="{x:Null}"
+        UseButtonPanel="False"
+        Padding="0"
+        MinWidth="1000" MinHeight="800">
+
+
+        <DockPanel>
+
+            <Border DockPanel.Dock="Left"
+                    Padding="10"
+                    MinWidth="200"
+                    Background="{a:ThemeResource Container2BackgroundBrush}">
+
+                <TabStrip
+                    ItemsSource="{Binding Tabs}"
+                    SelectedItem="{Binding Tab}"
+                    BorderThickness="0">
+
+                    <TabStrip.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Spacing="4" />
+                        </ItemsPanelTemplate>
+                    </TabStrip.ItemsPanel>
+
+                    <TabStrip.ItemContainerTheme>
+                        <ControlTheme TargetType="TabStripItem" BasedOn="{StaticResource TabStripItemSoft}">
+                            <Setter Property="HorizontalContentAlignment" Value="Left" />
+
+                            <Style Selector="^:selected">
+                                <Setter Property="Foreground"
+                                        Value="{a:ThemeResource TabItemForegroundBrushOutlineSelected}" />
+                            </Style>
+                        </ControlTheme>
+                    </TabStrip.ItemContainerTheme>
+
+                    <TabStrip.ItemTemplate>
+                        <DataTemplate x:DataType="shared:PageViewModel">
+                            <TextBlock
+                                Text="{Binding Title}"
+                                FontSize="{a:ThemeResource DefaultFontSizeMedium}" />
+                        </DataTemplate>
+                    </TabStrip.ItemTemplate>
+
+                </TabStrip>
+
+            </Border>
+
+            <Border DockPanel.Dock="Right"
+                    Padding="20"
+                    Background="{a:ThemeResource Container1BackgroundBrush}">
+
+                <ContentControl Content="{Binding Tab}">
+                    <ContentControl.ContentTemplate>
+                        <DataTemplate x:DataType="shared:PageViewModel">
+                            <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+                                <ContentControl Content="{Binding}" Margin="20" />
+                            </ScrollViewer>
+                        </DataTemplate>
+                    </ContentControl.ContentTemplate>
+                </ContentControl>
+
+            </Border>
+
+        </DockPanel>
+    </controls:Prompt>
+</UserControl>

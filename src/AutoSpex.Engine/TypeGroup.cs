@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using System.Xml;
 using System.Xml.Linq;
 using Ardalis.SmartEnum;
 using L5Sharp.Core;
@@ -135,14 +134,25 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
 
         public override bool TryParse(string text, out object? value)
         {
-            if (!Radix.TryInfer(text, out var radix))
+            //Radix TryInfer will support .NET primitives.
+            if (Radix.TryInfer(text, out var radix))
+            {
+                value = radix.ParseValue(text);
+                return true;
+            }
+            
+            //This is to support LogixData
+            try
+            {
+                var element = XElement.Parse(text);
+                value = element.Deserialize();
+                return true;
+            }
+            catch (Exception)
             {
                 value = null;
                 return false;
             }
-
-            value = radix.ParseValue(text);
-            return true;
         }
     }
 
@@ -246,12 +256,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
                 value = element.Deserialize();
                 return true;
             }
-            catch (XmlException)
-            {
-                value = null;
-                return false;
-            }
-            catch (InvalidOperationException)
+            catch (Exception)
             {
                 value = null;
                 return false;

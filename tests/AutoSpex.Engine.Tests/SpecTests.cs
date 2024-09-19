@@ -61,36 +61,6 @@ public class SpecTests
     }
 
     [Test]
-    public async Task RunAsync_WithRangeValidRange_ShouldReturnSuccess()
-    {
-        var spec = new Spec();
-        var content = L5X.Load(Known.Test);
-
-        spec.Find(Element.Program)
-            .Filter("Type", Operation.EqualTo, ProgramType.Normal)
-            .Count(Operation.GreaterThanOrEqualTo, 1);
-
-        var verification = await spec.RunAsync(content);
-
-        verification.Result.Should().Be(ResultState.Passed);
-    }
-
-    [Test]
-    public async Task RunAsync_WithRangeInvalidRange_ShouldReturnFailure()
-    {
-        var spec = new Spec();
-        var content = L5X.Load(Known.Test);
-
-        spec.Find(Element.Program)
-            .Filter("Type", Operation.EqualTo, ProgramType.Normal)
-            .Count(Operation.LessThan, 1);
-
-        var verification = await spec.RunAsync(content);
-
-        verification.Result.Should().Be(ResultState.Failed);
-    }
-
-    [Test]
     public Task Serialize_ConfiguredSpec_ShouldBeVerified()
     {
         var spec = new Spec();
