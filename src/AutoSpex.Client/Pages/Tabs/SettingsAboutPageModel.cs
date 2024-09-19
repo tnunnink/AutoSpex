@@ -5,6 +5,7 @@ using AutoSpex.Client.Shared;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Velopack;
+using Velopack.Sources;
 
 namespace AutoSpex.Client.Pages;
 
@@ -37,7 +38,7 @@ public partial class SettingsAboutPageModel() : PageViewModel("About")
 
         try
         {
-            var manager = new UpdateManager(LatestRelease);
+            var manager = new UpdateManager(new GithubSource(LatestRelease, string.Empty, false));
 
             await manager.DownloadUpdatesAsync(NewVersion);
 
