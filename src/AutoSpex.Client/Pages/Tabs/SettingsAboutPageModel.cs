@@ -65,7 +65,7 @@ public partial class SettingsAboutPageModel() : PageViewModel("About")
     {
         try
         {
-            var manager = new UpdateManager(LatestRelease);
+            var manager = new UpdateManager(new GithubSource(LatestRelease, string.Empty, false));
 
             var newVersion = await manager.CheckForUpdatesAsync();
             if (newVersion is null)

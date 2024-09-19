@@ -8,7 +8,7 @@ using JetBrains.Annotations;
 namespace AutoSpex.Client.Pages;
 
 [UsedImplicitly]
-public partial class SourceSettingsPageModel(SourceObserver source) : PageViewModel
+public partial class SourceSettingsPageModel(SourceObserver source) : PageViewModel("Source Settings")
 {
     public SourceObserver Source { get; } = source;
 
