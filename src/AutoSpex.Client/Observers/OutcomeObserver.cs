@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using AutoSpex.Client.Resources;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
+using Avalonia.Input;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
@@ -21,6 +24,7 @@ public partial class OutcomeObserver : Observer<Outcome>,
         );
     }
 
+    protected override bool PromptForDeletion => false;
     public override Guid Id => Model.OutcomeId;
     public override string Name => Model.Name;
     public NodeObserver? Node => GetObserver<NodeObserver>(x => x.Id == Model.NodeId);
@@ -37,8 +41,8 @@ public partial class OutcomeObserver : Observer<Outcome>,
 
         //Check matches against name and node path.
         return string.IsNullOrEmpty(filter)
-                     || Name.Satisfies(filter)
-                     || Node?.Model.Path.Satisfies(filter) is true;
+               || Name.Satisfies(filter)
+               || Node?.Model.Path.Satisfies(filter) is true;
     }
 
     /// <inheritdoc />
@@ -90,6 +94,36 @@ public partial class OutcomeObserver : Observer<Outcome>,
     /// </summary>
     /// <param name="Outcome">The outcome instance that just completed its run.</param>
     public record Complete(Outcome Outcome);
+
+    /// <inheritdoc />
+    protected override IEnumerable<MenuActionItem> GenerateContextItems()
+    {
+        /*yield return new MenuActionItem
+        {
+            Header = "Run",
+            Icon = Resource.Find("IconFilledLightning"),
+            Classes = "accent",
+            Command = RunCommand
+        };*/
+
+        yield return new MenuActionItem
+        {
+            Header = "Open Spec",
+            Icon = Resource.Find("IconLineLaunch"),
+            Command = NavigateCommand,
+            Gesture = new KeyGesture(Key.Enter),
+            DetermineVisibility = () => HasSingleSelection
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Delete",
+            Icon = Resource.Find("IconFilledTrash"),
+            Classes = "danger",
+            Command = DeleteSelectedCommand,
+            Gesture = new KeyGesture(Key.Delete)
+        };
+    }
 
     public static implicit operator Outcome(OutcomeObserver observer) => observer.Model;
     public static implicit operator OutcomeObserver(Outcome model) => new(model);

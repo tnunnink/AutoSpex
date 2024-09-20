@@ -275,6 +275,7 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
         _refreshing = false;
         _changed = false;
         OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsChanged)));
+        OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasItems)));
     }
 
     /// <summary>

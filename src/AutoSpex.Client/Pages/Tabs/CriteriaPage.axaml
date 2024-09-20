@@ -38,7 +38,7 @@
 
             <ItemsControl
                 ItemsSource="{Binding Specs}"
-                ItemTemplate="{StaticResource QueryEntry}"
+                ItemTemplate="{StaticResource SpecEntry}"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>

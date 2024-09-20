@@ -10,7 +10,6 @@
         <ResourceInclude Source="ElementEntry.axaml" />
         <ResourceInclude Source="FilterEntry.axaml" />
         <ResourceInclude Source="NameEntry.axaml" />
-        <ResourceInclude Source="QueryEntry.axaml" />
         <ResourceInclude Source="SpecEntry.axaml" />
         <ResourceInclude Source="VerificationEntry.axaml" />
     </ResourceDictionary.MergedDictionaries>

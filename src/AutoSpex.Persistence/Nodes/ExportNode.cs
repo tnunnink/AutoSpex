@@ -49,16 +49,17 @@ internal class ExportNodeHandler(IConnectionManager manager) : IRequestHandler<E
         await connection.QueryAsync<Node, Spec?, Variable?, Node>(ListNodes,
             (node, spec, variable) =>
             {
-                nodes.TryAdd(node.NodeId, node);
+                if (!nodes.TryAdd(node.NodeId, node))
+                    node = nodes[node.NodeId];
 
                 if (nodes.TryGetValue(node.ParentId, out var parent))
                     parent.AddNode(node);
+                
+                if (spec is not null)
+                    node.AddSpec(spec);
 
                 if (variable is not null)
                     node.AddVariable(variable);
-
-                if (spec is not null)
-                    node.AddSpec(spec);
 
                 return node;
             },
