@@ -11,10 +11,9 @@ namespace AutoSpex.Client.Pages;
 
 public partial class SettingsAboutPageModel() : PageViewModel("About")
 {
-    private const string Website = "https://github.com/tnunnink/AutoSpex/";
+    private const string Website = "https://github.com/tnunnink/AutoSpex";
     private const string Issues = "https://github.com/tnunnink/AutoSpex/issues";
     private const string Releases = "https://github.com/tnunnink/AutoSpex/releases";
-    private const string LatestRelease = "https://github.com/tnunnink/AutoSpex/releases/latest";
 
     public override string Route => "Settings/About";
 
@@ -38,7 +37,7 @@ public partial class SettingsAboutPageModel() : PageViewModel("About")
 
         try
         {
-            var manager = new UpdateManager(new GithubSource(LatestRelease, string.Empty, false));
+            var manager = new UpdateManager(new GithubSource(Website, string.Empty, false));
 
             await manager.DownloadUpdatesAsync(NewVersion);
 
@@ -65,7 +64,7 @@ public partial class SettingsAboutPageModel() : PageViewModel("About")
     {
         try
         {
-            var manager = new UpdateManager(new GithubSource(LatestRelease, string.Empty, false));
+            var manager = new UpdateManager(new GithubSource(Website, string.Empty, false));
 
             var newVersion = await manager.CheckForUpdatesAsync();
             if (newVersion is null)
