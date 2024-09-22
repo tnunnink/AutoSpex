@@ -4,7 +4,8 @@
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
                     xmlns:components="clr-namespace:AutoSpex.Client.Components"
                     xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
-                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine">
 
     <Design.PreviewWith>
         <ListBox
@@ -26,7 +27,22 @@
     </Design.PreviewWith>
 
     <DataTemplate x:Key="OutcomeListItem" x:DataType="observers:OutcomeObserver">
-        <Border Padding="0 5">
+        <Border x:Name="Border" Focusable="True" Background="Transparent" Padding="0 5">
+
+            <Interaction.Behaviors>
+                <ExecuteCommandOnKeyDownBehavior
+                    Key="Delete"
+                    Command="{Binding DeleteSelectedCommand}"
+                    MarkAsHandled="True" />
+            </Interaction.Behaviors>
+
+            <Border.ContextFlyout>
+                <MenuFlyout
+                    ItemsSource="{Binding ContextItems}"
+                    ItemContainerTheme="{StaticResource MenuActionItem}"
+                    Placement="Pointer" />
+            </Border.ContextFlyout>
+
             <Expander
                 Theme="{StaticResource ExpanderEmbedded}"
                 IsExpanded="{Binding IsExpanded}">
@@ -84,35 +100,63 @@
 
                         <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="5">
 
-                            <StackPanel Orientation="Horizontal" Spacing="2" Margin="10 0"
-                                        IsVisible="{Binding Duration}">
-                                <PathIcon Theme="{StaticResource IconLineStopwatch}" Classes="size-sm accent"
-                                          Margin="4 1 4 0" />
-                                <TextBlock Text="{Binding Duration}" />
+                            <StackPanel Orientation="Horizontal" Spacing="2" Margin="10 0">
+                                <PathIcon
+                                    Theme="{StaticResource IconLineStopwatch}"
+                                    Classes="size-sm accent"
+                                    Margin="4 0" />
+                                <TextBlock Text="{Binding Duration}" IsVisible="{Binding Duration}" />
+                                <TextBlock Text="&lt; 1" IsVisible="{Binding !Duration}" />
                                 <TextBlock Text="ms" Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
                             </StackPanel>
 
                             <Button
                                 Command="{Binding NavigateCommand}"
-                                IsVisible="{Binding Node, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                IsEnabled="{Binding Node, Converter={x:Static ObjectConverters.IsNotNull}}"
                                 Theme="{StaticResource IconButtonSmall}"
                                 properties:Icon.Theme="{StaticResource IconLineLaunch}"
                                 ToolTip.Tip="Open Spec" />
-                            <Button
-                                Theme="{StaticResource IconButtonSmall}"
-                                properties:Icon.Theme="{StaticResource IconEllipsis}"
-                                ToolTip.Tip="Options" />
 
                         </StackPanel>
                     </Grid>
                 </Expander.Header>
 
                 <Expander.Content>
+
                     <Panel>
                         <controls:DefaultMessage
-                            IsVisible="{Binding !Evaluations.Count}"
                             Header="No results available"
-                            Message="Result will appear after executing this run." />
+                            Message="Result will appear after running this spec."
+                            IsVisible="{Binding Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.None}}" />
+
+                        <controls:DefaultMessage
+                            Header="No results produced"
+                            Message="This means no source element met the criteria or filters defined by the spec.">
+                            <controls:DefaultMessage.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                    <Binding
+                                        Path="Result"
+                                        Converter="{StaticResource NotEqualToConverter}"
+                                        ConverterParameter="{x:Static engine:ResultState.None}" />
+                                    <Binding Path="!Evaluations.HasItems" />
+                                </MultiBinding>
+                            </controls:DefaultMessage.IsVisible>
+                        </controls:DefaultMessage>
+
+                        <controls:DefaultMessage
+                            Header="No results found"
+                            Message="No evaluations match the current search critera.">
+                            <controls:DefaultMessage.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                    <Binding
+                                        Path="Result"
+                                        Converter="{StaticResource NotEqualToConverter}"
+                                        ConverterParameter="{x:Static engine:ResultState.None}" />
+                                    <Binding Path="Evaluations.HasItems" />
+                                    <Binding Path="!Evaluations.Count" />
+                                </MultiBinding>
+                            </controls:DefaultMessage.IsVisible>
+                        </controls:DefaultMessage>
 
                         <ListBox
                             ItemsSource="{Binding Evaluations}"
@@ -128,10 +172,24 @@
                                     <Setter Property="IsVisible" Value="{Binding IsVisible}" />
                                 </ControlTheme>
                             </ListBox.ItemContainerTheme>
+                            <ListBox.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                    <Binding
+                                        Path="Result"
+                                        Converter="{StaticResource NotEqualToConverter}"
+                                        ConverterParameter="{x:Static engine:ResultState.None}" />
+                                    <Binding Path="Evaluations.HasItems" />
+                                    <Binding Path="Evaluations.Count" />
+                                </MultiBinding>
+                            </ListBox.IsVisible>
                         </ListBox>
+
                     </Panel>
                 </Expander.Content>
+
             </Expander>
+
         </Border>
+
     </DataTemplate>
 </ResourceDictionary>

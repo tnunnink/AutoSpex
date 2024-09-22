@@ -34,14 +34,10 @@
             <ListBox
                 DockPanel.Dock="Top"
                 ItemsSource="{Binding Variables}"
+                ItemContainerTheme="{StaticResource ListBoxItemSimple}"
                 IsVisible="{Binding Variables.Count}"
                 Margin="5">
-                <ListBox.ItemContainerTheme>
-                    <ControlTheme TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemSimple}"
-                                  x:DataType="observers:VariableObserver">
-                        <Setter Property="IsVisible" Value="{Binding IsVisible}" />
-                    </ControlTheme>
-                </ListBox.ItemContainerTheme>
+
                 <ListBox.ItemTemplate>
                     <DataTemplate x:DataType="observers:VariableObserver">
                         <Border Focusable="True" Background="Transparent">
@@ -71,11 +67,27 @@
                 </ListBox.ItemTemplate>
             </ListBox>
 
-            <controls:DefaultMessage
-                IsVisible="{Binding !Variables.Count}"
-                HeaderIcon="{StaticResource IconThemedVariable}"
-                Header="No variables defined"
-                Message="Variables can be defined for any container or spec under 'Variables'." />
+            <Panel>
+
+                <controls:DefaultMessage
+                    IsVisible="{Binding !Variables.HasItems}"
+                    HeaderIcon="{StaticResource IconThemedVariable}"
+                    Header="No variables defined"
+                    Message="Variables can be defined for any container or spec under 'Variables'." />
+
+                <controls:DefaultMessage
+                    HeaderIcon="{StaticResource IconThemedVariable}"
+                    Header="No variables found"
+                    Message="Could not find any variables that match the current search text.">
+                    <controls:DefaultMessage.IsVisible>
+                        <MultiBinding Converter="{x:Static BoolConverters.And}">
+                            <Binding Path="Variables.HasItems" />
+                            <Binding Path="!Variables.Count" />
+                        </MultiBinding>
+                    </controls:DefaultMessage.IsVisible>
+                </controls:DefaultMessage>
+
+            </Panel>
         </DockPanel>
 
         <Interaction.Behaviors>

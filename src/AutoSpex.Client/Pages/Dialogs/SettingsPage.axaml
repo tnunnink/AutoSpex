@@ -61,7 +61,7 @@
             </Border>
 
             <Border DockPanel.Dock="Right"
-                    Padding="20"
+                    Padding="10"
                     Background="{a:ThemeResource Container1BackgroundBrush}">
 
                 <ContentControl Content="{Binding Tab}">

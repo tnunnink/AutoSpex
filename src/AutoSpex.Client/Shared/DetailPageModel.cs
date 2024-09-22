@@ -119,7 +119,7 @@ public abstract partial class DetailPageModel(string? title) : PageViewModel(tit
     /// <summary>
     /// Close this node if was deleted.
     /// </summary>
-    public void Receive(Observer.Deleted message)
+    public virtual void Receive(Observer.Deleted message)
     {
         if (!Route.Contains(message.Observer.Id.ToString())) return;
         ForceClose();
@@ -128,7 +128,7 @@ public abstract partial class DetailPageModel(string? title) : PageViewModel(tit
     /// <summary>
     /// When the observer this detail page contains has a name change then notify the title property.
     /// </summary>
-    public void Receive(Observer.Renamed message)
+    public virtual void Receive(Observer.Renamed message)
     {
         if (!Route.Contains(message.Observer.Id.ToString())) return;
         Title = message.Observer.Name;

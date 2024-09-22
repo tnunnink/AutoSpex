@@ -77,22 +77,21 @@
                         Command="{Binding NavigateCommand}"
                         Theme="{StaticResource IconButtonSmall}"
                         properties:Icon.Theme="{StaticResource IconLineLaunch}"
-                        Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
                         ToolTip.Tip="Open" />
 
                 </StackPanel>
 
             </DockPanel>
-            
+
             <Interaction.Behaviors>
                 <ExecuteCommandOnKeyDownBehavior
-                    Key="Delete" 
-                    Command="{Binding DeleteSelectedCommand}" 
-                    MarkAsHandled="True" 
+                    Key="Delete"
+                    Command="{Binding DeleteSelectedCommand}"
+                    MarkAsHandled="True"
                     FocusControl="Border" />
                 <ExecuteCommandOnKeyDownBehavior
-                    Gesture="Ctrl+D" 
-                    Command="{Binding DuplicateCommand}" 
+                    Gesture="Ctrl+D"
+                    Command="{Binding DuplicateCommand}"
                     MarkAsHandled="True" />
             </Interaction.Behaviors>
         </Border>

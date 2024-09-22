@@ -54,11 +54,15 @@
                     EventRoutingStrategy="Bubble" />
                 <ExecuteCommandOnKeyDownBehavior
                     Key="Delete"
-                    Command="{Binding DeleteCommand}"
+                    Command="{Binding DeleteSelectedCommand}"
                     MarkAsHandled="True" />
                 <ExecuteCommandOnKeyDownBehavior
                     Gesture="Ctrl+E"
                     Command="{Binding RenameCommand}"
+                    MarkAsHandled="True" />
+                <ExecuteCommandOnKeyDownBehavior
+                    Gesture="Ctrl+D"
+                    Command="{Binding DuplicateCommand}"
                     MarkAsHandled="True" />
                 <behaviors:DraggableBehavior
                     Context="{Binding}" />

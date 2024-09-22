@@ -74,7 +74,7 @@ public partial class NavigationPageModel : PageViewModel
         if (package is null) return;
 
         var action = ImportAction.None;
-        var exists = await Mediator.Send(new HaveNode(package.Collection.Name, NodeType.Collection));
+        var exists = await Mediator.Send(new ContainsNode(package.Collection.Name, NodeType.Collection));
 
         if (exists)
         {

@@ -92,6 +92,7 @@
                         Grid.Column="1"
                         Watermark="Enter name"
                         Value="{Binding Name}"
+                        CommitCommand="{Binding RenameCommand}"
                         MinDropDownWidth="{Binding $self.Bounds.Width}"
                         IsEmpty="{Binding Name, Converter={x:Static StringConverters.IsNullOrEmpty}}" />
                     

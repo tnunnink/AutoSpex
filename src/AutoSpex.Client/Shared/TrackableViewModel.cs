@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace AutoSpex.Client.Shared;
@@ -9,7 +10,16 @@ namespace AutoSpex.Client.Shared;
 /// A marker interface to allow me to pass instance of <see cref="Observer{TModel}"/> around with knowledge that it
 /// implements these interfaces.
 /// </summary>
-public interface ITrackable : INotifyPropertyChanged, IChangeTracking, INotifyDataErrorInfo;
+public interface ITrackable : INotifyPropertyChanged, IChangeTracking, INotifyDataErrorInfo
+{
+    /// <summary>
+    /// Performs validation of all properties for the view model to ensure valid state of the data.
+    /// </summary>
+    /// <remarks>
+    /// This will call the underlying ValidateAllProperties using the built-in ObservableValidator.
+    /// </remarks>
+    IEnumerable<ValidationResult> Validate();
+}
 
 /// <summary>
 /// A base view model that implements tracking of the child properties and objects and provides functionality to indicate
@@ -45,22 +55,11 @@ public abstract class TrackableViewModel : ViewModelBase, ITrackable
     }
 
     /// <summary>
-    /// Accepts the changes to the specified property name. This will just remove the property from the internal
-    /// change collection.
-    /// </summary>
-    /// <param name="propertyName">The name of the property to clear from the change list.</param>
-    protected void AcceptChanges(string propertyName)
-    {
-        _changed.Remove(propertyName);
-        OnPropertyChanged(nameof(IsChanged));
-    }
-
-    /// <summary>
     /// Refreshes all bindings to the derived observer object. This could be used if changes are made to the model
     /// internally without the observer knowing (data refresh or domain level logic/events) It should signify a reset
     /// between the model and observer and therefore UI. 
     /// </summary>
-    public virtual void Refresh()
+    public void Refresh()
     {
         _changed.Clear();
         OnPropertyChanged(string.Empty);
@@ -104,6 +103,22 @@ public abstract class TrackableViewModel : ViewModelBase, ITrackable
         if (!removed) return;
         trackable.PropertyChanged -= OnTrackedModelPropertyChanged;
         trackable.ErrorsChanged -= OnTrackedModelErrorsChanged;
+    }
+
+    /// <inheritdoc />
+    public IEnumerable<ValidationResult> Validate()
+    {
+        var errors = new List<ValidationResult>();
+
+        ValidateAllProperties();
+        errors.AddRange(GetErrors());
+
+        foreach (var trackable in _tracked)
+        {
+            errors.AddRange(trackable.Validate());
+        }
+
+        return errors;
     }
 
     /// <inheritdoc />
@@ -161,7 +176,6 @@ public abstract class TrackableViewModel : ViewModelBase, ITrackable
     /// </summary>
     private void OnTrackedModelErrorsChanged(object? sender, DataErrorsChangedEventArgs e)
     {
-        Console.WriteLine($"{GetType()} ErrorsChanged from {sender}");
         OnPropertyChanged(nameof(IsErrored));
     }
 }

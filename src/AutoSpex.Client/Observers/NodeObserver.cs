@@ -220,17 +220,24 @@ public partial class NodeObserver : Observer<Node>,
     {
         if (Type != NodeType.Collection) return;
 
-        var export = await Mediator.Send(new ExportNode(Id));
-        if (export.IsFailed)
+        try
         {
-            Notifier.NofityExportFailed(Name, export.Errors.Select(e => e.Message));
-            return;
-        }
+            var export = await Mediator.Send(new ExportNode(Id));
+            if (export.IsFailed)
+            {
+                Notifier.NofityExportFailed(Name, export.Errors.Select(e => e.Message));
+                return;
+            }
 
-        var result = await Shell.StorageProvider.ExportPackage(export.Value);
-        if (result.IsFailed)
+            var result = await Shell.StorageProvider.ExportPackage(export.Value);
+            if (result.IsFailed)
+            {
+                Notifier.NofityExportFailed(Name, export.Errors.Select(e => e.Message));
+            }
+        }
+        catch (Exception e)
         {
-            Notifier.NofityExportFailed(Name, export.Errors.Select(e => e.Message));
+            Notifier.ShowError("Export failed.", $"Failed to process export due to {e.Message}");
         }
     }
 

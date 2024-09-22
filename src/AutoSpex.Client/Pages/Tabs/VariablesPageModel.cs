@@ -10,6 +10,7 @@ using CommunityToolkit.Mvvm.Messaging;
 namespace AutoSpex.Client.Pages;
 
 public partial class VariablesPageModel : PageViewModel,
+    IRecipient<Observer.Renamed>,
     IRecipient<Observer.Deleted>,
     IRecipient<Observer.MakeCopy>,
     IRecipient<Observer.GetSelected>
@@ -24,9 +25,10 @@ public partial class VariablesPageModel : PageViewModel,
         Variables = new ObserverCollection<Variable, VariableObserver>(
             refresh: () => _node.Model.Variables.Select(v => new VariableObserver(v)).ToList(),
             add: (_, v) => _node.Model.AddVariable(v),
-            remove: (_, v) => _node.Model.RemoveVariable(v)
+            remove: (_, v) => _node.Model.RemoveVariable(v),
+            clear: () => _node.Model.ClearVariables()
         );
-
+        Variables.Sort(x => x.Name, StringComparer.OrdinalIgnoreCase);
         Track(Variables);
     }
 
@@ -42,7 +44,6 @@ public partial class VariablesPageModel : PageViewModel,
     private void AddVariable()
     {
         Variables.Add(new VariableObserver(new Variable()));
-        Variables.Sort(x => x.Name, StringComparer.OrdinalIgnoreCase);
     }
 
     /// <summary>
@@ -53,7 +54,7 @@ public partial class VariablesPageModel : PageViewModel,
         if (message.Observer is not VariableObserver variable) return;
         Variables.RemoveAny(v => v.Id == variable.Id);
     }
-    
+
     /// <summary>
     /// Handle reception of messages to make a copy of a given spec instance. Check that the instance comes from
     /// this node object, and that it is indeed a spec, and then create and add the duplicate.
@@ -79,5 +80,15 @@ public partial class VariablesPageModel : PageViewModel,
 
         foreach (var selected in Selected.ToList())
             message.Reply(selected);
+    }
+
+    /// <summary>
+    /// Handle variable renaming by resotring the variables collection to show all in alphabetical order.
+    /// </summary>
+    public void Receive(Observer.Renamed message)
+    {
+        if (message.Observer is not VariableObserver observer) return;
+        if (!Variables.Contains(observer)) return;
+        Variables.Sort(x => x.Name, StringComparer.OrdinalIgnoreCase);
     }
 }

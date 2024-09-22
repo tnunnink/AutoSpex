@@ -44,9 +44,6 @@ public sealed class App : Application, IDisposable, IAsyncDisposable
             // Without this line you will get duplicate validations from both Avalonia and CT
             BindingPlugins.DataValidators.RemoveAt(0);
 
-            //Tells Actipro to show all prompts as an overlay by default
-            UserPromptBuilder.DefaultDisplayMode = UserPromptDisplayMode.Overlay;
-
             desktop.MainWindow = Container.Resolve<Shell>();
         }
 

@@ -60,7 +60,7 @@
                         HotKey="Ctrl+Shift+S"
                         ToolTip.Tip="Search" />
 
-                    <Button
+                    <!--<Button
                         Command="{Binding OpenHistoryCommand}"
                         Theme="{StaticResource IconButton}"
                         properties:Icon.Theme="{StaticResource IconLineHistory}"
@@ -71,7 +71,7 @@
                         Command="{Binding OpenVariablesCommand}"
                         Theme="{StaticResource IconButton}"
                         properties:Icon.Theme="{StaticResource IconLineAt}"
-                        ToolTip.Tip="Variables" />
+                        ToolTip.Tip="Variables" />-->
 
                 </StackPanel>
 
@@ -80,11 +80,11 @@
                         Command="{Binding OpenSettingsCommand}"
                         Theme="{StaticResource IconButton}"
                         properties:Icon.Theme="{StaticResource IconFilledCog}"
+                        FontSize="16"
                         ToolTip.Tip="Settings" />
                     <Button
                         Theme="{StaticResource IconButton}"
                         properties:Icon.Theme="{StaticResource IconLineSidebar}"
-                        FontSize="14"
                         ToolTip.Tip="Hide Navigation">
                         <Interaction.Behaviors>
                             <behaviors:ToggleDrawerOnClickBehavior />

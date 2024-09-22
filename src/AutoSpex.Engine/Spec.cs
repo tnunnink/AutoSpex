@@ -12,8 +12,17 @@ namespace AutoSpex.Engine;
 /// filter those resulting element, and verify the candidate element all using the configured <see cref="Criterion"/>
 /// objects. This object is persisted to the database to be reloaded and executed against source files as needed.
 /// </summary>
-public class Spec : IEquatable<Spec>
+public class Spec() : IEquatable<Spec>
 {
+    /// <summary>
+    /// Creates a new spec with the provided element type.
+    /// </summary>
+    /// <param name="element">The <see cref="Element"/> type the spec represents.</param>
+    public Spec(Element element) : this()
+    {
+        Query = new Query(element);
+    }
+
     /// <summary>
     /// The unique id that indietifies this spec aprart from others.
     /// </summary>
@@ -167,7 +176,7 @@ public class Spec : IEquatable<Spec>
         try
         {
             var stopwatch = Stopwatch.StartNew();
-            
+
             //1. Execute the configured query.
             var elements = Query.Execute(content);
 
@@ -176,9 +185,9 @@ public class Spec : IEquatable<Spec>
 
             //3. Verify the candidates elements.
             var verifications = candidates.Select(VerifyElement);
-            
+
             stopwatch.Stop();
-            
+
             //Merge/flatten into single verification object.
             return Verification.Merge(verifications.ToList(), stopwatch.ElapsedMilliseconds);
         }

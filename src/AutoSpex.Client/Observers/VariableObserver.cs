@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using AutoSpex.Client.Resources;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
-using AutoSpex.Persistence;
 using Avalonia.Input;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -28,16 +27,25 @@ public partial class VariableObserver : Observer<Variable>
         Track(nameof(Group));
     }
 
-    public override Guid Id => Model.VariableId;
-    public Task<NodeObserver> Node => FetchNode();
+    /// <inheritdoc />
+    protected override bool PromptForDeletion => false;
 
+    /// <inheritdoc />
+    public override Guid Id => Model.VariableId;
+
+    /// <summary>
+    /// Gets or sets the <see cref="TypeGroup"/> for the variable. 
+    /// </summary>
     public TypeGroup Group
     {
         get => Model.Group;
         set => SetProperty(Model.Group, value, Model, (v, g) => v.Group = g);
     }
 
-    [Required(ErrorMessage = "Name is a required field")]
+    /// <summary>
+    /// Gets or sets the name of the variable. 
+    /// </summary>
+    [Required(ErrorMessage = "Name is a required field for variables", AllowEmptyStrings = false)]
     [CustomValidation(typeof(VariableObserver), nameof(ValidateName))]
     public override string Name
     {
@@ -45,16 +53,38 @@ public partial class VariableObserver : Observer<Variable>
         set => SetProperty(Model.Name, value, Model, (v, x) => v.Name = x, true);
     }
 
+    /// <summary>
+    /// Gets or sets the value of the variable. 
+    /// </summary>
     public ValueObserver Value
     {
         get => new(Model.Value);
         set => SetProperty(new ValueObserver(Model.Value), value, Model, (v, o) => v.Value = o.Model);
     }
 
+    /// <summary>
+    /// The <see cref="NodeObserver"/> that this variable is defined for. If no node matches the configured id, this
+    /// property will be null. This could happen for globally defined variables.
+    /// </summary>
+    public NodeObserver? Node => GetObserver<NodeObserver>(x => x.Id == Model.NodeId);
+
+    /// <summary>
+    /// The function for retrieving suggestions to populate the value entry with.
+    /// </summary>
     public Func<string?, CancellationToken, Task<IEnumerable<object>>> Suggestions => GetSuggestions;
 
+
     /// <inheritdoc />
-    protected override bool PromptForDeletion => false;
+    /// <remarks>
+    /// For a variable we can change the name directly from the entry field and this shuold be updated
+    /// when the user clicks Save. We don't need any prompting or database request sent.
+    /// </remarks>
+    protected override Task Rename(string? name)
+    {
+        Name = name ?? string.Empty;
+        Messenger.Send(new Renamed(this));
+        return Task.CompletedTask;
+    }
 
     /// <summary>
     /// Updates the <see cref="Group"/> property for the variable indicating what type the value should be.
@@ -126,6 +156,9 @@ public partial class VariableObserver : Observer<Variable>
     public static ValidationResult? ValidateName(string name, ValidationContext context)
     {
         var observer = (VariableObserver)context.ObjectInstance;
+
+        /*observer.GetObserver<NodeObserver>(x =>
+            x.Id == observer.Model.NodeId && x.Model.Variables.Any(v => ReferenceEquals(v, observer.Model)));*/
         var names = observer.RequestNames().ToList();
 
         return names.Any(name.Equals)
@@ -141,28 +174,12 @@ public partial class VariableObserver : Observer<Variable>
     {
         var request = new GetNames(this);
         Messenger.Send(request);
-        return request.HasReceivedResponse ? request.Response : Enumerable.Empty<string>();
-    }
-
-    /// <summary>
-    /// Gets the node this variable belongs to from the database.
-    /// </summary>
-    private async Task<NodeObserver> FetchNode()
-    {
-        var node = await Mediator.Send(new FindOwningNode(Id));
-        return new NodeObserver(node);
+        return request.HasReceivedResponse ? request.Response : [];
     }
 
     /// <inheritdoc />
     protected override IEnumerable<MenuActionItem> GenerateContextItems()
     {
-        yield return new MenuActionItem
-        {
-            Header = "Explore",
-            Icon = Resource.Find("IconFilledBinoculars"),
-            DetermineVisibility = () => HasSingleSelection
-        };
-
         yield return new MenuActionItem
         {
             Header = "Duplicate",
@@ -185,12 +202,6 @@ public partial class VariableObserver : Observer<Variable>
     /// <inheritdoc />
     protected override IEnumerable<MenuActionItem> GenerateMenuItems()
     {
-        yield return new MenuActionItem
-        {
-            Header = "Explore",
-            Icon = Resource.Find("IconFilledBinoculars"),
-        };
-
         yield return new MenuActionItem
         {
             Header = "Duplicate",

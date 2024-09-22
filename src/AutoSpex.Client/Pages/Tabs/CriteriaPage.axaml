@@ -3,11 +3,58 @@
              xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
              xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors"
+             xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
              x:Class="AutoSpex.Client.Pages.CriteriaPage"
              x:DataType="pages:CriteriaPageModel">
 
     <Design.Width>800</Design.Width>
     <Design.Height>600</Design.Height>
+
+    <UserControl.Styles>
+        <Style Selector="Button.add-criteria">
+            <Setter Property="Theme" Value="{a:ControlTheme ButtonSubtle}" />
+            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+            <Setter Property="Content">
+                <Template>
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <PathIcon
+                            Theme="{StaticResource IconAdd}"
+                            Foreground="{Binding $parent[Button].Foreground}"
+                            Classes="size-sm centered" />
+                        <TextBlock Text="Add Critera" />
+                    </StackPanel>
+                </Template>
+            </Setter>
+        </Style>
+    </UserControl.Styles>
+
+    <UserControl.Resources>
+        <DataTemplate x:Key="ElementSelectionList" x:DataType="pages:CriteriaPageModel">
+            <ItemsControl
+                Theme="{a:ControlTheme ItemsControlScrollable}"
+                ItemsSource="{x:Static engine:Element.Selectable}"
+                MaxHeight="250" MinWidth="240" Margin="5">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="engine:Element">
+                        <Button
+                            Command="{Binding $parent[ItemsControl].((pages:CriteriaPageModel)DataContext).AddSpecCommand, FallbackValue={x:Null}}"
+                            CommandParameter="{Binding}"
+                            Theme="{a:ControlTheme ButtonSubtle}"
+                            HorizontalContentAlignment="Stretch">
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <PathIcon Theme="{StaticResource IconThemedSource}" />
+                                <TextBlock Text="{Binding Name}" />
+                            </StackPanel>
+                            <Interaction.Behaviors>
+                                <behaviors:HideFlyoutOnClickedBehavior />
+                            </Interaction.Behaviors>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </DataTemplate>
+    </UserControl.Resources>
 
     <Panel>
 
@@ -16,20 +63,16 @@
             IsVisible="{Binding !Specs.HasItems}"
             HeaderIcon="{StaticResource IconFilledClipboard}"
             Header="No criteria defined"
-            Message="Add criteria to define what this specification verifies.">
+            Message="Add criteria to define this specification.">
             <controls:DefaultMessage.Action>
-                <Button
-                    Command="{Binding AddSpecCommand}"
-                    Theme="{a:ControlTheme ButtonSubtle}"
-                    Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
-                    Margin="10">
-                    <StackPanel Orientation="Horizontal" Spacing="5">
-                        <PathIcon
-                            Theme="{StaticResource IconAdd}"
-                            Foreground="{Binding $parent[Button].Foreground}"
-                            Classes="size-sm" Margin="0 1 0 0" />
-                        <TextBlock Text="Add Criteria" />
-                    </StackPanel>
+                <Button Classes="add-criteria" Margin="10">
+                    <Button.Flyout>
+                        <Flyout Placement="Bottom" VerticalOffset="5">
+                            <ContentControl
+                                Content="{Binding}"
+                                ContentTemplate="{StaticResource ElementSelectionList}" />
+                        </Flyout>
+                    </Button.Flyout>
                 </Button>
             </controls:DefaultMessage.Action>
         </controls:DefaultMessage>
@@ -38,7 +81,7 @@
 
             <ItemsControl
                 ItemsSource="{Binding Specs}"
-                ItemTemplate="{StaticResource QueryEntry}"
+                ItemTemplate="{StaticResource SpecEntry}"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -47,18 +90,14 @@
                 </ItemsControl.ItemsPanel>
             </ItemsControl>
 
-            <Button
-                Command="{Binding AddSpecCommand}"
-                HorizontalAlignment="Left"
-                Theme="{a:ControlTheme ButtonSubtle}"
-                Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}">
-                <StackPanel Orientation="Horizontal" Spacing="5">
-                    <PathIcon
-                        Theme="{StaticResource IconAdd}"
-                        Foreground="{Binding $parent[Button].Foreground}"
-                        Classes="size-sm" Margin="0 1 0 0" />
-                    <TextBlock Text="Add Critera" />
-                </StackPanel>
+            <Button Classes="add-criteria" HorizontalAlignment="Left">
+                <Button.Flyout>
+                    <Flyout Placement="BottomEdgeAlignedLeft" HorizontalOffset="-8" VerticalOffset="5">
+                        <ContentControl
+                            Content="{Binding}"
+                            ContentTemplate="{StaticResource ElementSelectionList}" />
+                    </Flyout>
+                </Button.Flyout>
             </Button>
 
         </StackPanel>

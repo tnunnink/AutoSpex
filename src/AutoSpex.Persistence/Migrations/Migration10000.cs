@@ -66,15 +66,5 @@ public class Migration10000 : AutoReversingMigration
             .WithColumn("Result").AsString().Nullable().WithDefaultValue(ResultState.None)
             .WithColumn("Duration").AsInt32().Nullable().WithDefaultValue(0)
             .WithColumn("Evaluations").AsString().Nullable();
-
-        /*Create.Table("ChangeLog")
-            .WithColumn("ChangeId").AsString().PrimaryKey()
-            .WithColumn("NodeId").AsString().NotNullable().ForeignKey("Node", "NodeId").OnDelete(Rule.Cascade)
-            .WithColumn("Command").AsString().NotNullable()
-            .WithColumn("Message").AsString().NotNullable()
-            .WithColumn("ChangedOn").AsString().NotNullable()
-            .WithColumn("ChangedBy").AsString().NotNullable()
-            .WithColumn("Machine").AsInt64().NotNullable()
-            .WithColumn("Duration").AsInt64().NotNullable();*/
     }
 }
