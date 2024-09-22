@@ -223,7 +223,7 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     /// </summary>
     /// <param name="name">The new name of the item.</param>
     [RelayCommand]
-    private async Task Rename(string? name)
+    protected virtual async Task Rename(string? name)
     {
         //If empty prompt the user for a new name.
         if (string.IsNullOrEmpty(name))

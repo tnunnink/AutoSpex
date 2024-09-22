@@ -62,12 +62,15 @@
                                     CornerRadius="10 10 0 0"
                                     ClipToBounds="True"
                                     Padding="10">
+                                
                                 <Grid ColumnDefinitions="*,Auto">
+                                    
                                     <StackPanel Orientation="Horizontal" Spacing="10" Margin="5 0">
                                         <PathIcon
                                             x:Name="HeaderIcon"
                                             Theme="{TemplateBinding HeaderIcon}"
-                                            IsVisible="{Binding HeaderIcon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                                            IsVisible="{Binding HeaderIcon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                            Margin="0 1 0 0"/>
                                         <ContentPresenter
                                             x:Name="PART_HeaderPresenter"
                                             Content="{TemplateBinding Header}"
@@ -76,6 +79,8 @@
                                                 <Style Selector="TextBlock">
                                                     <Setter Property="FontSize"
                                                             Value="{a:ThemeResource DefaultFontSizeMedium}" />
+                                                    <Setter Property="FontWeight"
+                                                            Value="{a:ThemeResource HeadingFontWeightMedium}" />
                                                 </Style>
                                             </ContentPresenter.Styles>
                                         </ContentPresenter>

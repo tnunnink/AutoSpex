@@ -17,16 +17,15 @@ public partial class SelectVariablePageModel : PageViewModel
 
     public override async Task Load()
     {
-        var result = await Mediator.Send(new ListVariables());
-        if (result.IsFailed) return;
+        var variables = await Mediator.Send(new ListVariables());
 
         Variables = new ObserverCollection<Variable, VariableObserver>(
-            result.Value.ToList(),
+            variables.ToList(),
             v => new VariableObserver(v));
     }
 
     partial void OnFilterChanged(string? value)
     {
-        Variables.Filter(value);
+        Variables.Filter(v => v.Filter(value) || v.Node?.Filter(value) is true);
     }
 }

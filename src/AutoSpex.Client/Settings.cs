@@ -31,8 +31,6 @@ public sealed class Settings
     private readonly Lazy<Dictionary<string, string>> _cache = new(Load,
         LazyThreadSafetyMode.ExecutionAndPublication);
 
-    /*private readonly Dictionary<string, string> _changes = new();*/
-
     private static Settings? _settings;
 
     private Settings()
@@ -94,7 +92,7 @@ public sealed class Settings
     
     public bool AlwaysDiscardChanges
     {
-        get => GetSetting(s => s == "1");
+        get => GetSetting(s => s.Equals("true", StringComparison.InvariantCultureIgnoreCase));
         set => SetSetting(value);
     }
 
@@ -119,8 +117,8 @@ public sealed class Settings
 
     private T GetSetting<T>(Func<string, T> parser, [CallerMemberName] string? setting = default)
     {
-        if (setting is null) throw new ArgumentNullException(nameof(setting));
-        if (parser is null) throw new ArgumentNullException(nameof(parser));
+        ArgumentNullException.ThrowIfNull(setting);
+        ArgumentNullException.ThrowIfNull(parser);
 
         if (_cache.Value.TryGetValue(setting, out var value))
         {
@@ -132,8 +130,8 @@ public sealed class Settings
 
     private void SetSetting<T>(T value, [CallerMemberName] string? setting = default)
     {
-        if (setting is null) throw new ArgumentNullException(nameof(setting));
-        if (value is null) throw new ArgumentNullException(nameof(value));
+        ArgumentNullException.ThrowIfNull(setting);
+        ArgumentNullException.ThrowIfNull(value);
 
         var s = value.ToString() ?? throw new ArgumentException("Can not convert value to string");
 

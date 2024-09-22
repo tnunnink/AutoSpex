@@ -69,7 +69,7 @@ internal class ExportNodeHandler(IConnectionManager manager) : IRequestHandler<E
         if (!nodes.TryGetValue(request.NodeId, out var collection))
             return Result.Fail("Collection not found: {request.NodeId}");
 
-        var version = await connection.QuerySingleAsync<long>(GetVersion);
+        var version = await connection.QueryFirstAsync<long>(GetVersion);
         var package = new Package(collection, version);
         return Result.Ok(package);
     }

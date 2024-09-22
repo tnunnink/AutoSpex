@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace AutoSpex.Client.Shared;
@@ -56,6 +57,8 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
     public event PropertyChangedEventHandler? ItemPropertyChanged;
     public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
+
+    /// <inheritdoc />
     public void AcceptChanges()
     {
         _changed = false;
@@ -66,6 +69,20 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
         }
 
         OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsChanged)));
+    }
+
+    /// <inheritdoc />
+    public IEnumerable<ValidationResult> Validate()
+    {
+        var errors = new List<ValidationResult>(); 
+        
+        foreach (var observer in this)
+        {
+            var results = observer.Validate();
+            errors.AddRange(results);
+        }
+
+        return errors;
     }
 
     /// <summary>
@@ -139,13 +156,14 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
     /// <typeparam name="TField">The type of the selected property.</typeparam>
     public void Sort<TField>(Func<TObserver, TField> selector, IComparer<TField>? comparer = default)
     {
+        _refreshing = true;
+
         var sorted = this.OrderBy(selector, comparer).ToList();
 
         for (var i = 0; i < sorted.Count; i++)
             Move(IndexOf(sorted[i]), i);
 
-        _changed = false;
-        OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsChanged)));
+        _refreshing = false;
     }
 
     /// <summary>
@@ -185,7 +203,7 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
     {
         base.OnCollectionChanged(e);
 
-        //Don't notify change when refreshing since it is intended to sync to the underlying collection.
+        //Don't notify change when refreshing.
         if (_refreshing) return;
 
         //When the collection changes just set a flag to indicate for IsChanged.

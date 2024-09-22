@@ -45,7 +45,15 @@ public partial class NodeDetailPageModel : DetailPageModel, IRecipient<Environme
     /// </remarks>
     public override Task<Result> Save()
     {
-        return Node.IsVirtual ? CreateNode() : SaveNode();
+        var errors = Validate().ToList();
+
+        if (errors.Count == 0)
+        {
+            return Node.IsVirtual ? CreateNode() : SaveNode();
+        }
+        
+        Notifier.ShowError($"Failed to save {Title}", $"{errors.FirstOrDefault()}");
+        return Task.FromResult(Result.Fail("Failed to save page due to validation errors."));
     }
 
     /// <inheritdoc />
@@ -68,11 +76,11 @@ public partial class NodeDetailPageModel : DetailPageModel, IRecipient<Environme
         //We need to load the full environment to get sources and overrides.
         var loadEnvironment = await Mediator.Send(new LoadEnvironment(Environment.Id));
         if (Notifier.ShowIfFailed(loadEnvironment, $"Failed to load the target environment {Environment.Name}")) return;
-        
+
         //We also need to get the full node tree loaded to make sure to add descendants (which the local Node does not have).
         var getNode = await Mediator.Send(new GetNode(Node.Id));
         if (Notifier.ShowIfFailed(getNode)) return;
-        
+
         //Build the run object.
         var run = new RunObserver(new Run(loadEnvironment.Value, getNode.Value));
 

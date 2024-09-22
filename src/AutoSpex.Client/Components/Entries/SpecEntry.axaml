@@ -98,17 +98,17 @@
                             </TextBox.Styles>
                         </TextBox>
 
-                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="5" Margin="5 0">
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="7" Margin="5 0">
 
                             <Button
                                 Command="{Binding OpenSourceExplorerCommand}"
-                                Theme="{StaticResource IconButton}"
+                                Theme="{StaticResource IconButtonSmall}"
                                 properties:Icon.Theme="{StaticResource IconLineSearch}"
                                 ToolTip.Tip="Search"
                                 ToolTip.Placement="BottomEdgeAlignedRight" />
 
                             <Button
-                                Theme="{StaticResource IconButton}"
+                                Theme="{StaticResource IconButtonSmall}"
                                 properties:Icon.Theme="{StaticResource IconFilledFunnel}"
                                 Classes.accent="{Binding Filters.Count}"
                                 ToolTip.Tip="Filters"
@@ -124,7 +124,7 @@
                             </Button>
 
                             <Button
-                                Theme="{StaticResource IconButton}"
+                                Theme="{StaticResource IconButtonSmall}"
                                 properties:Icon.Theme="{StaticResource IconEllipsis}"
                                 ToolTip.Tip="Options"
                                 ToolTip.Placement="BottomEdgeAlignedRight">

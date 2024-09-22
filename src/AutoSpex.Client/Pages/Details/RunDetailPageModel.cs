@@ -16,7 +16,7 @@ using JetBrains.Annotations;
 namespace AutoSpex.Client.Pages;
 
 [UsedImplicitly]
-public partial class RunDetailPageModel : DetailPageModel
+public partial class RunDetailPageModel : DetailPageModel, IRecipient<Observer.GetSelected>
 {
     private CancellationTokenSource? _cancellation;
 
@@ -105,9 +105,11 @@ public partial class RunDetailPageModel : DetailPageModel
     /// Adds the provided node (or its descendants) to this run configuration.
     /// </summary>
     /// <param name="node">The node to add.</param>
-    [RelayCommand(CanExecute = nameof(CanAddNode))]
-    private void AddNode(NodeObserver node)
+    [RelayCommand]
+    private void AddNode(NodeObserver? node)
     {
+        if (node is null) return;
+
         //Getting a local node to use as the different observer instance to respect different UI properties.
         var observer = new NodeObserver(node);
 
@@ -119,12 +121,6 @@ public partial class RunDetailPageModel : DetailPageModel
         ExecuteCommand.NotifyCanExecuteChanged();
         SaveCommand.NotifyCanExecuteChanged();
     }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <returns></returns>
-    private bool CanAddNode() => true;
 
     /// <summary>
     /// Command to expand all visible outcome observers in the detail view.
@@ -152,6 +148,35 @@ public partial class RunDetailPageModel : DetailPageModel
         }
 
         OnPropertyChanged(nameof(IsExpanded));
+    }
+
+    /// <inheritdoc />
+    public override void Receive(Observer.Deleted message)
+    {
+        if (message.Observer is OutcomeObserver observer && Outcomes.Any(x => x.Is(observer)))
+        {
+            var ids = Selected.Select(x => x.Model.NodeId).ToList();
+            Run.Model.RemoveNodes(ids);
+            Outcomes.Refresh();
+            return;
+        }
+
+        base.Receive(message);
+    }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="message"></param>
+    public void Receive(Observer.GetSelected message)
+    {
+        if (message.Observer is not OutcomeObserver observer) return;
+        if (!Outcomes.Any(x => x.Is(observer))) return;
+
+        foreach (var outcome in Selected)
+        {
+            message.Reply(outcome);
+        }
     }
 
     /// <summary>

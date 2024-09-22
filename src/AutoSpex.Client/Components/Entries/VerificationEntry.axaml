@@ -2,7 +2,8 @@
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
-                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
 
     <Design.PreviewWith>
         <Border Padding="30" Width="800" Height="300">
@@ -17,7 +18,7 @@
         <StackPanel>
 
             <ListBox
-                IsVisible="{Binding Verifications.Count}"
+                IsVisible="{Binding Verifications.HasItems}"
                 ItemsSource="{Binding Verifications}"
                 SelectedItems="{Binding SelectedVerifications}"
                 ItemTemplate="{StaticResource CriterionListItem}"
@@ -25,39 +26,56 @@
                 SelectionMode="Multiple"
                 BorderBrush="{a:ThemeResource Container1BorderBrush}"
                 BorderThickness="0 0 0 1" />
+            
+            <controls:DefaultMessage 
+                IsVisible="{Binding !Verifications.HasItems}"
+                HeaderIcon="{StaticResource IconFilledPatch}"
+                Header="No verifications defined"
+                Message="Add verifications to ensure candidate elements meet the criteria."
+                Margin="20">
+                <controls:DefaultMessage.Action>
+                    <Button
+                        Command="{Binding AddVerificationCommand}"
+                        Theme="{a:ControlTheme ButtonSubtle}"
+                        Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                        BorderThickness="0" Margin="0 10 0 0">
 
-            <Button
-                Command="{Binding AddVerificationCommand}"
-                Theme="{a:ControlTheme ButtonSubtle}"
-                Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
-                HorizontalAlignment="Stretch"
-                HorizontalContentAlignment="Left"
-                Padding="15 10" BorderThickness="0" CornerRadius="0 0 4 4">
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <PathIcon Theme="{StaticResource IconAdd}" Classes="size-sm accent" />
+                            <TextBlock Text="Add Verification" />
+                        </StackPanel>
 
-                <StackPanel Orientation="Horizontal" Spacing="5">
-                    <PathIcon
-                        Theme="{StaticResource IconAdd}"
-                        Classes="size-sm accent" />
-                    <TextBlock
-                        Text="Add Verification" />
-                    <TextBlock
-                        Text="to filter or verify elements."
-                        Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                    </Button>
+                </controls:DefaultMessage.Action>
+            </controls:DefaultMessage>
+
+            <Grid ColumnDefinitions="*,Auto" Margin="5" IsVisible="{Binding Verifications.HasItems}">
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
+
+                    <Button
+                        Command="{Binding AddVerificationCommand}"
+                        Theme="{a:ControlTheme ButtonSubtle}"
+                        Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                        BorderThickness="0">
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <PathIcon Theme="{StaticResource IconAdd}" Classes="size-sm accent" />
+                            <TextBlock Text="Add Verification" />
+                        </StackPanel>
+                    </Button>
+
                 </StackPanel>
 
-                <Button.Flyout>
+                <ContentControl
+                    Grid.Column="1"
+                    Content="{Binding}"
+                    ContentTemplate="{StaticResource VerificationInclusion}"
+                    VerticalAlignment="Center" />
 
-                </Button.Flyout>
-
-                <Button.Styles>
-                    <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-                        <Setter Property="Background" Value="{a:ThemeResource Container2BackgroundBrush}" />
-                    </Style>
-                </Button.Styles>
-            </Button>
+            </Grid>
 
         </StackPanel>
-        
+
     </DataTemplate>
 
 </ResourceDictionary>

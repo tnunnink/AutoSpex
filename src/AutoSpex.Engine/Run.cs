@@ -19,11 +19,6 @@ public class Run
         if (seed is not null)
             AddNodeTree(seed);
     }
-    
-    public Run(Environment environment, IEnumerable<Node> nodes)
-    {
-        Environment = environment;
-    }
 
     public Guid RunId { get; private set; } = Guid.NewGuid();
     public string Name => $"{Environment.Name} - Run Results";
@@ -59,6 +54,18 @@ public class Run
     public void RemoveNodes(IEnumerable<Node> nodes) => nodes.ToList().ForEach(RemoveNodeInternal);
 
     /// <summary>
+    /// Removes the specified outcome nodes from the Run's <see cref="Outcomes"/> collection.
+    /// </summary>
+    /// <param name="nodeIds">The IDs of the outcome nodes to be removed.</param>
+    public void RemoveNodes(IEnumerable<Guid> nodeIds)
+    {
+        foreach (var nodeId in nodeIds)
+        {
+            _outcomes.Remove(nodeId);
+        }
+    }
+
+    /// <summary>
     /// Clears all configured outcomes from the run.
     /// </summary>
     public void Clear() => _outcomes.Clear();
@@ -88,9 +95,9 @@ public class Run
         CancellationToken token = default)
     {
         ClearOutcomes();
-        
+
         var sources = Environment.Sources.ToList();
-        
+
         foreach (var source in sources)
         {
             source.Override(nodes.SelectMany(n => n.Variables));

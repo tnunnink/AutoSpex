@@ -27,7 +27,7 @@
     </Design.PreviewWith>
 
     <DataTemplate x:Key="OutcomeListItem" x:DataType="observers:OutcomeObserver">
-        <Border Padding="0 5">
+        <Border x:Name="Border" Focusable="True" Background="Transparent" Padding="0 5">
 
             <Interaction.Behaviors>
                 <ExecuteCommandOnKeyDownBehavior
@@ -122,7 +122,7 @@
                 </Expander.Header>
 
                 <Expander.Content>
-                    
+
                     <Panel>
                         <controls:DefaultMessage
                             Header="No results available"
@@ -142,7 +142,7 @@
                                 </MultiBinding>
                             </controls:DefaultMessage.IsVisible>
                         </controls:DefaultMessage>
-                        
+
                         <controls:DefaultMessage
                             Header="No results found"
                             Message="No evaluations match the current search critera.">
@@ -183,13 +183,13 @@
                                 </MultiBinding>
                             </ListBox.IsVisible>
                         </ListBox>
-                        
+
                     </Panel>
                 </Expander.Content>
-                
+
             </Expander>
-            
+
         </Border>
-        
+
     </DataTemplate>
 </ResourceDictionary>

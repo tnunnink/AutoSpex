@@ -4,7 +4,7 @@
 public class ImportNodeTests
 {
     [Test]
-    public async Task ExportNode_SimpleCollectionNoConflict_ShouldBeSuccess()
+    public async Task ImportNode_SimpleCollectionNoConflict_ShouldBeSuccess()
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
@@ -18,7 +18,7 @@ public class ImportNodeTests
     }
 
     [Test]
-    public async Task ExportNode_SimpleCollectionCopyAction_ShouldBeSuccess()
+    public async Task ImportNode_SimpleCollectionCopyAction_ShouldBeSuccess()
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
@@ -34,7 +34,7 @@ public class ImportNodeTests
     }
 
     [Test]
-    public async Task ExportNode_ConfiguredCollectionNoConflict_ShouldBeSuccess()
+    public async Task ImportNode_ConfiguredCollectionNoConflict_ShouldBeSuccess()
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();

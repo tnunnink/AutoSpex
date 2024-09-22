@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -13,7 +14,7 @@ public abstract partial class PageViewModel() : TrackableViewModel, IEquatable<P
     {
         Title = title;
     }
-    
+
     /// <summary>
     /// A resource identifier that identifies this page relative to any other. The default implementation is this
     /// type name but derived classes can override to indicate how a given page should be identified.

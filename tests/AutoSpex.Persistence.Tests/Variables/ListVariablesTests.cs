@@ -10,9 +10,8 @@ public class ListVariablesTests
         var mediator = context.Resolve<IMediator>();
 
         var result = await mediator.Send(new ListVariables());
-
-        result.IsSuccess.Should().BeTrue();
-        result.Value.Should().BeEmpty();
+        
+        result.Should().BeEmpty();
     }
 
     [Test]
@@ -27,8 +26,23 @@ public class ListVariablesTests
         await mediator.Send(new CreateNode(node));
 
         var result = await mediator.Send(new ListVariables());
+        
+        result.Should().HaveCount(3);
+    }
+    
+    [Test]
+    public async Task ListVariables_ExistingVariablesForNode_ShouldHaveNodeId()
+    {
+        using var context = new TestContext();
+        var mediator = context.Resolve<IMediator>();
+        var node = Node.NewContainer();
+        node.AddVariable("Var01", "Test");
+        node.AddVariable("Var02", "Test");
+        node.AddVariable("Var03", "Test");
+        await mediator.Send(new CreateNode(node));
 
-        result.IsSuccess.Should().BeTrue();
-        result.Value.Should().HaveCount(3);
+        var result = await mediator.Send(new ListVariables());
+
+        result.Should().AllSatisfy(v => v.NodeId.Should().NotBeEmpty());
     }
 }

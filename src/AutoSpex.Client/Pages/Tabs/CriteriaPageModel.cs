@@ -14,7 +14,7 @@ public partial class CriteriaPageModel : PageViewModel,
     IRecipient<Observer.MakeCopy>
 {
     private readonly NodeObserver _node;
-    
+
     /// <inheritdoc/>
     public CriteriaPageModel(NodeObserver node) : base("Criteria")
     {
@@ -30,16 +30,18 @@ public partial class CriteriaPageModel : PageViewModel,
     }
 
     public override string Route => $"Spec/{_node.Id}/{Title}";
-    
+
     public ObserverCollection<Spec, SpecObserver> Specs { get; }
 
     /// <summary>
-    /// 
+    /// Adds a new Spec to the Specs collection.
     /// </summary>
+    /// <param name="element">The Element object to be used for creating the new Spec.</param>
     [RelayCommand]
-    private void AddSpec()
+    private void AddSpec(Element? element)
     {
-        Specs.Add(new SpecObserver(new Spec()));
+        if (element is null) return;
+        Specs.Add(new SpecObserver(new Spec(element)));
     }
 
     /// <summary>
@@ -55,7 +57,7 @@ public partial class CriteriaPageModel : PageViewModel,
         if (message.Observer is not SpecObserver spec) return;
         Specs.RemoveAny(x => x.Id == spec.Id);
     }
-    
+
     /// <summary>
     /// Handle reception of messages to make a copy of a given spec instance. Check that the instance comes from
     /// this node object, and that it is indeed a spec, and then create and add the duplicate.

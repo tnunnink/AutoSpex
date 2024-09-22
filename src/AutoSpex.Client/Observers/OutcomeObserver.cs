@@ -117,7 +117,7 @@ public partial class OutcomeObserver : Observer<Outcome>,
 
         yield return new MenuActionItem
         {
-            Header = "Delete",
+            Header = "Remove",
             Icon = Resource.Find("IconFilledTrash"),
             Classes = "danger",
             Command = DeleteSelectedCommand,

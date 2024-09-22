@@ -16,15 +16,6 @@ public class Variable : IEquatable<Variable>
     {
     }
 
-    /*/// <summary>
-    /// Creates a new <see cref="Variable"/> having the provided node id.
-    /// </summary>
-    /// <param name="nodeId">The id of the node this variable belongs to.</param>
-    public Variable(Guid nodeId) : this()
-    {
-        NodeId = nodeId;
-    }*/
-
     /// <summary>
     /// Creates a new <see cref="Variable"/> with the provided type group.
     /// </summary>
@@ -56,13 +47,13 @@ public class Variable : IEquatable<Variable>
     [JsonInclude]
     public Guid VariableId { get; private init; } = Guid.NewGuid();
 
-    /*/// <summary>
+    /// <summary>
     /// The <see cref="Guid"/> that identifies the node this variable is defined for.
     /// By default, this is an empty guid, but should be set upon retrieval from the database so that the object can
     /// identify which node it is scoped to.
     /// </summary>
-    [JsonInclude]
-    public Guid NodeId { get; private set; } = Guid.Empty;*/
+    [JsonIgnore]
+    public Guid NodeId { get; private set; } = Guid.Empty;
 
     /// <summary>
     /// The string name used to identify the <see cref="Variable"/>.

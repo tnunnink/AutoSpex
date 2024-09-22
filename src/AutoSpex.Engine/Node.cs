@@ -11,7 +11,7 @@ public class Node : IEquatable<Node>
 {
     private readonly List<Node> _nodes = [];
     private readonly List<Spec> _specs = [];
-    private readonly Dictionary<string, Variable> _variables = [];
+    private readonly List<Variable> _variables = [];
 
     private Node()
     {
@@ -27,7 +27,7 @@ public class Node : IEquatable<Node>
         Name = name;
         _nodes = nodes.ToList();
         _specs = specs.ToList();
-        _variables = variables.ToDictionary(v => v.Name);
+        _variables = variables.ToList();
     }
 
     /// <summary>
@@ -94,7 +94,7 @@ public class Node : IEquatable<Node>
     /// references to variables, so we can resolve the values when the specifications are run.
     /// </remarks>
     [JsonInclude]
-    public IEnumerable<Variable> Variables => _variables.Values;
+    public IEnumerable<Variable> Variables => _variables;
 
     /// <summary>
     /// The depth or level of this node the tree heirarchy.
@@ -188,7 +188,7 @@ public class Node : IEquatable<Node>
         };
 
         _nodes.Add(node);
-        
+
         return node;
     }
 
@@ -345,7 +345,7 @@ public class Node : IEquatable<Node>
             Group = TypeGroup.FromType(value?.GetType())
         };
 
-        _variables[variable.Name] = variable;
+        _variables.Add(variable);
         return variable;
     }
 
@@ -357,7 +357,7 @@ public class Node : IEquatable<Node>
     {
         ArgumentNullException.ThrowIfNull(variable);
 
-        _variables[variable.Name] = variable;
+        _variables.Add(variable);
     }
 
     /// <summary>
@@ -381,7 +381,7 @@ public class Node : IEquatable<Node>
     {
         ArgumentNullException.ThrowIfNull(variable);
 
-        _variables.Remove(variable.Name);
+        _variables.Remove(variable);
     }
 
     public void ClearVariables()
@@ -405,7 +405,7 @@ public class Node : IEquatable<Node>
         foreach (var child in _nodes)
             duplicate.AddNode(child.Duplicate());
 
-        foreach (var variable in _variables.Values)
+        foreach (var variable in _variables)
             duplicate.AddVariable(variable.Duplicate());
 
         foreach (var spec in Specs)
@@ -545,7 +545,7 @@ public class Node : IEquatable<Node>
             var verification = await spec.RunAsync(content, token);
             verifications.Add(verification);
         }
-        
+
         return Verification.Merge(verifications);
     }
 
@@ -615,9 +615,8 @@ public class Node : IEquatable<Node>
     /// <returns>The value of the referenced variable if found, otherwise, <c>null</c></returns>
     private object? ResolveReference(Reference reference)
     {
-        return _variables.TryGetValue(reference.Name, out var variable)
-            ? variable.Value
-            : Parent?.ResolveReference(reference);
+        var variable = _variables.FirstOrDefault(x => string.Equals(x.Name, reference.Name));
+        return variable is not null ? variable.Value : Parent?.ResolveReference(reference);
     }
 
     /// <summary>

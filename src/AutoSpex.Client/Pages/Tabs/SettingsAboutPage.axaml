@@ -37,13 +37,13 @@
             <Button
                 Command="{Binding CheckForUpdtaesCommand}"
                 IsVisible="{Binding NewVersion, Converter={x:Static ObjectConverters.IsNull}}"
-                Theme="{a:ControlTheme ButtonSoft}"
+                Theme="{a:ControlTheme ButtonSolid}"
                 Classes="accent">
                 <StackPanel Orientation="Horizontal" Spacing="10">
                     <PathIcon
-                        Theme="{StaticResource IconFilledBinoculars}"
+                        Theme="{StaticResource IconLineArrowUp}"
                         Foreground="{Binding $parent[Button].Foreground}"
-                        FontSize="12" />
+                        FontSize="10" />
                     <TextBlock Text="Check for updates" />
                 </StackPanel>
             </Button>
@@ -57,7 +57,7 @@
                     <PathIcon
                         Theme="{StaticResource IconLineArrowUp}"
                         Foreground="{Binding $parent[Button].Foreground}"
-                        FontSize="12" />
+                        FontSize="10" />
                     <ContentControl Content="{Binding NewVersion.TargetFullRelease.Version, FallbackValue={x:Null}}">
                         <ContentControl.ContentTemplate>
                             <DataTemplate x:DataType="versioning:SemanticVersion">
