@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using AutoSpex.Client.Observers;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
@@ -24,7 +25,9 @@ public partial class CriteriaPageModel : PageViewModel,
             refresh: () => _node.Model.Specs.Select(m => new SpecObserver(m)).ToList(),
             add: (_, m) => _node.Model.AddSpec(m),
             remove: (_, n) => _node.Model.RemoveSpec(n),
-            clear: () => _node.Model.ClearSpecs());
+            clear: () => _node.Model.ClearSpecs(),
+            count: () => _node.Model.Specs.Count()
+        );
 
         Track(Specs);
     }

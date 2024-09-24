@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -10,9 +9,9 @@ namespace AutoSpex.Client.Shared;
 
 public abstract partial class PageViewModel() : TrackableViewModel, IEquatable<PageViewModel>
 {
-    protected PageViewModel(string title) : this()
+    protected PageViewModel(string? title) : this()
     {
-        Title = title;
+        Title = title ?? GetType().Name;
     }
 
     /// <summary>

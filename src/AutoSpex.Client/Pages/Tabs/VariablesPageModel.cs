@@ -26,7 +26,8 @@ public partial class VariablesPageModel : PageViewModel,
             refresh: () => _node.Model.Variables.Select(v => new VariableObserver(v)).ToList(),
             add: (_, v) => _node.Model.AddVariable(v),
             remove: (_, v) => _node.Model.RemoveVariable(v),
-            clear: () => _node.Model.ClearVariables()
+            clear: () => _node.Model.ClearVariables(),
+            count: () => _node.Model.Variables.Count()
         );
         Variables.Sort(x => x.Name, StringComparer.OrdinalIgnoreCase);
         Track(Variables);

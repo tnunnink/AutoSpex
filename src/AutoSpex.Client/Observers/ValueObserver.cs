@@ -49,10 +49,8 @@ public class ValueObserver(object? value) : NullableObserver<object>(value)
     /// <inheritdoc />
     public override bool Filter(string? filter)
     {
-        return base.Filter(filter)
-               || Text.Satisfies(filter)
-               || Type.Satisfies(filter)
-               || Group.Name.Satisfies(filter);
+        FilterText = filter;
+        return Text.Satisfies(filter);
     }
 
     /// <inheritdoc />

@@ -81,7 +81,7 @@ public partial class DetailsPageModel : PageViewModel, IRecipient<NavigationRequ
     private static async Task CloseTab(DetailPageModel? page)
     {
         if (page is null) return;
-        await page.Close(); //todo we might not need this command and just use the bound page/tab close command.
+        await page.Close();
     }
 
     /// <summary>

@@ -10,17 +10,23 @@ namespace AutoSpex.Client.Observers;
 /// A simple observer class wrapping an <see cref="Evaluation"/> returned from running a spec/criterion.
 /// This class helps with formatting and filtering the returned data.
 /// </summary>
-/// <param name="model">The <see cref="Evaluation"/> object to wrap.</param>
-public class EvaluationObserver(Evaluation model) : Observer<Evaluation>(model)
+public class EvaluationObserver : Observer<Evaluation>
 {
+    /// <summary>
+    /// A simple observer class wrapping an <see cref="Evaluation"/> returned from running a spec/criterion.
+    /// This class helps with formatting and filtering the returned data.
+    /// </summary>
+    /// <param name="model">The <see cref="Evaluation"/> object to wrap.</param>
+    public EvaluationObserver(Evaluation model) : base(model)
+    {
+    }
+
     public ResultState Result => Model.Result;
     public ValueObserver Candidate => new(Model.Candidate);
     public string Criteria => Model.Criteria;
     public ObservableCollection<ValueObserver> Expected => new(Model.Expected.Select(x => new ValueObserver(x)));
     public ValueObserver Actual => new(Model.Actual);
     public Exception? Error => Model.Error;
-    public string SourceName => Model.SourceName;
-    public string SourcePath => Model.SourcePath;
 
 
     /// <inheritdoc />
@@ -29,12 +35,11 @@ public class EvaluationObserver(Evaluation model) : Observer<Evaluation>(model)
         FilterText = filter;
 
         var passes = string.IsNullOrEmpty(filter)
-                    || Candidate.Filter(filter)
-                    || Criteria.Satisfies(filter)
-                    || Expected.Any(x => x.Filter(filter))
-                    || Actual.Filter(filter)
-                    || Error is not null && Error.Message.Satisfies(filter)
-                    || SourceName.Satisfies(filter);
+                     || Candidate.Filter(filter)
+                     || Criteria.Satisfies(filter)
+                     || Expected.Any(x => x.Filter(filter))
+                     || Actual.Filter(filter)
+                     || Error is not null && Error.Message.Satisfies(filter);
 
         return passes;
     }

@@ -10,7 +10,7 @@
         <LangVersion>12</LangVersion>
         <ApplicationIcon>Resources\Images\logo.ico</ApplicationIcon>
         <Platforms>AnyCPU;x64;x86</Platforms>
-        <Version>0.3.0</Version>
+        <Version>0.3.1</Version>
         <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     </PropertyGroup>
 
@@ -308,5 +308,11 @@
 
     <ItemGroup>
         <AdditionalFiles Remove="Components\Runs\**"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\..\README.md">
+        <Link>README.md</Link>
+      </Content>
     </ItemGroup>
 </Project>

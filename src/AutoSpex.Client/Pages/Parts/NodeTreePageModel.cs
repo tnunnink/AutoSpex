@@ -34,6 +34,7 @@ public partial class NodeTreePageModel : PageViewModel,
 
         Nodes.Refresh(result.Value.Select(n => new NodeObserver(n)));
         Nodes.Sort(n => n.Name, StringComparer.OrdinalIgnoreCase);
+        Track(Nodes, false);
     }
 
     /// <summary>

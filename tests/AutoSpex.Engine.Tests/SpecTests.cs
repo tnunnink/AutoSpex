@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using JetBrains.dotMemoryUnit;
 using Task = System.Threading.Tasks.Task;
 
 namespace AutoSpex.Engine.Tests;
@@ -45,7 +46,7 @@ public class SpecTests
     }
 
     [Test]
-    public async Task RunAsync_DefaultElement_ShouldReturnNoneDueToNoVerifications_ValidSpec_ShouldReturnSuccess()
+    public async Task RunAsync_ValidSpec_ShouldReturnSuccess()
     {
         var spec = new Spec();
         var content = L5X.Load(Known.Test);
@@ -58,6 +59,48 @@ public class SpecTests
 
         verification.Result.Should().Be(ResultState.Passed);
         verification.Evaluations.Should().NotBeEmpty();
+    }
+
+    [Test]
+    public async Task RunAsync_InhibitedIsFalse_ShouldReturnSuccess()
+    {
+        var spec = new Spec();
+        var content = L5X.Load(Known.Test);
+
+        spec.Find(Element.Module)
+            .Verify("Inhibited", Negation.Is, Operation.False);
+
+        var verification = await spec.RunAsync(content);
+
+        verification.Result.Should().Be(ResultState.Passed);
+        verification.Evaluations.Should().NotBeEmpty();
+    }
+
+    [DotMemoryUnit(FailIfRunWithoutSupport = false)]
+    [Test]
+    public void CheckForMemeoryLeaksAgainstSpec()
+    {
+        var isolator = new Action(() =>
+        {
+            var content = L5X.Load(Known.Test);
+            var spec = Spec.Configure(c =>
+            {
+                c.Find(Element.Module);
+                c.Verify("Inhibited", Negation.Is, Operation.False);
+            });
+
+            var verification = spec.Run(content);
+            verification.Result.Should().Be(ResultState.Passed);
+        });
+
+        isolator();
+
+        GC.Collect();
+        GC.WaitForFullGCComplete();
+
+        // Assert L5X is removed from memory
+        dotMemory.Check(memory => memory.GetObjects(where => where.Type.Is<L5X>()).ObjectsCount.Should().Be(0));
+        dotMemory.Check(memory => memory.GetObjects(where => where.Type.Is<Spec>()).ObjectsCount.Should().Be(0));
     }
 
     [Test]

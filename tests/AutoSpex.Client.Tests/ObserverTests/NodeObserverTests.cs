@@ -1,6 +1,8 @@
 ﻿using AutoSpex.Client.Observers;
 using AutoSpex.Engine;
 using FluentAssertions;
+using JetBrains.dotMemoryUnit;
+using L5Sharp.Core;
 
 namespace AutoSpex.Client.Tests.ObserverTests;
 
@@ -35,5 +37,25 @@ public class NodeObserverTests
     public void New_Null_ShouldThrowException()
     {
         FluentActions.Invoking(() => new NodeObserver(null!)).Should().Throw<ArgumentNullException>();
+    }
+    
+    [DotMemoryUnit(FailIfRunWithoutSupport = false)]
+    [Test]
+    public void CheckForMemeoryLeaksAgainstNodeObserver()
+    {
+        var isolator = new Action(() =>
+        {
+            var node = Node.NewContainer("Test");
+            var observer = new NodeObserver(node);
+            observer.Should().NotBeNull();
+        });
+
+        isolator();
+
+        GC.Collect();
+        GC.WaitForFullGCComplete();
+
+        // Assert L5X is removed from memory
+        dotMemory.Check(memory => memory.GetObjects(where => where.Type.Is<NodeObserver>()).ObjectsCount.Should().Be(0));
     }
 }

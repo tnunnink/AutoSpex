@@ -26,8 +26,10 @@ public partial class RunDetailPageModel : DetailPageModel, IRecipient<Observer.G
         Result = Run.Result;
 
         Outcomes = new ObserverCollection<Outcome, OutcomeObserver>(
-            refresh: () => Run.Model.Outcomes.Select(x => new OutcomeObserver(x)).ToList()
+            refresh: () => Run.Model.Outcomes.Select(x => new OutcomeObserver(x)).ToList(),
+            count: () => Run.Model.Outcomes.Count()
         );
+        Track(Outcomes, false);
 
         FilterPage = new ResultFilterPageModel(this);
     }
@@ -163,7 +165,7 @@ public partial class RunDetailPageModel : DetailPageModel, IRecipient<Observer.G
 
         base.Receive(message);
     }
-    
+
     /// <summary>
     /// 
     /// </summary>

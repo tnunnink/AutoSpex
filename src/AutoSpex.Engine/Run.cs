@@ -1,4 +1,6 @@
-﻿namespace AutoSpex.Engine;
+﻿using Task = System.Threading.Tasks.Task;
+
+namespace AutoSpex.Engine;
 
 /// <summary>
 /// A <see cref="Run"/> represents a set of specs and source which should be executed together and produce a set of
@@ -124,8 +126,7 @@ public class Run
         {
             token.ThrowIfCancellationRequested();
 
-            if (!_outcomes.TryGetValue(node.NodeId, out var outcome))
-                continue; //todo this should probably never happen but if so then we want to report it not just pass up.
+            if (!_outcomes.TryGetValue(node.NodeId, out var outcome)) continue;
 
             running?.Invoke(outcome);
             var verification = await node.RunAll(content, token);

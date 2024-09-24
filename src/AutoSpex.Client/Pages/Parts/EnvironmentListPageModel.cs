@@ -37,6 +37,8 @@ public partial class EnvironmentListPageModel : PageViewModel,
             result.Value.ToList(),
             e => new EnvironmentObserver(e)
         );
+        
+        Track(Environments, false);
 
         Environments.Sort(n => n.Name);
         Total = Environments.Count;

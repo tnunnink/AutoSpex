@@ -32,9 +32,11 @@ public partial class NodeObserver : Observer<Node>,
             refresh: () => Model.Nodes.Select(n => new NodeObserver(n)).ToList(),
             add: (_, n) => Model.AddNode(n),
             remove: (_, n) => Model.RemoveNode(n),
-            clear: () => Model.ClearNodes());
-
+            clear: () => Model.ClearNodes(),
+            count: () => Model.Nodes.Count());
+        
         Nodes.Sort(n => n.Name, StringComparer.OrdinalIgnoreCase);
+        Track(Nodes, false);
     }
 
     public override Guid Id => Model.NodeId;

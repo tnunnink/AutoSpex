@@ -62,8 +62,8 @@ public partial class ResultFilterPageModel(RunDetailPageModel page) : PageViewMo
             //Filter the observer collection in place using the configured filter criteria.
             o.Evaluations.Filter(e =>
                 e.Filter(keyword) &&
-                (results.Count == 0 || results.Contains(e.Result)) &&
-                (sources.Count == 0 || sources.Contains(e.Model.SourceId))
+                (results.Count == 0 || results.Contains(e.Result)) /*&&
+                (sources.Count == 0 || sources.Contains(e.Model.SourceId))*/
             );
 
             //Then filter the outcome using the entered text.

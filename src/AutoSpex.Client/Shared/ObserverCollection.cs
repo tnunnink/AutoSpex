@@ -19,6 +19,7 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
     private readonly Action<int, TModel>? _insert;
     private readonly Action<int, TModel>? _remove;
     private readonly Action? _clear;
+    private readonly Func<int>? _count;
 
     public ObserverCollection()
     {
@@ -29,13 +30,15 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
         Action<int, TModel>? add = default,
         Action<int, TModel>? insert = default,
         Action<int, TModel>? remove = default,
-        Action? clear = default) : base(refresh())
+        Action? clear = default,
+        Func<int>? count = default) : base(refresh())
     {
         _refresh = refresh;
         _add = add;
         _insert = insert;
         _remove = remove;
         _clear = clear;
+        _count = count;
 
         Attach(this);
     }
@@ -47,13 +50,14 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
         _insert = models.Insert;
         _remove = (_, m) => models.Remove(m);
         _clear = models.Clear;
+        _count = () => models.Count;
 
         Attach(this);
     }
 
     public bool IsChanged => _changed || this.Any(o => o.IsChanged);
     public bool HasErrors => this.Any(o => o.IsErrored);
-    public bool HasItems => _refresh.Invoke().Count > 0;
+    public bool HasItems => _count is not null && _count() > 0;
     public event PropertyChangedEventHandler? ItemPropertyChanged;
     public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
@@ -74,8 +78,8 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
     /// <inheritdoc />
     public IEnumerable<ValidationResult> Validate()
     {
-        var errors = new List<ValidationResult>(); 
-        
+        var errors = new List<ValidationResult>();
+
         foreach (var observer in this)
         {
             var results = observer.Validate();

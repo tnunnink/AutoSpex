@@ -10,7 +10,7 @@
     <Design.PreviewWith>
         <StackPanel Width="700" Height="200">
             <ListBoxItem Padding="0"
-                         Content="{x:Static components:TestData.PassedEvaluation}" 
+                         Content="{x:Static components:TestData.PassedEvaluation}"
                          ContentTemplate="{DynamicResource EvaluationListItem}" />
             <ListBoxItem Padding="0"
                          Content="{x:Static components:TestData.ErroredEvaluation}"
@@ -23,9 +23,11 @@
 
     <DataTemplate x:Key="EvaluationListItem" x:DataType="observers:EvaluationObserver">
 
-        <Border properties:StyleClasses.Classes="{Binding Result}"
-                BorderThickness="3 0 0 0" CornerRadius="0"
-                Padding="10 7">
+        <Border
+            x:Name="RootBorder"
+            properties:StyleClasses.Classes="{Binding Result}"
+            BorderThickness="3 0 0 0" CornerRadius="0"
+            Padding="10 7">
 
             <Border.Styles>
                 <Style Selector="Border.Passed">
@@ -40,7 +42,8 @@
 
                 <Style Selector="controls|HighlightableTextBlock">
                     <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushSecondary}" />
-                    <Setter Property="HighlightedText" Value="{Binding FilterText}" />
+                    <Setter Property="HighlightedText"
+                            Value="{Binding #RootBorder.((observers:EvaluationObserver)DataContext).FilterText, FallbackValue={x:Null}}" />
                     <Setter Property="TextWrapping" Value="NoWrap" />
                     <Setter Property="TextTrimming" Value="CharacterEllipsis" />
                 </Style>
@@ -57,26 +60,14 @@
                     ToolTip.Placement="BottomEdgeAlignedRight">
                     <StackPanel Orientation="Horizontal" Spacing="5">
                         <PathIcon Theme="{StaticResource IconThemedSource}" Classes="size-sm" Margin="0 1 0 0" />
-                        <controls:HighlightableTextBlock Text="{Binding SourceName}" />
+
                     </StackPanel>
-                    <ToolTip.Tip>
-                        <Grid ColumnDefinitions="Auto,*" Margin="5">
-                            <PathIcon Grid.Column="0" Theme="{StaticResource IconThemedSource}" Classes="size-lg" />
-                            <StackPanel Grid.Column="1" Spacing="5" VerticalAlignment="Center" Margin="10 0">
-                                <TextBlock Text="{Binding SourceName}"
-                                           FontSize="{a:ThemeResource  DefaultFontSizeMedium}"
-                                           FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
-                                <TextBlock Text="{Binding SourcePath}"
-                                           Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
-                            </StackPanel>
-                        </Grid>
-                    </ToolTip.Tip>
                 </Border>
 
                 <TextBlock Text="Expected" />
 
                 <controls:HighlightableTextBlock
-                    Text="{Binding Candidate.Text}"
+                    Text="{Binding Candidate}"
                     Foreground="{DynamicResource TypeGroupForegroundBrushText}" />
 
                 <TextBlock
@@ -84,7 +75,6 @@
 
                 <controls:HighlightableTextBlock
                     Text="{Binding Criteria}"
-                    HighlightedText="{Binding FilterText}"
                     Foreground="{a:ThemeResource DefaultForegroundBrush}" />
 
                 <ItemsControl

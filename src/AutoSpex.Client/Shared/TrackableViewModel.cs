@@ -77,14 +77,26 @@ public abstract class TrackableViewModel : ViewModelBase, ITrackable
 
     /// <summary>
     /// Adds the provided <see cref="ITrackable"/> to the internal collection of tracked objects for this
-    /// view model so to propagate changes up the object graph.
+    /// view model so to both deactive on parent deactivation (release memory) and optionally propagate
+    /// changes up the object graph.
     /// </summary>
     /// <param name="trackable">The child <see cref="ITrackable"/> to be tracked.</param>
+    /// <param name="registerChanges">
+    /// Wehther to subscribe to change events in order to propagate changes up the object graph.
+    /// By default, the events are subscribed and therefore progatate changes,
+    /// but the user can opt out of this feature to only track view models that need
+    /// to be released but not be used for change notification.
+    /// </param>
     /// <exception cref="ArgumentNullException"><paramref name="trackable"/> is null.</exception>
-    protected void Track(ITrackable trackable)
+    protected void Track(ITrackable trackable, bool registerChanges = true)
     {
         ArgumentNullException.ThrowIfNull(trackable);
         _tracked.Add(trackable);
+
+        if (!registerChanges) return;
+
+        trackable.PropertyChanged -= OnTrackedModelPropertyChanged;
+        trackable.ErrorsChanged -= OnTrackedModelErrorsChanged;
         trackable.PropertyChanged += OnTrackedModelPropertyChanged;
         trackable.ErrorsChanged += OnTrackedModelErrorsChanged;
     }
@@ -99,8 +111,7 @@ public abstract class TrackableViewModel : ViewModelBase, ITrackable
     protected void Forget(ITrackable trackable)
     {
         ArgumentNullException.ThrowIfNull(trackable);
-        var removed = _tracked.Remove(trackable);
-        if (!removed) return;
+        _tracked.Remove(trackable);
         trackable.PropertyChanged -= OnTrackedModelPropertyChanged;
         trackable.ErrorsChanged -= OnTrackedModelErrorsChanged;
     }
@@ -125,14 +136,7 @@ public abstract class TrackableViewModel : ViewModelBase, ITrackable
     protected override void OnDeactivated()
     {
         base.OnDeactivated();
-
-        foreach (var tracked in _tracked)
-        {
-            tracked.PropertyChanged -= OnTrackedModelPropertyChanged;
-            tracked.ErrorsChanged -= OnTrackedModelErrorsChanged;
-        }
-
-        _tracked.Clear();
+        ReleaseTrackedModels();
     }
 
     /// <summary>
@@ -177,5 +181,34 @@ public abstract class TrackableViewModel : ViewModelBase, ITrackable
     private void OnTrackedModelErrorsChanged(object? sender, DataErrorsChangedEventArgs e)
     {
         OnPropertyChanged(nameof(IsErrored));
+    }
+
+    /// <summary>
+    /// Releases all tracked models and deactivates child view models, allowing for the release of memory.
+    /// </summary>
+    /// <remarks>
+    /// This method is called when the view model is deactivated to ensure that all tracked models and child view models are released.
+    /// Tracked models are unsubscribed from property change and error change events, and child models are made inacitve.
+    /// </remarks>
+    private void ReleaseTrackedModels()
+    {
+        foreach (var trackable in _tracked)
+        {
+            trackable.PropertyChanged -= OnTrackedModelPropertyChanged;
+            trackable.ErrorsChanged -= OnTrackedModelErrorsChanged;
+
+            //In turn deactivate child view models to force release of memory.
+            switch (trackable)
+            {
+                case ViewModelBase viewModel:
+                    viewModel.IsActive = false;
+                    break;
+                case IEnumerable<ViewModelBase> collection:
+                    collection.ToList().ForEach(x => x.IsActive = false);
+                    break;
+            }
+        }
+
+        _tracked.Clear();
     }
 }

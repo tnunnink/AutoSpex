@@ -20,8 +20,10 @@ public partial class OutcomeObserver : Observer<Outcome>,
     {
         Result = model.Result;
         Evaluations = new ObserverCollection<Evaluation, EvaluationObserver>(
-            refresh: () => Model.Evaluations.Select(e => new EvaluationObserver(e)).ToList()
+            refresh: () => Model.Evaluations.Select(e => new EvaluationObserver(e)).ToList(),
+            count: () => Model.Evaluations.Count()
         );
+        Track(Evaluations, false);
     }
 
     protected override bool PromptForDeletion => false;

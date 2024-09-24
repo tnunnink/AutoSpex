@@ -203,7 +203,7 @@ public class Criterion : IEquatable<Criterion>
     /// <summary>
     /// Gets the text containing the property, negation, and operation that this criterion is configured to evaluate.
     /// This includes all nested criterion argument values, thereby forming a chain of readable text that identifies
-    /// what is being checked.
+    /// what is being evaluated.
     /// </summary>
     /// <returns>A <see cref="string"/> containing the criteria text.</returns>
     public string GetCriteria()

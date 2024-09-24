@@ -23,8 +23,8 @@ public partial class VariableObserver : Observer<Variable>
     public VariableObserver(Variable model) : base(model)
     {
         Track(nameof(Name));
-        Track(nameof(Value));
         Track(nameof(Group));
+        Track(Value);
     }
 
     /// <inheritdoc />

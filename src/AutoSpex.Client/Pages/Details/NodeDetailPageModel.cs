@@ -51,7 +51,7 @@ public partial class NodeDetailPageModel : DetailPageModel, IRecipient<Environme
         {
             return Node.IsVirtual ? CreateNode() : SaveNode();
         }
-        
+
         Notifier.ShowError($"Failed to save {Title}", $"{errors.FirstOrDefault()}");
         return Task.FromResult(Result.Fail("Failed to save page due to validation errors."));
     }
@@ -136,7 +136,7 @@ public partial class NodeDetailPageModel : DetailPageModel, IRecipient<Environme
 
         Node = new NodeObserver(result.Value);
         OnPropertyChanged(nameof(Node));
-        Track(Node);
+        Track(Node, false);
     }
 
     /// <summary>
@@ -147,6 +147,7 @@ public partial class NodeDetailPageModel : DetailPageModel, IRecipient<Environme
         var result = await Mediator.Send(new GetTargetEnvironment());
         if (result.IsFailed) return;
         Environment = new EnvironmentObserver(result.Value);
+        Track(Environment, false);
     }
 
     /// <summary>
