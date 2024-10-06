@@ -15,17 +15,18 @@ internal class GetScopedVariablesHandler(IConnectionManager manager)
     private const string GetInheritedVariables =
         """
         WITH Tree AS (
-            SELECT NodeId, ParentId
+            SELECT NodeId, ParentId, 0 as [Distance]
             FROM Node
             WHERE NodeId = @NodeId
             UNION ALL
-            SELECT n.NodeId, n.ParentId
+            SELECT n.NodeId, n.ParentId, t.distance + 1 [Distance]
             FROM Node n
                      INNER JOIN Tree t ON t.ParentId = n.NodeId)
 
         SELECT [VariableId], [Name], [Group], [Value]
         FROM Tree t
         JOIN Variable v ON v.NodeId = t.NodeId
+        ORDER BY Distance
         """;
 
     public async Task<IEnumerable<Variable>> Handle(GetScopedVariables request, CancellationToken cancellationToken)
