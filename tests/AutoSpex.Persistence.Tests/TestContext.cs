@@ -5,7 +5,7 @@ namespace AutoSpex.Persistence.Tests;
 public sealed class TestContext : IDisposable
 {
     private readonly ServiceProvider _provider;
-    private const string AppDb = "spex.db";
+    private const string AppDb = "../spex.db";
 
     public TestContext()
     {

@@ -26,17 +26,18 @@ internal class GetReferenceVariableHandler(IConnectionManager manager)
     private const string GetInheritedVariables =
         """
         WITH Tree AS (
-            SELECT NodeId, ParentId
+            SELECT NodeId, ParentId, 0 as [Distance]
             FROM Node
             WHERE NodeId = @NodeId
             UNION ALL
-            SELECT n.NodeId, n.ParentId
+            SELECT n.NodeId, n.ParentId, t.distance + 1 [Distance]
             FROM Node n
                      INNER JOIN Tree t ON t.ParentId = n.NodeId)
 
-        SELECT v.*
+        SELECT [VariableId], [Name], [Group], [Value]
         FROM Tree t
         JOIN Variable v ON v.NodeId = t.NodeId
+        ORDER BY Distance
         """;
 
     public async Task<Result<Variable>> Handle(GetReferenceVariable request, CancellationToken cancellationToken)
@@ -52,6 +53,7 @@ internal class GetReferenceVariableHandler(IConnectionManager manager)
         var inherited = await connection.QueryAsync<Variable>(GetInheritedVariables, new { NodeId = nodeId });
 
         var scoped = new Dictionary<string, Variable>();
+
         foreach (var variable in inherited)
             scoped.TryAdd(variable.Name, variable);
 
