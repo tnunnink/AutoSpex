@@ -168,7 +168,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
             typeof(Revision),
             typeof(L5Sharp.Core.Argument),
             typeof(IPAddress),
-            typeof(ComponentKey)
+            typeof(Scope)
         ];
 
 

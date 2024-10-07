@@ -69,13 +69,10 @@ public static class Extensions
         return candidate switch
         {
             bool b => b.ToString().ToLowerInvariant(),
-            Tag tag => tag.TagName,
-            DataTypeMember member => member.Name,
-            Parameter parameter => parameter.Name,
-            LogixCode code => code.Location,
-            LogixComponent component => component.Name,
-            LogixEnum enumeration => enumeration.Name,
             string text => text,
+            LogixEnum enumeration => enumeration.Name,
+            LogixCode code => code.Scope,
+            LogixComponent component => component.Scope,
             IEnumerable enumerable =>
                 $"{string.Join(", ", enumerable.GetType().GetGenericArguments().Select(CommonName).ToArray())}s",
             _ => candidate?.ToString() ?? "null"

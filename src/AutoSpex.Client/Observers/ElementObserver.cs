@@ -40,7 +40,7 @@ public partial class ElementObserver(LogixElement model) : Observer<LogixElement
         data.Set(nameof(ElementObserver), this);
         await clipboard.SetDataObjectAsync(data);
     }
-    
+
     [RelayCommand]
     private async Task CopyName()
     {
@@ -85,11 +85,8 @@ public partial class ElementObserver(LogixElement model) : Observer<LogixElement
     {
         return Model switch
         {
-            DataTypeMember member => member.Name,
-            Parameter parameter => parameter.Name,
-            Tag tag => tag.TagName,
-            LogixCode code => code.Location,
-            LogixComponent component => component.Name,
+            LogixCode code => code.Scope,
+            LogixComponent component => component.Scope,
             _ => Model.ToString() ?? Model.L5XType
         };
     }
@@ -108,7 +105,7 @@ public partial class ElementObserver(LogixElement model) : Observer<LogixElement
 
     private string? DetermineContainer()
     {
-        return Model is LogixObject element ? element.Container : default;
+        return Model is LogixScoped element ? element.Scope.Container : default;
     }
 
     private IEnumerable<PropertyObserver> GetProperties()
