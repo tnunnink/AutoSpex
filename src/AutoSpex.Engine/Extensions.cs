@@ -69,10 +69,9 @@ public static class Extensions
         return candidate switch
         {
             bool b => b.ToString().ToLowerInvariant(),
-            string text => text,
             LogixEnum enumeration => enumeration.Name,
-            LogixCode code => code.Scope,
-            LogixComponent component => component.Scope,
+            LogixScoped scoped => scoped.Scope,
+            string text => text, // this needs to be before IEnumerable since string is enumerable
             IEnumerable enumerable =>
                 $"{string.Join(", ", enumerable.GetType().GetGenericArguments().Select(CommonName).ToArray())}s",
             _ => candidate?.ToString() ?? "null"
