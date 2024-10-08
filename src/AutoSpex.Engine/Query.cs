@@ -82,13 +82,13 @@ public partial class Query
         if (Element == Element.Tag)
         {
             //This method gets the nested tag names which is why we treat it differently.
-            var scoped = content.All(LocalName);
-            return string.IsNullOrEmpty(ContainerName) ? scoped : scoped.Where(t => t.Container == ContainerName);
+            var scoped = content.Find<Tag>(LocalName);
+            return string.IsNullOrEmpty(ContainerName) ? scoped : scoped.Where(t => t.Scope.Container == ContainerName);
         }
 
         //Every other component is global, so we can just use the all method and scope the provided container name if configured.
-        var candidates = content.All(new ComponentKey(Element.Name, Name));
-        return string.IsNullOrEmpty(ContainerName) ? candidates : candidates.Where(t => t.Container == ContainerName);
+        var candidates = content.Find($"{Element.Name}/{Name}");
+        return string.IsNullOrEmpty(ContainerName) ? candidates : candidates.Where(t => t.Scope.Container == ContainerName);
     }
 
     /// <summary>

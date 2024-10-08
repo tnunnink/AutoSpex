@@ -53,6 +53,7 @@
                                 properties:Icon.Theme="{StaticResource IconLineLaunch}"
                                 ToolTip.Tip="Open Element" />
                             <Button
+                                Command="{Binding CopyNameCommand}"
                                 Theme="{StaticResource IconButtonSmall}"
                                 properties:Icon.Theme="{StaticResource IconFilledClone}"
                                 IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}"

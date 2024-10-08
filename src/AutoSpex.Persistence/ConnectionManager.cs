@@ -5,7 +5,7 @@ namespace AutoSpex.Persistence;
 
 public class ConnectionManager : IConnectionManager
 {
-    private const string AppDatabase = "spex.db";
+    private const string AppDatabase = "../spex.db";
     public static readonly string ConnectionString = BuildConnectionString();
 
     /// <inheritdoc />

@@ -89,7 +89,8 @@
                             BorderThickness="0" CornerRadius="0"
                             VerticalContentAlignment="Center"
                             FontSize="{a:ThemeResource DefaultFontSizeSmall}"
-                            FontFamily="{a:ThemeResource CodeFontFamily}">
+                            FontFamily="{a:ThemeResource CodeFontFamily}"
+                            Padding="10 11 10 10">
                             <TextBox.Styles>
                                 <Style Selector="TextBox:empty">
                                     <Setter Property="Foreground"
@@ -118,7 +119,7 @@
                                         <ContentControl
                                             Content="{Binding }"
                                             ContentTemplate="{StaticResource FilterEntry}"
-                                            MinWidth="400"/>
+                                            MinWidth="400" />
                                     </Flyout>
                                 </Button.Flyout>
                             </Button>
