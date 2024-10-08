@@ -22,10 +22,10 @@ public class EvaluationObserver : Observer<Evaluation>
     }
 
     public ResultState Result => Model.Result;
-    public ValueObserver Candidate => new(Model.Candidate);
+    public string Candidate => Model.Candidate;
     public string Criteria => Model.Criteria;
-    public ObservableCollection<ValueObserver> Expected => new(Model.Expected.Select(x => new ValueObserver(x)));
-    public ValueObserver Actual => new(Model.Actual);
+    public ObservableCollection<string> Expected => new(Model.Expected);
+    public string Actual => Model.Actual;
     public Exception? Error => Model.Error;
 
 
@@ -35,10 +35,10 @@ public class EvaluationObserver : Observer<Evaluation>
         FilterText = filter;
 
         var passes = string.IsNullOrEmpty(filter)
-                     || Candidate.Filter(filter)
+                     || Candidate.Satisfies(filter)
                      || Criteria.Satisfies(filter)
-                     || Expected.Any(x => x.Filter(filter))
-                     || Actual.Filter(filter)
+                     || Expected.Any(x => x.Satisfies(filter))
+                     || Actual.Satisfies(filter)
                      || Error is not null && Error.Message.Satisfies(filter);
 
         return passes;
