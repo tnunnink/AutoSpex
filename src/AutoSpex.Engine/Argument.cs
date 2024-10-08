@@ -55,6 +55,7 @@ public class Argument : IEquatable<Argument>
             Criterion criterion => criterion,
             IEnumerable<Argument> arguments => arguments.Select(a => a.ResolveAs(type)),
             string text when type is not null && type != typeof(string) => text.TryParse(type),
+            //todo this needs te thought through more I think. We might not want to alwasy convert if we don't have to
             not string when type is not null && type != value?.GetType() && value is IConvertible convertible =>
                 convertible.ToType(type, null),
             _ => value
