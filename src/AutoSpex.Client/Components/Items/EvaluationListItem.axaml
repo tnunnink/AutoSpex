@@ -5,7 +5,8 @@
                     xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
                     xmlns:components="clr-namespace:AutoSpex.Client.Components"
                     xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
-                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+                    xmlns:system="clr-namespace:System;assembly=System.Runtime">
 
     <Design.PreviewWith>
         <StackPanel Width="700" Height="200">
@@ -65,13 +66,8 @@
                 </Border>
 
                 <TextBlock Text="Expected" />
-
-                <controls:HighlightableTextBlock
-                    Text="{Binding Candidate}"
-                    Foreground="{DynamicResource TypeGroupForegroundBrushText}" />
-
-                <TextBlock
-                    Text="to have" />
+                <controls:HighlightableTextBlock Text="{Binding Candidate}" />
+                <TextBlock Text="to have" />
 
                 <controls:HighlightableTextBlock
                     Text="{Binding Criteria}"
@@ -86,9 +82,9 @@
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
-                        <DataTemplate x:DataType="observers:ValueObserver">
+                        <DataTemplate x:DataType="system:String">
                             <controls:HighlightableTextBlock
-                                Text="{Binding Text}"
+                                Text="{Binding}"
                                 Foreground="{DynamicResource TypeGroupForegroundBrushText}" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
@@ -106,7 +102,7 @@
                         Text="but found" />
 
                     <controls:HighlightableTextBlock
-                        Text="{Binding Actual.Text}"
+                        Text="{Binding Actual}"
                         Foreground="{DynamicResource TypeGroupForegroundBrushText}" />
                 </StackPanel>
 
