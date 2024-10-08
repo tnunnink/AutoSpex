@@ -17,7 +17,7 @@ public record Evaluation
         Candidate = candidate.ToText();
         Criteria = criterion.GetCriteria();
         Expected = criterion.GetExpected().Select(x => x.ToText());
-        Actual = actual?.ToText();
+        Actual = actual.ToText();
     }
 
     private Evaluation(ResultState result, Criterion criterion, object candidate, Exception exception)
@@ -45,10 +45,10 @@ public record Evaluation
     public Guid CriterionId { get; } = Guid.Empty;
     public Guid SourceId { get; } = Guid.Empty;
     public ResultState Result { get; } = ResultState.None;
-    public string? Candidate { get; } = string.Empty;
+    public string Candidate { get; } = string.Empty;
     public string Criteria { get; } = string.Empty;
     public IEnumerable<string> Expected { get; } = [];
-    public string? Actual { get; }
+    public string Actual { get; } = string.Empty;
     public Exception? Error { get; }
 
 
