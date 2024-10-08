@@ -184,12 +184,12 @@ public class Spec() : IEquatable<Spec>
             var candidates = elements.Where(FilterElement).ToList();
 
             //3. Verify the candidates elements.
-            var verifications = candidates.Select(VerifyElement);
+            var verifications = candidates.Select(VerifyElement).ToList();
 
             stopwatch.Stop();
 
             //Merge/flatten into single verification object.
-            return Verification.Merge(verifications.ToList(), stopwatch.ElapsedMilliseconds);
+            return Verification.Merge(verifications, stopwatch.ElapsedMilliseconds);
         }
         catch (Exception e)
         {
