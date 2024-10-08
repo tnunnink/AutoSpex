@@ -46,11 +46,7 @@ public partial class ElementObserver(LogixElement model) : Observer<LogixElement
     {
         var clipboard = Shell.Clipboard;
         if (clipboard is null) return;
-
-        var data = new DataObject();
-        data.Set(nameof(Name), Name);
-
-        await clipboard.SetDataObjectAsync(data);
+        await clipboard.SetTextAsync(Name);
     }
 
     [RelayCommand]
@@ -86,7 +82,7 @@ public partial class ElementObserver(LogixElement model) : Observer<LogixElement
         return Model switch
         {
             LogixCode code => code.Scope,
-            LogixComponent component => component.Scope,
+            LogixComponent component => component.Scope.Name,
             _ => Model.ToString() ?? Model.L5XType
         };
     }
