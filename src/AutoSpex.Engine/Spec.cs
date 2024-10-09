@@ -133,7 +133,7 @@ public class Spec() : IEquatable<Spec>
     {
         return new Spec
         {
-            Query = Query,
+            Query = new Query(Query.Element, Query.Name),
             Filters = Filters.Select(x => x.Duplicate()).ToList(),
             Verifications = Verifications.Select(x => x.Duplicate()).ToList(),
             FilterInclusion = FilterInclusion,
