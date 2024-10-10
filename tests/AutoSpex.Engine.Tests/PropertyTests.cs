@@ -22,7 +22,7 @@ public class PropertyTests
         property.Type.Should().Be(typeof(string));
         property.Name.Should().Be("Name");
         property.Properties.Should().BeEmpty();
-        property.Identifier.Should().Be("string");
+        property.DisplayName.Should().Be("string");
         property.Group.Should().Be(TypeGroup.Text);
         property.Options.Should().BeEmpty();
         property.TypeGraph.Should().HaveCount(2);
@@ -53,6 +53,16 @@ public class PropertyTests
         var property = new Property("ExternalAccess", typeof(ExternalAccess), Element.Tag.This);
 
         property.Options.Should().HaveCount(3);
+    }
+
+    [Test]
+    public void Property_TagIndexer_ShouldNotBeNull()
+    {
+        var property = Element.Tag.Property("[PRE]");
+
+        property.Should().NotBeNull();
+        property?.Origin.Should().Be(typeof(Tag));
+        property?.Type.Should().Be(typeof(Tag));
     }
 
     [Test]
@@ -104,19 +114,13 @@ public class PropertyTests
     }
 
     [Test]
-    public void GetProperty_CollectionIndexPropertyPartiallyCompleted_ShouldReturnExpected()
+    public void GetProperty_CollectionIndexPropertyPartiallyCompleted_ShouldRetrunNull()
     {
         var origin = Element.Tag.This;
 
         var property = origin.GetProperty("Members[");
 
-        property.Should().NotBeNull();
-        property?.Key.Should().Be("L5Sharp.Core.Tag.Members[");
-        property?.Origin.Should().Be(typeof(Tag));
-        property?.Path.Should().Be("Members[");
-        property?.Name.Should().Be("[");
-        property?.Type.Should().Be(typeof(Tag));
-        property?.Group.Should().Be(TypeGroup.Element);
+        property.Should().BeNull();
     }
 
     [Test]
@@ -218,6 +222,20 @@ public class PropertyTests
     }
 
     [Test]
+    public void GetValue_TagIndexerNestedMember_ShouldBeExpectedInstance()
+    {
+        var instance = new Tag("Test", new TIMER());
+        var expected = instance["PRE"];
+        var property = Element.Tag.Property("[PRE]");
+
+        var value = property?.GetValue(instance);
+
+        value.Should().NotBeNull();
+        value.Should().BeOfType<Tag>();
+        value.Should().BeEquivalentTo(expected);
+    }
+
+    [Test]
     public void Default_WhenCalled_HasExpectedValues()
     {
         var property = Property.Default;
@@ -227,7 +245,7 @@ public class PropertyTests
         property.Parent.Should().BeNull();
         property.Name.Should().Be("This");
         property.Path.Should().BeEmpty();
-        property.Identifier.Should().Be("Object");
+        property.DisplayName.Should().Be("Object");
         property.Group.Should().Be(TypeGroup.Default);
         property.Options.Should().BeEmpty();
         property.Properties.Should().BeEmpty();
