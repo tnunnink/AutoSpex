@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.IO.Compression;
+using System.Reflection;
 using System.Text;
 using L5Sharp.Core;
 
