@@ -30,7 +30,7 @@ public partial class PropertyObserver(Property model, ElementObserver element) :
     /// <summary>
     /// The UI friendly type name of the current property.
     /// </summary>
-    public string Type => $"{{{Model.Identifier}}}";
+    public string Type => $"{{{Model.DisplayName}}}";
 
     /// <summary>
     /// The value of the property retrieved from the instance help within <see cref="_element"/>. 
