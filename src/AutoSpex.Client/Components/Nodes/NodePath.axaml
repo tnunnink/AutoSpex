@@ -1,0 +1,106 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="using:AutoSpex.Client.Components"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
+
+    <Design.PreviewWith>
+        <Border Padding="20">
+            <StackPanel Spacing="20">
+                <ContentControl
+                    Content="{x:Static components:TestData.SpecNode}"
+                    ContentTemplate="{DynamicResource NodePath}" />
+                <ContentControl
+                    Content="{x:Static components:TestData.SpecNode}"
+                    ContentTemplate="{DynamicResource NodePathSimple}" />
+            </StackPanel>
+        </Border>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="NodePath" x:DataType="observers:NodeObserver">
+
+        <StackPanel Orientation="Horizontal" Spacing="2">
+            <StackPanel.Styles>
+                <Style Selector="Button.link" x:DataType="observers:NodeObserver">
+                    <Setter Property="Command" Value="{Binding NavigateCommand}" />
+                    <Setter Property="Theme" Value="{a:ControlTheme ButtonSubtle}" />
+                    <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                    <Setter Property="Padding" Value="3" />
+                    <Setter Property="Content">
+                        <Template>
+                            <controls:HighlightableTextBlock
+                                Text="{Binding Name}"
+                                HighlightedText="{Binding FilterText}"
+                                Foreground="{Binding $parent[Button].Foreground}" />
+                        </Template>
+                    </Setter>
+                    <Setter Property="ToolTip.Tip" Value="{Binding Name}" />
+                </Style>
+            </StackPanel.Styles>
+
+            <ItemsControl ItemsSource="{Binding Crumbs}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" Spacing="2" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="observers:NodeObserver">
+                        <StackPanel Orientation="Horizontal" Spacing="2">
+                            <Button Classes="link" />
+                            <TextBlock Text="/" Classes="faint" Margin="0 0 0 1" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <Button Classes="link"
+                    Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
+                    FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
+
+        </StackPanel>
+    </DataTemplate>
+
+    <DataTemplate x:Key="NodePathSimple" x:DataType="observers:NodeObserver">
+
+        <StackPanel Orientation="Horizontal" Spacing="2">
+            <StackPanel.Styles>
+                <Style Selector="ContentControl.segment" x:DataType="observers:NodeObserver">
+                    <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                    <Setter Property="Padding" Value="3" />
+                    <Setter Property="Content">
+                        <Template>
+                            <controls:HighlightableTextBlock
+                                Text="{Binding Name}"
+                                HighlightedText="{Binding FilterText}"
+                                Foreground="{Binding $parent[Button].Foreground}" />
+                        </Template>
+                    </Setter>
+                </Style>
+            </StackPanel.Styles>
+
+            <ItemsControl ItemsSource="{Binding Crumbs}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" Spacing="2" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="observers:NodeObserver">
+                        <StackPanel Orientation="Horizontal" Spacing="2">
+                            <ContentControl Classes="segment" />
+                            <TextBlock Text="/" Classes="faint" Margin="0 0 0 1" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <ContentControl
+                Classes="segment"
+                Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
+                FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
+
+        </StackPanel>
+    </DataTemplate>
+</ResourceDictionary>

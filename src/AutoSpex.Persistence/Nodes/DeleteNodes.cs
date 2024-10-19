@@ -15,7 +15,7 @@ internal class DeleteNodesHandler(IConnectionManager manager) : IRequestHandler<
     
     public async Task<Result> Handle(DeleteNodes request, CancellationToken cancellationToken)
     {
-        var connection = await manager.Connect(cancellationToken);
+        using var connection = await manager.Connect(cancellationToken);
         var ids = request.NodeIds.Select(n => n.ToString()).ToList();
         await connection.ExecuteAsync(DeleteNodes, new {NodeIds = ids});
         return Result.Ok();

@@ -16,17 +16,17 @@
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Light">
             <SolidColorBrush x:Key="HighlightTextBackgroundBrush" Color="#9ee5ff" />
-            <SolidColorBrush x:Key="HighlightTextForegroundBrush" Color="#070004" />
+            <SolidColorBrush x:Key="HighlightTextForegroundBrush" Color="#4e727e" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Dark">
             <SolidColorBrush x:Key="HighlightTextBackgroundBrush" Color="#2d687d" />
-            <SolidColorBrush x:Key="HighlightTextForegroundBrush" Color="#070004" />
+            <SolidColorBrush x:Key="HighlightTextForegroundBrush" Color="#55c6ef" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
     <ControlTheme x:Key="{x:Type controls:HighlightableTextBlock}" TargetType="controls:HighlightableTextBlock">
-        <Setter Property="SelectionBrush" Value="{a:ThemeResource EditSelectionBackgroundBrush}" />
-        <Setter Property="SelectionForegroundBrush" Value="{a:ThemeResource EditSelectionForegroundBrush}" />
+        <Setter Property="SelectionBrush" Value="{DynamicResource HighlightTextBackgroundBrush}" />
+        <Setter Property="SelectionForegroundBrush" Value="{DynamicResource HighlightTextForegroundBrush}" />
         <Setter Property="VerticalAlignment" Value="Center" />
 
         <Setter Property="IsEnabled" Value="False" />

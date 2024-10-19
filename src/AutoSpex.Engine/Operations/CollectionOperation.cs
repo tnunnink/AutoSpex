@@ -4,16 +4,13 @@ namespace AutoSpex.Engine;
 
 public abstract class CollectionOperation(string name) : Operation(name)
 {
-    public override bool Execute(object? input, params object[] values)
+    public override bool Execute(object? input, object? value)
     {
         if (input is not IEnumerable enumerable)
             throw new ArgumentException("Collection operations require an enumerable input", nameof(input));
 
-        if (values.Length != 1)
-            throw new ArgumentException("Collection operations require one argument", nameof(values));
-
-        if (values[0] is not Criterion criterion)
-            throw new ArgumentException("Collection operations require an inner criterion argument");
+        if (value is not Criterion criterion)
+            throw new ArgumentException("Collection operations require a single criterion argument");
 
         return Evaluate(enumerable.Cast<object>(), criterion);
     }

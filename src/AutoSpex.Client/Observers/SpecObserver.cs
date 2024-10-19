@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using AutoSpex.Client.Pages;
 using AutoSpex.Client.Resources;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
@@ -28,7 +27,6 @@ public partial class SpecObserver : Observer<Spec>,
             Model.Verifications, m => new CriterionObserver(m));
 
         Track(nameof(Element));
-        Track(nameof(ElementName));
         Track(nameof(FilterInclusion));
         Track(nameof(VerificationInclusion));
         Track(Filters);
@@ -40,14 +38,8 @@ public partial class SpecObserver : Observer<Spec>,
 
     public Element Element
     {
-        get => Model.Query.Element;
-        set => SetProperty(Model.Query.Element, value, Model, (s, v) => s.Query.Element = v);
-    }
-
-    public string? ElementName
-    {
-        get => Model.Query.Name;
-        set => SetProperty(Model.Query.Name, value, Model, (s, v) => s.Query.Name = v);
+        get => Model.Element;
+        set => SetProperty(Model.Element, value, Model, (s, v) => s.Element = v);
     }
 
     public Inclusion FilterInclusion
@@ -148,16 +140,7 @@ public partial class SpecObserver : Observer<Spec>,
     {
         VerificationInclusion = VerificationInclusion == Inclusion.All ? Inclusion.Any : Inclusion.All;
     }
-
-    /// <summary>
-    /// Opens the source explorer dialog to allow the user to select content from a source.
-    /// </summary>
-    [RelayCommand]
-    private Task OpenSourceExplorer()
-    {
-        return Prompter.Show(() => new SourceExplorerPageModel(Element));
-    }
-
+    
     /// <summary>
     /// If a criterion delete message is received we will delete all selected criterion from the list.
     /// </summary>
@@ -217,7 +200,7 @@ public partial class SpecObserver : Observer<Spec>,
 
         if (message.Predicate.Invoke(this))
         {
-            message.Reply(this);
+            message.Reply(new SpecObserver(Model));
         }
     }
 

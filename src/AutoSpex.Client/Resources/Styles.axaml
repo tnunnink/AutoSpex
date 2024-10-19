@@ -1,30 +1,15 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
-        xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
         xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
+
     <Design.PreviewWith>
         <Border Padding="20">
             <StackPanel Orientation="Vertical" Spacing="10">
-                <PathIcon Theme="{StaticResource IconLineGear}" />
+                <PathIcon Theme="{StaticResource IconFilledCog}" />
                 <PathIcon Theme="{StaticResource IconFilledCube}" Classes="accent" />
                 <PathIcon Theme="{StaticResource IconThemedSpec}" />
                 <PathIcon Theme="{StaticResource IconThemedSpec}" Classes="size-sm" />
-
-                <StackPanel Orientation="Horizontal" Spacing="5">
-                    <PathIcon
-                        Theme="{StaticResource IconThemedSpec}"
-                        Classes="size-sm" />
-                    <TextBlock Text="Container Name" />
-                    <Border Height="20" Width="20" Margin="0 2 0 0">
-                        <Button
-                            properties:Icon.Theme="{StaticResource IconClose}"
-                            Theme="{a:ControlTheme ButtonSubtle}"
-                            IsVisible="{Binding $parent[TabStripItem].IsPointerOver}"
-                            HotKey="Ctrl+W"
-                            CornerRadius="10" Height="16" Width="16" Padding="12" />
-                    </Border>
-                </StackPanel>
             </StackPanel>
         </Border>
     </Design.PreviewWith>
@@ -131,26 +116,33 @@
         <Setter Property="HorizontalScrollBarVisibility" Value="Auto" />
     </Style>
 
-    <Style Selector="Button.split">
-        <Setter Property="Theme" Value="{a:ControlTheme ButtonOutline}" />
+    <Style Selector="TextBlock.None">
+        <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+    </Style>
+    <Style Selector="TextBlock.Inconclusive">
+        <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftWarning}" />
+    </Style>
+    <Style Selector="TextBlock.Pending">
+        <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftAccent}" />
+    </Style>
+    <Style Selector="TextBlock.Passed">
+        <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftSuccess}" />
+    </Style>
+    <Style Selector="TextBlock.Failed">
+        <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftDanger}" />
+    </Style>
+    <Style Selector="TextBlock.Errored">
+        <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftWarning}" />
+    </Style>
 
-        <Style Selector="^:disabled">
-            <Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
-                <Setter Property="Background" Value="Transparent" />
-            </Style>
-            <Style Selector="^ PathIcon">
-                <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushDisabled}" />
-            </Style>
-        </Style>
-
-        <Style Selector="^:accent > PathIcon">
-            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
-        </Style>
-        <Style Selector="^:success > PathIcon">
-            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineSuccess}" />
-        </Style>
-        <Style Selector="^:warning > PathIcon">
-            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineWarning}" />
-        </Style>
+    <Style Selector="controls|DrawerView.vertical">
+        <Setter Property="DrawerPlacement" Value="Right" />
+        <Setter Property="DrawerOpenLength"
+                Value="{Binding $parent[controls:DrawerView].Bounds.Width, Converter={StaticResource MathConverter}, ConverterParameter='x / 3'}" />
+    </Style>
+    <Style Selector="controls|DrawerView.horizontal">
+        <Setter Property="DrawerPlacement" Value="Bottom" />
+        <Setter Property="DrawerOpenLength"
+                Value="{Binding $parent[controls:DrawerView].Bounds.Height, Converter={StaticResource MathConverter}, ConverterParameter='x / 3'}" />
     </Style>
 </Styles>

@@ -5,13 +5,13 @@
                     xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine">
 
     <Design.PreviewWith>
-        <StackPanel Spacing="10" Margin="30" Width="100" Height="400">
+        <StackPanel Spacing="10" Margin="30" Width="200" Height="400">
             <StackPanel.Styles>
                 <Style Selector="ComboBox">
                     <Setter Property="Theme" Value="{DynamicResource ComboBoxSubtle}" />
                 </Style>
             </StackPanel.Styles>
-            <ComboBox ItemsSource="{x:Static engine:TypeGroup.List}" />
+            <ComboBox PlaceholderText="Select item" ItemsSource="{x:Static engine:TypeGroup.List}" />
             <ComboBox ItemsSource="{x:Static engine:Element.List}" />
         </StackPanel>
     </Design.PreviewWith>
@@ -19,7 +19,7 @@
     <!-- ComboBoxSubtle -->
     <ControlTheme x:Key="ComboBoxSubtle" TargetType="ComboBox" BasedOn="{a:ControlTheme ComboBoxBase}">
         <Setter Property="Background" Value="{a:ThemeResource Container1BackgroundBrush}" />
-        <Setter Property="BorderBrush" Value="{a:ThemeResource Container1BorderBrush}" />
+        <Setter Property="BorderBrush" Value="{a:ThemeResource Container1BackgroundBrush}" />
         <Setter Property="Foreground" Value="{a:ThemeResource EditForegroundBrush}" />
         <Setter Property="PlaceholderForeground" Value="{a:ThemeResource EditForegroundBrush}" />
         <Setter Property="BorderThickness" Value="{a:ThemeResource ButtonBorderThickness}" />
@@ -69,11 +69,12 @@
                                     HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                     VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
 
-                                <ContentPresenter
+                                <PathIcon
                                     x:Name="glyph"
                                     Grid.Column="1"
-                                    Margin="{a:ScaledThickness '0.6,0'}"
-                                    ContentTemplate="{a:GlyphTemplate DropDownArrow16}" />
+                                    Margin="{a:ScaledThickness '1,0'}"
+                                    Theme="{StaticResource IconLineExpand }"
+                                    Classes="size-sm" />
 
                                 <primitives:ChromedPopup
                                     x:Name="PART_Popup"
@@ -103,7 +104,7 @@
         </Setter>
 
         <Style Selector="^ /template/ primitives|ChromedPopup#PART_Popup">
-            <Setter Property="Placement" Value="BottomEdgeAlignedRight" />
+            <Setter Property="Placement" Value="BottomEdgeAlignedLeft" />
             <Setter Property="MinChildWidth" Value="200" />
         </Style>
 
@@ -112,10 +113,10 @@
         </Style>
 
         <Style Selector="^:pointerover /template/ Border#border">
-            <Setter Property="Background" Value="{a:ThemeResource ButtonBackgroundBrushOutlinePointerOver}" />
+            <Setter Property="Background" Value="{a:ThemeResource ButtonBackgroundBrushSubtlePointerOver}" />
         </Style>
         <Style Selector="^:pressed /template/ Border#border, ^:dropdownopen /template/ Border#border">
-            <Setter Property="Background" Value="{a:ThemeResource ButtonBackgroundBrushOutlinePressed}" />
+            <Setter Property="Background" Value="{a:ThemeResource ButtonBackgroundBrushSubtlePressed}" />
         </Style>
         <Style Selector="^:disabled /template/ Border#border">
             <Setter Property="Background" Value="{a:ThemeResource EditBackgroundBrushDisabled}" />

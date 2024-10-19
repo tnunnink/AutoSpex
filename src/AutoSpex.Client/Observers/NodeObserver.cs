@@ -34,9 +34,9 @@ public partial class NodeObserver : Observer<Node>,
             remove: (_, n) => Model.RemoveNode(n),
             clear: () => Model.ClearNodes(),
             count: () => Model.Nodes.Count());
-        
+
         Nodes.Sort(n => n.Name, StringComparer.OrdinalIgnoreCase);
-        Track(Nodes, false);
+        RegisterDisposable(Nodes);
     }
 
     public override Guid Id => Model.NodeId;
@@ -174,19 +174,12 @@ public partial class NodeObserver : Observer<Node>,
     [RelayCommand]
     private async Task Run()
     {
-        //We need to load the full environment to get sources and overrides.
-        var loadEnvironment = await Mediator.Send(new LoadTargetEnvironment());
-        if (Notifier.ShowIfFailed(loadEnvironment, "Failed to load the target environment.")) return;
+        var result = await Mediator.Send(new NewRun(Id));
+        if (Notifier.ShowIfFailed(result)) return;
 
-        //Get selected node from the same container as this node.
-        var selected = SelectedItems.Where(x => x is NodeObserver).Cast<NodeObserver>().Select(n => n.Model);
-
-        //Build the run object.
-        var run = new Run(loadEnvironment.Value);
-        run.AddNodes(selected);
-
-        //Navigate the run page model which will then trigger the run process
-        await Navigator.Navigate(() => new RunDetailPageModel(run));
+        var run = new RunObserver(result.Value);
+        
+        await Navigator.Navigate(() => new RunDetailPageModel(run, true));
     }
 
     /// <inheritdoc />
@@ -365,7 +358,7 @@ public partial class NodeObserver : Observer<Node>,
 
         if (message.Predicate.Invoke(this))
         {
-            message.Reply(this);
+            message.Reply(new NodeObserver(Model));
         }
     }
 
@@ -376,7 +369,7 @@ public partial class NodeObserver : Observer<Node>,
     {
         if (message.Predicate.Invoke(this) && message.Responses.All(x => x.Id != Id))
         {
-            message.Reply(this);
+            message.Reply(new NodeObserver(Model));
         }
     }
 

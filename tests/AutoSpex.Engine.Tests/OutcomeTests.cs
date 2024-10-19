@@ -1,23 +1,18 @@
-﻿using System.Text.Json;
-using Task = System.Threading.Tasks.Task;
-
-namespace AutoSpex.Engine.Tests;
+﻿namespace AutoSpex.Engine.Tests;
 
 [TestFixture]
 public class OutcomeTests
 {
     [Test]
-    public void New_NodeOverload_ShouldBeExpected()
+    public void New_DefaultOverload_ShouldBeExpected()
     {
-        var collection = Node.NewCollection();
-        var container = collection.AddContainer();
-        var spec = container.AddSpec("MySpec");
-        var outcome = new Outcome(spec);
+        var outcome = new Outcome();
 
-        outcome.NodeId.Should().Be(spec.NodeId);
-        outcome.Name.Should().Be("MySpec");
-        outcome.Result.Should().Be(ResultState.None);
-        outcome.Duration.Should().Be(0);
-        outcome.Evaluations.Should().BeEmpty();
+        outcome.OutcomeId.Should().NotBeEmpty();
+        outcome.NodeId.Should().BeEmpty();
+        outcome.Name.Should().BeEmpty();
+        outcome.Verification.Result.Should().Be(ResultState.None);
+        outcome.Verification.Duration.Should().Be(0);
+        outcome.Verification.Evaluations.Should().BeEmpty();
     }
 }

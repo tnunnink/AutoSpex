@@ -28,16 +28,24 @@ public class DrawerView : ContentControl
     private Panel? _drawer;
     private GridLength _drawerGridLength;
 
+    #region Properties
+
+    public static readonly StyledProperty<object?> DrawerProperty =
+        AvaloniaProperty.Register<DrawerView, object?>(nameof(Drawer));
+
+    public static readonly StyledProperty<IDataTemplate> DrawerTemplateProperty =
+        AvaloniaProperty.Register<DrawerView, IDataTemplate>(nameof(DrawerTemplate));
+
     public static readonly StyledProperty<bool> IsDrawerOpenProperty =
         AvaloniaProperty.Register<DrawerView, bool>(
             nameof(IsDrawerOpen),
             defaultValue: false,
             coerce: CoerceIsPaneOpen);
 
-    public static readonly StyledProperty<double> DrawerClosedLengthProperty =
+    public static readonly StyledProperty<double> DrawerMinLengthProperty =
         AvaloniaProperty.Register<DrawerView, double>(
-            nameof(DrawerClosedLength),
-            defaultValue: 30);
+            nameof(DrawerMinLength),
+            defaultValue: 0);
 
     public static readonly StyledProperty<double> DrawerMaxLengthProperty =
         AvaloniaProperty.Register<DrawerView, double>(
@@ -57,11 +65,30 @@ public class DrawerView : ContentControl
         AvaloniaProperty.Register<DrawerView, DrawerViewPlacement>(nameof(DrawerPlacement),
             defaultValue: DrawerViewPlacement.Left);
 
-    public static readonly StyledProperty<object?> DrawerProperty =
-        AvaloniaProperty.Register<DrawerView, object?>(nameof(Drawer));
+    public static readonly StyledProperty<bool> HideSplitterProperty =
+        AvaloniaProperty.Register<DrawerView, bool>(
+            nameof(HideSplitter), defaultValue: true);
 
-    public static readonly StyledProperty<IDataTemplate> DrawerTemplateProperty =
-        AvaloniaProperty.Register<DrawerView, IDataTemplate>(nameof(DrawerTemplate));
+    #endregion
+
+    /// <summary>
+    /// Gets or sets the Drawer for the SplitView
+    /// </summary>
+    [DependsOn(nameof(DrawerTemplate))]
+    public object? Drawer
+    {
+        get => GetValue(DrawerProperty);
+        set => SetValue(DrawerProperty, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the data template used to display the header content of the control.
+    /// </summary>
+    public IDataTemplate DrawerTemplate
+    {
+        get => GetValue(DrawerTemplateProperty);
+        set => SetValue(DrawerTemplateProperty, value);
+    }
 
     /// <summary>
     /// A bit that indicates and controls whether the drawer panel is open or closed.
@@ -84,12 +111,12 @@ public class DrawerView : ContentControl
     }
 
     /// <summary>
-    /// The length (height or width) of the drawer panel when the drawer is closed.
+    /// The minimum length (height or width) of the drawer panel. This is the length set when the drawer is closed.
     /// </summary>
-    public double DrawerClosedLength
+    public double DrawerMinLength
     {
-        get => GetValue(DrawerClosedLengthProperty);
-        set => SetValue(DrawerClosedLengthProperty, value);
+        get => GetValue(DrawerMinLengthProperty);
+        set => SetValue(DrawerMinLengthProperty, value);
     }
 
     /// <summary>
@@ -120,22 +147,14 @@ public class DrawerView : ContentControl
     }
 
     /// <summary>
-    /// Gets or sets the Drawer for the SplitView
+    /// Whether to automatically hide the grid splitter border when the drawer is closed. By default, this is set to true
+    /// since we assume the drawer will be completely hidden. For use case where the drawer is partially shown, setting
+    /// this to false will show the splitter border, but not allow interaction.
     /// </summary>
-    [DependsOn(nameof(DrawerTemplate))]
-    public object? Drawer
+    public bool HideSplitter
     {
-        get => GetValue(DrawerProperty);
-        set => SetValue(DrawerProperty, value);
-    }
-
-    /// <summary>
-    /// Gets or sets the data template used to display the header content of the control.
-    /// </summary>
-    public IDataTemplate DrawerTemplate
-    {
-        get => GetValue(DrawerTemplateProperty);
-        set => SetValue(DrawerTemplateProperty, value);
+        get => GetValue(HideSplitterProperty);
+        set => SetValue(HideSplitterProperty, value);
     }
 
     protected override bool RegisterContentPresenter(ContentPresenter presenter)
@@ -215,7 +234,7 @@ public class DrawerView : ContentControl
         }
         else
         {
-            DrawerGridLength = new GridLength(DrawerClosedLength, GridUnitType.Pixel);
+            DrawerGridLength = new GridLength(DrawerMinLength, GridUnitType.Pixel);
             PseudoClasses.Add(ClassClosed);
             PseudoClasses.Remove(ClassOpen);
         }

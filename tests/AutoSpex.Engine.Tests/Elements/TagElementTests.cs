@@ -35,7 +35,7 @@ public class TagElementTests
         result.Name.Should().Be("This");
         result.Path.Should().BeEmpty();
         result.Group.Should().Be(TypeGroup.Element);
-        result.Identifier.Should().Be("Tag");
+        result.DisplayName.Should().Be("Tag");
         result.Options.Should().BeEmpty();
         result.Properties.Should().NotBeEmpty();
     }
@@ -62,7 +62,7 @@ public class TagElementTests
         property?.Name.Should().Be("Name");
         property?.Path.Should().Be("Name");
         property?.Group.Should().Be(TypeGroup.Text);
-        property?.Identifier.Should().Be("string");
+        property?.DisplayName.Should().Be("string");
         property?.Options.Should().BeEmpty();
         property?.Properties.Should().BeEmpty();
     }
@@ -79,7 +79,7 @@ public class TagElementTests
         property?.Name.Should().Be("Name");
         property?.Path.Should().Be("Radix.Name");
         property?.Group.Should().Be(TypeGroup.Text);
-        property?.Identifier.Should().Be("string");
+        property?.DisplayName.Should().Be("string");
         property?.Options.Should().BeEmpty();
         property?.Properties.Should().BeEmpty();
     }
@@ -96,7 +96,7 @@ public class TagElementTests
         property?.Name.Should().Be("Parent");
         property?.Path.Should().Be("Root.Root.Parent");
         property?.Group.Should().Be(TypeGroup.Element);
-        property?.Identifier.Should().Be("Tag");
+        property?.DisplayName.Should().Be("Tag");
         property?.Options.Should().BeEmpty();
         property?.Properties.Should().NotBeEmpty();
     }

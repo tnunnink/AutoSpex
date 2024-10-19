@@ -5,58 +5,32 @@
 
 
     <Design.PreviewWith>
-        <controls:DrawerView Height="500" Width="700"
-                             IsDrawerOpen="True"
-                             DrawerClosedLength="40"
-                             DrawerPlacement="Right">
-            <controls:DrawerView.Styles>
-                <Style Selector=":top">
-                    <Style Selector="^ Border#MyBorder">
-                        <Setter Property="DockPanel.Dock" Value="Top" />
-                        <Setter Property="Height" Value="40" />
-                    </Style>
-                    <Style Selector="^ StackPanel#StackPanel">
-                        <Setter Property="Orientation" Value="Horizontal" />
-                    </Style>
-                </Style>
-                <Style Selector=":left">
-                    <Style Selector="^ Border#MyBorder">
-                        <Setter Property="DockPanel.Dock" Value="Left" />
-                        <Setter Property="Width" Value="40" />
-                    </Style>
-                    <Style Selector="^ StackPanel#StackPanel">
-                        <Setter Property="Orientation" Value="Vertical" />
-                    </Style>
-                </Style>
-            </controls:DrawerView.Styles>
-            <controls:DrawerView.Drawer>
-                <DockPanel>
-                    <Border x:Name="MyBorder"
-                            Background="{actipro:ThemeResource Container2BackgroundBrush}"
-                            BorderBrush="{actipro:ThemeResource Container1BorderBrush}"
-                            BorderThickness="0 1 1 1">
-                        <StackPanel Spacing="10"
-                                    x:Name="StackPanel"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center">
-                            <PathIcon x:Name="MyIcon" Theme="{StaticResource IconClipboardFilled}" />
-                            <PathIcon Theme="{StaticResource IconClipboardFilled}" />
-                            <PathIcon Theme="{StaticResource IconClipboardFilled}" />
-                        </StackPanel>
-                    </Border>
-                    <Border />
-                </DockPanel>
-            </controls:DrawerView.Drawer>
+        <controls:DrawerView
+            x:Name="DrawerView"
+            Height="500" Width="700"
+            IsDrawerOpen="True"
+            DrawerMinLength="20"
+            HideSplitter="False"
+            DrawerPlacement="Right">
+
             <StackPanel VerticalAlignment="Center"
                         HorizontalAlignment="Center">
-                <TextBlock Text="This is the content" />
                 <CheckBox Content="IsOpen"
                           HorizontalAlignment="Center"
                           Margin="20"
                           IsChecked="{Binding $parent[controls:DrawerView].IsDrawerOpen}"
                           Theme="{actipro:ControlTheme CheckBoxSolid}"
                           Classes="size-sm accent" />
+                <TextBlock
+                    Text="{Binding #DrawerView.DrawerGridLength}" />
             </StackPanel>
+
+            <controls:DrawerView.Drawer>
+                <Border x:Name="MyBorder"
+                        Background="{actipro:ThemeResource Container2BackgroundBrush}"
+                        BorderThickness="0" />
+            </controls:DrawerView.Drawer>
+
         </controls:DrawerView>
     </Design.PreviewWith>
 
@@ -69,29 +43,37 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition
                                 Width="{Binding DrawerGridLength, RelativeSource={RelativeSource TemplatedParent}}"
-                                MinWidth="{Binding DrawerClosedLength, RelativeSource={RelativeSource TemplatedParent}}"
+                                MinWidth="{Binding DrawerMinLength, RelativeSource={RelativeSource TemplatedParent}}"
                                 MaxWidth="{Binding DrawerMaxLength, RelativeSource={RelativeSource TemplatedParent}}" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
                         <Panel x:Name="PART_DrawerRoot" Grid.Column="0" ClipToBounds="True" ZIndex="100">
-                            <ContentPresenter x:Name="PART_DrawerPresenter"
-                                              Content="{TemplateBinding Drawer}"
-                                              ContentTemplate="{TemplateBinding DrawerTemplate}" />
+                            <ContentPresenter
+                                x:Name="PART_DrawerPresenter"
+                                Content="{TemplateBinding Drawer}"
+                                ContentTemplate="{TemplateBinding DrawerTemplate}" />
                         </Panel>
 
-                        <GridSplitter Grid.Column="1"
-                                      IsEnabled="{TemplateBinding IsDrawerOpen}"
-                                      IsVisible="{TemplateBinding IsDrawerOpen}"
-                                      Theme="{StaticResource GridSplitterHighlight}"
-                                      Width="1" />
+                        <GridSplitter
+                            Grid.Column="1"
+                            IsEnabled="{TemplateBinding IsDrawerOpen}"
+                            Theme="{StaticResource GridSplitterHighlight}"
+                            Width="1">
+                            <GridSplitter.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                    <Binding Path="IsDrawerOpen" RelativeSource="{RelativeSource TemplatedParent}" />
+                                    <Binding Path="!HideSplitter" RelativeSource="{RelativeSource TemplatedParent}" />
+                                </MultiBinding>
+                            </GridSplitter.IsVisible>
+                        </GridSplitter>
 
-                        <Panel Grid.Column="2">
-                            <ContentPresenter x:Name="PART_ContentPresenter"
-                                              Content="{TemplateBinding Content}"
-                                              ContentTemplate="{TemplateBinding ContentTemplate}" />
-                        </Panel>
+                        <ContentPresenter
+                            Grid.Column="2"
+                            x:Name="PART_ContentPresenter"
+                            Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}" />
                     </Grid>
                 </ControlTemplate>
             </Setter>
@@ -106,27 +88,35 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition
                                 Width="{Binding DrawerGridLength, RelativeSource={RelativeSource TemplatedParent}}"
-                                MinWidth="{Binding DrawerClosedLength, RelativeSource={RelativeSource TemplatedParent}}"
+                                MinWidth="{Binding DrawerMinLength, RelativeSource={RelativeSource TemplatedParent}}"
                                 MaxWidth="{Binding DrawerMaxLength, RelativeSource={RelativeSource TemplatedParent}}" />
                         </Grid.ColumnDefinitions>
 
                         <Panel x:Name="PART_DrawerRoot" Grid.Column="2" ClipToBounds="True" ZIndex="100">
-                            <ContentPresenter x:Name="PART_DrawerPresenter"
-                                              Content="{TemplateBinding Drawer}"
-                                              ContentTemplate="{TemplateBinding DrawerTemplate}" />
+                            <ContentPresenter
+                                x:Name="PART_DrawerPresenter"
+                                Content="{TemplateBinding Drawer}"
+                                ContentTemplate="{TemplateBinding DrawerTemplate}" />
                         </Panel>
 
-                        <GridSplitter Grid.Column="1"
-                                      IsEnabled="{TemplateBinding IsDrawerOpen}"
-                                      IsVisible="{TemplateBinding IsDrawerOpen}"
-                                      Theme="{StaticResource GridSplitterHighlight}"
-                                      Width="1" />
+                        <GridSplitter
+                            Grid.Column="1"
+                            IsEnabled="{TemplateBinding IsDrawerOpen}"
+                            Theme="{StaticResource GridSplitterHighlight}"
+                            Width="1">
+                            <GridSplitter.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                    <Binding Path="IsDrawerOpen" RelativeSource="{RelativeSource TemplatedParent}" />
+                                    <Binding Path="!HideSplitter" RelativeSource="{RelativeSource TemplatedParent}" />
+                                </MultiBinding>
+                            </GridSplitter.IsVisible>
+                        </GridSplitter>
 
-                        <Panel Grid.Column="0">
-                            <ContentPresenter x:Name="PART_ContentPresenter"
-                                              Content="{TemplateBinding Content}"
-                                              ContentTemplate="{TemplateBinding ContentTemplate}" />
-                        </Panel>
+                        <ContentPresenter
+                            Grid.Column="0"
+                            x:Name="PART_ContentPresenter"
+                            Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}" />
                     </Grid>
                 </ControlTemplate>
             </Setter>
@@ -139,29 +129,37 @@
                         <Grid.RowDefinitions>
                             <RowDefinition
                                 Height="{Binding DrawerGridLength, RelativeSource={RelativeSource TemplatedParent}}"
-                                MinHeight="{Binding DrawerClosedLength, RelativeSource={RelativeSource TemplatedParent}}"
+                                MinHeight="{Binding DrawerMinLength, RelativeSource={RelativeSource TemplatedParent}}"
                                 MaxHeight="{Binding DrawerMaxLength, RelativeSource={RelativeSource TemplatedParent}}" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
                         <Panel x:Name="PART_DrawerRoot" Grid.Row="0" ClipToBounds="True" ZIndex="100">
-                            <ContentPresenter x:Name="PART_DrawerPresenter"
-                                              Content="{TemplateBinding Drawer}"
-                                              ContentTemplate="{TemplateBinding DrawerTemplate}" />
+                            <ContentPresenter
+                                x:Name="PART_DrawerPresenter"
+                                Content="{TemplateBinding Drawer}"
+                                ContentTemplate="{TemplateBinding DrawerTemplate}" />
                         </Panel>
 
-                        <GridSplitter Grid.Row="1"
-                                      IsEnabled="{TemplateBinding IsDrawerOpen}"
-                                      IsVisible="{TemplateBinding IsDrawerOpen}"
-                                      Theme="{StaticResource GridSplitterHighlight}"
-                                      Height="1" />
+                        <GridSplitter
+                            Grid.Row="1"
+                            IsEnabled="{TemplateBinding IsDrawerOpen}"
+                            Theme="{StaticResource GridSplitterHighlight}"
+                            Height="1">
+                            <GridSplitter.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                    <Binding Path="IsDrawerOpen" RelativeSource="{RelativeSource TemplatedParent}" />
+                                    <Binding Path="!HideSplitter" RelativeSource="{RelativeSource TemplatedParent}" />
+                                </MultiBinding>
+                            </GridSplitter.IsVisible>
+                        </GridSplitter>
 
-                        <Panel Grid.Row="2">
-                            <ContentPresenter x:Name="PART_ContentPresenter"
-                                              Content="{TemplateBinding Content}"
-                                              ContentTemplate="{TemplateBinding ContentTemplate}" />
-                        </Panel>
+                        <ContentPresenter
+                            Grid.Row="2"
+                            x:Name="PART_ContentPresenter"
+                            Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}" />
                     </Grid>
                 </ControlTemplate>
             </Setter>
@@ -176,30 +174,39 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition
                                 Height="{Binding DrawerGridLength, RelativeSource={RelativeSource TemplatedParent}}"
-                                MinHeight="{Binding DrawerClosedLength, RelativeSource={RelativeSource TemplatedParent}}"
+                                MinHeight="{Binding DrawerMinLength, RelativeSource={RelativeSource TemplatedParent}}"
                                 MaxHeight="{Binding DrawerMaxLength, RelativeSource={RelativeSource TemplatedParent}}" />
                         </Grid.RowDefinitions>
 
                         <Panel x:Name="PART_DrawerRoot" Grid.Row="2" ClipToBounds="True" ZIndex="100">
-                            <ContentPresenter x:Name="PART_DrawerPresenter"
-                                              Content="{TemplateBinding Drawer}"
-                                              ContentTemplate="{TemplateBinding DrawerTemplate}" />
+                            <ContentPresenter
+                                x:Name="PART_DrawerPresenter"
+                                Content="{TemplateBinding Drawer}"
+                                ContentTemplate="{TemplateBinding DrawerTemplate}" />
                         </Panel>
 
-                        <GridSplitter Grid.Row="1"
-                                      IsEnabled="{TemplateBinding IsDrawerOpen}"
-                                      IsVisible="{TemplateBinding IsDrawerOpen}"
-                                      Theme="{StaticResource GridSplitterHighlight}"
-                                      Height="1" />
+                        <GridSplitter
+                            Grid.Row="1"
+                            IsEnabled="{TemplateBinding IsDrawerOpen}"
+                            Theme="{StaticResource GridSplitterHighlight}"
+                            Height="1">
+                            <GridSplitter.IsVisible>
+                                <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                    <Binding Path="IsDrawerOpen" RelativeSource="{RelativeSource TemplatedParent}" />
+                                    <Binding Path="!HideSplitter" RelativeSource="{RelativeSource TemplatedParent}" />
+                                </MultiBinding>
+                            </GridSplitter.IsVisible>
+                        </GridSplitter>
 
-                        <Panel Grid.Row="0">
-                            <ContentPresenter x:Name="PART_ContentPresenter"
-                                              Content="{TemplateBinding Content}"
-                                              ContentTemplate="{TemplateBinding ContentTemplate}" />
-                        </Panel>
+                        <ContentPresenter
+                            Grid.Row="0"
+                            x:Name="PART_ContentPresenter"
+                            Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}" />
                     </Grid>
                 </ControlTemplate>
             </Setter>
         </Style>
+
     </ControlTheme>
 </ResourceDictionary>

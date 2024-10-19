@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoSpex.Client.Observers;
@@ -13,7 +12,7 @@ using FluentResults;
 
 namespace AutoSpex.Client.Pages;
 
-public partial class NodeDetailPageModel : DetailPageModel, IRecipient<EnvironmentObserver.Targeted>
+public partial class NodeDetailPageModel : DetailPageModel
 {
     /// <inheritdoc/>
     public NodeDetailPageModel(NodeObserver node) : base(node.Name)
@@ -25,16 +24,14 @@ public partial class NodeDetailPageModel : DetailPageModel, IRecipient<Environme
     public override string Icon => Node.Type.Name;
     public NodeObserver Node { get; private set; }
 
-    [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(RunCommand))]
-    private EnvironmentObserver? _environment;
+    [ObservableProperty] private SpecRunnerPageModel? _runnerPage;
 
-    public Task<IEnumerable<EnvironmentObserver>> Environments => FetchEnvironments();
 
     /// <inheritdoc />
     public override async Task Load()
     {
         await LoadNode();
-        await LoadTargetEnvironment();
+        await LoadRunner();
         await base.Load();
     }
 
@@ -64,42 +61,19 @@ public partial class NodeDetailPageModel : DetailPageModel, IRecipient<Environme
     }
 
     /// <summary>
-    /// Runs this node against the target environment. This involves loading the environment and creating a new run
+    /// Runs this node against the target source. This involves loading the source and creating a new run
     /// instance with this node (and all descendant spec nodes if a container). Then navigates the run detail page into view
     /// which will execute the created run instance. 
     /// </summary>
-    [RelayCommand(CanExecute = nameof(CanRun))]
+    [RelayCommand]
     private async Task Run()
     {
-        if (Environment is null) return;
+        var result = await Mediator.Send(new NewRun(Node.Id));
+        if (Notifier.ShowIfFailed(result)) return;
 
-        //We need to load the full environment to get sources and overrides.
-        var loadEnvironment = await Mediator.Send(new LoadEnvironment(Environment.Id));
-        if (Notifier.ShowIfFailed(loadEnvironment, $"Failed to load the target environment {Environment.Name}")) return;
+        var run = new RunObserver(result.Value);
 
-        //We also need to get the full node tree loaded to make sure to add descendants (which the local Node does not have).
-        var getNode = await Mediator.Send(new GetNode(Node.Id));
-        if (Notifier.ShowIfFailed(getNode)) return;
-
-        //Build the run object.
-        var run = new RunObserver(new Run(loadEnvironment.Value, getNode.Value));
-
-        //Navigate the run page model to run the container/spec.
-        await Navigator.Navigate(() => new RunDetailPageModel(run));
-    }
-
-    /// <summary>
-    /// Determines if the run command can be executed for this node page model.
-    /// </summary>
-    private bool CanRun() => Environment is not null;
-
-    /// <summary>
-    /// When the targeted environment changes from any node page or anywhere else, update the local selected environment
-    /// instance.
-    /// </summary>
-    public void Receive(EnvironmentObserver.Targeted message)
-    {
-        Environment = message.Environment;
+        await Navigator.Navigate(() => new RunDetailPageModel(run, true));
     }
 
     /// <inheritdoc />
@@ -117,15 +91,6 @@ public partial class NodeDetailPageModel : DetailPageModel, IRecipient<Environme
     }
 
     /// <summary>
-    /// Get a list of all environments to allow the user to select the one to run against.
-    /// </summary>
-    private async Task<IEnumerable<EnvironmentObserver>> FetchEnvironments()
-    {
-        var result = await Mediator.Send(new ListEnvironments());
-        return result.IsSuccess ? result.Value.Select(e => new EnvironmentObserver(e)) : [];
-    }
-
-    /// <summary>
     /// Loads the full node into the application, replacing the current node instance.
     /// Nofitys changes and then starts tracking for changes.
     /// </summary>
@@ -136,18 +101,16 @@ public partial class NodeDetailPageModel : DetailPageModel, IRecipient<Environme
 
         Node = new NodeObserver(result.Value);
         OnPropertyChanged(nameof(Node));
-        Track(Node, false);
+        Track(Node);
     }
 
     /// <summary>
-    /// Get a list of all environments to allow the user to select the one to run against.
+    /// Loads the local runner page to allow the user to run and test a spec before saving/creating a run.
     /// </summary>
-    private async Task LoadTargetEnvironment()
+    private async Task LoadRunner()
     {
-        var result = await Mediator.Send(new GetTargetEnvironment());
-        if (result.IsFailed) return;
-        Environment = new EnvironmentObserver(result.Value);
-        Track(Environment, false);
+        if (Node.Type != NodeType.Spec) return;
+        RunnerPage = await Navigator.Navigate(() => new SpecRunnerPageModel(Node));
     }
 
     /// <summary>

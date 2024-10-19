@@ -1,0 +1,28 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine">
+
+    <Design.PreviewWith>
+        <Border Padding="20">
+            <StackPanel Spacing="10">
+                <ContentControl
+                    Content="{x:Static engine:Element.Tag}"
+                    ContentTemplate="{DynamicResource ElementDisplay}" />
+                <ContentControl
+                    Content="{x:Static engine:Element.Program}"
+                    ContentTemplate="{DynamicResource ElementDisplay}" />
+                <ContentControl
+                    Content="{x:Static engine:Element.AddOnInstruction}"
+                    ContentTemplate="{DynamicResource ElementDisplay}" />
+            </StackPanel>
+        </Border>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="ElementDisplay" x:DataType="engine:Element">
+        <StackPanel Orientation="Horizontal" Spacing="10">
+            <PathIcon Theme="{StaticResource IconThemedSource}" />
+            <TextBlock Text="{Binding Name}" />
+        </StackPanel>
+    </DataTemplate>
+</ResourceDictionary>

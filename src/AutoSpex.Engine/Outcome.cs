@@ -1,89 +1,46 @@
-﻿namespace AutoSpex.Engine;
+﻿using System.Text.Json.Serialization;
+
+namespace AutoSpex.Engine;
 
 /// <summary>
 /// An object containing the resulting data from running a <see cref="Spec"/> against a given <see cref="Source"/>.
 /// </summary>
 public class Outcome
 {
-    private readonly List<Verification> _verifications = [];
-
-    public Outcome(Node node)
-    {
-        ArgumentNullException.ThrowIfNull(node);
-        NodeId = node.NodeId;
-        Name = node.Name;
-    }
-
     /// <summary>
     /// The <see cref="Guid"/> that uniquely represents this outcome object.
     /// </summary>
+    [JsonInclude]
     public Guid OutcomeId { get; private init; } = Guid.NewGuid();
+
+    /// <summary>
+    /// The id of the run that this outcome belongs to. 
+    /// </summary>
+    [JsonInclude]
+    public Guid RunId { get; init; } = Guid.Empty;
 
     /// <summary>
     /// The id of the node that this outcome represents. 
     /// </summary>
-    public Guid NodeId { get; private init; }
+    [JsonInclude]
+    public Guid NodeId { get; init; } = Guid.Empty;
 
     /// <summary>
     /// The name of the spec that this outcome represents.
     /// </summary>
-    public string Name { get; private init; }
+    [JsonInclude]
+    public string Name { get; init; } = string.Empty;
 
     /// <summary>
-    /// The result of the outcome. This represents if the spec passed, failed, errored, etc.
+    /// The <see cref="Engine.Verification"/> that contains the result data produced by running the corresponding node.
     /// </summary>
-    public ResultState Result { get; private set; } = ResultState.None;
+    [JsonInclude]
+    public Verification Verification { get; set; } = Verification.None;
 
     /// <summary>
-    /// Represents the duration of running a spec against a given source or collection of sources.
+    /// A supporession message that explains why this outcome is not applicable to necessary for the run it was a part
+    /// or. This allows user to ignore certain specs/outcomes as part of a run that don't apply to a certain source/project.
     /// </summary>
-    public long Duration { get; private set; }
-
-    /// <summary>
-    /// The evaluations associated with the Outcome object.
-    /// </summary>
-    /// <remarks>
-    /// This property represents the evaluations performed by the Verifications associated with the Outcome object. Evaluations are generated based on the criteria defined in the Spec and the data from the Source.
-    /// </remarks>
-    public IEnumerable<Evaluation> Evaluations => _verifications.SelectMany(v => v.Evaluations);
-
-    /// <summary>
-    /// Adds a verification to the collection of verifications for the outcome and updates the local result state.
-    /// </summary>
-    /// <param name="verification">The verification to be added.</param>
-    public void Add(Verification verification)
-    {
-        ArgumentNullException.ThrowIfNull(verification);
-        _verifications.Add(verification);
-        UpdateResult();
-    }
-
-    /// <summary>
-    /// Removes a verification from the collection of verifications for the outcome and updates the local result state.
-    /// </summary>
-    /// <param name="verification">The verification to be removed.</param>
-    public void Reomve(Verification verification)
-    {
-        ArgumentNullException.ThrowIfNull(verification);
-        _verifications.Remove(verification);
-        UpdateResult();
-    }
-
-    /// <summary>
-    /// Clears the collection of verifications for the outcome and updates the local result state.
-    /// </summary>
-    public void Clear()
-    {
-        _verifications.Clear();
-        UpdateResult();
-    }
-
-    /// <summary>
-    /// Updates the local result state of the outcome using the current collection of verifications.
-    /// </summary>
-    private void UpdateResult()
-    {
-        Result = ResultState.MaxOrDefault(_verifications.Select(v => v.Result).ToList());
-        Duration = _verifications.Sum(v => v.Duration);
-    }
+    [JsonInclude]
+    public string? Suppression { get; set; }
 }

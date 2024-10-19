@@ -24,6 +24,7 @@
 
     <!-- Entry -->
     <ControlTheme x:Key="{x:Type controls:Entry}" TargetType="controls:Entry">
+        <Setter Property="ButtonTheme" Value="{a:ControlTheme ButtonSubtle}" />
         <Setter Property="FontFamily" Value="{a:ThemeResource CodeFontFamily}" />
         <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeSmall}" />
         <Setter Property="Padding" Value="{a:ThemeResource ButtonPadding}"></Setter>
@@ -37,7 +38,7 @@
                 <Grid x:Name="PART_LayoutRoot">
                     <Button
                         x:Name="PART_Button"
-                        Theme="{a:ControlTheme ButtonSubtle}"
+                        Theme="{TemplateBinding ButtonTheme}"
                         Padding="{TemplateBinding Padding}"
                         Classes.danger="{TemplateBinding (DataValidationErrors.HasErrors)}"
                         HorizontalContentAlignment="Left">
@@ -77,6 +78,7 @@
                                 FontSize="{TemplateBinding FontSize}"
                                 FontWeight="{TemplateBinding FontWeight}"
                                 Theme="{a:ControlTheme TextBoxOutline}"
+                                AcceptsReturn="True"
                                 BorderThickness="0"
                                 Margin="0 1 0 0"
                                 CornerRadius="0 0 4 4"

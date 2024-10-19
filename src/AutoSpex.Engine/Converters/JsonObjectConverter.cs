@@ -35,6 +35,7 @@ public class JsonObjectConverter : JsonConverter<object?>
         if (type == typeof(Criterion)) return JsonSerializer.Deserialize<Criterion>(data);
         if (type == typeof(Reference)) return JsonSerializer.Deserialize<Reference>(data);
         if (type == typeof(Variable)) return JsonSerializer.Deserialize<Variable>(data);
+        if (type == typeof(List<Argument>)) return JsonSerializer.Deserialize<List<Argument>>(data);
 
         //LogixParser can handle all the other types we care about (.NET primitive and L5Sharp).
         return type.IsParsable() ? data.TryParse(type) : default;
@@ -56,7 +57,7 @@ public class JsonObjectConverter : JsonConverter<object?>
             Criterion v => JsonSerializer.Serialize(v),
             Reference v => JsonSerializer.Serialize(v),
             Variable v => JsonSerializer.Serialize(v),
-            IEnumerable<Argument> v => JsonSerializer.Serialize(v),
+            List<Argument> v => JsonSerializer.Serialize(v),
             _ => value.ToString()
         };
 

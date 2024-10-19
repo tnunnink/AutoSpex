@@ -58,7 +58,7 @@ public class GetScopedVariablesTests
         folder.AddVariable("FolderVar", "Test Value");
         var spec = folder.AddSpec("Test", x =>
         {
-            x.Find(Element.Tag);
+            x.Query(Element.Tag);
             x.Verify("TagType", Operation.EqualTo, new Reference("SpecVar"));
         });
         spec.AddVariable("SpecVar", TagType.Base);

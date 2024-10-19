@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoSpex.Client.Observers;
 using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
@@ -18,6 +19,7 @@ public partial class DetailsPageModel : PageViewModel, IRecipient<NavigationRequ
     [ObservableProperty] private ObservableCollection<DetailPageModel> _pages = [];
 
     [ObservableProperty] private PageViewModel? _selected;
+    public Task<DetailTabListPageModel> TabList => Navigator.Navigate(() => new DetailTabListPageModel(Pages.ToList()));
 
     protected override void OnDeactivated()
     {
@@ -59,17 +61,18 @@ public partial class DetailsPageModel : PageViewModel, IRecipient<NavigationRequ
     }
 
     /// <summary>
-    /// Command to quickly create a new environment and open the details for in the detail view.
+    /// Command to quickly create a new source and open the details for in the detail view.
     /// </summary>
     [RelayCommand]
-    private async Task NewEnvironment()
+    private async Task NewSource()
     {
-        var environment = new Environment();
+        var source = await Prompter.Show<SourceObserver?>(() => new NewSourcePageModel());
+        if (source is null) return;
 
-        var result = await Mediator.Send(new CreateEnvironment(environment));
-        if (Notifier.ShowIfFailed(result, "Failed to create new environment. See notifications for details.")) return;
+        var result = await Mediator.Send(new CreateSource(source));
+        if (Notifier.ShowIfFailed(result, "Failed to create new source. See notifications for details.")) return;
 
-        var observer = new EnvironmentObserver(environment) { IsNew = true };
+        var observer = new SourceObserver(source);
         Messenger.Send(new Observer.Created(observer));
         await Navigator.Navigate(observer);
     }

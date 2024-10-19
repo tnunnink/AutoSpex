@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Text.Json.Serialization;
+using Ardalis.SmartEnum.SystemTextJson;
 using L5Sharp.Core;
 using Task = System.Threading.Tasks.Task;
 
@@ -20,7 +21,7 @@ public class Spec() : IEquatable<Spec>
     /// <param name="element">The <see cref="Element"/> type the spec represents.</param>
     public Spec(Element element) : this()
     {
-        Query = new Query(element);
+        Element = element ?? throw new ArgumentNullException(nameof(element));
     }
 
     /// <summary>
@@ -30,12 +31,11 @@ public class Spec() : IEquatable<Spec>
     public Guid SpecId { get; private init; } = Guid.NewGuid();
 
     /// <summary>
-    /// The settings used to specify which component item to search using the element lookup function instead of
-    /// querying all elements in the entire file. This speeds up specs for tags significantly since we can use the internal
-    /// L5X index. This would only be used for specs that are targeting some specific tag or component.
+    /// The target <see cref="Engine.Element"/> this query will search for.
     /// </summary>
+    [JsonConverter(typeof(SmartEnumNameConverter<Element, string>))]
     [JsonInclude]
-    public Query Query { get; private set; } = new();
+    public Element Element { get; set; } = Element.Default;
 
     /// <summary>
     /// The collection of <see cref="Criterion"/> that define how to filter elements to return candidates for verification.
@@ -74,14 +74,13 @@ public class Spec() : IEquatable<Spec>
     }
 
     /// <summary>
-    /// Configures the <see cref="Query"/> for which this specification will find data.
+    /// Configures the <see cref="Element"/> type to query when this specification is run.
     /// </summary>
     /// <param name="element">The <see cref="Engine.Element"/> option to query.</param>
-    /// <param name="name">The optional name of the element to find to optimize the query and scope to a single component.</param>
     /// <returns>The configured spec instance.</returns>
-    public Spec Find(Element element, string? name = default)
+    public Spec Query(Element element)
     {
-        Query = new Query(element, name);
+        Element = element ?? throw new ArgumentNullException(nameof(element));
         return this;
     }
 
@@ -92,9 +91,9 @@ public class Spec() : IEquatable<Spec>
     /// <param name="operation">The <see cref="Operation"/> the criterion will perform.</param>
     /// <param name="args">The collection of <see cref="Argument"/> to supply to the criterion operation.</param>
     /// <returns>The configured spec instance.</returns>
-    public Spec Filter(string? property, Operation operation, params Argument[] args)
+    public Spec Filter(string? property, Operation operation, Argument? args = default)
     {
-        Filters.Add(new Criterion(Query.Element.Property(property), operation, args));
+        Filters.Add(new Criterion(Element.Property(property), operation, args));
         return this;
     }
 
@@ -105,9 +104,9 @@ public class Spec() : IEquatable<Spec>
     /// <param name="operation">The <see cref="Operation"/> the criterion will perform.</param>
     /// <param name="args">The collection of <see cref="Argument"/> to supply to the criterion operation.</param>
     /// <returns>The configured spec instance.</returns>
-    public Spec Verify(string? property, Operation operation, params Argument[] args)
+    public Spec Verify(string? property, Operation operation, Argument? args = default)
     {
-        Verifications.Add(new Criterion(Query.Element.Property(property), operation, args));
+        Verifications.Add(new Criterion(Element.Property(property), operation, args));
         return this;
     }
 
@@ -119,9 +118,9 @@ public class Spec() : IEquatable<Spec>
     /// <param name="operation">The <see cref="Operation"/> the criterion will perform.</param>
     /// <param name="args">The collection of <see cref="Argument"/> to supply to the criterion operation.</param>
     /// <returns>The configured spec instance.</returns>
-    public Spec Verify(string? property, Negation negation, Operation operation, params Argument[] args)
+    public Spec Verify(string? property, Negation negation, Operation operation, Argument? args = default)
     {
-        Verifications.Add(new Criterion(Query.Element.Property(property), operation, args) { Negation = negation });
+        Verifications.Add(new Criterion(Element.Property(property), operation, args) { Negation = negation });
         return this;
     }
 
@@ -133,7 +132,7 @@ public class Spec() : IEquatable<Spec>
     {
         return new Spec
         {
-            Query = Query,
+            Element = Element,
             Filters = Filters.Select(x => x.Duplicate()).ToList(),
             Verifications = Verifications.Select(x => x.Duplicate()).ToList(),
             FilterInclusion = FilterInclusion,
@@ -178,7 +177,7 @@ public class Spec() : IEquatable<Spec>
             var stopwatch = Stopwatch.StartNew();
 
             //1. Execute the configured query.
-            var elements = Query.Execute(content);
+            var elements = content.Query(Element.Type);
 
             //2. Filter the resulting elements.
             var candidates = elements.Where(FilterElement).ToList();

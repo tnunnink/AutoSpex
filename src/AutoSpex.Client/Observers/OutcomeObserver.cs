@@ -7,6 +7,7 @@ using AutoSpex.Engine;
 using Avalonia.Input;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
 namespace AutoSpex.Client.Observers;
@@ -18,22 +19,28 @@ public partial class OutcomeObserver : Observer<Outcome>,
     /// <inheritdoc/>
     public OutcomeObserver(Outcome model) : base(model)
     {
-        Result = model.Result;
+        Result = model.Verification.Result;
         Evaluations = new ObserverCollection<Evaluation, EvaluationObserver>(
-            refresh: () => Model.Evaluations.Select(e => new EvaluationObserver(e)).ToList(),
-            count: () => Model.Evaluations.Count()
+            refresh: () => Model.Verification.Evaluations.Select(e => new EvaluationObserver(e)).ToList(),
+            count: () => Model.Verification.Evaluations.Count()
         );
-        Track(Evaluations, false);
+        RegisterDisposable(Evaluations);
     }
 
     protected override bool PromptForDeletion => false;
     public override Guid Id => Model.OutcomeId;
     public override string Name => Model.Name;
     public NodeObserver? Node => GetObserver<NodeObserver>(x => x.Id == Model.NodeId);
-    public long Duration => Model.Duration;
 
     [ObservableProperty] private ResultState _result = ResultState.None;
+    public long Duration => Model.Verification.Duration;
+    public int Total => Model.Verification.Evaluations.Count();
+    public int Passed => Model.Verification.Evaluations.Count(e => e.Result == ResultState.Passed);
+    public int Failed => Model.Verification.Evaluations.Count(e => e.Result == ResultState.Failed);
+    public int Errored => Model.Verification.Evaluations.Count(e => e.Result == ResultState.Errored);
     public ObserverCollection<Evaluation, EvaluationObserver> Evaluations { get; }
+
+    [ObservableProperty] private ResultState _filterState = ResultState.None;
 
     /// <inheritdoc />
     public override bool Filter(string? filter)
@@ -44,7 +51,7 @@ public partial class OutcomeObserver : Observer<Outcome>,
         //Check matches against name and node path.
         return string.IsNullOrEmpty(filter)
                || Name.Satisfies(filter)
-               || Node?.Model.Path.Satisfies(filter) is true;
+               || Node?.Filter(filter) is true;
     }
 
     /// <inheritdoc />
@@ -58,13 +65,25 @@ public partial class OutcomeObserver : Observer<Outcome>,
     }
 
     /// <summary>
+    /// Applies a filter to the evaluations in the OutcomeObserver based on the specified ResultState.
+    /// </summary>
+    /// <param name="state">The ResultState to filter by.</param>
+    [RelayCommand]
+    private void ApplyFilter(ResultState? state)
+    {
+        FilterState = state ?? ResultState.None;
+        Evaluations.Filter(x => FilterState == ResultState.None || x.Result == FilterState);
+    }
+
+    /// <summary>
     /// When we receive the running message for the outcome with the same local id, then we want to set the result
     /// state to pending to notify the UI which outcome is processing.
     /// </summary>
     /// <param name="message"></param>
     public void Receive(Running message)
     {
-        if (Id != message.OutcomeId) return;
+        if (Model.RunId != message.Outcome.RunId || Model.NodeId != message.Outcome.NodeId) return;
+
         Dispatcher.UIThread.Invoke(() => { Result = ResultState.Running; });
     }
 
@@ -75,11 +94,11 @@ public partial class OutcomeObserver : Observer<Outcome>,
     /// <param name="message">The message indicating an outcome run is complete.</param>
     public void Receive(Complete message)
     {
-        if (Id != message.Outcome.OutcomeId) return;
+        if (Model.RunId != message.Outcome.RunId || Model.NodeId != message.Outcome.NodeId) return;
 
         Dispatcher.UIThread.Invoke(() =>
         {
-            Result = Model.Result;
+            Result = message.Outcome.Verification.Result;
             Evaluations.Refresh();
             Refresh();
         });
@@ -88,42 +107,30 @@ public partial class OutcomeObserver : Observer<Outcome>,
     /// <summary>
     /// A message send that indicates an outcome is about to be run.
     /// </summary>
-    /// <param name="OutcomeId">The ID of the outcome that is about to be run.</param>
-    public record Running(Guid OutcomeId);
+    /// <param name="Outcome">The outcome that is about to run.</param>
+    public record Running(Outcome Outcome);
 
     /// <summary>
     /// A message sent that indicates an outcome just completed running.
     /// </summary>
-    /// <param name="Outcome">The outcome instance that just completed its run.</param>
+    /// <param name="Outcome">The outcome produced by the run.</param>
     public record Complete(Outcome Outcome);
 
     /// <inheritdoc />
     protected override IEnumerable<MenuActionItem> GenerateContextItems()
     {
-        /*yield return new MenuActionItem
-        {
-            Header = "Run",
-            Icon = Resource.Find("IconFilledLightning"),
-            Classes = "accent",
-            Command = RunCommand
-        };*/
-
         yield return new MenuActionItem
         {
             Header = "Open Spec",
             Icon = Resource.Find("IconLineLaunch"),
             Command = NavigateCommand,
-            Gesture = new KeyGesture(Key.Enter),
-            DetermineVisibility = () => HasSingleSelection
+            Gesture = new KeyGesture(Key.Enter)
         };
 
         yield return new MenuActionItem
         {
-            Header = "Remove",
+            Header = "Suppress Result",
             Icon = Resource.Find("IconFilledTrash"),
-            Classes = "danger",
-            Command = DeleteSelectedCommand,
-            Gesture = new KeyGesture(Key.Delete)
         };
     }
 

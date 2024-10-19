@@ -1,0 +1,70 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+             x:Class="AutoSpex.Client.Pages.SourceSelectorPage"
+             x:DataType="pages:SourceSelectorPageModel"
+             CornerRadius="{a:ThemeResource ButtonCornerRadius}">
+
+    <Design.Width>400</Design.Width>
+    <Design.Height>40</Design.Height>
+
+    <Grid ColumnDefinitions="*,Auto">
+
+        <Button
+            Grid.Column="0"
+            Theme="{a:ControlTheme ButtonSubtle}"
+            HorizontalContentAlignment="Stretch"
+            CornerRadius="{Binding $parent[UserControl].CornerRadius}">
+
+            <Button.Content>
+
+                <DockPanel LastChildFill="False">
+
+                    <PathIcon DockPanel.Dock="Left" Theme="{StaticResource IconThemedSource}" />
+
+                    <Panel DockPanel.Dock="Left" Margin="10 0">
+
+                        <TextBlock
+                            Text="Select source"
+                            IsVisible="{Binding Targeted, Converter={x:Static ObjectConverters.IsNull}}"
+                            Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                            FontStyle="Italic" />
+
+                        <TextBlock
+                            Text="{Binding Targeted.Name, FallbackValue={x:Null}}"
+                            FontWeight="{a:ThemeResource HeadingFontWeightSmall}"
+                            IsVisible="{Binding Targeted, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
+                    </Panel>
+
+                    <PathIcon DockPanel.Dock="Right" Theme="{StaticResource IconLineExpand}" Classes="size-sm" />
+
+                </DockPanel>
+            </Button.Content>
+
+            <Button.Flyout>
+                <Flyout Placement="TopEdgeAlignedLeft" HorizontalOffset="-8" VerticalOffset="-5">
+                    <ContentControl Content="{Binding SourceList^}" />
+                </Flyout>
+            </Button.Flyout>
+        </Button>
+
+        <Button
+            Grid.Column="1"
+            Command="{Binding Targeted.NavigateCommand, FallbackValue={x:Null}}"
+            Theme="{StaticResource IconButton}"
+            properties:Icon.Theme="{StaticResource IconLineLaunch}"
+            Margin="5 0 0 0"
+            ToolTip.Tip="Open">
+            <Button.IsVisible>
+                <MultiBinding Converter="{x:Static BoolConverters.And}">
+                    <Binding Path="Targeted" Converter="{x:Static ObjectConverters.IsNotNull}" />
+                    <Binding Path="ShowNavigationButton" />
+                </MultiBinding>
+            </Button.IsVisible>
+        </Button>
+
+    </Grid>
+</UserControl>

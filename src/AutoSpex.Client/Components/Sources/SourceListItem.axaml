@@ -1,0 +1,101 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+
+    <Design.PreviewWith>
+        <Border Padding="30" Width="700" Height="400">
+            <ListBox ItemsSource="{x:Static components:TestData.Sources}"
+                     ItemTemplate="{DynamicResource SourceListItem}"
+                     ItemContainerTheme="{StaticResource ListBoxItemEntry}"
+                     SelectionMode="Multiple"
+                     BorderThickness="1" CornerRadius="5"
+                     BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                     VerticalAlignment="Top" />
+        </Border>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="SourceListItem" x:DataType="observers:SourceObserver">
+        <Border x:Name="Border"
+                Focusable="True"
+                Background="Transparent"
+                Padding="{a:ThemeResource ListItemPadding}">
+
+            <Border.ContextFlyout>
+                <MenuFlyout
+                    ItemsSource="{Binding ContextItems}"
+                    ItemContainerTheme="{StaticResource MenuActionItem}"
+                    Placement="Pointer" />
+            </Border.ContextFlyout>
+
+            <Grid ColumnDefinitions="*,30,Auto">
+
+                <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Left" ClipToBounds="True">
+
+                    <PathIcon Theme="{StaticResource IconThemedSource}" />
+
+                    <StackPanel Spacing="3" VerticalAlignment="Center">
+
+                        <controls:HighlightableTextBlock
+                            Text="{Binding Name}"
+                            HighlightedText="{Binding FilterText}"
+                            FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
+
+                        <controls:HighlightableTextBlock
+                            Text="{Binding Description}"
+                            HighlightedText="{Binding FilterText}"
+                            Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                            FontSize="{a:ThemeResource DefaultFontSizeExtraSmall}" />
+
+                    </StackPanel>
+
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="20">
+
+                    <StackPanel Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
+
+                        <controls:HighlightableTextBlock
+                            Text="{Binding TargetType}"
+                            HighlightedText="{Binding FilterText}"
+                            Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                            FontSize="{a:ThemeResource DefaultFontSizeExtraSmall}" />
+
+                        <Ellipse Height="5" Width="5" Fill="{a:ThemeResource Container2BorderBrush}" Margin="3" />
+
+                        <controls:HighlightableTextBlock
+                            Text="{Binding ExportedOn}"
+                            HighlightedText="{Binding FilterText}"
+                            Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                            FontSize="{a:ThemeResource DefaultFontSizeExtraSmall}" />
+
+                    </StackPanel>
+
+                    <Button
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconEllipsis}"
+                        ToolTip.Tip="Options">
+                        <Button.Flyout>
+                            <MenuFlyout
+                                ItemsSource="{Binding MenuItems}"
+                                ItemContainerTheme="{StaticResource MenuActionItem}"
+                                Placement="BottomEdgeAlignedRight" HorizontalOffset="8" VerticalOffset="5" />
+                        </Button.Flyout>
+                    </Button>
+                </StackPanel>
+
+            </Grid>
+
+            <Interaction.Behaviors>
+                <ExecuteCommandOnKeyDownBehavior
+                    Gesture="Ctrl+E"
+                    Command="{Binding RenameCommand}"
+                    MarkAsHandled="True" />
+            </Interaction.Behaviors>
+        </Border>
+    </DataTemplate>
+
+</ResourceDictionary>

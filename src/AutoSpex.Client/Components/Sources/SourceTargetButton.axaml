@@ -1,0 +1,39 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors">
+
+    <Design.PreviewWith>
+        <Border Padding="30" Width="700" Height="400">
+            <ListBox
+                ItemsSource="{x:Static components:TestData.Sources}"
+                ItemTemplate="{DynamicResource SourceTargetButton}"
+                ItemContainerTheme="{StaticResource ListBoxItemSimple}"
+                SelectionMode="Multiple"
+                VerticalAlignment="Top" />
+        </Border>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="SourceTargetButton" x:DataType="observers:SourceObserver">
+
+        <Button
+            Command="{Binding TargetCommand}"
+            Theme="{a:ControlTheme ButtonInvisible}"
+            HorizontalAlignment="Stretch"
+            HorizontalContentAlignment="Left"
+            Padding="{a:ThemeResource ButtonPadding}">
+
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <PathIcon Theme="{StaticResource IconThemedSource}" />
+                <TextBlock Text="{Binding Name}" />
+            </StackPanel>
+
+            <Interaction.Behaviors>
+                <behaviors:HideFlyoutOnClickedBehavior />
+            </Interaction.Behaviors>
+        </Button>
+
+    </DataTemplate>
+</ResourceDictionary>

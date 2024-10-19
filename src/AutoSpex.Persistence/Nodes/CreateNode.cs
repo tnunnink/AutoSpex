@@ -26,16 +26,16 @@ internal class CreateNodeHandler(IConnectionManager manager) : IRequestHandler<C
         VALUES (@NodeId, @ParentId, @Type, @Name, @Comment)
         """;
 
-    private const string InsertSpec =
-        """
-        INSERT INTO Spec ([SpecId], [NodeId], [Config])
-        VALUES (@SpecId, @NodeId, @Config)
-        """;
-
     private const string InsertVariable =
         """
         INSERT INTO Variable ([VariableId], [NodeId], [Name], [Group], [Value])
         VALUES (@VariableId, @NodeId, @Name, @Group, @Value)
+        """;
+
+    private const string InsertSpec =
+        """
+        INSERT INTO Spec ([SpecId], [NodeId], [Config])
+        VALUES (@SpecId, @NodeId, @Config)
         """;
 
     public async Task<Result> Handle(CreateNode request, CancellationToken cancellationToken)
@@ -53,13 +53,13 @@ internal class CreateNodeHandler(IConnectionManager manager) : IRequestHandler<C
             return Result.Fail($"Node with id already exists: {request.Node.NodeId}");
 
         await connection.ExecuteAsync(InsertNode, request.Node, transaction);
-
-        await connection.ExecuteAsync(InsertSpec,
-            request.Node.Specs.Select(s => new { s.SpecId, request.Node.NodeId, Config = s }),
-            transaction);
-
+        
         await connection.ExecuteAsync(InsertVariable,
             request.Node.Variables.Select(v => new { v.VariableId, request.Node.NodeId, v.Name, v.Group, v.Value }),
+            transaction);
+
+        await connection.ExecuteAsync(InsertSpec,
+            new { request.Node.Spec.SpecId, request.Node.NodeId, Config = request.Node.Spec },
             transaction);
 
         transaction.Commit();

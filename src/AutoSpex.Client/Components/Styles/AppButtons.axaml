@@ -1,29 +1,36 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
     <Design.PreviewWith>
         <Border Padding="20">
-            <StackPanel Spacing="10">
-                <Button Classes="run accent" />
-                <Button Classes="run accent" IsEnabled="False" />
-                <Button Classes="cancel" />
-                <Button Classes="cancel" IsEnabled="False" />
-                <Button Classes="save" />
-                <Button Classes="save" IsEnabled="False" />
-                <Button Classes="export" />
-                <Button Classes="export" IsEnabled="False" />
+            <StackPanel Orientation="Horizontal" Spacing="20">
+                <StackPanel Spacing="10">
+                    <Button Classes="run accent" />
+                    <Button Classes="run accent" IsEnabled="False" />
+                    <Button Classes="cancel danger" />
+                    <Button Classes="cancel danger" IsEnabled="False" />
+                    <Button Classes="save" />
+                    <Button Classes="save" IsEnabled="False" />
+                    <Button Classes="export" />
+                    <Button Classes="export" IsEnabled="False" />
+                </StackPanel>
+                <StackPanel Spacing="10">
+                    <Button Classes="new-collection" />
+                    <Button Classes="new-specification" />
+                    <Button Classes="new-source" />
+                </StackPanel>
             </StackPanel>
         </Border>
     </Design.PreviewWith>
 
     <Style Selector="Button.run">
         <Setter Property="Theme" Value="{a:ControlTheme ButtonSolid}" />
-        <Setter Property="CornerRadius" Value="0 4 4 0" />
         <Setter Property="Content">
             <Template>
                 <StackPanel Orientation="Horizontal" Spacing="7">
                     <PathIcon Theme="{StaticResource IconFilledLightning}" />
-                    <TextBlock Text="Run" Padding="0 0 0 1" FontSize="{a:ThemeResource DefaultFontSizeMedium}" />
+                    <TextBlock Text="Run" FontSize="{a:ThemeResource DefaultFontSizeMedium}" />
                 </StackPanel>
             </Template>
         </Setter>
@@ -34,16 +41,15 @@
             <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSolidAccent}" />
         </Style>
     </Style>
-    
+
     <Style Selector="Button.cancel">
-        <Setter Property="Theme" Value="{a:ControlTheme ButtonSoft}" />
-        <Setter Property="CornerRadius" Value="{a:ThemeResource ButtonCornerRadius}" />
+        <Setter Property="Theme" Value="{a:ControlTheme ButtonSolid}" />
         <Setter Property="Content">
             <Template>
                 <Panel>
                     <StackPanel Orientation="Horizontal" Spacing="7">
-                        <PathIcon Theme="{StaticResource IconFilledStop}" FontSize="14" />
-                        <TextBlock Text="Cancel" Padding="0 0 0 1" FontSize="{a:ThemeResource DefaultFontSizeMedium}" />
+                        <PathIcon Theme="{StaticResource IconFilledStop}" FontSize="14" Classes="centered" />
+                        <TextBlock Text="Cancel" FontSize="{a:ThemeResource DefaultFontSizeMedium}" />
                     </StackPanel>
                 </Panel>
             </Template>
@@ -70,7 +76,7 @@
             <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushDisabled}" />
         </Style>
     </Style>
-    
+
     <Style Selector="Button.export">
         <Setter Property="Theme" Value="{a:ControlTheme ButtonSoft}" />
         <Setter Property="Content">
@@ -85,4 +91,84 @@
             <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushDisabled}" />
         </Style>
     </Style>
+
+    <Style Selector="Button.new-collection">
+        <Setter Property="Theme" Value="{a:ControlTheme ButtonSubtle}" />
+        <Setter Property="Width" Value="300" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="Content">
+            <Template>
+                <StackPanel Spacing="7">
+                    <StackPanel Orientation="Horizontal" Spacing="7">
+                        <PathIcon
+                            Theme="{StaticResource IconThemedCollection}" />
+                        <TextBlock
+                            Text="Collection"
+                            FontSize="{a:ThemeResource DefaultFontSizeMedium}"
+                            FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
+                    </StackPanel>
+
+                    <TextBlock
+                        Text="Collections organize specifications into groups to be run together. Add a new container to starting building specs."
+                        Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                        TextWrapping="Wrap" />
+
+                </StackPanel>
+            </Template>
+        </Setter>
+    </Style>
+
+    <Style Selector="Button.new-specification">
+        <Setter Property="Theme" Value="{a:ControlTheme ButtonSubtle}" />
+        <Setter Property="Width" Value="300" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="Content">
+            <Template>
+                <StackPanel Spacing="7">
+                    <StackPanel Orientation="Horizontal" Spacing="7">
+                        <PathIcon
+                            Theme="{StaticResource IconThemedSpec}" />
+                        <TextBlock
+                            Text="Specification"
+                            FontSize="{a:ThemeResource DefaultFontSizeMedium}"
+                            FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
+                    </StackPanel>
+
+                    <TextBlock
+                        Text="Specifications define the criteria to verify for a given source. Add and configure specs to validate L5X projects."
+                        Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                        TextWrapping="Wrap" />
+
+                </StackPanel>
+            </Template>
+        </Setter>
+    </Style>
+
+    <Style Selector="Button.new-source">
+        <Setter Property="Theme" Value="{a:ControlTheme ButtonSubtle}" />
+        <Setter Property="Width" Value="300" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="Content">
+            <Template>
+                <StackPanel Spacing="7">
+                    <StackPanel Orientation="Horizontal" Spacing="7">
+                        <PathIcon
+                            Theme="{StaticResource IconThemedSource}"
+                            Classes="centered" />
+                        <TextBlock
+                            Text="Source"
+                            FontSize="{a:ThemeResource DefaultFontSizeMedium}"
+                            FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
+                    </StackPanel>
+
+                    <TextBlock
+                        Text="Sources represent an L5X project to run specifications against. Add sources from disc to upload into the application."
+                        Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                        TextWrapping="Wrap" />
+
+                </StackPanel>
+            </Template>
+        </Setter>
+    </Style>
+
 </Styles>

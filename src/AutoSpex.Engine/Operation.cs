@@ -19,7 +19,7 @@ public abstract class Operation(string name, string value) : SmartEnum<Operation
     /// in derived operation classes.
     /// </summary>
     /// <param name="input">The value that will be compared/evaluated by the operation.</param>
-    /// <param name="values">Additional parameters needed for some operations.</param>
+    /// <param name="value">Additional parameters needed for some operations.</param>
     /// <returns>The result of the predicate operation. This is typically a boolean
     /// value indicating whether the input value meets the criteria defined by the operation.</returns>
     /// <remarks>
@@ -27,7 +27,7 @@ public abstract class Operation(string name, string value) : SmartEnum<Operation
     /// Be aware that this function may throw exceptions if input data is not of the expected 
     /// type or proper format for the executing operation.
     /// </remarks>
-    public abstract bool Execute(object? input, params object[] values);
+    public abstract bool Execute(object? input, object? value);
 
     /// <summary>
     /// Returns a collection of operations that support the specified property group.
@@ -44,9 +44,9 @@ public abstract class Operation(string name, string value) : SmartEnum<Operation
     protected virtual bool Supports(TypeGroup group) => true;
 
     /// <summary>
-    /// Represents an equality operation. The operation checks if the input value 
-    /// is equal to the comparison value. Comparison is done based on the underlying
-    /// type of the input value.
+    /// Represents an operation that signifies no specific operation.
+    /// Used as a placeholder or default value.
+    /// Executing this operation always returns false.
     /// </summary>
     public static readonly Operation None = new NoneOperation();
 

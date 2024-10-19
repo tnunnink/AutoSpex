@@ -1,0 +1,107 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors"
+             x:Class="AutoSpex.Client.Pages.SourceSelectorListPage"
+             x:DataType="pages:SourceSelectorListPageModel"
+             MinHeight="300" MaxHeight="600">
+
+    <DockPanel>
+
+        <Border
+            DockPanel.Dock="Top"
+            Padding="10"
+            Background="{a:ThemeResource Container2BackgroundBrush}"
+            CornerRadius="5 5 0 0">
+
+            <Grid ColumnDefinitions="*,Auto">
+
+                <StackPanel Grid.Column="0" Spacing="5" HorizontalAlignment="Left" Margin="0 0 100 0">
+                    <TextBlock
+                        Text="Sources"
+                        FontSize="{a:ThemeResource DefaultFontSizeMedium}"
+                        FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
+                    <TextBlock
+                        Text="Select a target source to run specs against."
+                        Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                        TextWrapping="Wrap" MaxWidth="400" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="5">
+                    <Button
+                        Command="{Binding AddSourceCommand}"
+                        Theme="{a:ControlTheme ButtonSolid}"
+                        Classes="accent"
+                        VerticalAlignment="Center">
+                        <Button.Content>
+                            <StackPanel Orientation="Horizontal" Spacing="7">
+                                <PathIcon Theme="{StaticResource IconAdd}"
+                                          Foreground="{Binding $parent[Button].Foreground}"
+                                          Classes="size-sm" />
+                                <TextBlock Text="Add Source" FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
+                            </StackPanel>
+                        </Button.Content>
+                        <Interaction.Behaviors>
+                            <behaviors:HideFlyoutOnClickedBehavior />
+                        </Interaction.Behaviors>
+                    </Button>
+                </StackPanel>
+
+            </Grid>
+        </Border>
+
+        <TextBox
+            DockPanel.Dock="Top"
+            Text="{Binding Filter}"
+            IsVisible="{Binding Sources.HasItems}"
+            Watermark="Search sources"
+            Theme="{StaticResource TextBoxSimple}"
+            VerticalContentAlignment="Center"
+            Background="{a:ThemeResource Container1BackgroundBrush}"
+            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+            Padding="0 10" BorderThickness="0 0 0 1" CornerRadius="0">
+            <TextBox.InnerLeftContent>
+                <PathIcon Theme="{StaticResource IconLineSearch}"
+                          VerticalAlignment="Center" Margin="10 0"
+                          Classes="size-sm"
+                          Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+            </TextBox.InnerLeftContent>
+            <Interaction.Behaviors>
+                <SelectAllOnGotFocusBehavior />
+            </Interaction.Behaviors>
+        </TextBox>
+
+        <Panel>
+
+            <controls:DefaultMessage
+                IsVisible="{Binding !Sources.HasItems}"
+                HeaderIcon="{StaticResource IconThemedSource}"
+                Header="No sources configured"
+                Message="Add source fils to run your configured specs against." />
+
+            <controls:DefaultMessage
+                HeaderIcon="{StaticResource IconLineSearch}"
+                Header="No sources found"
+                Message="Could not find any sources matching the current filter text.">
+                <controls:DefaultMessage.IsVisible>
+                    <MultiBinding Converter="{x:Static BoolConverters.And}">
+                        <Binding Path="Sources.HasItems" />
+                        <Binding Path="!Sources.Count" />
+                    </MultiBinding>
+                </controls:DefaultMessage.IsVisible>
+            </controls:DefaultMessage>
+
+            <ListBox
+                ItemsSource="{Binding Sources}"
+                ItemContainerTheme="{StaticResource ListBoxItemSimple}"
+                ItemTemplate="{StaticResource SourceTargetButton}"
+                IsVisible="{Binding Sources.Count}"
+                Padding="10 5" />
+
+        </Panel>
+
+    </DockPanel>
+
+</UserControl>

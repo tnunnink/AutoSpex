@@ -3,7 +3,7 @@
 public class NoneOperation() : Operation("None")
 {
     /// <inheritdoc />
-    public override bool Execute(object? input, params object[] values) => false;
+    public override bool Execute(object? input, object? value) => false;
 
     /// <inheritdoc />
     protected override bool Supports(TypeGroup group) => false;

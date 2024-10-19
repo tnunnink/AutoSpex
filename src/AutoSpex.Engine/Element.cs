@@ -139,7 +139,7 @@ public abstract class Element : SmartEnum<Element, string>
     {
         public TagElement() : base(typeof(Tag))
         {
-            Register<IList<Tag>>("Members", x => ((Tag)x!).Members().ToList());
+            Register<IList<Tag>>("Members", x => (x as Tag)?.Members().ToList() ?? []);
         }
     }
 

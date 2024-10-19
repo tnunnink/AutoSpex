@@ -2,10 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
-             xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
-             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
              xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
-             xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors"
              x:Class="AutoSpex.Client.Pages.RunDetailPage"
              x:DataType="pages:RunDetailPageModel">
 
@@ -15,10 +12,12 @@
     <DockPanel>
 
         <Border DockPanel.Dock="Top" Padding="20" Background="{a:ThemeResource Container2BackgroundBrush}">
-            <StackPanel Spacing="10">
 
-                <Grid ColumnDefinitions="Auto,*,Auto">
-                    <StackPanel Grid.Column="0" Spacing="5" HorizontalAlignment="Left" Orientation="Horizontal">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+
+                <StackPanel Grid.Column="0" Spacing="10">
+
+                    <StackPanel Orientation="Horizontal" Spacing="5" Margin="5 0 0 0">
                         <PathIcon
                             Theme="{Binding Icon, Converter={StaticResource KeyIconConverter}}"
                             Classes="size-lg" />
@@ -27,129 +26,38 @@
                             ContentTemplate="{StaticResource NameEntry}" />
                     </StackPanel>
 
-                    <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10">
+                    <ContentControl
+                        Content="{Binding Run}"
+                        ContentTemplate="{StaticResource ResultSummary}" />
 
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+
+                    <Button
+                        Command="{Binding SaveCommand}"
+                        Classes="save" />
+
+                    <Panel>
                         <Button
-                            Command="{Binding ExecuteCommand}"
+                            Command="{Binding Run.ExecuteCommand}"
                             Classes="run accent"
-                            CornerRadius="5"
-                            IsVisible="{Binding Result, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:ResultState.Pending}}" />
+                            CornerRadius="{a:ThemeResource ButtonCornerRadius}"
+                            IsVisible="{Binding Run.Result, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:ResultState.Pending}}" />
 
                         <Button
-                            Command="{Binding CancelCommand}"
-                            Classes="cancel"
-                            IsVisible="{Binding Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Pending}}" />
+                            Command="{Binding Run.CancelCommand}"
+                            Classes="cancel danger"
+                            CornerRadius="{a:ThemeResource ButtonCornerRadius}"
+                            IsVisible="{Binding Run.Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Pending}}" />
+                    </Panel>
 
-                    </StackPanel>
-                </Grid>
+                </StackPanel>
 
-                <ContentControl
-                    Content="{Binding Run}"
-                    ContentTemplate="{StaticResource ResultSummary}" />
-            </StackPanel>
+            </Grid>
         </Border>
 
-        <Grid Margin="20" RowDefinitions="Auto,*">
+        <ContentControl Margin="20" Content="{Binding OutcomePage^}" />
 
-            <TextBox
-                Grid.Row="0"
-                Text="{Binding FilterPage.FilterText}"
-                Watermark="Filter results by keyword"
-                Theme="{a:ControlTheme TextBoxSoft}"
-                Background="{a:ThemeResource Container2BackgroundBrush}"
-                BorderBrush="{a:ThemeResource Container2BackgroundBrush}"
-                VerticalContentAlignment="Center"
-                Padding="10">
-
-                <TextBox.InnerLeftContent>
-                    <StackPanel Orientation="Horizontal">
-                        <Button
-                            Theme="{a:ControlTheme ButtonSoft}"
-                            CornerRadius="4 0 0 4">
-                            <PathIcon Theme="{StaticResource IconLineFilter}" />
-                            <Button.Flyout>
-                                <Flyout Placement="BottomEdgeAlignedLeft" HorizontalOffset="8" VerticalOffset="2">
-                                    <ContentControl Content="{Binding FilterPage}" />
-                                </Flyout>
-                            </Button.Flyout>
-                        </Button>
-                    </StackPanel>
-                </TextBox.InnerLeftContent>
-
-                <TextBox.InnerRightContent>
-                    <StackPanel Orientation="Horizontal" Spacing="5" Margin="10 0">
-
-                        <Button
-                            Theme="{StaticResource IconButton}"
-                            properties:Icon.Theme="{StaticResource IconLineDownload}" />
-
-                        <Panel>
-                            <Button
-                                Command="{Binding ExpandAllCommand}"
-                                IsVisible="{Binding !IsExpanded}"
-                                Theme="{StaticResource IconButton}"
-                                properties:Icon.Theme="{StaticResource IconLineExpand}"
-                                ToolTip.Tip="Expand All" />
-                            <Button
-                                Command="{Binding CollapseAllCommand}"
-                                IsVisible="{Binding IsExpanded}"
-                                Theme="{StaticResource IconButton}"
-                                properties:Icon.Theme="{StaticResource IconLineCollapse}"
-                                ToolTip.Tip="Collapse All" />
-                        </Panel>
-
-                        <Button
-                            Theme="{StaticResource IconButton}"
-                            VerticalAlignment="Center"
-                            properties:Icon.Theme="{StaticResource IconEllipsis}"
-                            ToolTip.Tip="More" />
-
-                    </StackPanel>
-                </TextBox.InnerRightContent>
-
-            </TextBox>
-
-            <Border x:Name="DropArea" Grid.Row="1" Margin="0 20">
-
-
-                <ListBox
-                    x:Name="OutcomeList"
-                    VerticalAlignment="Top"
-                    ItemsSource="{Binding Outcomes}"
-                    SelectedItems="{Binding Selected}"
-                    IsVisible="{Binding Outcomes.Count}"
-                    ItemTemplate="{StaticResource OutcomeListItem}"
-                    SelectionMode="Multiple"
-                    BorderThickness="1" CornerRadius="5">
-
-                    <ListBox.ItemContainerTheme>
-                        <ControlTheme TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemEntry}"
-                                      x:DataType="observers:OutcomeObserver">
-                            <Style Selector="^:pointerover /template/ Border#RootBorder">
-                                <Setter Property="Background" Value="{a:ThemeResource Container2BackgroundBrush}" />
-                            </Style>
-                        </ControlTheme>
-                    </ListBox.ItemContainerTheme>
-
-                    <Interaction.Behaviors>
-                        <behaviors:ExecuteCommandOnDropBehavior
-                            Command="{Binding AddNodeCommand}" />
-                    </Interaction.Behaviors>
-
-                    <ListBox.Styles>
-                        <Style Selector="ListBox">
-                            <Setter Property="BorderBrush" Value="{a:ThemeResource Container1BorderBrush}" />
-                            <Style Selector="^.dragover">
-                                <Setter
-                                    Property="BorderBrush"
-                                    Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
-                            </Style>
-                        </Style>
-                    </ListBox.Styles>
-                </ListBox>
-
-            </Border>
-
-        </Grid>
     </DockPanel>
 </UserControl>

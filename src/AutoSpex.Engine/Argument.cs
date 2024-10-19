@@ -36,6 +36,11 @@ public class Argument : IEquatable<Argument>
     public object? Value { get; set; }
 
     /// <summary>
+    /// Gets the default Argument object with null value.
+    /// </summary>
+    public static Argument Default => new(default);
+
+    /// <summary>
     /// Resolves the underlying argument value to the specified type if possible.
     /// </summary>
     /// <param name="type">The type for which to resolve or convert to.</param>
@@ -53,7 +58,7 @@ public class Argument : IEquatable<Argument>
         var typed = value switch
         {
             Criterion criterion => criterion,
-            IEnumerable<Argument> arguments => arguments.Select(a => a.ResolveAs(type)),
+            IEnumerable<Argument> arguments => arguments.Select(a => a.ResolveAs(type)).ToList(),
             string text when type is not null && type != typeof(string) => text.TryParse(type),
             //todo this needs te thought through more I think. We might not want to alwasy convert if we don't have to
             not string when type is not null && type != value?.GetType() && value is IConvertible convertible =>
@@ -67,7 +72,7 @@ public class Argument : IEquatable<Argument>
     /// <summary>
     /// Traverses the argument value and retrieves the final expected argument value(s).
     /// Since an argument value can be a <see cref="Reference"/> or inner <see cref="Criterion"/> or a collection of
-    /// inner <see cref="Argument"/> we want to check them and get the values which are going to be used in the operation.
+    /// inner <see cref="Argument"/> values, we want to check them and get the values which are going to be used in the operation.
     /// </summary>
     /// <returns>A collection of object values that represent the final arguments.</returns>
     public IEnumerable<object> Expected()
@@ -76,9 +81,9 @@ public class Argument : IEquatable<Argument>
 
         return value switch
         {
-            Criterion criterion => criterion.Arguments.SelectMany(a => a.Expected()),
+            Criterion criterion => criterion.Argument.Expected(),
             IEnumerable<Argument> arguments => arguments.SelectMany(a => a.Expected()),
-            _ => value is not null ? [value] : Enumerable.Empty<object>()
+            _ => value is not null ? [value] : []
         };
     }
 
@@ -110,6 +115,7 @@ public class Argument : IEquatable<Argument>
     public static implicit operator Argument(LogixEnum value) => new(value);
     public static implicit operator Argument(LogixElement value) => new(value);
     public static implicit operator Argument(List<Argument> value) => new(value);
+    public static implicit operator Argument(List<object> value) => new(value);
     public static implicit operator Argument(Criterion value) => new(value);
     public static implicit operator Argument(Reference value) => new(value);
 }

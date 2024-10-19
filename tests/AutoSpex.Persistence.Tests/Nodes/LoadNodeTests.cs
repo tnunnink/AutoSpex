@@ -63,7 +63,7 @@ public class LoadNodeTests
         var mediator = context.Resolve<IMediator>();
         var node = Node.NewSpec("test", s =>
         {
-            s.Find(Element.Program)
+            s.Query(Element.Program)
                 .Filter("Name", Operation.EqualTo, "SomeName")
                 .Verify("Disabled", Operation.False);
         });
@@ -82,7 +82,7 @@ public class LoadNodeTests
         var mediator = context.Resolve<IMediator>();
         var node = Node.NewSpec("test", s =>
         {
-            s.Find(Element.Program)
+            s.Query(Element.Program)
                 .Filter("Name", Operation.EqualTo, new Reference("SomeName"))
                 .Verify("Disabled", Operation.False);
         });

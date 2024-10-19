@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using Ardalis.SmartEnum.SystemTextJson;
 
 namespace AutoSpex.Engine;
 
@@ -16,6 +17,7 @@ public class Verification
     /// The total result for all evaluations of this verification, indicating whether is Passed/Failed/Errored.
     /// </summary>
     [JsonInclude]
+    [JsonConverter(typeof(SmartEnumNameConverter<ResultState, int>))]
     public ResultState Result { get; }
 
     /// <summary>

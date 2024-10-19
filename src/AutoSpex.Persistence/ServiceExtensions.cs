@@ -26,6 +26,8 @@ public static class ServiceExtensions
         SqlMapper.AddTypeHandler(new SqlUriHandler());
         SqlMapper.AddTypeHandler(new SqlObjectHandler());
         SqlMapper.AddTypeHandler(new SqlSpecHandler());
+        SqlMapper.AddTypeHandler(new SqlVerificationHandler());
+        SqlMapper.AddTypeHandler(new SqlL5XHandler());
         SqlMapper.AddTypeHandler(new SmartEnumByNameTypeHandler<Element, string>());
         SqlMapper.AddTypeHandler(new SmartEnumByNameTypeHandler<Operation, string>());
         SqlMapper.AddTypeHandler(new SmartEnumByNameTypeHandler<NodeType, int>());

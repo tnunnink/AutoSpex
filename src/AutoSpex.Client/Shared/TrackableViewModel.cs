@@ -10,7 +10,7 @@ namespace AutoSpex.Client.Shared;
 /// A marker interface to allow me to pass instance of <see cref="Observer{TModel}"/> around with knowledge that it
 /// implements these interfaces.
 /// </summary>
-public interface ITrackable : INotifyPropertyChanged, IChangeTracking, INotifyDataErrorInfo
+public interface ITrackable : INotifyPropertyChanged, IChangeTracking, INotifyDataErrorInfo, IDisposable
 {
     /// <summary>
     /// Performs validation of all properties for the view model to ensure valid state of the data.
@@ -30,6 +30,7 @@ public abstract class TrackableViewModel : ViewModelBase, ITrackable
     private readonly HashSet<string> _changed = [];
     private readonly HashSet<string> _tracking = [];
     private readonly List<ITrackable> _tracked = [];
+    private readonly List<IDisposable> _disposables = [];
 
     /// <summary>
     /// Indicates that there are changes made to the state of the view model that need to be persisted or saved.
@@ -81,19 +82,12 @@ public abstract class TrackableViewModel : ViewModelBase, ITrackable
     /// changes up the object graph.
     /// </summary>
     /// <param name="trackable">The child <see cref="ITrackable"/> to be tracked.</param>
-    /// <param name="registerChanges">
-    /// Wehther to subscribe to change events in order to propagate changes up the object graph.
-    /// By default, the events are subscribed and therefore progatate changes,
-    /// but the user can opt out of this feature to only track view models that need
-    /// to be released but not be used for change notification.
-    /// </param>
     /// <exception cref="ArgumentNullException"><paramref name="trackable"/> is null.</exception>
-    protected void Track(ITrackable trackable, bool registerChanges = true)
+    protected void Track(ITrackable trackable)
     {
         ArgumentNullException.ThrowIfNull(trackable);
-        _tracked.Add(trackable);
 
-        if (!registerChanges) return;
+        _tracked.Add(trackable);
 
         trackable.PropertyChanged -= OnTrackedModelPropertyChanged;
         trackable.ErrorsChanged -= OnTrackedModelErrorsChanged;
@@ -114,6 +108,16 @@ public abstract class TrackableViewModel : ViewModelBase, ITrackable
         _tracked.Remove(trackable);
         trackable.PropertyChanged -= OnTrackedModelPropertyChanged;
         trackable.ErrorsChanged -= OnTrackedModelErrorsChanged;
+    }
+
+    /// <summary>
+    /// Registers a disposable object to be disposed of when the view model is closed or deactivated.
+    /// </summary>
+    /// <param name="disposable">The disposable object to be registered for disposal.</param>
+    protected void RegisterDisposable(IDisposable? disposable)
+    {
+        if (disposable is null) return;
+        _disposables.Add(disposable);
     }
 
     /// <inheritdoc />
@@ -137,6 +141,8 @@ public abstract class TrackableViewModel : ViewModelBase, ITrackable
     {
         base.OnDeactivated();
         ReleaseTrackedModels();
+        DisposeModels();
+        Dispose();
     }
 
     /// <summary>
@@ -196,19 +202,39 @@ public abstract class TrackableViewModel : ViewModelBase, ITrackable
         {
             trackable.PropertyChanged -= OnTrackedModelPropertyChanged;
             trackable.ErrorsChanged -= OnTrackedModelErrorsChanged;
-
-            //In turn deactivate child view models to force release of memory.
-            switch (trackable)
-            {
-                case ViewModelBase viewModel:
-                    viewModel.IsActive = false;
-                    break;
-                case IEnumerable<ViewModelBase> collection:
-                    collection.ToList().ForEach(x => x.IsActive = false);
-                    break;
-            }
+            trackable.Dispose();
         }
 
         _tracked.Clear();
+    }
+
+    /// <summary>
+    /// Disposes all the models that were tracked by the view model.
+    /// </summary>
+    /// <remarks>
+    /// This method iterates through the list of disposables that were registered during the lifetime of the view model
+    /// and calls dispose on each of them. Once disposed, the disposables are removed from the internal disposables list.
+    /// </remarks>
+    private void DisposeModels()
+    {
+        foreach (var disposable in _disposables)
+        {
+            disposable.Dispose();
+        }
+
+        _disposables.Clear();
+    }
+
+    /// <summary>
+    /// Sets the IsActive property to false and suppresses the finalization of the object.
+    /// </summary>
+    public void Dispose()
+    {
+        if (IsActive)
+        {
+            IsActive = false;
+        }
+
+        GC.SuppressFinalize(this);
     }
 }

@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using AutoSpex.Client.Pages;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using L5Sharp.Core;
 
@@ -30,7 +30,7 @@ public partial class PropertyObserver(Property model, ElementObserver element) :
     /// <summary>
     /// The UI friendly type name of the current property.
     /// </summary>
-    public string Type => $"{{{Model.Identifier}}}";
+    public string Type => $"{{{Model.DisplayName}}}";
 
     /// <summary>
     /// The value of the property retrieved from the instance help within <see cref="_element"/>. 
@@ -38,65 +38,66 @@ public partial class PropertyObserver(Property model, ElementObserver element) :
     public ValueObserver Value => new(Model.GetValue(_element.Model));
 
     /// <summary>
-    /// Represents the path of the current <see cref="Property"/> object.
-    /// The path is constructed by combining the name of the <see cref="Element"/> and the path of the property.
-    /// </summary>
-    public string Path => $"{_element.Element.Name}.{Model.Path}";
-
-    /// <summary>
     /// The collection of child <see cref="PropertyObserver"/> that are navigable from this property instance given the
     /// current root <see cref="ElementObserver"/>.
     /// </summary>
     public IEnumerable<PropertyObserver> Properties => GetProperties();
 
-    /// <summary>
-    /// indicates that the observer is visible in the control in which it is being presented.
-    /// </summary>
-    [ObservableProperty] private bool _isVisible = true;
-
-    /// <summary>
-    /// Indicates that the observer is expanded within the tree view
-    /// </summary>
-    [ObservableProperty] private bool _isExpanded;
-
-    /// <summary>
-    /// Indicates that the observer is selected from the UI.
-    /// </summary>
-    [ObservableProperty] private bool _isSelected;
-
     [RelayCommand]
-    private Task Copy()
+    private async Task CopyValue()
     {
-        throw new NotImplementedException();
+        try
+        {
+            var clipboard = Shell.Clipboard;
+            if (clipboard is null) return;
+            await clipboard.SetTextAsync(Value.ToString());
+        }
+        catch (Exception e)
+        {
+            Notifier.ShowError("Command failed", e.Message);
+        }
     }
 
     [RelayCommand]
-    private Task CreateVariable()
+    private async Task CreateVariable()
     {
-        var sourceId = _element.SourceId;
-
-        return Task.CompletedTask;
+        try
+        {
+            var variable = await Prompter.Show<VariableObserver?>(() => new NewVariablePageModel(Value.Model));
+            if (variable is null) return;
+            Notifier.ShowSuccess("Variable created",
+                $"{variable.Name} successfully created for in {variable.Node?.Name}");
+        }
+        catch (Exception e)
+        {
+            Notifier.ShowError("Command failed", e.Message);
+        }
     }
 
-    /// <summary>
-    /// Finds properties that pass the filter recursively.
-    /// </summary>
-    /// <param name="filter">The filter string.</param>
-    /// <param name="depth">The depth of the filter.</param>
-    /// <returns>A collection of PropertyObserver objects that pass the filter.</returns>
-    public IEnumerable<PropertyObserver> FindProperties(string? filter, int depth = 0)
+    [RelayCommand]
+    private void ViewValue()
     {
-        var properties = new List<PropertyObserver>();
+        try
+        {
+        }
+        catch (Exception e)
+        {
+            Notifier.ShowError("Command failed", e.Message);
+        }
+    }
 
-        if (depth > MaxFilterDepth) return properties;
+    /// <inheritdoc />
+    public override bool Filter(string? filter)
+    {
+        if (Model.TypeGraph.Length > MaxFilterDepth) return false;
 
-        if (Filter(filter))
-            properties.Add(this);
+        var passes = base.Filter(filter) || Type.Satisfies(filter) || Value.Filter(filter);
+        var children = Properties.Count(x => x.Filter(filter));
 
-        foreach (var property in Properties)
-            properties.AddRange(property.FindProperties(filter, depth + 1));
+        IsVisible = passes || children > 0;
+        IsExpanded = !string.IsNullOrEmpty(filter) && children > 0;
 
-        return properties;
+        return IsVisible;
     }
 
     /// <summary>
@@ -117,7 +118,7 @@ public partial class PropertyObserver(Property model, ElementObserver element) :
         //If this is a normal property then just return the sub properties wrapped in the observer and pass
         //down the root Element.
         return Model.Properties
-            .Where(p => p.Type != _element.Element.Type &&
+            .Where(p => p.Type != _element.Type.Type &&
                         p.Name != "This") //No self referencing types please. Just confusing to look at.
             .Select(p => new PropertyObserver(p, _element));
     }
@@ -125,11 +126,11 @@ public partial class PropertyObserver(Property model, ElementObserver element) :
     /// <summary>
     /// Creates a collection of child pseudo properties for the current property collection type.
     /// </summary>
-    private IEnumerable<PropertyObserver> GetCollectionProperties()
+    private List<PropertyObserver> GetCollectionProperties()
     {
         //Get the collection instance and if not an IEnumerable return empty properties.
         var value = Model.GetValue(_element.Model);
-        if (value is not IEnumerable enumerable) return Enumerable.Empty<PropertyObserver>();
+        if (value is not IEnumerable enumerable) return [];
 
         var properties = new List<PropertyObserver>();
 
@@ -145,18 +146,5 @@ public partial class PropertyObserver(Property model, ElementObserver element) :
         }
 
         return properties;
-    }
-
-    /// <summary>
-    /// Determines whether the property passes the filter.
-    /// </summary>
-    /// <param name="filter">The filter string.</param>
-    /// <returns>True if the property passes the filter, false otherwise.</returns>
-    public override bool Filter(string? filter)
-    {
-        return base.Filter(filter)
-               || Name.Satisfies(filter)
-               || Type.Satisfies(filter)
-               || Value?.ToString()?.Satisfies(filter) is true;
     }
 }

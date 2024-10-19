@@ -14,7 +14,8 @@ public class CriterionTests
         criterion.Type.Should().Be(typeof(object));
         criterion.Property.Should().Be(Property.Default);
         criterion.Operation.Should().Be(Operation.None);
-        criterion.Arguments.Should().BeEmpty();
+        criterion.Argument.Should().NotBeNull();
+        criterion.Argument.Value.Should().BeNull();
     }
 
     [Test]
@@ -25,20 +26,22 @@ public class CriterionTests
         criterion.Type.Should().Be(typeof(Tag));
         criterion.Property.Should().Be(Element.Tag.Property("Value"));
         criterion.Operation.Should().Be(Operation.Between);
-        criterion.Arguments.Should().HaveCount(2);
+        criterion.Argument.Value.Should().BeOfType<List<Argument>>();
+        criterion.Argument.Value.As<List<Argument>>().Should().HaveCount(2);
     }
 
     [Test]
     public void New_InnerCriterionArgument_ShouldHaveExpected()
     {
-        var criterion = new Criterion(Element.Tag.Property("Members"), Operation.Any,
-            new Criterion(Element.Tag.Property("Name"), Operation.Containing, "Test"));
+        var innerCriterion = new Criterion(Element.Tag.Property("Name"), Operation.Containing, "Test");
+        var criterion = new Criterion(Element.Tag.Property("Members"), Operation.Any, innerCriterion);
 
         criterion.Type.Should().Be(typeof(Tag));
         criterion.Property.Should().Be(Element.Tag.Property("Members"));
         criterion.Operation.Should().Be(Operation.Any);
-        criterion.Arguments.Should().HaveCount(1);
-        criterion.Arguments.First().Value.Should().BeOfType<Criterion>();
+        criterion.Argument.Value.Should().BeOfType<Criterion>();
+        criterion.Argument.Value.Should().BeEquivalentTo(innerCriterion);
+        
     }
 
     [Test]
@@ -200,7 +203,7 @@ public class CriterionTests
 
         evaluation.Result.Should().Be(ResultState.Passed);
     }
-    
+
     [Test]
     public void True_WhenEvaluatedWithFalse_ShouldBePassed()
     {
@@ -210,7 +213,7 @@ public class CriterionTests
 
         evaluation.Result.Should().Be(ResultState.Passed);
     }
-    
+
     [Test]
     public void True_WhenEvaluatedWithNull_ShouldBePassed()
     {
@@ -220,7 +223,7 @@ public class CriterionTests
 
         evaluation.Result.Should().Be(ResultState.Passed);
     }
-    
+
     [Test]
     public void False_WhenEvaluatedWithSomeString_ShouldBeFailed()
     {
@@ -230,7 +233,7 @@ public class CriterionTests
 
         evaluation.Result.Should().Be(ResultState.Failed);
     }
-    
+
     [Test]
     public void False_WhenEvaluatedWithFalse_ShouldBeFailed()
     {
@@ -240,7 +243,7 @@ public class CriterionTests
 
         evaluation.Result.Should().Be(ResultState.Failed);
     }
-    
+
     [Test]
     public void False_WhenEvaluatedWithNull_ShouldBeFailed()
     {

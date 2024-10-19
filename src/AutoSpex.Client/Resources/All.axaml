@@ -43,7 +43,6 @@
 
     <converters:KeyResourceConverter x:Key="KeyIconConverter">
         <converters:ValueResourceKey Value="Collections" Resource="IconFilledStack" />
-        <converters:ValueResourceKey Value="Environments" Resource="IconFilledCog" />
         <converters:ValueResourceKey Value="Specs" Resource="IconFilledClipboard" />
         <converters:ValueResourceKey Value="Sources" Resource="IconLineXml" />
         <converters:ValueResourceKey Value="Runs" Resource="IconFilledLightning" />
@@ -53,7 +52,6 @@
         <converters:ValueResourceKey Value="Collection" Resource="IconThemedCollection" />
         <converters:ValueResourceKey Value="Container" Resource="IconThemedContainer" />
         <converters:ValueResourceKey Value="Spec" Resource="IconThemedSpec" />
-        <converters:ValueResourceKey Value="Environment" Resource="IconThemedEnvironment" />
         <converters:ValueResourceKey Value="Source" Resource="IconThemedSource" />
         <converters:ValueResourceKey Value="Run" Resource="IconThemedRun" />
         <converters:ValueResourceKey Value="Runner" Resource="IconThemedRun" />

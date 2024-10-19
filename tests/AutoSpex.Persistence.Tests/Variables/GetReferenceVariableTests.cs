@@ -57,9 +57,9 @@ public class GetReferenceVariableTests
         await mediator.Send(new CreateNode(spec));
 
         var reference = new Reference("SpecVar");
-        spec.AddSpec(c =>
+        spec.Configure(c =>
         {
-            c.Find(Element.Tag);
+            c.Query(Element.Tag);
             c.Filter("Name", Operation.EqualTo, "SomeName");
             c.Verify("TagType", Operation.EqualTo, reference);
         });
@@ -91,9 +91,9 @@ public class GetReferenceVariableTests
         await mediator.Send(new CreateNode(spec));
 
         var reference = new Reference("MyVar01");
-        spec.AddSpec(c =>
+        spec.Configure(c =>
         {
-            c.Find(Element.Tag);
+            c.Query(Element.Tag);
             c.Filter("Name", Operation.EqualTo, "SomeName");
             c.Verify("TagType", Operation.EqualTo, reference);
         });

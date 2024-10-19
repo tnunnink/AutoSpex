@@ -40,19 +40,19 @@ public class ExportNodeTests
         var collection = Node.NewCollection();
         collection.AddSpec("First", s =>
         {
-            s.Find(Element.Tag);
+            s.Query(Element.Tag);
             s.Filter("Name", Operation.Like, "someName");
             s.Verify("Value", Operation.EqualTo, 123);
         });
         collection.AddSpec("Second", s =>
         {
-            s.Find(Element.Tag);
+            s.Query(Element.Tag);
             s.Filter("Name", Operation.Containing, "anotherName");
             s.Verify("Value", Operation.GreaterThan, 456);
         });
         collection.AddSpec("Third", s =>
         {
-            s.Find(Element.Tag);
+            s.Query(Element.Tag);
             s.Filter("Name", Operation.EqualTo, "yetAnotherName");
             s.Verify("Value", Negation.Not, Operation.EqualTo, 678);
             s.VerificationInclusion = Inclusion.Any;
@@ -94,21 +94,21 @@ public class ExportNodeTests
         collection.AddVariable("second", "Another test");
         collection.AddVariable("third", new Tag("MyTag", new DINT(123)));
         var spec = collection.AddSpec("Test");
-        spec.AddSpec(s =>
+        spec.Configure(s =>
         {
-            s.Find(Element.Tag);
+            s.Query(Element.Tag);
             s.Filter("Name", Operation.Like, "someName");
             s.Verify("Value", Operation.EqualTo, 123);
         });
-        spec.AddSpec(s =>
+        spec.Configure(s =>
         {
-            s.Find(Element.Tag);
+            s.Query(Element.Tag);
             s.Filter("Name", Operation.Containing, "anotherName");
             s.Verify("Value", Operation.GreaterThan, 456);
         });
-        spec.AddSpec(s =>
+        spec.Configure(s =>
         {
-            s.Find(Element.Tag);
+            s.Query(Element.Tag);
             s.Filter("Name", Operation.EqualTo, "yetAnotherName");
             s.Verify("Value", Negation.Not, Operation.EqualTo, 678);
             s.VerificationInclusion = Inclusion.Any;

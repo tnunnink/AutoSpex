@@ -43,7 +43,7 @@ public class ArgumentTests
     }
 
     [Test]
-    public void New_VariableReference_ShouldHaveExpectedValues()
+    public void New_Reference_ShouldHaveExpectedValues()
     {
         var value = new Variable("Test", "Test");
         var reference = value.Reference;
@@ -54,12 +54,23 @@ public class ArgumentTests
     }
 
     [Test]
-    public void New_CriterionType_ShouldHaveExpectedValues()
+    public void New_Criterion_ShouldHaveExpectedValues()
     {
         var value = new Criterion(Element.Tag.Property("Name"), Operation.Containing, "Something");
         var argument = new Argument(value);
 
         argument.Should().NotBeNull();
+        argument.Value.Should().BeEquivalentTo(value);
+    }
+    
+    [Test]
+    public void New_ListOfArguments_ShouldHaveExpectedValues()
+    {
+        var value = new List<Argument> { 1, 2, 3, 4 };
+        var argument = new Argument(value);
+
+        argument.Should().NotBeNull();
+        argument.Value.Should().BeOfType<List<Argument>>();
         argument.Value.Should().BeEquivalentTo(value);
     }
 
@@ -161,6 +172,28 @@ public class ArgumentTests
         var result = argument.ResolveAs(typeof(Radix));
 
         result.Should().Be(Radix.Decimal);
+    }
+    
+    [Test]
+    public void ResolveAs_ListNumberArgumentsNumber_ShouldHaveExpectedTypes()
+    {
+        var argument = new Argument(new List<Argument> { 1, 2, 3, 4 });
+
+        var result = argument.ResolveAs(typeof(int));
+
+        result.Should().BeOfType<List<object>>();
+        result.As<List<object>>().Should().AllSatisfy(x => x.Should().BeOfType<int>());
+    }
+    
+    [Test]
+    public void ResolveAs_ListNumberArgumentsAsString_ShouldHaveExpectedTypes()
+    {
+        var argument = new Argument(new List<Argument> { 1, 2, 3, 4 });
+
+        var result = argument.ResolveAs(typeof(string));
+
+        result.Should().BeOfType<List<object>>();
+        result.As<List<object>>().Should().AllSatisfy(x => x.Should().BeOfType<string>());
     }
 
     [Test]

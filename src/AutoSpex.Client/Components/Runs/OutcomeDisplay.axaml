@@ -1,0 +1,111 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine">
+
+    <Design.PreviewWith>
+        <ContentControl
+            Content="{x:Static components:TestData.DefaultOutcome}"
+            ContentTemplate="{DynamicResource OutcomeDisplay}"
+            Margin="20" />
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="OutcomeDisplay" x:DataType="observers:OutcomeObserver">
+
+        <StackPanel Orientation="Horizontal" Spacing="7" VerticalAlignment="Center">
+
+            <ContentControl
+                Content="{Binding Result}"
+                ContentTemplate="{StaticResource ResultPill}" />
+
+            <Border
+                Background="{a:ThemeResource ControlBackgroundBrushSoftDisabled}"
+                BorderThickness="1" Padding="7 0" MinWidth="60" CornerRadius="20">
+                <StackPanel Orientation="Horizontal" Spacing="5">
+                    <PathIcon Theme="{StaticResource IconLineStopwatch}" Classes="accent size-sm" />
+                    <StackPanel Orientation="Horizontal" Spacing="3">
+                        <TextBlock Text="{Binding Duration}" />
+                        <TextBlock Text="ms" Classes="faint" Padding="0 0 0 1" />
+                    </StackPanel>
+                    <ToolTip.Tip>Duration</ToolTip.Tip>
+                </StackPanel>
+            </Border>
+
+            <Button
+                Command="{Binding ApplyFilterCommand}"
+                CommandParameter="{x:Static engine:ResultState.None}"
+                Theme="{a:ControlTheme ButtonSoft}"
+                Classes.accent="{Binding FilterState, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.None}}"
+                Padding="7 0" CornerRadius="20">
+                <StackPanel Orientation="Horizontal" Spacing="5">
+                    <PathIcon Theme="{StaticResource IconLineCircleHalfFill}" Classes="accent size-sm" />
+                    <TextBlock Text="{Binding Total}" Foreground="{a:ThemeResource ControlForegroundBrushSoftAccent}" />
+                    <ToolTip.Tip>Total</ToolTip.Tip>
+                </StackPanel>
+            </Button>
+
+            <Button
+                IsVisible="{Binding Passed}"
+                Command="{Binding ApplyFilterCommand}"
+                CommandParameter="{x:Static engine:ResultState.Passed}"
+                Theme="{a:ControlTheme ButtonSoft}"
+                Classes.success="{Binding FilterState, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Passed}}"
+                Padding="7 0" CornerRadius="20">
+                <StackPanel Orientation="Horizontal" Spacing="5">
+                    <PathIcon Theme="{StaticResource IconFilledCheck}" Classes="success size-sm" />
+                    <TextBlock Text="{Binding Passed}" Foreground="{a:ThemeResource ControlForegroundBrushSoftSuccess}" />
+                    <ToolTip.Tip>Passed</ToolTip.Tip>
+                </StackPanel>
+                <Button.Styles>
+                    <Style Selector="Button.selected">
+                        <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBackgroundBrushSoftSuccess}" />
+                    </Style>
+                </Button.Styles>
+            </Button>
+
+            <Button
+                IsVisible="{Binding Failed}"
+                Command="{Binding ApplyFilterCommand}"
+                CommandParameter="{x:Static engine:ResultState.Failed}"
+                Theme="{a:ControlTheme ButtonSoft}"
+                Classes.danger="{Binding FilterState, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Failed}}"
+                Padding="7 0" CornerRadius="20">
+                <StackPanel Orientation="Horizontal" Spacing="5">
+                    <PathIcon Theme="{StaticResource IconFilledCross}" Classes="danger size-sm" />
+                    <TextBlock Text="{Binding Failed}" Foreground="{a:ThemeResource ControlForegroundBrushSoftDanger}" />
+                    <ToolTip.Tip>Failed</ToolTip.Tip>
+                </StackPanel>
+                <Button.Styles>
+                    <Style Selector="Button.selected">
+                        <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBackgroundBrushSoftDanger}" />
+                    </Style>
+                </Button.Styles>
+            </Button>
+
+            <Button
+                IsVisible="{Binding Errored}"
+                Command="{Binding ApplyFilterCommand}"
+                CommandParameter="{x:Static engine:ResultState.Errored}"
+                Theme="{a:ControlTheme ButtonSoft}"
+                Classes.warning="{Binding FilterState, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Errored}}"
+                Padding="7 0" CornerRadius="20">
+                <StackPanel Orientation="Horizontal" Spacing="5">
+                    <PathIcon Theme="{StaticResource IconFilledExclamation}" Classes="warning size-sm" />
+                    <TextBlock Text="{Binding Errored}"
+                               Foreground="{a:ThemeResource ControlForegroundBrushSoftWarning}" />
+                    <ToolTip.Tip>Errored</ToolTip.Tip>
+                </StackPanel>
+                <Button.Styles>
+                    <Style Selector="Button.selected">
+                        <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBackgroundBrushSoftWarning}" />
+                    </Style>
+                </Button.Styles>
+            </Button>
+
+        </StackPanel>
+
+    </DataTemplate>
+
+</ResourceDictionary>

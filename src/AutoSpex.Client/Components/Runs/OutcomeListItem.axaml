@@ -1,0 +1,83 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+
+    <Design.PreviewWith>
+        <ListBox
+            Margin="20" Width="700" Height="300"
+            ItemsSource="{x:Static components:TestData.DefaultOutcomes}"
+            ItemTemplate="{DynamicResource OutcomeListItem}"
+            ItemContainerTheme="{DynamicResource ListBoxItemEntry}"
+            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+            BorderThickness="1" CornerRadius="5" VerticalAlignment="Top" />
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="OutcomeListItem" x:DataType="observers:OutcomeObserver">
+
+        <Border x:Name="Border" Focusable="True" Background="Transparent" Padding="{a:ThemeResource ListItemPadding}">
+
+            <Interaction.Behaviors>
+                <ExecuteCommandOnKeyDownBehavior
+                    Key="Delete"
+                    Command="{Binding DeleteSelectedCommand}"
+                    MarkAsHandled="True" />
+            </Interaction.Behaviors>
+
+            <Border.ContextFlyout>
+                <MenuFlyout
+                    ItemsSource="{Binding ContextItems}"
+                    ItemContainerTheme="{StaticResource MenuActionItem}"
+                    Placement="Pointer" />
+            </Border.ContextFlyout>
+
+            <DockPanel LastChildFill="False">
+
+                <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+
+                    <PathIcon
+                        Theme="{Binding Result, Converter={StaticResource ResultStateIconConverter}}" />
+
+                    <controls:HighlightableTextBlock
+                        Text="{Binding Name}"
+                        HighlightedText="{Binding FilterText}"
+                        FontWeight="{a:ThemeResource HeadingFontWeightMedium}"
+                        MaxWidth="250"
+                        TextTrimming="CharacterEllipsis"
+                        ToolTip.Tip="{Binding Name}" />
+
+                    <ContentControl
+                        Content="{Binding Node}"
+                        ContentTemplate="{StaticResource BreadcrumbLabel}" />
+
+                </StackPanel>
+
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="5">
+
+                    <StackPanel Orientation="Horizontal" Spacing="2" Margin="10 0">
+                        <PathIcon
+                            Theme="{StaticResource IconLineStopwatch}"
+                            Classes="size-sm accent"
+                            Margin="4 0" />
+                        <TextBlock Text="{Binding Duration}" IsVisible="{Binding Duration}" />
+                        <TextBlock Text="&lt; 1" IsVisible="{Binding !Duration}" />
+                        <TextBlock Text="ms" Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                    </StackPanel>
+
+                    <Button
+                        Command="{Binding NavigateCommand}"
+                        IsEnabled="{Binding Node, Converter={x:Static ObjectConverters.IsNotNull}}"
+                        Theme="{StaticResource IconButtonSmall}"
+                        properties:Icon.Theme="{StaticResource IconLineLaunch}"
+                        ToolTip.Tip="Open Spec" />
+
+                </StackPanel>
+
+            </DockPanel>
+        </Border>
+
+    </DataTemplate>
+</ResourceDictionary>

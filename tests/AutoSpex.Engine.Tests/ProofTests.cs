@@ -12,7 +12,7 @@ public class ProofTests
         var source = L5X.Load(Known.Test);
         var spec = Spec.Configure(c =>
         {
-            c.Find(Element.Tag);
+            c.Query(Element.Tag);
             c.Filter("TagName", Operation.EqualTo, "TestSimpleTag");
             c.Verify("DataType", Operation.EqualTo, "SimpleType");
         });
@@ -30,7 +30,7 @@ public class ProofTests
         var source = L5X.Load(Known.Test);
         var spec = Spec.Configure(c =>
         {
-            c.Find(Element.Tag);
+            c.Query(Element.Tag);
             c.Filter("TagName", Operation.EqualTo, "TestSimpleTag");
             c.Verify("DataType", Operation.EqualTo, "SimpleType");
         });
@@ -57,7 +57,7 @@ public class ProofTests
 
         var spec = Spec.Configure(c =>
         {
-            c.Find(Element.Module);
+            c.Query(Element.Module);
             c.Filter("CatalogNumber", Operation.EqualTo, "5094-IB16/A");
             c.Verify("Revision", Operation.EqualTo, "2.1");
         });
@@ -65,11 +65,5 @@ public class ProofTests
         var verification = await spec.RunAsync(source);
 
         verification.Result.Should().Be(ResultState.Passed);
-    }
-
-    [Test]
-    public void METHOD()
-    {
-        
     }
 }
