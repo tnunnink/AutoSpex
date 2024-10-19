@@ -10,32 +10,67 @@
     <Design.Height>800</Design.Height>
     <Design.Width>1200</Design.Width>
 
-    <Panel>
+    <DockPanel>
+        
+        <Grid DockPanel.Dock="Top"
+              ColumnDefinitions="Auto,*,Auto"
+              Margin="0 0 0 10"
+              IsVisible="{Binding Variables.HasItems}">
+
+            <TextBox
+                Grid.Column="0"
+                Text="{Binding Filter}"
+                Watermark="Search variables"
+                Theme="{StaticResource TextBoxOutlineHighlight}"
+                BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                MinWidth="300">
+                <TextBox.InnerLeftContent>
+                    <PathIcon
+                        Theme="{StaticResource IconLineSearch}"
+                        Margin="10 0 0 0"
+                        Classes="size-sm" />
+                </TextBox.InnerLeftContent>
+            </TextBox>
+
+            <Button
+                Grid.Column="2"
+                Command="{Binding AddVariableCommand}"
+                Theme="{a:ControlTheme ButtonSoft}">
+                <StackPanel Orientation="Horizontal" Spacing="7">
+                    <PathIcon
+                        Theme="{StaticResource IconAdd}"
+                        Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
+                        Classes="size-sm" />
+                    <TextBlock Text="Add Variable" />
+                </StackPanel>
+            </Button>
+
+        </Grid>
 
         <controls:DefaultMessage
-            VerticalAlignment="Top" Margin="20"
-            IsVisible="{Binding !Variables.Count}"
+            DockPanel.Dock="Top" Margin="20"
+            IsVisible="{Binding !Variables.HasItems}"
             HeaderIcon="{StaticResource IconLineAt}"
             Header="No variables defined"
             Message="Add variables to reference data dynamically from criteria arguments.">
             <controls:DefaultMessage.Action>
                 <Button
                     Command="{Binding AddVariableCommand}"
-                    Theme="{a:ControlTheme ButtonSubtle}"
-                    Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
+                    Theme="{a:ControlTheme ButtonSolid}"
+                    Classes="accent"
                     Margin="10">
-                    <StackPanel Orientation="Horizontal" Spacing="5">
+                    <StackPanel Orientation="Horizontal" Spacing="7">
                         <PathIcon
                             Theme="{StaticResource IconAdd}"
                             Foreground="{Binding $parent[Button].Foreground}"
-                            Classes="size-sm" Margin="0 1 0 0" />
+                            Classes="size-sm" />
                         <TextBlock Text="Add Variable" />
                     </StackPanel>
                 </Button>
             </controls:DefaultMessage.Action>
         </controls:DefaultMessage>
 
-        <StackPanel Spacing="10" IsVisible="{Binding Variables.Count}">
+        <StackPanel Spacing="10" IsVisible="{Binding Variables.HasItems}">
 
             <ListBox
                 ItemsSource="{Binding Variables}"
@@ -44,23 +79,10 @@
                 ItemContainerTheme="{StaticResource ListBoxItemEntry}"
                 SelectionMode="Multiple"
                 BorderBrush="{a:ThemeResource Container1BorderBrush}"
-                BorderThickness="1"
-                CornerRadius="5" />
+                BorderThickness="1" CornerRadius="5" />
 
-            <Button
-                Command="{Binding AddVariableCommand}"
-                HorizontalAlignment="Left"
-                Theme="{a:ControlTheme ButtonSubtle}"
-                Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}">
-                <StackPanel Orientation="Horizontal" Spacing="5">
-                    <PathIcon
-                        Theme="{StaticResource IconAdd}"
-                        Foreground="{Binding $parent[Button].Foreground}"
-                        Classes="size-sm" Margin="0 1 0 0" />
-                    <TextBlock Text="Add Variable" />
-                </StackPanel>
-            </Button>
+
         </StackPanel>
 
-    </Panel>
+    </DockPanel>
 </UserControl>

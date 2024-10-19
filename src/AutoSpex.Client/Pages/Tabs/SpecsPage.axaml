@@ -11,12 +11,15 @@
     <Design.Width>1200</Design.Width>
 
     <DockPanel>
-        <Grid DockPanel.Dock="Top" ColumnDefinitions="Auto,*,Auto" Margin="0 0 0 10">
+
+        <Grid DockPanel.Dock="Top"
+              ColumnDefinitions="Auto,*,Auto"
+              Margin="0 0 0 10"
+              IsVisible="{Binding Specs.HasItems}">
 
             <TextBox
                 Grid.Column="0"
                 Text="{Binding Filter}"
-                IsVisible="{Binding Specs.HasItems}"
                 Watermark="Search specs"
                 Theme="{StaticResource TextBoxOutlineHighlight}"
                 BorderBrush="{a:ThemeResource Container1BorderBrush}"
@@ -29,22 +32,34 @@
                 </TextBox.InnerLeftContent>
             </TextBox>
 
+            <Button
+                Grid.Column="2"
+                Command="{Binding AddSpecCommand}"
+                Theme="{a:ControlTheme ButtonSoft}">
+                <StackPanel Orientation="Horizontal" Spacing="7">
+                    <PathIcon
+                        Theme="{StaticResource IconAdd}"
+                        Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
+                        Classes="size-sm" />
+                    <TextBlock Text="Add Spec" />
+                </StackPanel>
+            </Button>
+
         </Grid>
 
         <controls:DefaultMessage
-            DockPanel.Dock="Top"
+            DockPanel.Dock="Top" Margin="20"
             IsVisible="{Binding !Specs.HasItems}"
             HeaderIcon="{StaticResource IconFilledClipboard}"
             Header="No specs defined"
-            Message="Add a new spec to this collection or container to get started."
-            Margin="10">
+            Message="Add a new spec to this collection or container to get started.">
             <controls:DefaultMessage.Action>
                 <Button
                     Command="{Binding AddSpecCommand}"
-                    Theme="{a:ControlTheme ButtonSubtle}"
-                    Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
-                    Margin="4">
-                    <StackPanel Orientation="Horizontal" Spacing="5">
+                    Theme="{a:ControlTheme ButtonSolid}"
+                    Classes="accent"
+                    Margin="10">
+                    <StackPanel Orientation="Horizontal" Spacing="7">
                         <PathIcon
                             Theme="{StaticResource IconAdd}"
                             Foreground="{Binding $parent[Button].Foreground}"
@@ -66,28 +81,13 @@
                 SelectionMode="Multiple"
                 BorderBrush="{a:ThemeResource Container1BorderBrush}"
                 BorderThickness="1" CornerRadius="5" />
-            
+
             <controls:DefaultMessage
                 IsVisible="{Binding !Specs.Count}"
                 HeaderIcon="{StaticResource IconFilledClipboard}"
                 Header="No specs found"
                 Message="Could not find any specs matching the current filter text."
-                Margin="10"/>
-
-            <Button
-                Command="{Binding AddSpecCommand}"
-                IsVisible="{Binding Specs.Count}"
-                Theme="{a:ControlTheme ButtonSubtle}"
-                Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
-                HorizontalAlignment="Left" Margin="0 10">
-                <StackPanel Orientation="Horizontal" Spacing="5">
-                    <PathIcon
-                        Theme="{StaticResource IconAdd}"
-                        Foreground="{Binding $parent[Button].Foreground}"
-                        Classes="size-sm" />
-                    <TextBlock Text="Add Spec" />
-                </StackPanel>
-            </Button>
+                Margin="10" />
 
         </StackPanel>
 

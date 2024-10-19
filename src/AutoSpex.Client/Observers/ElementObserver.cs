@@ -1,59 +1,102 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AutoSpex.Client.Pages;
+using AutoSpex.Client.Resources;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
-using Avalonia.Input;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using L5Sharp.Core;
 
 namespace AutoSpex.Client.Observers;
 
-public partial class ElementObserver(LogixElement model) : Observer<LogixElement>(model)
+public partial class ElementObserver : Observer<LogixElement>
 {
-    public Guid SourceId => DetermineSourceId();
+    /// <inheritdoc/>
+    public ElementObserver(LogixElement model) : base(model)
+    {
+        Description = DetermineDescription();
+        Container = DetermineContainer();
+        Type = Element.FromName(Model.GetType().Name);
+    }
+
     public override string Name => DetermineName();
-    public string? Description => DetermineDescription();
-    public string? Container => DetermineContainer();
-    public Element Element => Element.FromName(Model.GetType().Name);
+    public string? Description { get; }
+    public string? Container { get; }
+    public Element Type { get; }
     public IEnumerable<PropertyObserver> Properties => GetProperties();
 
     #region Commands
 
-    /// <inheritdoc />
-    /// <remarks>
-    /// </remarks>
-    protected override Task Navigate()
-    {
-        Messenger.Send(new Open(this));
-        return Task.CompletedTask;
-    }
-
     [RelayCommand]
     private async Task CopyElement()
     {
-        var clipboard = Shell.Clipboard;
-        if (clipboard is null) return;
-
-        var data = new DataObject();
-        data.Set(nameof(ElementObserver), this);
-        await clipboard.SetDataObjectAsync(data);
+        try
+        {
+            var clipboard = Shell.Clipboard;
+            if (clipboard is null) return;
+            await clipboard.SetTextAsync(Model.Serialize().ToString());
+        }
+        catch (Exception e)
+        {
+            Notifier.ShowError("Command failed", e.Message);
+        }
     }
 
     [RelayCommand]
     private async Task CopyName()
     {
-        var clipboard = Shell.Clipboard;
-        if (clipboard is null) return;
-        await clipboard.SetTextAsync(Name);
+        try
+        {
+            var clipboard = Shell.Clipboard;
+            if (clipboard is null) return;
+            await clipboard.SetTextAsync(Name);
+        }
+        catch (Exception e)
+        {
+            Notifier.ShowError("Command failed", e.Message);
+        }
     }
 
     [RelayCommand]
-    private Task CreateVariable()
+    private void ViewProperties()
     {
-        throw new NotImplementedException();
+        try
+        {
+            Messenger.Send(new ShowProperties(this));
+        }
+        catch (Exception e)
+        {
+            Notifier.ShowError("Command failed", e.Message);
+        }
     }
+
+    [RelayCommand]
+    private async Task CreateVariable()
+    {
+        try
+        {
+            var variable = await Prompter.Show<VariableObserver?>(() => new NewVariablePageModel(Model));
+            if (variable is null) return;
+            Notifier.ShowSuccess("Variable created",
+                $"{variable.Name} successfully created for in {variable.Node?.Name}");
+        }
+        catch (Exception e)
+        {
+            Notifier.ShowError("Command failed", e.Message);
+        }
+    }
+
+    #endregion
+
+    #region Messages
+
+    /// <summary>
+    /// A message that can be sent to a parent page to signal the opening of the properties for this element.
+    /// </summary>
+    /// <param name="Element">The element instance for which to view properties.</param>
+    public record ShowProperties(ElementObserver Element);
 
     #endregion
 
@@ -65,24 +108,88 @@ public partial class ElementObserver(LogixElement model) : Observer<LogixElement
     /// <returns><c>true</c> if this observer passes the filter, otherwise, <c>false</c></returns>
     public override bool Filter(string? filter)
     {
-        return base.Filter(filter) || Container.Satisfies(filter);
+        FilterText = filter;
+        return Name.Satisfies(filter) || Container.Satisfies(filter) || Description.Satisfies(filter);
     }
 
     public override string ToString() => DetermineName();
 
-    private Guid DetermineSourceId()
+    /// <inheritdoc />
+    protected override IEnumerable<MenuActionItem> GenerateMenuItems()
     {
-        var element = Model.Serialize();
-        var id = element.Ancestors(L5XName.RSLogix5000Content).SingleOrDefault()?.Attribute(nameof(SourceId))?.Value;
-        return id is not null ? Guid.Parse(id) : Guid.Empty;
+        yield return new MenuActionItem
+        {
+            Header = "Copy Element",
+            Icon = Resource.Find("IconFilledClone"),
+            Command = CopyElementCommand
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Copy Name",
+            Icon = Resource.Find("IconFilledClone"),
+            Command = CopyNameCommand
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Create Variable",
+            Icon = Resource.Find("IconLineAt"),
+            Command = CreateVariableCommand
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "View Properties",
+            Icon = Resource.Find("IconFilledBinoculars"),
+            Command = ViewPropertiesCommand
+        };
     }
+
+    /// <inheritdoc />
+    protected override IEnumerable<MenuActionItem> GenerateContextItems()
+    {
+        yield return new MenuActionItem
+        {
+            Header = "Copy Element",
+            Icon = Resource.Find("IconFilledClone"),
+            Command = CopyElementCommand,
+            DetermineVisibility = () => HasSingleSelection
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Copy Name",
+            Icon = Resource.Find("IconFilledClone"),
+            Command = CopyNameCommand,
+            DetermineVisibility = () => HasSingleSelection
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Create Variable",
+            Icon = Resource.Find("IconLineAt"),
+            Command = CreateVariableCommand,
+            DetermineVisibility = () => HasSingleSelection
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "View Properties",
+            Icon = Resource.Find("IconFilledBinoculars"),
+            Command = ViewPropertiesCommand,
+            DetermineVisibility = () => HasSingleSelection
+        };
+    }
+
 
     private string DetermineName()
     {
         return Model switch
         {
-            LogixCode code => code.Scope,
-            LogixComponent component => component.Scope.Name,
+            Tag tag => tag.TagName,
+            LogixCode code => $"{code.Scope.Type} {code.Scope.Name}",
+            LogixComponent component => component.Name,
             _ => Model.ToString() ?? Model.L5XType
         };
     }
@@ -101,21 +208,16 @@ public partial class ElementObserver(LogixElement model) : Observer<LogixElement
 
     private string? DetermineContainer()
     {
-        return Model is LogixScoped element ? element.Scope.Container : default;
+        return Model is LogixScoped scoped
+            ? $"{scoped.Scope.Controller}/{scoped.Scope.Program}/{scoped.Scope.Routine}".Trim('/')
+            : default;
     }
 
     private IEnumerable<PropertyObserver> GetProperties()
     {
-        return Element.This.Properties.Select(p => new PropertyObserver(p, this));
+        return Type.This.Properties.Select(p => new PropertyObserver(p, this));
     }
 
     public static implicit operator LogixElement(ElementObserver observer) => observer.Model;
     public static implicit operator ElementObserver(LogixElement element) => new(element);
-
-    /// <summary>
-    /// A message to be sent to a containing page to allow this element observer to be opened.
-    /// Opening an element just involves viewing its property tree to see the data from the interface.
-    /// </summary>
-    /// <param name="Element">The element to open</param>
-    public record Open(ElementObserver Element);
 }

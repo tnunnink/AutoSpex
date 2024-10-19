@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using AutoSpex.Persistence;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Argument = AutoSpex.Engine.Argument;
 
@@ -20,70 +22,62 @@ public partial class ArgumentObserver : Observer<Argument>
 {
     public ArgumentObserver(Argument argument) : base(argument)
     {
+        Value = GetValue();
         Track(nameof(Value));
-    }
-
-    public ArgumentObserver() : this(new Argument())
-    {
+        Track(Value);
     }
 
     /// <inheritdoc />
     public override Guid Id => Model.ArgumentId;
 
     /// <summary>
-    /// Indicates that the argument's value is an inner criterion object itself. This controls whether we will display
-    /// a simple argument entry field or a nested criterion entry field.
+    /// The value of the argument. This is expected to be some <see cref="ITrackable"/> observer or observer collection
+    /// so that we can detect and respond to changes. The underlying value is initially set from the passed in mode
+    /// depending on how it's parent criterion created it based on the selected operation. From there we either update
+    /// this value directly if a binary type operations or update the nested object for inner criterion or observer collections.
     /// </summary>
-    public bool IsCriterion => Value.Group == TypeGroup.Criterion;
+    [ObservableProperty] private ITrackable _value;
 
     /// <summary>
-    /// Indicates that the argument's value is an collection of values.
+    /// Gets the parent criterion that contains the argument. We need this to determine the property type and operation
+    /// so that we can get suggesstable values and parse the input text correctly.
     /// </summary>
-    public bool IsCollection => Value.Group == TypeGroup.Collection;
-
-    /// <summary>
-    /// The value of the argument which represents the data in which the criterion will evaluate against. This
-    /// is ultimately the persisted value.
-    /// </summary>
-    public ValueObserver Value
-    {
-        get => new(Model.Value);
-        set => SetProperty(new ValueObserver(Model.Value), value, Model, (a, v) => a.Value = v.Model);
-    }
+    public CriterionObserver? Criterion => GetObserver<CriterionObserver>(IsParent);
 
     /// <summary>
     /// The function that retrieves a collection of object values that are suggestions to the entry control.
     /// </summary>
     public Func<string?, CancellationToken, Task<IEnumerable<object>>> Suggestions => GetSuggestions;
 
-    /// <inheritdoc />
-    public override string ToString() => Value.ToString();
+    /// <summary>
+    /// Gets a value indicating whether the Value property is empty.
+    /// This is only used for basic input entries for binrary operations.
+    /// </summary>
+    public bool IsEmpty => Value is ValueObserver { IsEmpty: true };
 
     /// <summary>
     /// Updates the argument <see cref="Value"/> based on the received value type from the entry field.
     /// If user enters simple text we would like to parse it as the strong type to let our data templates work.
     /// If the user enters a variable reference (text starting with '@') then we want to find and resolve the object.
-    /// If user enters a complex object then it was selected from the suggestions, and we can just use that.
+    /// If user enters a complex object, then it was selected from the suggestions, and we can just use that.
     /// Anything else just wrap in a value observer and set accordingly.
     /// </summary>
     [RelayCommand]
     private async Task UpdateValue(object? value)
     {
-        var criterion = GetObserver<CriterionObserver>(x => x.Arguments.Any(a => a.Id == Id));
-        var group = criterion?.Property.Group;
+        var group = Criterion?.Property.Group;
 
         switch (value)
         {
             case string text when text.StartsWith(Reference.Prefix):
                 var reference = await ResolveReference(text);
-                Value = new ValueObserver(reference);
+                Value = new ReferenceObserver(reference);
                 return;
             case string text when group?.TryParse(text, out var parsed) is true && parsed is not null:
                 Value = new ValueObserver(parsed);
                 return;
             case ValueObserver observer:
-                //Set to the variable reference and not the actual variable object itself.
-                Value = observer.Model is Variable variable ? new ValueObserver(variable.Reference()) : observer;
+                Value = observer.Model is Variable variable ? new ReferenceObserver(variable.Reference()) : observer;
                 return;
             default:
                 Value = new ValueObserver(value);
@@ -91,13 +85,58 @@ public partial class ArgumentObserver : Observer<Argument>
         }
     }
 
+    /// <inheritdoc />
+    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+    {
+        base.OnPropertyChanged(e);
+
+        //Sync the obsever value with that of the underlying model object.
+        if (e.PropertyName is not nameof(Value)) return;
+        SetValue(Value);
+        OnPropertyChanged(nameof(IsEmpty));
+    }
+
+    /// <summary>
+    /// Returns the wrapped model value if the model has a corresponding observer type.
+    /// Collections are wrapped in the ObserverCollection since it implements ITrackable, so we can notify changes when the user updates the list.
+    /// And default value will be wrapped in a value observer to be used with data templates
+    /// </summary>
+    private ITrackable GetValue()
+    {
+        return Model.Value switch
+        {
+            Reference reference => new ReferenceObserver(reference),
+            Criterion criterion => new CriterionObserver(criterion),
+            List<Argument> arguments => new ObserverCollection<Argument, ArgumentObserver>(arguments.ToList(),
+                a => new ArgumentObserver(a)),
+            _ => new ValueObserver(Model.Value)
+        };
+    }
+
+    /// <summary>
+    /// Sets the underlying argument value based on the provided object. This object should either be a nested observer
+    /// Criterion or Reference, nested observer collection of argument observers which in turn wrap single values,
+    /// or some default value wrapped in a value observer.
+    /// </summary>
+    private void SetValue(object? value)
+    {
+        Model.Value = value switch
+        {
+            ReferenceObserver reference => reference.Model,
+            CriterionObserver criterion => criterion.Model,
+            ObserverCollection<Argument, ArgumentObserver> collection => collection.Select(x => x.Model).ToList(),
+            ValueObserver observer => observer.Model,
+            _ => value
+        };
+    }
+
     /// <summary>
     /// Queries the database for a variable in scope with the specified name and returns it, or null if not found.
     /// </summary>
-    private async Task<object?> ResolveReference(string name)
+    private async Task<Reference> ResolveReference(string name)
     {
         var scoped = await GetScopedVariables(string.Empty, CancellationToken.None);
-        
+
         return scoped.FirstOrDefault(v => v.Name == name)?.Model is Variable match
             ? match.Reference()
             : new Reference(name);
@@ -111,7 +150,10 @@ public partial class ArgumentObserver : Observer<Argument>
     {
         var suggestions = new List<object>();
 
-        suggestions.AddRange(GetOptions(filter));
+        var options = GetOptions(filter);
+        suggestions.AddRange(options);
+
+        //todo get possible source values based on type/property of the parent criterion
 
         var variables = await GetScopedVariables(filter, token);
         suggestions.AddRange(variables);
@@ -134,7 +176,7 @@ public partial class ArgumentObserver : Observer<Argument>
         //but if not found will just return empty collection.
         //Remember we are doing in memory retrieval of this node id becuause this data may not yet be persisted.
         var node = GetObserver<NodeObserver>(x =>
-            x.Model.Specs.Any(s => s.Filters.Any(f => f.Contains(Id)) || s.Verifications.Any(v => v.Contains(Id))));
+            x.Model.Spec.Filters.Any(f => f.Contains(Id)) || x.Model.Spec.Verifications.Any(v => v.Contains(Id)));
 
         if (node is null) return [];
 
@@ -147,9 +189,8 @@ public partial class ArgumentObserver : Observer<Argument>
     /// </summary>
     private IEnumerable<ValueObserver> GetOptions(string? filter)
     {
-        var criterion = GetObserver<CriterionObserver>(x => x.Arguments.Any(a => a.Id == Id));
-        var type = criterion?.Property.Type;
-        var group = criterion?.Property.Group;
+        var type = Criterion?.Property.Type;
+        var group = Criterion?.Property.Group;
 
         if (type is null) return [];
 
@@ -159,6 +200,19 @@ public partial class ArgumentObserver : Observer<Argument>
         return group == TypeGroup.Enum
             ? type.GetOptions().Select(x => new ValueObserver(x)).Where(v => v.Filter(filter))
             : [];
+    }
+
+    /// <summary>
+    /// Determines whether the specified criterion is a parent of the current argument observer.
+    /// </summary>
+    /// <param name="criterion">The criterion to check if it is a parent.</param>
+    /// <returns>True if the criterion is a parent, otherwise false.</returns>
+    private bool IsParent(CriterionObserver criterion)
+    {
+        if (criterion.Argument.Id == Id) return true;
+        if (criterion.Argument.Value is not ObserverCollection<Argument, ArgumentObserver> collection) return false;
+        if (collection.Any(a => a.Id == Id)) return true;
+        return false;
     }
 
     public static implicit operator Argument(ArgumentObserver observer) => observer.Model;

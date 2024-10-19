@@ -11,12 +11,11 @@ public class ListNodesTests
 
         var result = await mediator.Send(new ListNodes());
 
-        result.IsSuccess.Should().BeTrue();
-        result.Value.Should().BeEmpty();
+        result.Should().BeEmpty();
     }
 
     [Test]
-    public async Task ListNodes_SpecTypeWithSeededNodes_ShouldBeSuccessAndExpectedCount()
+    public async Task ListNodes_SpecTypeWithSeededNodes_ShouldHaveExpectedCount()
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
@@ -26,12 +25,11 @@ public class ListNodesTests
 
         var result = await mediator.Send(new ListNodes());
 
-        result.IsSuccess.Should().BeTrue();
-        result.Value.Should().HaveCount(3);
+        result.Should().HaveCount(3);
     }
 
     [Test]
-    public async Task ListNodes_WithSeededHierarchy_ShouldBeSuccessAndExpectedCount()
+    public async Task ListNodes_WithSeededHierarchy_ShouldHAveExpectedCount()
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
@@ -40,11 +38,10 @@ public class ListNodesTests
         await mediator.Send(new CreateNode(collection.AddContainer()));
         await mediator.Send(new CreateNode(collection.AddSpec()));
 
-        var result = await mediator.Send(new ListNodes());
-
-        result.IsSuccess.Should().BeTrue();
-        result.Value.Should().HaveCount(1);
-        result.Value.First().Type.Should().Be(NodeType.Container);
-        result.Value.First().Nodes.Should().HaveCount(2);
+        var result = (await mediator.Send(new ListNodes())).ToList();
+        
+        result.Should().HaveCount(1);
+        result.First().Type.Should().Be(NodeType.Container);
+        result.First().Nodes.Should().HaveCount(2);
     }
 }

@@ -7,7 +7,6 @@ using AutoSpex.Persistence;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
-using Environment = AutoSpex.Engine.Environment;
 
 namespace AutoSpex.Client.Pages;
 
@@ -15,7 +14,7 @@ namespace AutoSpex.Client.Pages;
 public partial class NavigationPageModel : PageViewModel
 {
     public Task<NodeTreePageModel> NodeTree => Navigator.Navigate<NodeTreePageModel>();
-    public Task<EnvironmentListPageModel> EnvironmentList => Navigator.Navigate<EnvironmentListPageModel>();
+    public Task<SourceSelectorPageModel> SourceSelector => Navigator.Navigate<SourceSelectorPageModel>();
 
     #region Commands
 
@@ -23,7 +22,7 @@ public partial class NavigationPageModel : PageViewModel
     /// Command to quickly create a new collection node.
     /// </summary>
     [RelayCommand]
-    private async Task NewCollection()
+    private async Task AddCollection()
     {
         var node = Node.NewCollection();
 
@@ -49,17 +48,18 @@ public partial class NavigationPageModel : PageViewModel
     }
 
     /// <summary>
-    /// Command to quickly create a new environment and open the details for in the detail view.
+    /// Command to quickly create a new source and open the details for in the detail view.
     /// </summary>
     [RelayCommand]
-    private async Task AddEnvironment()
+    private async Task AddSource()
     {
-        var environment = new Environment();
-        
-        var result = await Mediator.Send(new CreateEnvironment(environment));
-        if (result.IsFailed) return;
+        var source = await Prompter.Show<SourceObserver?>(() => new NewSourcePageModel());
+        if (source is null) return;
 
-        var observer = new EnvironmentObserver(environment) { IsNew = true };
+        var result = await Mediator.Send(new CreateSource(source));
+        if (Notifier.ShowIfFailed(result, "Failed to create new source. See notifications for details.")) return;
+
+        var observer = new SourceObserver(source);
         Messenger.Send(new Observer.Created(observer));
         await Navigator.Navigate(observer);
     }
@@ -85,9 +85,9 @@ public partial class NavigationPageModel : PageViewModel
 
         var import = await Mediator.Send(new ImportNode(package, action));
         if (Notifier.ShowIfFailed(import)) return;
-        
+
         Messenger.Send(new Observer.Created(new NodeObserver(import.Value)));
-        
+
         Notifier.ShowSuccess(
             "Import request complete",
             $"Import of {import.Value.Name} completed successfully @ {DateTime.Now}"
@@ -95,32 +95,11 @@ public partial class NavigationPageModel : PageViewModel
     }
 
     [RelayCommand]
-    private Task Search()
+    private async Task OpenSources()
     {
-        //todo
-        return Task.CompletedTask;
+        await Navigator.Navigate<SourceManagerPageModel>();
     }
 
-    [RelayCommand]
-    private Task OpenExplorer()
-    {
-        return Prompter.Show(() => new SourceExplorerPageModel());
-    }
-
-    [RelayCommand]
-    private Task OpenHistory()
-    {
-        //todo
-        return Task.CompletedTask;
-    }
-
-    [RelayCommand]
-    private Task OpenVariables()
-    {
-        //todo
-        return Task.CompletedTask;
-    }
-    
     [RelayCommand]
     private Task OpenSettings()
     {

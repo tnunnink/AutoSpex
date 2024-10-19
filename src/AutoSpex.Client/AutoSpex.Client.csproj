@@ -10,7 +10,7 @@
         <LangVersion>12</LangVersion>
         <ApplicationIcon>Resources\Images\logo.ico</ApplicationIcon>
         <Platforms>AnyCPU;x64;x86</Platforms>
-        <Version>0.3.1</Version>
+        <Version>0.4.0</Version>
         <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     </PropertyGroup>
 
@@ -200,8 +200,6 @@
             <DependentUpon>DetailsPage.axaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
-        <Compile Remove="Pages\Tabs\SourceContentPage.axaml.cs"/>
-        <Compile Remove="Pages\Tabs\SourceContentPageModel.cs"/>
         <Compile Update="Resources\Controls\Section.cs">
             <DependentUpon>Section.axaml</DependentUpon>
             <SubType>Code</SubType>
@@ -215,7 +213,6 @@
             <SubType>Code</SubType>
         </Compile>
         <Compile Remove="Components\Runs\OutcomeTree.axaml.cs"/>
-        <Compile Remove="Components\Runs\**"/>
         <Compile Update="Components\Controls\DetailTabList.axaml.cs">
             <DependentUpon>DetailTabList.axaml</DependentUpon>
             <SubType>Code</SubType>
@@ -224,90 +221,84 @@
             <DependentUpon>SettingsPage.axaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
+        <Compile Update="Pages\Dialogs\NewVariablePage.axaml.cs">
+          <DependentUpon>NewVariablePage.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
     </ItemGroup>
 
     <ItemGroup>
         <None Update="appsettings.json">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Remove="AutoSpex.Client.csproj.DotSettings"/>
-        <None Remove="Components\Runs\**"/>
+        <None Remove="AutoSpex.Client.csproj.DotSettings" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Remove="Shared\Assets\Images\logo.png"/>
+        <None Remove="Shared\Assets\Images\logo.png" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Remove="Resources\Images\box-arrow-up-right.svg"/>
-        <None Remove="Resources\Images\clipboard-filled-32.png"/>
-        <None Remove="Resources\Images\clipboard-outlined-32.png"/>
-        <None Remove="Resources\Images\clipboard-outlined-64.png"/>
-        <None Remove="Resources\Images\icons8-clipboard-64.png"/>
-        <None Remove="Resources\Images\icons8-clipboard-ok-62.png"/>
-        <None Remove="Resources\Images\icons8-inspection-94.png"/>
-        <None Remove="Resources\Images\icons8-clipboard-64 (1).png"/>
-        <None Remove="Resources\Images\icons8-clipboard-64 (2).png"/>
-        <None Remove="Resources\Images\icons8-inspection-96 (2).png"/>
-        <AvaloniaXaml Remove="Features\Specifications\Resources\CollectionContextMenu.axaml"/>
-        <None Remove="Resources\Images\Icons\link.svg"/>
-        <AvaloniaXaml Remove="Resources\Controls\SplitGrid.axaml"/>
-        <None Remove="Resources\Images\icons8-inspection-96 (4).png"/>
-        <AvaloniaXaml Remove="ShellView.axaml"/>
-        <None Remove="Resources\Images\icons8-true-false-96.png"/>
-        <None Remove="Resources\Images\inspect-code.png"/>
-        <AvaloniaResource Include="Resources\Images\inspect-code.png"/>
-        <AvaloniaXaml Remove="Resources\Icons\FilledIcons.axaml"/>
-        <AvaloniaXaml Remove="Resources\Icons\OutlinedIcons.axaml"/>
-        <AvaloniaXaml Remove="Resources\Icons\RegularIcons.axaml"/>
-        <None Remove="Resources\Images\logo_simple.png"/>
-        <None Remove="Resources\Images\logo.png"/>
+        <None Remove="Resources\Images\box-arrow-up-right.svg" />
+        <None Remove="Resources\Images\clipboard-filled-32.png" />
+        <None Remove="Resources\Images\clipboard-outlined-32.png" />
+        <None Remove="Resources\Images\clipboard-outlined-64.png" />
+        <None Remove="Resources\Images\icons8-clipboard-64.png" />
+        <None Remove="Resources\Images\icons8-clipboard-ok-62.png" />
+        <None Remove="Resources\Images\icons8-inspection-94.png" />
+        <None Remove="Resources\Images\icons8-clipboard-64 (1).png" />
+        <None Remove="Resources\Images\icons8-clipboard-64 (2).png" />
+        <None Remove="Resources\Images\icons8-inspection-96 (2).png" />
+        <AvaloniaXaml Remove="Features\Specifications\Resources\CollectionContextMenu.axaml" />
+        <None Remove="Resources\Images\Icons\link.svg" />
+        <AvaloniaXaml Remove="Resources\Controls\SplitGrid.axaml" />
+        <None Remove="Resources\Images\icons8-inspection-96 (4).png" />
+        <AvaloniaXaml Remove="ShellView.axaml" />
+        <None Remove="Resources\Images\icons8-true-false-96.png" />
+        <None Remove="Resources\Images\inspect-code.png" />
+        <AvaloniaResource Include="Resources\Images\inspect-code.png" />
+        <AvaloniaXaml Remove="Resources\Icons\FilledIcons.axaml" />
+        <AvaloniaXaml Remove="Resources\Icons\OutlinedIcons.axaml" />
+        <AvaloniaXaml Remove="Resources\Icons\RegularIcons.axaml" />
+        <None Remove="Resources\Images\logo_simple.png" />
+        <None Remove="Resources\Images\logo.png" />
         <AvaloniaResource Include="Resources\Images\logo.png">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </AvaloniaResource>
-        <None Remove="Resources\Images\logo.ico"/>
+        <None Remove="Resources\Images\logo.ico" />
         <AvaloniaResource Include="Resources\Images\logo.ico">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </AvaloniaResource>
-        <AvaloniaXaml Remove="Pages\Tabs\SourceContentPage.axaml"/>
-        <None Remove="Resources\Svgs\clipboard-check.svg"/>
-        <AvaloniaXaml Remove="Components\Runs\All.axaml"/>
-        <AvaloniaXaml Remove="Components\Runs\**"/>
-        <AvaloniaResource Remove="Components\Runs\**"/>
+        <AvaloniaXaml Remove="Pages\Tabs\SourceContentPage.axaml" />
+        <None Remove="Resources\Svgs\clipboard-check.svg" />
     </ItemGroup>
 
     <ItemGroup>
-        <UpToDateCheckInput Remove="Features\Specifications\Resources\All.axaml"/>
-        <UpToDateCheckInput Remove="Components\Specs\Resources\CollectionMenu.axaml"/>
-        <UpToDateCheckInput Remove="Components\Specs\Resources\FolderMenu.axaml"/>
-        <UpToDateCheckInput Remove="Components\Specs\Resources\Merged.axaml"/>
-        <UpToDateCheckInput Remove="Components\Specs\Resources\NodeIcons.axaml"/>
-        <UpToDateCheckInput Remove="Components\Specs\Resources\SpecMenu.axaml"/>
-        <UpToDateCheckInput Remove="Resources\Styles\TextBoxStyles.axaml"/>
-        <UpToDateCheckInput Remove="Pages\Runs\RunListPage.axaml"/>
-        <UpToDateCheckInput Remove="Pages\Runs\RunPage.axaml"/>
-        <UpToDateCheckInput Remove="Pages\Sources\QueryPage.axaml"/>
-        <UpToDateCheckInput Remove="Components\Breadcrumb\All.axaml"/>
-        <UpToDateCheckInput Remove="Components\Templates\All.axaml"/>
-        <UpToDateCheckInput Remove="Components\Sources\All.axaml"/>
-        <UpToDateCheckInput Remove="Components\Sources\SourceLoader.axaml"/>
-        <UpToDateCheckInput Remove="Components\Sources\SourceSearchBar.axaml"/>
-        <UpToDateCheckInput Remove="Components\Sources\SourceTemplates.axaml"/>
-        <UpToDateCheckInput Remove="Components\Sources\XmlEditor.axaml"/>
-        <UpToDateCheckInput Remove="Components\Variables\All.axaml"/>
-        <UpToDateCheckInput Remove="Components\Observers\All.axaml"/>
-        <UpToDateCheckInput Remove="Components\Navigation\All.axaml"/>
-        <UpToDateCheckInput Remove="Components\Specs\All.axaml"/>
-        <UpToDateCheckInput Remove="Components\Details\All.axaml"/>
-        <UpToDateCheckInput Remove="Components\Entries\All.axaml"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <EmbeddedResource Remove="Components\Runs\**"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <AdditionalFiles Remove="Components\Runs\**"/>
+        <UpToDateCheckInput Remove="Features\Specifications\Resources\All.axaml" />
+        <UpToDateCheckInput Remove="Components\Specs\Resources\CollectionMenu.axaml" />
+        <UpToDateCheckInput Remove="Components\Specs\Resources\FolderMenu.axaml" />
+        <UpToDateCheckInput Remove="Components\Specs\Resources\Merged.axaml" />
+        <UpToDateCheckInput Remove="Components\Specs\Resources\NodeIcons.axaml" />
+        <UpToDateCheckInput Remove="Components\Specs\Resources\SpecMenu.axaml" />
+        <UpToDateCheckInput Remove="Resources\Styles\TextBoxStyles.axaml" />
+        <UpToDateCheckInput Remove="Pages\Runs\RunListPage.axaml" />
+        <UpToDateCheckInput Remove="Pages\Runs\RunPage.axaml" />
+        <UpToDateCheckInput Remove="Pages\Sources\QueryPage.axaml" />
+        <UpToDateCheckInput Remove="Components\Breadcrumb\All.axaml" />
+        <UpToDateCheckInput Remove="Components\Templates\All.axaml" />
+        <UpToDateCheckInput Remove="Components\Sources\All.axaml" />
+        <UpToDateCheckInput Remove="Components\Sources\SourceLoader.axaml" />
+        <UpToDateCheckInput Remove="Components\Sources\SourceSearchBar.axaml" />
+        <UpToDateCheckInput Remove="Components\Sources\SourceTemplates.axaml" />
+        <UpToDateCheckInput Remove="Components\Sources\XmlEditor.axaml" />
+        <UpToDateCheckInput Remove="Components\Variables\All.axaml" />
+        <UpToDateCheckInput Remove="Components\Observers\All.axaml" />
+        <UpToDateCheckInput Remove="Components\Navigation\All.axaml" />
+        <UpToDateCheckInput Remove="Components\Specs\All.axaml" />
+        <UpToDateCheckInput Remove="Components\Details\All.axaml" />
+        <UpToDateCheckInput Remove="Components\Entries\All.axaml" />
+        <UpToDateCheckInput Remove="Components\Items\All.axaml" />
+        <UpToDateCheckInput Remove="Components\Entries\All.axaml" />
     </ItemGroup>
 
     <ItemGroup>

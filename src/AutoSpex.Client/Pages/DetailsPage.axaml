@@ -110,7 +110,7 @@
                             Padding="3" VerticalAlignment="Center">
                         <Button.Flyout>
                             <Flyout Placement="BottomEdgeAlignedRight" VerticalOffset="3" HorizontalOffset="8">
-                                <components:DetailTabList Tabs="{Binding Pages}" />
+                                <ContentControl Content="{Binding TabList^}" />
                             </Flyout>
                         </Button.Flyout>
                     </Button>
@@ -154,9 +154,9 @@
                         </Button>
 
                         <Button
-                            Command="{Binding NewEnvironmentCommand}"
-                            ToolTip.Tip="New Environment">
-                            <PathIcon Theme="{StaticResource IconThemedEnvironment}" />
+                            Command="{Binding NewSourceCommand}"
+                            ToolTip.Tip="New Source">
+                            <PathIcon Theme="{StaticResource IconThemedSource}" />
                         </Button>
                         
                     </StackPanel>

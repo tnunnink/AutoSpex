@@ -35,7 +35,7 @@
                 DrawerPlacement="Left"
                 IsDrawerOpen="True"
                 DrawerOpenLength="400"
-                DrawerClosedLength="46"
+                DrawerMinLength="46"
                 DrawerMaxLength="800">
 
                 <controls:DrawerView.Drawer>

@@ -12,7 +12,7 @@ public class SpecTests
     {
         var spec = new Spec();
 
-        spec.Query.Should().NotBeNull();
+        spec.Element.Should().Be(Element.Default);
         spec.Filters.Should().BeEmpty();
         spec.Verifications.Should().BeEmpty();
         spec.FilterInclusion.Should().Be(Inclusion.All);
@@ -24,11 +24,11 @@ public class SpecTests
     {
         var spec = new Spec();
 
-        spec.Find(Element.Tag)
+        spec.Query(Element.Tag)
             .Filter("Name", Operation.Containing, "Test")
             .Verify("Value", Operation.EqualTo, 4);
 
-        spec.Query.Element.Should().Be(Element.Tag);
+        spec.Element.Should().Be(Element.Tag);
         spec.Filters.Should().HaveCount(1);
         spec.Verifications.Should().HaveCount(1);
     }
@@ -51,7 +51,7 @@ public class SpecTests
         var spec = new Spec();
         var content = L5X.Load(Known.Test);
 
-        spec.Find(Element.Tag)
+        spec.Query(Element.Tag)
             .Filter("Name", Operation.Containing, "Test")
             .Verify("DataType", Negation.Not, Operation.NullOrEmpty);
 
@@ -67,7 +67,7 @@ public class SpecTests
         var spec = new Spec();
         var content = L5X.Load(Known.Test);
 
-        spec.Find(Element.Module)
+        spec.Query(Element.Module)
             .Verify("Inhibited", Negation.Is, Operation.False);
 
         var verification = await spec.RunAsync(content);
@@ -85,7 +85,7 @@ public class SpecTests
             var content = L5X.Load(Known.Test);
             var spec = Spec.Configure(c =>
             {
-                c.Find(Element.Module);
+                c.Query(Element.Module);
                 c.Verify("Inhibited", Negation.Is, Operation.False);
             });
 
@@ -108,7 +108,7 @@ public class SpecTests
     {
         var spec = new Spec();
 
-        spec.Find(Element.Tag)
+        spec.Query(Element.Tag)
             .Filter("Name", Operation.Containing, "Test")
             .Verify("DataType", Negation.Not, Operation.NullOrEmpty);
 
@@ -119,14 +119,14 @@ public class SpecTests
     public void Deserialize_WhenCalled_ShouldBeExpected()
     {
         var spec = new Spec();
-        spec.Find(Element.Tag)
+        spec.Query(Element.Tag)
             .Filter("Name", Operation.Containing, "Test")
             .Verify("DataType", Negation.Not, Operation.NullOrEmpty);
         var data = JsonSerializer.Serialize(spec);
 
         var result = JsonSerializer.Deserialize<Spec>(data);
 
-        result?.Query.Element.Should().Be(Element.Tag);
+        result?.Element.Should().Be(Element.Tag);
         result?.FilterInclusion.Should().Be(Inclusion.All);
         result?.VerificationInclusion.Should().Be(Inclusion.All);
         result?.Filters.Should().HaveCount(1);

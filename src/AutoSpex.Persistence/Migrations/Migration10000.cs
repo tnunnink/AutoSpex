@@ -30,21 +30,16 @@ public class Migration10000 : AutoReversingMigration
             .WithColumn("Group").AsString().NotNullable()
             .WithColumn("Value").AsString().Nullable();
 
-        Create.UniqueConstraint("Unique_Variable_NodeId_Name")
-            .OnTable("Variable")
-            .Columns("NodeId", "Name");
-
-        Create.Table("Environment")
-            .WithColumn("EnvironmentId").AsString().PrimaryKey()
-            .WithColumn("Name").AsString().NotNullable()
-            .WithColumn("Comment").AsString().Nullable()
-            .WithColumn("IsTarget").AsBoolean().NotNullable().WithDefaultValue(0);
-
         Create.Table("Source")
             .WithColumn("SourceId").AsString().PrimaryKey()
-            .WithColumn("EnvironmentId").AsString().ForeignKey("Environment", "EnvironmentId").OnDelete(Rule.Cascade)
             .WithColumn("Name").AsString().NotNullable()
-            .WithColumn("Uri").AsString().NotNullable();
+            .WithColumn("IsTarget").AsBoolean().NotNullable().WithDefaultValue(0)
+            .WithColumn("TargetType").AsString().Nullable()
+            .WithColumn("TargetName").AsString().Nullable()
+            .WithColumn("ExportedOn").AsDateTime().Nullable()
+            .WithColumn("ExportedBy").AsString().Nullable()
+            .WithColumn("Description").AsString().Nullable()
+            .WithColumn("Content").AsString().Nullable();
 
         Create.Table("Override")
             .WithColumn("OverrideId").AsString().PrimaryKey()
@@ -54,17 +49,12 @@ public class Migration10000 : AutoReversingMigration
 
         Create.Table("Run")
             .WithColumn("RunId").AsString().PrimaryKey()
-            .WithColumn("EnvironmentId").AsString().ForeignKey("Environment", "EnvironmentId").OnDelete(Rule.Cascade)
-            .WithColumn("Result").AsString().Nullable().WithDefaultValue(ResultState.None)
-            .WithColumn("RanOn").AsString().Nullable()
-            .WithColumn("RanBy").AsString().Nullable();
-
-        Create.Table("Outcome")
-            .WithColumn("OutcomeId").AsString().PrimaryKey()
-            .WithColumn("RunId").AsString().ForeignKey("Run", "RunId").OnDelete(Rule.Cascade)
-            .WithColumn("NodeId").AsString().ForeignKey("Node", "NodeId").OnDelete(Rule.Cascade)
-            .WithColumn("Result").AsString().Nullable().WithDefaultValue(ResultState.None)
-            .WithColumn("Duration").AsInt32().Nullable().WithDefaultValue(0)
-            .WithColumn("Evaluations").AsString().Nullable();
+            .WithColumn("Name").AsString().NotNullable()
+            .WithColumn("Node").AsString().NotNullable()
+            .WithColumn("Source").AsString().NotNullable()
+            .WithColumn("Result").AsString().NotNullable().WithDefaultValue(ResultState.None)
+            .WithColumn("RanOn").AsString().NotNullable()
+            .WithColumn("RanBy").AsString().NotNullable()
+            .WithColumn("Outcomes").AsString().Nullable();
     }
 }

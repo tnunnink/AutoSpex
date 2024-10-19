@@ -196,4 +196,22 @@ public static class Extensions
     /// <param name="type">The type to evaluate.</param>
     /// <returns>True if the type is nullable, false otherwise.</returns>
     private static bool IsNullable(this Type type) => Nullable.GetUnderlyingType(type) is not null;
+
+    /// <summary>
+    /// Combines two Guid values by concatenating the first half of the string representation of the first Guid
+    /// with the first half of the string representation of the second Guid to create a new Guid.
+    /// </summary>
+    /// <param name="first">The first Guid value to combine.</param>
+    /// <param name="second">The second Guid value to combine.</param>
+    /// <returns>A new Guid formed by combining the first halves of the string representations of the input Guid values.</returns>
+    public static Guid Combine(this Guid first, Guid second)
+    {
+        var g1 = first.ToString();
+        var g2 = second.ToString();
+
+        var firstHalf = g1[..(g1.Length / 2)];
+        var secondHalf = g2[..(g2.Length / 2)];
+        
+        return Guid.Parse(firstHalf + secondHalf);
+    }
 }

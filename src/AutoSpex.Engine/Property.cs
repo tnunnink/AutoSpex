@@ -282,7 +282,7 @@ public class Property : IEquatable<Property>
             children.Add(property);
         }
 
-        //Only for element types (like Tag) support indexers.
+        /*//Only for element types (like Tag) support indexers.
         if (Group == TypeGroup.Element)
         {
             //Handle indexer properties next. Only supporting single parameter indexers since that is all we really have anyway.
@@ -296,7 +296,7 @@ public class Property : IEquatable<Property>
                 var property = new Property($"[{name}]", indexer.PropertyType, this);
                 children.Add(property);
             }
-        }
+        }*/
 
         //Add custom properties defined on elements.
         if (!Element.TryFromName(Type.Name, out var element)) return children;

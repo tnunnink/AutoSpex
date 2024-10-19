@@ -57,37 +57,24 @@ public class LoadNodesTests
     }
 
     [Test]
-    public async Task LoadNodes_NodeWithSeveralSpecsConfiged_ShouldBeSuccessAndExpectedCount()
+    public async Task LoadNodes_NodeWithSpecsConfiged_ShouldBeSuccessAndExpected()
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
         var node = Node.NewSpec("Test");
-        node.AddSpec(c =>
+        node.Configure(c =>
         {
-            c.Find(Element.Tag);
+            c.Query(Element.Tag);
             c.Filter("TagName", Operation.Containing, "SomeValue");
             c.Verify("Comment", Operation.EqualTo, "SomeValue");
         });
-        node.AddSpec(c =>
-        {
-            c.Find(Element.Tag);
-            c.Filter("TagName", Operation.Containing, "SomeValue");
-            c.Verify("Comment", Operation.EqualTo, "SomeValue");
-        });
-        node.AddSpec(c =>
-        {
-            c.Find(Element.Tag);
-            c.Filter("TagName", Operation.Containing, "SomeValue");
-            c.Verify("Comment", Operation.EqualTo, "SomeValue");
-        });
-
         await mediator.Send(new CreateNode(node));
 
         var result = await mediator.Send(new LoadNodes([node.NodeId]));
 
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().HaveCount(1);
-        result.Value.First().Specs.Should().HaveCount(3);
+        result.Value.First().Spec.Should().BeEquivalentTo(node.Spec);
     }
 
     [Test]
@@ -99,9 +86,9 @@ public class LoadNodesTests
         var node = Node.NewSpec("Test");
         var variable = node.AddVariable("MyVar", "SomeValue");
         var reference = variable.Reference();
-        node.AddSpec(c =>
+        node.Configure(c =>
         {
-            c.Find(Element.Tag);
+            c.Query(Element.Tag);
             c.Filter("TagName", Operation.Containing, reference);
             c.Verify("Comment", Operation.EqualTo, reference);
         });
@@ -115,17 +102,12 @@ public class LoadNodesTests
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().HaveCount(1);
 
-        var targetSpec = result.Value.First().Specs.First();
+        var spec = result.Value.First().Spec;
 
-        targetSpec.Filters[0].Arguments[0]
-            .As<Argument>().Value
-            .As<Reference>()
-            .Should()
-            .BeEquivalentTo(reference, o => o.Excluding(r => r.Value));
+        spec.Filters[0].Argument.Value.As<Reference>()
+            .Should().BeEquivalentTo(reference, o => o.Excluding(r => r.Value));
 
-        targetSpec.Verifications[0].Arguments[0]
-            .As<Argument>().Value
-            .As<Reference>()
+        spec.Verifications[0].Argument.Value.As<Reference>()
             .Should().BeEquivalentTo(reference, o => o.Excluding(r => r.Value));
     }
 }

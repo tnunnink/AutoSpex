@@ -3,96 +3,50 @@
              xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
              xmlns:shared="clr-namespace:AutoSpex.Client.Shared"
-             xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
-             xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
              x:Class="AutoSpex.Client.Pages.NodeDetailPage"
              x:DataType="pages:NodeDetailPageModel">
 
     <Design.Width>1400</Design.Width>
     <Design.Height>900</Design.Height>
 
-    <UserControl.Styles>
-        <Style Selector="Button.environment-selector">
-            <Setter Property="Theme" Value="{a:ControlTheme ButtonSoft}" />
-            <Setter Property="CornerRadius" Value="4 0 0 4" />
-            <Setter Property="Content">
-                <Template>
-                    <StackPanel Orientation="Horizontal" Spacing="7">
-                        <PathIcon Theme="{StaticResource IconThemedEnvironment}" />
-                        <TextBlock Text="{Binding Environment.Name, FallbackValue='---'}" />
-                        <PathIcon Theme="{StaticResource IconLineExpand}" Classes="size-sm" />
-                    </StackPanel>
-                </Template>
-            </Setter>
-        </Style>
-    </UserControl.Styles>
-
     <DockPanel>
-        
+
         <Border DockPanel.Dock="Top" Padding="20" Background="{a:ThemeResource Container2BackgroundBrush}">
 
-            <StackPanel Spacing="5">
-                <Grid ColumnDefinitions="Auto,*,Auto">
+            <Grid ColumnDefinitions="Auto,*,Auto">
 
-                    <StackPanel Grid.Column="0" Spacing="3">
+                <StackPanel Grid.Column="0" Spacing="3">
 
-                        <StackPanel Orientation="Horizontal" Spacing="3" Margin="5 0 0 0">
-                            <PathIcon
-                                Theme="{Binding Node.Icon, Converter={StaticResource KeyIconConverter}}"
-                                Classes="size-lg" />
-                            <ContentControl
-                                HorizontalAlignment="Left"
-                                Content="{Binding Node}"
-                                ContentTemplate="{StaticResource NameEntry}" />
-                        </StackPanel>
-
+                    <StackPanel Orientation="Horizontal" Spacing="5" Margin="5 0 0 0">
+                        <PathIcon
+                            Theme="{Binding Node.Icon, Converter={StaticResource KeyIconConverter}}"
+                            Classes="size-lg" />
                         <ContentControl
+                            HorizontalAlignment="Left"
                             Content="{Binding Node}"
-                            ContentTemplate="{StaticResource BreadcrumbLink}" />
+                            ContentTemplate="{StaticResource NameEntry}" />
                     </StackPanel>
 
-                    <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <ContentControl
+                        Content="{Binding Node}"
+                        ContentTemplate="{StaticResource BreadcrumbLink}" />
+                </StackPanel>
 
-                        <Button
-                            Command="{Binding SaveCommand}"
-                            Classes="save" />
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
 
-                        <StackPanel Orientation="Horizontal">
-                            <Button Classes="environment-selector">
-                                <Button.Flyout>
-                                    <Flyout Placement="BottomEdgeAlignedRight" HorizontalOffset="8" VerticalOffset="5">
-                                        <ListBox
-                                            ItemsSource="{Binding Environments^}"
-                                            ItemContainerTheme="{StaticResource ListBoxItemSimple}"
-                                            Padding="5" MinWidth="200">
-                                            <ListBox.ItemTemplate>
-                                                <DataTemplate x:DataType="observers:EnvironmentObserver">
-                                                    <Button Command="{Binding TargetCommand}"
-                                                            Theme="{a:ControlTheme ButtonInvisible}"
-                                                            HorizontalAlignment="Stretch"
-                                                            HorizontalContentAlignment="Left">
-                                                        <StackPanel Orientation="Horizontal" Spacing="10">
-                                                            <PathIcon Theme="{StaticResource IconThemedEnvironment}" />
-                                                            <TextBlock Text="{Binding Name}" />
-                                                        </StackPanel>
-                                                        <Interaction.Behaviors>
-                                                            <behaviors:HideFlyoutOnClickedBehavior />
-                                                        </Interaction.Behaviors>
-                                                    </Button>
-                                                </DataTemplate>
-                                            </ListBox.ItemTemplate>
-                                        </ListBox>
-                                    </Flyout>
-                                </Button.Flyout>
-                            </Button>
+                    <Button
+                        Command="{Binding SaveCommand}"
+                        Classes="save" />
 
-                            <Button
-                                Command="{Binding RunCommand}"
-                                Classes="run accent" />
-                        </StackPanel>
-                    </StackPanel>
-                </Grid>
-            </StackPanel>
+                    <Button
+                        Command="{Binding RunCommand}"
+                        Classes="run accent" />
+
+                </StackPanel>
+
+            </Grid>
         </Border>
 
         <DockPanel>
@@ -108,7 +62,7 @@
 
                 <TabStrip.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal" Spacing="10" />
+                        <StackPanel Orientation="Horizontal" Spacing="15" />
                     </ItemsPanelTemplate>
                 </TabStrip.ItemsPanel>
 
@@ -117,18 +71,35 @@
                         <TextBlock Text="{Binding Title}" />
                     </DataTemplate>
                 </TabStrip.ItemTemplate>
-                
+
             </TabStrip>
 
-            <ContentControl Content="{Binding Tab}">
-                <ContentControl.ContentTemplate>
-                    <DataTemplate x:DataType="shared:PageViewModel">
-                        <ScrollViewer HorizontalScrollBarVisibility="Disabled">
-                            <ContentControl Content="{Binding}" Margin="20"/>
-                        </ScrollViewer>
-                    </DataTemplate>
-                </ContentControl.ContentTemplate>
-            </ContentControl>
+            <controls:DrawerView
+                DrawerPlacement="Bottom"
+                Classes.show="{Binding Node.Type, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:NodeType.Spec}}">
+
+                <ContentControl Content="{Binding Tab}">
+                    <ContentControl.ContentTemplate>
+                        <DataTemplate x:DataType="shared:PageViewModel">
+                            <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+                                <ContentControl Content="{Binding}" Margin="20" />
+                            </ScrollViewer>
+                        </DataTemplate>
+                    </ContentControl.ContentTemplate>
+                </ContentControl>
+
+                <controls:DrawerView.Drawer>
+                    <ContentControl Content="{Binding RunnerPage}" />
+                </controls:DrawerView.Drawer>
+
+                <controls:DrawerView.Styles>
+                    <Style Selector="controls|DrawerView.show">
+                        <Setter Property="DrawerMinLength" Value="50" />
+                        <Setter Property="HideSplitter" Value="False" />
+                    </Style>
+                </controls:DrawerView.Styles>
+
+            </controls:DrawerView>
 
         </DockPanel>
     </DockPanel>

@@ -1,0 +1,82 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+
+    <Design.PreviewWith>
+        <StackPanel Spacing="10" Margin="20" Orientation="Horizontal">
+            <a:ToggleThemeButton Theme="{a:ControlTheme ToggleThemeButtonSoft}" />
+            <ContentControl
+                Content="{x:Static engine:ResultState.None}"
+                ContentTemplate="{DynamicResource ResultPill}" />
+            <ContentControl
+                Content="{x:Static engine:ResultState.Inconclusive}"
+                ContentTemplate="{DynamicResource ResultPill}" />
+            <ContentControl
+                Content="{x:Static engine:ResultState.Pending}"
+                ContentTemplate="{DynamicResource ResultPill}" />
+            <ContentControl
+                Content="{x:Static engine:ResultState.Passed}"
+                ContentTemplate="{DynamicResource ResultPill}" />
+            <ContentControl
+                Content="{x:Static engine:ResultState.Failed}"
+                ContentTemplate="{DynamicResource ResultPill}" />
+            <ContentControl
+                Content="{x:Static engine:ResultState.Errored}"
+                ContentTemplate="{DynamicResource ResultPill}" />
+        </StackPanel>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="ResultPill" x:DataType="engine:ResultState">
+
+        <Border
+            BorderThickness="1"
+            Padding="7 3"
+            MinWidth="60"
+            CornerRadius="20"
+            properties:StyleClasses.Classes="{Binding}">
+
+            <TextBlock Text="{Binding}" HorizontalAlignment="Center" />
+
+            <Border.Styles>
+                <Style Selector="Border.None">
+                    <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftDisabled}" />
+                    <Style Selector="^ TextBlock">
+                        <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                    </Style>
+                </Style>
+                <Style Selector="Border.Inconclusive">
+                    <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftWarning}" />
+                    <Style Selector="^ TextBlock">
+                        <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftWarning}" />
+                    </Style>
+                </Style>
+                <Style Selector="Border.Pending">
+                    <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftAccent}" />
+                    <Style Selector="^ TextBlock">
+                        <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftAccent}" />
+                    </Style>
+                </Style>
+                <Style Selector="Border.Passed">
+                    <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftSuccess}" />
+                    <Style Selector="^ TextBlock">
+                        <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftSuccess}" />
+                    </Style>
+                </Style>
+                <Style Selector="Border.Failed">
+                    <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftDanger}" />
+                    <Style Selector="^ TextBlock">
+                        <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftDanger}" />
+                    </Style>
+                </Style>
+                <Style Selector="Border.Errored">
+                    <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftWarning}" />
+                    <Style Selector="^ TextBlock">
+                        <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftWarning}" />
+                    </Style>
+                </Style>
+            </Border.Styles>
+        </Border>
+    </DataTemplate>
+</ResourceDictionary>

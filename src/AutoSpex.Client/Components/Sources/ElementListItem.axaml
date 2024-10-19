@@ -1,0 +1,120 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
+
+    <Design.PreviewWith>
+        <StackPanel Margin="10" Spacing="10" Width="500" Height="400">
+            <ListBox
+                ItemsSource="{x:Static components:TestData.DataTypeElements}"
+                ItemContainerTheme="{StaticResource ListBoxItemSimple}"
+                ItemTemplate="{DynamicResource ElementListItem}"
+                BorderThickness="1" BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                CornerRadius="5" Padding="5"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
+        </StackPanel>
+    </Design.PreviewWith>
+
+
+    <DataTemplate x:Key="ElementListItem" x:DataType="observers:ElementObserver">
+        
+        <Border x:Name="Border"
+                Background="Transparent"
+                Focusable="True"
+                Padding="{a:ThemeResource ListItemPadding}">
+
+            <Border.ContextFlyout>
+                <MenuFlyout
+                    ItemsSource="{Binding ContextItems}"
+                    ItemContainerTheme="{StaticResource MenuActionItem}"
+                    Placement="Pointer" />
+            </Border.ContextFlyout>
+
+            <Grid ColumnDefinitions="*,Auto">
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10" ClipToBounds="True">
+
+                    <PathIcon Theme="{StaticResource IconThemedSource}" />
+
+                    <controls:HighlightableTextBlock
+                        Text="{Binding Name}"
+                        HighlightedText="{Binding FilterText}"
+                        Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
+                        FontWeight="{a:ThemeResource HeadingFontWeightSmall}"
+                        FontSize="{a:ThemeResource DefaultFontSizeSmall}" />
+
+                    <Ellipse
+                        Height="5" Width="5"
+                        Fill="{a:ThemeResource Container5BackgroundBrush}"
+                        Margin="0 2 0 0"
+                        IsVisible="{Binding Description, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
+                    <controls:HighlightableTextBlock
+                        Text="{Binding Container}"
+                        HighlightedText="{Binding FilterText}"
+                        Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                        FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                        ToolTip.Tip="Scope" />
+
+                    <Ellipse
+                        Height="5" Width="5"
+                        Fill="{a:ThemeResource Container5BackgroundBrush}"
+                        Margin="0 2 0 0"
+                        IsVisible="{Binding Description, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
+                    <controls:HighlightableTextBlock
+                        IsVisible="{Binding Description, Converter={x:Static ObjectConverters.IsNotNull}}"
+                        Text="{Binding Description}"
+                        HighlightedText="{Binding FilterText}"
+                        Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                        FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                        FontStyle="Italic"
+                        MaxLines="1"
+                        TextWrapping="NoWrap"
+                        TextTrimming="CharacterEllipsis"
+                        ToolTip.Tip="{Binding Description}" />
+
+                </StackPanel>
+
+                <Border Grid.Column="1" MinHeight="20" Padding="10 0 5 0">
+
+                    <StackPanel Orientation="Horizontal" Spacing="5"
+                                IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}">
+
+                        <Button
+                            Command="{Binding CopyElementCommand}"
+                            Theme="{StaticResource IconButtonSmall}"
+                            properties:Icon.Theme="{StaticResource IconFilledClone}"
+                            IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}"
+                            ToolTip.Tip="Copy Element" />
+
+                        <Button
+                            Command="{Binding ViewPropertiesCommand}"
+                            Theme="{StaticResource IconButtonSmall}"
+                            properties:Icon.Theme="{StaticResource IconFilledBinoculars}"
+                            IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}"
+                            ToolTip.Tip="View Properties" />
+
+                        <Button
+                            Theme="{StaticResource IconButtonSmall}"
+                            properties:Icon.Theme="{StaticResource IconEllipsis}"
+                            ToolTip.Tip="Options">
+                            <Button.Flyout>
+                                <MenuFlyout
+                                    ItemsSource="{Binding MenuItems}"
+                                    ItemContainerTheme="{StaticResource MenuActionItem}"
+                                    Placement="Pointer" HorizontalOffset="8" VerticalOffset="5" />
+                            </Button.Flyout>
+                        </Button>
+
+                    </StackPanel>
+                </Border>
+
+            </Grid>
+        </Border>
+
+    </DataTemplate>
+</ResourceDictionary>

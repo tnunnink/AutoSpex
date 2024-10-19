@@ -1,29 +1,40 @@
 ﻿using System.Text.Json.Serialization;
-using System.Xml.Linq;
 using L5Sharp.Core;
 
 namespace AutoSpex.Engine;
 
 /// <summary>
-/// Represents a L5X file that has been added to an environment. We use the sources to run against a set of specifications.
-/// Sources are not loaded until a specification or set or specifications are run.
+/// Represents a source L5X content that can be run against any set of specifications.
+/// Source content will be stored locally and the user can inspect, update, and create runs against the source.
 /// </summary>
 public class Source
 {
-    private Dictionary<Guid, Variable>? _overrides;
+    private readonly Dictionary<Guid, Variable> _overrides = [];
 
+    /// <summary>
+    /// Creates a new <see cref="Source"/> with no content. 
+    /// </summary>
     public Source()
     {
-        Uri = default!;
     }
 
     /// <summary>
     /// Creates a new <see cref="Source"/> provided the location on disc of the L5X file.
     /// </summary>
-    public Source(Uri location)
+    public Source(L5X content)
     {
-        Uri = location ?? throw new ArgumentNullException(nameof(location));
-        Name = Path.GetFileNameWithoutExtension(Uri.LocalPath);
+        if (content is null)
+            throw new ArgumentNullException(nameof(content));
+
+        Name = content.Info.TargetName ?? "New Source";
+        TargetName = content.Info.TargetName ?? string.Empty;
+        TargetType = content.Info.TargetType ?? string.Empty;
+        ExportedOn = content.Info.ExportDate?.ToString() ?? string.Empty;
+        ExportedBy = content.Info.Owner ?? string.Empty;
+        Description = content.Controller.Description ?? string.Empty;
+
+        InjectMetadata(content);
+        Content = content;
     }
 
     /// <summary>
@@ -33,105 +44,124 @@ public class Source
     public Guid SourceId { get; private init; } = Guid.NewGuid();
 
     /// <summary>
-    /// Represents a location (file path or remote URL) of a source file.
-    /// </summary>
-    [JsonInclude]
-    public Uri Uri { get; private set; }
-
-    /// <summary>
     /// Gets or sets the name of the source file.
     /// </summary>
     /// <remarks>
     /// This property represents the name of the source file without the file extension.
     /// </remarks>
     [JsonInclude]
-    public string Name { get; set; } = string.Empty;
+    public string Name { get; set; } = "New Source";
 
     /// <summary>
-    /// Represents the physical location of the L5X file associated with a source.
+    /// Gets or sets a value indicating whether the source is the default run target.
     /// </summary>
-    /// <value>
-    /// The location of the L5X file.
-    /// </value>
     [JsonIgnore]
-    public string Location => Uri.LocalPath;
+    public bool IsTarget { get; set; }
 
     /// <summary>
-    /// Gets the file name of the source file.
+    /// The name of the element that is the target of the L5X content export.
+    /// We will use this to help further identify content this source contains.
     /// </summary>
-    /// <remarks>
-    /// This property returns the file name of the source file specified by the <see cref="Uri"/> property.
-    /// </remarks>
-    [JsonIgnore]
-    public string FileName => Path.GetFileName(Uri.LocalPath);
+    [JsonInclude]
+    public string TargetName { get; private set; } = string.Empty;
 
     /// <summary>
-    /// Represents a directory path where the source file is located.
+    /// The type of the element that is the target of the L5X content export.
+    /// We will use this to help further identify content this source contains.
     /// </summary>
-    /// <remarks>
-    /// This property returns the directory path of the source file specified by the <see cref="Uri"/> property.
-    /// </remarks>
-    [JsonIgnore]
-    public string? Directory => Path.GetDirectoryName(Uri.LocalPath);
+    [JsonInclude]
+    public string TargetType { get; private set; } = string.Empty;
 
     /// <summary>
-    /// Gets a value indicating whether the source file exists.
+    /// The date/time that the L5X content was exported.
+    /// We will use this to help further identify content this source contains.
     /// </summary>
-    /// <remarks>
-    /// This property checks if the source file exists at the specified <see cref="Uri"/> location.
-    /// </remarks>
+    [JsonInclude]
+    public string ExportedOn { get; private set; } = string.Empty;
+
+    /// <summary>
+    /// The name of the users that exported the L5X content.
+    /// We will use this to help further identify content this source contains.
+    /// </summary>
+    [JsonInclude]
+    public string ExportedBy { get; private set; } = string.Empty;
+
+    /// <summary>
+    /// The controller/project description of the L5X content.
+    /// </summary>
+    [JsonInclude]
+    public string Description { get; private set; } = string.Empty;
+
+    /// <summary>
+    /// The <see cref="L5X"/> content this source contains.
+    /// </summary>
     [JsonIgnore]
-    public bool Exists => File.Exists(Uri.LocalPath);
+    public L5X Content { get; private set; } = L5X.Empty();
 
     /// <summary>
     /// Gets the collection of <see cref="Variable"/> objects representing the overrides that allow the user to
     /// change the input data to variables that are referenced on any node in the project.
     /// </summary>
-    public List<Variable> Overrides { get; init; } = [];
+    [JsonInclude]
+    public IEnumerable<Variable> Overrides => _overrides.Values;
 
     /// <summary>
-    /// Adds an override value for a specified variable in the environment.
+    /// Represents an empty source object with default property values and an empty source id.
+    /// </summary>
+    public static Source Empty => new() { SourceId = Guid.Empty };
+
+    /// <summary>
+    /// Updates the internal <see cref="Content"/> of the source with the provided L5X. 
+    /// </summary>
+    /// <param name="content">The L5X content to update this source with.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="content"/> is null.</exception>
+    public void Update(L5X content)
+    {
+        if (content is null)
+            throw new ArgumentNullException(nameof(content));
+
+        TargetName = content.Info.TargetName ?? string.Empty;
+        TargetType = content.Info.TargetType ?? string.Empty;
+        ExportedOn = content.Info.ExportDate?.ToString() ?? string.Empty;
+        ExportedBy = content.Info.Owner ?? string.Empty;
+        Description = content.Controller.Description ?? string.Empty;
+
+        InjectMetadata(content);
+        Content = content;
+    }
+
+    /// <summary>
+    /// Adds an override value for a specified variable to this source.
     /// </summary>
     /// <param name="variable">The overriden variable object.</param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="variable"/> is null.</exception>
-    public void Add(Variable variable)
+    public void AddOverride(Variable variable)
     {
         ArgumentNullException.ThrowIfNull(variable);
-        Overrides.Add(variable);
+        _overrides[variable.VariableId] = variable;
     }
 
     /// <summary>
-    /// Loads the content of the source from the specified file path and returns it as an instance of L5X.
-    /// If the content has already been loaded, it is returned from memory without loading it again from the file.
+    /// Removes the specified override variable from the source. This will delete the override variable from the internal collection.
     /// </summary>
-    /// <returns>An instance of L5X representing the content of the source.</returns>
-    public L5X Load()
+    /// <param name="variable">The variable to remove from the overrides.</param>
+    public void RemoveOverride(Variable variable)
     {
-        var file = L5X.Load(Uri.LocalPath);
-        InjectMetadata(file);
-        return file;
-    }
-    
-    /// <summary>
-    /// Loads the content of the source from the specified file path and returns it as an instance of L5X.
-    /// If the content has already been loaded, it is returned from memory without loading it again from the file.
-    /// </summary>
-    /// <returns>An instance of L5X representing the content of the source.</returns>
-    public async Task<L5X> LoadAsync(CancellationToken token)
-    {
-        var file = await L5X.LoadAsync(Uri.LocalPath, token);
-        InjectMetadata(file);
-        return file;
+        ArgumentNullException.ThrowIfNull(variable);
+        _overrides.Remove(variable.VariableId);
     }
 
     /// <summary>
-    /// Overrides the values of the provided variables using the configured <see cref="Overrides"/> collection.
+    /// Clears all overrides stored in the source.
+    /// </summary>
+    public void ClearOverrides() => _overrides.Clear();
+
+    /// <summary>
+    /// Overrides the values of the provided variables using the configured <see cref="Overrides"/> collection of the source.
     /// </summary>
     /// <param name="variables">The variables whose values should be overridden.</param>
     public void Override(IEnumerable<Variable> variables)
     {
-        _overrides ??= Overrides.ToDictionary(x => x.VariableId);
-
         foreach (var variable in variables)
         {
             if (!_overrides.TryGetValue(variable.VariableId, out var match)) continue;
@@ -140,31 +170,47 @@ public class Source
     }
 
     /// <summary>
-    /// Creates a `FileSystemWatcher` object for the source file.
-    /// The watcher is configured to monitor the directory containing the source file,
-    /// and it raises events when the source file or its attributes are changed.
+    /// 
     /// </summary>
-    /// <returns>
-    /// A `FileSystemWatcher` object if the source file exists and its directory is not null or empty; otherwise, null.
-    /// </returns>
-    public FileSystemWatcher? CreateWatcher()
+    /// <returns></returns>
+    public Source Duplicate()
     {
-        if (!Exists || string.IsNullOrEmpty(Directory)) return null;
-        var watcher = new FileSystemWatcher(Directory);
-        watcher.EnableRaisingEvents = true;
-        watcher.IncludeSubdirectories = false;
-        watcher.Filter = FileName;
-        return watcher;
+        var duplicate = new Source(Content);
+
+        foreach (var variable in _overrides.Values)
+        {
+            duplicate.AddOverride(variable);
+        }
+
+        return duplicate;
     }
 
     /// <summary>
-    /// Adds some metadata to the L5X content for this source. The Guid, name, and physical location of the file on disc.
-    /// This is so we can read back this data from the element data without having to find the source information.
+    /// Creates a shallow copy of the current <see cref="Source"/> object.
     /// </summary>
-    private void InjectMetadata(ILogixSerializable content)
+    /// <returns>
+    /// A new <see cref="Source"/> object with the same basic information but not <see cref="Content"/>.
+    /// </returns>
+    public Source Copy()
     {
-        content.Serialize().Add(new XAttribute("SourceId", SourceId.ToString()));
-        content.Serialize().Add(new XAttribute("SourceName", Name));
-        content.Serialize().Add(new XAttribute("SourcePath", Uri.LocalPath));
+        return new Source
+        {
+            SourceId = SourceId,
+            Name = Name,
+            TargetName = TargetName,
+            TargetType = TargetType,
+            ExportedOn = ExportedOn,
+            ExportedBy = ExportedBy,
+            Description = Description
+        };
+    }
+
+    /// <summary>
+    /// Adds/sets the source metadata to the L5X content.
+    /// This is so we can read back this data from the element without having to find the source information.
+    /// </summary>
+    private void InjectMetadata(L5X content)
+    {
+        content.Serialize().SetAttributeValue("SourceId", SourceId.ToString());
     }
 }

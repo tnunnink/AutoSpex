@@ -26,7 +26,7 @@ public class EvaluationObserver : Observer<Evaluation>
     public string Criteria => Model.Criteria;
     public ObservableCollection<string> Expected => new(Model.Expected);
     public string Actual => Model.Actual;
-    public Exception? Error => Model.Error;
+    public string? Error => Model.Error;
 
 
     /// <inheritdoc />
@@ -39,7 +39,7 @@ public class EvaluationObserver : Observer<Evaluation>
                      || Criteria.Satisfies(filter)
                      || Expected.Any(x => x.Satisfies(filter))
                      || Actual.Satisfies(filter)
-                     || Error is not null && Error.Message.Satisfies(filter);
+                     || Error is not null && Error.Satisfies(filter);
 
         return passes;
     }

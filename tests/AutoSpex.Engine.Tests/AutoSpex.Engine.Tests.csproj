@@ -24,7 +24,7 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="System.Text.Json" Version="8.0.0" />
+        <PackageReference Include="System.Text.Json" Version="8.0.5" />
         <PackageReference Include="Verify.NUnit" Version="25.0.4" />
     </ItemGroup>
 
@@ -46,6 +46,12 @@
       </None>
       <None Update="PackageTests.ShouldBeVerifiedWhenSerialized.verified.txt">
         <DependentUpon>PackageTests.cs</DependentUpon>
+      </None>
+      <None Update="EvaluationTests.Serialized_Evaluation_ShouldBeVerified.verified.txt">
+        <DependentUpon>EvaluationTests.cs</DependentUpon>
+      </None>
+      <None Update="VerificationTests.Serialized_Verification_ShouldBeVerified.verified.txt">
+        <DependentUpon>VerificationTests.cs</DependentUpon>
       </None>
     </ItemGroup>
 

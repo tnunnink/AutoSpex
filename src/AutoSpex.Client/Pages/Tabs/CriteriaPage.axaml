@@ -3,7 +3,6 @@
              xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
              xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
-             xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors"
              xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
              x:Class="AutoSpex.Client.Pages.CriteriaPage"
              x:DataType="pages:CriteriaPageModel">
@@ -29,77 +28,114 @@
         </Style>
     </UserControl.Styles>
 
-    <UserControl.Resources>
-        <DataTemplate x:Key="ElementSelectionList" x:DataType="pages:CriteriaPageModel">
-            <ItemsControl
-                Theme="{a:ControlTheme ItemsControlScrollable}"
-                ItemsSource="{x:Static engine:Element.Selectable}"
-                MaxHeight="250" MinWidth="240" Margin="5">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate DataType="engine:Element">
-                        <Button
-                            Command="{Binding $parent[ItemsControl].((pages:CriteriaPageModel)DataContext).AddSpecCommand, FallbackValue={x:Null}}"
-                            CommandParameter="{Binding}"
-                            Theme="{a:ControlTheme ButtonSubtle}"
-                            HorizontalContentAlignment="Stretch">
-                            <StackPanel Orientation="Horizontal" Spacing="10">
-                                <PathIcon Theme="{StaticResource IconThemedSource}" />
-                                <TextBlock Text="{Binding Name}" />
-                            </StackPanel>
-                            <Interaction.Behaviors>
-                                <behaviors:HideFlyoutOnClickedBehavior />
-                            </Interaction.Behaviors>
-                        </Button>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </DataTemplate>
-    </UserControl.Resources>
-
     <Panel>
 
-        <controls:DefaultMessage
-            VerticalAlignment="Top" Margin="20"
-            IsVisible="{Binding !Specs.HasItems}"
-            HeaderIcon="{StaticResource IconFilledClipboard}"
-            Header="No criteria defined"
-            Message="Add criteria to define this specification.">
-            <controls:DefaultMessage.Action>
-                <Button Classes="add-criteria" Margin="10">
-                    <Button.Flyout>
-                        <Flyout Placement="Bottom" VerticalOffset="5">
-                            <ContentControl
-                                Content="{Binding}"
-                                ContentTemplate="{StaticResource ElementSelectionList}" />
-                        </Flyout>
-                    </Button.Flyout>
-                </Button>
-            </controls:DefaultMessage.Action>
-        </controls:DefaultMessage>
+        <StackPanel Spacing="20">
 
-        <StackPanel Spacing="20" IsVisible="{Binding Specs.Count}">
+            <controls:Section
+                Header="Query"
+                Description="Select the element type to query when this specification is run."
+                ShowContent="False">
 
-            <ItemsControl
-                ItemsSource="{Binding Specs}"
-                ItemTemplate="{StaticResource SpecEntry}"
-                ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Spacing="20" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-            </ItemsControl>
+                <controls:Section.Icon>
+                    <PathIcon Theme="{StaticResource IconFilledBinoculars}" />
+                </controls:Section.Icon>
 
-            <Button Classes="add-criteria" HorizontalAlignment="Left">
-                <Button.Flyout>
-                    <Flyout Placement="BottomEdgeAlignedLeft" HorizontalOffset="-8" VerticalOffset="5">
+                <controls:Section.Action>
+                    <ContentControl
+                        Content="{Binding Spec}"
+                        ContentTemplate="{StaticResource ElementEntry}" />
+                </controls:Section.Action>
+
+            </controls:Section>
+
+            <controls:Section
+                Header="Filter"
+                Description="Add filters to target specific elements for verification."
+                ShowContent="{Binding Spec.Filters.HasItems}"
+                IsVisible="{Binding Spec.Element, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Element.Default}}">
+
+                <controls:Section.Icon>
+                    <PathIcon Theme="{StaticResource IconFilledFunnel}" />
+                </controls:Section.Icon>
+
+                <controls:Section.Action>
+                    <StackPanel Spacing="10" Orientation="Horizontal">
+
                         <ContentControl
-                            Content="{Binding}"
-                            ContentTemplate="{StaticResource ElementSelectionList}" />
-                    </Flyout>
-                </Button.Flyout>
-            </Button>
+                            Content="{Binding Spec}"
+                            ContentTemplate="{StaticResource FilterInclusion}"
+                            IsVisible="{Binding Spec.Filters.HasItems}"
+                            VerticalAlignment="Center" />
+
+                        <Button
+                            Command="{Binding Spec.AddFilterCommand}"
+                            Theme="{a:ControlTheme ButtonSoft}">
+                            <StackPanel Orientation="Horizontal" Spacing="7">
+                                <PathIcon Theme="{StaticResource IconAdd}" Classes="size-sm accent" />
+                                <TextBlock Text="Add Filter" />
+                            </StackPanel>
+                        </Button>
+
+                    </StackPanel>
+                </controls:Section.Action>
+
+                <ListBox
+                    IsVisible="{Binding Spec.Filters.HasItems}"
+                    ItemsSource="{Binding Spec.Filters}"
+                    SelectedItems="{Binding Spec.SelectedFilters}"
+                    ItemTemplate="{StaticResource CriterionListItem}"
+                    ItemContainerTheme="{StaticResource ListBoxItemEntry}"
+                    SelectionMode="Multiple"
+                    BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                    BorderThickness="1" CornerRadius="5" />
+
+            </controls:Section>
+
+            <controls:Section
+                Header="Verify"
+                Description="Add verifications to define the criteria of the specification."
+                ShowContent="{Binding Spec.Verifications.HasItems}"
+                IsVisible="{Binding Spec.Element, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Element.Default}}">
+
+                <controls:Section.Icon>
+                    <PathIcon Theme="{StaticResource IconFilledPatch}" />
+                </controls:Section.Icon>
+
+                <controls:Section.Action>
+                    <StackPanel Spacing="10" Orientation="Horizontal">
+
+                        <ContentControl
+                            Content="{Binding Spec}"
+                            ContentTemplate="{StaticResource VerificationInclusion}"
+                            IsVisible="{Binding Spec.Verifications.HasItems}"
+                            VerticalAlignment="Center" />
+
+                        <Button
+                            Command="{Binding Spec.AddVerificationCommand}"
+                            Theme="{a:ControlTheme ButtonSoft}">
+                            <StackPanel Orientation="Horizontal" Spacing="7">
+                                <PathIcon Theme="{StaticResource IconAdd}" Classes="size-sm accent" />
+                                <TextBlock Text="Add Verification" />
+                            </StackPanel>
+                        </Button>
+
+                    </StackPanel>
+                </controls:Section.Action>
+
+                <ListBox
+                    IsVisible="{Binding Spec.Verifications.HasItems}"
+                    ItemsSource="{Binding Spec.Verifications}"
+                    SelectedItems="{Binding Spec.SelectedVerifications}"
+                    ItemTemplate="{StaticResource CriterionListItem}"
+                    ItemContainerTheme="{StaticResource ListBoxItemEntry}"
+                    SelectionMode="Multiple"
+                    BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                    BorderThickness="1" CornerRadius="5" />
+
+            </controls:Section>
 
         </StackPanel>
+
     </Panel>
 </UserControl>

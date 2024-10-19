@@ -7,10 +7,10 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record ListNodes : IDbQuery<Result<IEnumerable<Node>>>;
+public record ListNodes : IRequest<IEnumerable<Node>>;
 
 [UsedImplicitly]
-internal class ListNodesHandler(IConnectionManager manager) : IRequestHandler<ListNodes, Result<IEnumerable<Node>>>
+internal class ListNodesHandler(IConnectionManager manager) : IRequestHandler<ListNodes, IEnumerable<Node>>
 {
     private const string GetNodeTree =
         """
@@ -29,15 +29,11 @@ internal class ListNodesHandler(IConnectionManager manager) : IRequestHandler<Li
         ORDER BY Depth, Name;
         """;
 
-    public async Task<Result<IEnumerable<Node>>> Handle(ListNodes request,
-        CancellationToken cancellationToken)
+    public async Task<IEnumerable<Node>> Handle(ListNodes request, CancellationToken cancellationToken)
     {
-        var connection = await manager.Connect(cancellationToken);
-
+        using var connection = await manager.Connect(cancellationToken);
         var nodes = (await connection.QueryAsync<Node>(GetNodeTree)).BuildTree();
-
         var results = nodes.Values.Where(x => x.Depth == 0).AsEnumerable();
-
-        return Result.Ok(results);
+        return results;
     }
 }

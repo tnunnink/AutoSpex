@@ -1,0 +1,76 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+
+    <Design.PreviewWith>
+        <StackPanel Spacing="20" Margin="20">
+            <a:ToggleThemeButton Theme="{a:ControlTheme ToggleThemeButtonSoft}" />
+            <ContentControl
+                Content="{x:Static components:TestData.Run}"
+                ContentTemplate="{DynamicResource ResultSummary}" />
+        </StackPanel>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="ResultSummary" x:DataType="observers:RunObserver">
+        
+        <StackPanel Orientation="Horizontal" Spacing="20">
+            <StackPanel.Styles>
+                <Style Selector="TextBlock">
+                    <Style Selector="^.caption">
+                        <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                        <Setter Property="Padding" Value="0 0 0 1" />
+                    </Style>
+                </Style>
+            </StackPanel.Styles>
+
+            <StackPanel Orientation="Horizontal" Spacing="5">
+
+                <ContentControl Content="{Binding Result}" ContentTemplate="{StaticResource ResultPill}" />
+
+                <StackPanel Orientation="Horizontal" Spacing="5" IsVisible="{Binding HasResult}">
+                    <TextBlock Text="on" Classes="caption" />
+                    <TextBlock Text="{Binding RanOn, StringFormat='MM/dd/yyyy HH:mm:ss'}" />
+                    <TextBlock Text="by" Classes="caption" />
+                    <TextBlock Text="{Binding RanBy}" />
+                    <TextBlock Text="in" Classes="caption" />
+                    <StackPanel Orientation="Horizontal" Spacing="3">
+                        <PathIcon Theme="{StaticResource IconLineStopwatch}" Classes="accent" />
+                        <TextBlock Text="{Binding Duration}" />
+                        <TextBlock Text="ms" Classes="caption" />
+                        <ToolTip.Tip>Duration</ToolTip.Tip>
+                    </StackPanel>
+                </StackPanel>
+
+                <TextBlock Text="Execute this run to view results"
+                           Classes="caption"
+                           IsVisible="{Binding !HasResult}" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Spacing="10" IsVisible="{Binding HasResult}">
+
+                <StackPanel Orientation="Horizontal" Spacing="5" IsVisible="{Binding Passed}">
+                    <PathIcon Theme="{StaticResource IconThemedPassed}" />
+                    <TextBlock Text="{Binding Passed}" />
+                    <ToolTip.Tip>Passed</ToolTip.Tip>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Spacing="5" IsVisible="{Binding Failed}">
+                    <PathIcon Theme="{StaticResource IconThemedFailed}" />
+                    <TextBlock Text="{Binding Failed}" />
+                    <ToolTip.Tip>Failed</ToolTip.Tip>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Spacing="5" IsVisible="{Binding Errored}">
+                    <PathIcon Theme="{StaticResource IconThemedError}" />
+                    <TextBlock Text="{Binding Errored}" />
+                    <ToolTip.Tip>Errored</ToolTip.Tip>
+                </StackPanel>
+
+            </StackPanel>
+            
+        </StackPanel>
+        
+    </DataTemplate>
+</ResourceDictionary>

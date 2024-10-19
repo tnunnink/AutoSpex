@@ -299,7 +299,7 @@ public class NodeTests
 
         specs.Should().HaveCount(1);
     }
-    
+
     [Test]
     public void IsDescendantOf_Null_ShouldThrowException()
     {
@@ -307,7 +307,7 @@ public class NodeTests
 
         FluentActions.Invoking(() => spec.IsDescendantOf(null!)).Should().Throw<ArgumentNullException>();
     }
-    
+
     [Test]
     public void IsDescendantOf_SeparateNodes_ShouldBeFalse()
     {
@@ -318,7 +318,7 @@ public class NodeTests
 
         result.Should().BeFalse();
     }
-    
+
     [Test]
     public void IsDescendantOf_DirectChild_ShouldBeTrue()
     {
@@ -329,7 +329,7 @@ public class NodeTests
 
         result.Should().BeTrue();
     }
-    
+
     [Test]
     public void IsDescendantOf_NestedSpecNode_ShouldBeTrue()
     {
@@ -342,7 +342,7 @@ public class NodeTests
 
         result.Should().BeTrue();
     }
-    
+
     [Test]
     public void IsDescendantOf_Itself_ShouldBeFalse()
     {
@@ -355,97 +355,78 @@ public class NodeTests
     }
 
     [Test]
-    public void AddSpec_ValidConfig_ShouldHaveExpectedCount()
+    public void Configure_ValidConfig_ShouldHaveExpectedCount()
     {
         var node = Node.NewSpec();
 
-        node.AddSpec(c =>
+        node.Configure(c =>
         {
-            c.Find(Element.Program);
+            c.Query(Element.Program);
             c.Filter("Name", Operation.Like, "%Test");
             c.Verify("Disabled", Operation.False);
         });
 
-        node.Specs.Should().HaveCount(1);
-        var spec = node.Specs.FirstOrDefault();
-        spec.Should().NotBeNull();
+        node.Spec.Element.Should().Be(Element.Program);
+        node.Spec.Filters.Should().HaveCount(1);
+        node.Spec.Verifications.Should().HaveCount(1);
     }
 
     [Test]
-    public void AddSpec_NullConfig_ShouldThrowException()
+    public void Configure_NullConfig_ShouldThrowException()
     {
         var node = Node.NewSpec();
 
-        FluentActions.Invoking(() => node.AddSpec((Action<Spec>)null!)).Should().Throw<ArgumentNullException>();
+        FluentActions.Invoking(() => node.Configure((Action<Spec>)null!)).Should().Throw<ArgumentNullException>();
     }
 
     [Test]
-    public void AddSpec_ValidSpec_ShouldHaveExpectedCount()
+    public void Configure_ValidSpec_ShouldHaveExpectedCount()
     {
         var node = Node.NewSpec();
 
-        node.AddSpec(new Spec());
+        node.Configure(new Spec(Element.Tag));
 
-        node.Specs.Should().HaveCount(1);
-    }
-
-    [Test]
-    public void AddSpec_NullSpec_ShouldThrowException()
-    {
-        var node = Node.NewSpec();
-
-        FluentActions.Invoking(() => node.AddSpec((Spec)null!)).Should().Throw<ArgumentNullException>();
-    }
-
-    [Test]
-    public void RemoveSpec_ValidSpec_ShouldHaveExpectedCount()
-    {
-        var node = Node.NewSpec();
-        var spec = new Spec();
-        node.AddSpec(spec);
-
-        node.RemoveSpec(spec);
-
-        node.Specs.Should().BeEmpty();
+        node.Spec.Should().NotBeNull();
+        node.Spec.Element.Should().Be(Element.Tag);
     }
 
     [Test]
     public async Task RunAll_SingleConfiguredSpec_ShouldReturnExpectedResult()
     {
         var content = L5X.Load(Known.Test);
-        
+
         var node = Node.NewSpec("Test", c =>
         {
-            c.Find(Element.Tag);
+            c.Query(Element.Tag);
             c.Filter("TagName", Operation.EqualTo, "TestSimpleTag");
             c.Verify("DataType", Operation.EqualTo, "SimpleType");
         });
 
-        var verification = await node.RunAll(content);
+        var verification = await node.Run(content);
 
         verification.Result.Should().Be(ResultState.Passed);
         verification.Evaluations.Should().NotBeEmpty();
         verification.Duration.Should().BeGreaterThan(0);
     }
-    
+
     [Test]
     public async Task RunAll_MultipleConfiguredSpec_ShouldReturnExpectedResult()
     {
         var content = L5X.Load(Known.Test);
         var node = Node.NewSpec("Test");
-        node.AddSpec(c =>
+        node.Configure(c =>
         {
-            c.Find(Element.Tag);
+            c.Query(Element.Tag);
             c.Filter("TagName", Operation.EqualTo, "TestSimpleTag");
             c.Verify("DataType", Operation.EqualTo, "SimpleType");
         });
-        node.AddSpec(c =>
+        node.Configure(c =>
         {
-            c.Find(Element.Program);
+            c.Query(Element.Program);
             c.Verify("Disabled", Operation.False);
         });
 
-        var verification = await node.RunAll(content);
+        var verification = await node.Run(content);
 
         verification.Result.Should().Be(ResultState.Passed);
         verification.Evaluations.Should().HaveCountGreaterThan(2);

@@ -34,7 +34,7 @@ public class AnyOperationTests
     {
         var items = new List<int> {1, 2, 3, 4, 5};
         
-        var result = Operation.Any.Execute(items, new Criterion(Operation.EqualTo, 3));
+        var result = Operation.Any.Execute(items, new Criterion(Property.Default, Operation.EqualTo, 3));
         
         result.Should().BeTrue();
     }
@@ -44,7 +44,7 @@ public class AnyOperationTests
     {
         var items = new List<int> {1, 2, 3, 4, 5};
         
-        var result = Operation.Any.Execute(items, new Criterion(Operation.EqualTo, 6));
+        var result = Operation.Any.Execute(items, new Criterion(Property.Default, Operation.EqualTo, 6));
         
         result.Should().BeFalse();
     }
@@ -54,7 +54,7 @@ public class AnyOperationTests
     {
         var items = new List<int> {1, 2, 3, 4, 5};
 
-        var result = Operation.Any.Execute(items, new Criterion(Operation.GreaterThan, 10));
+        var result = Operation.Any.Execute(items, new Criterion(Property.Default, Operation.GreaterThan, 10));
 
         result.Should().BeFalse();
     }
@@ -64,7 +64,7 @@ public class AnyOperationTests
     {
         var items = new List<int> {1, 2, 3, 4, 5};
 
-        var result = Operation.Any.Execute(items, new Criterion(Operation.LessThan, 10));
+        var result = Operation.Any.Execute(items, new Criterion(Property.Default, Operation.LessThan, 10));
 
         result.Should().BeTrue();
     }

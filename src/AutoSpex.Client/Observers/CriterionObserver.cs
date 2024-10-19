@@ -9,22 +9,22 @@ using AutoSpex.Client.Resources;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using Avalonia.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
 namespace AutoSpex.Client.Observers;
 
-public partial class CriterionObserver : Observer<Criterion>,
-    IRecipient<Observer.Get<CriterionObserver>>
+public partial class CriterionObserver : Observer<Criterion>, IRecipient<Observer.Get<CriterionObserver>>
 {
     public CriterionObserver(Criterion model) : base(model)
     {
-        Arguments = new ObserverCollection<Argument, ArgumentObserver>(Model.Arguments, a => new ArgumentObserver(a));
+        Argument = new ArgumentObserver(Model.Argument);
 
         Track(nameof(Property));
         Track(nameof(Negation));
         Track(nameof(Operation));
-        Track(Arguments);
+        Track(Argument);
     }
 
     public override Guid Id => Model.CriterionId;
@@ -50,7 +50,8 @@ public partial class CriterionObserver : Observer<Criterion>,
         set => SetProperty(Model.Operation, value, Model, (c, o) => c.Operation = o, true);
     }
 
-    public ObserverCollection<Argument, ArgumentObserver> Arguments { get; }
+    [ObservableProperty] private ArgumentObserver _argument;
+
 
     public Func<string?, CancellationToken, Task<IEnumerable<object>>> PopulateProperties => GetProperties;
     public Func<string?, CancellationToken, Task<IEnumerable<object>>> PopulateOperations => GetOperations;
@@ -60,8 +61,9 @@ public partial class CriterionObserver : Observer<Criterion>,
 
     /// <inheritdoc />
     /// <remarks>
-    /// When the property changes we want to reset the operation which in turn resets the arguments. This prevents invalid entry.
-    /// WHen the operation changes we want to update the arguments based on the selected operation type.
+    /// When the property changes we want to reset the operation which in turn resets the argument.
+    /// This helps prevent invalid entry. When the operation changes we want to update the argument based
+    /// on the selected operation type.
     /// </remarks>
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
@@ -73,7 +75,10 @@ public partial class CriterionObserver : Observer<Criterion>,
                 Operation = Operation.None;
                 break;
             case nameof(Operation):
-                UpdateArguments();
+                UpdateArgument();
+                break;
+            case nameof(Argument):
+                Model.Argument = Argument.Model;
                 break;
         }
     }
@@ -97,6 +102,15 @@ public partial class CriterionObserver : Observer<Criterion>,
     }
 
     /// <summary>
+    /// Toggles the state of the criterion <see cref="Negation"/> property to make the operation negate the output.
+    /// </summary>
+    [RelayCommand]
+    private void ToggleNegation()
+    {
+        Negation = Negation.Negate;
+    }
+
+    /// <summary>
     /// Updates the criterion <see cref="Operation"/> based on the provided value type.
     /// If the user provides text we can try to parse it but if not then we need to set to null/none.
     /// </summary>
@@ -116,12 +130,36 @@ public partial class CriterionObserver : Observer<Criterion>,
     }
 
     /// <summary>
-    /// Toggles the state of the criterion <see cref="Negation"/> property to make the operation negate the output.
+    /// Updates the criterion arguments collection based on the selected operation.
+    /// Each operation type expects a certain number of arguments (except for In).
+    /// Collection operations expect an inner criterion that's type needs to be the inner type of the collection.
     /// </summary>
-    [RelayCommand]
-    private void ToggleNegation()
+    private void UpdateArgument()
     {
-        Negation = Negation.Negate;
+        if (Operation is NoneOperation)
+        {
+            Argument = new ArgumentObserver(Engine.Argument.Default);
+        }
+
+        if (Operation is BinaryOperation)
+        {
+            Argument = new ArgumentObserver(new Argument());
+        }
+
+        if (Operation is TernaryOperation)
+        {
+            Argument = new ArgumentObserver(new Argument(new List<Argument> { new(), new() }));
+        }
+
+        if (Operation is CollectionOperation)
+        {
+            Argument = new ArgumentObserver(new Argument(new Criterion(Property.InnerType)));
+        }
+
+        if (Operation is InOperation)
+        {
+            Argument = new ArgumentObserver(new Argument(new List<Argument> { new() }));
+        }
     }
 
     /// <summary>
@@ -130,43 +168,11 @@ public partial class CriterionObserver : Observer<Criterion>,
     public void Receive(Get<CriterionObserver> message)
     {
         if (message.HasReceivedResponse) return;
-        
+
         if (message.Predicate.Invoke(this))
         {
             message.Reply(this);
         }
-    }
-
-    /// <summary>
-    /// Updates the criterion arguments collection based on the selected operation.
-    /// Each operation type expects a certain number of arguments (except for In).
-    /// Collection operations expect an inner criterion that's type needs to be the inner type of the collection.
-    /// </summary>
-    private void UpdateArguments()
-    {
-        Arguments.Clear();
-
-        /*//We need to make the argument value a list of inner arguments to get the correct UI display.
-        if (Operation == Operation.In)
-        {
-            Arguments.Add(new ArgumentObserver(new Argument(new List<Argument> { new() })));
-            return;
-        }*/
-
-        if (Operation is BinaryOperation)
-        {
-            Arguments.Add(new ArgumentObserver());
-        }
-
-        if (Operation is TernaryOperation)
-        {
-            Arguments.Add(new ArgumentObserver());
-            Arguments.Add(new ArgumentObserver());
-        }
-
-        if (Operation is not CollectionOperation) return;
-        var innerType = Property.InnerType;
-        Arguments.Add(new ArgumentObserver(new Argument(new Criterion(innerType))));
     }
 
     /// <summary>
@@ -183,12 +189,17 @@ public partial class CriterionObserver : Observer<Criterion>,
         if (string.IsNullOrEmpty(filter))
             return Task.FromResult(origin.Properties.Cast<object>());
 
-        var index = filter.LastIndexOf('.');
-        var path = index > -1 ? filter[..index] : string.Empty;
-        var member = index > -1 ? filter[(index + 1)..] : filter;
+        //We don't want to suggest properties while in the indexer part. Only after it is closed
+        //Example: "[MyTagName.MyMem"
+        if (filter.Count(x => x == '[') != filter.Count(x => x == ']'))
+            return Task.FromResult(Enumerable.Empty<object>());
+
+        var memeberIndex = filter.LastIndexOf('.');
+        var path = memeberIndex > -1 ? filter[..memeberIndex] : string.Empty;
+        var member = memeberIndex > -1 ? filter[(memeberIndex + 1)..] : filter;
 
         var property = origin.GetProperty(path);
-        var properties = property?.Properties ?? origin.Properties;
+        var properties = property?.Properties ?? [];
 
         var filtered = properties
             .Where(p => p.Name.Contains(member, StringComparison.OrdinalIgnoreCase))

@@ -10,7 +10,6 @@ namespace AutoSpex.Engine;
 public class Node : IEquatable<Node>
 {
     private readonly List<Node> _nodes = [];
-    private readonly List<Spec> _specs = [];
     private readonly List<Variable> _variables = [];
 
     private Node()
@@ -19,14 +18,14 @@ public class Node : IEquatable<Node>
 
     [JsonConstructor]
     private Node(Guid nodeId, Guid parentId, NodeType type, string name,
-        IEnumerable<Node> nodes, IEnumerable<Spec> specs, IEnumerable<Variable> variables)
+        IEnumerable<Node> nodes, IEnumerable<Variable> variables, Spec spec)
     {
         NodeId = nodeId;
         ParentId = parentId;
         Type = type;
         Name = name;
+        Spec = spec;
         _nodes = nodes.ToList();
-        _specs = specs.ToList();
         _variables = variables.ToList();
     }
 
@@ -77,16 +76,6 @@ public class Node : IEquatable<Node>
     public IEnumerable<Node> Nodes => _nodes;
 
     /// <summary>
-    /// The configued <see cref="Spec"/> this node will run when executed. 
-    /// </summary>
-    /// <remarks>All nodes can technically have a specification.
-    /// Container nodes can use this to define when they run child specs.
-    /// Spec nodes can use this to actually produce verifications that are of interest to the user.
-    /// </remarks>
-    [JsonInclude]
-    public IEnumerable<Spec> Specs => _specs;
-
-    /// <summary>
     /// The collection of <see cref="Variable"/> defined by this node.
     /// </summary>
     /// <remarks>
@@ -95,6 +84,12 @@ public class Node : IEquatable<Node>
     /// </remarks>
     [JsonInclude]
     public IEnumerable<Variable> Variables => _variables;
+
+    /// <summary>
+    /// Represents the specification associated with a Node.
+    /// </summary>
+    [JsonInclude]
+    public Spec Spec { get; private set; } = new();
 
     /// <summary>
     /// The depth or level of this node the tree heirarchy.
@@ -115,6 +110,11 @@ public class Node : IEquatable<Node>
     /// </summary>
     [JsonIgnore]
     public string Route => $"{Path}/{Name}".Trim('/');
+
+    /// <summary>
+    /// Represents an empty node instance with NodeId set to Guid.Empty.
+    /// </summary>
+    public static Node Empty => new() { NodeId = Guid.Empty };
 
     /// <summary>
     /// Creates a new Collection type node.
@@ -163,7 +163,7 @@ public class Node : IEquatable<Node>
         };
 
         if (config is not null)
-            node.AddSpec(config);
+            node.Configure(config);
 
         return node;
     }
@@ -215,7 +215,7 @@ public class Node : IEquatable<Node>
         _nodes.Add(node);
 
         if (config is not null)
-            node.AddSpec(config);
+            node.Configure(config);
 
         return node;
     }
@@ -274,63 +274,6 @@ public class Node : IEquatable<Node>
     }
 
     /// <summary>
-    /// Creates and configures a new <see cref="Spec"/> and adds it to the collection of <see cref="Specs"/>.
-    /// </summary>
-    /// <param name="config">The delegate that configures the newly created spec.</param>
-    /// <remarks>This is mostly a help for adding spec configs to this node for testing.</remarks>
-    public Spec AddSpec(Action<Spec> config)
-    {
-        ArgumentNullException.ThrowIfNull(config);
-
-        var spec = new Spec();
-        config.Invoke(spec);
-        _specs.Add(spec);
-
-        return spec;
-    }
-
-    /// <summary>
-    /// Add the provided specification to this node. 
-    /// </summary>
-    /// <param name="spec">The <see cref="Spec"/> to add.</param>
-    public void AddSpec(Spec spec)
-    {
-        ArgumentNullException.ThrowIfNull(spec);
-
-        _specs.Add(spec);
-    }
-
-    /// <summary>
-    /// Adds the provided collection of specifications to this node. 
-    /// </summary>
-    /// <param name="specs">The collection of <see cref="Spec"/> to add.</param>
-    public void AddSpecs(IEnumerable<Spec> specs)
-    {
-        ArgumentNullException.ThrowIfNull(specs);
-
-        _specs.AddRange(specs);
-    }
-
-    /// <summary>
-    /// Removes the provided specification from this node.
-    /// </summary>
-    /// <param name="spec">The <see cref="Spec"/> to remove.</param>
-    public void RemoveSpec(Spec spec)
-    {
-        ArgumentNullException.ThrowIfNull(spec);
-
-        _specs.Remove(spec);
-    }
-
-    /// <summary>
-    /// Clears the list of specs in the node.
-    /// </summary>
-    public void ClearSpecs()
-    {
-        _specs.Clear();
-    }
-
-    /// <summary>
     /// Adds the provided variable to this node and sets the NodeId of the variable to match.
     /// </summary>
     public Variable AddVariable(string name, object? value = default)
@@ -384,9 +327,36 @@ public class Node : IEquatable<Node>
         _variables.Remove(variable);
     }
 
+    /// <summary>
+    /// Clears all variables associated with the Node.
+    /// </summary>
     public void ClearVariables()
     {
         _variables.Clear();
+    }
+
+    /// <summary>
+    /// Updates the configured <see cref="Spec"/> for this node using the provided config delegate.
+    /// </summary>
+    /// <param name="config">The delegate that configures the spec instance.</param>
+    /// <remarks>This is mostly a helper for updating spec configs to this node for testing.</remarks>
+    public Spec Configure(Action<Spec> config)
+    {
+        ArgumentNullException.ThrowIfNull(config);
+        var spec = new Spec();
+        config.Invoke(spec);
+        Spec = spec;
+        return Spec;
+    }
+
+    /// <summary>
+    /// Updates the configured <see cref="Spec"/> for this node using the provided spec instance. 
+    /// </summary>
+    /// <param name="spec">The <see cref="Spec"/> instance to set for this node.
+    /// If null will set <see cref="Spec"/> to a default instance.</param>
+    public void Configure(Spec? spec)
+    {
+        Spec = spec ?? new Spec();
     }
 
     /// <summary>
@@ -408,12 +378,27 @@ public class Node : IEquatable<Node>
         foreach (var variable in _variables)
             duplicate.AddVariable(variable.Duplicate());
 
-        foreach (var spec in Specs)
-            duplicate.AddSpec(spec.Duplicate());
+        duplicate.Configure(Spec.Duplicate());
 
         Parent?.AddNode(duplicate);
 
         return duplicate;
+    }
+
+    /// <summary>
+    /// Creates a copy of the current Node with the same NodeId, Type, and Name.
+    /// </summary>
+    /// <returns>A new Node instance that is a copy of the original Node.</returns>
+    public Node Copy()
+    {
+        var copy = new Node
+        {
+            NodeId = NodeId,
+            Type = Type,
+            Name = Name
+        };
+
+        return copy;
     }
 
     /// <summary>
@@ -532,21 +517,13 @@ public class Node : IEquatable<Node>
     /// <param name="content">The <see cref="L5X"/> file to run the specs aginst.</param>
     /// <param name="token">The token to cancel the run.</param>
     /// <returns>A <see cref="Task"/> that excutes the specs and returns the flattened <see cref="Verification"/> result.</returns>
-    public async Task<Verification> RunAll(L5X content, CancellationToken token = default)
+    public async Task<Verification> Run(L5X content, CancellationToken token = default)
     {
-        //todo there is potential to configure how the node runs the set of specs. Otherwise it just runs each ony and merges results into a single verification.
-        //todo there might also be consideration to run descendent specs from a given node, but not sure...
+        //Update all referenced variables to the correct values. 
         ResolveReferences();
 
-        var verifications = new List<Verification>();
-
-        foreach (var spec in _specs)
-        {
-            var verification = await spec.RunAsync(content, token);
-            verifications.Add(verification);
-        }
-
-        return Verification.Merge(verifications);
+        //Run the specification and return the resulting verification.
+        return await Spec.RunAsync(content, token);
     }
 
     /// <inheritdoc />
@@ -570,17 +547,14 @@ public class Node : IEquatable<Node>
 
 
     /// <summary>
-    /// Resolves all references configured in the node's set of specs to the variables that defined in the
-    /// scope of this node. This is called prior to running a specification so that all configured criterion have the
+    /// Resolves all references configured in the node's spec to the variables that defined in the scope of this node.
+    /// This is called prior to running a specification so that all configured criterion have the
     /// appropriate value base on mapped variable references.
     /// </summary>
     private void ResolveReferences()
     {
-        foreach (var spec in Specs)
-        {
-            spec.Filters.ForEach(x => x.Arguments.ForEach(ResolveArgument));
-            spec.Verifications.ForEach(x => x.Arguments.ForEach(ResolveArgument));
-        }
+        Spec.Filters.ForEach(x => ResolveArgument(x.Argument));
+        Spec.Verifications.ForEach(x => ResolveArgument(x.Argument));
     }
 
     /// <summary>
@@ -594,7 +568,7 @@ public class Node : IEquatable<Node>
         switch (argument.Value)
         {
             case Criterion nested:
-                nested.Arguments.ForEach(ResolveArgument);
+                ResolveArgument(nested.Argument);
                 break;
             case IEnumerable<Argument> collection:
                 collection.ToList().ForEach(ResolveArgument);

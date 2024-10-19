@@ -2,15 +2,12 @@
 
 public abstract class BinaryOperation(string name) : Operation(name)
 {
-    public override bool Execute(object? input, params object[] values)
+    public override bool Execute(object? input, object? value)
     {
-        if (values is null) 
-            throw new ArgumentNullException(nameof(values));
-        
-        if (values.Length != 1)
-            throw new ArgumentException("Binary operations require exactly one value", nameof(values));
+        if (value is null) 
+            throw new ArgumentNullException(nameof(value), "Binary operations expect an argument.");
 
-        return Evaluate(input, values[0]);
+        return Evaluate(input, value);
     }
 
     protected abstract bool Evaluate(object? input, object value);

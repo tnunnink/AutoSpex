@@ -3,7 +3,6 @@
              xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
              xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
-             xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
              x:Class="AutoSpex.Client.Pages.SaveToContainerPage"
              x:DataType="pages:SaveToContainerPageModel"
              Height="600" Width="600">
@@ -40,28 +39,8 @@
                 SelectedItem="{Binding Selected}"
                 IsVisible="{Binding Containers.Count}"
                 ItemContainerTheme="{StaticResource ListBoxItemSimple}"
-                Margin="10">
-
-                <ListBox.ItemTemplate>
-                    <DataTemplate x:DataType="observers:NodeObserver">
-                        <DockPanel LastChildFill="False">
-
-                            <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" Spacing="10">
-                                <PathIcon
-                                    Theme="{Binding Type.Name, Converter={StaticResource KeyIconConverter}}" />
-                                <TextBlock
-                                    Text="{Binding Name}"
-                                    FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
-                            </StackPanel>
-
-                            <ContentControl
-                                DockPanel.Dock="Right"
-                                Content="{Binding}"
-                                ContentTemplate="{StaticResource BreadcrumbLabel}" />
-
-                        </DockPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
+                ItemTemplate="{StaticResource NodeListItemSimple}"
+                Padding="10">
             </ListBox>
 
             <controls:DefaultMessage

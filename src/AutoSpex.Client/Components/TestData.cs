@@ -15,6 +15,58 @@ namespace AutoSpex.Client.Components;
 [SuppressMessage("Usage", "CA2211:Non-constant fields should not be visible")]
 public static class TestData
 {
+    #region Sources
+
+    private const string TestSource = @"C:\Users\tnunn\Documents\L5X\Test.L5X";
+
+    public static SourceObserver SourceTest = new(new Source(L5X.Load(TestSource)));
+
+    public static SourceObserver SourceEmpty = new(new Source());
+
+    public static ObservableCollection<SourceObserver> Sources = [SourceTest, SourceTest, SourceEmpty];
+
+    #endregion
+
+    #region Elements
+
+    public static ObservableCollection<ElementObserver> DataTypeElements = new(GetDataTypes());
+
+    private static IEnumerable<ElementObserver> GetDataTypes()
+    {
+        /*var content = L5X.New("Test", "1756-L83E", new Revision(33.1));
+
+        content.Add(new DataType("MyTestType") { Description = "this is a test element" });
+        content.Add(new DataType("AnotherType") { Description = "this is a test element" });
+        content.Add(new DataType("MyComplexType") { Description = "this is a test element" });
+
+        return content.DataTypes.Select(e => new ElementObserver(e));*/
+
+        yield return new DataType("MyTestType") { Description = "this is a test element" };
+        yield return new DataType("AnotherType") { Description = "this is a test element" };
+        yield return new DataType("MyComplexType") { Description = "this is a test element" };
+    }
+
+    #endregion
+
+    #region Properties
+
+    public static PropertyObserver RadixPropertyObserver = new(
+        Element.Tag.This.GetProperty("Radix")!,
+        new ElementObserver(new Tag { Name = "MyTag" })
+    );
+
+    public static PropertyObserver TagNamePropertyObserver => new(
+        Element.Tag.This.GetProperty("TagName")!,
+        new ElementObserver(new Tag { Name = "MyTag" })
+    );
+
+    public static PropertyObserver MembersPropertyObserver => new(
+        Element.Tag.This.GetProperty("Members")!,
+        new ElementObserver(new Tag { Name = "MyTag", Value = new TIMER() })
+    );
+
+    #endregion
+
     #region Nodes
 
     public static NodeObserver SpecNode = SpecNodeObserver();
@@ -60,7 +112,7 @@ public static class TestData
 
     public static SpecObserver SpecObserver = new(Spec.Configure(c =>
         {
-            c.Find(Element.Tag);
+            c.Query(Element.Tag);
             c.Filter("TagName", Operation.Containing, "TestTag");
             c.Verify("Value", Operation.EqualTo, 123);
         })
@@ -96,6 +148,28 @@ public static class TestData
         TextCriterion,
         EnumCriterion,
         InnerCriterion
+    ];
+
+    #endregion
+
+    #region Arguments
+
+    public static ArgumentObserver EmptyArgument = new Argument(string.Empty);
+
+    public static ArgumentObserver TextArgument = new Argument("Literal Text Value");
+
+    public static ArgumentObserver EnumArgument = new Argument(ExternalAccess.ReadOnly);
+
+    public static ArgumentObserver VariableArgument = new Argument(new Variable("Var01", "Some Value"));
+
+    public static ArgumentObserver TernaryArgument = new Argument(new List<Argument> { 1, 12 });
+
+    public static ObservableCollection<ArgumentObserver> Arguments =
+    [
+        EmptyArgument,
+        TextArgument,
+        EnumArgument,
+        VariableArgument
     ];
 
     #endregion
@@ -139,14 +213,22 @@ public static class TestData
     public static ValueObserver ReferenceValue = new(new Reference("test_ref"));
 
     #endregion
+    
+    #region Runs
+
+    public static RunObserver Run => new(new Run(Node.NewCollection(), new Source()));
+
+    #endregion
 
     #region Outcomes
 
-    public static OutcomeObserver DefaultOutcome = new(new Outcome(Node.NewSpec()));
+    public static OutcomeObserver DefaultOutcome = new(new Outcome { Name = "Default Outcome" });
 
     public static IEnumerable<OutcomeObserver> DefaultOutcomes = [DefaultOutcome, DefaultOutcome, DefaultOutcome];
 
     #endregion
+
+    #region Evaluations
 
     public static EvaluationObserver PassedEvaluation = new(
         Evaluation.Passed(
@@ -170,4 +252,6 @@ public static class TestData
 
     public static ObservableCollection<EvaluationObserver> Evaluations =
         new(new[] { PassedEvaluation, FailedEvaluation, ErroredEvaluation });
+
+    #endregion
 }

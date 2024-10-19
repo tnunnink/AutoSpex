@@ -68,7 +68,7 @@ public class CreateNodeTests
         var mediator = context.Resolve<IMediator>();
         var node = Node.NewSpec("MySpec", c =>
         {
-            c.Find(Element.Tag);
+            c.Query(Element.Tag);
             c.Filter("TagName", Operation.Containing, "Test");
             c.Verify("Value", Operation.EqualTo, 123);
             c.FilterInclusion = Inclusion.Any;
@@ -79,7 +79,7 @@ public class CreateNodeTests
         
         var created = await mediator.Send(new LoadNode(node.NodeId));
         created.IsSuccess.Should().BeTrue();
-        created.Value.Specs.Should().HaveCount(1);
+        created.Value.Spec.Should().BeEquivalentTo(node.Spec);
     }
 
     [Test]

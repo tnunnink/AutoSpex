@@ -14,12 +14,12 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
 {
     private bool _changed;
     private bool _refreshing;
-    private readonly Func<ICollection<TObserver>> _refresh;
-    private readonly Action<int, TModel>? _add;
-    private readonly Action<int, TModel>? _insert;
-    private readonly Action<int, TModel>? _remove;
-    private readonly Action? _clear;
-    private readonly Func<int>? _count;
+    private Func<ICollection<TObserver>> _refresh;
+    private Action<int, TModel>? _add;
+    private Action<int, TModel>? _insert;
+    private Action<int, TModel>? _remove;
+    private Action? _clear;
+    private Func<int>? _count;
 
     public ObserverCollection()
     {
@@ -96,7 +96,7 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
     /// <param name="observer">The observer to add to the collection.</param>
     /// <returns>
     /// <see langword="true"/> if the observer was added to the collection;
-    /// <see langword="false"/> if an observer with the same Id already exists in the collection.</returns>
+    /// <see langword="false"/> if an observer with the same ID already exists in the collection.</returns>
     public bool TryAdd(TObserver observer)
     {
         if (this.Any(x => x.Id == observer.Id)) return false;
@@ -116,6 +116,23 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
         {
             Remove(target);
         }
+    }
+
+    /// <summary>
+    /// Binds this observer collection to the provided list using the specified wrapper function.
+    /// </summary>
+    /// <param name="models">The list of models to bind to the ObserverCollection</param>
+    /// <param name="wrapper">A function that wraps a model into its corresponding observer</param>
+    public void Bind(IList<TModel> models, Func<TModel, TObserver> wrapper)
+    {
+        _refresh = () => models.Select(wrapper).ToList();
+        _add = (_, m) => models.Add(m);
+        _insert = models.Insert;
+        _remove = (_, m) => models.Remove(m);
+        _clear = models.Clear;
+        _count = () => models.Count;
+
+        RefreshCollection(_refresh());
     }
 
     /// <summary>
@@ -193,6 +210,19 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
     }
 
     /// <summary>
+    /// Adds or appends a collection by applying the provided filter to the current observable collection. This is
+    /// in contrast to <see cref="Filter(System.Func{TObserver,bool})"/> which first calls refresh, filters using
+    /// the predicate, and then updates the collection with the results. This would allow chaining of filters in sequence.
+    /// Resetting can be accomplished by calling <see cref="Refresh"/>
+    /// </summary>
+    /// <param name="filter">The filter function to apply to each item in the current collection.</param>
+    public void AddFilter(Func<TObserver, bool> filter)
+    {
+        var collection = this.Where(filter).ToList();
+        RefreshCollection(collection);
+    }
+
+    /// <summary>
     /// Retrieves all error messages found for child observers in the <see cref="ObserverCollection{TModel,TObserver}"/>
     /// </summary>
     /// <param name="propertyName">The name of the property to get errors for.</param>
@@ -200,6 +230,20 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
     public IEnumerable GetErrors(string? propertyName)
     {
         return this.SelectMany(o => o.GetErrors(propertyName));
+    }
+
+    /// <summary>
+    /// Disposes the ObserverCollection by calling Dispose method on each observer in the collection.
+    /// It also suppresses finalization of the ObserverCollection instance.
+    /// </summary>
+    public void Dispose()
+    {
+        foreach (var observer in this)
+        {
+            observer.Dispose();
+        }
+
+        GC.SuppressFinalize(this);
     }
 
     /// <inheritdoc />
@@ -288,12 +332,6 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
         foreach (var observer in collection)
             Add(observer);
 
-        /*if (cascade)
-        {
-            foreach (var observer in this)
-                observer.Refresh();
-        }*/
-
         _refreshing = false;
         _changed = false;
         OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsChanged)));
@@ -369,7 +407,7 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
 }
 
 /// <summary>
-/// Some helpers for the base <see cref="ObservableCollection{T}"/> class to make adding and refreshing it's items easier.
+/// Some helpers for the base <see cref="ObservableCollection{T}"/> class to make adding and refreshing its items easier.
 /// </summary>
 public static class ObservableCollectionExtensions
 {

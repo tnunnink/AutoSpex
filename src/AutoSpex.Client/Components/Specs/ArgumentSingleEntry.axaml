@@ -1,0 +1,39 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+
+    <Design.PreviewWith>
+        <Border Padding="20" Height="300" Width="600">
+            <StackPanel Spacing="10" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <ContentControl
+                    Content="{x:Static components:TestData.EmptyArgument}"
+                    ContentTemplate="{DynamicResource ArgumentSingleEntry}" />
+                <ContentControl
+                    Content="{x:Static components:TestData.EnumArgument}"
+                    ContentTemplate="{DynamicResource ArgumentSingleEntry}" />
+                <ContentControl
+                    Content="{x:Static components:TestData.TextArgument}"
+                    ContentTemplate="{DynamicResource ArgumentSingleEntry}" />
+                <ContentControl
+                    Content="{x:Static components:TestData.VariableArgument}"
+                    ContentTemplate="{DynamicResource ArgumentSingleEntry}" />
+            </StackPanel>
+        </Border>
+    </Design.PreviewWith>
+
+
+    <DataTemplate x:Key="ArgumentSingleEntry" x:DataType="observers:ArgumentObserver">
+        <controls:Entry
+            Watermark="Enter value"
+            Value="{Binding Value}"
+            ValueTemplate="{StaticResource ValueDisplay}"
+            IsEmpty="{Binding IsEmpty}"
+            ItemTemplate="{StaticResource ValueItemTemplate}"
+            Populate="{Binding Suggestions}"
+            CommitCommand="{Binding UpdateValueCommand}">
+        </controls:Entry>
+    </DataTemplate>
+
+</ResourceDictionary>

@@ -13,178 +13,157 @@
         ParentId: Guid_2,
         Type: Spec,
         Name: First,
-        Specs: [
-          {
-            SpecId: Guid_4,
-            Query: {
-              Element: Tag,
-              Name: null
-            },
-            Filters: [
-              {
-                CriterionId: Guid_5,
-                Type: L5Sharp.Core.Tag,
-                Property: {
-                  Origin: L5Sharp.Core.Tag,
-                  Path: Name
-                },
-                Operation: Like,
-                Arguments: [
-                  {
-                    ArgumentId: Guid_6,
-                    Value: {
-                      Type: System.String,
-                      Data: someName
-                    }
-                  }
-                ],
-                Negation: Is
-              }
-            ],
-            Verifications: [
-              {
-                CriterionId: Guid_7,
-                Type: L5Sharp.Core.Tag,
-                Property: {
-                  Origin: L5Sharp.Core.Tag,
-                  Path: Value
-                },
-                Operation: Equal To,
-                Arguments: [
-                  {
-                    ArgumentId: Guid_8,
-                    Value: {
-                      Type: System.Int32,
-                      Data: 123
-                    }
-                  }
-                ],
-                Negation: Is
-              }
-            ],
-            FilterInclusion: 0,
-            VerificationInclusion: 0
-          }
-        ]
+        Spec: {
+          SpecId: Guid_4,
+          Element: Tag,
+          Filters: [
+            {
+              CriterionId: Guid_5,
+              Type: L5Sharp.Core.Tag,
+              Property: {
+                Origin: L5Sharp.Core.Tag,
+                Path: Name
+              },
+              Operation: Like,
+              Argument: {
+                ArgumentId: Guid_6,
+                Value: {
+                  Type: System.String,
+                  Data: someName
+                }
+              },
+              Negation: Is
+            }
+          ],
+          Verifications: [
+            {
+              CriterionId: Guid_7,
+              Type: L5Sharp.Core.Tag,
+              Property: {
+                Origin: L5Sharp.Core.Tag,
+                Path: Value
+              },
+              Operation: Equal To,
+              Argument: {
+                ArgumentId: Guid_8,
+                Value: {
+                  Type: System.Int32,
+                  Data: 123
+                }
+              },
+              Negation: Is
+            }
+          ],
+          FilterInclusion: 0,
+          VerificationInclusion: 0
+        }
       },
       {
         NodeId: Guid_9,
         ParentId: Guid_2,
         Type: Spec,
         Name: Second,
-        Specs: [
-          {
-            SpecId: Guid_10,
-            Query: {
-              Element: Tag,
-              Name: null
-            },
-            Filters: [
-              {
-                CriterionId: Guid_11,
-                Type: L5Sharp.Core.Tag,
-                Property: {
-                  Origin: L5Sharp.Core.Tag,
-                  Path: Name
-                },
-                Operation: Containing,
-                Arguments: [
-                  {
-                    ArgumentId: Guid_12,
-                    Value: {
-                      Type: System.String,
-                      Data: anotherName
-                    }
-                  }
-                ],
-                Negation: Is
-              }
-            ],
-            Verifications: [
-              {
-                CriterionId: Guid_13,
-                Type: L5Sharp.Core.Tag,
-                Property: {
-                  Origin: L5Sharp.Core.Tag,
-                  Path: Value
-                },
-                Operation: Greater Than,
-                Arguments: [
-                  {
-                    ArgumentId: Guid_14,
-                    Value: {
-                      Type: System.Int32,
-                      Data: 456
-                    }
-                  }
-                ],
-                Negation: Is
-              }
-            ],
-            FilterInclusion: 0,
-            VerificationInclusion: 0
-          }
-        ]
+        Spec: {
+          SpecId: Guid_10,
+          Element: Tag,
+          Filters: [
+            {
+              CriterionId: Guid_11,
+              Type: L5Sharp.Core.Tag,
+              Property: {
+                Origin: L5Sharp.Core.Tag,
+                Path: Name
+              },
+              Operation: Containing,
+              Argument: {
+                ArgumentId: Guid_12,
+                Value: {
+                  Type: System.String,
+                  Data: anotherName
+                }
+              },
+              Negation: Is
+            }
+          ],
+          Verifications: [
+            {
+              CriterionId: Guid_13,
+              Type: L5Sharp.Core.Tag,
+              Property: {
+                Origin: L5Sharp.Core.Tag,
+                Path: Value
+              },
+              Operation: Greater Than,
+              Argument: {
+                ArgumentId: Guid_14,
+                Value: {
+                  Type: System.Int32,
+                  Data: 456
+                }
+              },
+              Negation: Is
+            }
+          ],
+          FilterInclusion: 0,
+          VerificationInclusion: 0
+        }
       },
       {
         NodeId: Guid_15,
         ParentId: Guid_2,
         Type: Spec,
         Name: Third,
-        Specs: [
-          {
-            SpecId: Guid_16,
-            Query: {
-              Element: Tag,
-              Name: null
-            },
-            Filters: [
-              {
-                CriterionId: Guid_17,
-                Type: L5Sharp.Core.Tag,
-                Property: {
-                  Origin: L5Sharp.Core.Tag,
-                  Path: Name
-                },
-                Operation: Equal To,
-                Arguments: [
-                  {
-                    ArgumentId: Guid_18,
-                    Value: {
-                      Type: System.String,
-                      Data: yetAnotherName
-                    }
-                  }
-                ],
-                Negation: Is
-              }
-            ],
-            Verifications: [
-              {
-                CriterionId: Guid_19,
-                Type: L5Sharp.Core.Tag,
-                Property: {
-                  Origin: L5Sharp.Core.Tag,
-                  Path: Value
-                },
-                Operation: Equal To,
-                Arguments: [
-                  {
-                    ArgumentId: Guid_20,
-                    Value: {
-                      Type: System.Int32,
-                      Data: 678
-                    }
-                  }
-                ],
-                Negation: Not
-              }
-            ],
-            FilterInclusion: 0,
-            VerificationInclusion: 1
-          }
-        ]
+        Spec: {
+          SpecId: Guid_16,
+          Element: Tag,
+          Filters: [
+            {
+              CriterionId: Guid_17,
+              Type: L5Sharp.Core.Tag,
+              Property: {
+                Origin: L5Sharp.Core.Tag,
+                Path: Name
+              },
+              Operation: Equal To,
+              Argument: {
+                ArgumentId: Guid_18,
+                Value: {
+                  Type: System.String,
+                  Data: yetAnotherName
+                }
+              },
+              Negation: Is
+            }
+          ],
+          Verifications: [
+            {
+              CriterionId: Guid_19,
+              Type: L5Sharp.Core.Tag,
+              Property: {
+                Origin: L5Sharp.Core.Tag,
+                Path: Value
+              },
+              Operation: Equal To,
+              Argument: {
+                ArgumentId: Guid_20,
+                Value: {
+                  Type: System.Int32,
+                  Data: 678
+                }
+              },
+              Negation: Not
+            }
+          ],
+          FilterInclusion: 0,
+          VerificationInclusion: 1
+        }
       }
-    ]
+    ],
+    Spec: {
+      SpecId: Guid_21,
+      Element: None,
+      FilterInclusion: 0,
+      VerificationInclusion: 0
+    }
   }
 }

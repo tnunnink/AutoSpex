@@ -30,11 +30,10 @@ public partial class NodeTreePageModel : PageViewModel,
     public override async Task Load()
     {
         var result = await Mediator.Send(new ListNodes());
-        if (result.IsFailed) return;
 
-        Nodes.Refresh(result.Value.Select(n => new NodeObserver(n)));
+        Nodes.Refresh(result.Select(n => new NodeObserver(n)));
         Nodes.Sort(n => n.Name, StringComparer.OrdinalIgnoreCase);
-        Track(Nodes, false);
+        RegisterDisposable(Nodes);
     }
 
     /// <summary>

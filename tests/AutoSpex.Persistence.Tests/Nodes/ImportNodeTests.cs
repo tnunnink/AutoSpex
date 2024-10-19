@@ -43,7 +43,7 @@ public class ImportNodeTests
         collection.AddVariable("Test1", "This is a variale");
         collection.AddSpec("Test", s =>
         {
-            s.Find(Element.Tag);
+            s.Query(Element.Tag);
             s.Filter("TagName", Operation.EqualTo, "TestTag");
             s.Verify("Value", Operation.GreaterThan, "TestTag");
         });

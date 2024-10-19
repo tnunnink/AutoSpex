@@ -39,9 +39,9 @@ public class SaveNodeTests
         var node = Node.NewSpec();
         await mediator.Send(new CreateNode(node));
 
-        node.AddSpec(c =>
+        node.Configure(c =>
         {
-            c.Find(Element.Program);
+            c.Query(Element.Program);
             c.Filter("Name", Operation.EqualTo, "SomeName");
             c.Verify("Disabled", Operation.False);
         });
@@ -60,9 +60,9 @@ public class SaveNodeTests
         var node = Node.NewSpec();
         await mediator.Send(new CreateNode(node));
 
-        node.AddSpec(c =>
+        node.Configure(c =>
         {
-            c.Find(Element.Program);
+            c.Query(Element.Program);
             c.Filter("Name", Operation.EqualTo, "SomeName");
             c.Verify("Disabled", Operation.False);
         });

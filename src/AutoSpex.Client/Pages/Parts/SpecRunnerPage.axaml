@@ -1,0 +1,145 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+             xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors"
+             xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
+             x:Class="AutoSpex.Client.Pages.SpecRunnerPage"
+             x:DataType="pages:SpecRunnerPageModel">
+
+    <Design.Height>400</Design.Height>
+    <Design.Width>600</Design.Width>
+
+    <DockPanel Background="{a:ThemeResource Container2BackgroundBrush}">
+
+        <Border DockPanel.Dock="Top" Padding="10" Height="50">
+
+            <Grid ColumnDefinitions="*,Auto">
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10">
+
+                    <TextBlock
+                        Text="Runner"
+                        FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
+
+                    <ContentControl
+                        Content="{Binding Outcome}"
+                        ContentTemplate="{StaticResource OutcomeDisplay}"
+                        VerticalAlignment="Center"
+                        IsVisible="{Binding $parent[controls:DrawerView].IsDrawerOpen}" />
+
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="7">
+
+                    <Button
+                        Command="{Binding TestCommand}"
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconFilledLightning}"
+                        Classes="accent"
+                        ToolTip.Tip="Run Spec"
+                        ToolTip.Placement="BottomEdgeAlignedRight">
+                        <Interaction.Behaviors>
+                            <behaviors:ToggleDrawerOnClickBehavior AlwaysOpen="True" />
+                        </Interaction.Behaviors>
+                    </Button>
+
+                    <Button
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconLineSidebar}"
+                        ToolTip.Tip="Show Results"
+                        ToolTip.Placement="BottomEdgeAlignedRight">
+                        <Button.RenderTransform>
+                            <RotateTransform Angle="270" />
+                        </Button.RenderTransform>
+                        <Interaction.Behaviors>
+                            <behaviors:ToggleDrawerOnClickBehavior />
+                        </Interaction.Behaviors>
+                    </Button>
+
+                </StackPanel>
+
+            </Grid>
+
+        </Border>
+
+        <TextBox
+            DockPanel.Dock="Top"
+            Text="{Binding Filter}"
+            IsVisible="{Binding $parent[controls:DrawerView].IsDrawerOpen}"
+            Watermark="Search results"
+            Theme="{StaticResource TextBoxSimple}"
+            VerticalContentAlignment="Center"
+            HorizontalContentAlignment="Stretch"
+            Background="Transparent"
+            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+            Padding="0 10" BorderThickness="0 1 0 1" CornerRadius="0">
+            <TextBox.InnerLeftContent>
+                <PathIcon
+                    Theme="{StaticResource IconLineSearch}"
+                    VerticalAlignment="Center"
+                    Margin="10 0"
+                    Classes="size-sm"
+                    Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+            </TextBox.InnerLeftContent>
+        </TextBox>
+
+        <Panel IsVisible="{Binding $parent[controls:DrawerView].IsDrawerOpen}">
+
+            <controls:DefaultMessage
+                HorizontalAlignment="Center"
+                IsVisible="{Binding Outcome, Converter={x:Static ObjectConverters.IsNull}}"
+                HeaderIcon="{StaticResource IconLineListCheck}"
+                Header="No results available"
+                Message="Run the spec to view results." />
+
+            <controls:DefaultMessage
+                HorizontalAlignment="Center"
+                HeaderIcon="{StaticResource IconThemedInconclusive}"
+                Header="No results produced"
+                Message="No source element passed the configured filters for this spec.">
+                <controls:DefaultMessage.IsVisible>
+                    <MultiBinding Converter="{x:Static BoolConverters.And}">
+                        <Binding Path="Outcome" Converter="{x:Static ObjectConverters.IsNotNull}" />
+                        <Binding Path="!Outcome.Evaluations.HasItems" FallbackValue="{x:False}" />
+                    </MultiBinding>
+                </controls:DefaultMessage.IsVisible>
+            </controls:DefaultMessage>
+
+            <controls:DefaultMessage
+                HorizontalAlignment="Center"
+                HeaderIcon="{StaticResource IconLineSearch}"
+                Header="No results found"
+                Message="No result contains the search text that was entered.">
+                <controls:DefaultMessage.IsVisible>
+                    <MultiBinding Converter="{x:Static BoolConverters.And}">
+                        <Binding Path="Outcome" Converter="{x:Static ObjectConverters.IsNotNull}" />
+                        <Binding Path="Outcome.Evaluations.HasItems" FallbackValue="{x:False}" />
+                        <Binding Path="!Outcome.Evaluations.Count" FallbackValue="{x:False}" />
+                    </MultiBinding>
+                </controls:DefaultMessage.IsVisible>
+            </controls:DefaultMessage>
+
+            <ListBox
+                ItemsSource="{Binding Outcome.Evaluations, FallbackValue={x:Null}}"
+                ItemTemplate="{StaticResource EvaluationListItem}"
+                Padding="10">
+                <ListBox.ItemContainerTheme>
+                    <ControlTheme BasedOn="{StaticResource ListBoxItemSimple}" TargetType="ListBoxItem">
+                        <Setter Property="Margin" Value="0" />
+                    </ControlTheme>
+                </ListBox.ItemContainerTheme>
+                <controls:DefaultMessage.IsVisible>
+                    <MultiBinding Converter="{x:Static BoolConverters.And}">
+                        <Binding Path="Outcome" Converter="{x:Static ObjectConverters.IsNotNull}" />
+                        <Binding Path="Outcome.Evaluations.Count" FallbackValue="{x:Null}" />
+                    </MultiBinding>
+                </controls:DefaultMessage.IsVisible>
+            </ListBox>
+
+        </Panel>
+
+    </DockPanel>
+</UserControl>

@@ -37,26 +37,29 @@ public class Criterion : IEquatable<Criterion>
     /// <summary>
     /// Creates a new <see cref="Criterion"/> with the provided arguments.
     /// </summary>
-    /// <param name="property">The name of the property for which to retrieve the the value from the candidate.</param>
+    /// <param name="property">The name of the property for which to retrieve the value from the candidate.</param>
     /// <param name="operation">The operation to perform when evaluating.</param>
-    /// <param name="arguments">The set of <see cref="Argument"/> values to use when evaluating.</param>
-    public Criterion(Property? property, Operation operation, params Argument[] arguments)
+    /// <param name="argument">The argument value to use when evaluating.</param>
+    public Criterion(Property? property, Operation operation, Argument? argument = default)
     {
         Type = property?.Origin ?? typeof(object);
         Property = property ?? Property.Default;
         Operation = operation;
-        Arguments = arguments.ToList();
+        Argument = argument ?? Argument.Default;
     }
 
     /// <summary>
     /// Creates a new <see cref="Criterion"/> with the provided arguments.
     /// </summary>
+    /// <param name="property">The name of the property for which to retrieve the value from the candidate.</param>
     /// <param name="operation">The operation to perform when evaluating.</param>
-    /// <param name="arguments">The set of <see cref="Argument"/> values to use when evaluating.</param>
-    public Criterion(Operation operation, params Argument[] arguments)
+    /// <param name="arguments">The argument values to use when evaluating.</param>
+    public Criterion(Property? property, Operation operation, params Argument[] arguments)
     {
+        Type = property?.Origin ?? typeof(object);
+        Property = property ?? Property.Default;
         Operation = operation;
-        Arguments = arguments.ToList();
+        Argument = arguments.ToList();
     }
 
     /// <summary>
@@ -90,7 +93,7 @@ public class Criterion : IEquatable<Criterion>
     /// <summary>
     /// The collection of argument values required for the operation to execute.
     /// </summary>
-    public List<Argument> Arguments { get; init; } = [];
+    public Argument Argument { get; set; } = Argument.Default;
 
     /// <summary>
     /// A flag to negate the result of the operation for this criterion. 
@@ -119,8 +122,8 @@ public class Criterion : IEquatable<Criterion>
         {
             var value = Property != Property.Default ? Property.GetValue(candidate) : candidate;
             var valueType = value?.GetType();
-            var args = Arguments.Select(a => a.ResolveAs(valueType)).ToArray();
-            var result = Operation.Execute(value, args);
+            var argument = Argument.ResolveAs(valueType);
+            var result = Operation.Execute(value, argument);
 
             return Negation.Satisfies(result)
                 ? Evaluation.Passed(this, candidate, value)
@@ -132,9 +135,9 @@ public class Criterion : IEquatable<Criterion>
         }
     }
 
-    /// <summary>
+    /*/// <summary>
     /// Determines if the provided criterion is a nested object of this criterion, meaning that one of this criterion's
-    /// arguments or descendent arguments is this criterion object. 
+    /// arguments or descendent arguments is this criterion object.
     /// </summary>
     /// <param name="other">The criterion to search for in the object graph.</param>
     /// <returns>
@@ -144,24 +147,25 @@ public class Criterion : IEquatable<Criterion>
     /// <remarks>This allows us to determine if one criterion "owns" another.</remarks>
     public bool Contains(Criterion other)
     {
-        return Arguments.Any(a => a.Value is Criterion criterion &&
-                                  (criterion.CriterionId == other.CriterionId || criterion.Contains(other)));
-    }
+        return Argument.Value is Criterion criterion &&
+               (criterion.CriterionId == other.CriterionId || criterion.Contains(other));
+    }*/
 
     /// <summary>
-    /// Determines whether this or a nested criterion contains the specified argument ID.
+    /// Determines whether this or a nested criterion contains the specified argument id.
     /// </summary>
-    /// <param name="argumentId">The argument ID to search for.</param>
+    /// <param name="argumentId">The argument id to search for.</param>
     /// <returns>True if a criterion with the specified argument ID is found, otherwise false.</returns>
     public bool Contains(Guid argumentId)
     {
-        foreach (var argument in Arguments)
-        {
-            if (argument.ArgumentId == argumentId) return true;
-            if (argument.Value is Criterion criterion) return criterion.Contains(argumentId);
-        }
+        if (Argument.ArgumentId == argumentId) return true;
 
-        return false;
+        return Argument.Value switch
+        {
+            Criterion criterion => criterion.Contains(argumentId),
+            IEnumerable<Argument> arguments => arguments.Any(a => a.ArgumentId == argumentId),
+            _ => false
+        };
     }
 
     /// <summary>
@@ -181,7 +185,7 @@ public class Criterion : IEquatable<Criterion>
             Property = Property,
             Operation = Operation,
             Negation = Negation,
-            Arguments = Arguments.Select(a => a.Duplicate()).ToList()
+            Argument = Argument.Duplicate()
         };
     }
 
@@ -209,7 +213,7 @@ public class Criterion : IEquatable<Criterion>
     public string GetCriteria()
     {
         var rootText = $"{Property.Path} {Negation} {Operation}";
-        var innerText = Arguments is [{ Value: Criterion criterion }] ? criterion.GetCriteria() : string.Empty;
+        var innerText = Argument is { Value: Criterion criterion } ? criterion.GetCriteria() : string.Empty;
         return $"{rootText} {innerText}".Trim();
     }
 
@@ -220,10 +224,7 @@ public class Criterion : IEquatable<Criterion>
     /// A collection of object values that represent the final resolved (and perhaps nested) argument values for this
     /// criterion instance.
     /// </returns>
-    public IEnumerable<object> GetExpected()
-    {
-        return Arguments.SelectMany(a => a.Expected()).ToList();
-    }
+    public IEnumerable<object> GetExpected() => Argument.Expected();
 
     public bool Equals(Criterion? other)
     {

@@ -28,22 +28,31 @@
                         Classes="accent"
                         ToolTip.Tip="Add">
                         <Button.Flyout>
-                            <MenuFlyout
-                                Placement="RightEdgeAlignedTop"
-                                ItemContainerTheme="{StaticResource ContextMenuItem}">
-                                <MenuItem
-                                    Command="{Binding NewCollectionCommand}"
-                                    Header="Collection"
-                                    Icon="{StaticResource IconThemedCollection}" />
-                                <MenuItem
-                                    Command="{Binding AddSpecCommand}"
-                                    Icon="{StaticResource IconThemedSpec}"
-                                    Header="Specification" />
-                                <MenuItem
-                                    Command="{Binding AddEnvironmentCommand}"
-                                    Icon="{StaticResource IconThemedEnvironment}"
-                                    Header="Environment" />
-                            </MenuFlyout>
+                            <Flyout Placement="RightEdgeAlignedTop">
+                                <StackPanel Spacing="5" Margin="5">
+                                    <Button
+                                        Command="{Binding AddCollectionCommand}"
+                                        Classes="new-collection">
+                                        <Interaction.Behaviors>
+                                            <behaviors:HideFlyoutOnClickedBehavior />
+                                        </Interaction.Behaviors>
+                                    </Button>
+                                    <Button
+                                        Command="{Binding AddSpecCommand}"
+                                        Classes="new-specification">
+                                        <Interaction.Behaviors>
+                                            <behaviors:HideFlyoutOnClickedBehavior />
+                                        </Interaction.Behaviors>
+                                    </Button>
+                                    <Button
+                                        Command="{Binding AddSourceCommand}"
+                                        Classes="new-source">
+                                        <Interaction.Behaviors>
+                                            <behaviors:HideFlyoutOnClickedBehavior />
+                                        </Interaction.Behaviors>
+                                    </Button>
+                                </StackPanel>
+                            </Flyout>
                         </Button.Flyout>
                     </Button>
 
@@ -54,21 +63,17 @@
                         ToolTip.Tip="Import" />
 
                     <Button
-                        Command="{Binding OpenExplorerCommand}"
+                        Command="{Binding OpenSourcesCommand}"
                         Theme="{StaticResource IconButton}"
-                        properties:Icon.Theme="{StaticResource IconLineSearch}"
-                        HotKey="Ctrl+Shift+S"
-                        ToolTip.Tip="Search" />
+                        properties:Icon.Theme="{StaticResource IconLineXml}"
+                        ToolTip.Tip="Sources" />
 
                     <!--<Button
-                        Command="{Binding OpenHistoryCommand}"
                         Theme="{StaticResource IconButton}"
-                        properties:Icon.Theme="{StaticResource IconLineHistory}"
-                        HotKey="Ctrl+H"
-                        ToolTip.Tip="History" />
+                        properties:Icon.Theme="{StaticResource IconFilledLightning}"
+                        ToolTip.Tip="Runs" />
 
                     <Button
-                        Command="{Binding OpenVariablesCommand}"
                         Theme="{StaticResource IconButton}"
                         properties:Icon.Theme="{StaticResource IconLineAt}"
                         ToolTip.Tip="Variables" />-->
@@ -96,8 +101,18 @@
         </Border>
 
         <Grid RowDefinitions="*,Auto">
-            <ContentControl Grid.Row="0" Content="{Binding NodeTree^}" />
-            <ContentControl Grid.Row="1" Content="{Binding EnvironmentList^}" />
+
+            <ContentControl
+                Grid.Row="0"
+                Content="{Binding NodeTree^}" />
+
+            <Border
+                Grid.Row="1"
+                BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                BorderThickness="0 1 0 0" Padding="10">
+                <ContentControl Content="{Binding SourceSelector^}" />
+            </Border>
+
         </Grid>
 
     </DockPanel>

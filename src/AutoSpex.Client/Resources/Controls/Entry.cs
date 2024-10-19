@@ -13,6 +13,7 @@ using Avalonia.Controls.Templates;
 using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Styling;
 using Avalonia.VisualTree;
 
 namespace AutoSpex.Client.Resources.Controls;
@@ -41,6 +42,10 @@ public class Entry : TemplatedControl
     public static readonly StyledProperty<bool> IsEmptyProperty =
         AvaloniaProperty.Register<Entry, bool>(
             nameof(IsEmpty));
+
+    public static readonly StyledProperty<ControlTheme> ButtonThemeProperty =
+        AvaloniaProperty.Register<Entry, ControlTheme>(
+            nameof(ButtonTheme));
 
     public static readonly StyledProperty<IDataTemplate?> ItemTemplateProperty =
         AvaloniaProperty.Register<Entry, IDataTemplate?>(
@@ -120,6 +125,12 @@ public class Entry : TemplatedControl
     {
         get => GetValue(IsEmptyProperty);
         set => SetValue(IsEmptyProperty, value);
+    }
+
+    public ControlTheme ButtonTheme
+    {
+        get => GetValue(ButtonThemeProperty);
+        set => SetValue(ButtonThemeProperty, value);
     }
 
     public IDataTemplate? ItemTemplate

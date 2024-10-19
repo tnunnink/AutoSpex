@@ -16,7 +16,7 @@ internal class RenameNodeHandler(IConnectionManager manager) : IRequestHandler<R
 
     public async Task<Result> Handle(RenameNode request, CancellationToken cancellationToken)
     {
-        var connection = await manager.Connect(cancellationToken);
+        using var connection = await manager.Connect(cancellationToken);
         var updated = await connection.ExecuteAsync(Command, request.Node);
         return Result.OkIf(updated == 1, $"Node not found: '{request.Node.NodeId}'");
     }

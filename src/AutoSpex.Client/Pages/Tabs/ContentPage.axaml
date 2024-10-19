@@ -1,0 +1,138 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+             x:Class="AutoSpex.Client.Pages.ContentPage"
+             x:DataType="pages:ContentPageModel">
+
+    <Design.Width>1400</Design.Width>
+    <Design.Height>900</Design.Height>
+
+    <Grid RowDefinitions="Auto,*">
+
+        <Border
+            Background="{a:ThemeResource Container2BackgroundBrush}"
+            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+            BorderThickness="1"
+            CornerRadius="4 4 0 0"
+            MinHeight="40">
+
+            <Grid ColumnDefinitions="Auto,*,Auto">
+
+                <ComboBox
+                    SelectedItem="{Binding Type}"
+                    ItemsSource="{x:Static engine:Element.Selectable}"
+                    SelectionBoxItemTemplate="{StaticResource ElementDisplay}"
+                    ItemTemplate="{StaticResource ElementDisplay}"
+                    Theme="{StaticResource ComboBoxSubtle}"
+                    Background="Transparent"
+                    BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                    CornerRadius="5 0 0 0" BorderThickness="0 0 1 0" />
+
+                <TextBox
+                    Grid.Column="1"
+                    Text="{Binding ElementFilter}"
+                    Watermark="Search elements"
+                    Theme="{StaticResource TextBoxSimple}"
+                    FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                    VerticalContentAlignment="Center" />
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="7" Margin="10 0">
+
+                    <Button
+                        Theme="{StaticResource IconButtonSmall}"
+                        properties:Icon.Theme="{StaticResource IconFilledFunnel}">
+                        <Button.Flyout>
+                            <Flyout Placement="BottomEdgeAlignedRight" HorizontalOffset="8" VerticalOffset="5">
+
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+
+                    <Button
+                        Command="{Binding TogglePropertiesCommand}"
+                        Theme="{StaticResource IconButtonSmall}"
+                        properties:Icon.Theme="{StaticResource IconLineSidebar}" />
+
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Border
+            Grid.Row="1"
+            BorderThickness="1 0 1 1"
+            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+            CornerRadius="0 0 4 4">
+
+            <controls:DrawerView
+                IsDrawerOpen="{Binding ShowProperties}"
+                DrawerPlacement="Right"
+                DrawerMinLength="0"
+                DrawerOpenLength="340">
+
+                <ListBox
+                    IsVisible="{Binding Elements.Count}"
+                    ItemsSource="{Binding Elements}"
+                    SelectedItem="{Binding SelectedElement}"
+                    ItemTemplate="{StaticResource ElementListItem}"
+                    ItemContainerTheme="{StaticResource ListBoxItemSimple}"
+                    Padding="5"
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
+
+                <controls:DrawerView.Drawer>
+
+                    <Border Background="{a:ThemeResource Container2BackgroundBrush}">
+
+                        <DockPanel>
+
+                            <TextBox
+                                DockPanel.Dock="Top"
+                                Text="{Binding PropertyFilter}"
+                                Watermark="Search properties"
+                                Theme="{StaticResource TextBoxSimple}"
+                                VerticalContentAlignment="Center"
+                                FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                                Background="Transparent"
+                                BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                                Padding="0 10" BorderThickness="0 0 0 1" CornerRadius="0">
+                                <TextBox.InnerLeftContent>
+                                    <PathIcon Theme="{StaticResource IconLineSearch}"
+                                              VerticalAlignment="Center" Margin="10 0"
+                                              Classes="size-sm"
+                                              Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                                </TextBox.InnerLeftContent>
+                                <Interaction.Behaviors>
+                                    <SelectAllOnGotFocusBehavior />
+                                </Interaction.Behaviors>
+                            </TextBox>
+
+                            <Panel>
+                                <controls:DefaultMessage
+                                    HorizontalAlignment="Center"
+                                    IsVisible="{Binding SelectedElement, Converter={x:Static ObjectConverters.IsNull}}"
+                                    HeaderIcon="{StaticResource IconFilledBinoculars}"
+                                    Message="Select an element from the list to view properties." />
+
+                                <TreeView
+                                    IsVisible="{Binding SelectedElement, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                    ItemsSource="{Binding Properties}"
+                                    ItemTemplate="{StaticResource PropertyTreeItem}"
+                                    ItemContainerTheme="{StaticResource PropertyTreeItemTheme}"
+                                    Padding="5"
+                                    ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
+                            </Panel>
+
+                        </DockPanel>
+                    </Border>
+
+                </controls:DrawerView.Drawer>
+
+            </controls:DrawerView>
+        </Border>
+
+    </Grid>
+
+</UserControl>

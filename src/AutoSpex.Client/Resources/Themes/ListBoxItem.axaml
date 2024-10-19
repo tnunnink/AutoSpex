@@ -5,7 +5,8 @@
         <Border Padding="20">
             <StackPanel Spacing="30" Height="600">
                 <ListBox Height="100" Width="300"
-                         ItemContainerTheme="{DynamicResource ListBoxItemSimple}">
+                         ItemContainerTheme="{DynamicResource ListBoxItemSimple}"
+                         BorderThickness="1" Padding="5">
                     <ListBoxItem Content="Item 1" />
                     <ListBoxItem Content="Item 2" />
                     <ListBoxItem Content="Item 3" />
@@ -37,7 +38,7 @@
     <ControlTheme x:Key="ListBoxItemSimple" TargetType="ListBoxItem" BasedOn="{a:ControlTheme ListBoxItem}">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{a:ThemeResource ListItemForegroundBrush}" />
-        <Setter Property="Padding" Value="{a:ThemeResource ListItemPadding}" />
+        <Setter Property="Padding" Value="0" />
         <Setter Property="CornerRadius" Value="5" />
         <Setter Property="Margin" Value="0 3 0 0" />
         <Setter Property="FocusAdorner" Value="{x:Null}" />
@@ -73,6 +74,9 @@
         </Style>
         <Style Selector="^:selected:disabled /template/ ContentPresenter#PART_ContentPresenter">
             <Setter Property="Foreground" Value="{a:ThemeResource ListItemForegroundBrushSelectedDisabled}" />
+        </Style>
+        <Style Selector="^:nth-child(1)">
+            <Setter Property="Margin" Value="0" />
         </Style>
     </ControlTheme>
 

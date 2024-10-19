@@ -56,7 +56,7 @@ internal class ExportNodeHandler(IConnectionManager manager) : IRequestHandler<E
                     parent.AddNode(node);
                 
                 if (spec is not null)
-                    node.AddSpec(spec);
+                    node.Configure(spec);
 
                 if (variable is not null)
                     node.AddVariable(variable);

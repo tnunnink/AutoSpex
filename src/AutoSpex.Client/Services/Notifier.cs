@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Avalonia.Controls.Notifications;
 using FluentResults;
 using JetBrains.Annotations;
@@ -57,7 +58,9 @@ public sealed class Notifier(Shell shell)
         if (!result.IsFailed) return false;
 
         title ??= "Request failed";
-        message ??= "An error was encountered while processing the previous request. See notifications for details.";
+        message ??=
+            result.Errors.FirstOrDefault()?.Message ??
+            "An error was encountered while processing the previous request. See notifications for details.";
         ShowError(title, message);
 
         return true;
