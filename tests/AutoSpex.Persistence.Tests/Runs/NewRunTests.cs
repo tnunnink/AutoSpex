@@ -71,7 +71,8 @@ public class NewRunTests
         var result = await mediator.Send(new NewRun(node.NodeId, source.SourceId));
 
         result.Value.Node.Should().BeEquivalentTo(node);
-        result.Value.Source.Should().BeEquivalentTo(source, o => o.Excluding(s => s.Content));
+        result.Value.Source.Should()
+            .BeEquivalentTo(source, o => o.Excluding(s => s.Content).Excluding(s => s.IsTarget));
         result.Value.Outcomes.Should().HaveCount(1);
     }
 

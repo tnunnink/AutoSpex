@@ -11,11 +11,17 @@ using Avalonia.Input;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FluentResults;
+using L5Sharp.Core;
 
 namespace AutoSpex.Client.Observers;
 
-public partial class SourceObserver : Observer<Source>, IRecipient<SourceObserver.Targeted>
+public partial class SourceObserver : Observer<Source>,
+    IRecipient<SourceObserver.Targeted>,
+    IRecipient<ArgumentObserver.SuggestionRequest>,
+    IRecipient<CriterionObserver.TagNameRequest>
 {
+    private readonly List<TypeGroup> _groups = [TypeGroup.Number, TypeGroup.Text, TypeGroup.Date, TypeGroup.Element];
+
     /// <inheritdoc/>
     public SourceObserver(Source source) : base(source)
     {
@@ -62,7 +68,7 @@ public partial class SourceObserver : Observer<Source>, IRecipient<SourceObserve
     {
         var result = await Mediator.Send(new TargetSource(Id));
         if (Notifier.ShowIfFailed(result)) return;
-        Messenger.Send(new Targeted(this));
+        Messenger.Send(new Targeted(result.Value));
     }
 
     /// <summary>
@@ -97,6 +103,79 @@ public partial class SourceObserver : Observer<Source>, IRecipient<SourceObserve
         }
 
         IsTarget = false;
+    }
+
+    /// <summary>
+    /// Handle the request for argument suggesstions be getting possible values for the configured criterion property
+    /// from this source content. This will only run for the target source that has loaded content (non-loaded content is empty anyway).
+    /// We return distinct values that are retreived from all instances of the specified type.
+    /// </summary>
+    public void Receive(ArgumentObserver.SuggestionRequest message)
+    {
+        if (!IsTarget) return;
+
+        var property = message.Argument.Criterion?.Property ?? Property.Default;
+
+        //Only search source for numbers, text, dates, or elements.
+        //bools and enums are static and everything else is internal or not wanted.
+        if (!_groups.Contains(property.Group)) return;
+
+        try
+        {
+            //Since every property origin is/should be the L5Sharp type,
+            //we can use that to query for elements in the source.
+            var elements = Model.Content.Query(property.Origin);
+
+            //Essentially just get non-null distinct values for the specified property
+            //for all elements of the origin type.
+            var values = elements.Select(property.GetValue)
+                .Where(x => x is not null)
+                .Distinct()
+                .Select(x => new ValueObserver(x))
+                .Where(x => x.Filter(message.Filter))
+                .ToList();
+
+            values.ForEach(message.Reply);
+        }
+        catch (Exception)
+        {
+            // ignored because this is just optional.
+            // If the user enteres invalid property it will result in and errored evaluation telling them the issue.
+        }
+    }
+
+    /// <summary>
+    /// Handles the request for tag names to suggest to the user as then enter text in a property entry with indexer
+    /// notation. This is very usefuly because we don't need to look up the tag structure,
+    /// and instead we can have it prompted to us.
+    /// </summary>
+    public void Receive(CriterionObserver.TagNameRequest message)
+    {
+        //This only applies to tag elements. Guard agains anything else.
+        if (message.Spec.Element != Element.Tag) return;
+
+        try
+        {
+            //Ideally we want to narrow the search space for tag names using the currently configured filters to
+            //improve the performance of this lookup which will happen continuously as text changes
+            var elements = message.Spec.GetCandidates(Model.Content);
+
+            var tagNames = elements.Cast<Tag>()
+                .SelectMany(t => t.TagNames())
+                .Select(t => t.Path)
+                .Distinct()
+                .Where(t => !string.IsNullOrEmpty(t) && t.Satisfies(message.Filter))
+                .OrderBy(t => t)
+                .Select(t => new TagName($"[{t}]"))
+                .ToList();
+
+            tagNames.ForEach(message.Reply);
+        }
+        catch (Exception)
+        {
+            // ignored because this is just optional.
+            // If the user enteres invalid tagnames it will result in and errored evaluation telling them the issue.
+        }
     }
 
     /// <summary>

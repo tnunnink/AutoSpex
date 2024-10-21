@@ -52,7 +52,7 @@ public partial class NewVariablePageModel(object? value) : PageViewModel
         if (Notifier.ShowIfFailed(result)) return;
 
         var observer = new VariableObserver(variable);
-        Messenger.Send(new Observer.Created(observer));
+        Messenger.Send(new Observer.Created<VariableObserver>(observer));
         window.Close(observer);
     }
 

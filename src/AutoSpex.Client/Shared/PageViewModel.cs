@@ -31,6 +31,11 @@ public abstract partial class PageViewModel() : TrackableViewModel, IEquatable<P
     public virtual string Icon => "None";
 
     /// <summary>
+    /// 
+    /// </summary>
+    [ObservableProperty] private string? _filter;
+
+    /// <summary>
     /// Gets or sets a value indicating whether the page should be kept alive in the navigation stack.
     /// </summary>
     /// <value>
@@ -72,6 +77,22 @@ public abstract partial class PageViewModel() : TrackableViewModel, IEquatable<P
 
     /// <inheritdoc />
     protected override Task Navigate() => Navigator.Navigate(() => this);
+
+    /// <summary>
+    /// Called when <see cref="Filter"/> value changes to allow derivced pages to respond to the input filter.
+    /// </summary>
+    /// <param name="filter">The current entered text filter.</param>
+    protected virtual void FilterChanged(string? filter)
+    {
+    }
+
+    /// <summary>
+    /// When the filter text changes call the protected method to allow derived pages to handle the change.
+    /// </summary>
+    partial void OnFilterChanged(string? value)
+    {
+        FilterChanged(value);
+    }
 
     /// <inheritdoc />
     public override bool Equals(object? obj)

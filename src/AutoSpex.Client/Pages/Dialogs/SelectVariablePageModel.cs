@@ -13,8 +13,6 @@ public partial class SelectVariablePageModel : PageViewModel
 {
     public ObserverCollection<Variable, VariableObserver> Variables { get; private set; } = [];
 
-    [ObservableProperty] private string? _filter;
-
     public override async Task Load()
     {
         var variables = await Mediator.Send(new ListVariables());
@@ -24,8 +22,8 @@ public partial class SelectVariablePageModel : PageViewModel
             v => new VariableObserver(v));
     }
 
-    partial void OnFilterChanged(string? value)
+    protected override void FilterChanged(string? filter)
     {
-        Variables.Filter(v => v.Filter(value) || v.Node?.Filter(value) is true);
+        Variables.Filter(v => v.Filter(filter) || v.Node?.Filter(filter) is true);
     }
 }

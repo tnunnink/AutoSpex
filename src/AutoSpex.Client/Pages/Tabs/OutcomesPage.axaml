@@ -3,8 +3,8 @@
              xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
              xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
-             xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
              xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+             xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors"
              x:Class="AutoSpex.Client.Pages.OutcomesPage"
              x:DataType="pages:OutcomesPageModel">
 
@@ -20,50 +20,17 @@
             CornerRadius="4 4 0 0"
             MinHeight="40">
 
-            <Grid ColumnDefinitions="Auto,*,Auto">
-
-                <Button
-                    Grid.Column="0"
-                    Theme="{a:ControlTheme ButtonSoft}"
-                    Background="{a:ThemeResource Container2BackgroundBrush}"
-                    BorderBrush="{a:ThemeResource Container1BorderBrush}"
-                    CornerRadius="4 0 0 0" BorderThickness="0">
-
-                    <StackPanel Orientation="Horizontal" Spacing="7">
-                        <ContentControl
-                            Content="{Binding State}"
-                            ContentTemplate="{StaticResource ResultStateSelection}" />
-                        <PathIcon Theme="{StaticResource IconLineExpand}" Classes="size-sm" />
-                    </StackPanel>
-
-                    <Button.Flyout>
-                        <Flyout Placement="BottomEdgeAlignedLeft" HorizontalOffset="-8" VerticalOffset="5">
-                            <ItemsControl ItemsSource="{Binding States}" Margin="5">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate x:DataType="engine:ResultState">
-                                        <Button
-                                            Command="{Binding $parent[ItemsControl].((pages:OutcomesPageModel)DataContext).UpdateStateCommand, FallbackValue={x:Null}}"
-                                            CommandParameter="{Binding}"
-                                            Content="{Binding}"
-                                            ContentTemplate="{StaticResource ResultStateSelection}"
-                                            Theme="{a:ControlTheme ButtonSubtle}"
-                                            HorizontalContentAlignment="Stretch" />
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </Flyout>
-                    </Button.Flyout>
-                </Button>
+            <Grid ColumnDefinitions="*,Auto">
 
                 <TextBox
-                    Grid.Column="1"
-                    Text="{Binding Filter}"
+                    Grid.Column="0"
+                    Text="{Binding Run.FilterText}"
                     Watermark="Search outcomes"
                     Theme="{StaticResource TextBoxSimple}"
                     FontSize="{a:ThemeResource DefaultFontSizeSmall}"
                     VerticalContentAlignment="Center"
                     BorderBrush="{a:ThemeResource Container1BorderBrush}"
-                    CornerRadius="0" BorderThickness="1 0 1 0" Padding="0 10">
+                    CornerRadius="0" BorderThickness="0" Padding="0 10">
                     <TextBox.InnerLeftContent>
                         <PathIcon Theme="{StaticResource IconLineSearch}"
                                   VerticalAlignment="Center" Margin="10 0"
@@ -75,40 +42,12 @@
                     </Interaction.Behaviors>
                 </TextBox>
 
-                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="7" Margin="10 0">
+                <ContentControl
+                    Grid.Column="1"
+                    Margin="10 0"
+                    Content="{Binding Run}"
+                    ContentTemplate="{StaticResource RunResult}" />
 
-                    <Button
-                        Theme="{StaticResource IconButton}"
-                        properties:Icon.Theme="{StaticResource IconLineDownload}" />
-
-                    <Button
-                        Command="{Binding ToggleOrientationCommand}"
-                        Theme="{StaticResource IconButton}"
-                        properties:Icon.Theme="{StaticResource IconLineRotate}" />
-
-                    <Button
-                        Command="{Binding ToggleResultsCommand}"
-                        Theme="{StaticResource IconButton}"
-                        properties:Icon.Theme="{StaticResource IconLineSidebar}"
-                        Classes.vertical="{Binding DrawerOrientation, Converter={StaticResource EqualToConverter}, ConverterParameter='Vertical'}"
-                        Classes.horizontal="{Binding DrawerOrientation, Converter={StaticResource EqualToConverter}, ConverterParameter='Horizontal'}">
-
-                        <Button.Styles>
-                            <Style Selector="Button.vertical">
-                                <Setter Property="RenderTransform">
-                                    <RotateTransform Angle="180" />
-                                </Setter>
-                            </Style>
-                            <Style Selector="Button.horizontal">
-                                <Setter Property="RenderTransform">
-                                    <RotateTransform Angle="270" />
-                                </Setter>
-                            </Style>
-                        </Button.Styles>
-
-                    </Button>
-
-                </StackPanel>
             </Grid>
         </Border>
 
@@ -119,62 +58,101 @@
             CornerRadius="0 0 4 4">
 
             <controls:DrawerView
-                IsDrawerOpen="{Binding ShowResults}"
+                IsDrawerOpen="{Binding ShowResults, Mode=TwoWay}"
                 DrawerMinLength="0"
-                Classes.vertical="{Binding DrawerOrientation, Converter={StaticResource EqualToConverter}, ConverterParameter='Vertical'}"
-                Classes.horizontal="{Binding DrawerOrientation, Converter={StaticResource EqualToConverter}, ConverterParameter='Horizontal'}">
+                DrawerPlacement="Bottom"
+                Classes.vertical="{Binding $self.IsVertical}"
+                Classes.horizontal="{Binding !$self.IsVertical}">
 
                 <ListBox
-                    IsVisible="{Binding Outcomes.Count}"
-                    ItemsSource="{Binding Outcomes}"
-                    SelectedItem="{Binding SelectedOutcome}"
+                    IsVisible="{Binding Run.Outcomes.Count}"
+                    ItemsSource="{Binding Run.Outcomes}"
+                    SelectedItem="{Binding Outcome}"
                     ItemTemplate="{StaticResource OutcomeListItem}"
                     ItemContainerTheme="{StaticResource ListBoxItemSimple}"
                     Padding="5" />
 
                 <controls:DrawerView.Drawer>
 
-                    <DockPanel>
+                    <DockPanel Background="{a:ThemeResource Container2BackgroundBrush}">
 
                         <Border
+                            x:Name="HeaderBorder"
                             DockPanel.Dock="Top"
                             Padding="10 7"
-                            Background="{a:ThemeResource Container2BackgroundBrush}"
                             BorderBrush="{a:ThemeResource Container1BorderBrush}"
                             BorderThickness="0 0 0 1">
 
                             <Grid ColumnDefinitions="*,Auto">
 
-                                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="7">
+                                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="7" ClipToBounds="True">
 
                                     <TextBlock
-                                        Text="{Binding SelectedOutcome.Name, FallbackValue={x:Null}}"
+                                        Text="{Binding Outcome.Name, FallbackValue={x:Null}}"
                                         FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
 
-                                    <Button
-                                        Command="{Binding SelectedOutcome.NavigateCommand, FallbackValue={x:Null}}"
-                                        Theme="{StaticResource IconButtonSmall}"
-                                        properties:Icon.Theme="{StaticResource IconLineLaunch}" />
+                                    <ContentControl
+                                        Content="{Binding Outcome}"
+                                        ContentTemplate="{StaticResource OutcomeResult}"
+                                        VerticalAlignment="Center" />
 
                                 </StackPanel>
 
-                                <ContentControl
-                                    Grid.Column="1"
-                                    Content="{Binding SelectedOutcome}"
-                                    ContentTemplate="{StaticResource OutcomeDisplay}"
-                                    VerticalAlignment="Center" />
+                                <Border Grid.Column="1" Background="{a:ThemeResource Container2BackgroundBrush}">
+
+                                    <StackPanel Orientation="Horizontal" Spacing="7">
+
+                                        <Button
+                                            Command="{Binding Outcome.NavigateCommand, FallbackValue={x:Null}}"
+                                            Theme="{StaticResource IconButtonSmall}"
+                                            properties:Icon.Theme="{StaticResource IconLineLaunch}" />
+
+                                        <Button
+                                            Theme="{StaticResource IconButton}"
+                                            properties:Icon.Theme="{StaticResource IconLineRotate}">
+                                            <Interaction.Behaviors>
+                                                <behaviors:RotateDrawerOnClickBehavior />
+                                            </Interaction.Behaviors>
+                                        </Button>
+
+                                        <Button
+                                            Theme="{StaticResource IconButton}"
+                                            properties:Icon.Theme="{StaticResource IconLineSidebar}"
+                                            Classes.vertical="{Binding $parent[controls:DrawerView].IsVertical}"
+                                            Classes.horizontal="{Binding !$parent[controls:DrawerView].IsVertical}">
+                                            <Interaction.Behaviors>
+                                                <behaviors:ToggleDrawerOnClickBehavior />
+                                            </Interaction.Behaviors>
+
+                                            <Button.Styles>
+                                                <Style Selector="Button.vertical">
+                                                    <Setter Property="RenderTransform">
+                                                        <RotateTransform Angle="180" />
+                                                    </Setter>
+                                                </Style>
+                                                <Style Selector="Button.horizontal">
+                                                    <Setter Property="RenderTransform">
+                                                        <RotateTransform Angle="270" />
+                                                    </Setter>
+                                                </Style>
+                                            </Button.Styles>
+
+                                        </Button>
+
+                                    </StackPanel>
+                                </Border>
 
                             </Grid>
                         </Border>
 
                         <TextBox
                             DockPanel.Dock="Top"
-                            Text="{Binding EvaluationFilter}"
-                            IsVisible="{Binding SelectedOutcome, Converter={x:Static ObjectConverters.IsNotNull}}"
+                            Text="{Binding Filter}"
+                            IsVisible="{Binding Outcome, Converter={x:Static ObjectConverters.IsNotNull}}"
                             Watermark="Search results"
                             Theme="{StaticResource TextBoxSimple}"
                             VerticalContentAlignment="Center"
-                            Background="{a:ThemeResource Container1BackgroundBrush}"
+                            Background="Transparent"
                             BorderBrush="{a:ThemeResource Container1BorderBrush}"
                             Padding="0 10" BorderThickness="0 0 0 1" CornerRadius="0">
                             <TextBox.InnerLeftContent>
@@ -187,28 +165,9 @@
                             </TextBox.InnerLeftContent>
                         </TextBox>
 
-                        <Panel>
-
-                            <controls:DefaultMessage
-                                HorizontalAlignment="Center"
-                                IsVisible="{Binding SelectedOutcome, Converter={x:Static ObjectConverters.IsNull}}"
-                                HeaderIcon="{StaticResource IconLineListCheck}"
-                                Message="Select an outcome from the list to view results." />
-
-                            <ListBox
-                                IsVisible="{Binding SelectedOutcome, Converter={x:Static ObjectConverters.IsNotNull}}"
-                                ItemsSource="{Binding SelectedOutcome.Evaluations, FallbackValue={x:Null}}"
-                                ItemTemplate="{StaticResource EvaluationListItem}"
-                                Padding="10">
-                                <ListBox.ItemContainerTheme>
-                                    <ControlTheme BasedOn="{StaticResource ListBoxItemSimple}"
-                                                  TargetType="ListBoxItem">
-                                        <Setter Property="Margin" Value="0" />
-                                    </ControlTheme>
-                                </ListBox.ItemContainerTheme>
-                            </ListBox>
-
-                        </Panel>
+                        <ContentControl
+                            Content="{Binding Outcome}"
+                            ContentTemplate="{StaticResource OutcomeList}" />
 
                     </DockPanel>
 

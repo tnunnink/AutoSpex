@@ -27,6 +27,7 @@ public class DrawerView : ContentControl
     private string? _lastPlacement;
     private Panel? _drawer;
     private GridLength _drawerGridLength;
+    private bool _isVertical;
 
     #region Properties
 
@@ -38,24 +39,19 @@ public class DrawerView : ContentControl
 
     public static readonly StyledProperty<bool> IsDrawerOpenProperty =
         AvaloniaProperty.Register<DrawerView, bool>(
-            nameof(IsDrawerOpen),
-            defaultValue: false,
-            coerce: CoerceIsPaneOpen);
+            nameof(IsDrawerOpen), defaultValue: false, coerce: CoerceIsPaneOpen);
 
     public static readonly StyledProperty<double> DrawerMinLengthProperty =
         AvaloniaProperty.Register<DrawerView, double>(
-            nameof(DrawerMinLength),
-            defaultValue: 0);
+            nameof(DrawerMinLength), defaultValue: 0);
 
     public static readonly StyledProperty<double> DrawerMaxLengthProperty =
         AvaloniaProperty.Register<DrawerView, double>(
-            nameof(DrawerMaxLength),
-            defaultValue: 1000);
+            nameof(DrawerMaxLength), defaultValue: 1000);
 
     public static readonly StyledProperty<double> DrawerOpenLengthProperty =
         AvaloniaProperty.Register<DrawerView, double>(
-            nameof(DrawerOpenLength),
-            defaultValue: 300);
+            nameof(DrawerOpenLength), defaultValue: 300);
 
     public static readonly DirectProperty<DrawerView, GridLength> DrawerGridLengthProperty =
         AvaloniaProperty.RegisterDirect<DrawerView, GridLength>(
@@ -68,6 +64,10 @@ public class DrawerView : ContentControl
     public static readonly StyledProperty<bool> HideSplitterProperty =
         AvaloniaProperty.Register<DrawerView, bool>(
             nameof(HideSplitter), defaultValue: true);
+
+    public static readonly DirectProperty<DrawerView, bool> IsVerticalProperty =
+        AvaloniaProperty.RegisterDirect<DrawerView, bool>(
+            nameof(IsVertical), o => o.IsVertical, (o, v) => o.IsVertical = v);
 
     #endregion
 
@@ -155,6 +155,16 @@ public class DrawerView : ContentControl
     {
         get => GetValue(HideSplitterProperty);
         set => SetValue(HideSplitterProperty, value);
+    }
+
+    /// <summary>
+    /// Indicates whether the <see cref="DrawerPlacement"/> is in a <c>Vertical</c> (top/bottom) orientation.
+    /// If not, then it should be in a <c>Horizontal</c> (left/right) orientation.
+    /// </summary>
+    public bool IsVertical
+    {
+        get => _isVertical;
+        set => SetAndRaise(IsVerticalProperty, ref _isVertical, value);
     }
 
     protected override bool RegisterContentPresenter(ContentPresenter presenter)
@@ -258,6 +268,8 @@ public class DrawerView : ContentControl
         if (!string.IsNullOrEmpty(_lastPlacement)) PseudoClasses.Remove(_lastPlacement);
         _lastPlacement = GetPseudoClass(newValue);
         PseudoClasses.Add(_lastPlacement);
+
+        IsVertical = newValue is DrawerViewPlacement.Top or DrawerViewPlacement.Bottom;
     }
 
     private static bool CoerceIsPaneOpen(AvaloniaObject instance, bool value) => value;

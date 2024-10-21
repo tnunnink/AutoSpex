@@ -33,6 +33,9 @@ public partial class NodeDetailPageModel : DetailPageModel
         await LoadNode();
         await LoadRunner();
         await base.Load();
+        
+        //Any time a node is open locate it in the navigation tree.
+        Messenger.Send(new NodeObserver.ExpandTo(Node.Id));
     }
 
     /// <inheritdoc />
@@ -131,7 +134,7 @@ public partial class NodeDetailPageModel : DetailPageModel
 
         if (result.IsSuccess)
         {
-            Messenger.Send(new Observer.Created(Node));
+            Messenger.Send(new Observer.Created<NodeObserver>(Node));
             NotifySaveSuccess();
             AcceptChanges();
             return Result.Ok();

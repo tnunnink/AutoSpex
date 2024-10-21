@@ -14,7 +14,7 @@ namespace AutoSpex.Client.Pages;
 public partial class NavigationPageModel : PageViewModel
 {
     public Task<NodeTreePageModel> NodeTree => Navigator.Navigate<NodeTreePageModel>();
-    public Task<SourceSelectorPageModel> SourceSelector => Navigator.Navigate<SourceSelectorPageModel>();
+    public Task<SourceTargetPageModel> SourceSelector => Navigator.Navigate<SourceTargetPageModel>();
 
     #region Commands
 
@@ -30,7 +30,7 @@ public partial class NavigationPageModel : PageViewModel
         if (result.IsFailed) return;
 
         var observer = new NodeObserver(node) { IsNew = true };
-        Messenger.Send(new Observer.Created(observer));
+        Messenger.Send(new Observer.Created<NodeObserver>(observer));
         await Navigator.Navigate(observer);
     }
 
@@ -60,7 +60,7 @@ public partial class NavigationPageModel : PageViewModel
         if (Notifier.ShowIfFailed(result, "Failed to create new source. See notifications for details.")) return;
 
         var observer = new SourceObserver(source);
-        Messenger.Send(new Observer.Created(observer));
+        Messenger.Send(new Observer.Created<SourceObserver>(observer));
         await Navigator.Navigate(observer);
     }
 
@@ -86,7 +86,7 @@ public partial class NavigationPageModel : PageViewModel
         var import = await Mediator.Send(new ImportNode(package, action));
         if (Notifier.ShowIfFailed(import)) return;
 
-        Messenger.Send(new Observer.Created(new NodeObserver(import.Value)));
+        Messenger.Send(new Observer.Created<NodeObserver>(new NodeObserver(import.Value)));
 
         Notifier.ShowSuccess(
             "Import request complete",

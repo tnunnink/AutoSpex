@@ -13,7 +13,7 @@
             <ListBox ItemsSource="{x:Static components:TestData.Evaluations}"
                      ItemTemplate="{DynamicResource EvaluationListItem}"
                      ItemContainerTheme="{StaticResource ListBoxItemSimple}"
-                     Padding="10"/>
+                     Padding="10" />
         </Border>
     </Design.PreviewWith>
 
@@ -22,20 +22,9 @@
         <Border
             x:Name="RootBorder"
             properties:StyleClasses.Classes="{Binding Result}"
-            BorderThickness="3 0 0 0"
             Padding="{a:ThemeResource ListItemPadding}">
 
             <Border.Styles>
-                <Style Selector="Border.Passed">
-                    <Setter Property="BorderBrush" Value="{a:ThemeResource ControlForegroundBrushOutlineSuccess}" />
-                </Style>
-                <Style Selector="Border.Failed">
-                    <Setter Property="BorderBrush" Value="{a:ThemeResource ControlForegroundBrushOutlineDanger}" />
-                </Style>
-                <Style Selector="Border.Errored">
-                    <Setter Property="BorderBrush" Value="{a:ThemeResource ControlForegroundBrushOutlineWarning}" />
-                </Style>
-
                 <Style Selector="controls|HighlightableTextBlock">
                     <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushSecondary}" />
                     <Setter Property="HighlightedText"
@@ -52,13 +41,8 @@
 
             <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" Spacing="5" ClipToBounds="True">
 
-                <Border
-                    ToolTip.Placement="BottomEdgeAlignedRight">
-                    <StackPanel Orientation="Horizontal" Spacing="5">
-                        <PathIcon Theme="{StaticResource IconThemedSource}" Classes="size-sm" Margin="0 1 0 0" />
-
-                    </StackPanel>
-                </Border>
+                <PathIcon Theme="{Binding Result, Converter={StaticResource ResultStateIconConverter}}"
+                          Classes="size-sm" Margin="0 1 3 0" />
 
                 <TextBlock Text="Expected" />
                 <controls:HighlightableTextBlock Text="{Binding Candidate}" />
@@ -98,7 +82,8 @@
 
                     <controls:HighlightableTextBlock
                         Text="{Binding Actual}"
-                        Foreground="{DynamicResource TypeGroupForegroundBrushText}" />
+                        Classes.success="{Binding Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Passed}}"
+                        Classes.danger="{Binding Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Failed}}" />
                 </StackPanel>
 
                 <StackPanel

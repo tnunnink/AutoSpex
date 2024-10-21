@@ -9,6 +9,8 @@ using AutoSpex.Engine;
 using AutoSpex.Persistence;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging.Messages;
 using Argument = AutoSpex.Engine.Argument;
 
 // ReSharper disable TailRecursiveCall
@@ -131,75 +133,24 @@ public partial class ArgumentObserver : Observer<Argument>
     }
 
     /// <summary>
-    /// Queries the database for a variable in scope with the specified name and returns it, or null if not found.
-    /// </summary>
-    private async Task<Reference> ResolveReference(string name)
-    {
-        var scoped = await GetScopedVariables(string.Empty, CancellationToken.None);
-
-        return scoped.FirstOrDefault(v => v.Name == name)?.Model is Variable match
-            ? match.Reference()
-            : new Reference(name);
-    }
-
-    /// <summary>
     /// Executes the code to retrieve possible suggestion values based on the current argument's type and scope,
     /// and returns a collection of values which are filtered based on the provided input text.
     /// </summary>
     private async Task<IEnumerable<object>> GetSuggestions(string? filter, CancellationToken token)
     {
-        var suggestions = new List<object>();
-
-        var options = GetOptions(filter);
-        suggestions.AddRange(options);
-
-        //todo get possible source values based on type/property of the parent criterion
-
-        var variables = await GetScopedVariables(filter, token);
-        suggestions.AddRange(variables);
-
-        return suggestions;
+        var message = Messenger.Send(new SuggestionRequest(this, filter));
+        var response = await message.GetResponsesAsync(token);
+        return response;
     }
 
     /// <summary>
-    /// Query the database for variables that are in scope of this argument. These are variables that belong to or are
-    /// inherited by the parent node object. Therefore, we first request the parent node and the use it's id to fetch
-    /// variable objects as suggestions to plug into the argument value for the user.
+    /// Queries the database for a variable in scope with the specified name and returns it, or null if not found.
     /// </summary>
-    private async Task<IEnumerable<ValueObserver>> GetScopedVariables(string? filter, CancellationToken token)
+    private async Task<Reference> ResolveReference(string name)
     {
-        //Remove the prefix '@' so we can return all variables we want to reference.
-        filter = filter?.TrimStart(Reference.Prefix);
-
-        //Find the node to which this argument belongs.
-        //This should be in memory since page rendering this argument contains the node,
-        //but if not found will just return empty collection.
-        //Remember we are doing in memory retrieval of this node id becuause this data may not yet be persisted.
-        var node = GetObserver<NodeObserver>(x =>
-            x.Model.Spec.Filters.Any(f => f.Contains(Id)) || x.Model.Spec.Verifications.Any(v => v.Contains(Id)));
-
-        if (node is null) return [];
-
-        var variables = await Mediator.Send(new GetScopedVariables(node.Id), token);
-        return variables.Select(v => new ValueObserver(v)).Where(v => v.Filter(filter));
-    }
-
-    /// <summary>
-    /// Gets potential option values for the parent criterion property which are potential values to the argument input. 
-    /// </summary>
-    private IEnumerable<ValueObserver> GetOptions(string? filter)
-    {
-        var type = Criterion?.Property.Type;
-        var group = Criterion?.Property.Group;
-
-        if (type is null) return [];
-
-        if (group == TypeGroup.Boolean)
-            return type.GetOptions().Select(x => new ValueObserver(x));
-
-        return group == TypeGroup.Enum
-            ? type.GetOptions().Select(x => new ValueObserver(x)).Where(v => v.Filter(filter))
-            : [];
+        var reference = new Reference(name);
+        var scoped = await Mediator.Send(new GetReferenceVariable(reference));
+        return scoped.IsSuccess ? scoped.Value.Reference() : reference;
     }
 
     /// <summary>
@@ -213,6 +164,17 @@ public partial class ArgumentObserver : Observer<Argument>
         if (criterion.Argument.Value is not ObserverCollection<Argument, ArgumentObserver> collection) return false;
         if (collection.Any(a => a.Id == Id)) return true;
         return false;
+    }
+
+    /// <summary>
+    /// Represents an observer wrapper over the <see cref="Engine.Argument"/> class for a parent criterion object.
+    /// </summary>
+    public class SuggestionRequest(ArgumentObserver argument, string? filter)
+        : AsyncCollectionRequestMessage<ValueObserver>
+    {
+        public ArgumentObserver Argument { get; } = argument;
+
+        public string? Filter { get; } = filter;
     }
 
     public static implicit operator Argument(ArgumentObserver observer) => observer.Model;

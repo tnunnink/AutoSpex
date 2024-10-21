@@ -1,0 +1,37 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+
+    <Design.PreviewWith>
+        <StackPanel Margin="100">
+            <Button
+                Theme="{a:ControlTheme ButtonSubtle}"
+                Content="{x:Static components:TestData.ReferenceValue}"
+                ContentTemplate="{DynamicResource ReferenceDisplay}" />
+        </StackPanel>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="ReferenceDisplay" x:DataType="observers:ReferenceObserver">
+
+        <StackPanel Orientation="Horizontal" Spacing="2">
+            <TextBlock
+                Text="@"
+                Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+            <TextBlock
+                Text="{Binding Name}"
+                Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
+                TextTrimming="CharacterEllipsis"
+                MaxLines="1" />
+
+            <ToolTip.Tip>
+                <ContentControl
+                    Content="{Binding Variable^}"
+                    ContentTemplate="{StaticResource VariableTip}" />
+            </ToolTip.Tip>
+
+        </StackPanel>
+
+    </DataTemplate>
+</ResourceDictionary>

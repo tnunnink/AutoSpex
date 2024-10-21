@@ -11,29 +11,21 @@ namespace AutoSpex.Client.Pages;
 
 public partial class SaveToContainerPageModel : PageViewModel
 {
-    private readonly List<NodeObserver> _container = [];
     public override bool KeepAlive => false;
-    public ObservableCollection<NodeObserver> Containers { get; } = [];
+    public ObserverCollection<Node, NodeObserver> Containers { get; } = [];
 
     [ObservableProperty] private NodeObserver? _selected;
 
-    [ObservableProperty] private string? _filter;
-
     public override Task Load()
     {
-        var containers = Messenger.Send(new Observer.Find<NodeObserver>(n => n.Type != NodeType.Spec));
-
-        _container.Clear();
-        _container.AddRange(containers);
-
-        Containers.Refresh(_container);
-
+        var message = Messenger.Send(new Observer.Find<NodeObserver>(n => n.Type != NodeType.Spec));
+        var containers = message.Responses.Select(n => n.Model).ToList();
+        Containers.Bind(containers, x => new NodeObserver(x));
         return Task.CompletedTask;
     }
 
-    partial void OnFilterChanged(string? value)
+    protected override void FilterChanged(string? filter)
     {
-        var filtered = _container.Where(n => n.Name.Satisfies(value));
-        Containers.Refresh(filtered);
+        Containers.Filter(filter);
     }
 }
