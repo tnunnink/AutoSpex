@@ -4,7 +4,6 @@ using System.Linq;
 using AutoSpex.Client.Observers;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
@@ -38,8 +37,6 @@ public partial class VariablesPageModel : PageViewModel,
     public override string Icon => Title;
     public ObserverCollection<Variable, VariableObserver> Variables { get; }
     public ObservableCollection<VariableObserver> Selected { get; } = [];
-
-    [ObservableProperty] private string? _filter;
 
     /// <summary>
     /// Command to add a new variable to the node. Perform sort after to ensure proper order.
@@ -94,5 +91,11 @@ public partial class VariablesPageModel : PageViewModel,
         if (message.Observer is not VariableObserver observer) return;
         if (!Variables.Contains(observer)) return;
         Variables.Sort(x => x.Name, StringComparer.OrdinalIgnoreCase);
+    }
+
+    /// <inheritdoc />
+    protected override void FilterChanged(string? filter)
+    {
+        Variables.Filter(filter);
     }
 }

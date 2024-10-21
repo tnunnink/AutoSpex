@@ -30,8 +30,6 @@
                 <Button Content="{x:Static components:TestData.DataTypeValue}" />
                 <Button Content="{x:Static components:TestData.RungValue}" />
                 <!--<Button Content="{x:Static components:TestData.TagValue}" />-->
-                <Button Content="{x:Static components:TestData.VariableValue}" />
-                <Button Content="{x:Static components:TestData.ReferenceValue}" />
 
             </StackPanel>
         </StackPanel>
@@ -69,12 +67,6 @@
                 </Style>
                 <Style Selector="TextBlock.Collection">
                     <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushCollection}" />
-                </Style>
-                <Style Selector="TextBlock.Variable">
-                    <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
-                </Style>
-                <Style Selector="TextBlock.Reference">
-                    <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
                 </Style>
             </TextBlock.Styles>
 

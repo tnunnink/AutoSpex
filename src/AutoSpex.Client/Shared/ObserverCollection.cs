@@ -210,19 +210,6 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
     }
 
     /// <summary>
-    /// Adds or appends a collection by applying the provided filter to the current observable collection. This is
-    /// in contrast to <see cref="Filter(System.Func{TObserver,bool})"/> which first calls refresh, filters using
-    /// the predicate, and then updates the collection with the results. This would allow chaining of filters in sequence.
-    /// Resetting can be accomplished by calling <see cref="Refresh"/>
-    /// </summary>
-    /// <param name="filter">The filter function to apply to each item in the current collection.</param>
-    public void AddFilter(Func<TObserver, bool> filter)
-    {
-        var collection = this.Where(filter).ToList();
-        RefreshCollection(collection);
-    }
-
-    /// <summary>
     /// Retrieves all error messages found for child observers in the <see cref="ObserverCollection{TModel,TObserver}"/>
     /// </summary>
     /// <param name="propertyName">The name of the property to get errors for.</param>
@@ -330,7 +317,9 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
         ClearItems();
 
         foreach (var observer in collection)
+        {
             Add(observer);
+        }
 
         _refreshing = false;
         _changed = false;

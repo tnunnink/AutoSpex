@@ -19,7 +19,6 @@ namespace AutoSpex.Client.Observers;
 
 [PublicAPI]
 public partial class NodeObserver : Observer<Node>,
-    IRecipient<Observer.Created>,
     IRecipient<Observer.Deleted>,
     IRecipient<Observer.Get<NodeObserver>>,
     IRecipient<Observer.Find<NodeObserver>>,
@@ -29,7 +28,7 @@ public partial class NodeObserver : Observer<Node>,
     public NodeObserver(Node node) : base(node)
     {
         Nodes = new ObserverCollection<Node, NodeObserver>(
-            refresh: () => Model.Nodes.Select(n => new NodeObserver(n)).ToList(),
+            refresh: () => Model.Nodes.OrderBy(n => n.Name).Select(n => new NodeObserver(n)).ToList(),
             add: (_, n) => Model.AddNode(n),
             remove: (_, n) => Model.RemoveNode(n),
             clear: () => Model.ClearNodes(),
@@ -58,14 +57,20 @@ public partial class NodeObserver : Observer<Node>,
     public IEnumerable<NodeObserver> Path => Model.AncestorsAndSelf().Select(n => new NodeObserver(n));
 
     /// <inheritdoc />
-    /// <remarks>
-    /// Since the node is a tree we want to also filter depth first to find children containing the text.
-    /// If found we set the visibility and expand up to the found items.
-    /// </remarks>
     public override bool Filter(string? filter)
     {
+        return base.Filter(filter) || Model.Path.Satisfies(filter);
+    }
+
+    /// <summary>
+    /// Filters the tree structure based on the provided filter string recursively.
+    /// </summary>
+    /// <param name="filter">The filter string to apply.</param>
+    /// <returns>True if any node in the tree structure is visible after filtering; otherwise, false.</returns>
+    public bool FilterTree(string? filter)
+    {
         var passes = base.Filter(filter);
-        var children = Nodes.Count(x => x.Filter(filter));
+        var children = Nodes.Count(x => x.FilterTree(filter));
 
         IsVisible = passes || children > 0;
         IsExpanded = children > 0;
@@ -73,10 +78,21 @@ public partial class NodeObserver : Observer<Node>,
         return IsVisible;
     }
 
-    public bool FilterSingle(string? filter)
+    /// <summary>
+    /// Finds the parent NodeObserver of the provided target NodeObserver.
+    /// </summary>
+    /// <param name="target">The NodeObserver for which to find the parent.</param>
+    /// <returns>The parent NodeObserver of the target NodeObserver, or default if not found.</returns>
+    public NodeObserver? FindParentTo(NodeObserver target)
     {
-        FilterText = filter;
-        return string.IsNullOrEmpty(filter) || Name.Satisfies(filter);
+        if (Id == target.ParentId) return this;
+
+        foreach (var node in Nodes)
+        {
+            node.FindParentTo(target);
+        }
+
+        return default;
     }
 
     #region Commands
@@ -86,7 +102,7 @@ public partial class NodeObserver : Observer<Node>,
     /// </summary>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     [RelayCommand]
-    private Task AddContainer() => AddNode(new NodeObserver(Node.NewContainer()) { IsNew = true });
+    private Task AddContainer() => AddNode(Model.AddContainer());
 
     /// <summary>
     /// Adds a new spec node to the list of child nodes.
@@ -95,7 +111,7 @@ public partial class NodeObserver : Observer<Node>,
     /// A Task representing the asynchronous operation.
     /// </returns>
     [RelayCommand]
-    private Task AddSpec() => AddNode(new NodeObserver(Node.NewSpec()) { IsNew = true });
+    private Task AddSpec() => AddNode(Model.AddSpec());
 
     /// <summary>
     /// Command to move the provided node and the selected items to this node container.
@@ -178,7 +194,7 @@ public partial class NodeObserver : Observer<Node>,
         if (Notifier.ShowIfFailed(result)) return;
 
         var run = new RunObserver(result.Value);
-        
+
         await Navigator.Navigate(() => new RunDetailPageModel(run, true));
     }
 
@@ -200,7 +216,7 @@ public partial class NodeObserver : Observer<Node>,
         var result = await Mediator.Send(new CreateNode(duplicate));
         if (Notifier.ShowIfFailed(result)) return;
 
-        Messenger.Send(new Created(new NodeObserver(duplicate)));
+        Messenger.Send(new Created<NodeObserver>(new NodeObserver(duplicate)));
         Notifier.ShowSuccess(
             "Create node request complete",
             $"{duplicate.Name} was successfully created @ {DateTime.Now}"
@@ -240,16 +256,6 @@ public partial class NodeObserver : Observer<Node>,
     /// Sends the command to expand the tree and select this node, thereby locating this node in the hierarchy.
     /// </summary>
     [RelayCommand]
-    public void Locate()
-    {
-        Messenger.Send(new ExpandTo(this));
-        IsSelected = true;
-    }
-
-    /// <summary>
-    /// Sends the command to expand the tree and select this node, thereby locating this node in the hierarchy.
-    /// </summary>
-    [RelayCommand]
     public void ExpandAll()
     {
         IsExpanded = true;
@@ -277,23 +283,6 @@ public partial class NodeObserver : Observer<Node>,
     #endregion
 
     #region Handlers
-
-    /// <summary>
-    /// Will handle the creation of a node. Parent nodes need to ensure the object is added if it belongs as a child.
-    /// Also, this is where we want to sort the children to ensure proper ordering. Also trigger the locate command
-    /// to allow the UI to select and display this node in the tree.
-    /// </summary>
-    public void Receive(Created message)
-    {
-        if (message.Observer is not NodeObserver node) return;
-
-        if (Id != node.ParentId) return;
-        if (Nodes.Any(n => n.Id == node.Id)) return;
-
-        Nodes.Add(new NodeObserver(node));
-        Nodes.Sort(n => n.Name, StringComparer.OrdinalIgnoreCase);
-        node.Locate();
-    }
 
     /// <summary>
     /// Will handle the removal of the node and/or child nodes as based on which observer object is received.
@@ -344,9 +333,10 @@ public partial class NodeObserver : Observer<Node>,
     /// </summary>
     public void Receive(ExpandTo message)
     {
-        if (!Nodes.Contains(message.Node)) return;
+        if (Nodes.All(n => n.Id != message.NodeId)) return;
         IsExpanded = true;
-        Messenger.Send(new ExpandTo(this));
+        IsSelected = false;
+        Messenger.Send(new ExpandTo(Id));
     }
 
     /// <summary>
@@ -387,7 +377,7 @@ public partial class NodeObserver : Observer<Node>,
     /// A message that informs the parent nodes to expand their container if the provided node is a child of the
     /// received node. this allows use to expand the tree from a child leaf node.
     /// </summary>
-    public record ExpandTo(NodeObserver Node);
+    public record ExpandTo(Guid NodeId);
 
     #endregion
 
@@ -407,22 +397,19 @@ public partial class NodeObserver : Observer<Node>,
         return IsVirtual ? Task.FromResult(Result.Ok()) : Mediator.Send(new DeleteNodes(observers.Select(n => n.Id)));
     }
 
-    private async Task AddNode(NodeObserver node)
+    private async Task AddNode(Node node)
     {
-        //Add before sending request because this sets the parent correctly.
-        Nodes.Add(node);
-
         var result = await Mediator.Send(new CreateNode(node));
+
         if (Notifier.ShowIfFailed(result, $"Failed to create new {node.Type} {node.Name}."))
         {
-            Nodes.Remove(node);
+            Model.RemoveNode(node);
             return;
         }
 
-        Nodes.Sort(n => n.Name, StringComparer.OrdinalIgnoreCase);
-        Locate();
-        Messenger.Send(new Created(node));
-        await Navigator.Navigate(node);
+        var observer = new NodeObserver(node) { IsNew = true };
+        Messenger.Send(new Created<NodeObserver>(observer));
+        await Navigator.Navigate(observer);
     }
 
     /// <inheritdoc />

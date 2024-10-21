@@ -28,7 +28,7 @@
 
                     <ContentControl
                         Content="{Binding Run}"
-                        ContentTemplate="{StaticResource ResultSummary}" />
+                        ContentTemplate="{StaticResource RunSummary}" />
 
                 </StackPanel>
 

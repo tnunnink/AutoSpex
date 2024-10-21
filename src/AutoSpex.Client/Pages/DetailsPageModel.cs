@@ -43,7 +43,7 @@ public partial class DetailsPageModel : PageViewModel, IRecipient<NavigationRequ
         if (Notifier.ShowIfFailed(result, "Failed to create new collection. See notifications for details.")) return;
 
         var observer = new NodeObserver(node) { IsNew = true };
-        Messenger.Send(new Observer.Created(observer));
+        Messenger.Send(new Observer.Created<NodeObserver>(observer));
         await Navigator.Navigate(observer);
     }
 
@@ -73,7 +73,7 @@ public partial class DetailsPageModel : PageViewModel, IRecipient<NavigationRequ
         if (Notifier.ShowIfFailed(result, "Failed to create new source. See notifications for details.")) return;
 
         var observer = new SourceObserver(source);
-        Messenger.Send(new Observer.Created(observer));
+        Messenger.Send(new Observer.Created<SourceObserver>(observer));
         await Navigator.Navigate(observer);
     }
 

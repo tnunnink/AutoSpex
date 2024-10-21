@@ -4,7 +4,6 @@ using System.Linq;
 using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 
 namespace AutoSpex.Client.Pages;
@@ -21,8 +20,6 @@ public partial class DetailTabListPageModel : PageViewModel, IRecipient<Navigati
 
     public override bool KeepAlive => false;
     public ObservableCollection<DetailPageModel> Tabs { get; } = [];
-
-    [ObservableProperty] private string? _filter;
 
     /// <summary>
     /// If the page is closed we need to respond by removing it from the local collection and refreshing the UI.
@@ -43,9 +40,9 @@ public partial class DetailTabListPageModel : PageViewModel, IRecipient<Navigati
     /// <summary>
     /// Trigger collection filtering and update when filter text changes.
     /// </summary>
-    partial void OnFilterChanged(string? value)
+    protected override void FilterChanged(string? filter)
     {
-        UpdateTabs(value);
+        UpdateTabs(filter);
     }
 
     /// <summary>

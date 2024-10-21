@@ -310,7 +310,7 @@ public class Property : IEquatable<Property>
 
     /// <summary>
     /// Retrieves the getter function for this property, which will either be the custom getter, cached expression,
-    /// or the expression function we built using the inforation of this class. This getter function will return the value
+    /// or the expression function we built using the info of this class. This getter function will return the value
     /// of this property provided the parent object instance. As getters are created we are caching them so that we can
     /// reuse them and not have to recreate each time we ask for a property value (which will be a lot as each spec is run)
     /// </summary>
@@ -361,7 +361,7 @@ public class Property : IEquatable<Property>
         //Strip off the array brackets
         var key = name[1..^1];
 
-        //If "name" is just a number we need to parse it becuase there is no built in coersion for string to int.
+        //If "name" is just a number we need to parse it becuase there is no built-in coersion for string to int.
         //In this case we can just use the propety getter for Item (built in indexer name).
         if (int.TryParse(key, out var index))
             return Expression.Property(parameter, "Item", Expression.Constant(index));

@@ -9,12 +9,12 @@
             <a:ToggleThemeButton Theme="{a:ControlTheme ToggleThemeButtonSoft}" />
             <ContentControl
                 Content="{x:Static components:TestData.Run}"
-                ContentTemplate="{DynamicResource ResultSummary}" />
+                ContentTemplate="{DynamicResource RunSummary}" />
         </StackPanel>
     </Design.PreviewWith>
 
-    <DataTemplate x:Key="ResultSummary" x:DataType="observers:RunObserver">
-        
+    <DataTemplate x:Key="RunSummary" x:DataType="observers:RunObserver">
+
         <StackPanel Orientation="Horizontal" Spacing="20">
             <StackPanel.Styles>
                 <Style Selector="TextBlock">
@@ -48,29 +48,17 @@
                            IsVisible="{Binding !HasResult}" />
             </StackPanel>
 
-            <StackPanel Orientation="Horizontal" Spacing="10" IsVisible="{Binding HasResult}">
-
-                <StackPanel Orientation="Horizontal" Spacing="5" IsVisible="{Binding Passed}">
-                    <PathIcon Theme="{StaticResource IconThemedPassed}" />
-                    <TextBlock Text="{Binding Passed}" />
-                    <ToolTip.Tip>Passed</ToolTip.Tip>
-                </StackPanel>
-
-                <StackPanel Orientation="Horizontal" Spacing="5" IsVisible="{Binding Failed}">
-                    <PathIcon Theme="{StaticResource IconThemedFailed}" />
-                    <TextBlock Text="{Binding Failed}" />
-                    <ToolTip.Tip>Failed</ToolTip.Tip>
-                </StackPanel>
-
-                <StackPanel Orientation="Horizontal" Spacing="5" IsVisible="{Binding Errored}">
-                    <PathIcon Theme="{StaticResource IconThemedError}" />
-                    <TextBlock Text="{Binding Errored}" />
-                    <ToolTip.Tip>Errored</ToolTip.Tip>
-                </StackPanel>
-
+            <StackPanel Orientation="Horizontal" Spacing="5">
+                <PathIcon Theme="{Binding Node.Type.Name, Converter={StaticResource KeyIconConverter}}" />
+                <TextBlock Text="{Binding Node.Name}" />
             </StackPanel>
-            
+
+            <StackPanel Orientation="Horizontal" Spacing="5">
+                <PathIcon Theme="{StaticResource IconThemedSource}" />
+                <TextBlock Text="{Binding Source.Name}" />
+            </StackPanel>
+
         </StackPanel>
-        
+
     </DataTemplate>
 </ResourceDictionary>

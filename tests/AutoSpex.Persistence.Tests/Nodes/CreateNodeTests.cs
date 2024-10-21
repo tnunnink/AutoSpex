@@ -76,7 +76,7 @@ public class CreateNodeTests
 
         var result = await mediator.Send(new CreateNode(node));
         result.IsSuccess.Should().BeTrue();
-        
+
         var created = await mediator.Send(new LoadNode(node.NodeId));
         created.IsSuccess.Should().BeTrue();
         created.Value.Spec.Should().BeEquivalentTo(node.Spec);
@@ -99,5 +99,18 @@ public class CreateNodeTests
         created.IsSuccess.Should().BeTrue();
         created.Value.Should().NotBeNull();
         created.Value.Variables.Should().HaveCount(3);
+    }
+
+    [Test]
+    public async Task CreateNode_ManyManyNodes_ShouldBeSuccess()
+    {
+        using var context = new TestContext();
+        var mediator = context.Resolve<IMediator>();
+
+        for (var i = 0; i < 100; i++)
+        {
+            var result = await mediator.Send(new CreateNode(Node.NewSpec($"Spec {i}")));
+            result.IsSuccess.Should().BeTrue();
+        }
     }
 }

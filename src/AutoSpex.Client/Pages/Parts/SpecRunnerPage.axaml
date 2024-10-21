@@ -5,7 +5,6 @@
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
              xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
              xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors"
-             xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
              x:Class="AutoSpex.Client.Pages.SpecRunnerPage"
              x:DataType="pages:SpecRunnerPageModel">
 
@@ -26,7 +25,7 @@
 
                     <ContentControl
                         Content="{Binding Outcome}"
-                        ContentTemplate="{StaticResource OutcomeDisplay}"
+                        ContentTemplate="{StaticResource OutcomeResult}"
                         VerticalAlignment="Center"
                         IsVisible="{Binding $parent[controls:DrawerView].IsDrawerOpen}" />
 
@@ -52,7 +51,7 @@
                         ToolTip.Tip="Show Results"
                         ToolTip.Placement="BottomEdgeAlignedRight">
                         <Button.RenderTransform>
-                            <RotateTransform Angle="270" />
+                            <RotateTransform Angle="180" />
                         </Button.RenderTransform>
                         <Interaction.Behaviors>
                             <behaviors:ToggleDrawerOnClickBehavior />
@@ -86,60 +85,10 @@
             </TextBox.InnerLeftContent>
         </TextBox>
 
-        <Panel IsVisible="{Binding $parent[controls:DrawerView].IsDrawerOpen}">
-
-            <controls:DefaultMessage
-                HorizontalAlignment="Center"
-                IsVisible="{Binding Outcome, Converter={x:Static ObjectConverters.IsNull}}"
-                HeaderIcon="{StaticResource IconLineListCheck}"
-                Header="No results available"
-                Message="Run the spec to view results." />
-
-            <controls:DefaultMessage
-                HorizontalAlignment="Center"
-                HeaderIcon="{StaticResource IconThemedInconclusive}"
-                Header="No results produced"
-                Message="No source element passed the configured filters for this spec.">
-                <controls:DefaultMessage.IsVisible>
-                    <MultiBinding Converter="{x:Static BoolConverters.And}">
-                        <Binding Path="Outcome" Converter="{x:Static ObjectConverters.IsNotNull}" />
-                        <Binding Path="!Outcome.Evaluations.HasItems" FallbackValue="{x:False}" />
-                    </MultiBinding>
-                </controls:DefaultMessage.IsVisible>
-            </controls:DefaultMessage>
-
-            <controls:DefaultMessage
-                HorizontalAlignment="Center"
-                HeaderIcon="{StaticResource IconLineSearch}"
-                Header="No results found"
-                Message="No result contains the search text that was entered.">
-                <controls:DefaultMessage.IsVisible>
-                    <MultiBinding Converter="{x:Static BoolConverters.And}">
-                        <Binding Path="Outcome" Converter="{x:Static ObjectConverters.IsNotNull}" />
-                        <Binding Path="Outcome.Evaluations.HasItems" FallbackValue="{x:False}" />
-                        <Binding Path="!Outcome.Evaluations.Count" FallbackValue="{x:False}" />
-                    </MultiBinding>
-                </controls:DefaultMessage.IsVisible>
-            </controls:DefaultMessage>
-
-            <ListBox
-                ItemsSource="{Binding Outcome.Evaluations, FallbackValue={x:Null}}"
-                ItemTemplate="{StaticResource EvaluationListItem}"
-                Padding="10">
-                <ListBox.ItemContainerTheme>
-                    <ControlTheme BasedOn="{StaticResource ListBoxItemSimple}" TargetType="ListBoxItem">
-                        <Setter Property="Margin" Value="0" />
-                    </ControlTheme>
-                </ListBox.ItemContainerTheme>
-                <controls:DefaultMessage.IsVisible>
-                    <MultiBinding Converter="{x:Static BoolConverters.And}">
-                        <Binding Path="Outcome" Converter="{x:Static ObjectConverters.IsNotNull}" />
-                        <Binding Path="Outcome.Evaluations.Count" FallbackValue="{x:Null}" />
-                    </MultiBinding>
-                </controls:DefaultMessage.IsVisible>
-            </ListBox>
-
-        </Panel>
+        <ContentControl
+            Content="{Binding Outcome}"
+            ContentTemplate="{StaticResource OutcomeList}"
+            IsVisible="{Binding $parent[controls:DrawerView].IsDrawerOpen}" />
 
     </DockPanel>
 </UserControl>

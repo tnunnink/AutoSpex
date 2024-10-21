@@ -198,6 +198,21 @@ public class Spec() : IEquatable<Spec>
     }
 
     /// <summary>
+    /// Runs the configured spec to return a collection of candidate elements that would be validated when this spec is run.
+    /// This basically just queries the provided content and runs the results through the configured filters.
+    /// </summary>
+    /// <param name="content">The L5X content to query.</param>
+    /// <returns>A collection of <see cref="LogixElement"/> representing the candidates for the spec.</returns>
+    public IEnumerable<LogixElement> GetCandidates(L5X content)
+    {
+        ArgumentNullException.ThrowIfNull(content);
+
+        var elements = content.Query(Element.Type);
+        var candidates = elements.Where(FilterElement).ToList();
+        return candidates;
+    }
+
+    /// <summary>
     /// Given a target object, runs the configured <see cref="Filters"/> to evaluate whether this object should be
     /// considered a candidate for verification of this spec.
     /// </summary>

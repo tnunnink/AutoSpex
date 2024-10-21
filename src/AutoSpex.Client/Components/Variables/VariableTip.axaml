@@ -1,0 +1,62 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+
+    <Design.PreviewWith>
+        <StackPanel Margin="100">
+
+            <Border
+                BorderThickness="1"
+                BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                Padding="{a:ThemeResource PopupPadding}"
+                CornerRadius="{a:ThemeResource PopupCornerRadius}">
+
+                <ContentControl
+                    Content="{x:Static components:TestData.VariableObserver}"
+                    ContentTemplate="{DynamicResource VariableTip}" />
+
+            </Border>
+
+        </StackPanel>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="VariableTip" x:DataType="observers:VariableObserver">
+
+        <StackPanel
+            Background="{a:ThemeResource Container1BackgroundBrush}"
+            a:BorderChildClipConverter.ClipToContainingBorder="True"
+            MinWidth="300">
+
+            <Border Padding="10" Background="{a:ThemeResource Container2BackgroundBrush}">
+
+                <Grid ColumnDefinitions="*,Auto">
+
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <PathIcon Theme="{StaticResource IconThemedVariable}" />
+                        <TextBlock Text="{Binding Name}" FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
+                    </StackPanel>
+
+                    <!--<Button
+                        Grid.Column="1"
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconLineLaunch}" />-->
+
+                </Grid>
+            </Border>
+
+            <StackPanel Orientation="Horizontal" Spacing="10" Margin="10">
+                <PathIcon
+                    Theme="{Binding Group, Converter={StaticResource TypeGroupIconConverter}}" />
+                <ContentControl
+                    Content="{Binding Value}"
+                    ContentTemplate="{StaticResource ValueDisplay}" />
+            </StackPanel>
+
+        </StackPanel>
+
+    </DataTemplate>
+
+</ResourceDictionary>

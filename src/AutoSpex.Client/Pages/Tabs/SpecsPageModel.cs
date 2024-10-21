@@ -4,14 +4,13 @@ using AutoSpex.Client.Observers;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using AutoSpex.Persistence;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
 namespace AutoSpex.Client.Pages;
 
 public partial class SpecsPageModel(NodeObserver node) : PageViewModel("Specs"),
-    IRecipient<Observer.Created>,
+    IRecipient<Observer.Created<NodeObserver>>,
     IRecipient<Observer.Deleted>,
     IRecipient<Observer.GetSelected>,
     IRecipient<NodeObserver.Moved>
@@ -19,8 +18,6 @@ public partial class SpecsPageModel(NodeObserver node) : PageViewModel("Specs"),
     public override string Route => $"{node.Type}/{node.Id}/{Title}";
     public ObserverCollection<Node, NodeObserver> Specs { get; private set; } = [];
     public ObservableCollection<NodeObserver> Selected { get; } = [];
-
-    [ObservableProperty] private string? _filter;
 
     /// <inheritdoc />
     public override async Task Load()
@@ -45,21 +42,19 @@ public partial class SpecsPageModel(NodeObserver node) : PageViewModel("Specs"),
         if (Notifier.ShowIfFailed(result)) return;
 
         var observer = new NodeObserver(spec) { IsNew = true };
-        Specs.Add(observer);
-        Messenger.Send(new Observer.Created(observer));
+        Messenger.Send(new Observer.Created<NodeObserver>(observer));
     }
 
     /// <summary>
     /// Handle reception of a spec node being created by adding it to the local spec collection if the node is a
     /// descendant of the current node.
     /// </summary>
-    public void Receive(Observer.Created message)
+    public void Receive(Observer.Created<NodeObserver> message)
     {
-        if (message.Observer is not NodeObserver observer) return;
-        if (!observer.Model.IsDescendantOf(node)) return;
-        if (observer.Type != NodeType.Spec) return;
-        if (Specs.Contains(observer)) return;
-        Specs.Add(new NodeObserver(observer));
+        if (message.Observer.Type != NodeType.Spec) return;
+        if (!message.Observer.Model.IsDescendantOf(node)) return;
+        var observer = message.Observer.IsNew ? message.Observer : new NodeObserver(message.Observer.Model);
+        Specs.Add(observer);
     }
 
     /// <summary>
@@ -106,8 +101,8 @@ public partial class SpecsPageModel(NodeObserver node) : PageViewModel("Specs"),
     /// When the filter text changes call the observer collection filter method to update the filter text and perform
     /// the filtering of the underlying collection
     /// </summary>
-    partial void OnFilterChanged(string? value)
+    protected override void FilterChanged(string? filter)
     {
-        Specs.Filter(n => n.FilterSingle(value) || n.Model.Path.Satisfies(value));
+        Specs.Filter(filter);
     }
 }

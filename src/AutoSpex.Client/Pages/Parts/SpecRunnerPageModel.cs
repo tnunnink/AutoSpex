@@ -13,8 +13,6 @@ public partial class SpecRunnerPageModel(NodeObserver node) : PageViewModel("Run
 
     [ObservableProperty] private OutcomeObserver? _outcome;
 
-    [ObservableProperty] private string? _filter;
-
     /// <summary>
     /// Command to run the spec locally against the target source. This sets the resulting "virtual" outcome instance
     /// which we can use to show the result data in our results drawer. This is to let the user test a spec without
@@ -34,11 +32,18 @@ public partial class SpecRunnerPageModel(NodeObserver node) : PageViewModel("Run
         Outcome = new Outcome { NodeId = node.Id, Name = node.Name, Verification = verification };
     }
 
-    /// <summary>
-    /// Apply the text filter when the value changes.
-    /// </summary>
-    partial void OnFilterChanged(string? value)
+    protected override void FilterChanged(string? filter)
     {
-        Outcome?.Evaluations.Filter(value);
+        if (Outcome is null) return;
+
+        var state = Outcome.FilterState;
+        var text = filter;
+        
+        Outcome.Evaluations.Filter(x =>
+        {
+            var hasState = state == ResultState.None || x.Result == state;
+            var hasText = x.Filter(text);
+            return hasState && hasText;
+        });
     }
 }

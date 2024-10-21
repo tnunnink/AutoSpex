@@ -37,6 +37,7 @@
             <PathIcon Theme="{DynamicResource IconThemedEnum}" />
             <PathIcon Theme="{DynamicResource IconThemedElement}" />
             <PathIcon Theme="{DynamicResource IconThemedArray}" />
+            <PathIcon Theme="{DynamicResource IconThemedTag}" />
         </StackPanel>
     </Design.PreviewWith>
 
@@ -60,12 +61,12 @@
     </ControlTheme>
 
     <ControlTheme x:Key="IconThemedNone" TargetType="PathIcon" BasedOn="{StaticResource IconLineCircleHalfFill}">
-        <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
-    </ControlTheme>
-    <ControlTheme x:Key="IconThemedPending" TargetType="PathIcon" BasedOn="{StaticResource IconLineCircleHalfFill}">
         <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
     </ControlTheme>
-    <ControlTheme x:Key="IconThemedRunning" TargetType="PathIcon" BasedOn="{StaticResource IconLineCircleHalfFill}">
+    <ControlTheme x:Key="IconThemedPending" TargetType="PathIcon" BasedOn="{StaticResource IconLineCircleNotch}">
+        <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+    </ControlTheme>
+    <ControlTheme x:Key="IconThemedRunning" TargetType="PathIcon" BasedOn="{StaticResource IconLineCircleNotch}">
         <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineSuccess}" />
     </ControlTheme>
     <ControlTheme x:Key="IconThemedInconclusive" TargetType="PathIcon" BasedOn="{StaticResource IconFilledQuestion}">
@@ -107,6 +108,10 @@
     </ControlTheme>
     <ControlTheme x:Key="IconThemedArray" TargetType="PathIcon" BasedOn="{StaticResource IconFilledCubes}">
         <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushCollection}" />
+        <Setter Property="FontSize" Value="14" />
+    </ControlTheme>
+    <ControlTheme x:Key="IconThemedTag" TargetType="PathIcon" BasedOn="{StaticResource IconFilledTag}">
+        <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushTag}" />
         <Setter Property="FontSize" Value="14" />
     </ControlTheme>
 </ResourceDictionary>

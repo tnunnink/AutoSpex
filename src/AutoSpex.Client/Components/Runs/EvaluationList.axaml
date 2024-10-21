@@ -1,0 +1,71 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
+
+    <Design.PreviewWith>
+        <ContentControl
+            Content="{x:Static components:TestData.DefaultOutcome}"
+            ContentTemplate="{DynamicResource OutcomeList}"
+            Margin="20" />
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="OutcomeList" x:DataType="observers:OutcomeObserver">
+
+        <Panel>
+
+            <controls:DefaultMessage
+                HorizontalAlignment="Center"
+                IsVisible="{Binding Converter={x:Static ObjectConverters.IsNull}}"
+                HeaderIcon="{StaticResource IconLineListCheck}"
+                Header="No results available"
+                Message="Run the spec to view results." />
+
+            <controls:DefaultMessage
+                HorizontalAlignment="Center"
+                HeaderIcon="{StaticResource IconThemedInconclusive}"
+                Header="No results produced"
+                Message="No source element passed the configured filters for this spec.">
+                <controls:DefaultMessage.IsVisible>
+                    <MultiBinding Converter="{x:Static BoolConverters.And}">
+                        <Binding Converter="{x:Static ObjectConverters.IsNotNull}" />
+                        <Binding Path="!Evaluations.HasItems" FallbackValue="{x:False}" />
+                    </MultiBinding>
+                </controls:DefaultMessage.IsVisible>
+            </controls:DefaultMessage>
+
+            <controls:DefaultMessage
+                HorizontalAlignment="Center"
+                HeaderIcon="{StaticResource IconLineSearch}"
+                Header="No results found"
+                Message="No result contains the search text that was entered.">
+                <controls:DefaultMessage.IsVisible>
+                    <MultiBinding Converter="{x:Static BoolConverters.And}">
+                        <Binding Converter="{x:Static ObjectConverters.IsNotNull}" />
+                        <Binding Path="Evaluations.HasItems" FallbackValue="{x:False}" />
+                        <Binding Path="!Evaluations.Count" FallbackValue="{x:False}" />
+                    </MultiBinding>
+                </controls:DefaultMessage.IsVisible>
+            </controls:DefaultMessage>
+
+            <ListBox
+                ItemsSource="{Binding Evaluations}"
+                ItemTemplate="{StaticResource EvaluationListItem}"
+                Padding="10">
+                <ListBox.ItemContainerTheme>
+                    <ControlTheme BasedOn="{StaticResource ListBoxItemSimple}" TargetType="ListBoxItem">
+                        <Setter Property="Margin" Value="0" />
+                    </ControlTheme>
+                </ListBox.ItemContainerTheme>
+                <ListBox.IsVisible>
+                    <MultiBinding Converter="{x:Static BoolConverters.And}">
+                        <Binding Converter="{x:Static ObjectConverters.IsNotNull}" />
+                        <Binding Path="Evaluations.Count" FallbackValue="{x:Null}" />
+                    </MultiBinding>
+                </ListBox.IsVisible>
+            </ListBox>
+
+        </Panel>
+    </DataTemplate>
+</ResourceDictionary>

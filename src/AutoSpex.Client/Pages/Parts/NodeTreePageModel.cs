@@ -14,7 +14,7 @@ namespace AutoSpex.Client.Pages;
 
 [UsedImplicitly]
 public partial class NodeTreePageModel : PageViewModel,
-    IRecipient<Observer.Created>,
+    IRecipient<Observer.Created<NodeObserver>>,
     IRecipient<Observer.Deleted>,
     IRecipient<Observer.Renamed>,
     IRecipient<Observer.GetSelected>,
@@ -23,14 +23,11 @@ public partial class NodeTreePageModel : PageViewModel,
     public ObserverCollection<Node, NodeObserver> Nodes { get; } = [];
     public ObservableCollection<NodeObserver> Selected { get; } = [];
 
-    [ObservableProperty] private string? _filter;
-
     [ObservableProperty] private bool _isExpanded;
 
     public override async Task Load()
     {
         var result = await Mediator.Send(new ListNodes());
-
         Nodes.Refresh(result.Select(n => new NodeObserver(n)));
         Nodes.Sort(n => n.Name, StringComparer.OrdinalIgnoreCase);
         RegisterDisposable(Nodes);
@@ -69,14 +66,11 @@ public partial class NodeTreePageModel : PageViewModel,
     /// <summary>
     /// If a collection node is created elsewhere we need to sort and locate it in the tree view.
     /// </summary>
-    public void Receive(Observer.Created message)
+    public void Receive(Observer.Created<NodeObserver> message)
     {
-        if (message.Observer is not NodeObserver node) return;
-        if (node.ParentId != Guid.Empty) return;
-
-        Nodes.Add(new NodeObserver(node));
-        Nodes.Sort(n => n.Name, StringComparer.OrdinalIgnoreCase);
-        node.Locate();
+        var collection = FindCollectionContaining(message.Observer);
+        collection.Add(message.Observer);
+        collection.Sort(n => n.Name, StringComparer.OrdinalIgnoreCase);
     }
 
     /// <summary>
@@ -119,14 +113,27 @@ public partial class NodeTreePageModel : PageViewModel,
         }
     }
 
-    /// <summary>
-    /// When the filter text changes apply the nodes filter function to filter the tree view.
-    /// </summary>
-    partial void OnFilterChanged(string? value)
+    /// <inheritdoc />
+    protected override void FilterChanged(string? filter)
     {
+        Nodes.Filter(x => x.FilterTree(filter));
+    }
+
+    /// <summary>
+    /// Find the descendant node collection in which we need to add the target created node to.
+    /// </summary>
+    private ObserverCollection<Node, NodeObserver> FindCollectionContaining(NodeObserver target)
+    {
+        if (target.ParentId == Guid.Empty)
+            return Nodes;
+
         foreach (var node in Nodes)
         {
-            node.Filter(value);
+            var parent = node.FindParentTo(target);
+            if (parent is null) continue;
+            return parent.Nodes;
         }
+
+        return [];
     }
 }

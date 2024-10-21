@@ -12,10 +12,15 @@ using Avalonia.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging.Messages;
+using L5Sharp.Core;
+using Argument = AutoSpex.Engine.Argument;
 
 namespace AutoSpex.Client.Observers;
 
-public partial class CriterionObserver : Observer<Criterion>, IRecipient<Observer.Get<CriterionObserver>>
+public partial class CriterionObserver : Observer<Criterion>,
+    IRecipient<Observer.Get<CriterionObserver>>,
+    IRecipient<ArgumentObserver.SuggestionRequest>
 {
     public CriterionObserver(Criterion model) : base(model)
     {
@@ -51,7 +56,6 @@ public partial class CriterionObserver : Observer<Criterion>, IRecipient<Observe
     }
 
     [ObservableProperty] private ArgumentObserver _argument;
-
 
     public Func<string?, CancellationToken, Task<IEnumerable<object>>> PopulateProperties => GetProperties;
     public Func<string?, CancellationToken, Task<IEnumerable<object>>> PopulateOperations => GetOperations;
@@ -96,7 +100,10 @@ public partial class CriterionObserver : Observer<Criterion>, IRecipient<Observe
                 Property = property;
                 return;
             case string path:
-                Property = Property.This(Model.Type).GetProperty(path) ?? Property.Default;
+                Property = Property.This(Model.Type).GetProperty(path) ?? new Property(path, Model.Type);
+                return;
+            case TagName tagName:
+                Property = Property.This(Model.Type).GetProperty(tagName) ?? new Property(tagName, Model.Type);
                 return;
         }
     }
@@ -136,30 +143,22 @@ public partial class CriterionObserver : Observer<Criterion>, IRecipient<Observe
     /// </summary>
     private void UpdateArgument()
     {
-        if (Operation is NoneOperation)
-        {
-            Argument = new ArgumentObserver(Engine.Argument.Default);
-        }
+        Forget(Argument);
+        Argument.Dispose();
 
         if (Operation is BinaryOperation)
-        {
             Argument = new ArgumentObserver(new Argument());
-        }
 
         if (Operation is TernaryOperation)
-        {
             Argument = new ArgumentObserver(new Argument(new List<Argument> { new(), new() }));
-        }
 
         if (Operation is CollectionOperation)
-        {
             Argument = new ArgumentObserver(new Argument(new Criterion(Property.InnerType)));
-        }
 
         if (Operation is InOperation)
-        {
             Argument = new ArgumentObserver(new Argument(new List<Argument> { new() }));
-        }
+
+        Track(Argument);
     }
 
     /// <summary>
@@ -176,23 +175,43 @@ public partial class CriterionObserver : Observer<Criterion>, IRecipient<Observe
     }
 
     /// <summary>
+    /// Handle the suggesstion request for an argument by replying with the potential property options.
+    /// </summary>
+    public void Receive(ArgumentObserver.SuggestionRequest message)
+    {
+        if (!IsParentOf(message.Argument)) return;
+
+        Property.Type.GetOptions().Select(x => new ValueObserver(x))
+            .Where(v => v.Filter(message.Filter)).ToList()
+            .ForEach(message.Reply);
+    }
+
+    /// <summary>
     /// Retrieves a list of properties based on the specified filter.
     /// </summary>
     /// <param name="filter">The filter to apply to the properties. If null or empty, all properties are returned.</param>
     /// <param name="token">The cancellation token used to cancel the operation.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains the list of properties.</returns>
-    private Task<IEnumerable<object>> GetProperties(string? filter, CancellationToken token)
+    private async Task<IEnumerable<object>> GetProperties(string? filter, CancellationToken token)
     {
         var type = Model.Type;
         var origin = Property.This(type);
 
         if (string.IsNullOrEmpty(filter))
-            return Task.FromResult(origin.Properties.Cast<object>());
+        {
+            return origin.Properties;
+        }
 
-        //We don't want to suggest properties while in the indexer part. Only after it is closed
-        //Example: "[MyTagName.MyMem"
+        //While we are inside an indexer, we want to suggest tag names from the source instead of properties.
         if (filter.Count(x => x == '[') != filter.Count(x => x == ']'))
-            return Task.FromResult(Enumerable.Empty<object>());
+        {
+            //Only support tag lookup for verifications because we need to use the filters to narrow the search space.
+            var spec = GetObserver<SpecObserver>(x => x.Verifications.Any(v => v.Id == Id));
+            if (spec is null) return [];
+            var tagName = filter[(filter.LastIndexOf('[') + 1)..];
+            var message = Messenger.Send(new TagNameRequest(spec, tagName));
+            return await message.GetResponsesAsync(token);
+        }
 
         var memeberIndex = filter.LastIndexOf('.');
         var path = memeberIndex > -1 ? filter[..memeberIndex] : string.Empty;
@@ -200,13 +219,7 @@ public partial class CriterionObserver : Observer<Criterion>, IRecipient<Observe
 
         var property = origin.GetProperty(path);
         var properties = property?.Properties ?? [];
-
-        var filtered = properties
-            .Where(p => p.Name.Contains(member, StringComparison.OrdinalIgnoreCase))
-            .OrderBy(p => p.Name)
-            .Cast<object>();
-
-        return Task.FromResult(filtered);
+        return properties.Where(p => p.Name.Satisfies(member)).OrderBy(p => p.Name);
     }
 
     /// <summary>
@@ -219,8 +232,26 @@ public partial class CriterionObserver : Observer<Criterion>, IRecipient<Observe
         return Task.FromResult(filtered.Cast<object>());
     }
 
+    /// <summary>
+    /// Determines if the provided argument is contained by this criterion.
+    /// </summary>
+    private bool IsParentOf(ArgumentObserver argument)
+    {
+        if (Argument.Id == argument.Id) return true;
+        if (Argument.Value is not ObserverCollection<Argument, ArgumentObserver> collection) return false;
+        if (collection.Any(a => a.Id == argument.Id)) return true;
+        return false;
+    }
+
     protected override IEnumerable<MenuActionItem> GenerateContextItems()
     {
+        yield return new MenuActionItem
+        {
+            Header = "Copy",
+            Icon = Resource.Find("IconFilledCopy"),
+            Gesture = new KeyGesture(Key.C, KeyModifiers.Control)
+        };
+
         yield return new MenuActionItem
         {
             Header = "Duplicate",
@@ -237,6 +268,22 @@ public partial class CriterionObserver : Observer<Criterion>, IRecipient<Observe
             Command = DeleteSelectedCommand,
             Gesture = new KeyGesture(Key.Delete)
         };
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class TagNameRequest(Spec spec, string? filter) : AsyncCollectionRequestMessage<TagName>
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public Spec Spec { get; } = spec;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string? Filter { get; } = filter;
     }
 
     public static implicit operator Criterion(CriterionObserver observer) => observer.Model;

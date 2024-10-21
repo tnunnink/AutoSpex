@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using AutoSpex.Client.Resources;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
-using Avalonia.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -140,7 +137,7 @@ public partial class SpecObserver : Observer<Spec>,
     {
         VerificationInclusion = VerificationInclusion == Inclusion.All ? Inclusion.Any : Inclusion.All;
     }
-    
+
     /// <summary>
     /// If a criterion delete message is received we will delete all selected criterion from the list.
     /// </summary>
@@ -168,7 +165,7 @@ public partial class SpecObserver : Observer<Spec>,
 
         if (Verifications.Any(x => x.Is(criterion)))
         {
-            Filters.Add(new CriterionObserver(criterion.Model.Duplicate()));
+            Verifications.Add(new CriterionObserver(criterion.Model.Duplicate()));
         }
     }
 
@@ -200,36 +197,8 @@ public partial class SpecObserver : Observer<Spec>,
 
         if (message.Predicate.Invoke(this))
         {
-            message.Reply(new SpecObserver(Model));
+            message.Reply(this);
         }
-    }
-
-    /// <inheritdoc />
-    protected override IEnumerable<MenuActionItem> GenerateMenuItems()
-    {
-        yield return new MenuActionItem
-        {
-            Header = "Copy",
-            Icon = Resource.Find("IconFilledPencil"),
-            Command = RenameCommand,
-        };
-
-        yield return new MenuActionItem
-        {
-            Header = "Duplicate",
-            Icon = Resource.Find("IconFilledClone"),
-            Command = DuplicateCommand,
-            Gesture = new KeyGesture(Key.D, KeyModifiers.Control)
-        };
-
-        yield return new MenuActionItem
-        {
-            Header = "Delete",
-            Icon = Resource.Find("IconFilledTrash"),
-            Classes = "danger",
-            Command = DeleteCommand,
-            Gesture = new KeyGesture(Key.Delete)
-        };
     }
 
     public static implicit operator SpecObserver(Spec model) => new(model);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,7 +23,13 @@ public partial class RunObserver : Observer<Run>
     public RunObserver(Run model) : base(model)
     {
         Result = Model.Result;
+        Outcomes = new ObserverCollection<Outcome, OutcomeObserver>(
+            refresh: () => Model.Outcomes.Select(x => new OutcomeObserver(x)).ToList(),
+            count: () => Model.Outcomes.Count()
+        );
+
         Track(nameof(Result));
+        Track(Outcomes);
     }
 
     public override Guid Id => Model.RunId;
@@ -30,16 +37,22 @@ public partial class RunObserver : Observer<Run>
     public override string Icon => nameof(Run);
     public DateTime RanOn => Model.RanOn;
     public string RanBy => Model.RanBy;
+    public int Ran => Model.Outcomes.Count(x => x.Verification.Result > ResultState.Pending);
     public int Passed => Model.Outcomes.Count(x => x.Verification.Result == ResultState.Passed);
     public int Failed => Model.Outcomes.Count(x => x.Verification.Result == ResultState.Failed);
     public int Errored => Model.Outcomes.Count(x => x.Verification.Result == ResultState.Errored);
+    public int Inconclusive => Model.Outcomes.Count(x => x.Verification.Result == ResultState.Inconclusive);
     public long Duration => Model.Outcomes.Sum(x => x.Verification.Duration);
     public bool HasResult => Model.Result > ResultState.Pending;
-    public int Ran => Model.Outcomes.Count(x => x.Verification.Result > ResultState.Pending);
     public float Progress => Total > 0 ? (float)Ran / Total * 100 : 0;
+    public NodeObserver Node => new(Model.Node);
+    public SourceObserver Source => new(Model.Source);
+    public ObserverCollection<Outcome, OutcomeObserver> Outcomes { get; }
 
     [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(CancelCommand))]
     private ResultState _result;
+
+    [ObservableProperty] private ResultState _filterState = ResultState.None;
 
     /// <summary>
     /// Command to execute this run by retrieving, resolving, and evaluating all configured spec/source pairs and
@@ -52,6 +65,8 @@ public partial class RunObserver : Observer<Run>
         var token = _cancellation.Token;
 
         MarkPending();
+
+        await Task.Delay(1000, token);
 
         try
         {
@@ -92,7 +107,28 @@ public partial class RunObserver : Observer<Run>
     private bool CanCancel() => Result == ResultState.Pending;
 
     /// <summary>
-    /// 
+    /// Applies a filter to the outcomes of this run based on the provided result state value.
+    /// </summary>
+    /// <param name="state">The <see cref="ResultState"/> to filter by.</param>
+    [RelayCommand]
+    private void ApplyFilter(ResultState? state)
+    {
+        FilterState = state ?? ResultState.None;
+    }
+
+    /// <summary>
+    /// When the filter text for a run observer changes
+    /// </summary>
+    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+    {
+        base.OnPropertyChanged(e);
+
+        if (e.PropertyName is nameof(FilterText) or nameof(FilterState))
+            ApplyFilters(FilterState, FilterText);
+    }
+
+    /// <summary>
+    /// Loads the full source object configured for this run. This is the source that all specs will be run against.
     /// </summary>
     private async Task<Result<Source>> LoadSource(CancellationToken token)
     {
@@ -102,8 +138,8 @@ public partial class RunObserver : Observer<Run>
     }
 
     /// <summary>
-    /// Load all specs configured for the provided <see cref="RunObserver"/>. This is executed prior to each run to
-    /// get the most updated configuration to execute.
+    /// Load all specs configured for this run. This is executed prior to each run to get the most updated
+    /// configuration to execute.
     /// </summary>
     private async Task<IEnumerable<Node>> LoadSpecs(CancellationToken token)
     {
@@ -141,14 +177,25 @@ public partial class RunObserver : Observer<Run>
     private void MarkPending()
     {
         Result = ResultState.Pending;
-        Messenger.Send(new Pending(this));
+
+        foreach (var outcome in Outcomes)
+        {
+            outcome.Result = ResultState.Pending;
+        }
     }
 
     /// <summary>
-    /// A message the indicates this run has started processing and is pending results.
+    /// Applies the configured result state filter and filter text to the observer collection.
     /// </summary>
-    /// <param name="Run">The run that is pending results.</param>
-    public record Pending(RunObserver Run);
+    private void ApplyFilters(ResultState state, string? text)
+    {
+        Outcomes.Filter(x =>
+        {
+            var hasState = state == ResultState.None || x.Result == state;
+            var hasText = x.Filter(text);
+            return hasState && hasText;
+        });
+    }
 
     public static implicit operator Run(RunObserver observer) => observer.Model;
     public static implicit operator RunObserver(Run model) => new(model);

@@ -135,8 +135,7 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     public virtual bool Filter(string? filter)
     {
         FilterText = filter;
-        IsVisible = string.IsNullOrEmpty(filter) || Name.Satisfies(filter);
-        return IsVisible;
+        return string.IsNullOrEmpty(filter) || Name.Satisfies(filter);
     }
 
     /// <summary>
@@ -289,7 +288,7 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     /// that need to respond/update to reflect the newly created observer.
     /// </summary>
     /// <param name="Observer">The observer that was created.</param>
-    public record Created(Observer Observer);
+    public record Created<TObserver>(TObserver Observer) where TObserver : Observer;
 
     /// <summary>
     /// A messages that indicates an existing observer was deleted. This can be used to notify other pages that need
