@@ -76,7 +76,7 @@ public partial class CriterionObserver : Observer<Criterion>,
         switch (e.PropertyName)
         {
             case nameof(Property):
-                Operation = Operation.None;
+                Operation = Operation.Supports(Property) ? Operation : Operation.None;
                 break;
             case nameof(Operation):
                 UpdateArgument();
@@ -145,6 +145,9 @@ public partial class CriterionObserver : Observer<Criterion>,
     {
         Forget(Argument);
         Argument.Dispose();
+
+        if (Operation is NoneOperation)
+            Argument = new ArgumentObserver(Engine.Argument.Default);
 
         if (Operation is BinaryOperation)
             Argument = new ArgumentObserver(new Argument());
@@ -228,7 +231,7 @@ public partial class CriterionObserver : Observer<Criterion>,
     /// </summary>
     private Task<IEnumerable<object>> GetOperations(string? filter, CancellationToken token)
     {
-        var filtered = Operation.Supporting(Property);
+        var filtered = Operation.Supporting(Property).Where(o => o.Name.Satisfies(filter));
         return Task.FromResult(filtered.Cast<object>());
     }
 

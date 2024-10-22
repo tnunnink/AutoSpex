@@ -35,7 +35,7 @@
                     Content="{Binding}"
                     ContentTemplate="{StaticResource CriterionEntry}" />
 
-                <!--<Button
+                <Button
                     Grid.Column="1"
                     properties:Icon.Theme="{StaticResource IconEllipsis}"
                     Theme="{StaticResource IconButtonSmall}"
@@ -49,7 +49,7 @@
                             ItemsSource="{Binding MenuItems}"
                             ItemContainerTheme="{StaticResource MenuActionItem}" />
                     </Button.Flyout>
-                </Button>-->
+                </Button>
             </Grid>
             
             <Interaction.Behaviors>
