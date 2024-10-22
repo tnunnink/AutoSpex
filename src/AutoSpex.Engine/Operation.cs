@@ -37,6 +37,13 @@ public abstract class Operation(string name, string value) : SmartEnum<Operation
     public static IEnumerable<Operation> Supporting(Property property) => List.Where(x => x.Supports(property.Group));
 
     /// <summary>
+    /// Determins whether the given property is supported by the current operation type.
+    /// </summary>
+    /// <param name="property">The property to check.</param>
+    /// <returns>True if the Operation supports the Proeprty; otherwise, false.</returns>
+    public bool Supports(Property property) => Supports(property.Group);
+
+    /// <summary>
     /// Determines whether the given TypeGroup is supported by the Operation.
     /// </summary>
     /// <param name="group">The TypeGroup to check.</param>
