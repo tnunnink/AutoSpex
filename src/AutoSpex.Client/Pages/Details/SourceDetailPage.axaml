@@ -33,7 +33,7 @@
                         Classes="run accent"
                         CornerRadius="{a:ThemeResource ButtonCornerRadius}" />
                 </StackPanel>
-                
+
             </Grid>
         </Border>
 
@@ -64,7 +64,7 @@
             <ContentControl Content="{Binding Tab}">
                 <ContentControl.ContentTemplate>
                     <DataTemplate x:DataType="shared:PageViewModel">
-                        <ContentControl Content="{Binding}" Margin="20" />
+                        <ContentControl Content="{Binding}" />
                     </DataTemplate>
                 </ContentControl.ContentTemplate>
             </ContentControl>
