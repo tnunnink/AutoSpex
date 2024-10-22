@@ -5,6 +5,7 @@ using AutoSpex.Client.Observers;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using AutoSpex.Persistence;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
@@ -57,6 +58,12 @@ public partial class SpecsPageModel(NodeObserver node) : PageViewModel("Specs"),
         if (!message.Observer.Model.IsDescendantOf(node)) return;
         var observer = message.Observer.IsNew ? message.Observer : new NodeObserver(message.Observer.Model);
         Specs.Add(observer);
+
+        Dispatcher.UIThread.Post(() =>
+        {
+            Selected.Clear();
+            Selected.Add(observer);
+        });
     }
 
     /// <summary>
