@@ -108,7 +108,7 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
     /// Removes any observer items from the collection that match the specified predicate.
     /// </summary>
     /// <param name="predicate">The function used to determine if an observer item should be removed.</param>
-    public void RemoveAny(Func<TObserver, bool> predicate)
+    public bool RemoveAny(Func<TObserver, bool> predicate)
     {
         var targets = this.Where(predicate).ToList();
 
@@ -116,6 +116,8 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
         {
             Remove(target);
         }
+
+        return targets.Count > 0;
     }
 
     /// <summary>
@@ -132,6 +134,19 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
         _clear = models.Clear;
         _count = () => models.Count;
 
+        RefreshCollection(_refresh());
+    }
+
+    /// <summary>
+    /// Binds this observer collection to the provided list of observer objects.
+    /// This does not bind any mutation methods (add, remove, etc.) as it is only expected to be read from and filtered
+    /// but never changed.
+    /// </summary>
+    /// <param name="observers">The list of models to bind to the ObserverCollection</param>
+    public void BindReadOnly(IList<TObserver> observers)
+    {
+        _refresh = () => observers;
+        _count = () => observers.Count;
         RefreshCollection(_refresh());
     }
 

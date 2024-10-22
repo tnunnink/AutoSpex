@@ -33,7 +33,7 @@ public partial class NodeDetailPageModel : DetailPageModel
         await LoadNode();
         await LoadRunner();
         await base.Load();
-        
+
         //Any time a node is open locate it in the navigation tree.
         Messenger.Send(new NodeObserver.ExpandTo(Node.Id));
     }
@@ -123,7 +123,7 @@ public partial class NodeDetailPageModel : DetailPageModel
     /// </summary>
     private async Task<Result> CreateNode()
     {
-        var parent = await Prompter.Show<NodeObserver?>(() => new SaveToContainerPageModel());
+        var parent = await Prompter.Show<NodeObserver?>(() => new SelectContainerPageModel { ButtonText = "Save" });
 
         if (parent is null)
             return Result.Fail("Node requires parent to be saved.");

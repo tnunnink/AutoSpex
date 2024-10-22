@@ -38,7 +38,6 @@
             <PathIcon Theme="{DynamicResource IconLineXml}" />
             <PathIcon Theme="{DynamicResource IconLineHash}" />
             <PathIcon Theme="{DynamicResource IconLineSidebar}" />
-            <PathIcon Theme="{DynamicResource IconLineType}" />
             <PathIcon Theme="{DynamicResource IconLineList}" />
             <PathIcon Theme="{DynamicResource IconLineListCheck}" />
             <PathIcon Theme="{DynamicResource IconLineCalendar}" />
@@ -49,7 +48,6 @@
             <PathIcon Theme="{DynamicResource IconLineStopwatch}" />
             <PathIcon Theme="{DynamicResource IconLineFilter}" />
             <PathIcon Theme="{DynamicResource IconLineParagraph}" />
-            <PathIcon Theme="{DynamicResource IconLineClipboard}" />
             <PathIcon Theme="{DynamicResource IconLineMerge}" />
         </WrapPanel>
     </Design.PreviewWith>
@@ -202,14 +200,6 @@
         </Setter>
     </ControlTheme>
 
-    <ControlTheme x:Key="IconLineType" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
-        <Setter Property="Data">
-            <StreamGeometry>
-                M254 52.8C249.3 40.3 237.3 32 224 32s-25.3 8.3-30 20.8L57.8 416 32 416c-17.7 0-32 14.3-32 32s14.3 32 32 32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-1.8 0 18-48 159.6 0 18 48-1.8 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-25.8 0L254 52.8zM279.8 304l-111.6 0L224 155.1 279.8 304z
-            </StreamGeometry>
-        </Setter>
-    </ControlTheme>
-
     <ControlTheme x:Key="IconLineXml" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
         <Setter Property="Data">
             <StreamGeometry>
@@ -318,14 +308,6 @@
         <Setter Property="Data">
             <StreamGeometry>
                 M464 256A208 208 0 1 1 48 256a208 208 0 1 1 416 0zM0 256a256 256 0 1 0 512 0A256 256 0 1 0 0 256zM232 120l0 136c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2 280 120c0-13.3-10.7-24-24-24s-24 10.7-24 24z
-            </StreamGeometry>
-        </Setter>
-    </ControlTheme>
-
-    <ControlTheme x:Key="IconLineClipboard" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
-        <Setter Property="Data">
-            <StreamGeometry>
-                M280 64l40 0c35.3 0 64 28.7 64 64l0 320c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 128C0 92.7 28.7 64 64 64l40 0 9.6 0C121 27.5 153.3 0 192 0s71 27.5 78.4 64l9.6 0zM64 112c-8.8 0-16 7.2-16 16l0 320c0 8.8 7.2 16 16 16l256 0c8.8 0 16-7.2 16-16l0-320c0-8.8-7.2-16-16-16l-16 0 0 24c0 13.3-10.7 24-24 24l-88 0-88 0c-13.3 0-24-10.7-24-24l0-24-16 0zm128-8a24 24 0 1 0 0-48 24 24 0 1 0 0 48z
             </StreamGeometry>
         </Setter>
     </ControlTheme>

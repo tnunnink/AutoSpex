@@ -333,7 +333,7 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     /// <param name="predicate">The predicate the observer must satisfy.</param>
     /// <typeparam name="TObserver">The type of observer the request is representing.</typeparam>
     public class Find<TObserver>(Func<TObserver, bool> predicate)
-        : CollectionRequestMessage<TObserver> where TObserver : Observer
+        : AsyncCollectionRequestMessage<TObserver> where TObserver : Observer
     {
         public Func<TObserver, bool> Predicate { get; } = predicate;
     }

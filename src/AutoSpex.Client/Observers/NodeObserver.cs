@@ -20,8 +20,6 @@ namespace AutoSpex.Client.Observers;
 [PublicAPI]
 public partial class NodeObserver : Observer<Node>,
     IRecipient<Observer.Deleted>,
-    IRecipient<Observer.Get<NodeObserver>>,
-    IRecipient<Observer.Find<NodeObserver>>,
     IRecipient<NodeObserver.Moved>,
     IRecipient<NodeObserver.ExpandTo>
 {
@@ -34,14 +32,12 @@ public partial class NodeObserver : Observer<Node>,
             clear: () => Model.ClearNodes(),
             count: () => Model.Nodes.Count());
 
-        Nodes.Sort(n => n.Name, StringComparer.OrdinalIgnoreCase);
         RegisterDisposable(Nodes);
     }
 
     public override Guid Id => Model.NodeId;
     public override string Icon => Type.Name;
     public Guid ParentId => Model.ParentId;
-    public NodeObserver? Parent => Model.Parent is not null ? new NodeObserver(Model.Parent) : default;
     public NodeType Type => Model.Type;
     public bool IsVirtual => Type != NodeType.Collection && ParentId == Guid.Empty;
 
@@ -89,7 +85,8 @@ public partial class NodeObserver : Observer<Node>,
 
         foreach (var node in Nodes)
         {
-            node.FindParentTo(target);
+            var parent = node.FindParentTo(target);
+            if (parent is not null) return parent;
         }
 
         return default;
@@ -122,20 +119,15 @@ public partial class NodeObserver : Observer<Node>,
     {
         if (source is not NodeObserver node) return;
 
-        //We want to get the selected items from this nodes container to ensure we move all selected nodes.
         var selected = node.SelectedItems.Where(o => o is NodeObserver).Cast<NodeObserver>().ToList();
         if (selected.Any(n => !Type.CanContain(n.Type) || Id == n.Id)) return;
 
-        //Update the database parent id for the selected node.
         var result = await Mediator.Send(new MoveNodes(selected.Select(n => n.Model), Id));
         if (Notifier.ShowIfFailed(result, $"Failed to move selected node to parent {Name}")) return;
 
         foreach (var moved in selected)
         {
-            //Add the selected nodes to the parent to update the parent id correctly.
-            Nodes.TryAdd(node);
-            //Sends the message to other nodes to remove the moved nodes from their child nodes collection.
-            Messenger.Send(new Moved(moved));
+            Messenger.Send(new Moved(moved, Id));
         }
     }
 
@@ -159,11 +151,9 @@ public partial class NodeObserver : Observer<Node>,
     [RelayCommand]
     private async Task MoveTo()
     {
-        //Prompt the user to select the node instance to move the selected nodes to.
-        var parent = await Prompter.Show<NodeObserver?>(() => new SaveToContainerPageModel());
+        var parent = await Prompter.Show<NodeObserver?>(() => new SelectContainerPageModel { ButtonText = "Move" });
         if (parent is null) return;
 
-        //We want to get the selected items from this nodes container to ensure we move all selected nodes.
         var selected = SelectedItems.Where(o => o is NodeObserver).Cast<NodeObserver>().ToList();
         if (selected.Any(n => !parent.Type.CanContain(n.Type) || parent.Id == n.Id)) return;
 
@@ -173,10 +163,7 @@ public partial class NodeObserver : Observer<Node>,
 
         foreach (var node in selected)
         {
-            //Add the selected nodes to the parent to update the parent id correctly.
-            parent.Nodes.TryAdd(node);
-            //Sends the message to other nodes to remove the moved nodes from their child nodes collection.
-            Messenger.Send(new Moved(node));
+            Messenger.Send(new Moved(node, parent.Id));
         }
     }
 
@@ -205,22 +192,30 @@ public partial class NodeObserver : Observer<Node>,
     /// </remarks>
     protected override async Task Duplicate()
     {
-        var name = await Prompter.PromptNewName(this);
-        if (name is null) return;
+        try
+        {
+            var name = await Prompter.PromptNewName(this);
+            if (name is null) return;
 
-        var load = await Mediator.Send(new LoadNode(Id));
-        if (Notifier.ShowIfFailed(load)) return;
+            var load = await Mediator.Send(new LoadNode(Id));
+            if (Notifier.ShowIfFailed(load)) return;
 
-        var duplicate = load.Value.Duplicate(name);
+            var duplicate = load.Value.Duplicate(name);
 
-        var result = await Mediator.Send(new CreateNode(duplicate));
-        if (Notifier.ShowIfFailed(result)) return;
+            var result = await Mediator.Send(new CreateNode(duplicate));
+            if (Notifier.ShowIfFailed(result)) return;
 
-        Messenger.Send(new Created<NodeObserver>(new NodeObserver(duplicate)));
-        Notifier.ShowSuccess(
-            "Create node request complete",
-            $"{duplicate.Name} was successfully created @ {DateTime.Now}"
-        );
+            Messenger.Send(new Created<NodeObserver>(new NodeObserver(duplicate)));
+            Notifier.ShowSuccess(
+                "Create node request complete",
+                $"{duplicate.Name} was successfully created @ {DateTime.Now}"
+            );
+        }
+        catch (Exception e)
+        {
+            Notifier.ShowError("Request Failed", e.Message);
+            throw;
+        }
     }
 
     /// <summary>
@@ -248,7 +243,7 @@ public partial class NodeObserver : Observer<Node>,
         }
         catch (Exception e)
         {
-            Notifier.ShowError("Export failed.", $"Failed to process export due to {e.Message}");
+            Notifier.ShowError("Export failed.", e.Message);
         }
     }
 
@@ -293,15 +288,11 @@ public partial class NodeObserver : Observer<Node>,
     {
         if (message.Observer is not NodeObserver node) return;
 
-        if (Nodes.Any(n => n.Id == node.Id))
-        {
-            Nodes.Remove(node);
-            return;
-        }
+        if (Nodes.RemoveAny(n => n.Id == node.Id)) return;
 
         if (Id != node.Id) return;
         Nodes.ToList().ForEach(n => Messenger.Send(new Deleted(n)));
-        Messenger.UnregisterAll(this);
+        Dispose();
     }
 
     /// <inheritdoc />
@@ -322,9 +313,10 @@ public partial class NodeObserver : Observer<Node>,
     /// </summary>
     public void Receive(Moved message)
     {
-        if (!Nodes.Contains(message.Node)) return;
-        if (message.Node.ParentId == Id) return;
-        Nodes.Remove(message.Node);
+        Nodes.RemoveAny(n => n.Id == message.Node.Id);
+        if (Id != message.ParentId) return;
+        Nodes.Add(message.Node);
+        Nodes.Sort(x => x.Name, StringComparer.OrdinalIgnoreCase);
     }
 
     /// <summary>
@@ -333,34 +325,15 @@ public partial class NodeObserver : Observer<Node>,
     /// </summary>
     public void Receive(ExpandTo message)
     {
-        if (Nodes.All(n => n.Id != message.NodeId)) return;
+        if (Id == message.NodeId)
+        {
+            IsSelected = true;
+            return;
+        }
+
+        if (!Model.Contains(message.NodeId)) return;
         IsExpanded = true;
         IsSelected = false;
-        Messenger.Send(new ExpandTo(Id));
-    }
-
-    /// <summary>
-    /// Respond to the request message of a node observer instance if the id matches this node's id.
-    /// </summary>
-    public void Receive(Get<NodeObserver> message)
-    {
-        if (message.HasReceivedResponse) return;
-
-        if (message.Predicate.Invoke(this))
-        {
-            message.Reply(new NodeObserver(Model));
-        }
-    }
-
-    /// <summary>
-    /// Respond the to find request message for a node observer instance by checking the provided predicate.
-    /// </summary>
-    public void Receive(Find<NodeObserver> message)
-    {
-        if (message.Predicate.Invoke(this) && message.Responses.All(x => x.Id != Id))
-        {
-            message.Reply(new NodeObserver(Model));
-        }
     }
 
     #endregion
@@ -369,18 +342,20 @@ public partial class NodeObserver : Observer<Node>,
 
     /// <summary>
     /// A message to be sent when nodes are moved to a different parent container. This is so that
-    /// other node instances can respond by removing the moved node from its node children.
+    /// other node instances can respond by removing the moved node from its node children and the new parent can
+    /// add the node and re-sort.
     /// </summary>
-    public record Moved(NodeObserver Node);
+    public record Moved(NodeObserver Node, Guid ParentId);
 
     /// <summary>
-    /// A message that informs the parent nodes to expand their container if the provided node is a child of the
-    /// received node. this allows use to expand the tree from a child leaf node.
+    /// A message that informs the nodes to expand their container if the provided node is a child of the
+    /// received node. This allows use to expand the tree from a child leaf node.
     /// </summary>
     public record ExpandTo(Guid NodeId);
 
     #endregion
 
+    /// <inheritdoc />
     protected override Task<Result> UpdateName(string name)
     {
         Model.Name = name;
@@ -390,6 +365,7 @@ public partial class NodeObserver : Observer<Node>,
         return IsVirtual ? Task.FromResult(Result.Ok()) : Mediator.Send(new RenameNode(this));
     }
 
+    /// <inheritdoc />
     protected override Task<Result> DeleteItems(IEnumerable<Observer> observers)
     {
         //If this node has not been saved to the database, just return ok to allow the node to be deleted virtually.
@@ -397,6 +373,11 @@ public partial class NodeObserver : Observer<Node>,
         return IsVirtual ? Task.FromResult(Result.Ok()) : Mediator.Send(new DeleteNodes(observers.Select(n => n.Id)));
     }
 
+    /// <summary>
+    /// Creates the provided node type to the database, shows the result, creates the new observer instance,
+    /// notifies of creation, and opens the detail page for the new node.
+    /// </summary>
+    /// <param name="node"></param>
     private async Task AddNode(Node node)
     {
         var result = await Mediator.Send(new CreateNode(node));

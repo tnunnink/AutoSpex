@@ -42,7 +42,7 @@
                                     x:Name="Separator"
                                     Text="/"
                                     Padding="2 0 0 0"
-                                    IsVisible="{Binding Parent, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                    IsVisible="{Binding Model.Parent, Converter={x:Static ObjectConverters.IsNotNull}}"
                                     Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
 
                                 <Button
@@ -103,7 +103,7 @@
                             x:Name="Separator"
                             Text="/"
                             Padding="4 0 0 1"
-                            IsVisible="{Binding Parent, Converter={x:Static ObjectConverters.IsNotNull}}"
+                            IsVisible="{Binding Model.Parent, Converter={x:Static ObjectConverters.IsNotNull}}"
                             Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
                         <controls:HighlightableTextBlock
                             Text="{Binding Name}"
@@ -132,7 +132,7 @@
                                     x:Name="Separator"
                                     Text="/"
                                     Padding="2 0"
-                                    IsVisible="{Binding Parent, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                    IsVisible="{Binding Model.Parent, Converter={x:Static ObjectConverters.IsNotNull}}"
                                     Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
                                 <controls:HighlightableTextBlock
                                     Text="{Binding Name}"

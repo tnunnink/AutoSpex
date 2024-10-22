@@ -127,12 +127,12 @@
                                             <Button.Styles>
                                                 <Style Selector="Button.vertical">
                                                     <Setter Property="RenderTransform">
-                                                        <RotateTransform Angle="180" />
+                                                        <RotateTransform Angle="270" />
                                                     </Setter>
                                                 </Style>
                                                 <Style Selector="Button.horizontal">
                                                     <Setter Property="RenderTransform">
-                                                        <RotateTransform Angle="270" />
+                                                        <RotateTransform Angle="180" />
                                                     </Setter>
                                                 </Style>
                                             </Button.Styles>
