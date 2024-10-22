@@ -41,7 +41,10 @@
                         Theme="{TemplateBinding ButtonTheme}"
                         Padding="{TemplateBinding Padding}"
                         Classes.danger="{TemplateBinding (DataValidationErrors.HasErrors)}"
-                        HorizontalContentAlignment="Left">
+                        HorizontalContentAlignment="Left"
+                        IsTabStop="True"
+                        Focusable="True"
+                        TemplatedControl.IsTemplateFocusTarget="True">
                         <Panel>
                             <TextBlock
                                 Text="{TemplateBinding Watermark}"

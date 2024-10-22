@@ -87,8 +87,10 @@ public class Entry : TemplatedControl
     #endregion
 
     private const string ClassEmpty = ":empty";
+    private const string PartButton = "PART_Button";
     private const string PartTextBox = "PART_TextBox";
     private const string PartListBox = "PART_ListBox";
+    private Button? _button;
     private TextBox? _textBox;
     private ListBox? _listBox;
 
@@ -211,6 +213,7 @@ public class Entry : TemplatedControl
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
         base.OnApplyTemplate(e);
+        RegisterButton(e);
         RegisterTextBox(e);
         RegisterListBox(e);
     }
@@ -225,7 +228,17 @@ public class Entry : TemplatedControl
     }
 
     /// <summary>
-    /// Registers the entry text box and attaches the key down event handler to handler navigation of the suggestion list.
+    /// Registers the entry button by attaching the key down event handler to handle opening the drop-down.
+    /// </summary>
+    private void RegisterButton(TemplateAppliedEventArgs args)
+    {
+        _button?.RemoveHandler(KeyDownEvent, OnButtonKeyDown);
+        _button = args.NameScope.Get<Button>(PartButton);
+        _button.AddHandler(KeyDownEvent, OnButtonKeyDown, RoutingStrategies.Tunnel);
+    }
+
+    /// <summary>
+    /// Registers the entry text box and attaches the key down event handler to handle navigation of the suggestion list.
     /// </summary>
     private void RegisterTextBox(TemplateAppliedEventArgs args)
     {
@@ -242,6 +255,17 @@ public class Entry : TemplatedControl
         _listBox?.RemoveHandler(PointerPressedEvent, OnListBoxPointerReleased);
         _listBox = args.NameScope.Get<ListBox>(PartListBox);
         _listBox.AddHandler(PointerReleasedEvent, OnListBoxPointerReleased, RoutingStrategies.Tunnel);
+    }
+
+    /// <summary>
+    /// When the user presses a key while the button has focus, we want to expand the entry drop down.
+    /// </summary>
+    private void OnButtonKeyDown(object? sender, KeyEventArgs e)
+    {
+        if (e.Key is Key.Tab) return;
+        if (IsDropDownOpen) return;
+        IsDropDownOpen = true;
+        e.Handled = true;
     }
 
     private void OnTextBoxKeyDown(object? sender, KeyEventArgs e)
