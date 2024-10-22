@@ -2,7 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
-                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
 
     <Design.PreviewWith>
         <ListBox
@@ -16,23 +17,23 @@
 
     <DataTemplate x:Key="NodeListItemSimple" x:DataType="observers:NodeObserver">
         <Border Background="Transparent" Focusable="True" Padding="{a:ThemeResource ListItemPadding}">
-            
-            <Grid ColumnDefinitions="*,Auto">
 
-                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10">
-                    <PathIcon
-                        Theme="{Binding Type.Name, Converter={StaticResource KeyIconConverter}}" />
-                    <TextBlock
-                        Text="{Binding Name}"
-                        FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
-                </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="10">
+
+                <PathIcon
+                    Theme="{Binding Type.Name, Converter={StaticResource KeyIconConverter}}" />
+
+                <controls:HighlightableTextBlock
+                    Text="{Binding Name}"
+                    HighlightedText="{Binding FilterText}"
+                    FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
 
                 <ContentControl
-                    Grid.Column="1"
                     Content="{Binding}"
                     ContentTemplate="{StaticResource BreadcrumbLabel}" />
 
-            </Grid>
+            </StackPanel>
+
         </Border>
     </DataTemplate>
 </ResourceDictionary>

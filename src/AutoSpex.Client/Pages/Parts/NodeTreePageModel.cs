@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using AutoSpex.Client.Observers;
@@ -18,7 +19,8 @@ public partial class NodeTreePageModel : PageViewModel,
     IRecipient<Observer.Deleted>,
     IRecipient<Observer.Renamed>,
     IRecipient<Observer.GetSelected>,
-    IRecipient<NodeObserver.Moved>
+    IRecipient<Observer.Get<NodeObserver>>,
+    IRecipient<Observer.Find<NodeObserver>>
 {
     public ObserverCollection<Node, NodeObserver> Nodes { get; } = [];
     public ObservableCollection<NodeObserver> Selected { get; } = [];
@@ -28,8 +30,7 @@ public partial class NodeTreePageModel : PageViewModel,
     public override async Task Load()
     {
         var result = await Mediator.Send(new ListNodes());
-        Nodes.Refresh(result.Select(n => new NodeObserver(n)));
-        Nodes.Sort(n => n.Name, StringComparer.OrdinalIgnoreCase);
+        Nodes.Bind(result.ToList(), n => new NodeObserver(n));
         RegisterDisposable(Nodes);
     }
 
@@ -64,7 +65,7 @@ public partial class NodeTreePageModel : PageViewModel,
     }
 
     /// <summary>
-    /// If a collection node is created elsewhere we need to sort and locate it in the tree view.
+    /// If a node is created elsewhere, we need to add to and sort the corresponding tree collection.
     /// </summary>
     public void Receive(Observer.Created<NodeObserver> message)
     {
@@ -74,16 +75,17 @@ public partial class NodeTreePageModel : PageViewModel,
     }
 
     /// <summary>
-    /// When a node is deleted from the root collection ensure that it is removed.
+    /// When a root collection node is deleted, ensure that it is removed locally.
     /// </summary>
     public void Receive(Observer.Deleted message)
     {
         if (message.Observer is not NodeObserver node) return;
+        if (node.ParentId != Guid.Empty) return;
         Nodes.Remove(node);
     }
 
     /// <summary>
-    /// When a node in the root collection is renamed, resort to ensure order.
+    /// When a root collection node is renamed, resort to ensure order.
     /// </summary>
     public void Receive(Observer.Renamed message)
     {
@@ -92,15 +94,11 @@ public partial class NodeTreePageModel : PageViewModel,
         Nodes.Sort(n => n.Name, StringComparer.OrdinalIgnoreCase);
     }
 
-    public void Receive(NodeObserver.Moved message)
-    {
-        Nodes.RemoveAny(n => n.ParentId != Guid.Empty);
-        Nodes.Sort(n => n.Name, StringComparer.OrdinalIgnoreCase);
-    }
-
     /// <summary>
-    /// When a selection request is sent we respond with all selected nodes in this page. This page will hold all
-    /// node instances for the user.
+    /// When a selection request is sent we respond with all selected nodes in this page.
+    /// This page will hold all node instances in the app. However, we also check that the selected collectionc contains
+    /// the same instance that requested the selection, since there could be multiple collections in the UI that could
+    /// respond to this message.
     /// </summary>
     public void Receive(Observer.GetSelected message)
     {
@@ -110,6 +108,55 @@ public partial class NodeTreePageModel : PageViewModel,
         foreach (var observer in Selected)
         {
             message.Reply(observer);
+        }
+    }
+
+    /// <summary>
+    /// Handles the request to get the first in memory node that passes the provided prediate condition.
+    /// Since the node tree contains all nodes in the app, we only handle this message here and not from node itself,
+    /// because there could be many instances of the "same" node alive in the app.
+    /// </summary>
+    public void Receive(Observer.Get<NodeObserver> message)
+    {
+        BroadcastNode(Nodes, message);
+        return;
+
+        void BroadcastNode(IEnumerable<NodeObserver> nodes, Observer.Get<NodeObserver> msg)
+        {
+            foreach (var node in nodes)
+            {
+                if (msg.Predicate(node))
+                {
+                    msg.Reply(node);
+                    return;
+                }
+
+                BroadcastNode(node.Nodes, msg);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Handles the request to find in memory node instances that passes the provided predicate condition.
+    /// Since the node tree contains all nodes in the app, we only handle this message here and not from node itself,
+    /// because there could be many instances of the "same" node alive in the app.
+    /// </summary>
+    public void Receive(Observer.Find<NodeObserver> message)
+    {
+        BroadcastNodes(Nodes, message);
+        return;
+
+        void BroadcastNodes(IEnumerable<NodeObserver> nodes, Observer.Find<NodeObserver> msg)
+        {
+            foreach (var node in nodes)
+            {
+                if (msg.Predicate(node))
+                {
+                    msg.Reply(node);
+                }
+
+                BroadcastNodes(node.Nodes, msg);
+            }
         }
     }
 

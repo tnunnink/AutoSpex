@@ -491,6 +491,22 @@ public class Node : IEquatable<Node>
     }
 
     /// <summary>
+    /// Determines whether the node or any of its descendants contain a node with the specified node ID.
+    /// </summary>
+    /// <param name="nodeId">The ID of the node to search for.</param>
+    /// <returns>True if the node or any of its descendants contain a node with the specified ID; otherwise, false.</returns>
+    public bool Contains(Guid nodeId)
+    {
+        foreach (var node in _nodes)
+        {
+            if (node.NodeId == nodeId) return true;
+            if (node.Contains(nodeId)) return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
     /// Determines whether the current node is a descendant of the specified node.
     /// </summary>
     /// <param name="node">The node to check if it is an ancestor of the current node.</param>

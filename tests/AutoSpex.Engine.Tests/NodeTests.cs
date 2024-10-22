@@ -301,6 +301,30 @@ public class NodeTests
     }
 
     [Test]
+    public void Contains_NodeExists_ReturnsTrue()
+    {
+        var collection = Node.NewCollection();
+        var first = collection.AddContainer();
+        var second = first.AddContainer();
+
+        var result = collection.Contains(second.NodeId);
+
+        result.Should().BeTrue();
+    }
+
+    [Test]
+    public void Contains_NodeDoesNotExist_ReturnsFalse()
+    {
+        var collection = Node.NewCollection();
+        collection.AddContainer();
+        collection.AddContainer();
+
+        var result = collection.Contains(Guid.NewGuid());
+
+        result.Should().BeFalse();
+    }
+
+    [Test]
     public void IsDescendantOf_Null_ShouldThrowException()
     {
         var spec = Node.NewSpec();

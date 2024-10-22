@@ -3,15 +3,15 @@
              xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
              xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
-             x:Class="AutoSpex.Client.Pages.SaveToContainerPage"
-             x:DataType="pages:SaveToContainerPageModel"
+             x:Class="AutoSpex.Client.Pages.SelectContainerPage"
+             x:DataType="pages:SelectContainerPageModel"
              Height="600" Width="600">
 
     <controls:Prompt
-        Header="Select a container"
+        Header="{Binding Header}"
         CancelButtonTheme="{a:ControlTheme ButtonSoft}"
         CancelCommandParameter="{x:Null}"
-        ActionButtonText="Next"
+        ActionButtonText="{Binding ButtonText}"
         ActionButtonTheme="{a:ControlTheme ButtonSolid}"
         ActionCommandParameter="{Binding Selected}"
         Classes="accent"
@@ -26,8 +26,7 @@
                 Theme="{a:ControlTheme TextBoxOutline}"
                 BorderBrush="{a:ThemeResource Container1BorderBrush}"
                 BorderThickness="0 0 0 1" CornerRadius="0" Padding="0 10"
-                VerticalContentAlignment="Center"
-                Classes="has-clear-button">
+                VerticalContentAlignment="Center">
                 <TextBox.InnerLeftContent>
                     <PathIcon Theme="{StaticResource IconLineSearch}" Classes="size-sm" Margin="15 0 10 0" />
                 </TextBox.InnerLeftContent>
@@ -40,13 +39,30 @@
                 IsVisible="{Binding Containers.Count}"
                 ItemContainerTheme="{StaticResource ListBoxItemSimple}"
                 ItemTemplate="{StaticResource NodeListItemSimple}"
-                Padding="10">
-            </ListBox>
+                Padding="10" />
 
-            <controls:DefaultMessage
-                IsVisible="{Binding !Containers.Count}"
-                Header="No containers found"
-                Message="Create a host container before saving this specification." />
+            <Panel>
+
+                <controls:DefaultMessage
+                    HeaderIcon="{StaticResource IconThemedCollection}"
+                    Header="No collections configured"
+                    Message="Create a collection before saving this specification."
+                    IsVisible="{Binding !Containers.HasItems}" />
+
+                <controls:DefaultMessage
+                    HeaderIcon="{StaticResource IconLineSearch}"
+                    Header="No containers found"
+                    Message="No containers match the current filter text.">
+                    <controls:DefaultMessage.IsVisible>
+                        <MultiBinding Converter="{x:Static BoolConverters.And}">
+                            <Binding Path="Containers.HasItems" />
+                            <Binding Path="!Containers.Count" />
+                        </MultiBinding>
+                    </controls:DefaultMessage.IsVisible>
+                </controls:DefaultMessage>
+
+            </Panel>
+
         </DockPanel>
 
     </controls:Prompt>

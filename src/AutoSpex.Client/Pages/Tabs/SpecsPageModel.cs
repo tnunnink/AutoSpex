@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using AutoSpex.Client.Observers;
 using AutoSpex.Client.Shared;
@@ -12,11 +13,12 @@ namespace AutoSpex.Client.Pages;
 public partial class SpecsPageModel(NodeObserver node) : PageViewModel("Specs"),
     IRecipient<Observer.Created<NodeObserver>>,
     IRecipient<Observer.Deleted>,
+    IRecipient<Observer.Renamed>,
     IRecipient<Observer.GetSelected>,
     IRecipient<NodeObserver.Moved>
 {
     public override string Route => $"{node.Type}/{node.Id}/{Title}";
-    public ObserverCollection<Node, NodeObserver> Specs { get; private set; } = [];
+    public ObserverCollection<Node, NodeObserver> Specs { get; } = [];
     public ObservableCollection<NodeObserver> Selected { get; } = [];
 
     /// <inheritdoc />
@@ -25,8 +27,8 @@ public partial class SpecsPageModel(NodeObserver node) : PageViewModel("Specs"),
         var result = await Mediator.Send(new GetNode(node.Id));
         if (Notifier.ShowIfFailed(result, $"Failed to retrieve data for {node.Name}")) return;
 
-        var nodes = result.Value.Descendants(NodeType.Spec).ToList();
-        Specs = new ObserverCollection<Node, NodeObserver>(nodes, n => new NodeObserver(n));
+        var nodes = result.Value.Descendants(NodeType.Spec).OrderBy(x => x.Name).ToList();
+        Specs.Bind(nodes, n => new NodeObserver(n));
     }
 
     /// <summary>
@@ -65,6 +67,16 @@ public partial class SpecsPageModel(NodeObserver node) : PageViewModel("Specs"),
     {
         if (message.Observer is not NodeObserver observer) return;
         Specs.RemoveAny(s => s.Id == observer.Id);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public void Receive(Observer.Renamed message)
+    {
+        if (message.Observer is not NodeObserver observer) return;
+        if (!observer.Model.IsDescendantOf(node)) return;
+        Specs.Sort(x => x.Name, StringComparer.OrdinalIgnoreCase);
     }
 
     /// <summary>

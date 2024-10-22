@@ -4,7 +4,8 @@
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
                     xmlns:components="clr-namespace:AutoSpex.Client.Components"
                     xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
-                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine">
 
     <Design.PreviewWith>
         <ListBox
@@ -39,7 +40,24 @@
                 <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
 
                     <PathIcon
-                        Theme="{Binding Result, Converter={StaticResource ResultStateIconConverter}}" />
+                        Theme="{Binding Result, Converter={StaticResource ResultStateIconConverter}}"
+                        Classes.spinning="{Binding Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Pending}}">
+
+                        <PathIcon.Styles>
+                            <Style Selector="PathIcon.spinning">
+                                <Style.Animations>
+                                    <Animation Duration="0:0:1" IterationCount="INFINITE">
+                                        <KeyFrame Cue="0%">
+                                            <Setter Property="RotateTransform.Angle" Value="0" />
+                                        </KeyFrame>
+                                        <KeyFrame Cue="100%">
+                                            <Setter Property="RotateTransform.Angle" Value="360" />
+                                        </KeyFrame>
+                                    </Animation>
+                                </Style.Animations>
+                            </Style>
+                        </PathIcon.Styles>
+                    </PathIcon>
 
                     <controls:HighlightableTextBlock
                         Text="{Binding Name}"
