@@ -10,7 +10,7 @@
         <LangVersion>12</LangVersion>
         <ApplicationIcon>Resources\Images\logo.ico</ApplicationIcon>
         <Platforms>AnyCPU;x64;x86</Platforms>
-        <Version>0.4.1</Version>
+        <Version>0.4.2</Version>
         <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     </PropertyGroup>
 
