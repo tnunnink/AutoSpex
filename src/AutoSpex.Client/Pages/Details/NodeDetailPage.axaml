@@ -81,9 +81,7 @@
                 <ContentControl Content="{Binding Tab}">
                     <ContentControl.ContentTemplate>
                         <DataTemplate x:DataType="shared:PageViewModel">
-                            <ScrollViewer HorizontalScrollBarVisibility="Disabled">
-                                <ContentControl Content="{Binding}" Margin="20" />
-                            </ScrollViewer>
+                            <ContentControl Content="{Binding}" />
                         </DataTemplate>
                     </ContentControl.ContentTemplate>
                 </ContentControl>

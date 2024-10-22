@@ -10,7 +10,7 @@
     <Design.Height>800</Design.Height>
     <Design.Width>1200</Design.Width>
 
-    <StackPanel Spacing="10">
+    <StackPanel Spacing="10" Margin="20">
 
 
         <Panel>

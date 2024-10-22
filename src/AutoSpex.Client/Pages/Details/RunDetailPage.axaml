@@ -57,7 +57,7 @@
             </Grid>
         </Border>
 
-        <ContentControl Margin="20" Content="{Binding OutcomePage^}" />
+        <ContentControl Content="{Binding OutcomePage^}" />
 
     </DockPanel>
 </UserControl>

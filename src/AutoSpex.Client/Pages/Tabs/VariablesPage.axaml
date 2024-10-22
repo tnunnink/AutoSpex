@@ -10,12 +10,9 @@
     <Design.Height>800</Design.Height>
     <Design.Width>1200</Design.Width>
 
-    <DockPanel>
-        
-        <Grid DockPanel.Dock="Top"
-              ColumnDefinitions="Auto,*,Auto"
-              Margin="0 0 0 10"
-              IsVisible="{Binding Variables.HasItems}">
+    <StackPanel Margin="20" Spacing="10">
+
+        <Grid ColumnDefinitions="Auto,*,Auto" IsVisible="{Binding Variables.HasItems}">
 
             <TextBox
                 Grid.Column="0"
@@ -35,11 +32,12 @@
             <Button
                 Grid.Column="2"
                 Command="{Binding AddVariableCommand}"
-                Theme="{a:ControlTheme ButtonSoft}">
+                Theme="{a:ControlTheme ButtonSolid}"
+                Classes="accent">
                 <StackPanel Orientation="Horizontal" Spacing="7">
                     <PathIcon
                         Theme="{StaticResource IconAdd}"
-                        Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
+                        Foreground="{Binding $parent[Button].Foreground}"
                         Classes="size-sm" />
                     <TextBlock Text="Add Variable" />
                 </StackPanel>
@@ -48,11 +46,11 @@
         </Grid>
 
         <controls:DefaultMessage
-            DockPanel.Dock="Top" Margin="20"
             IsVisible="{Binding !Variables.HasItems}"
             HeaderIcon="{StaticResource IconLineAt}"
             Header="No variables defined"
-            Message="Add variables to reference data dynamically from criteria arguments.">
+            Message="Add variables to reference data dynamically from criteria arguments."
+            Margin="10">
             <controls:DefaultMessage.Action>
                 <Button
                     Command="{Binding AddVariableCommand}"
@@ -70,19 +68,30 @@
             </controls:DefaultMessage.Action>
         </controls:DefaultMessage>
 
-        <StackPanel Spacing="10" IsVisible="{Binding Variables.HasItems}">
+        <controls:DefaultMessage
+            HeaderIcon="{StaticResource IconLineSearch}"
+            Header="No variables found"
+            Message="Could not find any variables matching the current filter text."
+            Margin="10">
+            <controls:DefaultMessage.IsVisible>
+                <MultiBinding Converter="{x:Static BoolConverters.And}">
+                    <Binding Path="Variables.HasItems" />
+                    <Binding Path="!Variables.Count" />
+                </MultiBinding>
+            </controls:DefaultMessage.IsVisible>
+        </controls:DefaultMessage>
 
-            <ListBox
-                ItemsSource="{Binding Variables}"
-                SelectedItems="{Binding Selected}"
-                ItemTemplate="{StaticResource VariableListItem}"
-                ItemContainerTheme="{StaticResource ListBoxItemEntry}"
-                SelectionMode="Multiple"
-                BorderBrush="{a:ThemeResource Container1BorderBrush}"
-                BorderThickness="1" CornerRadius="5" />
+        <ListBox
+            ItemsSource="{Binding Variables}"
+            SelectedItems="{Binding Selected}"
+            ItemTemplate="{StaticResource VariableListItem}"
+            ItemContainerTheme="{StaticResource ListBoxItemEntry}"
+            IsVisible="{Binding Variables.Count}"
+            SelectionMode="Multiple"
+            ScrollViewer.BringIntoViewOnFocusChange="True"
+            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+            BorderThickness="1" CornerRadius="5" />
 
+    </StackPanel>
 
-        </StackPanel>
-
-    </DockPanel>
 </UserControl>

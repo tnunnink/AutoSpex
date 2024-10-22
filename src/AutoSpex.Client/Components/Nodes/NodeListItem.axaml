@@ -18,6 +18,7 @@
     </Design.PreviewWith>
 
     <DataTemplate x:Key="NodeListItem" x:DataType="observers:NodeObserver">
+        
         <Border x:Name="Border" Focusable="True" Background="Transparent" Padding="5 0">
 
             <Border.ContextFlyout>
@@ -67,10 +68,7 @@
 
                 </StackPanel>
 
-                <StackPanel
-                    DockPanel.Dock="Right"
-                    Orientation="Horizontal"
-                    Spacing="5"
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="5" Margin="5 0"
                     IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}">
 
                     <Button
