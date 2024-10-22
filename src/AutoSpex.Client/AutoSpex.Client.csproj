@@ -10,7 +10,7 @@
         <LangVersion>12</LangVersion>
         <ApplicationIcon>Resources\Images\logo.ico</ApplicationIcon>
         <Platforms>AnyCPU;x64;x86</Platforms>
-        <Version>0.4.2</Version>
+        <Version>0.4.3</Version>
         <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     </PropertyGroup>
 
@@ -223,6 +223,14 @@
         </Compile>
         <Compile Update="Pages\Dialogs\NewVariablePage.axaml.cs">
           <DependentUpon>NewVariablePage.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Pages\Parts\SettingsAboutPage.axaml.cs">
+          <DependentUpon>SettingsAboutPage.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Pages\Parts\SettingsGeneralPage.axaml.cs">
+          <DependentUpon>SettingsGeneralPage.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
     </ItemGroup>
