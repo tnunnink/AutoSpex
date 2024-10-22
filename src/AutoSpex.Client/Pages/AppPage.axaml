@@ -6,8 +6,8 @@
              x:Class="AutoSpex.Client.Pages.AppPage"
              x:DataType="pages:AppPageModel">
 
-    <Design.Width>1920</Design.Width>
-    <Design.Height>1080</Design.Height>
+    <Design.Width>1200</Design.Width>
+    <Design.Height>300</Design.Height>
 
     <DockPanel>
 
@@ -23,6 +23,7 @@
             <a:ChromedTitleBar.RightContent>
                 <a:ToggleThemeButton
                     Theme="{a:ControlTheme TitleBarToggleThemeButton}"
+                    IsTabStop="False"
                     ToolTip.Tip="Toggle Theme" />
             </a:ChromedTitleBar.RightContent>
         </a:ChromedTitleBar>
