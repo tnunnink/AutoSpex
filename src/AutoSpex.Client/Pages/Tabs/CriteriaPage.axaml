@@ -90,7 +90,8 @@
                         ItemContainerTheme="{StaticResource ListBoxItemEntry}"
                         SelectionMode="Multiple"
                         BorderBrush="{a:ThemeResource Container1BorderBrush}"
-                        BorderThickness="1" CornerRadius="5" />
+                        BorderThickness="1" CornerRadius="5"
+                        ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
 
                 </controls:Section>
 
@@ -133,7 +134,8 @@
                         ItemContainerTheme="{StaticResource ListBoxItemEntry}"
                         SelectionMode="Multiple"
                         BorderBrush="{a:ThemeResource Container1BorderBrush}"
-                        BorderThickness="1" CornerRadius="5" />
+                        BorderThickness="1" CornerRadius="5"
+                        ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
 
                 </controls:Section>
 
