@@ -4,8 +4,8 @@
                     xmlns:components="clr-namespace:AutoSpex.Client.Components">
 
     <ResourceDictionary.MergedDictionaries>
-        <ResourceInclude Source="ArgumentCollectionEntry.axaml" />
-        <ResourceInclude Source="ArgumentSingleEntry.axaml" />
+        <ResourceInclude Source="ArgumentBinaryEntry.axaml" />
+        <ResourceInclude Source="ArgumentInEntry.axaml" />
         <ResourceInclude Source="ArgumentTernaryEntry.axaml" />
         <ResourceInclude Source="CriterionEntry.axaml" />
         <ResourceInclude Source="CriterionListItem.axaml" />
@@ -19,7 +19,7 @@
         <DataTemplate x:Key="BinaryOperation" x:DataType="observers:ArgumentObserver">
             <ContentControl
                 Content="{Binding}"
-                ContentTemplate="{StaticResource ArgumentSingleEntry}" />
+                ContentTemplate="{StaticResource ArgumentBinaryEntry}" />
         </DataTemplate>
 
         <DataTemplate x:Key="TernaryOperation" x:DataType="observers:ArgumentObserver">
@@ -36,8 +36,8 @@
 
         <DataTemplate x:Key="InOperation" x:DataType="observers:ArgumentObserver">
             <ContentControl
-                Content="{Binding }"
-                ContentTemplate="{StaticResource ArgumentCollectionEntry}" />
+                Content="{Binding}"
+                ContentTemplate="{StaticResource ArgumentInEntry}" />
         </DataTemplate>
 
     </components:ArgumentSelector>
