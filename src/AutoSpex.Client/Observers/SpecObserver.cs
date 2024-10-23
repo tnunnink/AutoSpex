@@ -86,6 +86,25 @@ public partial class SpecObserver : Observer<Spec>,
     }
 
     /// <summary>
+    /// Command to add the criteria copied to the clipboard to the current spec filters.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanAddCriteria))]
+    private async Task PasteFilters()
+    {
+        var criteria = await GetClipboardObservers<Criterion>();
+
+        var copies = criteria.Select(c => new CriterionObserver(new Criterion(Element.Type)
+        {
+            Property = Element.Property(c.Property.Path) ?? new Property(c.Property.Path, typeof(object), Element.This),
+            Negation = c.Negation,
+            Operation = c.Operation,
+            Argument = c.Argument
+        }));
+
+        Filters.AddRange(copies);
+    }
+
+    /// <summary>
     /// Adds a verification to the specification.
     /// </summary>
     [RelayCommand(CanExecute = nameof(CanAddCriteria))]
@@ -93,6 +112,25 @@ public partial class SpecObserver : Observer<Spec>,
     {
         if (Element == Element.Default) return;
         Verifications.Add(new CriterionObserver(new Criterion(Element.Type)));
+    }
+
+    /// <summary>
+    /// Command to add the criteria copied to the clipboard to the current spec verifications.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanAddCriteria))]
+    private async Task PasteVerifications()
+    {
+        var criteria = await GetClipboardObservers<Criterion>();
+
+        var copies = criteria.Select(c => new CriterionObserver(new Criterion(Element.Type)
+        {
+            Property = Element.Property(c.Property.Path) ?? new Property(c.Property.Path, typeof(object), Element.This),
+            Negation = c.Negation,
+            Operation = c.Operation,
+            Argument = c.Argument
+        }));
+
+        Verifications.AddRange(copies);
     }
 
     /// <summary>

@@ -62,6 +62,10 @@
                     Gesture="Ctrl+D"
                     Command="{Binding DuplicateCommand}"
                     MarkAsHandled="True" />
+                <ExecuteCommandOnKeyDownBehavior
+                    Gesture="Ctrl+C"
+                    Command="{Binding CopyCommand}"
+                    MarkAsHandled="True" />
             </Interaction.Behaviors>
         </Border>
     </DataTemplate>

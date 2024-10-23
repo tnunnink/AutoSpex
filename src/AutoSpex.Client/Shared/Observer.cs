@@ -5,7 +5,6 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using AutoSpex.Client.Services;
 using AutoSpex.Engine;
-using Avalonia.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -255,19 +254,38 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
 
     /// <summary>
     /// A command to copy the <see cref="Observer"/> object to the clipboard so that the user can paste it somewhere
-    /// else that handles or accepts a paste command. By default, this command sets a data object with the instance
-    /// of this object with a data format of the type name. Deriving observers can override this implementation as needed.
+    /// else that handles or accepts a paste command. By default, this command sets the name of the observer to the clipboard.
+    /// NOTE: At this time Avalonia Clipboard does not accept getting data objects as they are set, so I can't use
+    /// the actual object instance. This is why we are using serialization, which most of our engine objects support anyway.
+    /// Deriving observers should override this implementation as needed.
     /// </summary>
     [RelayCommand]
     protected virtual async Task Copy()
     {
         var clipboard = Shell.Clipboard;
         if (clipboard is null) return;
+        await clipboard.SetTextAsync(Name);
+    }
 
-        var data = new DataObject();
-        data.Set(GetType().Name, this);
+    protected async Task<List<TData>> GetClipboardObservers<TData>()
+    {
+        try
+        {
+            var clipboard = Shell.Clipboard;
+            if (clipboard is null) return [];
 
-        await clipboard.SetDataObjectAsync(data);
+            var json = await clipboard.GetTextAsync();
+            if (json is null) return [];
+
+            var observers = JsonSerializer.Deserialize<List<TData>>(json);
+            return observers ?? [];
+        }
+        catch (Exception e)
+        {
+            Notifier.ShowError("Unable to parse data from clipboard.", e.Message);
+        }
+
+        return [];
     }
 
     #endregion
@@ -447,15 +465,6 @@ public abstract class Observer<TModel> : Observer
     /// The underlying model object that is being wrapped by the observer.
     /// </summary>
     public TModel Model { get; }
-
-    /// <inheritdoc />
-    protected override async Task Copy()
-    {
-        var clipboard = Shell.Clipboard;
-        if (clipboard is null) return;
-        var data = JsonSerializer.Serialize(Model);
-        await clipboard.SetTextAsync(data);
-    }
 }
 
 public abstract class NullableObserver<TModel>(TModel? model) : Observer

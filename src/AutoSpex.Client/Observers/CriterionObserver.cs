@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoSpex.Client.Resources;
@@ -100,10 +101,10 @@ public partial class CriterionObserver : Observer<Criterion>,
                 Property = property;
                 return;
             case string path:
-                Property = Property.This(Model.Type).GetProperty(path) ?? new Property(path, Model.Type);
+                Property = Property.This(Model.Type).GetProperty(path);
                 return;
             case TagName tagName:
-                Property = Property.This(Model.Type).GetProperty(tagName) ?? new Property(tagName, Model.Type);
+                Property = Property.This(Model.Type).GetProperty(tagName);
                 return;
         }
     }
@@ -186,12 +187,10 @@ public partial class CriterionObserver : Observer<Criterion>,
         var clipboard = Shell.Clipboard;
         if (clipboard is null) return;
 
-        //todo we want selected criterion I guess.
-        //also if this works then why not just implement in observer?
-        var data = new DataObject();
-        data.Set(nameof(CriterionObserver), this);
+        var selected = SelectedItems.Cast<CriterionObserver>().Select(c => c.Model).ToList();
+        var data = JsonSerializer.Serialize(selected);
 
-        await clipboard.SetDataObjectAsync(data);
+        await clipboard.SetTextAsync(data);
     }
 
     /// <summary>
@@ -251,7 +250,7 @@ public partial class CriterionObserver : Observer<Criterion>,
         var member = memeberIndex > -1 ? filter[(memeberIndex + 1)..] : filter;
 
         var property = origin.GetProperty(path);
-        var properties = property?.Properties ?? [];
+        var properties = property.Properties;
         return properties.Where(p => p.Name.Satisfies(member)).OrderBy(p => p.Name);
     }
 
