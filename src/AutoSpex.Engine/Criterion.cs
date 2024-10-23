@@ -135,21 +135,22 @@ public class Criterion : IEquatable<Criterion>
         }
     }
 
-    /*/// <summary>
-    /// Determines if the provided criterion is a nested object of this criterion, meaning that one of this criterion's
+    /// <summary>
+    /// Determines if the provided criterion is this or a nested criterion object, meaning that one of this criterion's
     /// arguments or descendent arguments is this criterion object.
     /// </summary>
-    /// <param name="other">The criterion to search for in the object graph.</param>
+    /// <param name="criterion">The criterion to search for in the object graph.</param>
     /// <returns>
     /// <c>true</c> if this criterion contains the provided criterion within it's nested argument structure;
     /// Otherwise, <c>false</c>.
     /// </returns>
-    /// <remarks>This allows us to determine if one criterion "owns" another.</remarks>
-    public bool Contains(Criterion other)
+    /// <remarks>This allows us to determine if one criterion is or contains the provided instance.</remarks>
+    public bool Contains(Criterion criterion)
     {
-        return Argument.Value is Criterion criterion &&
-               (criterion.CriterionId == other.CriterionId || criterion.Contains(other));
-    }*/
+        if (CriterionId == criterion.CriterionId) return true;
+        if (Argument.Value is not Criterion other) return false;
+        return other.CriterionId == criterion.CriterionId || other.Contains(criterion);
+    }
 
     /// <summary>
     /// Determines whether this or a nested criterion contains the specified argument id.
