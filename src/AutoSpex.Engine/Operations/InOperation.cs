@@ -2,9 +2,9 @@
 
 namespace AutoSpex.Engine;
 
-public class InOperation() : BinaryOperation("In")
+public class InOperation() : Operation("In")
 {
-    protected override bool Evaluate(object? input, object value)
+    public override bool Execute(object? input, object? value)
     {
         if (value is not IEnumerable enumerable)
             throw new ArgumentException("In operation require an enumerable argument value", nameof(value));

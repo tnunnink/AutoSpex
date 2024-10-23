@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
@@ -87,6 +88,24 @@ public partial class ArgumentObserver : Observer<Argument>
         }
     }
 
+    /// <summary>
+    /// Command to add an argument value to this arguments value collection. This is only supported for the In operation,
+    /// since we need to allow the user to add an somwhat unbounded list of arguments.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanAddArgument))]
+    private void AddArgument()
+    {
+        if (Criterion?.Operation != Operation.In) return;
+        if (Value is not ObserverCollection<Argument, ArgumentObserver> collection) return;
+        collection.Add(new ArgumentObserver(new Argument()));
+    }
+
+    /// <summary>
+    /// Determin if the argument should allow for arguments to be added.
+    /// </summary>
+    private bool CanAddArgument() =>
+        Criterion?.Operation == Operation.In && Value is ObserverCollection<Argument, ArgumentObserver>;
+
     /// <inheritdoc />
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
@@ -109,7 +128,7 @@ public partial class ArgumentObserver : Observer<Argument>
         {
             Reference reference => new ReferenceObserver(reference),
             Criterion criterion => new CriterionObserver(criterion),
-            List<Argument> arguments => new ObserverCollection<Argument, ArgumentObserver>(arguments.ToList(),
+            List<Argument> arguments => new ObserverCollection<Argument, ArgumentObserver>(arguments,
                 a => new ArgumentObserver(a)),
             _ => new ValueObserver(Model.Value)
         };

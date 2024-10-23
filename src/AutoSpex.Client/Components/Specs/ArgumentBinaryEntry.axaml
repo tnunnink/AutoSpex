@@ -10,22 +10,22 @@
             <StackPanel Spacing="10" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <ContentControl
                     Content="{x:Static components:TestData.EmptyArgument}"
-                    ContentTemplate="{DynamicResource ArgumentSingleEntry}" />
+                    ContentTemplate="{DynamicResource ArgumentBinaryEntry}" />
                 <ContentControl
                     Content="{x:Static components:TestData.EnumArgument}"
-                    ContentTemplate="{DynamicResource ArgumentSingleEntry}" />
+                    ContentTemplate="{DynamicResource ArgumentBinaryEntry}" />
                 <ContentControl
                     Content="{x:Static components:TestData.TextArgument}"
-                    ContentTemplate="{DynamicResource ArgumentSingleEntry}" />
+                    ContentTemplate="{DynamicResource ArgumentBinaryEntry}" />
                 <ContentControl
                     Content="{x:Static components:TestData.ReferenceArgument}"
-                    ContentTemplate="{DynamicResource ArgumentSingleEntry}" />
+                    ContentTemplate="{DynamicResource ArgumentBinaryEntry}" />
             </StackPanel>
         </Border>
     </Design.PreviewWith>
 
 
-    <DataTemplate x:Key="ArgumentSingleEntry" x:DataType="observers:ArgumentObserver">
+    <DataTemplate x:Key="ArgumentBinaryEntry" x:DataType="observers:ArgumentObserver">
         <controls:Entry
             Watermark="Enter value"
             Value="{Binding Value}"

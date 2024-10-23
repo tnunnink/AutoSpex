@@ -138,12 +138,11 @@ public abstract class Operation(string name, string value) : SmartEnum<Operation
     /// </summary>
     public static readonly Operation EndingWith = new EndingWithOperation();
 
-    //todo we need to develop a special entry for this operatio because it can be an unbounded collection or arguments.  leaving this for future development as needed.
-    /*/// <summary>
+    /// <summary>
     /// Represents an "in" operation. The operation checks whether the input value
     /// matches any value within a supplied list of values.
     /// </summary>
-    public static readonly Operation In = new InOperation();*/
+    public static readonly Operation In = new InOperation();
 
     /// <summary>
     /// Represents a like operation. The operation checks if the input value
