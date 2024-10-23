@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using AutoSpex.Client.Services;
 using AutoSpex.Engine;
+using Avalonia.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -237,8 +239,9 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
         if (Notifier.ShowIfFailed(result, $"Failed to rename item: {result.Reasons}")) return;
 
         Name = name;
-        Messenger.Send(new Renamed(this));
         IsNew = false;
+
+        Messenger.Send(new Renamed(this));
     }
 
     /// <summary>
@@ -251,12 +254,20 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     protected virtual Task Duplicate() => Task.FromResult(Messenger.Send(new MakeCopy(this)));
 
     /// <summary>
-    /// A command to reset the IsNew state of...
+    /// A command to copy the <see cref="Observer"/> object to the clipboard so that the user can paste it somewhere
+    /// else that handles or accepts a paste command. By default, this command sets a data object with the instance
+    /// of this object with a data format of the type name. Deriving observers can override this implementation as needed.
     /// </summary>
     [RelayCommand]
-    private void ResetIsNew()
+    protected virtual async Task Copy()
     {
-        IsNew = false;
+        var clipboard = Shell.Clipboard;
+        if (clipboard is null) return;
+
+        var data = new DataObject();
+        data.Set(GetType().Name, this);
+
+        await clipboard.SetDataObjectAsync(data);
     }
 
     #endregion
@@ -274,6 +285,7 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
         if (Name != message.Observer.Name)
         {
             Name = message.Observer.Name;
+            Messenger.Send(new Renamed(this));
         }
 
         OnPropertyChanged(nameof(Name));
@@ -435,6 +447,15 @@ public abstract class Observer<TModel> : Observer
     /// The underlying model object that is being wrapped by the observer.
     /// </summary>
     public TModel Model { get; }
+
+    /// <inheritdoc />
+    protected override async Task Copy()
+    {
+        var clipboard = Shell.Clipboard;
+        if (clipboard is null) return;
+        var data = JsonSerializer.Serialize(Model);
+        await clipboard.SetTextAsync(data);
+    }
 }
 
 public abstract class NullableObserver<TModel>(TModel? model) : Observer
