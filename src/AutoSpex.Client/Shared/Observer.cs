@@ -253,6 +253,19 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     protected virtual Task Duplicate() => Task.FromResult(Messenger.Send(new MakeCopy(this)));
 
     /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    [RelayCommand(CanExecute = nameof(CanMove))]
+    protected virtual Task Move(object? source) => Task.CompletedTask;
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    protected virtual bool CanMove(object? source) => false;
+
+    /// <summary>
     /// A command to copy the <see cref="Observer"/> object to the clipboard so that the user can paste it somewhere
     /// else that handles or accepts a paste command. By default, this command sets the name of the observer to the clipboard.
     /// NOTE: At this time Avalonia Clipboard does not accept getting data objects as they are set, so I can't use
