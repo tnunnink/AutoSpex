@@ -166,6 +166,45 @@ public partial class CriterionObserver : Observer<Criterion>,
     }
 
     /// <inheritdoc />
+    protected override Task Move(object? source)
+    {
+        if (source is not CriterionObserver criterion)
+            return Task.CompletedTask;
+
+        var spec = GetObserver<SpecObserver>(s => s.Model.Contains(Model));
+        if (spec is null)
+            return Task.CompletedTask;
+
+        if (spec.Filters.Any(x => x.Is(criterion)))
+        {
+            var oldIndex = spec.Filters.IndexOf(criterion);
+            var newIndex = spec.Filters.IndexOf(this);
+            spec.Filters.Move(oldIndex, newIndex);
+        }
+
+        if (spec.Verifications.Any(x => x.Is(criterion)))
+        {
+            var oldIndex = spec.Verifications.IndexOf(criterion);
+            var myIndex = spec.Verifications.IndexOf(this);
+            var newIndex = myIndex >= oldIndex ? myIndex : myIndex + 1;
+
+            spec.Verifications.Move(oldIndex, newIndex);
+        }
+
+        return Task.CompletedTask;
+    }
+
+    /// <inheritdoc />
+    protected override bool CanMove(object? source)
+    {
+        if (source is not CriterionObserver criterion) return false;
+        if (this == criterion) return false;
+        if (!TryGetSpec(out var spec)) return false;
+        return (spec.Filters.Contains(this) && spec.Filters.Contains(criterion)) ||
+               (spec.Verifications.Contains(this) && spec.Verifications.Contains(criterion));
+    }
+
+    /// <inheritdoc />
     protected override Task Duplicate()
     {
         var spec = GetObserver<SpecObserver>(s => s.Model.Contains(Model));
@@ -273,6 +312,23 @@ public partial class CriterionObserver : Observer<Criterion>,
         if (Argument.Value is not ObserverCollection<Argument, ArgumentObserver> collection) return false;
         if (collection.Any(a => a.Id == argument.Id)) return true;
         return false;
+    }
+
+    /// <summary>
+    /// Tries to get the corresponding SpecObserver for this criterion instance.
+    /// </summary>
+    private bool TryGetSpec(out SpecObserver spec)
+    {
+        var result = GetObserver<SpecObserver>(s => s.Model.Contains(Model));
+
+        if (result is null)
+        {
+            spec = default!;
+            return false;
+        }
+
+        spec = result;
+        return true;
     }
 
     protected override IEnumerable<MenuActionItem> GenerateMenuItems() => GenerateContextItems();

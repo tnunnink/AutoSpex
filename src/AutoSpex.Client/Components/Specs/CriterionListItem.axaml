@@ -3,13 +3,14 @@
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
                     xmlns:components="clr-namespace:AutoSpex.Client.Components"
-                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+                    xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors">
 
     <Design.PreviewWith>
         <ListBox
             ItemsSource="{x:Static components:TestData.Criteria}"
             ItemTemplate="{DynamicResource CriterionListItem}"
-            ItemContainerTheme="{StaticResource ListBoxItemEntry}"
+            ItemContainerTheme="{DynamicResource CriterionItemTheme}"
             SelectionMode="Multiple"
             BorderBrush="{a:ThemeResource Container1BorderBrush}"
             BorderThickness="1"
@@ -66,7 +67,20 @@
                     Gesture="Ctrl+C"
                     Command="{Binding CopyCommand}"
                     MarkAsHandled="True" />
+                <behaviors:DraggableBehavior
+                    Context="{Binding}" />
+                <behaviors:ExecuteCommandOnDropBehavior
+                    Command="{Binding MoveCommand}"
+                    StyleElement="{Binding $parent[ListBoxItem]}" />
             </Interaction.Behaviors>
         </Border>
     </DataTemplate>
+
+    <ControlTheme x:Key="CriterionItemTheme" TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemEntry}"
+                  x:DataType="observers:CriterionObserver">
+        <Style Selector="^.dragover /template/ Border#RootBorder">
+            <Setter Property="BorderBrush" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+            <Setter Property="BorderThickness" Value="0 0 0 2" />
+        </Style>
+    </ControlTheme>
 </ResourceDictionary>
