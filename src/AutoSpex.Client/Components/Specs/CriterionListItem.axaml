@@ -46,21 +46,21 @@
                     <Button.Flyout>
                         <MenuFlyout
                             Placement="BottomEdgeAlignedRight" HorizontalOffset="8"
-                            ItemsSource="{Binding MenuItems}"
-                            ItemContainerTheme="{StaticResource MenuActionItem}" />
+                            ItemContainerTheme="{StaticResource MenuActionItem}"
+                            ItemsSource="{Binding MenuItems}" />
                     </Button.Flyout>
                 </Button>
             </Grid>
-            
+
             <Interaction.Behaviors>
                 <ExecuteCommandOnKeyDownBehavior
-                    Key="Delete" 
-                    Command="{Binding DeleteSelectedCommand}" 
-                    MarkAsHandled="True" 
+                    Key="Delete"
+                    Command="{Binding DeleteSelectedCommand}"
+                    MarkAsHandled="True"
                     FocusControl="Border" />
                 <ExecuteCommandOnKeyDownBehavior
-                    Gesture="Ctrl+D" 
-                    Command="{Binding DuplicateCommand}" 
+                    Gesture="Ctrl+D"
+                    Command="{Binding DuplicateCommand}"
                     MarkAsHandled="True" />
             </Interaction.Behaviors>
         </Border>

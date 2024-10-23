@@ -164,6 +164,36 @@ public partial class CriterionObserver : Observer<Criterion>,
         Track(Argument);
     }
 
+    /// <inheritdoc />
+    protected override Task Duplicate()
+    {
+        var spec = GetObserver<SpecObserver>(s => s.Model.Contains(Model));
+        if (spec is null)
+            return Task.CompletedTask;
+
+        if (spec.Filters.Any(x => x.Is(this)))
+            spec.Filters.Add(new CriterionObserver(Model.Duplicate()));
+
+        if (spec.Verifications.Any(x => x.Is(this)))
+            spec.Verifications.Add(new CriterionObserver(Model.Duplicate()));
+
+        return Task.CompletedTask;
+    }
+
+    /// <inheritdoc />
+    protected override async Task Copy()
+    {
+        var clipboard = Shell.Clipboard;
+        if (clipboard is null) return;
+
+        //todo we want selected criterion I guess.
+        //also if this works then why not just implement in observer?
+        var data = new DataObject();
+        data.Set(nameof(CriterionObserver), this);
+
+        await clipboard.SetDataObjectAsync(data);
+    }
+
     /// <summary>
     /// Reply with this criterion observer instance if the id matches or the id is that of a child argument.
     /// </summary>
@@ -246,13 +276,16 @@ public partial class CriterionObserver : Observer<Criterion>,
         return false;
     }
 
+    protected override IEnumerable<MenuActionItem> GenerateMenuItems() => GenerateContextItems();
+
     protected override IEnumerable<MenuActionItem> GenerateContextItems()
     {
         yield return new MenuActionItem
         {
             Header = "Copy",
             Icon = Resource.Find("IconFilledCopy"),
-            Gesture = new KeyGesture(Key.C, KeyModifiers.Control)
+            Gesture = new KeyGesture(Key.C, KeyModifiers.Control),
+            Command = CopyCommand
         };
 
         yield return new MenuActionItem
