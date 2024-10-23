@@ -30,6 +30,7 @@
             <PathIcon Theme="{DynamicResource IconThemedPassed}" />
             <PathIcon Theme="{DynamicResource IconThemedFailed}" />
             <PathIcon Theme="{DynamicResource IconThemedError}" />
+            <PathIcon Theme="{DynamicResource IconThemedDefault}" />
             <PathIcon Theme="{DynamicResource IconThemedBoolean}" />
             <PathIcon Theme="{DynamicResource IconThemedNumber}" />
             <PathIcon Theme="{DynamicResource IconThemedText}" />
@@ -82,6 +83,10 @@
         <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineWarning}" />
     </ControlTheme>
 
+    <ControlTheme x:Key="IconThemedDefault" TargetType="PathIcon" BasedOn="{StaticResource IconFilledQuestion}">
+        <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+        <Setter Property="FontSize" Value="14" />
+    </ControlTheme>
     <ControlTheme x:Key="IconThemedBoolean" TargetType="PathIcon" BasedOn="{StaticResource IconFilledToggle}">
         <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushBoolean}" />
         <Setter Property="FontSize" Value="16" />
