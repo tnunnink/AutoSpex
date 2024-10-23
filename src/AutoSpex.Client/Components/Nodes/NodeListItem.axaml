@@ -18,7 +18,7 @@
     </Design.PreviewWith>
 
     <DataTemplate x:Key="NodeListItem" x:DataType="observers:NodeObserver">
-        
+
         <Border x:Name="Border" Focusable="True" Background="Transparent" Padding="5 0">
 
             <Border.ContextFlyout>
@@ -35,7 +35,23 @@
                     <PathIcon
                         Theme="{Binding Type.Name, Converter={StaticResource KeyIconConverter}}" />
 
-                    <controls:Entry
+                    <Button
+                        Command="{Binding NavigateCommand}"
+                        Theme="{a:ControlTheme ButtonInvisible}"
+                        Padding="{a:ThemeResource ButtonPadding }">
+                        <controls:HighlightableTextBlock
+                            Text="{Binding Name}"
+                            HighlightedText="{Binding FilterText}" />
+                        <Button.Styles>
+                            <Style Selector="Button:pointerover">
+                                <Setter
+                                    Property="Foreground"
+                                    Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+                            </Style>
+                        </Button.Styles>
+                    </Button>
+
+                    <!--<controls:Entry
                         x:Name="NameEntry"
                         Value="{Binding}"
                         FontFamily="{a:ThemeResource DefaultFontFamily}"
@@ -57,10 +73,8 @@
                                     PropertyName="IsDropDownOpen"
                                     Value="True" />
                             </DataTriggerBehavior>
-                            <ExecuteCommandOnLostFocusBehavior
-                                Command="{Binding ResetIsNewCommand}" />
                         </Interaction.Behaviors>
-                    </controls:Entry>
+                    </controls:Entry>-->
 
                     <ContentControl
                         Content="{Binding }"
@@ -69,13 +83,7 @@
                 </StackPanel>
 
                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="5" Margin="5 0"
-                    IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}">
-
-                    <Button
-                        Command="{Binding NavigateCommand}"
-                        Theme="{StaticResource IconButtonSmall}"
-                        properties:Icon.Theme="{StaticResource IconLineLaunch}"
-                        ToolTip.Tip="Open" />
+                            IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}">
 
                 </StackPanel>
 
