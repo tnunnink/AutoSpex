@@ -46,6 +46,7 @@ public partial class SpecsPageModel(NodeObserver node) : PageViewModel("Specs"),
 
         var observer = new NodeObserver(spec) { IsNew = true };
         Messenger.Send(new Observer.Created<NodeObserver>(observer));
+        await Navigator.Navigate(observer);
     }
 
     /// <summary>
