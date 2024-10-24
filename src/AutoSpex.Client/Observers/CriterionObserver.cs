@@ -323,9 +323,8 @@ public partial class CriterionObserver : Observer<Criterion>,
         return true;
     }
 
-    protected override IEnumerable<MenuActionItem> GenerateMenuItems() => GenerateContextItems();
-
-    protected override IEnumerable<MenuActionItem> GenerateContextItems()
+    /// <inheritdoc />
+    protected override IEnumerable<MenuActionItem> GenerateMenuItems()
     {
         yield return new MenuActionItem
         {
@@ -341,6 +340,36 @@ public partial class CriterionObserver : Observer<Criterion>,
             Icon = Resource.Find("IconFilledClone"),
             Command = DuplicateCommand,
             Gesture = new KeyGesture(Key.D, KeyModifiers.Control)
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Delete",
+            Icon = Resource.Find("IconFilledTrash"),
+            Classes = "danger",
+            Command = DeleteSelectedCommand,
+            Gesture = new KeyGesture(Key.Delete)
+        };
+    }
+
+    /// <inheritdoc />
+    protected override IEnumerable<MenuActionItem> GenerateContextItems()
+    {
+        yield return new MenuActionItem
+        {
+            Header = "Copy",
+            Icon = Resource.Find("IconFilledCopy"),
+            Gesture = new KeyGesture(Key.C, KeyModifiers.Control),
+            Command = CopyCommand,
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Duplicate",
+            Icon = Resource.Find("IconFilledClone"),
+            Command = DuplicateCommand,
+            Gesture = new KeyGesture(Key.D, KeyModifiers.Control),
+            DetermineVisibility = () => HasSingleSelection
         };
 
         yield return new MenuActionItem
