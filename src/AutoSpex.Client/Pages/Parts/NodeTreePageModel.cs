@@ -19,8 +19,7 @@ public partial class NodeTreePageModel : PageViewModel,
     IRecipient<Observer.Deleted>,
     IRecipient<Observer.Renamed>,
     IRecipient<Observer.GetSelected>,
-    IRecipient<Observer.Get<NodeObserver>>,
-    IRecipient<Observer.Find<NodeObserver>>
+    IRecipient<Observer.Get<NodeObserver>>
 {
     public ObserverCollection<Node, NodeObserver> Nodes { get; } = [];
     public ObservableCollection<NodeObserver> Selected { get; } = [];
@@ -132,30 +131,6 @@ public partial class NodeTreePageModel : PageViewModel,
                 }
 
                 BroadcastNode(node.Nodes, msg);
-            }
-        }
-    }
-
-    /// <summary>
-    /// Handles the request to find in memory node instances that passes the provided predicate condition.
-    /// Since the node tree contains all nodes in the app, we only handle this message here and not from node itself,
-    /// because there could be many instances of the "same" node alive in the app.
-    /// </summary>
-    public void Receive(Observer.Find<NodeObserver> message)
-    {
-        BroadcastNodes(Nodes, message);
-        return;
-
-        void BroadcastNodes(IEnumerable<NodeObserver> nodes, Observer.Find<NodeObserver> msg)
-        {
-            foreach (var node in nodes)
-            {
-                if (msg.Predicate(node))
-                {
-                    msg.Reply(node);
-                }
-
-                BroadcastNodes(node.Nodes, msg);
             }
         }
     }
