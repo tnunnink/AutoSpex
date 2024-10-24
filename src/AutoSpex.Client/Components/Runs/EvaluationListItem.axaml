@@ -22,7 +22,9 @@
         <Border
             x:Name="RootBorder"
             properties:StyleClasses.Classes="{Binding Result}"
-            Padding="{a:ThemeResource ListItemPadding}">
+            Padding="{a:ThemeResource ListItemPadding}"
+            Focusable="True"
+            IsTabStop="False">
 
             <Border.Styles>
                 <Style Selector="controls|HighlightableTextBlock">

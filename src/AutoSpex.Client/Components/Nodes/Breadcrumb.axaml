@@ -50,6 +50,7 @@
                                     Theme="{a:ControlTheme ButtonSubtle}"
                                     Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
                                     FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                                    IsTabStop="False"
                                     Padding="5 2">
 
                                     <Button.Flyout>
@@ -63,7 +64,8 @@
                                                             Command="{Binding NavigateCommand}"
                                                             Theme="{a:ControlTheme ButtonSubtle}"
                                                             HorizontalContentAlignment="Stretch"
-                                                            MinWidth="200" MaxWidth="300" Padding="5">
+                                                            MinWidth="200" MaxWidth="300" Padding="5"
+                                                            IsTabStop="False">
                                                             <StackPanel Orientation="Horizontal" Spacing="5">
                                                                 <PathIcon
                                                                     Theme="{Binding Type.Name, Converter={StaticResource KeyIconConverter}}" />

@@ -85,7 +85,11 @@ public class ExecuteCommandOnDropBehavior : Behavior<Control>
     {
         var source = e.Data.Get(DataFormat);
 
-        if (Command?.CanExecute(source) is not true) return;
+        if (Command?.CanExecute(source) is not true)
+        {
+            e.DragEffects = DragDropEffects.None;
+            return;
+        }
 
         UpdateStyledElement(true);
     }
@@ -99,7 +103,11 @@ public class ExecuteCommandOnDropBehavior : Behavior<Control>
     {
         var source = e.Data.Get(DataFormat);
 
-        if (Command?.CanExecute(source) is not true) return;
+        if (Command?.CanExecute(source) is not true)
+        {
+            e.DragEffects = DragDropEffects.None;
+            return;
+        }
 
         UpdateStyledElement(true);
     }
@@ -108,8 +116,10 @@ public class ExecuteCommandOnDropBehavior : Behavior<Control>
     {
         var source = e.Data.Get(DataFormat);
 
-        if (Command?.CanExecute(source) is not true) return;
-        Command.Execute(source);
+        if (Command?.CanExecute(source) is true)
+        {
+            Command.Execute(source);
+        }
 
         UpdateStyledElement(false);
     }

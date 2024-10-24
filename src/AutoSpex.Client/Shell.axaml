@@ -1,5 +1,6 @@
 ﻿<Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
         xmlns:client="clr-namespace:AutoSpex.Client"
         x:Class="AutoSpex.Client.Shell"
         x:DataType="client:Shell"
@@ -11,9 +12,10 @@
         ExtendClientAreaChromeHints="SystemChrome"
         ExtendClientAreaTitleBarHeightHint="0"
         SystemDecorations="BorderOnly"
-        Focusable="True" IsTabStop="False">
+        Focusable="True"
+        IsTabStop="False">
 
-    <Panel>
+    <Panel a:BorderChildClipConverter.ClipToContainingBorder="True">
 
         <ContentControl
             x:Name="ClientArea"
@@ -25,6 +27,7 @@
             PointerPressed="DialogShadowPointerPressed"
             Background="Black"
             Opacity="0.3" />
-        
+
     </Panel>
+
 </Window>

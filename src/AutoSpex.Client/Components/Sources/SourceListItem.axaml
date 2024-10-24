@@ -19,9 +19,11 @@
     </Design.PreviewWith>
 
     <DataTemplate x:Key="SourceListItem" x:DataType="observers:SourceObserver">
+        
         <Border x:Name="Border"
-                Focusable="True"
                 Background="Transparent"
+                Focusable="True" 
+                IsTabStop="False" 
                 Padding="{a:ThemeResource ListItemPadding}">
 
             <Border.ContextFlyout>

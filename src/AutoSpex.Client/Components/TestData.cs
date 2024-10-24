@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using AutoSpex.Client.Observers;
+using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using JetBrains.Annotations;
 using L5Sharp.Core;
@@ -164,6 +165,8 @@ public static class TestData
 
     public static ArgumentObserver TernaryArgument = new Argument(new List<Argument> { 1, 12 });
 
+    public static ArgumentObserver CollectionArgument = new(new Argument(new List<Argument> { new(), new(), new() }));
+
     public static ObservableCollection<ArgumentObserver> Arguments =
     [
         EmptyArgument,
@@ -185,7 +188,7 @@ public static class TestData
         new VariableObserver(new Variable("flag", true)),
         new VariableObserver(new Variable("numeric", 123)),
     ];
-    
+
     public static ReferenceObserver ReferenceValue = new(new Reference("test_ref"));
 
     #endregion
@@ -214,7 +217,7 @@ public static class TestData
     public static ValueObserver VariableValue = new(Variable);
 
     #endregion
-    
+
     #region Runs
 
     public static RunObserver Run => new(new Run(Node.NewCollection(), new Source()));

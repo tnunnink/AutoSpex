@@ -22,7 +22,8 @@
         Filter="Top, Right, Bottom" />
 
     <TreeDataTemplate x:Key="NodeTreeItem" x:DataType="observers:NodeObserver" ItemsSource="{Binding Nodes}">
-        <Border x:Name="Border" Background="Transparent" Focusable="True" Padding="0 5 9 5">
+        
+        <Border x:Name="Border" Background="Transparent" Focusable="True" IsTabStop="False" Padding="0 5 9 5">
 
             <Border.ContextFlyout>
                 <MenuFlyout

@@ -25,7 +25,10 @@
                       x:DataType="observers:PropertyObserver"
                       ItemsSource="{Binding Properties}">
 
-        <Border x:Name="Border" Background="Transparent" Focusable="True">
+        <Border x:Name="Border" 
+                Background="Transparent"
+                Focusable="True" 
+                IsTabStop="False" >
 
             <Border.ContextFlyout>
                 <MenuFlyout

@@ -54,13 +54,6 @@
         <converters:ValueResourceKey Value="Spec" Resource="IconThemedSpec" />
         <converters:ValueResourceKey Value="Source" Resource="IconThemedSource" />
         <converters:ValueResourceKey Value="Run" Resource="IconThemedRun" />
-        <converters:ValueResourceKey Value="Runner" Resource="IconThemedRun" />
-        <converters:ValueResourceKey Value="Boolean" Resource="IconThemedBoolean" />
-        <converters:ValueResourceKey Value="Number" Resource="IconThemedNumber" />
-        <converters:ValueResourceKey Value="Text" Resource="IconThemedText" />
-        <converters:ValueResourceKey Value="Date" Resource="IconThemedDate" />
-        <converters:ValueResourceKey Value="Enum" Resource="IconThemedEnum" />
-        <converters:ValueResourceKey Value="Element" Resource="IconThemedElement" />
         <converters:ValueResourceKey Value="Settings" Resource="IconFilledCog" />
     </converters:KeyResourceConverter>
 
@@ -76,6 +69,7 @@
     </converters:KeyResourceConverter>
 
     <converters:KeyResourceConverter x:Key="TypeGroupIconConverter">
+        <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Default}" Resource="IconThemedDefault" />
         <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Boolean}" Resource="IconThemedBoolean" />
         <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Number}" Resource="IconThemedNumber" />
         <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Text}" Resource="IconThemedText" />

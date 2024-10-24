@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoSpex.Client.Resources;
@@ -76,7 +77,7 @@ public partial class CriterionObserver : Observer<Criterion>,
         switch (e.PropertyName)
         {
             case nameof(Property):
-                Operation = Operation.None;
+                Operation = Operation.Supports(Property) ? Operation : Operation.None;
                 break;
             case nameof(Operation):
                 UpdateArgument();
@@ -100,10 +101,10 @@ public partial class CriterionObserver : Observer<Criterion>,
                 Property = property;
                 return;
             case string path:
-                Property = Property.This(Model.Type).GetProperty(path) ?? new Property(path, Model.Type);
+                Property = Property.This(Model.Type).GetProperty(path);
                 return;
             case TagName tagName:
-                Property = Property.This(Model.Type).GetProperty(tagName) ?? new Property(tagName, Model.Type);
+                Property = Property.This(Model.Type).GetProperty(tagName);
                 return;
         }
     }
@@ -146,6 +147,9 @@ public partial class CriterionObserver : Observer<Criterion>,
         Forget(Argument);
         Argument.Dispose();
 
+        if (Operation is NoneOperation)
+            Argument = new ArgumentObserver(Engine.Argument.Default);
+
         if (Operation is BinaryOperation)
             Argument = new ArgumentObserver(new Argument());
 
@@ -159,6 +163,65 @@ public partial class CriterionObserver : Observer<Criterion>,
             Argument = new ArgumentObserver(new Argument(new List<Argument> { new() }));
 
         Track(Argument);
+    }
+
+    /// <inheritdoc />
+    protected override Task Move(object? source)
+    {
+        if (source is not CriterionObserver criterion) return Task.CompletedTask;
+        if (!TryGetSpec(out var spec)) return Task.CompletedTask;
+
+        MoveItem(spec.Filters, criterion);
+        MoveItem(spec.Verifications, criterion);
+
+        return Task.CompletedTask;
+
+        void MoveItem(ObserverCollection<Criterion, CriterionObserver> collection, CriterionObserver observer)
+        {
+            if (!collection.Contains(observer)) return;
+
+            var oldIndex = collection.IndexOf(observer);
+            var thisIndex = collection.IndexOf(this);
+            var newIndex = thisIndex > oldIndex ? thisIndex : thisIndex + 1;
+
+            collection.Move(oldIndex, newIndex);
+        }
+    }
+
+    /// <inheritdoc />
+    protected override bool CanMove(object? source)
+    {
+        if (source is not CriterionObserver other) return false;
+        if (this == other) return false;
+        if (!TryGetSpec(out var spec)) return false;
+        return (spec.Filters.Contains(this) && spec.Filters.Contains(other)) ||
+               (spec.Verifications.Contains(this) && spec.Verifications.Contains(other));
+    }
+
+    /// <inheritdoc />
+    protected override Task Duplicate()
+    {
+        if (!TryGetSpec(out var spec)) return Task.CompletedTask;
+
+        if (spec.Filters.Contains(this))
+            spec.Filters.Add(new CriterionObserver(Model.Duplicate()));
+
+        if (spec.Verifications.Contains(this))
+            spec.Verifications.Add(new CriterionObserver(Model.Duplicate()));
+
+        return Task.CompletedTask;
+    }
+
+    /// <inheritdoc />
+    protected override async Task Copy()
+    {
+        var clipboard = Shell.Clipboard;
+        if (clipboard is null) return;
+
+        var selected = SelectedItems.Cast<CriterionObserver>().Select(c => c.Model).ToList();
+        var data = JsonSerializer.Serialize(selected);
+
+        await clipboard.SetTextAsync(data);
     }
 
     /// <summary>
@@ -218,7 +281,7 @@ public partial class CriterionObserver : Observer<Criterion>,
         var member = memeberIndex > -1 ? filter[(memeberIndex + 1)..] : filter;
 
         var property = origin.GetProperty(path);
-        var properties = property?.Properties ?? [];
+        var properties = property.Properties;
         return properties.Where(p => p.Name.Satisfies(member)).OrderBy(p => p.Name);
     }
 
@@ -228,7 +291,7 @@ public partial class CriterionObserver : Observer<Criterion>,
     /// </summary>
     private Task<IEnumerable<object>> GetOperations(string? filter, CancellationToken token)
     {
-        var filtered = Operation.Supporting(Property);
+        var filtered = Operation.Supporting(Property).Where(o => o.Name.Satisfies(filter));
         return Task.FromResult(filtered.Cast<object>());
     }
 
@@ -243,13 +306,32 @@ public partial class CriterionObserver : Observer<Criterion>,
         return false;
     }
 
-    protected override IEnumerable<MenuActionItem> GenerateContextItems()
+    /// <summary>
+    /// Tries to get the corresponding SpecObserver for this criterion instance.
+    /// </summary>
+    private bool TryGetSpec(out SpecObserver spec)
+    {
+        var result = GetObserver<SpecObserver>(s => s.Model.Contains(Model));
+
+        if (result is null)
+        {
+            spec = default!;
+            return false;
+        }
+
+        spec = result;
+        return true;
+    }
+
+    /// <inheritdoc />
+    protected override IEnumerable<MenuActionItem> GenerateMenuItems()
     {
         yield return new MenuActionItem
         {
             Header = "Copy",
             Icon = Resource.Find("IconFilledCopy"),
-            Gesture = new KeyGesture(Key.C, KeyModifiers.Control)
+            Gesture = new KeyGesture(Key.C, KeyModifiers.Control),
+            Command = CopyCommand
         };
 
         yield return new MenuActionItem
@@ -270,18 +352,50 @@ public partial class CriterionObserver : Observer<Criterion>,
         };
     }
 
+    /// <inheritdoc />
+    protected override IEnumerable<MenuActionItem> GenerateContextItems()
+    {
+        yield return new MenuActionItem
+        {
+            Header = "Copy",
+            Icon = Resource.Find("IconFilledCopy"),
+            Gesture = new KeyGesture(Key.C, KeyModifiers.Control),
+            Command = CopyCommand,
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Duplicate",
+            Icon = Resource.Find("IconFilledClone"),
+            Command = DuplicateCommand,
+            Gesture = new KeyGesture(Key.D, KeyModifiers.Control),
+            DetermineVisibility = () => HasSingleSelection
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Delete",
+            Icon = Resource.Find("IconFilledTrash"),
+            Classes = "danger",
+            Command = DeleteSelectedCommand,
+            Gesture = new KeyGesture(Key.Delete)
+        };
+    }
+
     /// <summary>
-    /// 
+    /// A request message the retrieve all potential tag name suggesstions for tag type properties
+    /// when the user inputs a collection indexer expression.
     /// </summary>
     public class TagNameRequest(Spec spec, string? filter) : AsyncCollectionRequestMessage<TagName>
     {
         /// <summary>
-        /// 
+        /// The spec instance that the criterion belongs to. We need to use this to execute filters to narrow the
+        /// search space down to applicable tag names.
         /// </summary>
         public Spec Spec { get; } = spec;
 
         /// <summary>
-        /// 
+        /// The current entered filter text for the property which we use to filter the list further.
         /// </summary>
         public string? Filter { get; } = filter;
     }

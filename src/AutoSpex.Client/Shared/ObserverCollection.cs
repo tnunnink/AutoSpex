@@ -18,6 +18,7 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
     private Action<int, TModel>? _add;
     private Action<int, TModel>? _insert;
     private Action<int, TModel>? _remove;
+    private Action<int, int>? _move;
     private Action? _clear;
     private Func<int>? _count;
 
@@ -30,6 +31,7 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
         Action<int, TModel>? add = default,
         Action<int, TModel>? insert = default,
         Action<int, TModel>? remove = default,
+        Action<int, int>? move = default,
         Action? clear = default,
         Func<int>? count = default) : base(refresh())
     {
@@ -37,6 +39,7 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
         _add = add;
         _insert = insert;
         _remove = remove;
+        _move = move;
         _clear = clear;
         _count = count;
 
@@ -49,7 +52,7 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
         _add = (_, m) => models.Add(m);
         _insert = models.Insert;
         _remove = (_, m) => models.Remove(m);
-        _clear = models.Clear;
+        _move = models.Move;
         _count = () => models.Count;
 
         Attach(this);
@@ -131,6 +134,7 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
         _add = (_, m) => models.Add(m);
         _insert = models.Insert;
         _remove = (_, m) => models.Remove(m);
+        _move = models.Move;
         _clear = models.Clear;
         _count = () => models.Count;
 
@@ -297,6 +301,16 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
         OnPropertyChanged(new PropertyChangedEventArgs(nameof(HasItems)));
     }
 
+    protected override void MoveItem(int oldIndex, int newIndex)
+    {
+        base.MoveItem(oldIndex, newIndex);
+        
+        //Abort if refreshing to avoid circular calls.
+        if (_refreshing) return;
+
+        _move?.Invoke(oldIndex, newIndex);
+    }
+
     /// <summary>Removes all items from the collection.</summary>
     protected override void ClearItems()
     {
@@ -431,5 +445,12 @@ public static class ObservableCollectionExtensions
         {
             collection.Add(item);
         }
+    }
+
+    public static void Move<T>(this IList<T> list, int oldIndex, int newIndex)
+    {
+        var item = list[oldIndex];
+        list.RemoveAt(oldIndex);
+        list.Insert(newIndex, item);
     }
 }

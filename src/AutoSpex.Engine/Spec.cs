@@ -141,6 +141,16 @@ public class Spec() : IEquatable<Spec>
     }
 
     /// <summary>
+    /// Checks if the Spec contains the given Criterion in its Filters or Verifications.
+    /// </summary>
+    /// <param name="criterion">The Criterion to check for within the Spec.</param>
+    /// <returns>True if the Spec contains the Criterion, false otherwise.</returns>
+    public bool Contains(Criterion criterion)
+    {
+        return Filters.Any(c => c.Contains(criterion)) || Verifications.Any(c => c.Contains(criterion));
+    }
+
+    /// <summary>
     /// Runs the configured specification against the provided L5X content and returns a verification result.
     /// </summary>
     /// <param name="content">The L5X content to run this specification against.</param>

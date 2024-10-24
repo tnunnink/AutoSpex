@@ -37,6 +37,13 @@ public abstract class Operation(string name, string value) : SmartEnum<Operation
     public static IEnumerable<Operation> Supporting(Property property) => List.Where(x => x.Supports(property.Group));
 
     /// <summary>
+    /// Determins whether the given property is supported by the current operation type.
+    /// </summary>
+    /// <param name="property">The property to check.</param>
+    /// <returns>True if the Operation supports the Proeprty; otherwise, false.</returns>
+    public bool Supports(Property property) => Supports(property.Group);
+
+    /// <summary>
     /// Determines whether the given TypeGroup is supported by the Operation.
     /// </summary>
     /// <param name="group">The TypeGroup to check.</param>
@@ -131,12 +138,11 @@ public abstract class Operation(string name, string value) : SmartEnum<Operation
     /// </summary>
     public static readonly Operation EndingWith = new EndingWithOperation();
 
-    //todo we need to develop a special entry for this operatio because it can be an unbounded collection or arguments.  leaving this for future development as needed.
-    /*/// <summary>
+    /// <summary>
     /// Represents an "in" operation. The operation checks whether the input value
     /// matches any value within a supplied list of values.
     /// </summary>
-    public static readonly Operation In = new InOperation();*/
+    public static readonly Operation In = new InOperation();
 
     /// <summary>
     /// Represents a like operation. The operation checks if the input value

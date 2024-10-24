@@ -9,6 +9,25 @@ public class PropertyTests
         var property = new Property("Name", typeof(string), Element.Tag.This);
         property.Should().NotBeNull();
     }
+    
+    [Test]
+    public void New_InvalidPropertyInfo_ShouldNotBeNull()
+    {
+        var property = new Property("Fake", typeof(string), Element.Tag.This);
+        property.Should().NotBeNull();
+    }
+    
+    [Test]
+    public void New_InvalidPropertyInfo_ShouldhaveExpectedValues()
+    {
+        var property = new Property("Fake", typeof(string), Element.Tag.This);
+
+        property.Key.Should().Be("L5Sharp.Core.Tag.Fake");
+        property.Origin.Should().Be(typeof(Tag));
+        property.Name.Should().Be("Fake");
+        property.Type.Should().Be(typeof(string));
+        property.Path.Should().Be("Fake");
+    }
 
     [Test]
     public void New_ValidPropertyInfo_ShouldHaveExpectedValues()
@@ -64,6 +83,19 @@ public class PropertyTests
         property?.Origin.Should().Be(typeof(Tag));
         property?.Type.Should().Be(typeof(Tag));
     }
+    
+    [Test]
+    public void GetProperty_InvalidProperty_ShouldRetrunUnknown()
+    {
+        var origin = Element.Tag.This;
+
+        var property = origin.GetProperty("Fake");
+
+        property.Should().NotBeNull();
+        property.Type.Should().Be(typeof(object));
+        property.Name.Should().Be("Fake");
+        property.Origin.Should().Be(typeof(Tag));
+    }
 
     [Test]
     public void GetProperty_TagSimpleProperty_ShouldReturnExpectedProperty()
@@ -73,12 +105,12 @@ public class PropertyTests
         var property = origin.GetProperty("Name");
 
         property.Should().NotBeNull();
-        property?.Key.Should().Be("L5Sharp.Core.Tag.Name");
-        property?.Origin.Should().Be(typeof(Tag));
-        property?.Path.Should().Be("Name");
-        property?.Name.Should().Be("Name");
-        property?.Type.Should().Be(typeof(string));
-        property?.Group.Should().Be(TypeGroup.Text);
+        property.Key.Should().Be("L5Sharp.Core.Tag.Name");
+        property.Origin.Should().Be(typeof(Tag));
+        property.Path.Should().Be("Name");
+        property.Name.Should().Be("Name");
+        property.Type.Should().Be(typeof(string));
+        property.Group.Should().Be(TypeGroup.Text);
     }
 
     [Test]
@@ -89,12 +121,12 @@ public class PropertyTests
         var property = origin.GetProperty("Radix.Name");
 
         property.Should().NotBeNull();
-        property?.Key.Should().Be("L5Sharp.Core.Tag.Radix.Name");
-        property?.Origin.Should().Be(typeof(Tag));
-        property?.Path.Should().Be("Radix.Name");
-        property?.Name.Should().Be("Name");
-        property?.Type.Should().Be(typeof(string));
-        property?.Group.Should().Be(TypeGroup.Text);
+        property.Key.Should().Be("L5Sharp.Core.Tag.Radix.Name");
+        property.Origin.Should().Be(typeof(Tag));
+        property.Path.Should().Be("Radix.Name");
+        property.Name.Should().Be("Name");
+        property.Type.Should().Be(typeof(string));
+        property.Group.Should().Be(TypeGroup.Text);
     }
 
     [Test]
@@ -105,22 +137,25 @@ public class PropertyTests
         var property = origin.GetProperty("Members[1]");
 
         property.Should().NotBeNull();
-        property?.Key.Should().Be("L5Sharp.Core.Tag.Members[1]");
-        property?.Origin.Should().Be(typeof(Tag));
-        property?.Path.Should().Be("Members[1]");
-        property?.Name.Should().Be("[1]");
-        property?.Type.Should().Be(typeof(Tag));
-        property?.Group.Should().Be(TypeGroup.Element);
+        property.Key.Should().Be("L5Sharp.Core.Tag.Members[1]");
+        property.Origin.Should().Be(typeof(Tag));
+        property.Path.Should().Be("Members[1]");
+        property.Name.Should().Be("[1]");
+        property.Type.Should().Be(typeof(Tag));
+        property.Group.Should().Be(TypeGroup.Element);
     }
 
     [Test]
-    public void GetProperty_CollectionIndexPropertyPartiallyCompleted_ShouldRetrunNull()
+    public void GetProperty_CollectionIndexPropertyPartiallyCompleted_ShouldRetrunUnknown()
     {
         var origin = Element.Tag.This;
 
         var property = origin.GetProperty("Members[");
 
-        property.Should().BeNull();
+        property.Should().NotBeNull();
+        property.Type.Should().Be(typeof(object));
+        property.Name.Should().Be("[");
+        property.Parent?.Name.Should().Be("Members");
     }
 
     [Test]

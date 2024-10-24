@@ -114,8 +114,7 @@ public partial class NodeObserver : Observer<Node>,
     /// Command to move the provided node and the selected items to this node container.
     /// </summary>
     /// <param name="source">The node that is to be moved to this node.</param>
-    [RelayCommand(CanExecute = nameof(CanMove))]
-    private async Task Move(object? source)
+    protected override async Task Move(object? source)
     {
         if (source is not NodeObserver node) return;
 
@@ -136,7 +135,7 @@ public partial class NodeObserver : Observer<Node>,
     /// </summary>
     /// <param name="source">The source command parameter.</param>
     /// <returns>true if the provided source contains valid nodes to be added to this node. Otherwise, false.</returns>
-    private bool CanMove(object? source)
+    protected override bool CanMove(object? source)
     {
         if (source is not NodeObserver node) return false;
         if (Type == NodeType.Spec) return false;

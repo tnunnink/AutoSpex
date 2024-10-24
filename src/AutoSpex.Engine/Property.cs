@@ -162,10 +162,8 @@ public class Property : IEquatable<Property>
     /// <see cref="Element"/> and <see cref="Property"/> make use of this extension to retrieve child property objects.
     /// This extension will check if the type is an Element type and if so also search the defined custom properties.
     /// </remarks>
-    public Property? GetProperty(string? path)
+    public Property GetProperty(string? path)
     {
-        if (path is null) return default;
-
         var property = this;
         var properties = Properties.ToList();
 
@@ -178,20 +176,20 @@ public class Property : IEquatable<Property>
             if (path.StartsWith(IndexOpenSeparator) && path.Contains(IndexCloseSeparator))
             {
                 index = path.IndexOf(IndexCloseSeparator) + 1;
-                member = index >= 0 ? path[..index] : path;
+                member = index > 0 ? path[..index] : path;
                 property = new Property(member, Type.SelfOrInnerType(), property);
             }
             else
             {
                 index = path.IndexOfAny(Separators);
-                member = index >= 0 ? path[..index] : path;
+                member = index > 0 ? path[..index] : path;
                 var defined = properties.SingleOrDefault(p => p.Name == member);
-                if (defined is null) return default;
+                if (defined is null) return new Property(member, typeof(object), property);
                 property = new Property(defined, property);
             }
 
             properties = property.Properties.ToList();
-            path = index >= 0 ? path[index..].TrimStart(MemberSeparator) : string.Empty;
+            path = index > 0 ? path[index..].TrimStart(MemberSeparator) : string.Empty;
         }
 
         return property;
@@ -286,7 +284,7 @@ public class Property : IEquatable<Property>
         if (Group == TypeGroup.Element)
         {
             //Handle indexer properties next. Only supporting single parameter indexers since that is all we really have anyway.
-            //These are treated separately to change the display name of the property. 
+            //These are treated separately to change the display name of the property.
             var indexers = Type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
                 .Where(p => p.GetIndexParameters().Length == 1 && !PropertyExclusions.Contains(p.Name));
 

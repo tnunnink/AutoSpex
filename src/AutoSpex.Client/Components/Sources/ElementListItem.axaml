@@ -24,6 +24,7 @@
         <Border x:Name="Border"
                 Background="Transparent"
                 Focusable="True"
+                IsTabStop="False"
                 Padding="{a:ThemeResource ListItemPadding}">
 
             <Border.ContextFlyout>

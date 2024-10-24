@@ -18,6 +18,18 @@ public class ResultState : SmartEnum<ResultState, int>
     public static readonly ResultState Errored = new(nameof(Errored), 6);
 
     /// <summary>
+    /// Indicates that the <see cref="ResultState"/> value is an outcome result (result of running a spec). This means
+    /// it is either inconslusive, passed, failed, or errored.
+    /// </summary>
+    public bool IsOutcome => Value > 2;
+
+    /// <summary>
+    /// Indicates that the <see cref="ResultState"/> value is a conclusive outcome result,
+    /// or a state where we difinitively know the result of a spec. The means it is either passed, failed, or errored.
+    /// </summary>
+    public bool IsConclusive => Value > 3;
+
+    /// <summary>
     /// Gets the maximum value of a collection of ResultState values or returns a default value if the collection is empty.
     /// </summary>
     /// <param name="states">The collection of ResultState values.</param>

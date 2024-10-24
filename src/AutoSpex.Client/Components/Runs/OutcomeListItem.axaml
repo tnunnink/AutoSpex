@@ -19,7 +19,11 @@
 
     <DataTemplate x:Key="OutcomeListItem" x:DataType="observers:OutcomeObserver">
 
-        <Border x:Name="Border" Focusable="True" Background="Transparent" Padding="{a:ThemeResource ListItemPadding}">
+        <Border x:Name="Border"
+                Background="Transparent"
+                Focusable="True" 
+                IsTabStop="False" 
+                Padding="{a:ThemeResource ListItemPadding}">
 
             <Interaction.Behaviors>
                 <ExecuteCommandOnKeyDownBehavior

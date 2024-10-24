@@ -10,10 +10,9 @@ using CommunityToolkit.Mvvm.Messaging;
 namespace AutoSpex.Client.Observers;
 
 public partial class SpecObserver : Observer<Spec>,
+    IRecipient<Observer.Get<SpecObserver>>,
     IRecipient<Observer.Deleted>,
-    IRecipient<Observer.MakeCopy>,
-    IRecipient<Observer.GetSelected>,
-    IRecipient<Observer.Get<SpecObserver>>
+    IRecipient<Observer.GetSelected>
 {
     public SpecObserver(Spec model) : base(model)
     {
@@ -87,6 +86,25 @@ public partial class SpecObserver : Observer<Spec>,
     }
 
     /// <summary>
+    /// Command to add the criteria copied to the clipboard to the current spec filters.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanAddCriteria))]
+    private async Task PasteFilters()
+    {
+        var criteria = await GetClipboardObservers<Criterion>();
+
+        var copies = criteria.Select(c => new CriterionObserver(new Criterion(Element.Type)
+        {
+            Property = Element.Property(c.Property.Path) ?? new Property(c.Property.Path, typeof(object), Element.This),
+            Negation = c.Negation,
+            Operation = c.Operation,
+            Argument = c.Argument
+        }));
+
+        Filters.AddRange(copies);
+    }
+
+    /// <summary>
     /// Adds a verification to the specification.
     /// </summary>
     [RelayCommand(CanExecute = nameof(CanAddCriteria))]
@@ -94,6 +112,25 @@ public partial class SpecObserver : Observer<Spec>,
     {
         if (Element == Element.Default) return;
         Verifications.Add(new CriterionObserver(new Criterion(Element.Type)));
+    }
+
+    /// <summary>
+    /// Command to add the criteria copied to the clipboard to the current spec verifications.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanAddCriteria))]
+    private async Task PasteVerifications()
+    {
+        var criteria = await GetClipboardObservers<Criterion>();
+
+        var copies = criteria.Select(c => new CriterionObserver(new Criterion(Element.Type)
+        {
+            Property = Element.Property(c.Property.Path) ?? new Property(c.Property.Path, typeof(object), Element.This),
+            Negation = c.Negation,
+            Operation = c.Operation,
+            Argument = c.Argument
+        }));
+
+        Verifications.AddRange(copies);
     }
 
     /// <summary>
@@ -139,6 +176,20 @@ public partial class SpecObserver : Observer<Spec>,
     }
 
     /// <summary>
+    /// Handles the request to get the spec observer that passes the provied predicate. This allows child criteria
+    /// to have access to the spec that contains them.
+    /// </summary>
+    public void Receive(Get<SpecObserver> message)
+    {
+        if (message.HasReceivedResponse) return;
+
+        if (message.Predicate.Invoke(this))
+        {
+            message.Reply(this);
+        }
+    }
+
+    /// <summary>
     /// If a criterion delete message is received we will delete all selected criterion from the list.
     /// </summary>
     public void Receive(Deleted message)
@@ -148,25 +199,6 @@ public partial class SpecObserver : Observer<Spec>,
         //Removes only if it exists, so we don't need to perform checks first.
         Filters.RemoveAny(x => x.Id == observer.Id);
         Verifications.RemoveAny(x => x.Id == observer.Id);
-    }
-
-    /// <summary>
-    /// Handle reception of the make copy command by duplicating the recieved criterion and adding the copy to the
-    /// appropriate filters or verifications collections.
-    /// </summary>
-    public void Receive(MakeCopy message)
-    {
-        if (message.Observer is not CriterionObserver criterion) return;
-
-        if (Filters.Any(x => x.Is(criterion)))
-        {
-            Filters.Add(new CriterionObserver(criterion.Model.Duplicate()));
-        }
-
-        if (Verifications.Any(x => x.Is(criterion)))
-        {
-            Verifications.Add(new CriterionObserver(criterion.Model.Duplicate()));
-        }
     }
 
     /// <summary>
@@ -188,16 +220,6 @@ public partial class SpecObserver : Observer<Spec>,
         {
             foreach (var filter in SelectedVerifications)
                 message.Reply(filter);
-        }
-    }
-
-    public void Receive(Get<SpecObserver> message)
-    {
-        if (message.HasReceivedResponse) return;
-
-        if (message.Predicate.Invoke(this))
-        {
-            message.Reply(this);
         }
     }
 

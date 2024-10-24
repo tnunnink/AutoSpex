@@ -11,7 +11,7 @@
     <Design.Width>800</Design.Width>
     <Design.Height>700</Design.Height>
 
-    <Grid RowDefinitions="Auto,*">
+    <Grid RowDefinitions="Auto,*" Margin="20">
 
         <Border
             Background="{a:ThemeResource Container2BackgroundBrush}"

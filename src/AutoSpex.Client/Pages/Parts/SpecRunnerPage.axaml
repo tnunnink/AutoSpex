@@ -51,7 +51,7 @@
                         ToolTip.Tip="Show Results"
                         ToolTip.Placement="BottomEdgeAlignedRight">
                         <Button.RenderTransform>
-                            <RotateTransform Angle="180" />
+                            <RotateTransform Angle="270" />
                         </Button.RenderTransform>
                         <Interaction.Behaviors>
                             <behaviors:ToggleDrawerOnClickBehavior />

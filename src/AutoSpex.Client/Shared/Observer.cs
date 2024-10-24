@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using AutoSpex.Client.Services;
 using AutoSpex.Engine;
@@ -237,13 +238,14 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
         if (Notifier.ShowIfFailed(result, $"Failed to rename item: {result.Reasons}")) return;
 
         Name = name;
-        Messenger.Send(new Renamed(this));
         IsNew = false;
+
+        Messenger.Send(new Renamed(this));
     }
 
     /// <summary>
-    /// A command to duplicate the <see cref="Observer"/> object in the database and UI. The default
-    /// implementation does nothing and not all observers may need this, but it will be supported by more than one so
+    /// A command to duplicate the <see cref="Observer"/> object.
+    /// The default implementation does nothing and not all observers may need this, but it will be supported by more than one so
     /// this is to consolidate the code. 
     /// </summary>
     /// <returns>The <see cref="Task"/> representing the async function to perform.</returns>
@@ -251,12 +253,60 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     protected virtual Task Duplicate() => Task.FromResult(Messenger.Send(new MakeCopy(this)));
 
     /// <summary>
-    /// A command to reset the IsNew state of...
+    /// A command to move and observer object in the list of observers to a different location.
+    /// This could be a different index in a list or different leaf in a tree.
+    /// The default implementation does nothing. Deriving observers requiring the feature must implement.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanMove))]
+    protected virtual Task Move(object? source) => Task.CompletedTask;
+
+    /// <summary>
+    /// Determines if the move command can be executed. This can help determine if drag/drop items are accepted by
+    /// the observer or not.
+    /// </summary>
+    /// <returns><c>true</c> if the object can be moved here; otherwise, <c>false</c></returns>
+    protected virtual bool CanMove(object? source) => false;
+
+    /// <summary>
+    /// A command to copy the <see cref="Observer"/> object to the clipboard so that the user can paste it somewhere
+    /// else that handles or accepts a paste command. By default, this command sets the name of the observer to the clipboard.
+    /// NOTE: At this time Avalonia Clipboard does not accept getting data objects as they are set, so I can't use
+    /// the actual object instance. This is why we are using serialization, which most of our engine objects support anyway.
+    /// Deriving observers should override this implementation as needed.
     /// </summary>
     [RelayCommand]
-    private void ResetIsNew()
+    protected virtual async Task Copy()
     {
-        IsNew = false;
+        var clipboard = Shell.Clipboard;
+        if (clipboard is null) return;
+        await clipboard.SetTextAsync(Name);
+    }
+
+    /// <summary>
+    /// A helper method that allows derived classes to get data from the clipboard. This assumes a collection of
+    /// objects of the specified type have been serialized to the clipboard as JSON. This is how we will handle copying
+    /// objects since the current Avalonia CLipboard does not support getting data objects in memory.
+    /// </summary>
+    /// <typeparam name="TData">The model type that was set on the clipboard.</typeparam>
+    protected async Task<List<TData>> GetClipboardObservers<TData>()
+    {
+        try
+        {
+            var clipboard = Shell.Clipboard;
+            if (clipboard is null) return [];
+
+            var json = await clipboard.GetTextAsync();
+            if (json is null) return [];
+
+            var observers = JsonSerializer.Deserialize<List<TData>>(json);
+            return observers ?? [];
+        }
+        catch (Exception e)
+        {
+            Notifier.ShowError("Unable to parse data from clipboard.", e.Message);
+        }
+
+        return [];
     }
 
     #endregion
@@ -274,6 +324,7 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
         if (Name != message.Observer.Name)
         {
             Name = message.Observer.Name;
+            Messenger.Send(new Renamed(this));
         }
 
         OnPropertyChanged(nameof(Name));
@@ -318,22 +369,7 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     /// </summary>
     /// <param name="predicate">The predicate the observer must satisfy.</param>
     /// <typeparam name="TObserver">The type of observer the request is representing.</typeparam>
-    /// <remarks>
-    /// This is in contrast to <see cref="Find{TObserver}"/> which can return all observers that satisfy
-    /// the provided predicate.
-    /// </remarks>
     public class Get<TObserver>(Func<TObserver, bool> predicate) : RequestMessage<TObserver> where TObserver : Observer
-    {
-        public Func<TObserver, bool> Predicate { get; } = predicate;
-    }
-
-    /// <summary>
-    /// A request to retrieve all in memory instances of and observer that satisfy the provided predicate.
-    /// </summary>
-    /// <param name="predicate">The predicate the observer must satisfy.</param>
-    /// <typeparam name="TObserver">The type of observer the request is representing.</typeparam>
-    public class Find<TObserver>(Func<TObserver, bool> predicate)
-        : AsyncCollectionRequestMessage<TObserver> where TObserver : Observer
     {
         public Func<TObserver, bool> Predicate { get; } = predicate;
     }
