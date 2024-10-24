@@ -168,53 +168,45 @@ public partial class CriterionObserver : Observer<Criterion>,
     /// <inheritdoc />
     protected override Task Move(object? source)
     {
-        if (source is not CriterionObserver criterion)
-            return Task.CompletedTask;
+        if (source is not CriterionObserver criterion) return Task.CompletedTask;
+        if (!TryGetSpec(out var spec)) return Task.CompletedTask;
 
-        var spec = GetObserver<SpecObserver>(s => s.Model.Contains(Model));
-        if (spec is null)
-            return Task.CompletedTask;
-
-        if (spec.Filters.Any(x => x.Is(criterion)))
-        {
-            var oldIndex = spec.Filters.IndexOf(criterion);
-            var newIndex = spec.Filters.IndexOf(this);
-            spec.Filters.Move(oldIndex, newIndex);
-        }
-
-        if (spec.Verifications.Any(x => x.Is(criterion)))
-        {
-            var oldIndex = spec.Verifications.IndexOf(criterion);
-            var myIndex = spec.Verifications.IndexOf(this);
-            var newIndex = myIndex >= oldIndex ? myIndex : myIndex + 1;
-
-            spec.Verifications.Move(oldIndex, newIndex);
-        }
+        MoveItem(spec.Filters, criterion);
+        MoveItem(spec.Verifications, criterion);
 
         return Task.CompletedTask;
+
+        void MoveItem(ObserverCollection<Criterion, CriterionObserver> collection, CriterionObserver observer)
+        {
+            if (!collection.Contains(observer)) return;
+
+            var oldIndex = collection.IndexOf(observer);
+            var thisIndex = collection.IndexOf(this);
+            var newIndex = thisIndex > oldIndex ? thisIndex : thisIndex + 1;
+
+            collection.Move(oldIndex, newIndex);
+        }
     }
 
     /// <inheritdoc />
     protected override bool CanMove(object? source)
     {
-        if (source is not CriterionObserver criterion) return false;
-        if (this == criterion) return false;
+        if (source is not CriterionObserver other) return false;
+        if (this == other) return false;
         if (!TryGetSpec(out var spec)) return false;
-        return (spec.Filters.Contains(this) && spec.Filters.Contains(criterion)) ||
-               (spec.Verifications.Contains(this) && spec.Verifications.Contains(criterion));
+        return (spec.Filters.Contains(this) && spec.Filters.Contains(other)) ||
+               (spec.Verifications.Contains(this) && spec.Verifications.Contains(other));
     }
 
     /// <inheritdoc />
     protected override Task Duplicate()
     {
-        var spec = GetObserver<SpecObserver>(s => s.Model.Contains(Model));
-        if (spec is null)
-            return Task.CompletedTask;
+        if (!TryGetSpec(out var spec)) return Task.CompletedTask;
 
-        if (spec.Filters.Any(x => x.Is(this)))
+        if (spec.Filters.Contains(this))
             spec.Filters.Add(new CriterionObserver(Model.Duplicate()));
 
-        if (spec.Verifications.Any(x => x.Is(this)))
+        if (spec.Verifications.Contains(this))
             spec.Verifications.Add(new CriterionObserver(Model.Duplicate()));
 
         return Task.CompletedTask;
@@ -362,17 +354,19 @@ public partial class CriterionObserver : Observer<Criterion>,
     }
 
     /// <summary>
-    /// 
+    /// A request message the retrieve all potential tag name suggesstions for tag type properties
+    /// when the user inputs a collection indexer expression.
     /// </summary>
     public class TagNameRequest(Spec spec, string? filter) : AsyncCollectionRequestMessage<TagName>
     {
         /// <summary>
-        /// 
+        /// The spec instance that the criterion belongs to. We need to use this to execute filters to narrow the
+        /// search space down to applicable tag names.
         /// </summary>
         public Spec Spec { get; } = spec;
 
         /// <summary>
-        /// 
+        /// The current entered filter text for the property which we use to filter the list further.
         /// </summary>
         public string? Filter { get; } = filter;
     }
