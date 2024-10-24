@@ -17,7 +17,6 @@ namespace AutoSpex.Client.Observers;
 public partial class RunObserver : Observer<Run>
 {
     private CancellationTokenSource? _cancellation;
-    private int Total => Model.Outcomes.Count();
 
     /// <inheritdoc/>
     public RunObserver(Run model) : base(model)
@@ -37,6 +36,7 @@ public partial class RunObserver : Observer<Run>
     public override string Icon => nameof(Run);
     public DateTime RanOn => Model.RanOn;
     public string RanBy => Model.RanBy;
+    public int Total => Model.Outcomes.Count();
     public int Ran => Model.Outcomes.Count(x => x.Verification.Result > ResultState.Pending);
     public int Passed => Model.Outcomes.Count(x => x.Verification.Result == ResultState.Passed);
     public int Failed => Model.Outcomes.Count(x => x.Verification.Result == ResultState.Failed);
@@ -166,6 +166,7 @@ public partial class RunObserver : Observer<Run>
     {
         var message = new OutcomeObserver.Complete(outcome);
         Messenger.Send(message);
+        
         OnPropertyChanged(nameof(Ran));
         OnPropertyChanged(nameof(Progress));
     }

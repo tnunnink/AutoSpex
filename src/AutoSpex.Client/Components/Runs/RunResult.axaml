@@ -43,7 +43,7 @@
                 Padding="7 0" CornerRadius="20">
                 <StackPanel Orientation="Horizontal" Spacing="5">
                     <PathIcon Theme="{StaticResource IconLineCircleHalfFill}" Classes="accent size-sm" />
-                    <TextBlock Text="{Binding Ran}" Foreground="{a:ThemeResource ControlForegroundBrushSoftAccent}" />
+                    <TextBlock Text="{Binding Total}" Foreground="{a:ThemeResource ControlForegroundBrushSoftAccent}" />
                     <ToolTip.Tip>Total</ToolTip.Tip>
                 </StackPanel>
             </Button>
