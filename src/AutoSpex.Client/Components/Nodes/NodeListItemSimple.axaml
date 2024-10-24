@@ -16,7 +16,8 @@
     </Design.PreviewWith>
 
     <DataTemplate x:Key="NodeListItemSimple" x:DataType="observers:NodeObserver">
-        <Border Background="Transparent" Focusable="True" Padding="{a:ThemeResource ListItemPadding}">
+        
+        <Border Background="Transparent" Focusable="True" IsTabStop="False" Padding="{a:ThemeResource ListItemPadding}">
 
             <StackPanel Orientation="Horizontal" Spacing="10">
 

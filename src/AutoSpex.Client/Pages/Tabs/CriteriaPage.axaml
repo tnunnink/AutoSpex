@@ -91,7 +91,8 @@
                         SelectionMode="Multiple"
                         BorderBrush="{a:ThemeResource Container1BorderBrush}"
                         BorderThickness="1" CornerRadius="5"
-                        ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                        KeyboardNavigation.TabNavigation="Continue">
                         <Interaction.Behaviors>
                             <ExecuteCommandOnKeyDownBehavior
                                 Gesture="Ctrl+V"
@@ -143,7 +144,8 @@
                         SelectionMode="Multiple"
                         BorderBrush="{a:ThemeResource Container1BorderBrush}"
                         BorderThickness="1" CornerRadius="5"
-                        ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                        KeyboardNavigation.TabNavigation="Continue">
                         <Interaction.Behaviors>
                             <ExecuteCommandOnKeyDownBehavior
                                 Gesture="Ctrl+V"

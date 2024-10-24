@@ -1,7 +1,6 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
-             xmlns:components="clr-namespace:AutoSpex.Client.Components"
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
              xmlns:shared="clr-namespace:AutoSpex.Client.Shared"
              x:Class="AutoSpex.Client.Pages.DetailsPage"
@@ -42,7 +41,9 @@
             </Grid>
         </DataTemplate>
 
-        <ControlTheme x:Key="DetailTabTheme" x:DataType="shared:DetailPageModel" TargetType="TabStripItem"
+        <ControlTheme x:Key="DetailTabTheme"
+                      x:DataType="shared:DetailPageModel"
+                      TargetType="TabStripItem"
                       BasedOn="{StaticResource TabStripItemSoft}">
             <Setter Property="Padding" Value="10 7 3 7" />
             <Setter Property="ContextFlyout">
@@ -80,14 +81,21 @@
     </UserControl.Resources>
 
     <DockPanel>
-        <Border DockPanel.Dock="Top" Height="41"
-                BorderBrush="{a:ThemeResource Container1BorderBrush}"
-                BorderThickness="0 0 0 1">
+
+        <Border
+            DockPanel.Dock="Top"
+            Height="41"
+            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+            BorderThickness="0 0 0 1">
+
             <Grid ColumnDefinitions="*,Auto">
-                <ScrollViewer Grid.Column="0"
-                              Classes="theme-scroll-overlay"
-                              VerticalScrollBarVisibility="Disabled"
-                              HorizontalScrollBarVisibility="Hidden">
+
+                <ScrollViewer
+                    Grid.Column="0"
+                    Classes="theme-scroll-overlay"
+                    VerticalScrollBarVisibility="Disabled"
+                    HorizontalScrollBarVisibility="Hidden">
+
                     <TabStrip
                         ItemsSource="{Binding Pages}"
                         SelectedItem="{Binding Selected}"
@@ -101,19 +109,25 @@
                             </ItemsPanelTemplate>
                         </TabStrip.ItemsPanel>
                     </TabStrip>
+
                 </ScrollViewer>
 
-                <Border Grid.Column="1" Padding="10 0"
-                        Background="{a:ThemeResource Container2BackgroundBrush}">
+                <Border
+                    Grid.Column="1"
+                    Padding="10 0"
+                    Background="{a:ThemeResource Container2BackgroundBrush}">
+
                     <Button Theme="{a:ControlTheme ButtonSubtle}"
                             ContentTemplate="{a:GlyphTemplate DropDownArrow16}"
-                            Padding="3" VerticalAlignment="Center">
+                            Padding="3" VerticalAlignment="Center"
+                            IsTabStop="False">
                         <Button.Flyout>
                             <Flyout Placement="BottomEdgeAlignedRight" VerticalOffset="3" HorizontalOffset="8">
                                 <ContentControl Content="{Binding TabList^}" />
                             </Flyout>
                         </Button.Flyout>
                     </Button>
+
                 </Border>
             </Grid>
         </Border>
@@ -122,14 +136,16 @@
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="10"
                         IsVisible="{Binding !Pages.Count}">
 
-                <Image Source="../../Resources/Images/logo.png"
-                       Height="60" Width="60" Margin="20" />
+                <Image Source="../../Resources/Images/logo.png" Height="60" Width="60" Margin="20" />
 
                 <StackPanel Spacing="10">
+
                     <TextBlock Text="Create new item to get started"
                                TextAlignment="Center"
                                Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+
                         <StackPanel.Styles>
                             <Style Selector="Button">
                                 <Setter Property="Theme" Value="{a:ControlTheme ButtonSubtle}" />
@@ -158,14 +174,17 @@
                             ToolTip.Tip="New Source">
                             <PathIcon Theme="{StaticResource IconThemedSource}" />
                         </Button>
-                        
+
                     </StackPanel>
+
                 </StackPanel>
             </StackPanel>
 
             <ContentControl
                 IsVisible="{Binding Selected, Converter={x:Static ObjectConverters.IsNotNull}}"
                 Content="{Binding Selected}" />
+
         </Panel>
+
     </DockPanel>
 </UserControl>

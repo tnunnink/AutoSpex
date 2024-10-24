@@ -19,7 +19,7 @@
 
     <DataTemplate x:Key="NodeListItem" x:DataType="observers:NodeObserver">
 
-        <Border x:Name="Border" Focusable="True" Background="Transparent" Padding="5 0">
+        <Border x:Name="Border" Focusable="True" IsTabStop="False" Background="Transparent" Padding="5 0">
 
             <Border.ContextFlyout>
                 <MenuFlyout

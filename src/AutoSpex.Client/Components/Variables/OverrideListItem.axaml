@@ -18,7 +18,12 @@
     </Design.PreviewWith>
 
     <DataTemplate x:Key="OverrideListItem" x:DataType="observers:VariableObserver">
-        <Border x:Name="Border" Focusable="True" Background="Transparent">
+
+        <Border
+            x:Name="Border"
+            Background="Transparent"
+            Focusable="True"
+            IsTabStop="False">
 
             <Border.ContextFlyout>
                 <MenuFlyout
