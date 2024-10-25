@@ -14,7 +14,7 @@ using FluentResults;
 
 namespace AutoSpex.Client.Observers;
 
-public partial class RunObserver : Observer<Run>
+public partial class RunObserver : Observer<Run>, IRecipient<Observer.Get<RunObserver>>
 {
     private CancellationTokenSource? _cancellation;
 
@@ -37,7 +37,6 @@ public partial class RunObserver : Observer<Run>
     public DateTime RanOn => Model.RanOn;
     public string RanBy => Model.RanBy;
     public int Total => Model.Outcomes.Count();
-    public int Ran => Model.Outcomes.Count(x => x.Verification.Result > ResultState.Pending);
     public int Passed => Model.Outcomes.Count(x => x.Verification.Result == ResultState.Passed);
     public int Failed => Model.Outcomes.Count(x => x.Verification.Result == ResultState.Failed);
     public int Errored => Model.Outcomes.Count(x => x.Verification.Result == ResultState.Errored);
@@ -51,6 +50,8 @@ public partial class RunObserver : Observer<Run>
 
     [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(CancelCommand))]
     private ResultState _result;
+
+    [ObservableProperty] private int _ran;
 
     [ObservableProperty] private ResultState _filterState = ResultState.None;
 
@@ -66,6 +67,7 @@ public partial class RunObserver : Observer<Run>
 
         MarkPending();
 
+        //For visual effect only.
         await Task.Delay(1000, token);
 
         try
@@ -128,6 +130,16 @@ public partial class RunObserver : Observer<Run>
     }
 
     /// <summary>
+    /// Handle requests for the run observer instance. This is used by the child outcome to get the run source id.
+    /// </summary>
+    public void Receive(Get<RunObserver> message)
+    {
+        if (message.HasReceivedResponse) return;
+        if (!message.Predicate(this)) return;
+        message.Reply(this);
+    }
+
+    /// <summary>
     /// Loads the full source object configured for this run. This is the source that all specs will be run against.
     /// </summary>
     private async Task<Result<Source>> LoadSource(CancellationToken token)
@@ -166,8 +178,8 @@ public partial class RunObserver : Observer<Run>
     {
         var message = new OutcomeObserver.Complete(outcome);
         Messenger.Send(message);
-        
-        OnPropertyChanged(nameof(Ran));
+
+        Ran++;
         OnPropertyChanged(nameof(Progress));
     }
 
@@ -177,12 +189,15 @@ public partial class RunObserver : Observer<Run>
     /// </summary>
     private void MarkPending()
     {
-        Result = ResultState.Pending;
+        Ran = 0;
+        OnPropertyChanged(nameof(Progress));
 
         foreach (var outcome in Outcomes)
         {
             outcome.Result = ResultState.Pending;
         }
+
+        Result = ResultState.Pending;
     }
 
     /// <summary>
