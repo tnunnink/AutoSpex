@@ -97,7 +97,6 @@
                 BorderBrush="{a:ThemeResource Container1BorderBrush}"
                 BorderThickness="1" CornerRadius="5" />
 
-
         </Panel>
     </Grid>
 </UserControl>

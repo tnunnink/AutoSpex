@@ -2,8 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
-                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
-                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
 
     <Design.PreviewWith>
         <ListBox
@@ -16,22 +15,21 @@
     </Design.PreviewWith>
 
     <DataTemplate x:Key="NodeListItemSimple" x:DataType="observers:NodeObserver">
-        
-        <Border Background="Transparent" Focusable="True" IsTabStop="False" Padding="{a:ThemeResource ListItemPadding}">
+
+        <Border
+            Background="Transparent"
+            Focusable="True"
+            IsTabStop="False"
+            Padding="{a:ThemeResource ListItemPadding}">
 
             <StackPanel Orientation="Horizontal" Spacing="10">
 
                 <PathIcon
                     Theme="{Binding Type.Name, Converter={StaticResource KeyIconConverter}}" />
 
-                <controls:HighlightableTextBlock
-                    Text="{Binding Name}"
-                    HighlightedText="{Binding FilterText}"
-                    FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
-
                 <ContentControl
                     Content="{Binding}"
-                    ContentTemplate="{StaticResource BreadcrumbLabel}" />
+                    ContentTemplate="{StaticResource NodeHeaderHorizontal}" />
 
             </StackPanel>
 

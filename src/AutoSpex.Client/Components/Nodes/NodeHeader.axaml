@@ -1,0 +1,52 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+
+    <Design.PreviewWith>
+        <StackPanel Spacing="50" Margin="20">
+            <ContentControl
+                Content="{x:Static components:TestData.SpecNode}"
+                ContentTemplate="{DynamicResource NodeHeaderHorizontal}" />
+            <ContentControl
+                Content="{x:Static components:TestData.SpecNode}"
+                ContentTemplate="{DynamicResource NodeHeaderVeritical}" />
+        </StackPanel>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="NodeHeaderHorizontal" x:DataType="observers:NodeObserver">
+
+        <StackPanel Orientation="Horizontal" Spacing="10">
+
+            <controls:HighlightableTextBlock
+                Text="{Binding Name}"
+                HighlightedText="{Binding FilterText}"
+                FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
+
+            <ContentControl
+                Content="{Binding}"
+                ContentTemplate="{StaticResource BreadcrumbLabel}" />
+
+        </StackPanel>
+
+    </DataTemplate>
+
+    <DataTemplate x:Key="NodeHeaderVeritical" x:DataType="observers:NodeObserver">
+
+        <StackPanel Spacing="3">
+
+            <controls:HighlightableTextBlock
+                Text="{Binding Name}"
+                HighlightedText="{Binding FilterText}"
+                FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
+
+            <ContentControl
+                Content="{Binding}"
+                ContentTemplate="{StaticResource BreadcrumbLabel}" />
+
+        </StackPanel>
+
+    </DataTemplate>
+</ResourceDictionary>

@@ -3,9 +3,7 @@
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
                     xmlns:components="clr-namespace:AutoSpex.Client.Components"
-                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
-                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
-                    xmlns:shared="clr-namespace:AutoSpex.Client.Shared">
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
 
     <Design.PreviewWith>
         <ListBox
@@ -41,7 +39,8 @@
                         Padding="{a:ThemeResource ButtonPadding }">
                         <controls:HighlightableTextBlock
                             Text="{Binding Name}"
-                            HighlightedText="{Binding FilterText}" />
+                            HighlightedText="{Binding FilterText}"
+                            FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
                         <Button.Styles>
                             <Style Selector="Button:pointerover">
                                 <Setter
@@ -50,31 +49,6 @@
                             </Style>
                         </Button.Styles>
                     </Button>
-
-                    <!--<controls:Entry
-                        x:Name="NameEntry"
-                        Value="{Binding}"
-                        FontFamily="{a:ThemeResource DefaultFontFamily}"
-                        CommitCommand="{Binding RenameCommand}"
-                        MinDropDownWidth="{Binding #NameEntry.Bounds.Width}"
-                        Padding="7 5"
-                        HorizontalAlignment="Left">
-                        <controls:Entry.ValueTemplate>
-                            <DataTemplate x:DataType="shared:Observer">
-                                <controls:HighlightableTextBlock
-                                    Text="{Binding Name}"
-                                    HighlightedText="{Binding FilterText}" />
-                            </DataTemplate>
-                        </controls:Entry.ValueTemplate>
-                        <Interaction.Behaviors>
-                            <DataTriggerBehavior Binding="{Binding IsNew}" ComparisonCondition="Equal" Value="True">
-                                <ChangePropertyAction
-                                    TargetObject="NameEntry"
-                                    PropertyName="IsDropDownOpen"
-                                    Value="True" />
-                            </DataTriggerBehavior>
-                        </Interaction.Behaviors>
-                    </controls:Entry>-->
 
                     <ContentControl
                         Content="{Binding }"
