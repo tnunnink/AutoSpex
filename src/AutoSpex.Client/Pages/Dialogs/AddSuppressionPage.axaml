@@ -9,7 +9,7 @@
 
     <controls:Prompt
         Header="Add Suppression"
-        HeaderIcon="{StaticResource IconThemedSupressed}"
+        HeaderIcon="{StaticResource IconThemedSuppressed}"
         CancelButtonTheme="{a:ControlTheme ButtonSoft}"
         CancelCommandParameter="{x:Null}"
         ActionButtonText="Add"
