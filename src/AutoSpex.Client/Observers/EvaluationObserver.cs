@@ -27,6 +27,7 @@ public class EvaluationObserver : Observer<Evaluation>
     public ObservableCollection<string> Expected => new(Model.Expected);
     public string Actual => Model.Actual;
     public string? Error => Model.Error;
+    public string ExpectedSeparator => Expected.Count == 2 ? "and" : Expected.Count > 2 ? "," : string.Empty;
 
 
     /// <inheritdoc />
