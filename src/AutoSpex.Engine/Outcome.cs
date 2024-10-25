@@ -51,7 +51,7 @@ public class Outcome
     /// <param name="reason">The reason for suppressing the verification.</param>
     public void Suppress(string reason)
     {
-        Verification = Verification.Suppress();
+        Verification = Verification.Suppressed;
         Suppression = reason;
     }
 }

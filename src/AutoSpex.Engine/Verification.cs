@@ -41,13 +41,12 @@ public class Verification
     /// The None property is a predefined instance of the <see cref="Verification"/> class.
     /// It is useful when you need to initialize a verification object with no evaluations.
     /// </remarks>
-    /// <example>
-    /// This example demonstrates how to create a verification object with no evaluations:
-    /// <code>
-    /// var verification = Verification.None;
-    /// </code>
-    /// </example>
     public static Verification None => new(ResultState.None, [], 0);
+
+    /// <summary>
+    /// Represents a verification object with no evaluations and a result state of Suppressed.
+    /// </summary>
+    public static Verification Suppressed => new(ResultState.Suppressed, [], 0);
 
     /// <summary>
     /// Creates a new <see cref="Verification"/> for a single evaluation, using the result as the total result for the
@@ -105,15 +104,5 @@ public class Verification
         var result = ResultState.MaxOrDefault(verifications.Select(e => e.Result).ToList());
         duration = duration > 0 ? duration : verifications.Sum(x => x.Duration);
         return new Verification(result, verifications.SelectMany(v => v.Evaluations).ToList(), duration);
-    }
-
-    /// <summary>
-    /// Suppresses the current verification, setting the ResultState to Suppressed while keeping the
-    /// original evaluations and duration.
-    /// </summary>
-    /// <returns>A new Verification with the result state set to Suppressed.</returns>
-    public Verification Suppress()
-    {
-        return new Verification(ResultState.Suppressed, Evaluations, Duration);
     }
 }
