@@ -26,7 +26,7 @@
             <PathIcon Theme="{DynamicResource IconThemedNone}" />
             <PathIcon Theme="{DynamicResource IconThemedPending}" />
             <PathIcon Theme="{DynamicResource IconThemedRunning}" />
-            <PathIcon Theme="{DynamicResource IconThemedSupressed}" />
+            <PathIcon Theme="{DynamicResource IconThemedSuppressed}" />
             <PathIcon Theme="{DynamicResource IconThemedPassed}" />
             <PathIcon Theme="{DynamicResource IconThemedInconclusive}" />
             <PathIcon Theme="{DynamicResource IconThemedFailed}" />
@@ -71,7 +71,7 @@
     <ControlTheme x:Key="IconThemedRunning" TargetType="PathIcon" BasedOn="{StaticResource IconLineCircleNotch}">
         <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineSuccess}" />
     </ControlTheme>
-    <ControlTheme x:Key="IconThemedSupressed" TargetType="PathIcon" BasedOn="{StaticResource IconFilledPause}">
+    <ControlTheme x:Key="IconThemedSuppressed" TargetType="PathIcon" BasedOn="{StaticResource IconLineBan}">
         <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushDisabled}" />
     </ControlTheme>
     <ControlTheme x:Key="IconThemedPassed" TargetType="PathIcon" BasedOn="{StaticResource IconFilledCheck}">
