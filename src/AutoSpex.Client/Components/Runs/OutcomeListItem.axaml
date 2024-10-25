@@ -21,8 +21,8 @@
 
         <Border x:Name="Border"
                 Background="Transparent"
-                Focusable="True" 
-                IsTabStop="False" 
+                Focusable="True"
+                IsTabStop="False"
                 Padding="{a:ThemeResource ListItemPadding}">
 
             <Interaction.Behaviors>
@@ -88,6 +88,20 @@
                         <TextBlock Text="&lt; 1" IsVisible="{Binding !Duration}" />
                         <TextBlock Text="ms" Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
                     </StackPanel>
+
+                    <Button
+                        IsEnabled="{Binding Result.IsSuppressible}"
+                        Theme="{StaticResource IconButtonSmall}"
+                        properties:Icon.Theme="{StaticResource IconLineBan}"
+                        ToolTip.Tip="Add Suppression">
+                        <Button.Flyout>
+                            <Flyout Placement="BottomEdgeAlignedRight" HorizontalOffset="8" VerticalOffset="2">
+                                <ContentControl
+                                    Content="{Binding }"
+                                    ContentTemplate="{StaticResource OutcomeSuppressor}" />
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
 
                     <Button
                         Command="{Binding NavigateCommand}"
