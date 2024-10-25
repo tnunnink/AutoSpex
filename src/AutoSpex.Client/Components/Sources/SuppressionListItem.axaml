@@ -34,7 +34,7 @@
             <StackPanel Orientation="Horizontal" Spacing="10">
 
                 <PathIcon
-                    Theme="{StaticResource IconThemedSupressed}"
+                    Theme="{StaticResource IconThemedSuppressed}"
                     VerticalAlignment="Top" Margin="0 1 0 0" />
 
                 <StackPanel DockPanel.Dock="Left" Spacing="5">
