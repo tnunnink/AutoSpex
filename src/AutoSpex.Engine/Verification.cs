@@ -106,4 +106,14 @@ public class Verification
         duration = duration > 0 ? duration : verifications.Sum(x => x.Duration);
         return new Verification(result, verifications.SelectMany(v => v.Evaluations).ToList(), duration);
     }
+
+    /// <summary>
+    /// Suppresses the current verification, setting the ResultState to Suppressed while keeping the
+    /// original evaluations and duration.
+    /// </summary>
+    /// <returns>A new Verification with the result state set to Suppressed.</returns>
+    public Verification Suppress()
+    {
+        return new Verification(ResultState.Suppressed, Evaluations, Duration);
+    }
 }

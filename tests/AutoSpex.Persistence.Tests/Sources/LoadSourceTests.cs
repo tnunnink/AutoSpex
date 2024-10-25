@@ -45,6 +45,33 @@ public class LoadSourceTests
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().BeEquivalentTo(source, o => o.Excluding(s => s.Content));
     }
+    
+    [Test]
+    public async Task LoadSource_WithSourceWithSuppressions_ShouldBeSuccessAndExpected()
+    {
+        using var context = new TestContext();
+        var mediator = context.Resolve<IMediator>();
+
+        //Create nodes.
+        var container = Node.NewContainer();
+        var spec01 = container.AddSpec();
+        var spec02 = container.AddSpec();
+        var spec03 = container.AddSpec();
+        await mediator.Send(new CreateNodes([container, spec01, spec02, spec03]));
+
+        //Create source.
+        var source = new Source();
+        await mediator.Send(new CreateSource(source));
+        source.AddSuppression(spec01.NodeId, "Just to test that this works");
+        source.AddSuppression(spec02.NodeId, "Just to test that this works");
+        source.AddSuppression(spec03.NodeId, "Just to test that this works");
+        await mediator.Send(new SaveSource(source));
+
+        var result = await mediator.Send(new LoadSource(source.SourceId));
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().BeEquivalentTo(source, o => o.Excluding(s => s.Content));
+    }
 
     [Test]
     public async Task LoadSource_WithSourceWithOverrides_ShouldBeSuccessAndExpected()

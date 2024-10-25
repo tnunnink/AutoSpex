@@ -258,4 +258,13 @@ public static class TestData
         new(new[] { PassedEvaluation, FailedEvaluation, ErroredEvaluation });
 
     #endregion
+
+    #region Suppressions
+
+    public static SuppressionObserver Suppression =
+        new(new Suppression(Guid.NewGuid(), "This is the reason why this spec is being suppressed."));
+
+    public static ObservableCollection<SuppressionObserver> Suppresions = [Suppression, Suppression, Suppression];
+
+    #endregion
 }

@@ -96,6 +96,7 @@ public class Run
             throw new ArgumentNullException(nameof(source));
 
         source.Override(nodes.SelectMany(n => n.Variables));
+        //source.Override(nodes); this is how we would override the entire spec
 
         await RunAllNodes(nodes, source, running, complete, token);
 
@@ -124,6 +125,7 @@ public class Run
 
             running?.Invoke(outcome);
             outcome.Verification = await node.Run(content, token);
+            source.TrySuppress(outcome);
             complete?.Invoke(outcome);
         }
     }

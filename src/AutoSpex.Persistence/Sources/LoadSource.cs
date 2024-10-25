@@ -19,6 +19,13 @@ internal class LoadSourceHandler(IConnectionManager manager) : IRequestHandler<L
         FROM Source WHERE SourceId = @SourceId
         """;
 
+    private const string GetSuppressions =
+        """
+        SELECT NodeId, Reason 
+        FROM Suppression 
+        WHERE SourceId = @SourceId
+        """;
+
     private const string GetOverrides =
         """
         SELECT V.*, O.Value 
@@ -32,9 +39,12 @@ internal class LoadSourceHandler(IConnectionManager manager) : IRequestHandler<L
         using var connection = await manager.Connect(cancellationToken);
 
         var source = await connection.QuerySingleOrDefaultAsync<Source>(GetSource, new { request.SourceId });
-
         if (source is null)
             return Result.Fail($"Source not found: {request.SourceId}");
+
+        var suppressions = await connection.QueryAsync<Suppression>(GetSuppressions, new { request.SourceId });
+        foreach (var suppression in suppressions)
+            source.AddSuppression(suppression);
 
         var options = new JsonSerializerOptions { Converters = { new JsonObjectConverter() } };
 

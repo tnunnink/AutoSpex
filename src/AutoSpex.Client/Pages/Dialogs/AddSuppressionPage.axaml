@@ -1,0 +1,67 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+             x:Class="AutoSpex.Client.Pages.AddSuppressionPage"
+             x:DataType="pages:AddSuppressionPageModel">
+
+    <controls:Prompt
+        Header="Add Suppression"
+        HeaderIcon="{StaticResource IconThemedSupressed}"
+        CancelButtonTheme="{a:ControlTheme ButtonSoft}"
+        CancelCommandParameter="{x:Null}"
+        ActionButtonText="Add"
+        ActionButtonTheme="{a:ControlTheme ButtonSolid}"
+        ActionCommand="{Binding AddCommand}"
+        ActionCommandParameter="{Binding $parent[Window]}"
+        Classes="accent">
+
+
+        <StackPanel Spacing="20">
+
+            <StackPanel Spacing="7">
+
+                <Label Content="Spec" FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
+
+                <controls:Entry
+                    ButtonTheme="{a:ControlTheme ButtonOutline}"
+                    Watermark="Select specification"
+                    FontFamily="{a:ThemeResource DefaultFontFamily}"
+                    Value="{Binding Node}"
+                    ItemTemplate="{StaticResource NodeListItemSimple}"
+                    CommitCommand="{Binding UpdateNodeCommand}"
+                    Populate="{Binding PopulateNodes}"
+                    MinDropDownWidth="{Binding $self.Bounds.Width}"
+                    IsEmpty="{Binding Node, Converter={x:Static ObjectConverters.IsNull}}"
+                    Padding="7">
+                    <controls:Entry.ValueTemplate>
+                        <DataTemplate x:DataType="observers:NodeObserver">
+                            <StackPanel Orientation="Horizontal" Spacing="7">
+                                <PathIcon Theme="{Binding Type.Name, Converter={StaticResource KeyIconConverter}}" />
+                                <TextBlock Text="{Binding Name}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </controls:Entry.ValueTemplate>
+                </controls:Entry>
+            </StackPanel>
+
+            <StackPanel Spacing="5">
+
+                <Label Content="Reason" FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
+
+                <TextBox
+                    Theme="{StaticResource TextBoxOutlineHighlight}"
+                    Text="{Binding Reason}"
+                    Watermark="Why suppress this spec?"
+                    VerticalContentAlignment="Top"
+                    Width="400" MinHeight="80"
+                    TextWrapping="Wrap" />
+
+            </StackPanel>
+
+        </StackPanel>
+
+    </controls:Prompt>
+</UserControl>
