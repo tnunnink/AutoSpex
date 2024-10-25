@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
@@ -25,7 +24,7 @@ public partial class ArgumentObserver : Observer<Argument>
 {
     public ArgumentObserver(Argument argument) : base(argument)
     {
-        Value = GetValue();
+        _value = GetValue();
         Track(nameof(Value));
         Track(Value);
     }
@@ -144,8 +143,6 @@ public partial class ArgumentObserver : Observer<Argument>
         Model.Value = value switch
         {
             ReferenceObserver reference => reference.Model,
-            CriterionObserver criterion => criterion.Model,
-            ObserverCollection<Argument, ArgumentObserver> collection => collection.Select(x => x.Model).ToList(),
             ValueObserver observer => observer.Model,
             _ => value
         };
