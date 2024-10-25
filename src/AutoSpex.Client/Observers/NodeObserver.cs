@@ -69,7 +69,7 @@ public partial class NodeObserver : Observer<Node>,
         var children = Nodes.Count(x => x.FilterTree(filter));
 
         IsVisible = passes || children > 0;
-        IsExpanded = children > 0;
+        IsExpanded = string.IsNullOrEmpty(filter) ? IsExpanded : children > 0;
 
         return IsVisible;
     }

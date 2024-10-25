@@ -9,6 +9,7 @@ using AutoSpex.Persistence;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using FluentResults;
 using JetBrains.Annotations;
 
 namespace AutoSpex.Client.Pages;
@@ -18,7 +19,8 @@ public partial class DetailsPageModel : PageViewModel, IRecipient<NavigationRequ
 {
     [ObservableProperty] private ObservableCollection<DetailPageModel> _pages = [];
 
-    [ObservableProperty] private PageViewModel? _selected;
+    [ObservableProperty] private DetailPageModel? _selected;
+
     public Task<DetailTabListPageModel> TabList => Navigator.Navigate(() => new DetailTabListPageModel(Pages.ToList()));
 
     protected override void OnDeactivated()
@@ -159,6 +161,22 @@ public partial class DetailsPageModel : PageViewModel, IRecipient<NavigationRequ
         }
 
         pages.Clear();
+    }
+
+    [RelayCommand]
+    private async Task SaveSelected()
+    {
+        if (Selected is null || !Selected.IsChanged) return;
+        await Selected.Save();
+    }
+
+    [RelayCommand]
+    private async Task SaveAll()
+    {
+        foreach (var page in Pages.Where(p => p.IsChanged))
+        {
+            await page.Save();
+        }
     }
 
     /// <summary>

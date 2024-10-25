@@ -8,7 +8,7 @@
 
     <Design.Width>1200</Design.Width>
     <Design.Height>800</Design.Height>
-
+    
     <UserControl.Resources>
         <DataTemplate x:Key="DetailTabTemplate" x:DataType="shared:DetailPageModel">
             <Grid>

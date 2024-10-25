@@ -1,0 +1,72 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
+
+    <Design.PreviewWith>
+        <ListBox
+            ItemsSource="{x:Static components:TestData.Suppresions}"
+            ItemContainerTheme="{StaticResource ListBoxItemEntry}"
+            ItemTemplate="{DynamicResource SuppresionListItem}"
+            Width="700" Height="250" Margin="10"
+            SelectionMode="Multiple"
+            Background="{a:ThemeResource Container1BackgroundBrush}" />
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="SuppresionListItem" x:DataType="observers:SuppressionObserver">
+
+        <Border
+            x:Name="Border"
+            Focusable="True"
+            IsTabStop="False"
+            Background="Transparent"
+            Padding="{a:ThemeResource ListItemPadding}">
+
+            <Border.ContextFlyout>
+                <MenuFlyout
+                    ItemsSource="{Binding ContextItems}"
+                    ItemContainerTheme="{StaticResource MenuActionItem}"
+                    Placement="Pointer" />
+            </Border.ContextFlyout>
+
+            <StackPanel Orientation="Horizontal" Spacing="10">
+
+                <PathIcon
+                    Theme="{StaticResource IconThemedSuppressed}"
+                    VerticalAlignment="Top" Margin="0 1 0 0" />
+
+                <StackPanel DockPanel.Dock="Left" Spacing="5">
+                    
+                    <TextBlock
+                        Text="Node not found"
+                        IsVisible="{Binding Node, Converter={x:Static ObjectConverters.IsNull}}" />
+
+                    <ContentControl
+                        Content="{Binding Node}"
+                        ContentTemplate="{StaticResource NodeHeaderHorizontal}"
+                        IsVisible="{Binding Node, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
+                    <controls:HighlightableTextBlock
+                        Text="{Binding Reason}"
+                        HighlightedText="{Binding FilterText}"
+                        Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                        MaxWidth="800"
+                        TextTrimming="CharacterEllipsis"
+                        ToolTip.Tip="{Binding Reason}"/>
+
+                </StackPanel>
+
+            </StackPanel>
+
+            <Interaction.Behaviors>
+                <ExecuteCommandOnKeyDownBehavior
+                    Key="Delete"
+                    Command="{Binding DeleteSelectedCommand}"
+                    MarkAsHandled="True"
+                    FocusControl="Border" />
+            </Interaction.Behaviors>
+        </Border>
+    </DataTemplate>
+</ResourceDictionary>

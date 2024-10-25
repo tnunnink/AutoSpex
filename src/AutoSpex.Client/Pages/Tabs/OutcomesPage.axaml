@@ -64,13 +64,27 @@
                 Classes.vertical="{Binding $self.IsVertical}"
                 Classes.horizontal="{Binding !$self.IsVertical}">
 
-                <ListBox
-                    IsVisible="{Binding Run.Outcomes.Count}"
-                    ItemsSource="{Binding Run.Outcomes}"
-                    SelectedItem="{Binding Outcome}"
-                    ItemTemplate="{StaticResource OutcomeListItem}"
-                    ItemContainerTheme="{StaticResource ListBoxItemSimple}"
-                    Padding="5" />
+                <Grid RowDefinitions="3,*">
+
+                    <ProgressBar
+                        Grid.Row="0"
+                        Value="{Binding Run.Progress}"
+                        IsVisible="{Binding !Run.Result.IsOutcome}"
+                        Background="Transparent"
+                        Classes="accent"
+                        CornerRadius="0"
+                        MinHeight="3" />
+
+                    <ListBox
+                        Grid.Row="1"
+                        IsVisible="{Binding Run.Outcomes.Count}"
+                        ItemsSource="{Binding Run.Outcomes}"
+                        SelectedItem="{Binding Outcome}"
+                        ItemTemplate="{StaticResource OutcomeListItem}"
+                        ItemContainerTheme="{StaticResource ListBoxItemSimple}"
+                        Padding="5" />
+
+                </Grid>
 
                 <controls:DrawerView.Drawer>
 
@@ -165,9 +179,20 @@
                             </TextBox.InnerLeftContent>
                         </TextBox>
 
-                        <ContentControl
-                            Content="{Binding Outcome}"
-                            ContentTemplate="{StaticResource OutcomeList}" />
+                        <Panel>
+                            <controls:DefaultMessage
+                                HorizontalAlignment="Center"
+                                IsVisible="{Binding Outcome, Converter={x:Static ObjectConverters.IsNull}}"
+                                HeaderIcon="{StaticResource IconLineListCheck}"
+                                Header="No outcome selected"
+                                Message="Select an outcome from the list to view result." />
+
+                            <ContentControl
+                                Content="{Binding Outcome}"
+                                ContentTemplate="{StaticResource OutcomeList}"
+                                IsVisible="{Binding Outcome, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
+                        </Panel>
 
                     </DockPanel>
 

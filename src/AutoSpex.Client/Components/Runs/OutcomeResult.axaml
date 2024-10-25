@@ -34,6 +34,7 @@
             </Border>
 
             <Button
+                IsVisible="{Binding Total}"
                 Command="{Binding ApplyFilterCommand}"
                 CommandParameter="{x:Static engine:ResultState.None}"
                 Theme="{a:ControlTheme ButtonSoft}"

@@ -26,8 +26,9 @@
             <PathIcon Theme="{DynamicResource IconThemedNone}" />
             <PathIcon Theme="{DynamicResource IconThemedPending}" />
             <PathIcon Theme="{DynamicResource IconThemedRunning}" />
-            <PathIcon Theme="{DynamicResource IconThemedInconclusive}" />
+            <PathIcon Theme="{DynamicResource IconThemedSuppressed}" />
             <PathIcon Theme="{DynamicResource IconThemedPassed}" />
+            <PathIcon Theme="{DynamicResource IconThemedInconclusive}" />
             <PathIcon Theme="{DynamicResource IconThemedFailed}" />
             <PathIcon Theme="{DynamicResource IconThemedError}" />
             <PathIcon Theme="{DynamicResource IconThemedDefault}" />
@@ -70,11 +71,14 @@
     <ControlTheme x:Key="IconThemedRunning" TargetType="PathIcon" BasedOn="{StaticResource IconLineCircleNotch}">
         <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineSuccess}" />
     </ControlTheme>
-    <ControlTheme x:Key="IconThemedInconclusive" TargetType="PathIcon" BasedOn="{StaticResource IconFilledQuestion}">
-        <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineWarning}" />
+    <ControlTheme x:Key="IconThemedSuppressed" TargetType="PathIcon" BasedOn="{StaticResource IconLineBan}">
+        <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushDisabled}" />
     </ControlTheme>
     <ControlTheme x:Key="IconThemedPassed" TargetType="PathIcon" BasedOn="{StaticResource IconFilledCheck}">
         <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftSuccess}" />
+    </ControlTheme>
+    <ControlTheme x:Key="IconThemedInconclusive" TargetType="PathIcon" BasedOn="{StaticResource IconFilledQuestion}">
+        <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineWarning}" />
     </ControlTheme>
     <ControlTheme x:Key="IconThemedFailed" TargetType="PathIcon" BasedOn="{StaticResource IconFilledCross}">
         <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineDanger}" />

@@ -12,7 +12,7 @@
                 Background="{a:ThemeResource Container1BackgroundBrush}">
             <StackPanel Spacing="10">
                 <a:ToggleThemeButton Theme="{a:ControlTheme ToggleThemeButtonSubtle}" />
-                <controls:Entry Watermark="Enter value" />
+                <controls:Entry Watermark="Enter value" Height="40" />
                 <controls:Entry Watermark="Enter value" Value="This is a test" />
                 <controls:Entry Watermark="Enter value" Value="Test"
                                 IsEmpty="{Binding $self.Value, Converter={StaticResource EqualToConverter}, ConverterParameter='Test'}" />
@@ -130,15 +130,16 @@
                                 Grid.Row="2"
                                 IsVisible="{Binding Suggestions.Count, RelativeSource={RelativeSource TemplatedParent}}"
                                 ItemsSource="{Binding Suggestions, RelativeSource={RelativeSource TemplatedParent}}"
+                                ItemContainerTheme="{StaticResource ListBoxItemSimple}"
                                 ItemTemplate="{TemplateBinding ItemTemplate}"
                                 MaxHeight="{TemplateBinding MaxDropDownHeight}"
                                 MinWidth="{TemplateBinding MinDropDownWidth}"
                                 Background="{a:ThemeResource Container2BackgroundBrush}"
-                                CornerRadius="0 0 4 4"
-                                BorderThickness="0 1 0 0"
                                 BorderBrush="{a:ThemeResource PopupBorderBrush}"
+                                CornerRadius="0 0 4 4" BorderThickness="0 1 0 0" Padding="5"
                                 ClipToBounds="True"
-                                Classes="theme-scroll-overlay" />
+                                Classes="theme-scroll-overlay"
+                                ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
                         </Grid>
                     </primitives:ChromedPopup>
                 </Grid>
@@ -150,7 +151,7 @@
             <Setter Property="Opacity" Value="0" />
         </Style>
         <Style Selector="^ /template/ primitives|ChromedPopup#PART_Popup">
-            <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBackgroundBrushEmphasizedAccent}" />
+            <Setter Property="BorderBrush" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
         </Style>
         <Style Selector="^[(DataValidationErrors.HasErrors)=True] /template/ primitives|ChromedPopup#PART_Popup">
             <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBackgroundBrushEmphasizedDanger}" />

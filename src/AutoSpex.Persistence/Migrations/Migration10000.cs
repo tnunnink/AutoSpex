@@ -5,8 +5,10 @@ using JetBrains.Annotations;
 
 namespace AutoSpex.Persistence;
 
+//Initial version was set to 10000 or 1.00.00.
+//From here on we will just use the format yyyyMMdd for the migration ID.
 [UsedImplicitly]
-[MigrationId(1, 00, 00, "Initial Build")]
+[Migration(10000, "Initial Build")]
 public class Migration10000 : AutoReversingMigration
 {
     public override void Up()

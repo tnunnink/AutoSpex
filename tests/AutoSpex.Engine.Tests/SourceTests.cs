@@ -100,7 +100,7 @@ public class SourceTests
     }
 
     [Test]
-    public void RemoveOverrid_NoOverrides_ShouldBeExpectedCount()
+    public void RemoveOverride_NoOverrides_ShouldBeExpectedCount()
     {
         var source = new Source();
 
@@ -110,7 +110,7 @@ public class SourceTests
     }
 
     [Test]
-    public void RemoveOverrid_ExistingOverrides_ShouldBeExpectedCount()
+    public void RemoveOverride_ExistingOverrides_ShouldBeExpectedCount()
     {
         var source = new Source();
 
@@ -133,5 +133,77 @@ public class SourceTests
         source.ClearOverrides();
 
         source.Overrides.Should().BeEmpty();
+    }
+
+    [Test]
+    public void AddSuppression_ValidGuidAndMessage_ShouldHaveExpectedCount()
+    {
+        var source = new Source();
+
+        source.AddSuppression(Guid.NewGuid(), "This is a test");
+
+        source.Suppressions.Should().HaveCount(1);
+    }
+
+    [Test]
+    public void AddSuppression_EmptyGuid_ShouldHaveExpectedCount()
+    {
+        var source = new Source();
+
+        FluentActions.Invoking(() => source.AddSuppression(Guid.Empty, "This is a test")).Should()
+            .Throw<ArgumentException>();
+    }
+
+    [Test]
+    public void AddSuppression_EmptyReason_ShouldHaveExpectedCount()
+    {
+        var source = new Source();
+
+        FluentActions.Invoking(() => source.AddSuppression(Guid.NewGuid(), "")).Should()
+            .Throw<ArgumentException>();
+    }
+
+    [Test]
+    public void AddSuppression_Null_ShouldThrowException()
+    {
+        var source = new Source();
+
+        FluentActions.Invoking(() => source.AddSuppression(null!)).Should().Throw<ArgumentNullException>();
+    }
+
+    [Test]
+    public void RemoveSuppression_NoSuppression_ShouldBeExpectedCount()
+    {
+        var source = new Source();
+
+        source.RemoveSuppression(new Suppression(Guid.NewGuid(), "My Reason"));
+
+        source.Suppressions.Should().BeEmpty();
+    }
+
+    [Test]
+    public void RemoveSuppression_ExistingOverrides_ShouldBeExpectedCount()
+    {
+        var source = new Source();
+
+        var suppression = new Suppression(Guid.NewGuid(), "My Reason");
+        source.AddSuppression(suppression);
+        source.Suppressions.Should().HaveCount(1);
+
+        source.RemoveSuppression(suppression);
+        source.Suppressions.Should().BeEmpty();
+    }
+
+    [Test]
+    public void ClearSuppressions_WhenCalled_ShouldHaveExpectedCount()
+    {
+        var source = new Source();
+
+        source.AddSuppression(new Suppression(Guid.NewGuid(), "My Reason"));
+        source.AddSuppression(new Suppression(Guid.NewGuid(), "My Reason"));
+
+        source.ClearSuppressions();
+
+        source.Suppressions.Should().BeEmpty();
     }
 }

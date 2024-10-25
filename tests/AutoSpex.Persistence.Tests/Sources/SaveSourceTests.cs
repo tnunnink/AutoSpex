@@ -46,6 +46,32 @@ public class SaveSourceTests
         get.IsSuccess.Should().BeTrue();
         get.Value.Should().BeEquivalentTo(source, o => o.Excluding(s => s.Content));
     }
+    
+    [Test]
+    public async Task SaveSource_SeededSourceWithSuppressions_ShouldBeSuccess()
+    {
+        using var context = new TestContext();
+        var mediator = context.Resolve<IMediator>();
+
+        //Create nodes.
+        var container = Node.NewContainer();
+        var spec01 = container.AddSpec();
+        var spec02 = container.AddSpec();
+        var spec03 = container.AddSpec();
+        await mediator.Send(new CreateNodes([container, spec01, spec02, spec03]));
+
+        //Create source.
+        var source = new Source();
+        await mediator.Send(new CreateSource(source));
+
+        //Add overrides to source.
+        source.AddSuppression(spec01.NodeId, "Just to test that this works");
+        source.AddSuppression(spec02.NodeId, "Just to test that this works");
+        source.AddSuppression(spec03.NodeId, "Just to test that this works");
+
+        var result = await mediator.Send(new SaveSource(source));
+        result.IsSuccess.Should().BeTrue();
+    }
 
     [Test]
     public async Task SaveSource_SeededWithSourceWithOverrides_ShouldBeSuccess()

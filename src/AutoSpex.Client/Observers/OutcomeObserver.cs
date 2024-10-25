@@ -4,6 +4,7 @@ using System.Linq;
 using AutoSpex.Client.Resources;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
+using AutoSpex.Persistence;
 using Avalonia.Input;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -75,6 +76,33 @@ public partial class OutcomeObserver : Observer<Outcome>,
         Evaluations.Filter(x => FilterState == ResultState.None || x.Result == FilterState);
     }
 
+    [RelayCommand]
+    private Task Run()
+    {
+        return Task.CompletedTask;
+    }
+
+    [RelayCommand(CanExecute = nameof(CanAddSuppression))]
+    private async Task AddSuppression(string? reason)
+    {
+        if (string.IsNullOrEmpty(reason))
+        {
+            //todo prompt for reason
+            /*reason = await Prompter.Show<string?>(new () => )*/
+        }
+
+        if (string.IsNullOrEmpty(reason)) return;
+
+        var run = GetObserver<RunObserver>(r => r.Id == Model.RunId);
+        if (run is null) return;
+
+        var suppression = new Suppression(Model.NodeId, reason);
+        var result = await Mediator.Send(new AddSuppression(run.Source.Id, suppression));
+        Notifier.ShowIfFailed(result);
+    }
+
+    private bool CanAddSuppression() => Result.Value > ResultState.Passed.Value;
+
     /// <summary>
     /// When we receive the running message for the outcome with the same local id, then we want to set the result
     /// state to pending to notify the UI which outcome is processing.
@@ -121,16 +149,25 @@ public partial class OutcomeObserver : Observer<Outcome>,
     {
         yield return new MenuActionItem
         {
-            Header = "Open Spec",
-            Icon = Resource.Find("IconLineLaunch"),
-            Command = NavigateCommand,
-            Gesture = new KeyGesture(Key.Enter)
+            Header = "Run Spec",
+            Icon = Resource.Find("IconFilledLightning"),
+            Classes = "accent",
+            Command = RunCommand
         };
 
         yield return new MenuActionItem
         {
-            Header = "Suppress Result",
-            Icon = Resource.Find("IconFilledTrash"),
+            Header = "Add Suppression",
+            Icon = Resource.Find("IconLineBan"),
+            Command = AddSuppressionCommand
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Open Spec",
+            Icon = Resource.Find("IconLineLaunch"),
+            Command = NavigateCommand,
+            Gesture = new KeyGesture(Key.Enter)
         };
     }
 

@@ -38,9 +38,20 @@ public class Outcome
     public Verification Verification { get; set; } = Verification.None;
 
     /// <summary>
-    /// A supporession message that explains why this outcome is not applicable to necessary for the run it was a part
-    /// or. This allows user to ignore certain specs/outcomes as part of a run that don't apply to a certain source/project.
+    /// A supporession message that explains why this outcome is not applicable to necessary for the run it was a part of.
+    /// This allows user to ignore certain specs/outcomes as part of a run that don't apply to a certain source/project.
     /// </summary>
     [JsonInclude]
     public string? Suppression { get; set; }
+
+    /// <summary>
+    /// Suppresses the current verification, setting the ResultState to Suppressed while keeping the
+    /// original evaluations and duration.
+    /// </summary>
+    /// <param name="reason">The reason for suppressing the verification.</param>
+    public void Suppress(string reason)
+    {
+        Verification = Verification.Suppressed;
+        Suppression = reason;
+    }
 }

@@ -9,7 +9,25 @@ namespace AutoSpex.Engine;
 /// </summary>
 public class Source
 {
+    private readonly Dictionary<Guid, Suppression> _suppressions = [];
     private readonly Dictionary<Guid, Variable> _overrides = [];
+    private readonly Dictionary<Guid, Spec> _specs = [];
+
+    /*[JsonConstructor]
+    private Source(Guid sourceId, string name,
+        string targetName, string targetType, string exportedOn, string exportedBy, string description,
+        IEnumerable<Variable> overrides, IEnumerable<Node> ignore)
+    {
+        SourceId = sourceId;
+        Name = name;
+        TargetName = targetName;
+        TargetType = targetType;
+        ExportedOn = exportedOn;
+        ExportedBy = exportedBy;
+        Description = description;
+        _overrides = overrides.ToDictionary(x => x.VariableId);
+        _suppressions = ignore.ToDictionary(x => x.NodeId);
+    }*/
 
     /// <summary>
     /// Creates a new <see cref="Source"/> with no content. 
@@ -99,6 +117,14 @@ public class Source
     public L5X Content { get; private set; } = L5X.Empty();
 
     /// <summary>
+    /// Represents the collection of nodes that should be ignored when this source is run.
+    /// These nodes will be excluded from processing or consideration within the specified context.
+    /// The user can add, remove, or clear the ignored nodes as needed.
+    /// </summary>
+    [JsonInclude]
+    public IEnumerable<Suppression> Suppressions => _suppressions.Values;
+
+    /// <summary>
     /// Gets the collection of <see cref="Variable"/> objects representing the overrides that allow the user to
     /// change the input data to variables that are referenced on any node in the project.
     /// </summary>
@@ -157,6 +183,48 @@ public class Source
     public void ClearOverrides() => _overrides.Clear();
 
     /// <summary>
+    /// Adds a suppression to the source with the specified node ID and reason.
+    /// </summary>
+    /// <param name="nodeId">The ID of the node to be suppressed.</param>
+    /// <param name="reason">The reason for the suppression.</param>
+    /// <exception cref="ArgumentException">Thrown if the nodeId is empty or if the reason is null or empty.</exception>
+    public void AddSuppression(Guid nodeId, string reason)
+    {
+        if (nodeId == Guid.Empty)
+            throw new ArgumentException("Supupressions require a non-empty node id");
+
+        if (string.IsNullOrEmpty(reason))
+            throw new ArgumentException("Suppressions require a valid reason.");
+
+        _suppressions[nodeId] = new Suppression(nodeId, reason);
+    }
+
+    /// <summary>
+    /// Adds a suppression for a specific node identified by its unique nodeId in the source.
+    /// </summary>
+    /// <param name="suppression">The suppression object containing information about the node to suppress.</param>
+    public void AddSuppression(Suppression suppression)
+    {
+        ArgumentNullException.ThrowIfNull(suppression);
+        _suppressions[suppression.NodeId] = suppression;
+    }
+
+    /// <summary>
+    /// Removes the specified suppression entry corresponding to the given suppression from the Source object.
+    /// </summary>
+    /// <param name="suppression">The suppression entry to be removed.</param>
+    public void RemoveSuppression(Suppression suppression)
+    {
+        ArgumentNullException.ThrowIfNull(suppression);
+        _suppressions.Remove(suppression.NodeId);
+    }
+
+    /// <summary>
+    /// Clears the list of nodes to suppress for this source.
+    /// </summary>
+    public void ClearSuppressions() => _suppressions.Clear();
+
+    /// <summary>
     /// Overrides the values of the provided variables using the configured <see cref="Overrides"/> collection of the source.
     /// </summary>
     /// <param name="variables">The variables whose values should be overridden.</param>
@@ -172,7 +240,43 @@ public class Source
     /// <summary>
     /// 
     /// </summary>
-    /// <returns></returns>
+    /// <param name="nodes"></param>
+    public void Override(IEnumerable<Node> nodes)
+    {
+        foreach (var node in nodes)
+        {
+            if (!_specs.TryGetValue(node.Spec.SpecId, out var spec)) continue;
+            node.Configure(spec);
+        }
+    }
+
+    /// <summary>
+    /// Determines whether the specified node is ignored.
+    /// </summary>
+    /// <param name="node">The node to check for ignoring.</param>
+    /// <returns>True if the node is ignored; otherwise, false.</returns>
+    public bool Supresses(Node node)
+    {
+        ArgumentNullException.ThrowIfNull(node);
+        return _suppressions.ContainsKey(node.NodeId);
+    }
+
+    /// <summary>
+    /// Tries to suppress the outcome by applying a suppression if one exists for the specified node.
+    /// </summary>
+    /// <param name="outcome">The outcome to potentially suppress</param>
+    public bool Suppresses(Outcome outcome)
+    {
+        ArgumentNullException.ThrowIfNull(outcome);
+        if (!_suppressions.TryGetValue(outcome.NodeId, out var suppression)) return false;
+        outcome.Suppress(suppression.Reason);
+        return true;
+    }
+
+    /// <summary>
+    /// Creates a duplicate instance of the current <see cref="Source"/> object with the same content and configuration.
+    /// </summary>
+    /// <returns>A new <see cref="Source"/> object that is a duplicate of the current instance.</returns>
     public Source Duplicate()
     {
         var duplicate = new Source(Content);
@@ -180,6 +284,11 @@ public class Source
         foreach (var variable in _overrides.Values)
         {
             duplicate.AddOverride(variable);
+        }
+
+        foreach (var node in _suppressions.Values)
+        {
+            duplicate.AddSuppression(node);
         }
 
         return duplicate;

@@ -11,13 +11,16 @@
                 Content="{x:Static engine:ResultState.None}"
                 ContentTemplate="{DynamicResource ResultPill}" />
             <ContentControl
-                Content="{x:Static engine:ResultState.Inconclusive}"
-                ContentTemplate="{DynamicResource ResultPill}" />
-            <ContentControl
                 Content="{x:Static engine:ResultState.Pending}"
                 ContentTemplate="{DynamicResource ResultPill}" />
             <ContentControl
+                Content="{x:Static engine:ResultState.Suppressed}"
+                ContentTemplate="{DynamicResource ResultPill}" />
+            <ContentControl
                 Content="{x:Static engine:ResultState.Passed}"
+                ContentTemplate="{DynamicResource ResultPill}" />
+            <ContentControl
+                Content="{x:Static engine:ResultState.Inconclusive}"
                 ContentTemplate="{DynamicResource ResultPill}" />
             <ContentControl
                 Content="{x:Static engine:ResultState.Failed}"
@@ -46,22 +49,28 @@
                         <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
                     </Style>
                 </Style>
-                <Style Selector="Border.Inconclusive">
-                    <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftWarning}" />
-                    <Style Selector="^ TextBlock">
-                        <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftWarning}" />
-                    </Style>
-                </Style>
                 <Style Selector="Border.Pending">
                     <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftAccent}" />
                     <Style Selector="^ TextBlock">
                         <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftAccent}" />
                     </Style>
                 </Style>
+                <Style Selector="Border.Suppressed">
+                    <Setter Property="Background" Value="{a:ThemeResource Container4BackgroundBrush}" />
+                    <Style Selector="^ TextBlock">
+                        <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushSecondary}" />
+                    </Style>
+                </Style>
                 <Style Selector="Border.Passed">
                     <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftSuccess}" />
                     <Style Selector="^ TextBlock">
                         <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftSuccess}" />
+                    </Style>
+                </Style>
+                <Style Selector="Border.Inconclusive">
+                    <Setter Property="Background" Value="{a:ThemeResource ControlBackgroundBrushSoftWarning}" />
+                    <Style Selector="^ TextBlock">
+                        <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftWarning}" />
                     </Style>
                 </Style>
                 <Style Selector="Border.Failed">

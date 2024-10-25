@@ -61,6 +61,11 @@
                         Theme="{StaticResource IconButton}"
                         properties:Icon.Theme="{StaticResource IconLineUpload}"
                         ToolTip.Tip="Import" />
+                    
+                    <Button
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconLineSearch}"
+                        ToolTip.Tip="Find" />
 
                     <Button
                         Command="{Binding OpenSourcesCommand}"
@@ -68,15 +73,10 @@
                         properties:Icon.Theme="{StaticResource IconLineXml}"
                         ToolTip.Tip="Sources" />
 
-                    <!--<Button
-                        Theme="{StaticResource IconButton}"
-                        properties:Icon.Theme="{StaticResource IconFilledLightning}"
-                        ToolTip.Tip="Runs" />
-
                     <Button
                         Theme="{StaticResource IconButton}"
-                        properties:Icon.Theme="{StaticResource IconLineAt}"
-                        ToolTip.Tip="Variables" />-->
+                        properties:Icon.Theme="{StaticResource IconLineHistory}"
+                        ToolTip.Tip="History" />
 
                 </StackPanel>
 

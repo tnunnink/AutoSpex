@@ -15,8 +15,17 @@ internal class SaveSourceHandler(IConnectionManager manager) : IRequestHandler<S
     private const string Exists =
         "SELECT COUNT() FROM Source WHERE SourceId = @SourceId";
 
+    private const string DeleteSuppressions =
+        "DELETE FROM Suppression WHERE SourceId = @SourceId";
+
     private const string DeleteOverrides =
         "DELETE FROM Override WHERE SourceId = @SourceId";
+
+    private const string InsertSuppressions =
+        """
+        INSERT INTO Suppression (SourceId, NodeId, Reason) 
+        VALUES (@SourceId, @NodeId, @Reason)
+        """;
 
     private const string InsertOverride =
         """
@@ -34,21 +43,30 @@ internal class SaveSourceHandler(IConnectionManager manager) : IRequestHandler<S
 
         using var transaction = connection.BeginTransaction();
 
+        await connection.ExecuteAsync(DeleteSuppressions, new { request.Source.SourceId }, transaction);
         await connection.ExecuteAsync(DeleteOverrides, new { request.Source.SourceId }, transaction);
 
-        var overrides = request.Source.Overrides.Select(x => new
+        await connection.ExecuteAsync(InsertSuppressions,
+            request.Source.Suppressions.Select(x => new
             {
-                OverrideId = Guid.NewGuid(),
                 request.Source.SourceId,
-                x.VariableId,
-                x.Value
-            }
-        );
+                x.NodeId,
+                x.Reason
+            }),
+            transaction);
 
-        await connection.ExecuteAsync(InsertOverride, overrides, transaction);
-
+        await connection.ExecuteAsync(InsertOverride,
+            request.Source.Overrides.Select(x => new
+                {
+                    OverrideId = Guid.NewGuid(),
+                    request.Source.SourceId,
+                    x.VariableId,
+                    x.Value
+                }
+            ),
+            transaction);
+        
         transaction.Commit();
-
         return Result.Ok();
     }
 }

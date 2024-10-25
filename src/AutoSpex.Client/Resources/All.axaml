@@ -61,9 +61,10 @@
         <converters:ValueResourceKey Value="{x:Static engine:ResultState.None}" Resource="IconThemedNone" />
         <converters:ValueResourceKey Value="{x:Static engine:ResultState.Pending}" Resource="IconThemedPending" />
         <converters:ValueResourceKey Value="{x:Static engine:ResultState.Running}" Resource="IconThemedRunning" />
+        <converters:ValueResourceKey Value="{x:Static engine:ResultState.Suppressed}" Resource="IconThemedSuppressed" />
+        <converters:ValueResourceKey Value="{x:Static engine:ResultState.Passed}" Resource="IconThemedPassed" />
         <converters:ValueResourceKey Value="{x:Static engine:ResultState.Inconclusive}"
                                      Resource="IconThemedInconclusive" />
-        <converters:ValueResourceKey Value="{x:Static engine:ResultState.Passed}" Resource="IconThemedPassed" />
         <converters:ValueResourceKey Value="{x:Static engine:ResultState.Failed}" Resource="IconThemedFailed" />
         <converters:ValueResourceKey Value="{x:Static engine:ResultState.Errored}" Resource="IconThemedError" />
     </converters:KeyResourceConverter>
