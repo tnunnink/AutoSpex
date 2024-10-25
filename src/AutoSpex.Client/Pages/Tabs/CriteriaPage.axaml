@@ -97,7 +97,6 @@
                             <ExecuteCommandOnKeyDownBehavior
                                 Gesture="Ctrl+V"
                                 Command="{Binding Spec.PasteFiltersCommand}"
-                                EventRoutingStrategy="Tunnel"
                                 MarkAsHandled="True" />
                         </Interaction.Behaviors>
                     </ListBox>
@@ -150,7 +149,6 @@
                             <ExecuteCommandOnKeyDownBehavior
                                 Gesture="Ctrl+V"
                                 Command="{Binding Spec.PasteVerificationsCommand}"
-                                EventRoutingStrategy="Tunnel"
                                 MarkAsHandled="True" />
                         </Interaction.Behaviors>
                     </ListBox>

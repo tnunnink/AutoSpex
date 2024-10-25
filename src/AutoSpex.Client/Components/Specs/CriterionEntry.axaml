@@ -49,42 +49,46 @@
                     <controls:Entry.ItemTemplate>
                         <a:TypedDataTemplateSelector>
                             <DataTemplate x:DataType="engine:Property">
-                                <Grid ColumnDefinitions="Auto,*,Auto" Margin="2">
-                                    <PathIcon
-                                        Grid.Column="0"
-                                        Theme="{Binding Group, Converter={StaticResource TypeGroupIconConverter}}"
-                                        Margin="0 0 10 0" />
-                                    <TextBlock
-                                        Grid.Column="1"
-                                        Text="{Binding Name}"
-                                        Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
-                                        FontFamily="{a:ThemeResource CodeFontFamily}" />
-                                    <TextBlock
-                                        Grid.Column="2"
-                                        Text="{Binding DisplayName}"
-                                        Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
-                                        FontFamily="{a:ThemeResource CodeFontFamily}"
-                                        Margin="20 0 10 0" FontSize="12" />
-                                </Grid>
+                                <Border Padding="{a:ThemeResource ListItemPadding}">
+                                    <Grid ColumnDefinitions="Auto,*,Auto">
+                                        <PathIcon
+                                            Grid.Column="0"
+                                            Theme="{Binding Group, Converter={StaticResource TypeGroupIconConverter}}"
+                                            Margin="0 0 10 0" />
+                                        <TextBlock
+                                            Grid.Column="1"
+                                            Text="{Binding Name}"
+                                            Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
+                                            FontFamily="{a:ThemeResource CodeFontFamily}" />
+                                        <TextBlock
+                                            Grid.Column="2"
+                                            Text="{Binding DisplayName}"
+                                            Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                                            FontFamily="{a:ThemeResource CodeFontFamily}"
+                                            Margin="20 0 10 0" FontSize="12" />
+                                    </Grid>
+                                </Border>
                             </DataTemplate>
                             <DataTemplate x:DataType="core:TagName">
-                                <Grid ColumnDefinitions="Auto,*,Auto" Margin="2">
-                                    <PathIcon
-                                        Grid.Column="0"
-                                        Theme="{StaticResource IconThemedTag}"
-                                        Margin="0 0 10 0" />
-                                    <TextBlock
-                                        Grid.Column="1"
-                                        Text="{Binding }"
-                                        Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
-                                        FontFamily="{a:ThemeResource CodeFontFamily}" />
-                                    <TextBlock
-                                        Grid.Column="2"
-                                        Text="TagName"
-                                        Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
-                                        FontFamily="{a:ThemeResource CodeFontFamily}"
-                                        Margin="20 0 10 0" FontSize="12" />
-                                </Grid>
+                                <Border Padding="{a:ThemeResource ListItemPadding}">
+                                    <Grid ColumnDefinitions="Auto,*,Auto">
+                                        <PathIcon
+                                            Grid.Column="0"
+                                            Theme="{StaticResource IconThemedTag}"
+                                            Margin="0 0 10 0" />
+                                        <TextBlock
+                                            Grid.Column="1"
+                                            Text="{Binding }"
+                                            Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
+                                            FontFamily="{a:ThemeResource CodeFontFamily}" />
+                                        <TextBlock
+                                            Grid.Column="2"
+                                            Text="TagName"
+                                            Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                                            FontFamily="{a:ThemeResource CodeFontFamily}"
+                                            Margin="20 0 10 0" FontSize="12" />
+                                    </Grid>
+                                </Border>
                             </DataTemplate>
                         </a:TypedDataTemplateSelector>
                     </controls:Entry.ItemTemplate>
@@ -116,11 +120,12 @@
                     IsVisible="{Binding Property, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Property.Default}}">
                     <controls:Entry.ItemTemplate>
                         <DataTemplate x:DataType="engine:Operation">
-                            <TextBlock
-                                Text="{Binding Name}"
-                                Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
-                                FontFamily="{a:ThemeResource CodeFontFamily}"
-                                Margin="2" />
+                            <Border Padding="{a:ThemeResource ListItemPadding}">
+                                <TextBlock
+                                    Text="{Binding Name}"
+                                    Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
+                                    FontFamily="{a:ThemeResource CodeFontFamily}" />
+                            </Border>
                         </DataTemplate>
                     </controls:Entry.ItemTemplate>
                     <controls:Entry.IsEmpty>

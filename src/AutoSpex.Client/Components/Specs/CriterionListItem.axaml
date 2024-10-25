@@ -36,26 +36,42 @@
 
             <Grid ColumnDefinitions="*,Auto">
 
-                <ContentControl
-                    Grid.Column="0"
-                    Content="{Binding}"
-                    ContentTemplate="{StaticResource CriterionEntry}" />
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5" Margin="5 0">
 
-                <Button
-                    Grid.Column="1"
-                    properties:Icon.Theme="{StaticResource IconEllipsis}"
-                    Theme="{StaticResource IconButtonSmall}"
-                    Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
-                    Margin="5 0"
-                    ToolTip.Tip="Options"
-                    ToolTip.Placement="BottomEdgeAlignedRight">
-                    <Button.Flyout>
-                        <MenuFlyout
-                            Placement="BottomEdgeAlignedRight" HorizontalOffset="8"
-                            ItemContainerTheme="{StaticResource MenuActionItem}"
-                            ItemsSource="{Binding MenuItems}" />
-                    </Button.Flyout>
-                </Button>
+                    <PathIcon
+                        Theme="{StaticResource IconFilledGrip}"
+                        Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                        FontSize="10"
+                        ToolTip.Tip="Move"
+                        ToolTip.Placement="BottomEdgeAlignedLeft">
+                        <Interaction.Behaviors>
+                            <behaviors:DraggableBehavior Context="{Binding }" />
+                        </Interaction.Behaviors>
+                    </PathIcon>
+
+                    <ContentControl
+                        Content="{Binding}"
+                        ContentTemplate="{StaticResource CriterionEntry}" />
+
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="5" Margin="5 0">
+
+                    <Button
+                        properties:Icon.Theme="{StaticResource IconEllipsis}"
+                        Theme="{StaticResource IconButtonSmall}"
+                        Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                        ToolTip.Tip="Options"
+                        ToolTip.Placement="BottomEdgeAlignedRight">
+                        <Button.Flyout>
+                            <MenuFlyout
+                                Placement="BottomEdgeAlignedRight" HorizontalOffset="8"
+                                ItemContainerTheme="{StaticResource MenuActionItem}"
+                                ItemsSource="{Binding MenuItems}" />
+                        </Button.Flyout>
+                    </Button>
+
+                </StackPanel>
 
             </Grid>
 
@@ -73,8 +89,6 @@
                     Gesture="Ctrl+C"
                     Command="{Binding CopyCommand}"
                     MarkAsHandled="True" />
-                <behaviors:DraggableBehavior
-                    Context="{Binding}" />
                 <behaviors:ExecuteCommandOnDropBehavior
                     Command="{Binding MoveCommand}"
                     StyleElement="{Binding $parent[ListBoxItem]}" />
