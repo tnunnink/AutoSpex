@@ -18,20 +18,22 @@
     </Design.PreviewWith>
 
     <DataTemplate x:Key="ValueItemTemplate" x:DataType="observers:ValueObserver">
-        <Grid ColumnDefinitions="30,*,Auto" Margin="2">
-            <PathIcon
-                Grid.Column="0"
-                Theme="{Binding Group, Converter={StaticResource TypeGroupIconConverter}}"
-                Margin="0 1 10 0" />
-            <ContentControl
-                Grid.Column="1"
-                Content="{Binding }"
-                ContentTemplate="{StaticResource ValueDisplay}" />
-            <TextBlock
-                Grid.Column="2"
-                Text="{Binding Type}"
-                Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
-                Margin="40 0 10 0" />
-        </Grid>
+        <Border Padding="{a:ThemeResource ListItemPadding}">
+            <Grid ColumnDefinitions="30,*,Auto">
+                <PathIcon
+                    Grid.Column="0"
+                    Theme="{Binding Group, Converter={StaticResource TypeGroupIconConverter}}"
+                    Margin="0 1 10 0" />
+                <ContentControl
+                    Grid.Column="1"
+                    Content="{Binding }"
+                    ContentTemplate="{StaticResource ValueDisplay}" />
+                <TextBlock
+                    Grid.Column="2"
+                    Text="{Binding Type}"
+                    Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                    Margin="40 0 10 0" />
+            </Grid>
+        </Border>
     </DataTemplate>
 </ResourceDictionary>
