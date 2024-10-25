@@ -21,7 +21,12 @@ public class ResultState : SmartEnum<ResultState, int>
     /// Indicates that the <see cref="ResultState"/> value is an outcome result (result of running a spec). This means
     /// it is either passed, inconslusive, failed, or errored.
     /// </summary>
-    public bool IsOutcome => Value >= 4;
+    public bool IsOutcome => Value >= 3;
+
+    /// <summary>
+    /// Indicates that the <see cref="ResultState"/> value is a result that can be suppressed (any non-passing result).
+    /// </summary>
+    public bool IsSuppressible => Value > 4;
 
     /// <summary>
     /// Gets the maximum value of a collection of ResultState values or returns a default value if the collection is empty.
