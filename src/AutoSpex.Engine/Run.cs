@@ -124,8 +124,14 @@ public class Run
                 continue;
 
             running?.Invoke(outcome);
+
+            if (source.Suppresses(outcome))
+            {
+                complete?.Invoke(outcome);
+                continue;
+            }
+
             outcome.Verification = await node.Run(content, token);
-            source.TrySuppress(outcome);
             complete?.Invoke(outcome);
         }
     }

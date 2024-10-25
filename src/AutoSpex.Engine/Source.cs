@@ -265,11 +265,12 @@ public class Source
     /// Tries to suppress the outcome by applying a suppression if one exists for the specified node.
     /// </summary>
     /// <param name="outcome">The outcome to potentially suppress</param>
-    public void TrySuppress(Outcome outcome)
+    public bool Suppresses(Outcome outcome)
     {
         ArgumentNullException.ThrowIfNull(outcome);
-        if (!_suppressions.TryGetValue(outcome.NodeId, out var suppression)) return;
+        if (!_suppressions.TryGetValue(outcome.NodeId, out var suppression)) return false;
         outcome.Suppress(suppression.Reason);
+        return true;
     }
 
     /// <summary>
