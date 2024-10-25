@@ -61,9 +61,9 @@
                     <ContentControl Content="{Binding NewVersion.TargetFullRelease.Version, FallbackValue={x:Null}}">
                         <ContentControl.ContentTemplate>
                             <DataTemplate x:DataType="versioning:SemanticVersion">
-                                <StackPanel Orientation="Horizontal">
+                                <StackPanel Orientation="Horizontal" Spacing="5">
                                     <TextBlock Text="Update to version" />
-                                    <TextBlock Text="{Binding}" />
+                                    <TextBlock Text="{Binding}" FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
                                 </StackPanel>
                             </DataTemplate>
                         </ContentControl.ContentTemplate>
