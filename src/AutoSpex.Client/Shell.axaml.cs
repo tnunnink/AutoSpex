@@ -23,15 +23,15 @@ public partial class Shell : Window, IRecipient<NavigationRequest>
         AvaloniaProperty.RegisterDirect<Shell, bool>(
             nameof(DialogOpen), o => o.DialogOpen, (o, v) => o.DialogOpen = v);
 
-    public static readonly DirectProperty<Shell, PageViewModel?> CurrentPageProperty =
-        AvaloniaProperty.RegisterDirect<Shell, PageViewModel?>(
-            nameof(CurrentPage), o => o.CurrentPage, (o, v) => o.CurrentPage = v);
+    public static readonly DirectProperty<Shell, AppPageModel?> AppPageProperty =
+        AvaloniaProperty.RegisterDirect<Shell, AppPageModel?>(
+            nameof(AppPage), o => o.AppPage, (o, v) => o.AppPage = v);
 
     #endregion
 
     private readonly Navigator? _navigator;
     private bool _dialogOpen;
-    private PageViewModel? _currentPage;
+    private AppPageModel? _appPage;
 
     public Shell()
     {
@@ -59,7 +59,7 @@ public partial class Shell : Window, IRecipient<NavigationRequest>
 
             ClientSize = screen.WorkingArea.Size.ToSize(screen.Scaling);
 
-            if (Position is {X: >= 0, Y: >= 0}) return;
+            if (Position is { X: >= 0, Y: >= 0 }) return;
 
             Position = screen.WorkingArea.Position;
             WindowHelper.FixAfterMaximizing(TryGetPlatformHandle()!.Handle, screen);
@@ -68,10 +68,10 @@ public partial class Shell : Window, IRecipient<NavigationRequest>
         Loaded += OnLoaded;
     }
 
-    public PageViewModel? CurrentPage
+    public AppPageModel? AppPage
     {
-        get => _currentPage;
-        set => SetAndRaise(CurrentPageProperty, ref _currentPage, value);
+        get => _appPage;
+        set => SetAndRaise(AppPageProperty, ref _appPage, value);
     }
 
     public bool DialogOpen
@@ -91,9 +91,9 @@ public partial class Shell : Window, IRecipient<NavigationRequest>
 
     public void Receive(NavigationRequest message)
     {
-        if (message.Page is not AppPageModel) return;
+        if (message.Page is not AppPageModel page) return;
         if (message.Action != NavigationAction.Open) return;
-        CurrentPage = message.Page;
+        AppPage = page;
     }
 
     private void DialogShadowPointerPressed(object? sender, PointerPressedEventArgs e)
