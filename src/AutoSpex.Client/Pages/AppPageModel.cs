@@ -1,10 +1,7 @@
 using System;
-using System.Collections.ObjectModel;
-using System.Linq;
 using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
 
@@ -13,9 +10,9 @@ namespace AutoSpex.Client.Pages;
 [UsedImplicitly]
 public partial class AppPageModel : PageViewModel, IRecipient<NavigationRequest>
 {
-    [ObservableProperty] private PageViewModel? _navigationPage;
+    [ObservableProperty] private NavigationPageModel? _navigationPage;
 
-    [ObservableProperty] private PageViewModel? _detailsPage;
+    [ObservableProperty] private DetailsPageModel? _detailsPage;
 
     /// <inheritdoc />
     public override async Task Load()
@@ -63,11 +60,11 @@ public partial class AppPageModel : PageViewModel, IRecipient<NavigationRequest>
     {
         switch (message.Page)
         {
-            case NavigationPageModel:
-                NavigationPage = message.Page;
+            case NavigationPageModel page:
+                NavigationPage = page;
                 break;
-            case DetailsPageModel:
-                DetailsPage = message.Page;
+            case DetailsPageModel page:
+                DetailsPage = page;
                 break;
         }
     }
