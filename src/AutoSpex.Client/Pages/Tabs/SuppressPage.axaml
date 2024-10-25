@@ -49,8 +49,8 @@
 
             <controls:DefaultMessage
                 IsVisible="{Binding !Suppressions.HasItems}"
-                HeaderIcon="{StaticResource IconThemedSupressed}"
-                Header="No suppressions configured"
+                HeaderIcon="{StaticResource IconLineBan}"
+                Header="No specs configured"
                 Message="Configure which specs should be suppressed when this source is run."
                 VerticalAlignment="Top"
                 Margin="10">
