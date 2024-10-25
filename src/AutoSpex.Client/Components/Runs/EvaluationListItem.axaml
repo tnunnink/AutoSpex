@@ -64,11 +64,21 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="system:String">
-                            <controls:HighlightableTextBlock
-                                Text="{Binding}"
-                                Foreground="{DynamicResource TypeGroupForegroundBrushText}" />
+                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                <controls:HighlightableTextBlock
+                                    Text="{Binding}"
+                                    Foreground="{DynamicResource TypeGroupForegroundBrushText}" />
+                                <TextBlock
+                                    x:Name="SeparatorText"
+                                    Text="{Binding $parent[ItemsControl].((observers:EvaluationObserver)DataContext).ExpectedSeparator, FallbackValue={x:Null}}" />
+                            </StackPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
+                    <ItemsControl.Styles>
+                        <Style Selector="ContentPresenter:nth-last-child(-n+1) TextBlock#SeparatorText">
+                            <Setter Property="IsVisible" Value="False" />
+                        </Style>
+                    </ItemsControl.Styles>
                 </ItemsControl>
 
                 <StackPanel
