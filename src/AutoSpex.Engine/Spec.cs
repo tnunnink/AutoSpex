@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Ardalis.SmartEnum.SystemTextJson;
 using L5Sharp.Core;
@@ -138,6 +139,17 @@ public class Spec() : IEquatable<Spec>
             FilterInclusion = FilterInclusion,
             VerificationInclusion = VerificationInclusion
         };
+    }
+
+    /// <summary>
+    /// Creates a deep copy of this spec instance, returning the same configuration and same <see cref="SpecId"/>.
+    /// </summary>
+    /// <returns>The new copied spec instance.</returns>
+    public Spec Copy()
+    {
+        var data = JsonSerializer.Serialize(this);
+        var spec = JsonSerializer.Deserialize<Spec>(data);
+        return spec ?? throw new ArgumentException("Could not materialize new spec instance.");
     }
 
     /// <summary>

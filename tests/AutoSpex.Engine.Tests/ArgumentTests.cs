@@ -43,17 +43,6 @@ public class ArgumentTests
     }
 
     [Test]
-    public void New_Reference_ShouldHaveExpectedValues()
-    {
-        var value = new Variable("Test", "Test");
-        var reference = value.Reference;
-        var argument = new Argument(reference);
-
-        argument.Should().NotBeNull();
-        argument.Value.Should().BeEquivalentTo(reference);
-    }
-
-    [Test]
     public void New_Criterion_ShouldHaveExpectedValues()
     {
         var value = new Criterion(Element.Tag.Property("Name"), Operation.Containing, "Something");
@@ -62,7 +51,7 @@ public class ArgumentTests
         argument.Should().NotBeNull();
         argument.Value.Should().BeEquivalentTo(value);
     }
-    
+
     [Test]
     public void New_ListOfArguments_ShouldHaveExpectedValues()
     {
@@ -153,18 +142,6 @@ public class ArgumentTests
     }
 
     [Test]
-    public void ResolveAs_ReferenceToVariable_ShouldReturnVariableValue()
-    {
-        var variable = new Variable("Test", "Test");
-        var reference = variable.Reference();
-        var argument = new Argument(reference);
-
-        var result = argument.ResolveAs(typeof(string));
-
-        result.Should().Be("Test");
-    }
-
-    [Test]
     public void ResolveAs_LogixEnumFromString_ShouldHaveExpectedValue()
     {
         var argument = new Argument("Decimal");
@@ -173,7 +150,7 @@ public class ArgumentTests
 
         result.Should().Be(Radix.Decimal);
     }
-    
+
     [Test]
     public void ResolveAs_ListNumberArgumentsNumber_ShouldHaveExpectedTypes()
     {
@@ -184,7 +161,7 @@ public class ArgumentTests
         result.Should().BeOfType<List<object>>();
         result.As<List<object>>().Should().AllSatisfy(x => x.Should().BeOfType<int>());
     }
-    
+
     [Test]
     public void ResolveAs_ListNumberArgumentsAsString_ShouldHaveExpectedTypes()
     {

@@ -48,12 +48,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
 
     public static readonly TypeGroup Argument = new ArgumentTypeGroup();
 
-    public static readonly TypeGroup Variable = new VariableTypeGroup();
-
-    public static readonly TypeGroup Reference = new ReferenceTypeGroup();
-
-    private static readonly List<TypeGroup> Exclusions =
-        [Default, Criterion, Argument, Variable, Reference, Collection];
+    private static readonly List<TypeGroup> Exclusions = [Default, Criterion, Argument, Collection];
 
     public static IEnumerable<TypeGroup> Selectable =>
         List.Where(t => Exclusions.All(e => e != t)).OrderBy(x => x.Value);
@@ -70,8 +65,6 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
         if (Element.AppliesTo(type)) return Element;
         if (Criterion.AppliesTo(type)) return Criterion;
         if (Argument.AppliesTo(type)) return Argument;
-        if (Variable.AppliesTo(type)) return Variable;
-        if (Reference.AppliesTo(type)) return Reference;
         return Default;
     }
 
@@ -140,7 +133,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
                 value = radix.ParseValue(text);
                 return true;
             }
-            
+
             //This is to support LogixData
             try
             {
@@ -282,28 +275,6 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
         public override bool TryParse(string text, out object? value)
         {
             value = new Argument(text);
-            return true;
-        }
-    }
-
-    private class VariableTypeGroup() : TypeGroup(nameof(Variable), 10)
-    {
-        protected override bool AppliesTo(Type type) => type == typeof(Variable);
-
-        public override bool TryParse(string text, out object? value)
-        {
-            value = null;
-            return false;
-        }
-    }
-
-    private class ReferenceTypeGroup() : TypeGroup(nameof(Reference), 11)
-    {
-        protected override bool AppliesTo(Type type) => type == typeof(Reference);
-
-        public override bool TryParse(string text, out object? value)
-        {
-            value = new Reference(text);
             return true;
         }
     }

@@ -34,10 +34,6 @@
 
                 <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
 
-                    <Button
-                        Command="{Binding SaveCommand}"
-                        Classes="save" />
-
                     <Panel>
                         <Button
                             Command="{Binding Run.ExecuteCommand}"

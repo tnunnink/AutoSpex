@@ -23,18 +23,9 @@ internal class ExportNodeHandler(IConnectionManager manager) : IRequestHandler<E
                        FROM Node c
                                 INNER JOIN Nodes n ON c.ParentId = n.NodeId)
 
-        SELECT n.[NodeId],
-               n.[ParentId],
-               n.[Name],
-               n.[Type],
-               s.[Config],
-               v.[VariableId],
-               v.[Name],
-               v.[Group],
-               v.[Value]
+        SELECT n.[NodeId], n.[ParentId], n.[Name], n.[Type], s.[Config]
         FROM Nodes n
-                 LEFT JOIN Spec s ON s.NodeId = n.NodeId
-                 LEFT JOIN Variable v ON v.NodeId = n.NodeId
+        LEFT JOIN Spec s ON s.NodeId = n.NodeId
         ORDER BY n.Depth, n.Name;
         """;
 
@@ -46,24 +37,21 @@ internal class ExportNodeHandler(IConnectionManager manager) : IRequestHandler<E
 
         var nodes = new Dictionary<Guid, Node>();
 
-        await connection.QueryAsync<Node, Spec?, Variable?, Node>(ListNodes,
-            (node, spec, variable) =>
+        await connection.QueryAsync<Node, Spec?, Node>(ListNodes,
+            (node, spec) =>
             {
                 if (!nodes.TryAdd(node.NodeId, node))
                     node = nodes[node.NodeId];
 
                 if (nodes.TryGetValue(node.ParentId, out var parent))
                     parent.AddNode(node);
-                
+
                 if (spec is not null)
                     node.Configure(spec);
 
-                if (variable is not null)
-                    node.AddVariable(variable);
-
                 return node;
             },
-            splitOn: "Config,VariableId",
+            splitOn: "Config",
             param: new { request.NodeId });
 
         if (!nodes.TryGetValue(request.NodeId, out var collection))

@@ -83,25 +83,6 @@ public class CreateNodeTests
     }
 
     [Test]
-    public async Task CreateNode_WithVariables_ShouldBeSuccess()
-    {
-        using var context = new TestContext();
-        var mediator = context.Resolve<IMediator>();
-        var node = Node.NewSpec();
-        node.AddVariable("Value1", 123);
-        node.AddVariable("Value2", Radix.Decimal);
-        node.AddVariable("Value3", "This is a test");
-
-        var result = await mediator.Send(new CreateNode(node));
-        result.IsSuccess.Should().BeTrue();
-
-        var created = await mediator.Send(new LoadNode(node.NodeId));
-        created.IsSuccess.Should().BeTrue();
-        created.Value.Should().NotBeNull();
-        created.Value.Variables.Should().HaveCount(3);
-    }
-
-    [Test]
     public async Task CreateNode_ManyManyNodes_ShouldBeSuccess()
     {
         using var context = new TestContext();

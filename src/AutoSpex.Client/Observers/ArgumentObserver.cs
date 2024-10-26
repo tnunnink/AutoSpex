@@ -65,26 +65,19 @@ public partial class ArgumentObserver : Observer<Argument>
     /// Anything else just wrap in a value observer and set accordingly.
     /// </summary>
     [RelayCommand]
-    private async Task UpdateValue(object? value)
+    private Task UpdateValue(object? value)
     {
         var group = Criterion?.Property.Group;
 
-        switch (value)
+        Value = value switch
         {
-            case string text when text.StartsWith(Reference.Prefix):
-                var reference = await ResolveReference(text);
-                Value = new ReferenceObserver(reference);
-                return;
-            case string text when group?.TryParse(text, out var parsed) is true && parsed is not null:
-                Value = new ValueObserver(parsed);
-                return;
-            case ValueObserver observer:
-                Value = observer.Model is Variable variable ? new ReferenceObserver(variable.Reference()) : observer;
-                return;
-            default:
-                Value = new ValueObserver(value);
-                break;
-        }
+            string text when group?.TryParse(text, out var parsed) is true && parsed is not null =>
+                new ValueObserver(parsed),
+            ValueObserver observer => observer,
+            _ => new ValueObserver(value)
+        };
+
+        return Task.CompletedTask;
     }
 
     /// <summary>
@@ -125,7 +118,6 @@ public partial class ArgumentObserver : Observer<Argument>
     {
         return Model.Value switch
         {
-            Reference reference => new ReferenceObserver(reference),
             Criterion criterion => new CriterionObserver(criterion),
             List<Argument> arguments => new ObserverCollection<Argument, ArgumentObserver>(arguments,
                 a => new ArgumentObserver(a)),
@@ -142,7 +134,6 @@ public partial class ArgumentObserver : Observer<Argument>
     {
         Model.Value = value switch
         {
-            ReferenceObserver reference => reference.Model,
             ValueObserver observer => observer.Model,
             _ => value
         };
@@ -157,16 +148,6 @@ public partial class ArgumentObserver : Observer<Argument>
         var message = Messenger.Send(new SuggestionRequest(this, filter));
         var response = await message.GetResponsesAsync(token);
         return response;
-    }
-
-    /// <summary>
-    /// Queries the database for a variable in scope with the specified name and returns it, or null if not found.
-    /// </summary>
-    private async Task<Reference> ResolveReference(string name)
-    {
-        var reference = new Reference(name);
-        var scoped = await Mediator.Send(new GetReferenceVariable(reference));
-        return scoped.IsSuccess ? scoped.Value.Reference() : reference;
     }
 
     /// <summary>

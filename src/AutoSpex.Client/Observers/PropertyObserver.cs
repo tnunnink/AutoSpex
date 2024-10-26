@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using AutoSpex.Client.Pages;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using CommunityToolkit.Mvvm.Input;
@@ -51,22 +50,6 @@ public partial class PropertyObserver(Property model, ElementObserver element) :
             var clipboard = Shell.Clipboard;
             if (clipboard is null) return;
             await clipboard.SetTextAsync(Value.ToString());
-        }
-        catch (Exception e)
-        {
-            Notifier.ShowError("Command failed", e.Message);
-        }
-    }
-
-    [RelayCommand]
-    private async Task CreateVariable()
-    {
-        try
-        {
-            var variable = await Prompter.Show<VariableObserver?>(() => new NewVariablePageModel(Value.Model));
-            if (variable is null) return;
-            Notifier.ShowSuccess("Variable created",
-                $"{variable.Name} successfully created for in {variable.Node?.Name}");
         }
         catch (Exception e)
         {

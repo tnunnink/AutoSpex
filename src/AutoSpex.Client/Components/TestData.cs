@@ -161,8 +161,6 @@ public static class TestData
 
     public static ArgumentObserver EnumArgument = new Argument(ExternalAccess.ReadOnly);
 
-    public static ArgumentObserver ReferenceArgument = new Argument(new Reference("Var01"));
-
     public static ArgumentObserver TernaryArgument = new Argument(new List<Argument> { 1, 12 });
 
     public static ArgumentObserver CollectionArgument = new(new Argument(new List<Argument> { new(), new(), new() }));
@@ -171,25 +169,8 @@ public static class TestData
     [
         EmptyArgument,
         TextArgument,
-        EnumArgument,
-        ReferenceArgument
+        EnumArgument
     ];
-
-    #endregion
-
-    #region Variables
-
-    public static Variable Variable = new("MyVar", "This is a test");
-
-    public static VariableObserver VariableObserver = new(Variable);
-
-    public static ObservableCollection<VariableObserver> Variables =
-    [
-        new VariableObserver(new Variable("flag", true)),
-        new VariableObserver(new Variable("numeric", 123)),
-    ];
-
-    public static ReferenceObserver ReferenceValue = new(new Reference("test_ref"));
 
     #endregion
 
@@ -214,7 +195,6 @@ public static class TestData
     public static ValueObserver TagValue = new(new Tag("TestTag", new DINT()));
 
     public static ValueObserver CollectionValue = new(new List<Argument> { new(), new(), new() });
-    public static ValueObserver VariableValue = new(Variable);
 
     #endregion
 

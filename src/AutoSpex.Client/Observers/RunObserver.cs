@@ -26,9 +26,6 @@ public partial class RunObserver : Observer<Run>, IRecipient<Observer.Get<RunObs
             refresh: () => Model.Outcomes.Select(x => new OutcomeObserver(x)).ToList(),
             count: () => Model.Outcomes.Count()
         );
-
-        Track(nameof(Result));
-        Track(Outcomes);
     }
 
     public override Guid Id => Model.RunId;
@@ -79,6 +76,9 @@ public partial class RunObserver : Observer<Run>, IRecipient<Observer.Get<RunObs
             var nodes = (await LoadSpecs(token)).ToList();
 
             await Model.Execute(nodes, source, OnSpecRunning, OnSpecCompleted, token);
+
+            var result = await Mediator.Send(new PostRun(Model), token);
+            Notifier.ShowIfFailed(result);
         }
         catch (OperationCanceledException)
         {

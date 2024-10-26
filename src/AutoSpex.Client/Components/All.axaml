@@ -8,6 +8,5 @@
         <ResourceInclude Source="Runs/All.axaml" />
         <ResourceInclude Source="Sources/All.axaml" />
         <ResourceInclude Source="Specs/All.axaml" />
-        <ResourceInclude Source="Variables/All.axaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

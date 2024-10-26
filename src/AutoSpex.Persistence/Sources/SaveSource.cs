@@ -22,16 +22,10 @@ internal class SaveSourceHandler(IConnectionManager manager) : IRequestHandler<S
         "DELETE FROM Override WHERE SourceId = @SourceId";
 
     private const string InsertSuppressions =
-        """
-        INSERT INTO Suppression (SourceId, NodeId, Reason) 
-        VALUES (@SourceId, @NodeId, @Reason)
-        """;
+        "INSERT INTO Suppression (SourceId, NodeId, Reason) VALUES (@SourceId, @NodeId, @Reason)";
 
     private const string InsertOverride =
-        """
-        INSERT INTO Override (OverrideId, SourceId, VariableId, Value) 
-        VALUES (@OverrideId, @SourceId, @VariableId, @Value)
-        """;
+        "INSERT INTO Override (SourceId, SpecId, Config) VALUES (@SourceId, @SpecId, @Config)";
 
     public async Task<Result> Handle(SaveSource request, CancellationToken cancellationToken)
     {
@@ -47,25 +41,24 @@ internal class SaveSourceHandler(IConnectionManager manager) : IRequestHandler<S
         await connection.ExecuteAsync(DeleteOverrides, new { request.Source.SourceId }, transaction);
 
         await connection.ExecuteAsync(InsertSuppressions,
-            request.Source.Suppressions.Select(x => new
+            request.Source.Suppressions.Select(suppression => new
             {
                 request.Source.SourceId,
-                x.NodeId,
-                x.Reason
+                suppression.NodeId,
+                suppression.Reason
             }),
             transaction);
 
         await connection.ExecuteAsync(InsertOverride,
-            request.Source.Overrides.Select(x => new
+            request.Source.Overrides.Select(spec => new
                 {
-                    OverrideId = Guid.NewGuid(),
                     request.Source.SourceId,
-                    x.VariableId,
-                    x.Value
+                    spec.SpecId,
+                    Config = spec
                 }
             ),
             transaction);
-        
+
         transaction.Commit();
         return Result.Ok();
     }

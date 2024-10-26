@@ -1,9 +1,0 @@
-﻿{
-  VariableId: Guid_1,
-  Name: Test,
-  Group: Number,
-  Value: {
-    Type: System.Int32,
-    Data: 123
-  }
-}

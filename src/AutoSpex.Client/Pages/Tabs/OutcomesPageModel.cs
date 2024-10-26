@@ -18,23 +18,15 @@ public partial class OutcomesPageModel : PageViewModel
 
     [ObservableProperty] private OutcomeObserver? _outcome;
 
-    [ObservableProperty] private string? _filter;
-
     [ObservableProperty] private bool _showResults;
 
-    // ReSharper disable once UnusedParameterInPartialMethod
-    partial void OnOutcomeChanged(OutcomeObserver? value)
-    {
-        ShowResults = true;
-    }
-
-    partial void OnFilterChanged(string? value)
+    protected override void FilterChanged(string? value)
     {
         if (Outcome is null) return;
 
         var state = Outcome.FilterState;
         var text = value;
-        
+
         Outcome.Evaluations.Filter(x =>
         {
             var hasState = state == ResultState.None || x.Result == state;

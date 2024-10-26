@@ -12,7 +12,7 @@ public class LoadRunTests
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
         var run = Run.Empty;
-        await mediator.Send(new SaveRun(run));
+        await mediator.Send(new PostRun(run));
 
         var result = await mediator.Send(new LoadRun(run.RunId));
 
@@ -25,7 +25,7 @@ public class LoadRunTests
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
         var run = new Run(Node.NewSpec("Test"), new Source(L5X.Load(Known.Test)));
-        await mediator.Send(new SaveRun(run));
+        await mediator.Send(new PostRun(run));
 
         var result = await mediator.Send(new LoadRun(run.RunId));
 
@@ -38,7 +38,7 @@ public class LoadRunTests
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
         var run = new Run(Node.NewSpec("Test"), new Source(L5X.Load(Known.Test)));
-        await mediator.Send(new SaveRun(run));
+        await mediator.Send(new PostRun(run));
 
         var result = await mediator.Send(new LoadRun(run.RunId));
 

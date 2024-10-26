@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using AutoSpex.Client.Pages;
 using AutoSpex.Client.Resources;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
@@ -72,22 +71,6 @@ public partial class ElementObserver : Observer<LogixElement>
         }
     }
 
-    [RelayCommand]
-    private async Task CreateVariable()
-    {
-        try
-        {
-            var variable = await Prompter.Show<VariableObserver?>(() => new NewVariablePageModel(Model));
-            if (variable is null) return;
-            Notifier.ShowSuccess("Variable created",
-                $"{variable.Name} successfully created for in {variable.Node?.Name}");
-        }
-        catch (Exception e)
-        {
-            Notifier.ShowError("Command failed", e.Message);
-        }
-    }
-
     #endregion
 
     #region Messages
@@ -133,13 +116,6 @@ public partial class ElementObserver : Observer<LogixElement>
 
         yield return new MenuActionItem
         {
-            Header = "Create Variable",
-            Icon = Resource.Find("IconLineAt"),
-            Command = CreateVariableCommand
-        };
-
-        yield return new MenuActionItem
-        {
             Header = "View Properties",
             Icon = Resource.Find("IconFilledBinoculars"),
             Command = ViewPropertiesCommand
@@ -162,14 +138,6 @@ public partial class ElementObserver : Observer<LogixElement>
             Header = "Copy Name",
             Icon = Resource.Find("IconFilledClone"),
             Command = CopyNameCommand,
-            DetermineVisibility = () => HasSingleSelection
-        };
-
-        yield return new MenuActionItem
-        {
-            Header = "Create Variable",
-            Icon = Resource.Find("IconLineAt"),
-            Command = CreateVariableCommand,
             DetermineVisibility = () => HasSingleSelection
         };
 

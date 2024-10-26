@@ -15,17 +15,8 @@ internal class SaveNodeHandler(IConnectionManager manager) : IRequestHandler<Sav
     private const string NodeExists =
         "SELECT COUNT() FROM Node WHERE NodeId = @NodeId";
 
-    private const string DeleteVariables =
-        "DELETE FROM Variable WHERE NodeId = @NodeId";
-
     private const string DeleteSpec =
         "DELETE FROM Spec WHERE NodeId = @NodeId";
-
-    private const string InsertVariable =
-        """
-        INSERT INTO Variable ([VariableId], [NodeId], [Name], [Group], [Value])
-        VALUES (@VariableId, @NodeId, @Name, @Group, @Value)
-        """;
 
     private const string InsertSpec =
         """
@@ -43,11 +34,6 @@ internal class SaveNodeHandler(IConnectionManager manager) : IRequestHandler<Sav
             return Result.Fail($"Node not found: {request.Node.NodeId}");
 
         await connection.ExecuteAsync(DeleteSpec, new { request.Node.NodeId }, transaction);
-        await connection.ExecuteAsync(DeleteVariables, new { request.Node.NodeId }, transaction);
-
-        await connection.ExecuteAsync(InsertVariable,
-            request.Node.Variables.Select(v => new { v.VariableId, request.Node.NodeId, v.Name, v.Group, v.Value }),
-            transaction);
 
         await connection.ExecuteAsync(InsertSpec,
             new { request.Node.Spec.SpecId, request.Node.NodeId, Config = request.Node.Spec },

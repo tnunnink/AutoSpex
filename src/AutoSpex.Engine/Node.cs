@@ -10,7 +10,6 @@ namespace AutoSpex.Engine;
 public class Node : IEquatable<Node>
 {
     private readonly List<Node> _nodes = [];
-    private readonly List<Variable> _variables = [];
 
     private Node()
     {
@@ -18,7 +17,7 @@ public class Node : IEquatable<Node>
 
     [JsonConstructor]
     private Node(Guid nodeId, Guid parentId, NodeType type, string name,
-        IEnumerable<Node> nodes, IEnumerable<Variable> variables, Spec spec)
+        IEnumerable<Node> nodes, Spec spec)
     {
         NodeId = nodeId;
         ParentId = parentId;
@@ -26,7 +25,6 @@ public class Node : IEquatable<Node>
         Name = name;
         Spec = spec;
         _nodes = nodes.ToList();
-        _variables = variables.ToList();
     }
 
     /// <summary>
@@ -74,16 +72,6 @@ public class Node : IEquatable<Node>
     /// </summary>
     [JsonInclude]
     public IEnumerable<Node> Nodes => _nodes;
-
-    /// <summary>
-    /// The collection of <see cref="Variable"/> defined by this node.
-    /// </summary>
-    /// <remarks>
-    /// Variables are used to substitue values for configured specifications. We need nodes to contain
-    /// references to variables, so we can resolve the values when the specifications are run.
-    /// </remarks>
-    [JsonInclude]
-    public IEnumerable<Variable> Variables => _variables;
 
     /// <summary>
     /// Represents the specification associated with a Node.
@@ -274,68 +262,6 @@ public class Node : IEquatable<Node>
     }
 
     /// <summary>
-    /// Adds the provided variable to this node and sets the NodeId of the variable to match.
-    /// </summary>
-    public Variable AddVariable(string name, object? value = default)
-    {
-        if (string.IsNullOrEmpty(name))
-            throw new ArgumentException("Name can not be null empty.");
-
-        var variable = new Variable
-        {
-            Name = name,
-            Value = value,
-            Group = TypeGroup.FromType(value?.GetType())
-        };
-
-        _variables.Add(variable);
-        return variable;
-    }
-
-    /// <summary>
-    /// Adds the provided variable to this node and sets the NodeId of the variable to match.
-    /// </summary>
-    /// <param name="variable">The <see cref="Variable"/> instance to add.</param>
-    public void AddVariable(Variable variable)
-    {
-        ArgumentNullException.ThrowIfNull(variable);
-
-        _variables.Add(variable);
-    }
-
-    /// <summary>
-    /// Adds the collection of variables to this node.
-    /// </summary>
-    /// <param name="variables">The variable collection to add.</param>
-    /// <exception cref="ArgumentNullException">The provided collection or any variable in the collection is null.</exception>
-    public void AddVariables(IEnumerable<Variable> variables)
-    {
-        ArgumentNullException.ThrowIfNull(variables);
-
-        variables.ToList().ForEach(AddVariable);
-    }
-
-    /// <summary>
-    /// Removes a variable from the node's collection of variables.
-    /// </summary>
-    /// <param name="variable">The variable to remove.</param>
-    /// <exception cref="ArgumentNullException">Thrown when the variable is null.</exception>
-    public void RemoveVariable(Variable variable)
-    {
-        ArgumentNullException.ThrowIfNull(variable);
-
-        _variables.Remove(variable);
-    }
-
-    /// <summary>
-    /// Clears all variables associated with the Node.
-    /// </summary>
-    public void ClearVariables()
-    {
-        _variables.Clear();
-    }
-
-    /// <summary>
     /// Updates the configured <see cref="Spec"/> for this node using the provided config delegate.
     /// </summary>
     /// <param name="config">The delegate that configures the spec instance.</param>
@@ -374,9 +300,6 @@ public class Node : IEquatable<Node>
 
         foreach (var child in _nodes)
             duplicate.AddNode(child.Duplicate());
-
-        foreach (var variable in _variables)
-            duplicate.AddVariable(variable.Duplicate());
 
         duplicate.Configure(Spec.Duplicate());
 
@@ -535,9 +458,6 @@ public class Node : IEquatable<Node>
     /// <returns>A <see cref="Task"/> that excutes the specs and returns the flattened <see cref="Verification"/> result.</returns>
     public async Task<Verification> Run(L5X content, CancellationToken token = default)
     {
-        //Update all referenced variables to the correct values. 
-        ResolveReferences();
-
         //Run the specification and return the resulting verification.
         return await Spec.RunAsync(content, token);
     }
@@ -560,54 +480,6 @@ public class Node : IEquatable<Node>
 
     /// <inheritdoc />
     public override int GetHashCode() => NodeId.GetHashCode();
-
-
-    /// <summary>
-    /// Resolves all references configured in the node's spec to the variables that defined in the scope of this node.
-    /// This is called prior to running a specification so that all configured criterion have the
-    /// appropriate value base on mapped variable references.
-    /// </summary>
-    private void ResolveReferences()
-    {
-        Spec.Filters.ForEach(x => ResolveArgument(x.Argument));
-        Spec.Verifications.ForEach(x => ResolveArgument(x.Argument));
-    }
-
-    /// <summary>
-    /// Resolves the argument reference values using this node instance.
-    /// If the argument is a nested criterion or argument collection, then this method will forward call to all
-    /// nested arguements, in order to deeply resolve all references.
-    /// </summary>
-    /// <param name="argument">The argument to resolve.</param>
-    private void ResolveArgument(Argument argument)
-    {
-        switch (argument.Value)
-        {
-            case Criterion nested:
-                ResolveArgument(nested.Argument);
-                break;
-            case IEnumerable<Argument> collection:
-                collection.ToList().ForEach(ResolveArgument);
-                break;
-            case Reference reference:
-                var value = ResolveReference(reference);
-                reference.Value = value;
-                break;
-        }
-    }
-
-    /// <summary>
-    /// Resolves the provided reference to a named variable by traversing up this node tree until it finds the first
-    /// matching variable name, and returns that variable's value. If no variable is found, meaning unresolvable, then
-    /// this method returns null.
-    /// </summary>
-    /// <param name="reference">The reference to a scoped variable to resolve.</param>
-    /// <returns>The value of the referenced variable if found, otherwise, <c>null</c></returns>
-    private object? ResolveReference(Reference reference)
-    {
-        var variable = _variables.FirstOrDefault(x => string.Equals(x.Name, reference.Name));
-        return variable is not null ? variable.Value : Parent?.ResolveReference(reference);
-    }
 
     /// <summary>
     /// Gets the depth or level of the node in the tree heirarchy.

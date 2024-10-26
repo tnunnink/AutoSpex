@@ -93,7 +93,7 @@ public partial class OutcomeObserver : Observer<Outcome>,
 
         if (string.IsNullOrEmpty(reason)) return;
 
-        var run = GetObserver<RunObserver>(r => r.Id == Model.RunId);
+        var run = GetObserver<RunObserver>(r => r.Model.Outcomes.Any(x => x.OutcomeId == Id));
         if (run is null) return;
 
         var suppression = new Suppression(Model.NodeId, reason);
@@ -110,7 +110,7 @@ public partial class OutcomeObserver : Observer<Outcome>,
     /// <param name="message"></param>
     public void Receive(Running message)
     {
-        if (Model.RunId != message.Outcome.RunId || Model.NodeId != message.Outcome.NodeId) return;
+        if (Model.OutcomeId != message.Outcome.OutcomeId) return;
 
         Dispatcher.UIThread.Invoke(() => { Result = ResultState.Running; });
     }
@@ -122,7 +122,7 @@ public partial class OutcomeObserver : Observer<Outcome>,
     /// <param name="message">The message indicating an outcome run is complete.</param>
     public void Receive(Complete message)
     {
-        if (Model.RunId != message.Outcome.RunId || Model.NodeId != message.Outcome.NodeId) return;
+        if (Model.OutcomeId != message.Outcome.OutcomeId) return;
 
         Dispatcher.UIThread.Invoke(() =>
         {

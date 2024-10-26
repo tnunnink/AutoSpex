@@ -67,32 +67,11 @@ public class ExportNodeTests
     }
 
     [Test]
-    public async Task ExportNode_ExistingCollectionWithVariables_ShouldBeSuccess()
+    public async Task ExportNode_NodeWithMultipleSpecs_ShouldBeSuccess()
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
         var collection = Node.NewCollection();
-        collection.AddVariable("first", 123);
-        collection.AddVariable("second", "Another test");
-        collection.AddVariable("third", new Tag("MyTag", new DINT(123)));
-        await mediator.Send(new CreateNode(collection));
-
-        var result = await mediator.Send(new ExportNode(collection.NodeId));
-
-        result.IsSuccess.Should().BeTrue();
-        result.Value.Should().NotBeNull();
-        result.Value.Collection.Should().BeEquivalentTo(collection);
-    }
-
-    [Test]
-    public async Task ExportNode_NodeWithMultipleSpecsAndVariables_ShouldBeSuccess()
-    {
-        using var context = new TestContext();
-        var mediator = context.Resolve<IMediator>();
-        var collection = Node.NewCollection();
-        collection.AddVariable("first", 123);
-        collection.AddVariable("second", "Another test");
-        collection.AddVariable("third", new Tag("MyTag", new DINT(123)));
         var spec = collection.AddSpec("Test");
         spec.Configure(s =>
         {

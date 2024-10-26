@@ -221,10 +221,6 @@
             <DependentUpon>SettingsPage.axaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
-        <Compile Update="Pages\Dialogs\NewVariablePage.axaml.cs">
-          <DependentUpon>NewVariablePage.axaml</DependentUpon>
-          <SubType>Code</SubType>
-        </Compile>
         <Compile Update="Pages\Parts\SettingsAboutPage.axaml.cs">
           <DependentUpon>SettingsAboutPage.axaml</DependentUpon>
           <SubType>Code</SubType>
@@ -307,6 +303,11 @@
         <UpToDateCheckInput Remove="Components\Entries\All.axaml" />
         <UpToDateCheckInput Remove="Components\Items\All.axaml" />
         <UpToDateCheckInput Remove="Components\Entries\All.axaml" />
+        <UpToDateCheckInput Remove="Components\Variables\All.axaml" />
+        <UpToDateCheckInput Remove="Components\Variables\OverrideListItem.axaml" />
+        <UpToDateCheckInput Remove="Components\Variables\ReferenceDisplay.axaml" />
+        <UpToDateCheckInput Remove="Components\Variables\VariableListItem.axaml" />
+        <UpToDateCheckInput Remove="Components\Variables\VariableTip.axaml" />
     </ItemGroup>
 
     <ItemGroup>

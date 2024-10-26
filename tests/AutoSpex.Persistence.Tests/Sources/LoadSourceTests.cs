@@ -73,7 +73,7 @@ public class LoadSourceTests
         result.Value.Should().BeEquivalentTo(source, o => o.Excluding(s => s.Content));
     }
 
-    [Test]
+    /*[Test]
     public async Task LoadSource_WithSourceWithOverrides_ShouldBeSuccessAndExpected()
     {
         using var context = new TestContext();
@@ -98,5 +98,5 @@ public class LoadSourceTests
 
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().BeEquivalentTo(source, o => o.Excluding(s => s.Content));
-    }
+    }*/
 }

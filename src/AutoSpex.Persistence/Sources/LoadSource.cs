@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using AutoSpex.Engine;
+﻿using AutoSpex.Engine;
 using Dapper;
 using FluentResults;
 using JetBrains.Annotations;
@@ -19,20 +18,9 @@ internal class LoadSourceHandler(IConnectionManager manager) : IRequestHandler<L
         FROM Source WHERE SourceId = @SourceId
         """;
 
-    private const string GetSuppressions =
-        """
-        SELECT NodeId, Reason 
-        FROM Suppression 
-        WHERE SourceId = @SourceId
-        """;
+    private const string GetSuppressions = "SELECT NodeId, Reason FROM Suppression WHERE SourceId = @SourceId";
 
-    private const string GetOverrides =
-        """
-        SELECT V.*, O.Value 
-        FROM Override O 
-            JOIN Variable V on O.VariableId = V.VariableId 
-        WHERE SourceId = @SourceId
-        """;
+    private const string GetOverrides = "SELECT Config FROM Override WHERE SourceId = @SourceId";
 
     public async Task<Result<Source>> Handle(LoadSource request, CancellationToken cancellationToken)
     {
@@ -46,19 +34,9 @@ internal class LoadSourceHandler(IConnectionManager manager) : IRequestHandler<L
         foreach (var suppression in suppressions)
             source.AddSuppression(suppression);
 
-        var options = new JsonSerializerOptions { Converters = { new JsonObjectConverter() } };
-
-        await connection.QueryAsync<Variable, string, Variable>(GetOverrides,
-            (variable, value) =>
-            {
-                var typed = JsonSerializer.Deserialize<object>(value, options);
-                variable.Value = typed;
-                source.AddOverride(variable);
-                return variable;
-            },
-            splitOn: "Value",
-            param: new { source.SourceId }
-        );
+        var specs = await connection.QueryAsync<Spec>(GetOverrides, new { request.SourceId });
+        foreach (var spec in specs)
+            source.AddOverride(spec);
 
         return Result.Ok(source);
     }

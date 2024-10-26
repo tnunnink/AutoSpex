@@ -41,7 +41,6 @@ public class CriterionTests
         criterion.Operation.Should().Be(Operation.Any);
         criterion.Argument.Value.Should().BeOfType<Criterion>();
         criterion.Argument.Value.Should().BeEquivalentTo(innerCriterion);
-        
     }
 
     [Test]
@@ -94,7 +93,7 @@ public class CriterionTests
         result.Should().BeTrue();
     }
 
-    [Test]
+    /*[Test]
     public void VariableArgument_WhenEvaluated_ShouldRunCorrectly()
     {
         var tag = new Tag { Name = "MyTestTag" };
@@ -140,7 +139,7 @@ public class CriterionTests
         var eval = criterion.Evaluate(tag);
 
         eval.Result.Should().Be(ResultState.Passed);
-    }
+    }*/
 
     [Test]
     public void ToString_SimpleStringArgument_ShouldBeExpected()
@@ -181,17 +180,6 @@ public class CriterionTests
         var result = criterion.ToString();
 
         result.Should().Be("Members Is Any TagName Is Containing SomeValue");
-    }
-
-    [Test]
-    public void ToString_NestedVariable_ShouldBeExpected()
-    {
-        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Like,
-            new Variable("Test", "%Test_%").Reference());
-
-        var result = criterion.ToString();
-
-        result.Should().Be("Name Is Like %Test_%");
     }
 
     [Test]

@@ -24,13 +24,9 @@ internal class LoadNodesHandler(IConnectionManager manager) : IRequestHandler<Lo
                      INNER JOIN Nodes n ON n.ParentId = p.NodeId
         )
         
-        SELECT
-            n.[NodeId], n.[ParentId], n.[Type], n.[Name],
-            s.[Config],
-            v.[VariableId], v.[Name], v.[Group], v.[Value]
+        SELECT n.[NodeId], n.[ParentId], n.[Type], n.[Name], s.[Config]
         FROM Nodes n
-                 LEFT JOIN Spec s ON s.NodeId = n.NodeId
-                 LEFT JOIN Variable v ON v.NodeId = n.NodeId
+        LEFT JOIN Spec s ON s.NodeId = n.NodeId
         ORDER BY n.Distance DESC, n.Name;
         """;
 
@@ -42,8 +38,8 @@ internal class LoadNodesHandler(IConnectionManager manager) : IRequestHandler<Lo
         var nodes = new HashSet<Node>();
         var lookup = new Dictionary<Guid, Node>();
 
-        await connection.QueryAsync<Node, Spec?, Variable?, Node>(LoadNodes,
-            (node, spec, variable) =>
+        await connection.QueryAsync<Node, Spec?, Node>(LoadNodes,
+            (node, spec) =>
             {
                 //Try to add or get the existing instance that is already partially configured.
                 if (!lookup.TryAdd(node.NodeId, node))
@@ -56,16 +52,13 @@ internal class LoadNodesHandler(IConnectionManager manager) : IRequestHandler<Lo
                 
                 if (spec is not null)
                     node.Configure(spec);
-
-                if (variable is not null)
-                    node.AddVariable(variable);
                 
                 if (ids.Contains(node.NodeId.ToString()))
                     nodes.Add(node);
                 
                 return node;
             },
-            splitOn: "Config,VariableId",
+            splitOn: "Config",
             param: new { Ids = ids });
 
         return Result.Ok(nodes.AsEnumerable());

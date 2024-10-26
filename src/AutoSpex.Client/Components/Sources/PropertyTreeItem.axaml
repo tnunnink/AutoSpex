@@ -25,10 +25,10 @@
                       x:DataType="observers:PropertyObserver"
                       ItemsSource="{Binding Properties}">
 
-        <Border x:Name="Border" 
+        <Border x:Name="Border"
                 Background="Transparent"
-                Focusable="True" 
-                IsTabStop="False" >
+                Focusable="True"
+                IsTabStop="False">
 
             <Border.ContextFlyout>
                 <MenuFlyout
@@ -64,13 +64,6 @@
                             properties:Icon.Theme="{StaticResource IconFilledClone}"
                             IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}"
                             ToolTip.Tip="Copy Element" />
-
-                        <Button
-                            Command="{Binding CreateVariableCommand}"
-                            Theme="{StaticResource IconButtonSmall}"
-                            properties:Icon.Theme="{StaticResource IconLineAt}"
-                            IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}"
-                            ToolTip.Tip="Create Variable" />
 
                         <Button
                             Theme="{StaticResource IconButtonSmall}"

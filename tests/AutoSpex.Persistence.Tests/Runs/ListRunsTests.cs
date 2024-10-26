@@ -22,9 +22,9 @@ public class ListRunsTests
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-        await mediator.Send(new SaveRun(Run.Empty));
-        await mediator.Send(new SaveRun(Run.Empty));
-        await mediator.Send(new SaveRun(Run.Empty));
+        await mediator.Send(new PostRun(Run.Empty));
+        await mediator.Send(new PostRun(Run.Empty));
+        await mediator.Send(new PostRun(Run.Empty));
 
         var result = await mediator.Send(new ListRuns());
 
@@ -36,9 +36,9 @@ public class ListRunsTests
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-        await mediator.Send(new SaveRun(new Run(Node.NewSpec("Test"), new Source(L5X.Load(Known.Test)))));
-        await mediator.Send(new SaveRun(new Run(Node.NewSpec("Test"), new Source(L5X.Load(Known.Test)))));
-        await mediator.Send(new SaveRun(new Run(Node.NewSpec("Test"), new Source(L5X.Load(Known.Test)))));
+        await mediator.Send(new PostRun(new Run(Node.NewSpec("Test"), new Source(L5X.Load(Known.Test)))));
+        await mediator.Send(new PostRun(new Run(Node.NewSpec("Test"), new Source(L5X.Load(Known.Test)))));
+        await mediator.Send(new PostRun(new Run(Node.NewSpec("Test"), new Source(L5X.Load(Known.Test)))));
 
         var result = await mediator.Send(new ListRuns());
 

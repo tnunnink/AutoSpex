@@ -85,12 +85,10 @@ public partial class NodeDetailPageModel : DetailPageModel
         if (Node.Type == NodeType.Spec)
         {
             await Navigator.Navigate(() => new CriteriaPageModel(Node));
-            await Navigator.Navigate(() => new VariablesPageModel(Node));
             return;
         }
 
         await Navigator.Navigate(() => new SpecsPageModel(Node));
-        await Navigator.Navigate(() => new VariablesPageModel(Node));
     }
 
     /// <summary>

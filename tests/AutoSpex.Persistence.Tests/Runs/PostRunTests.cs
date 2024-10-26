@@ -4,7 +4,7 @@ using Task = System.Threading.Tasks.Task;
 namespace AutoSpex.Persistence.Tests.Runs;
 
 [TestFixture]
-public class SaveRunTests
+public class PostRunTests
 {
     [Test]
     public async Task SaveRun_EmptyRun_ShouldReturnSuccess()
@@ -13,7 +13,7 @@ public class SaveRunTests
         var mediator = context.Resolve<IMediator>();
         var run = Run.Empty;
 
-        var result = await mediator.Send(new SaveRun(run));
+        var result = await mediator.Send(new PostRun(run));
 
         result.IsSuccess.Should().BeTrue();
     }
@@ -25,7 +25,7 @@ public class SaveRunTests
         var mediator = context.Resolve<IMediator>();
         var run = new Run(Node.NewCollection(), new Source(L5X.Load(Known.Test)));
 
-        var result = await mediator.Send(new SaveRun(run));
+        var result = await mediator.Send(new PostRun(run));
 
         result.IsSuccess.Should().BeTrue();
     }
@@ -36,7 +36,7 @@ public class SaveRunTests
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
         var run = new Run(Node.NewCollection(), new Source(L5X.Load(Known.Test)));
-        await mediator.Send(new SaveRun(run));
+        await mediator.Send(new PostRun(run));
 
         var result = await mediator.Send(new LoadRun(run.RunId));
 
@@ -56,7 +56,7 @@ public class SaveRunTests
         collection.AddContainer().AddSpec("Nested");
         var run = new Run(collection, new Source(L5X.Load(Known.Test)));
 
-        var result = await mediator.Send(new SaveRun(run));
+        var result = await mediator.Send(new PostRun(run));
 
         result.IsSuccess.Should().BeTrue();
     }

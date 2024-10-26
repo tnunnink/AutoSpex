@@ -29,9 +29,6 @@ internal class LoadNodeHandler(IConnectionManager manager) : IRequestHandler<Loa
         ORDER BY Distance DESC;
         """;
 
-    private const string LoadVariables =
-        "SELECT [VariableId], [Name], [Group], [Value] FROM Variable WHERE NodeId = @NodeId";
-
     private const string LoadSpec =
         "SELECT Config FROM Spec WHERE NodeId = @NodeId";
 
@@ -40,13 +37,11 @@ internal class LoadNodeHandler(IConnectionManager manager) : IRequestHandler<Loa
         using var connection = await manager.Connect(cancellationToken);
 
         var nodes = (await connection.QueryAsync<Node>(LoadNode, new { request.NodeId })).BuildTree();
-        var variables = await connection.QueryAsync<Variable>(LoadVariables, new { request.NodeId });
-        var spec = await connection.QuerySingleOrDefaultAsync<Spec>(LoadSpec, new { request.NodeId });
 
         if (!nodes.TryGetValue(request.NodeId, out var requested))
             return Result.Fail<Node>($"Node not found: '{request.NodeId}'");
-        
-        requested.AddVariables(variables);
+
+        var spec = await connection.QuerySingleOrDefaultAsync<Spec>(LoadSpec, new { request.NodeId });
         requested.Configure(spec);
 
         return Result.Ok(requested);
