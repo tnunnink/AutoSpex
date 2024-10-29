@@ -7,24 +7,24 @@
                     xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
 
     <Design.PreviewWith>
-        <Border Padding="30" Width="700" Height="400">
-            <ListBox ItemsSource="{x:Static components:TestData.Sources}"
-                     ItemTemplate="{DynamicResource SourceListItem}"
-                     ItemContainerTheme="{StaticResource ListBoxItemEntry}"
-                     SelectionMode="Multiple"
-                     BorderThickness="1" CornerRadius="5"
-                     BorderBrush="{a:ThemeResource Container1BorderBrush}"
-                     VerticalAlignment="Top" />
-        </Border>
+        <ListBox
+            Margin="20" Width="1000" Height="200"
+            ItemsSource="{x:Static components:TestData.Sources}"
+            ItemTemplate="{DynamicResource SourceListItem}"
+            ItemContainerTheme="{StaticResource ListBoxItemEntry}"
+            SelectionMode="Multiple"
+            BorderThickness="1" CornerRadius="5"
+            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+            VerticalAlignment="Top" />
     </Design.PreviewWith>
 
     <DataTemplate x:Key="SourceListItem" x:DataType="observers:SourceObserver">
-        
-        <Border x:Name="Border"
-                Background="Transparent"
-                Focusable="True" 
-                IsTabStop="False" 
-                Padding="{a:ThemeResource ListItemPadding}">
+
+        <Border
+            Background="Transparent"
+            Focusable="True"
+            IsTabStop="False"
+            Padding="{a:ThemeResource ListItemPadding}">
 
             <Border.ContextFlyout>
                 <MenuFlyout
@@ -33,30 +33,42 @@
                     Placement="Pointer" />
             </Border.ContextFlyout>
 
-            <Grid ColumnDefinitions="*,30,Auto">
+            <Grid ColumnDefinitions="Auto,*,Auto,Auto">
 
-                <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Left" ClipToBounds="True">
+                <PathIcon
+                    Grid.Column="0"
+                    Theme="{StaticResource IconThemedSource}"
+                    VerticalAlignment="Top"
+                    Margin="0 3 0 0" />
 
-                    <PathIcon Theme="{StaticResource IconThemedSource}" />
+                <StackPanel Grid.Column="1" Spacing="5" Margin="10 0" ClipToBounds="True">
 
-                    <StackPanel Spacing="3" VerticalAlignment="Center">
-
+                    <Button
+                        Command="{Binding NavigateCommand}"
+                        Theme="{a:ControlTheme ButtonInvisible}"
+                        HorizontalAlignment="Left">
                         <controls:HighlightableTextBlock
                             Text="{Binding Name}"
                             HighlightedText="{Binding FilterText}"
-                            FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
+                            FontSize="{a:ThemeResource DefaultFontSizeMedium}"
+                            FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
+                        <Button.Styles>
+                            <Style Selector="Button:pointerover">
+                                <Setter
+                                    Property="Foreground"
+                                    Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+                            </Style>
+                        </Button.Styles>
+                    </Button>
 
-                        <controls:HighlightableTextBlock
-                            Text="{Binding Description}"
-                            HighlightedText="{Binding FilterText}"
-                            Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
-                            FontSize="{a:ThemeResource DefaultFontSizeExtraSmall}" />
-
-                    </StackPanel>
+                    <controls:HighlightableTextBlock
+                        Text="{Binding Description}"
+                        HighlightedText="{Binding FilterText}"
+                        Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
 
                 </StackPanel>
 
-                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="20">
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="20" Margin="20 0">
 
                     <StackPanel Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
 
@@ -76,18 +88,20 @@
 
                     </StackPanel>
 
-                    <Button
-                        Theme="{StaticResource IconButton}"
-                        properties:Icon.Theme="{StaticResource IconEllipsis}"
-                        ToolTip.Tip="Options">
-                        <Button.Flyout>
-                            <MenuFlyout
-                                ItemsSource="{Binding MenuItems}"
-                                ItemContainerTheme="{StaticResource MenuActionItem}"
-                                Placement="BottomEdgeAlignedRight" HorizontalOffset="8" VerticalOffset="5" />
-                        </Button.Flyout>
-                    </Button>
                 </StackPanel>
+
+                <Button
+                    Grid.Column="3"
+                    Theme="{StaticResource IconButton}"
+                    properties:Icon.Theme="{StaticResource IconEllipsis}"
+                    ToolTip.Tip="Options">
+                    <Button.Flyout>
+                        <MenuFlyout
+                            ItemsSource="{Binding MenuItems}"
+                            ItemContainerTheme="{StaticResource MenuActionItem}"
+                            Placement="BottomEdgeAlignedRight" HorizontalOffset="8" VerticalOffset="5" />
+                    </Button.Flyout>
+                </Button>
 
             </Grid>
 
@@ -95,6 +109,10 @@
                 <ExecuteCommandOnKeyDownBehavior
                     Gesture="Ctrl+E"
                     Command="{Binding RenameCommand}"
+                    MarkAsHandled="True" />
+                <ExecuteCommandOnKeyDownBehavior
+                    Gesture="Delete"
+                    Command="{Binding DeleteCommand}"
                     MarkAsHandled="True" />
             </Interaction.Behaviors>
         </Border>
