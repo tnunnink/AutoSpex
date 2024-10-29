@@ -54,16 +54,6 @@
                 <Panel>
 
                     <Button
-                        Content="View Suppressions"
-                        Theme="{a:ControlTheme ButtonSubtle}"
-                        HorizontalAlignment="Left"
-                        Classes="accent">
-                        <Interaction.Behaviors>
-                            <behaviors:HideFlyoutOnClickedBehavior />
-                        </Interaction.Behaviors>
-                    </Button>
-
-                    <Button
                         Content="Apply"
                         Theme="{a:ControlTheme ButtonSolid}"
                         Command="{Binding AddSuppressionCommand}"

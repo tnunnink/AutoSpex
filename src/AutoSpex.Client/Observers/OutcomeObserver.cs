@@ -21,17 +21,21 @@ public partial class OutcomeObserver : Observer<Outcome>,
     public OutcomeObserver(Outcome model) : base(model)
     {
         Result = model.Verification.Result;
+        Node = GetObserver<NodeObserver>(x => x.Id == Model.NodeId);
         Evaluations = new ObserverCollection<Evaluation, EvaluationObserver>(
             refresh: () => Model.Verification.Evaluations.Select(e => new EvaluationObserver(e)).ToList(),
             count: () => Model.Verification.Evaluations.Count()
         );
+
+        RegisterDisposable(Node);
         RegisterDisposable(Evaluations);
     }
 
     protected override bool PromptForDeletion => false;
     public override Guid Id => Model.OutcomeId;
     public override string Name => Model.Name;
-    public NodeObserver? Node => GetObserver<NodeObserver>(x => x.Id == Model.NodeId);
+
+    [ObservableProperty] private NodeObserver? _node;
 
     [ObservableProperty] private ResultState _result = ResultState.None;
     public long Duration => Model.Verification.Duration;
@@ -57,12 +61,12 @@ public partial class OutcomeObserver : Observer<Outcome>,
 
     /// <inheritdoc />
     /// <remarks>
-    /// To get back to the spec we need to load the node first. If it no longer exists, we can't navigate there.
+    /// For an outcome we want to repurpose the navigate command to show the outcome result details in the parent list.
     /// </remarks>
-    protected override async Task Navigate()
+    protected override Task Navigate()
     {
-        if (Node is null) return;
-        await Navigator.Navigate(Node);
+        Messenger.Send(new Open(this));
+        return Task.CompletedTask;
     }
 
     /// <summary>
@@ -143,6 +147,12 @@ public partial class OutcomeObserver : Observer<Outcome>,
     /// </summary>
     /// <param name="Outcome">The outcome produced by the run.</param>
     public record Complete(Outcome Outcome);
+
+    /// <summary>
+    /// A message to nofiy the containing list to select and show the details for this outcome.
+    /// </summary>
+    /// <param name="Outcome">The outcome to open in the containing list.</param>
+    public record Open(OutcomeObserver Outcome);
 
     /// <inheritdoc />
     protected override IEnumerable<MenuActionItem> GenerateContextItems()
