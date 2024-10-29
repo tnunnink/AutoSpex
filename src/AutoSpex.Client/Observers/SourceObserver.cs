@@ -77,14 +77,15 @@ public partial class SourceObserver : Observer<Source>,
     [RelayCommand]
     private async Task Run()
     {
-        //todo need to prompt for node
-        var node = Node.NewCollection();
+        var node = await Prompter.Show<NodeObserver?>(() => new SelectContainerPageModel { ButtonText = "Run" });
+        if (node is null) return;
 
-        var result = await Mediator.Send(new NewRun(node.NodeId, Id));
+        var result = await Mediator.Send(new NewRun(node.Id, Id));
         if (Notifier.ShowIfFailed(result)) return;
 
         var run = new RunObserver(result.Value);
-        await Navigator.Navigate(() => new RunDetailPageModel(run, true));
+
+        await Navigator.Navigate(() => new RunDetailPageModel(run));
     }
 
     #endregion
