@@ -89,7 +89,7 @@ public static class TestData
     private static IEnumerable<Node> GenerateSpecs()
     {
         var collection = Node.NewContainer();
-        collection.AddSpec("Test Spec");
+        collection.AddSpec("Test Spec", s => s.Query(Element.Tag).Filter("TagName", Operation.Containing, "Test"));
         collection.AddSpec("Another Spec");
         collection.AddSpec("A Spec with a longer name then most of the other specs that you'd want");
         var folder = collection.AddContainer();
@@ -116,6 +116,19 @@ public static class TestData
             c.Query(Element.Tag);
             c.Filter("TagName", Operation.Containing, "TestTag");
             c.Verify("Value", Operation.EqualTo, 123);
+        })
+    );
+
+    public static SpecObserver SpecObserverManyCriterion = new(Spec.Configure(c =>
+        {
+            c.Query(Element.Tag);
+            c.Filter("TagName", Operation.Containing, "TestTag");
+            c.Filter("DataType", Operation.EqualTo, "MyType");
+            c.Filter("ExternalAccess", Operation.In,
+                new List<Argument> { ExternalAccess.ReadOnly, ExternalAccess.ReadWrite });
+            c.Verify("Value", Operation.GreaterThan, 123);
+            c.Verify("Description", Operation.EndingWith, "Some text value");
+            c.Verify("Scope.Program", Negation.Not, Operation.EqualTo, "MyContianer");
         })
     );
 
@@ -202,6 +215,8 @@ public static class TestData
 
     public static RunObserver Run => new(new Run(Node.NewCollection(), new Source()));
 
+    public static ObservableCollection<RunObserver> Runs = [Run, Run, Run];
+
     #endregion
 
     #region Outcomes
@@ -245,6 +260,13 @@ public static class TestData
         new(new Suppression(Guid.NewGuid(), "This is the reason why this spec is being suppressed."));
 
     public static ObservableCollection<SuppressionObserver> Suppresions = [Suppression, Suppression, Suppression];
+
+    #endregion
+
+    #region Overrides
+
+    public static ObservableCollection<OverrideObserver> Overrides =
+        new(GenerateSpecs().Select(n => new OverrideObserver(n)));
 
     #endregion
 }
