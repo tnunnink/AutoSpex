@@ -250,7 +250,7 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     /// </summary>
     /// <returns>The <see cref="Task"/> representing the async function to perform.</returns>
     [RelayCommand]
-    protected virtual Task Duplicate() => Task.FromResult(Messenger.Send(new MakeCopy(this)));
+    protected virtual Task Duplicate() => Task.CompletedTask;
 
     /// <summary>
     /// A command to move and observer object in the list of observers to a different location.
@@ -355,14 +355,6 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     public record Renamed(Observer Observer);
 
     /// <summary>
-    /// A message that indicates the observer needs to be duplicated or copied.
-    /// This can be handled by parent observers or pages to refresh the UI to show the newly duplicated instance.
-    /// This is by default what the <see cref="Shared.Observer.DuplicateCommand"/> sends.
-    /// </summary>
-    /// <param name="Observer">The observer instance that needs to be duplicated.</param>
-    public record MakeCopy(Observer Observer);
-
-    /// <summary>
     /// A request to get an in memory instance of an observer that satisfies the provided condition. This will return
     /// a single observer instance, and if multiple are in memory, should return the first instance that recieves the
     /// message.
@@ -384,7 +376,7 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     {
         public Observer Observer { get; } = observer;
     }
-    
+
     /// <summary>
     /// A request to retrieve all in memory instances of and observer that satisfy the provided predicate.
     /// </summary>
