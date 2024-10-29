@@ -1,6 +1,5 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
                     xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
                     xmlns:components="clr-namespace:AutoSpex.Client.Components">
@@ -17,9 +16,6 @@
                 <ContentControl
                     Content="{x:Static components:TestData.TextArgument}"
                     ContentTemplate="{DynamicResource ArgumentBinaryEntry}" />
-                <ContentControl
-                    Content="{x:Static components:TestData.ReferenceArgument}"
-                    ContentTemplate="{DynamicResource ArgumentBinaryEntry}" />
             </StackPanel>
         </Border>
     </Design.PreviewWith>
@@ -34,18 +30,11 @@
             Populate="{Binding Suggestions}"
             CommitCommand="{Binding UpdateValueCommand}">
             <controls:Entry.ValueTemplate>
-                <a:TypedDataTemplateSelector DefaultTemplate="{StaticResource ValueDisplay}">
-                    <DataTemplate x:DataType="observers:ValueObserver">
-                        <ContentControl
-                            Content="{Binding}"
-                            ContentTemplate="{StaticResource ValueDisplay}" />
-                    </DataTemplate>
-                    <DataTemplate x:DataType="observers:ReferenceObserver">
-                        <ContentControl
-                            Content="{Binding}"
-                            ContentTemplate="{StaticResource ReferenceDisplay}" />
-                    </DataTemplate>
-                </a:TypedDataTemplateSelector>
+                <DataTemplate x:DataType="observers:ValueObserver">
+                    <ContentControl
+                        Content="{Binding}"
+                        ContentTemplate="{StaticResource ValueDisplay}" />
+                </DataTemplate>
             </controls:Entry.ValueTemplate>
         </controls:Entry>
     </DataTemplate>

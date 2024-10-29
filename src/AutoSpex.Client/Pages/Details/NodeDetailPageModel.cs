@@ -5,6 +5,7 @@ using AutoSpex.Client.Observers;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using AutoSpex.Persistence;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -24,15 +25,22 @@ public partial class NodeDetailPageModel : DetailPageModel
     public override string Icon => Node.Type.Name;
     public NodeObserver Node { get; private set; }
 
+    [ObservableProperty] private PageViewModel? _contentPage;
+
     [ObservableProperty] private SpecRunnerPageModel? _runnerPage;
+
+    [ObservableProperty] private bool _showRunner;
 
 
     /// <inheritdoc />
     public override async Task Load()
     {
         await LoadNode();
+        await LoadContent();
         await LoadRunner();
-        await base.Load();
+
+        //New specs need to enable the save button by default.
+        Dispatcher.UIThread.Invoke(() => SaveCommand.NotifyCanExecuteChanged());
 
         //Any time a node is open locate it in the navigation tree.
         Messenger.Send(new NodeObserver.ExpandTo(Node.Id));
@@ -71,26 +79,20 @@ public partial class NodeDetailPageModel : DetailPageModel
     [RelayCommand]
     private async Task Run()
     {
+        //Specs will run and dispay result locally.
+        if (Node.Type == NodeType.Spec && RunnerPage is not null)
+        {
+            await RunnerPage.Run();
+            ShowRunner = true;
+            return;
+        }
+
+        //Collections/containers will create a new run instance.
         var result = await Mediator.Send(new NewRun(Node.Id));
         if (Notifier.ShowIfFailed(result)) return;
 
         var run = new RunObserver(result.Value);
-
-        await Navigator.Navigate(() => new RunDetailPageModel(run, true));
-    }
-
-    /// <inheritdoc />
-    protected override async Task NavigateTabs()
-    {
-        if (Node.Type == NodeType.Spec)
-        {
-            await Navigator.Navigate(() => new CriteriaPageModel(Node));
-            await Navigator.Navigate(() => new VariablesPageModel(Node));
-            return;
-        }
-
-        await Navigator.Navigate(() => new SpecsPageModel(Node));
-        await Navigator.Navigate(() => new VariablesPageModel(Node));
+        await Navigator.Navigate(() => new RunDetailPageModel(run));
     }
 
     /// <summary>
@@ -105,6 +107,20 @@ public partial class NodeDetailPageModel : DetailPageModel
         Node = new NodeObserver(result.Value);
         OnPropertyChanged(nameof(Node));
         Track(Node);
+    }
+
+    /// <summary>
+    /// Loads the local runner page to allow the user to run and test a spec before saving/creating a run.
+    /// </summary>
+    private async Task LoadContent()
+    {
+        if (Node.Type == NodeType.Spec)
+        {
+            ContentPage = await Navigator.Navigate(() => new CriteriaPageModel(Node));
+            return;
+        }
+
+        ContentPage = await Navigator.Navigate(() => new SpecsPageModel(Node));
     }
 
     /// <summary>

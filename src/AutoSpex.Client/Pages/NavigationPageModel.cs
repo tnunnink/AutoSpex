@@ -99,6 +99,12 @@ public partial class NavigationPageModel : PageViewModel
     {
         await Navigator.Navigate<SourceManagerPageModel>();
     }
+    
+    [RelayCommand]
+    private async Task OpenHistory()
+    {
+        await Navigator.Navigate<HistoryDetailPageModel>();
+    }
 
     [RelayCommand]
     private Task OpenSettings()

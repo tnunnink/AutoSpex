@@ -82,7 +82,7 @@ public abstract class Element : SmartEnum<Element, string>
     /// </summary>
     /// <param name="path">The path to the desired property, separated by dots.</param>
     /// <returns>The <see cref="Property"/> object representing the specified property if found, otherwise, <c>null</c>.</returns>
-    public Property? Property(string? path) => This.GetProperty(path);
+    public Property Property(string? path) => This.GetProperty(path);
 
     /// <summary>
     /// Registers a custom property for the element type using the provided property name and getter function.
@@ -109,6 +109,12 @@ public abstract class Element : SmartEnum<Element, string>
     {
         public ControllerElement() : base(typeof(Controller))
         {
+            Register<List<DataType>>("DataTypes", x => ((Controller)x!).L5X?.DataTypes.ToList());
+            Register<List<AddOnInstruction>>("AddOnInstructions", x => ((Controller)x!).L5X?.Instructions.ToList());
+            Register<List<Module>>("Modules", x => ((Controller)x!).L5X?.Modules.ToList());
+            Register<List<Tag>>("Tags", x => ((Controller)x!).L5X?.Tags.ToList());
+            Register<List<Program>>("Programs", x => ((Controller)x!).L5X?.Programs.ToList());
+            Register<List<Task>>("Tasks", x => ((Controller)x!).L5X?.Tasks.ToList());
         }
     }
 
@@ -116,8 +122,9 @@ public abstract class Element : SmartEnum<Element, string>
     {
         public DataTypeElement() : base(typeof(DataType))
         {
-            Register<IList<LogixComponent>>("Dependencies", x => ((DataType)x!).Dependencies().ToList());
-            /*Register<IList<CrossReference>>("References", x => ((DataType)x!).References().ToList());*/
+            Register<Controller>("Controller", x => ((DataType)x!).L5X?.Controller);
+            Register<List<LogixComponent>>("Dependencies", x => ((DataType)x!).Dependencies().ToList());
+            Register<List<CrossReference>>("References", x => ((DataType)x!).References().ToList());
         }
     }
 
@@ -125,6 +132,9 @@ public abstract class Element : SmartEnum<Element, string>
     {
         public AddOnInstructionElement() : base(typeof(AddOnInstruction))
         {
+            Register<Controller>("Controller", x => (x as DataType)?.L5X?.Controller);
+            Register<List<LogixComponent>>("Dependencies", x => (x as DataType)?.Dependencies().ToList());
+            Register<List<CrossReference>>("References", x => (x as DataType)?.References().ToList());
         }
     }
 
@@ -132,6 +142,7 @@ public abstract class Element : SmartEnum<Element, string>
     {
         public ModuleElement() : base(typeof(Module))
         {
+            Register<Controller>("Controller", x => (x as Module)?.L5X?.Controller);
         }
     }
 
@@ -139,6 +150,7 @@ public abstract class Element : SmartEnum<Element, string>
     {
         public TagElement() : base(typeof(Tag))
         {
+            Register<Controller>("Controller", x => (x as Tag)?.L5X?.Controller);
             Register<IList<Tag>>("Members", x => (x as Tag)?.Members().ToList() ?? []);
         }
     }
@@ -147,6 +159,7 @@ public abstract class Element : SmartEnum<Element, string>
     {
         public ProgramElement() : base(typeof(Program))
         {
+            Register<Controller>("Controller", x => (x as Program)?.L5X?.Controller);
         }
     }
 
@@ -154,6 +167,7 @@ public abstract class Element : SmartEnum<Element, string>
     {
         public RoutineElement() : base(typeof(Routine))
         {
+            Register<Controller>("Controller", x => (x as Routine)?.L5X?.Controller);
         }
     }
 
@@ -161,6 +175,7 @@ public abstract class Element : SmartEnum<Element, string>
     {
         public TaskElement() : base(typeof(Task))
         {
+            Register<Controller>("Controller", x => (x as Task)?.L5X?.Controller);
         }
     }
 
@@ -168,6 +183,7 @@ public abstract class Element : SmartEnum<Element, string>
     {
         public TrendElement() : base(typeof(Trend))
         {
+            Register<Controller>("Controller", x => (x as Trend)?.L5X?.Controller);
         }
     }
 
@@ -175,6 +191,7 @@ public abstract class Element : SmartEnum<Element, string>
     {
         public WatchListElement() : base(typeof(WatchList))
         {
+            Register<Controller>("Controller", x => (x as WatchList)?.L5X?.Controller);
         }
     }
 
@@ -252,6 +269,8 @@ public abstract class Element : SmartEnum<Element, string>
     {
         public RungElement() : base(typeof(Rung))
         {
+            Register<IEnumerable<Instruction>>("Instructions", x => (x as Rung)?.Text.Instructions());
+            Register<IEnumerable<TagName>>("Tags", x => (x as Rung)?.Text.Tags());
         }
     }
 

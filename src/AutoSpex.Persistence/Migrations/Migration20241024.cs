@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 namespace AutoSpex.Persistence;
 
 [UsedImplicitly]
-[Migration(20241024, "Adds Ignore Table")]
+[Migration(20241024, "Add Suppression")]
 public class Migration20241024 : Migration
 {
     public override void Up()

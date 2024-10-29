@@ -1,0 +1,77 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+
+    <Design.PreviewWith>
+        <Border Width="600" Height="400">
+            <ContentControl
+                Content="{x:Static components:TestData.SpecObserverManyCriterion}"
+                ContentTemplate="{DynamicResource VerificationFlyout}"
+                VerticalAlignment="Top" HorizontalAlignment="Right" Margin="20" />
+        </Border>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="VerificationFlyout" x:DataType="observers:SpecObserver">
+
+        <Button
+            Theme="{StaticResource IconButton}"
+            properties:Icon.Theme="{StaticResource IconFilledPatch}"
+            VerticalAlignment="Center"
+            ToolTip.Tip="Verifications">
+
+            <Button.Flyout>
+                <Flyout Placement="BottomEdgeAlignedRight" HorizontalOffset="8" VerticalOffset="5">
+
+                    <StackPanel>
+
+                        <Border
+                            Background="{a:ThemeResource Container2BackgroundBrush}"
+                            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                            BorderThickness="0 0 0 1"
+                            CornerRadius="4 4 0 0"
+                            Padding="10"
+                            MinWidth="300">
+
+                            <Grid ColumnDefinitions="*,Auto">
+
+                                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="7">
+                                    <PathIcon Theme="{StaticResource IconFilledPatch}" Classes="size-sm" />
+                                    <TextBlock
+                                        Text="Verifications"
+                                        FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
+                                </StackPanel>
+
+                                <Button
+                                    Grid.Column="1"
+                                    Command="{Binding AddVerificationCommand}"
+                                    Theme="{StaticResource IconButtonSmall}"
+                                    properties:Icon.Theme="{StaticResource IconAdd}"
+                                    Classes="accent size-sm"
+                                    ToolTip.Tip="Add Verification"
+                                    ToolTip.Placement="BottomEdgeAlignedRight" />
+
+                            </Grid>
+
+                        </Border>
+
+                        <ListBox
+                            ItemsSource="{Binding Verifications}"
+                            SelectedItems="{Binding SelectedVerifications}"
+                            ItemTemplate="{StaticResource CriterionListItem}"
+                            ItemContainerTheme="{StaticResource ListBoxItemEntry}"
+                            SelectionMode="Multiple"
+                            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                            CornerRadius="0 0 5 5" />
+
+                    </StackPanel>
+
+                </Flyout>
+            </Button.Flyout>
+
+        </Button>
+
+    </DataTemplate>
+</ResourceDictionary>

@@ -11,7 +11,7 @@ public class ImportNodeTests
 
         var collection = Node.NewCollection();
         var package = new Package(collection, 10000);
-        
+
         var result = await mediator.Send(new ImportNode(package, ImportAction.None));
 
         result.IsSuccess.Should().BeTrue();
@@ -25,7 +25,7 @@ public class ImportNodeTests
 
         var collection = Node.NewCollection();
         var package = new Package(collection, 10000);
-        
+
         var result = await mediator.Send(new ImportNode(package, ImportAction.Copy));
         result.IsSuccess.Should().BeTrue();
 
@@ -39,8 +39,6 @@ public class ImportNodeTests
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
         var collection = Node.NewCollection();
-        collection.AddVariable("Test1", 123);
-        collection.AddVariable("Test1", "This is a variale");
         collection.AddSpec("Test", s =>
         {
             s.Query(Element.Tag);
@@ -48,10 +46,10 @@ public class ImportNodeTests
             s.Verify("Value", Operation.GreaterThan, "TestTag");
         });
         var package = new Package(collection, 10000);
-        
+
         var result = await mediator.Send(new ImportNode(package, ImportAction.None));
         result.IsSuccess.Should().BeTrue();
-        
+
         var export = await mediator.Send(new ExportNode(collection.NodeId));
         export.Value.Collection.Should().BeEquivalentTo(collection);
     }

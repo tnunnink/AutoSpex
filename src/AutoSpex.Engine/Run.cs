@@ -95,9 +95,8 @@ public class Run
         if (source is null)
             throw new ArgumentNullException(nameof(source));
 
-        source.Override(nodes.SelectMany(n => n.Variables));
-        //source.Override(nodes); this is how we would override the entire spec
-
+        source.Override(nodes);
+        
         await RunAllNodes(nodes, source, running, complete, token);
 
         Result = ResultState.MaxOrDefault(_outcomes.Select(o => o.Value.Verification.Result).ToList());

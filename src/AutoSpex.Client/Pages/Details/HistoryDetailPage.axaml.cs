@@ -2,9 +2,9 @@
 
 namespace AutoSpex.Client.Pages;
 
-public partial class NewVariablePage : UserControl
+public partial class HistoryDetailPage : UserControl
 {
-    public NewVariablePage()
+    public HistoryDetailPage()
     {
         InitializeComponent();
     }

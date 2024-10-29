@@ -2,6 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <ResourceDictionary.MergedDictionaries>
         <ResourceInclude Source="NameEntry.axaml" />
+        <ResourceInclude Source="ObserverLink.axaml" />
         <ResourceInclude Source="ValueDisplay.axaml" />
         <ResourceInclude Source="ValueListItem.axaml" />
     </ResourceDictionary.MergedDictionaries>

@@ -1,0 +1,70 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             x:Class="AutoSpex.Client.Pages.SelectSpecPage"
+             x:DataType="pages:SelectSpecPageModel"
+             Height="600" Width="600">
+
+    <controls:Prompt
+        HeaderIcon="{StaticResource IconThemedSpec}"
+        Header="Select spec"
+        CancelButtonTheme="{a:ControlTheme ButtonSoft}"
+        CancelCommandParameter="{x:Null}"
+        ActionButtonText="{Binding ButtonText}"
+        ActionButtonTheme="{a:ControlTheme ButtonSolid}"
+        ActionCommandParameter="{Binding Selected}"
+        Classes="accent"
+        Padding="0">
+
+        <DockPanel>
+
+            <TextBox
+                DockPanel.Dock="Top"
+                Text="{Binding Filter}"
+                Watermark="Search specs"
+                Theme="{a:ControlTheme TextBoxOutline}"
+                BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                BorderThickness="0 0 0 1" CornerRadius="0" Padding="0 10"
+                VerticalContentAlignment="Center">
+                <TextBox.InnerLeftContent>
+                    <PathIcon Theme="{StaticResource IconLineSearch}" Classes="size-sm" Margin="15 0 10 0" />
+                </TextBox.InnerLeftContent>
+            </TextBox>
+
+            <ListBox
+                DockPanel.Dock="Top"
+                ItemsSource="{Binding Nodes}"
+                SelectedItem="{Binding Selected}"
+                IsVisible="{Binding Nodes.Count}"
+                ItemContainerTheme="{StaticResource ListBoxItemSimple}"
+                ItemTemplate="{StaticResource NodeListItemSimple}"
+                Padding="10" />
+
+            <Panel>
+
+                <controls:DefaultMessage
+                    HeaderIcon="{StaticResource IconThemedSpec}"
+                    Header="No specs configured"
+                    Message="Create a specification before..."
+                    IsVisible="{Binding !Nodes.HasItems}" />
+
+                <controls:DefaultMessage
+                    HeaderIcon="{StaticResource IconLineSearch}"
+                    Header="No specs found"
+                    Message="Could not find any spec matching the current filter text.">
+                    <controls:DefaultMessage.IsVisible>
+                        <MultiBinding Converter="{x:Static BoolConverters.And}">
+                            <Binding Path="Nodes.HasItems" />
+                            <Binding Path="!Nodes.Count" />
+                        </MultiBinding>
+                    </controls:DefaultMessage.IsVisible>
+                </controls:DefaultMessage>
+
+            </Panel>
+
+        </DockPanel>
+
+    </controls:Prompt>
+</UserControl>

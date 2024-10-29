@@ -10,24 +10,7 @@ namespace AutoSpex.Engine;
 public class Source
 {
     private readonly Dictionary<Guid, Suppression> _suppressions = [];
-    private readonly Dictionary<Guid, Variable> _overrides = [];
-    private readonly Dictionary<Guid, Spec> _specs = [];
-
-    /*[JsonConstructor]
-    private Source(Guid sourceId, string name,
-        string targetName, string targetType, string exportedOn, string exportedBy, string description,
-        IEnumerable<Variable> overrides, IEnumerable<Node> ignore)
-    {
-        SourceId = sourceId;
-        Name = name;
-        TargetName = targetName;
-        TargetType = targetType;
-        ExportedOn = exportedOn;
-        ExportedBy = exportedBy;
-        Description = description;
-        _overrides = overrides.ToDictionary(x => x.VariableId);
-        _suppressions = ignore.ToDictionary(x => x.NodeId);
-    }*/
+    private readonly Dictionary<Guid, Node> _overrides = [];
 
     /// <summary>
     /// Creates a new <see cref="Source"/> with no content. 
@@ -125,11 +108,11 @@ public class Source
     public IEnumerable<Suppression> Suppressions => _suppressions.Values;
 
     /// <summary>
-    /// Gets the collection of <see cref="Variable"/> objects representing the overrides that allow the user to
-    /// change the input data to variables that are referenced on any node in the project.
+    /// Gets the collection of <see cref="Override"/> objects representing the overrides that allow the user to
+    /// change the configuration of a spec when this source is run.
     /// </summary>
     [JsonInclude]
-    public IEnumerable<Variable> Overrides => _overrides.Values;
+    public IEnumerable<Node> Overrides => _overrides.Values;
 
     /// <summary>
     /// Represents an empty source object with default property values and an empty source id.
@@ -157,24 +140,23 @@ public class Source
     }
 
     /// <summary>
-    /// Adds an override value for a specified variable to this source.
+    /// 
     /// </summary>
-    /// <param name="variable">The overriden variable object.</param>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="variable"/> is null.</exception>
-    public void AddOverride(Variable variable)
+    /// <param name="node"></param>
+    public void AddOverride(Node node)
     {
-        ArgumentNullException.ThrowIfNull(variable);
-        _overrides[variable.VariableId] = variable;
+        ArgumentNullException.ThrowIfNull(node);
+        _overrides[node.NodeId] = node;
     }
 
     /// <summary>
-    /// Removes the specified override variable from the source. This will delete the override variable from the internal collection.
+    /// 
     /// </summary>
-    /// <param name="variable">The variable to remove from the overrides.</param>
-    public void RemoveOverride(Variable variable)
+    /// <param name="node"></param>
+    public void RemoveOverride(Node node)
     {
-        ArgumentNullException.ThrowIfNull(variable);
-        _overrides.Remove(variable.VariableId);
+        ArgumentNullException.ThrowIfNull(node);
+        _overrides.Remove(node.NodeId);
     }
 
     /// <summary>
@@ -225,46 +207,23 @@ public class Source
     public void ClearSuppressions() => _suppressions.Clear();
 
     /// <summary>
-    /// Overrides the values of the provided variables using the configured <see cref="Overrides"/> collection of the source.
+    /// Applies overrides for the specified nodes based on the stored specifications in the Source.
     /// </summary>
-    /// <param name="variables">The variables whose values should be overridden.</param>
-    public void Override(IEnumerable<Variable> variables)
-    {
-        foreach (var variable in variables)
-        {
-            if (!_overrides.TryGetValue(variable.VariableId, out var match)) continue;
-            variable.Value = match.Value;
-        }
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="nodes"></param>
+    /// <param name="nodes">The collection of nodes to apply the overrides to.</param>
     public void Override(IEnumerable<Node> nodes)
     {
         foreach (var node in nodes)
         {
-            if (!_specs.TryGetValue(node.Spec.SpecId, out var spec)) continue;
-            node.Configure(spec);
+            if (!_overrides.TryGetValue(node.NodeId, out var match)) continue;
+            node.Configure(match.Spec);
         }
     }
 
     /// <summary>
-    /// Determines whether the specified node is ignored.
-    /// </summary>
-    /// <param name="node">The node to check for ignoring.</param>
-    /// <returns>True if the node is ignored; otherwise, false.</returns>
-    public bool Supresses(Node node)
-    {
-        ArgumentNullException.ThrowIfNull(node);
-        return _suppressions.ContainsKey(node.NodeId);
-    }
-
-    /// <summary>
-    /// Tries to suppress the outcome by applying a suppression if one exists for the specified node.
+    /// Tries to suppress the outcome by applying a suppression if one is configured for the specified node.
     /// </summary>
     /// <param name="outcome">The outcome to potentially suppress</param>
+    /// <returns><c>true</c> if the outcome was suppressed by the source configuration; otherwise, <c>false</c>.</returns>
     public bool Suppresses(Outcome outcome)
     {
         ArgumentNullException.ThrowIfNull(outcome);

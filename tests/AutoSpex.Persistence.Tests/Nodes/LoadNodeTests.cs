@@ -68,25 +68,6 @@ public class LoadNodeTests
                 .Verify("Disabled", Operation.False);
         });
         await mediator.Send(new CreateNode(node));
-        
-        var result = await mediator.Send(new LoadNode(node.NodeId));
-
-        result.IsSuccess.Should().BeTrue();
-        result.Value.Should().BeEquivalentTo(node);
-    }
-
-    [Test]
-    public async Task LoadNode_SpecWithReferences_ShouldBeSuccess()
-    {
-        using var context = new TestContext();
-        var mediator = context.Resolve<IMediator>();
-        var node = Node.NewSpec("test", s =>
-        {
-            s.Query(Element.Program)
-                .Filter("Name", Operation.EqualTo, new Reference("SomeName"))
-                .Verify("Disabled", Operation.False);
-        });
-        await mediator.Send(new CreateNode(node));
 
         var result = await mediator.Send(new LoadNode(node.NodeId));
 

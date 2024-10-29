@@ -35,9 +35,6 @@
       <None Update="ArgumentTests.Serialize_SimpleValue_ShouldBeVerified.verified.txt">
         <DependentUpon>ArgumentTests.cs</DependentUpon>
       </None>
-      <None Update="VariableTests.Serialize_SimpleValue_ShouldBeVerified.verified.txt">
-        <DependentUpon>VariableTests.cs</DependentUpon>
-      </None>
       <None Update="OutcomeTests.Serialize_WithNode_ShouldBeVerified.verified.txt">
         <DependentUpon>OutcomeTests.cs</DependentUpon>
       </None>

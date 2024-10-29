@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Ardalis.SmartEnum.SystemTextJson;
 using L5Sharp.Core;
@@ -41,13 +42,13 @@ public class Spec() : IEquatable<Spec>
     /// The collection of <see cref="Criterion"/> that define how to filter elements to return candidates for verification.
     /// </summary>
     [JsonInclude]
-    public List<Criterion> Filters { get; init; } = [];
+    public List<Criterion> Filters { get; private init; } = [];
 
     /// <summary>
     /// The collection of <see cref="Criterion"/> that define the checks to perform for each candidate element.
     /// </summary>
     [JsonInclude]
-    public List<Criterion> Verifications { get; init; } = [];
+    public List<Criterion> Verifications { get; private init; } = [];
 
     /// <summary>
     /// The <see cref="Inclusion"/> specifying how to evaluate the filters of the spec (All/Any).
@@ -138,6 +139,17 @@ public class Spec() : IEquatable<Spec>
             FilterInclusion = FilterInclusion,
             VerificationInclusion = VerificationInclusion
         };
+    }
+
+    /// <summary>
+    /// Creates a deep copy of this spec instance, returning the same configuration and same <see cref="SpecId"/>.
+    /// </summary>
+    /// <returns>The new copied spec instance.</returns>
+    public Spec Copy()
+    {
+        var data = JsonSerializer.Serialize(this);
+        var spec = JsonSerializer.Deserialize<Spec>(data);
+        return spec ?? throw new ArgumentException("Could not materialize new spec instance.");
     }
 
     /// <summary>

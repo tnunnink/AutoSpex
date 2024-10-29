@@ -3,10 +3,8 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceInclude Source="Breadcrumb.axaml" />
         <ResourceInclude Source="NodeHeader.axaml" />
-        <ResourceInclude Source="NodeLink.axaml" />
         <ResourceInclude Source="NodeListItem.axaml" />
         <ResourceInclude Source="NodeListItemSimple.axaml" />
-        <ResourceInclude Source="NodePath.axaml" />
         <ResourceInclude Source="NodeTreeItem.axaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

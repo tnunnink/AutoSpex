@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using AutoSpex.Engine;
+﻿using AutoSpex.Engine;
 using Dapper;
 using FluentResults;
 using JetBrains.Annotations;
@@ -19,8 +18,26 @@ internal class LoadTargetSourceHandler(IConnectionManager manager) : IRequestHan
         FROM Source WHERE IsTarget = 1
         """;
 
-    private const string GetOverrides =
-        "SELECT V.*, O.Value FROM Override O JOIN Variable V on O.VariableId = V.VariableId WHERE SourceId = @SourceId";
+    private const string GetSuppressions = "SELECT NodeId, Reason FROM Suppression WHERE SourceId = @SourceId";
+
+    private const string GetOverrides = "SELECT NodeId, Config FROM Override WHERE SourceId = @SourceId";
+
+    private const string GetNodes =
+        """
+        WITH Nodes AS (
+            SELECT NodeId, ParentId, Type, Name, 0 as Distance
+            FROM Node
+            WHERE NodeId in (SELECT NodeId FROM Override WHERE SourceId = @SourceId)
+            UNION ALL
+            SELECT p.NodeId, p.ParentId, p.Type, p.Name, n.Distance + 1 as Distance
+            FROM Node p
+            INNER JOIN Nodes n ON n.ParentId = p.NodeId
+        )
+
+        SELECT NodeId, ParentId, Type, Name
+        FROM Nodes
+        ORDER BY Distance DESC, Name;
+        """;
 
     public async Task<Result<Source>> Handle(LoadTargetSource request, CancellationToken cancellationToken)
     {
@@ -30,20 +47,26 @@ internal class LoadTargetSourceHandler(IConnectionManager manager) : IRequestHan
         if (source is null)
             return Result.Fail("No source is currently targetd.");
 
-        var options = new JsonSerializerOptions { Converters = { new JsonObjectConverter() } };
+        var suppressions = await connection.QueryAsync<Suppression>(GetSuppressions, new { source.SourceId });
+        foreach (var suppression in suppressions)
+            source.AddSuppression(suppression);
 
-        await connection.QueryAsync<Variable, string, Variable>(GetOverrides,
-            (variable, value) =>
+        var nodes = (await connection.QueryAsync<Node>(GetNodes, new { source.SourceId })).BuildTree();
+
+        var overrides = await connection.QueryAsync<Guid, Spec, Node>(GetOverrides,
+            (nodeId, spec) =>
             {
-                var typed = JsonSerializer.Deserialize<object>(value, options);
-                variable.Value = typed;
-                source.AddOverride(variable);
-                return variable;
-            },
-            splitOn: "Value",
-            param: new { source.SourceId }
-        );
+                if (!nodes.TryGetValue(nodeId, out var node))
+                    throw new ArgumentException($"No node was found for override {nodeId}");
 
+                node.Configure(spec);
+                return node;
+            },
+            splitOn: "Config",
+            param: new { source.SourceId });
+
+        foreach (var node in overrides)
+            source.AddOverride(node);
 
         return Result.Ok(source);
     }

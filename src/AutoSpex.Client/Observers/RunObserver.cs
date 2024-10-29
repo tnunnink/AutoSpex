@@ -26,9 +26,6 @@ public partial class RunObserver : Observer<Run>, IRecipient<Observer.Get<RunObs
             refresh: () => Model.Outcomes.Select(x => new OutcomeObserver(x)).ToList(),
             count: () => Model.Outcomes.Count()
         );
-
-        Track(nameof(Result));
-        Track(Outcomes);
     }
 
     public override Guid Id => Model.RunId;
@@ -41,6 +38,7 @@ public partial class RunObserver : Observer<Run>, IRecipient<Observer.Get<RunObs
     public int Failed => Model.Outcomes.Count(x => x.Verification.Result == ResultState.Failed);
     public int Errored => Model.Outcomes.Count(x => x.Verification.Result == ResultState.Errored);
     public int Inconclusive => Model.Outcomes.Count(x => x.Verification.Result == ResultState.Inconclusive);
+    public int Suppressed => Model.Outcomes.Count(x => x.Verification.Result == ResultState.Suppressed);
     public long Duration => Model.Outcomes.Sum(x => x.Verification.Duration);
     public bool HasResult => Model.Result > ResultState.Pending;
     public float Progress => Total > 0 ? (float)Ran / Total * 100 : 0;
@@ -55,11 +53,22 @@ public partial class RunObserver : Observer<Run>, IRecipient<Observer.Get<RunObs
 
     [ObservableProperty] private ResultState _filterState = ResultState.None;
 
+    /// <inheritdoc />
+    /// <remarks>
+    /// Since the run detail page expects the fully loaded observer we will load that here.
+    /// This is for navigation of exiting run objects.
+    /// </remarks>
+    protected override async Task Navigate()
+    {
+        var result = await Mediator.Send(new LoadRun(Id));
+        if (Notifier.ShowIfFailed(result)) return;
+        await Navigator.Navigate(new RunObserver(result.Value));
+    }
+
     /// <summary>
     /// Command to execute this run by retrieving, resolving, and evaluating all configured spec/source pairs and
     /// producing new outcome results.
     /// </summary>
-    [RelayCommand(CanExecute = nameof(CanExecute))]
     public async Task Execute()
     {
         _cancellation = new CancellationTokenSource();
@@ -87,14 +96,6 @@ public partial class RunObserver : Observer<Run>, IRecipient<Observer.Get<RunObs
 
         Result = Model.Result;
         OnPropertyChanged(string.Empty);
-    }
-
-    /// <summary>
-    /// Indicates that this run can be executed.
-    /// </summary>
-    public bool CanExecute()
-    {
-        return Model.Node.NodeId != Guid.Empty && Model.Source.SourceId != Guid.Empty;
     }
 
     /// <summary>

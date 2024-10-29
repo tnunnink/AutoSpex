@@ -3,7 +3,8 @@
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
                     xmlns:components="clr-namespace:AutoSpex.Client.Components"
-                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
 
     <Design.PreviewWith>
         <ListBox
@@ -31,34 +32,34 @@
                     Placement="Pointer" />
             </Border.ContextFlyout>
 
-            <StackPanel Orientation="Horizontal" Spacing="10">
+            <Grid ColumnDefinitions="*,Auto,Auto">
 
-                <PathIcon
-                    Theme="{StaticResource IconThemedSuppressed}"
-                    VerticalAlignment="Top" Margin="0 1 0 0" />
+                <ContentControl
+                    Content="{Binding Node}"
+                    ContentTemplate="{StaticResource NodeHeaderVeritical}" />
 
-                <StackPanel DockPanel.Dock="Left" Spacing="5">
-                    
-                    <TextBlock
-                        Text="Node not found"
-                        IsVisible="{Binding Node, Converter={x:Static ObjectConverters.IsNull}}" />
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="7" Margin="10 0">
 
-                    <ContentControl
-                        Content="{Binding Node}"
-                        ContentTemplate="{StaticResource NodeHeaderHorizontal}"
-                        IsVisible="{Binding Node, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                    <PathIcon Theme="{StaticResource IconThemedSuppressed}" />
 
                     <controls:HighlightableTextBlock
                         Text="{Binding Reason}"
                         HighlightedText="{Binding FilterText}"
                         Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
-                        MaxWidth="800"
+                        MaxWidth="400"
                         TextTrimming="CharacterEllipsis"
-                        ToolTip.Tip="{Binding Reason}"/>
+                        ToolTip.Tip="{Binding Reason}" />
 
                 </StackPanel>
 
-            </StackPanel>
+                <Button
+                    Grid.Column="2"
+                    Command="{Binding DeleteCommand}"
+                    Theme="{StaticResource IconButton}"
+                    properties:Icon.Theme="{StaticResource IconFilledTrash}"
+                    ToolTip.Tip="Remove" />
+
+            </Grid>
 
             <Interaction.Behaviors>
                 <ExecuteCommandOnKeyDownBehavior

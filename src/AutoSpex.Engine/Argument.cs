@@ -53,7 +53,7 @@ public class Argument : IEquatable<Argument>
     /// </remarks>
     public object ResolveAs(Type? type)
     {
-        var value = Value is Reference reference ? reference.Value : Value;
+        var value = Value;
 
         var typed = value switch
         {
@@ -77,13 +77,11 @@ public class Argument : IEquatable<Argument>
     /// <returns>A collection of object values that represent the final arguments.</returns>
     public IEnumerable<object> Expected()
     {
-        var value = Value is Reference reference ? reference.Value : Value;
-
-        return value switch
+        return Value switch
         {
             Criterion criterion => criterion.Argument.Expected(),
             IEnumerable<Argument> arguments => arguments.SelectMany(a => a.Expected()),
-            _ => value is not null ? [value] : []
+            _ => Value is not null ? [Value] : []
         };
     }
 
@@ -117,5 +115,4 @@ public class Argument : IEquatable<Argument>
     public static implicit operator Argument(List<Argument> value) => new(value);
     public static implicit operator Argument(List<object> value) => new(value);
     public static implicit operator Argument(Criterion value) => new(value);
-    public static implicit operator Argument(Reference value) => new(value);
 }

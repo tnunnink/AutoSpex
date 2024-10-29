@@ -11,7 +11,9 @@
         <ResourceInclude Source="CriterionListItem.axaml" />
         <ResourceInclude Source="ElementDisplay.axaml" />
         <ResourceInclude Source="ElementEntry.axaml" />
+        <ResourceInclude Source="FilterFlyout.axaml" />
         <ResourceInclude Source="InclusionSelectors.axaml" />
+        <ResourceInclude Source="VerificationFlyout.axaml" />
     </ResourceDictionary.MergedDictionaries>
 
     <components:ArgumentSelector x:Key="ArgumentSelector">

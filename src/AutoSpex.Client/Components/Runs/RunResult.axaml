@@ -4,7 +4,7 @@
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
                     xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
                     xmlns:components="clr-namespace:AutoSpex.Client.Components">
-    
+
     <Design.PreviewWith>
         <StackPanel Spacing="20" Margin="20">
             <a:ToggleThemeButton Theme="{a:ControlTheme ToggleThemeButtonSoft}" />
@@ -13,7 +13,7 @@
                 ContentTemplate="{DynamicResource RunResult}" />
         </StackPanel>
     </Design.PreviewWith>
-    
+
     <DataTemplate x:Key="RunResult" x:DataType="observers:RunObserver">
 
         <StackPanel Orientation="Horizontal" Spacing="7" VerticalAlignment="Center">
@@ -36,6 +36,7 @@
             </Border>
 
             <Button
+                IsVisible="{Binding Total}"
                 Command="{Binding ApplyFilterCommand}"
                 CommandParameter="{x:Static engine:ResultState.None}"
                 Theme="{a:ControlTheme ButtonSoft}"
@@ -105,7 +106,7 @@
                     </Style>
                 </Button.Styles>
             </Button>
-            
+
             <Button
                 IsVisible="{Binding Inconclusive}"
                 Command="{Binding ApplyFilterCommand}"
@@ -122,6 +123,24 @@
                 <Button.Styles>
                     <Style Selector="Button.selected">
                         <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBackgroundBrushSoftWarning}" />
+                    </Style>
+                </Button.Styles>
+            </Button>
+
+            <Button
+                IsVisible="{Binding Suppressed}"
+                Command="{Binding ApplyFilterCommand}"
+                CommandParameter="{x:Static engine:ResultState.Suppressed}"
+                Theme="{a:ControlTheme ButtonSoft}"
+                Padding="7 0" CornerRadius="20">
+                <StackPanel Orientation="Horizontal" Spacing="5">
+                    <PathIcon Theme="{StaticResource IconThemedSuppressed}" Classes="size-sm" />
+                    <TextBlock Text="{Binding Suppressed}" />
+                    <ToolTip.Tip>Suppressed</ToolTip.Tip>
+                </StackPanel>
+                <Button.Styles>
+                    <Style Selector="Button.selected">
+                        <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBackgroundBrushSoft}" />
                     </Style>
                 </Button.Styles>
             </Button>

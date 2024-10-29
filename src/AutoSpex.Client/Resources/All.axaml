@@ -23,6 +23,7 @@
         <ResourceInclude Source="Themes/HighlightableTextBlock.axaml" />
         <ResourceInclude Source="Themes/IconButtons.axaml" />
         <ResourceInclude Source="Themes/ListBoxItem.axaml" />
+        <ResourceInclude Source="Themes/ListView.axaml" />
         <ResourceInclude Source="Themes/MenuItem.axaml" />
         <ResourceInclude Source="Themes/PathIcon.axaml" />
         <ResourceInclude Source="Themes/Prompt.axaml" />
@@ -41,6 +42,8 @@
 
     <actipro:MathConverter x:Key="MathConverter" />
 
+    <converters:TypeBrushConverter x:Key="TypeBrushConverter" />
+
     <converters:KeyResourceConverter x:Key="KeyIconConverter">
         <converters:ValueResourceKey Value="Collections" Resource="IconFilledStack" />
         <converters:ValueResourceKey Value="Specs" Resource="IconFilledClipboard" />
@@ -54,6 +57,7 @@
         <converters:ValueResourceKey Value="Spec" Resource="IconThemedSpec" />
         <converters:ValueResourceKey Value="Source" Resource="IconThemedSource" />
         <converters:ValueResourceKey Value="Run" Resource="IconThemedRun" />
+        <converters:ValueResourceKey Value="History" Resource="IconThemedHistory" />
         <converters:ValueResourceKey Value="Settings" Resource="IconFilledCog" />
     </converters:KeyResourceConverter>
 
@@ -78,8 +82,6 @@
         <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Enum}" Resource="IconThemedEnum" />
         <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Element}" Resource="IconThemedElement" />
         <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Collection}" Resource="IconThemedArray" />
-        <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Variable}" Resource="IconThemedVariable" />
-        <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Reference}" Resource="IconThemedVariable" />
     </converters:KeyResourceConverter>
 
 </ResourceDictionary>

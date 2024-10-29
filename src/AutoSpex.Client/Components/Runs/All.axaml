@@ -7,6 +7,7 @@
         <ResourceInclude Source="OutcomeResult.axaml" />
         <ResourceInclude Source="OutcomeSuppress.axaml" />
         <ResourceInclude Source="ResultPill.axaml" />
+        <ResourceInclude Source="RunListItem.axaml" />
         <ResourceInclude Source="RunSummary.axaml" />
         <ResourceInclude Source="RunResult.axaml" />
     </ResourceDictionary.MergedDictionaries>

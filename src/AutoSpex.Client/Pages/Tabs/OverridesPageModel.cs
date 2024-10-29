@@ -1,45 +1,78 @@
-﻿using System.Linq;
+﻿using System.Collections.ObjectModel;
+using System.Linq;
 using AutoSpex.Client.Observers;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
+using AutoSpex.Persistence;
 using CommunityToolkit.Mvvm.Input;
-using JetBrains.Annotations;
+using CommunityToolkit.Mvvm.Messaging;
 
 namespace AutoSpex.Client.Pages;
 
-[UsedImplicitly]
-public partial class OverridesPageModel : PageViewModel
+public partial class OverridesPageModel : PageViewModel,
+    IRecipient<Observer.GetSelected>,
+    IRecipient<Observer.Deleted>
 {
     private readonly SourceObserver _source;
 
-    /// <inheritdoc/>
     public OverridesPageModel(SourceObserver source) : base("Overrides")
     {
         _source = source;
 
-        Overrides = new ObserverCollection<Variable, VariableObserver>(
-            refresh: () => _source.Model.Overrides.Select(v => new VariableObserver(v)).ToList(),
-            add: (_, m) => _source.Model.AddOverride(m)
+        Overrides = new ObserverCollection<Node, OverrideObserver>(
+            refresh: () => _source.Model.Overrides.Select(x => new OverrideObserver(x)).ToList(),
+            add: (_, m) => _source.Model.AddOverride(m),
+            remove: (_, m) => _source.Model.RemoveOverride(m),
+            clear: () => _source.Model.ClearOverrides(),
+            count: () => _source.Model.Overrides.Count()
         );
 
         Track(Overrides);
     }
 
     public override string Route => $"{nameof(Source)}/{_source.Id}/{Title}";
+    public ObserverCollection<Node, OverrideObserver> Overrides { get; }
+    public ObservableCollection<OverrideObserver> Selected { get; } = [];
 
-    public ObserverCollection<Variable, VariableObserver> Overrides { get; }
-
-    /// <summary>
-    /// Command to configure a new override by letting the user select an existing variable and then adding it to
-    /// the selected source override collection.
-    /// </summary>
     [RelayCommand]
     private async Task AddOverride()
     {
-        var variable = await Prompter.Show<VariableObserver?>(() => new SelectVariablePageModel());
-        if (variable is null) return;
+        var node = await Prompter.Show<NodeObserver?>(() => new SelectSpecPageModel());
+        if (node is null) return;
 
-        if (Overrides.Contains(variable)) return;
-        Overrides.Add(variable);
+        var result = await Mediator.Send(new LoadNode(node.Id));
+        if (Notifier.ShowIfFailed(result)) return;
+
+        var observer = new OverrideObserver(result.Value);
+        Overrides.Add(observer);
+    }
+
+    public void Receive(Observer.GetSelected message)
+    {
+        if (message.Observer is not OverrideObserver observer) return;
+        if (!Overrides.Any(s => s.Is(observer))) return;
+
+        foreach (var item in Selected)
+            message.Reply(item);
+    }
+
+    public void Receive(Observer.Deleted message)
+    {
+        switch (message.Observer)
+        {
+            case NodeObserver observer when Overrides.Any(x => x.Id == observer.Id):
+                Overrides.RemoveAny(x => x.Id == observer.Id);
+                Overrides.AcceptChanges();
+                break;
+            case OverrideObserver observer when !Overrides.Any(x => x.Is(observer)):
+                Overrides.RemoveAny(x => x.Id == observer.Id);
+                Overrides.AcceptChanges();
+                break;
+        }
+    }
+
+    protected override void FilterChanged(string? filter)
+    {
+        Overrides.Filter(filter);
     }
 }

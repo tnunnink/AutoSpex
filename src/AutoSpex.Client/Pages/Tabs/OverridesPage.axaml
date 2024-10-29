@@ -4,68 +4,55 @@
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
              xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
              x:Class="AutoSpex.Client.Pages.OverridesPage"
-             x:DataType="pages:OverridesPageModel"
-             Background="{a:ThemeResource Container1BackgroundBrush}">
+             x:DataType="pages:OverridesPageModel">
 
     <Design.Height>800</Design.Height>
-    <Design.Width>1200</Design.Width>
+    <Design.Width>1000</Design.Width>
 
-    <StackPanel Spacing="10" Margin="20">
+    <Grid RowDefinitions="Auto,*" Margin="20">
 
+        <Grid ColumnDefinitions="*,Auto" Margin="0 0 0 20">
 
-        <Panel>
-
-            <controls:DefaultMessage
-                VerticalAlignment="Top" Margin="20"
-                IsVisible="{Binding !Overrides.HasItems}"
-                HeaderIcon="{StaticResource IconLineAt}"
-                Header="No overrides defined"
-                Message="Add overrides to change variable values when a source is run.">
-                <controls:DefaultMessage.Action>
-                    <Button
-                        Command="{Binding AddOverrideCommand}"
-                        Theme="{a:ControlTheme ButtonSubtle}"
-                        Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
-                        Margin="10">
-                        <StackPanel Orientation="Horizontal" Spacing="5">
-                            <PathIcon
-                                Theme="{StaticResource IconAdd}"
-                                Foreground="{Binding $parent[Button].Foreground}"
-                                Classes="size-sm" Margin="0 1 0 0" />
-                            <TextBlock Text="Add Override" />
-                        </StackPanel>
-                    </Button>
-                </controls:DefaultMessage.Action>
-            </controls:DefaultMessage>
-
-            <StackPanel Spacing="10" IsVisible="{Binding Overrides.HasItems, FallbackValue={x:Null}}">
-
-                <ListBox
-                    ItemsSource="{Binding Overrides}"
-                    ItemTemplate="{StaticResource OverrideListItem}"
-                    ItemContainerTheme="{StaticResource ListBoxItemEntry}"
-                    SelectionMode="Multiple"
-                    BorderBrush="{a:ThemeResource Container1BorderBrush}"
-                    BorderThickness="1"
-                    CornerRadius="5" />
-
-                <Button
-                    Command="{Binding AddOverrideCommand}"
-                    HorizontalAlignment="Left"
-                    Theme="{a:ControlTheme ButtonSubtle}"
-                    Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}">
-                    <StackPanel Orientation="Horizontal" Spacing="5">
-                        <PathIcon
-                            Theme="{StaticResource IconAdd}"
-                            Foreground="{Binding $parent[Button].Foreground}"
-                            Classes="size-sm" Margin="0 1 0 0" />
-                        <TextBlock Text="Add Override" />
-                    </StackPanel>
-                </Button>
+            <StackPanel Spacing="3">
+                <TextBlock
+                    Text="Overrides"
+                    FontSize="{a:ThemeResource DefaultFontSizeLarge}"
+                    FontWeight="{a:ThemeResource HeadingFontWeightLarge}" />
+                <TextBlock
+                    Text="Configure this source to override spec configurations when run."
+                    Classes="faint" />
             </StackPanel>
 
-        </Panel>
+            <Button
+                Grid.Column="1"
+                Command="{Binding AddOverrideCommand}"
+                Theme="{a:ControlTheme ButtonSolid}"
+                VerticalAlignment="Center"
+                Classes="accent">
+                <StackPanel Orientation="Horizontal" Spacing="7">
+                    <PathIcon
+                        Theme="{StaticResource IconAdd}"
+                        Foreground="{Binding $parent[Button].Foreground}"
+                        Classes="size-sm" />
+                    <TextBlock
+                        Text="Add Spec"
+                        FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
+                </StackPanel>
+            </Button>
 
-    </StackPanel>
+        </Grid>
+
+        <controls:ListView
+            Grid.Row="1"
+            ItemsSource="{Binding Overrides}"
+            SelectedItems="{Binding Selected}"
+            ItemTemplate="{StaticResource OverrideListItem}"
+            Filter="{Binding Filter}"
+            HasItems="{Binding Overrides.HasItems}"
+            DefaultIcon="{StaticResource IconFilledClipboard}"
+            DefaultMessage="No specs configured"
+            DefaultCaption="Add and update spec criteria to override the configuration" />
+
+    </Grid>
 
 </UserControl>

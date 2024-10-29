@@ -2,7 +2,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
-             xmlns:shared="clr-namespace:AutoSpex.Client.Shared"
              xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
              xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
              x:Class="AutoSpex.Client.Pages.NodeDetailPage"
@@ -31,12 +30,14 @@
 
                     <ContentControl
                         Content="{Binding Node}"
-                        ContentTemplate="{StaticResource BreadcrumbLink}" />
+                        ContentTemplate="{StaticResource Breadcrumb}" />
+
                 </StackPanel>
 
                 <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
 
                     <Button
+                        IsVisible="{Binding Node.Type, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:NodeType.Spec}}"
                         Command="{Binding SaveCommand}"
                         Classes="save" />
 
@@ -44,61 +45,39 @@
                         Command="{Binding RunCommand}"
                         Classes="run accent" />
 
+                    <Button Classes="more">
+                        <Button.Flyout>
+                            <MenuFlyout
+                                ItemsSource="{Binding Node.MenuItems}"
+                                ItemContainerTheme="{StaticResource MenuActionItem}"
+                                Placement="BottomEdgeAlignedRight" HorizontalOffset="8" VerticalOffset="5" />
+                        </Button.Flyout>
+                    </Button>
+
                 </StackPanel>
 
             </Grid>
         </Border>
 
-        <DockPanel>
+        <controls:DrawerView
+            IsDrawerOpen="{Binding ShowRunner, Mode=TwoWay}"
+            DrawerPlacement="Bottom"
+            Classes.show="{Binding Node.Type, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:NodeType.Spec}}">
 
-            <TabStrip
-                DockPanel.Dock="Top"
-                ItemsSource="{Binding Tabs}"
-                SelectedItem="{Binding Tab}"
-                ItemContainerTheme="{StaticResource TabStripItemStandard}"
-                Background="{a:ThemeResource Container2BackgroundBrush}"
-                BorderThickness="0"
-                Padding="20 0">
+            <ContentControl Content="{Binding ContentPage}" />
 
-                <TabStrip.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal" Spacing="15" />
-                    </ItemsPanelTemplate>
-                </TabStrip.ItemsPanel>
+            <controls:DrawerView.Drawer>
+                <ContentControl Content="{Binding RunnerPage}" />
+            </controls:DrawerView.Drawer>
 
-                <TabStrip.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Title}" />
-                    </DataTemplate>
-                </TabStrip.ItemTemplate>
+            <controls:DrawerView.Styles>
+                <Style Selector="controls|DrawerView.show">
+                    <Setter Property="DrawerMinLength" Value="50" />
+                    <Setter Property="HideSplitter" Value="False" />
+                </Style>
+            </controls:DrawerView.Styles>
 
-            </TabStrip>
+        </controls:DrawerView>
 
-            <controls:DrawerView
-                DrawerPlacement="Bottom"
-                Classes.show="{Binding Node.Type, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:NodeType.Spec}}">
-
-                <ContentControl Content="{Binding Tab}">
-                    <ContentControl.ContentTemplate>
-                        <DataTemplate x:DataType="shared:PageViewModel">
-                            <ContentControl Content="{Binding}" />
-                        </DataTemplate>
-                    </ContentControl.ContentTemplate>
-                </ContentControl>
-
-                <controls:DrawerView.Drawer>
-                    <ContentControl Content="{Binding RunnerPage}" />
-                </controls:DrawerView.Drawer>
-
-                <controls:DrawerView.Styles>
-                    <Style Selector="controls|DrawerView.show">
-                        <Setter Property="DrawerMinLength" Value="50" />
-                        <Setter Property="HideSplitter" Value="False" />
-                    </Style>
-                </controls:DrawerView.Styles>
-
-            </controls:DrawerView>
-
-        </DockPanel>
     </DockPanel>
 </UserControl>

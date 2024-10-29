@@ -49,6 +49,7 @@
                     ContentTemplate="{StaticResource RunResult}" />
 
             </Grid>
+
         </Border>
 
         <Border
@@ -59,10 +60,10 @@
 
             <controls:DrawerView
                 IsDrawerOpen="{Binding ShowResults, Mode=TwoWay}"
-                DrawerMinLength="0"
+                DrawerMinLength="40"
                 DrawerPlacement="Bottom"
-                Classes.vertical="{Binding $self.IsVertical}"
-                Classes.horizontal="{Binding !$self.IsVertical}">
+                HideSplitter="False"
+                DrawerOpenLength="{Binding $parent[controls:DrawerView].Bounds.Height, Converter={StaticResource MathConverter}, ConverterParameter='x / 2'}">
 
                 <Grid RowDefinitions="3,*">
 
@@ -88,18 +89,21 @@
 
                 <controls:DrawerView.Drawer>
 
-                    <DockPanel Background="{a:ThemeResource Container2BackgroundBrush}">
+                    <DockPanel>
 
                         <Border
                             x:Name="HeaderBorder"
                             DockPanel.Dock="Top"
                             Padding="10 7"
+                            Background="{a:ThemeResource Container2BackgroundBrush}"
                             BorderBrush="{a:ThemeResource Container1BorderBrush}"
                             BorderThickness="0 0 0 1">
 
                             <Grid ColumnDefinitions="*,Auto">
 
-                                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="7" ClipToBounds="True">
+                                <StackPanel
+                                    Grid.Column="0" Orientation="Horizontal" Spacing="7" ClipToBounds="True"
+                                    IsVisible="{Binding Outcome, Converter={x:Static ObjectConverters.IsNotNull}}">
 
                                     <TextBlock
                                         Text="{Binding Outcome.Name, FallbackValue={x:Null}}"
@@ -112,41 +116,48 @@
 
                                 </StackPanel>
 
-                                <Border Grid.Column="1" Background="{a:ThemeResource Container2BackgroundBrush}">
+                                <Border Grid.Column="1">
 
                                     <StackPanel Orientation="Horizontal" Spacing="7">
 
                                         <Button
-                                            Command="{Binding Outcome.NavigateCommand, FallbackValue={x:Null}}"
-                                            Theme="{StaticResource IconButtonSmall}"
-                                            properties:Icon.Theme="{StaticResource IconLineLaunch}" />
+                                            IsEnabled="{Binding Outcome.Result.IsSuppressible, FallbackValue={x:False}}"
+                                            Theme="{StaticResource IconButton}"
+                                            properties:Icon.Theme="{StaticResource IconLineBan}"
+                                            ToolTip.Tip="Add Suppression"
+                                            ToolTip.Placement="BottomEdgeAlignedRight">
+                                            <Button.Flyout>
+                                                <Flyout
+                                                    Placement="BottomEdgeAlignedRight"
+                                                    HorizontalOffset="8"
+                                                    VerticalOffset="2">
+                                                    <ContentControl
+                                                        Content="{Binding Outcome }"
+                                                        ContentTemplate="{StaticResource OutcomeSuppressor}" />
+                                                </Flyout>
+                                            </Button.Flyout>
+                                        </Button>
 
                                         <Button
+                                            Command="{Binding Outcome.Node.NavigateCommand, FallbackValue={x:Null}}"
                                             Theme="{StaticResource IconButton}"
-                                            properties:Icon.Theme="{StaticResource IconLineRotate}">
-                                            <Interaction.Behaviors>
-                                                <behaviors:RotateDrawerOnClickBehavior />
-                                            </Interaction.Behaviors>
-                                        </Button>
+                                            properties:Icon.Theme="{StaticResource IconLineLaunch}"
+                                            ToolTip.Tip="Open Spec"
+                                            ToolTip.Placement="BottomEdgeAlignedRight" />
 
                                         <Button
                                             Theme="{StaticResource IconButton}"
                                             properties:Icon.Theme="{StaticResource IconLineSidebar}"
-                                            Classes.vertical="{Binding $parent[controls:DrawerView].IsVertical}"
-                                            Classes.horizontal="{Binding !$parent[controls:DrawerView].IsVertical}">
+                                            ToolTip.Tip="Show Results"
+                                            ToolTip.Placement="BottomEdgeAlignedRight">
                                             <Interaction.Behaviors>
                                                 <behaviors:ToggleDrawerOnClickBehavior />
                                             </Interaction.Behaviors>
 
                                             <Button.Styles>
-                                                <Style Selector="Button.vertical">
+                                                <Style Selector="Button">
                                                     <Setter Property="RenderTransform">
                                                         <RotateTransform Angle="270" />
-                                                    </Setter>
-                                                </Style>
-                                                <Style Selector="Button.horizontal">
-                                                    <Setter Property="RenderTransform">
-                                                        <RotateTransform Angle="180" />
                                                     </Setter>
                                                 </Style>
                                             </Button.Styles>

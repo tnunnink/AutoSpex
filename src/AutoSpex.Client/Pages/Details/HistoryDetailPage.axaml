@@ -1,0 +1,209 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
+             x:Class="AutoSpex.Client.Pages.HistoryDetailPage"
+             x:DataType="pages:HistoryDetailPageModel">
+
+    <Design.Height>800</Design.Height>
+    <Design.Width>1200</Design.Width>
+
+    <Grid RowDefinitions="Auto,Auto,*" Margin="20">
+
+        <StackPanel Grid.Row="0" Spacing="5" Margin="0 0 0 20">
+            <TextBlock
+                Text="Run History"
+                FontSize="{a:ThemeResource DefaultFontSizeLarge}"
+                FontWeight="{a:ThemeResource HeadingFontWeightLarge}" />
+            <TextBlock
+                Text="View and manage past run results for all collections and sources."
+                Classes="faint" />
+        </StackPanel>
+
+        <Border
+            Grid.Row="1"
+            Background="{a:ThemeResource Container2BackgroundBrush}"
+            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+            BorderThickness="1"
+            CornerRadius="4 4 0 0"
+            MinHeight="40">
+
+            <Grid ColumnDefinitions="*,Auto">
+
+                <TextBox
+                    Grid.Column="0"
+                    Text="{Binding Filter}"
+                    Watermark="Search runs"
+                    Theme="{StaticResource TextBoxSimple}"
+                    FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                    VerticalContentAlignment="Center"
+                    BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                    CornerRadius="0" BorderThickness="0" Padding="0 10">
+                    <TextBox.InnerLeftContent>
+                        <PathIcon
+                            Theme="{StaticResource IconLineSearch}"
+                            VerticalAlignment="Center" Margin="10 0"
+                            Classes="size-sm"
+                            Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                    </TextBox.InnerLeftContent>
+                    <Interaction.Behaviors>
+                        <SelectAllOnGotFocusBehavior />
+                    </Interaction.Behaviors>
+                </TextBox>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="7" Margin="10 0"
+                            VerticalAlignment="Center">
+
+                    <Button
+                        IsVisible="{Binding Total}"
+                        Command="{Binding ApplyFilterCommand}"
+                        CommandParameter="{x:Static engine:ResultState.None}"
+                        Theme="{a:ControlTheme ButtonSoft}"
+                        Classes.accent="{Binding FilterState, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.None}}"
+                        Padding="7 3" CornerRadius="20">
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <PathIcon Theme="{StaticResource IconLineCircleHalfFill}" Classes="accent size-sm" />
+                            <TextBlock Text="{Binding Total}"
+                                       Foreground="{a:ThemeResource ControlForegroundBrushSoftAccent}" />
+                            <ToolTip.Tip>Total</ToolTip.Tip>
+                        </StackPanel>
+                    </Button>
+
+                    <Button
+                        IsVisible="{Binding Passed}"
+                        Command="{Binding ApplyFilterCommand}"
+                        CommandParameter="{x:Static engine:ResultState.Passed}"
+                        Theme="{a:ControlTheme ButtonSoft}"
+                        Classes.success="{Binding FilterState, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Passed}}"
+                        Padding="7 0" CornerRadius="20">
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <PathIcon Theme="{StaticResource IconFilledCheck}" Classes="success size-sm" />
+                            <TextBlock Text="{Binding Passed}"
+                                       Foreground="{a:ThemeResource ControlForegroundBrushSoftSuccess}" />
+                            <ToolTip.Tip>Passed</ToolTip.Tip>
+                        </StackPanel>
+                        <Button.Styles>
+                            <Style Selector="Button.selected">
+                                <Setter Property="BorderBrush"
+                                        Value="{a:ThemeResource ControlBackgroundBrushSoftSuccess}" />
+                            </Style>
+                        </Button.Styles>
+                    </Button>
+
+                    <Button
+                        IsVisible="{Binding Failed}"
+                        Command="{Binding ApplyFilterCommand}"
+                        CommandParameter="{x:Static engine:ResultState.Failed}"
+                        Theme="{a:ControlTheme ButtonSoft}"
+                        Classes.danger="{Binding FilterState, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Failed}}"
+                        Padding="7 0" CornerRadius="20">
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <PathIcon Theme="{StaticResource IconFilledCross}" Classes="danger size-sm" />
+                            <TextBlock Text="{Binding Failed}"
+                                       Foreground="{a:ThemeResource ControlForegroundBrushSoftDanger}" />
+                            <ToolTip.Tip>Failed</ToolTip.Tip>
+                        </StackPanel>
+                        <Button.Styles>
+                            <Style Selector="Button.selected">
+                                <Setter Property="BorderBrush"
+                                        Value="{a:ThemeResource ControlBackgroundBrushSoftDanger}" />
+                            </Style>
+                        </Button.Styles>
+                    </Button>
+
+                    <Button
+                        IsVisible="{Binding Errored}"
+                        Command="{Binding ApplyFilterCommand}"
+                        CommandParameter="{x:Static engine:ResultState.Errored}"
+                        Theme="{a:ControlTheme ButtonSoft}"
+                        Classes.warning="{Binding FilterState, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Errored}}"
+                        Padding="7 0" CornerRadius="20">
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <PathIcon Theme="{StaticResource IconFilledExclamation}" Classes="warning size-sm" />
+                            <TextBlock Text="{Binding Errored}"
+                                       Foreground="{a:ThemeResource ControlForegroundBrushSoftWarning}" />
+                            <ToolTip.Tip>Errored</ToolTip.Tip>
+                        </StackPanel>
+                        <Button.Styles>
+                            <Style Selector="Button.selected">
+                                <Setter Property="BorderBrush"
+                                        Value="{a:ThemeResource ControlBackgroundBrushSoftWarning}" />
+                            </Style>
+                        </Button.Styles>
+                    </Button>
+
+                    <Button
+                        IsVisible="{Binding Inconclusive}"
+                        Command="{Binding ApplyFilterCommand}"
+                        CommandParameter="{x:Static engine:ResultState.Inconclusive}"
+                        Theme="{a:ControlTheme ButtonSoft}"
+                        Classes.warning="{Binding FilterState, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Inconclusive}}"
+                        Padding="7 0" CornerRadius="20">
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <PathIcon Theme="{StaticResource IconThemedInconclusive}" Classes="size-sm" />
+                            <TextBlock Text="{Binding Inconclusive}"
+                                       Foreground="{a:ThemeResource ControlForegroundBrushSoftWarning}" />
+                            <ToolTip.Tip>Inconclusive</ToolTip.Tip>
+                        </StackPanel>
+                        <Button.Styles>
+                            <Style Selector="Button.selected">
+                                <Setter Property="BorderBrush"
+                                        Value="{a:ThemeResource ControlBackgroundBrushSoftWarning}" />
+                            </Style>
+                        </Button.Styles>
+                    </Button>
+                </StackPanel>
+
+            </Grid>
+
+        </Border>
+
+        <Border
+            Grid.Row="2"
+            BorderThickness="1 0 1 1"
+            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+            CornerRadius="0 0 4 4"
+            VerticalAlignment="Top">
+
+            <Panel>
+
+                <controls:DefaultMessage
+                    IsVisible="{Binding !Runs.HasItems}"
+                    HeaderIcon="{StaticResource IconFilledLightning}"
+                    Header="No runs exist"
+                    Message="Runs will show up here as specification are executed against source files."
+                    Margin="20" />
+
+                <controls:DefaultMessage
+                    HeaderIcon="{StaticResource IconLineSearch}"
+                    Header="No runs found"
+                    Message="Could not find any runs matching the current filter text."
+                    Margin="20">
+                    <controls:DefaultMessage.IsVisible>
+                        <MultiBinding Converter="{x:Static BoolConverters.And}">
+                            <Binding Path="Runs.HasItems" />
+                            <Binding Path="!Runs.Count" />
+                        </MultiBinding>
+                    </controls:DefaultMessage.IsVisible>
+                </controls:DefaultMessage>
+
+                <ListBox
+                    ItemsSource="{Binding Runs}"
+                    SelectedItems="{Binding Selected}"
+                    ItemTemplate="{StaticResource RunListItem}"
+                    ItemContainerTheme="{StaticResource ListBoxItemEntry}"
+                    IsVisible="{Binding Runs.Count}"
+                    SelectionMode="Multiple"
+                    VerticalAlignment="Top"
+                    BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                    CornerRadius="5" />
+
+            </Panel>
+
+        </Border>
+
+    </Grid>
+
+</UserControl>

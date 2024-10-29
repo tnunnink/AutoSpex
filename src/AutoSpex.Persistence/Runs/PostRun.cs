@@ -8,10 +8,10 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record SaveRun(Run Run) : IDbCommand<Result>;
+public record PostRun(Run Run) : IDbCommand<Result>;
 
 [UsedImplicitly]
-internal class SaveRunHandler(IConnectionManager manager) : IRequestHandler<SaveRun, Result>
+internal class PostRunHandler(IConnectionManager manager) : IRequestHandler<PostRun, Result>
 {
     private const string RunExists =
         "SELECT COUNT() FROM Run WHERE RunId = @RunId";
@@ -22,7 +22,7 @@ internal class SaveRunHandler(IConnectionManager manager) : IRequestHandler<Save
         VALUES (@RunId, @Name, @Node, @Source, @Result, @RanOn, @RanBy, @Outcomes)
         """;
 
-    public async Task<Result> Handle(SaveRun request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(PostRun request, CancellationToken cancellationToken)
     {
         using var connection = await manager.Connect(cancellationToken);
 

@@ -2,9 +2,9 @@
 
 namespace AutoSpex.Client.Pages;
 
-public partial class SelectVariablePage : UserControl
+public partial class SelectSpecPage : UserControl
 {
-    public SelectVariablePage()
+    public SelectSpecPage()
     {
         InitializeComponent();
     }

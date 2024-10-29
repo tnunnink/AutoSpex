@@ -8,12 +8,18 @@
                 <StackPanel Spacing="10">
                     <Button Classes="run accent" />
                     <Button Classes="run accent" IsEnabled="False" />
+                    <Button Classes="run-again accent" />
+                    <Button Classes="run-again accent" IsEnabled="False" />
                     <Button Classes="cancel danger" />
                     <Button Classes="cancel danger" IsEnabled="False" />
                     <Button Classes="save" />
                     <Button Classes="save" IsEnabled="False" />
                     <Button Classes="export" />
                     <Button Classes="export" IsEnabled="False" />
+                    <Button Classes="add-spec" />
+                    <Button Classes="add-spec" IsEnabled="False" />
+                    <Button Classes="more" HorizontalAlignment="Left" />
+                    <Button Classes="more" IsEnabled="False" HorizontalAlignment="Left" />
                 </StackPanel>
                 <StackPanel Spacing="10">
                     <Button Classes="new-collection" />
@@ -31,6 +37,24 @@
                 <StackPanel Orientation="Horizontal" Spacing="7">
                     <PathIcon Theme="{StaticResource IconFilledLightning}" />
                     <TextBlock Text="Run" FontSize="{a:ThemeResource DefaultFontSizeMedium}" />
+                </StackPanel>
+            </Template>
+        </Setter>
+        <Style Selector="^:disabled PathIcon">
+            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSolidAccentDisabled}" />
+        </Style>
+        <Style Selector="^:not(:disabled) PathIcon">
+            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSolidAccent}" />
+        </Style>
+    </Style>
+
+    <Style Selector="Button.run-again">
+        <Setter Property="Theme" Value="{a:ControlTheme ButtonSolid}" />
+        <Setter Property="Content">
+            <Template>
+                <StackPanel Orientation="Horizontal" Spacing="7">
+                    <PathIcon Theme="{StaticResource IconFilledLightning}" />
+                    <TextBlock Text="Run Again" FontSize="{a:ThemeResource DefaultFontSizeMedium}" />
                 </StackPanel>
             </Template>
         </Setter>
@@ -90,6 +114,30 @@
         <Style Selector="^:disabled PathIcon">
             <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushDisabled}" />
         </Style>
+    </Style>
+
+    <Style Selector="Button.add-spec">
+        <Setter Property="Theme" Value="{a:ControlTheme ButtonSoft}" />
+        <Setter Property="Content">
+            <Template>
+                <StackPanel Orientation="Horizontal" Spacing="7">
+                    <PathIcon Theme="{StaticResource IconAdd}" Classes="size-sm" />
+                    <TextBlock Text="Add Spec" FontSize="{a:ThemeResource DefaultFontSizeMedium}" />
+                </StackPanel>
+            </Template>
+        </Setter>
+        <Style Selector="^:disabled PathIcon">
+            <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+        </Style>
+    </Style>
+
+    <Style Selector="Button.more">
+        <Setter Property="Theme" Value="{a:ControlTheme ButtonSoft}" />
+        <Setter Property="Content">
+            <Template>
+                <PathIcon Theme="{StaticResource IconEllipsis}" />
+            </Template>
+        </Setter>
     </Style>
 
     <Style Selector="Button.new-collection">

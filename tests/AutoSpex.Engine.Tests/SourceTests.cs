@@ -82,17 +82,23 @@ public class SourceTests
     }
 
     [Test]
-    public void AddOverride_ValidVariable_ShouldHaveExpectedCount()
+    public void AddOverride_ValidSpec_ShouldHaveExpectedCount()
     {
         var source = new Source();
+        var spec = Node.NewSpec("test", s =>
+        {
+            s.Query(Element.Tag);
+            s.Filter("TagName", Operation.Containing, "Something");
+            s.Verify("Value", Operation.EqualTo, 12);
+        });
 
-        source.AddOverride(new Variable("TestVar", 123));
+        source.AddOverride(spec);
 
         source.Overrides.Should().HaveCount(1);
     }
 
     [Test]
-    public void AddOverride_Null_ShouldThrowException()
+    public void AddOverride_NullSpec_ShouldThrowException()
     {
         var source = new Source();
 
@@ -103,8 +109,14 @@ public class SourceTests
     public void RemoveOverride_NoOverrides_ShouldBeExpectedCount()
     {
         var source = new Source();
+        var spec = Node.NewSpec("test", s =>
+        {
+            s.Query(Element.Tag);
+            s.Filter("TagName", Operation.Containing, "Something");
+            s.Verify("Value", Operation.EqualTo, 12);
+        });
 
-        source.RemoveOverride(new Variable("Test", 123));
+        source.RemoveOverride(spec);
 
         source.Overrides.Should().BeEmpty();
     }
@@ -113,12 +125,17 @@ public class SourceTests
     public void RemoveOverride_ExistingOverrides_ShouldBeExpectedCount()
     {
         var source = new Source();
+        var spec = Node.NewSpec("test", s =>
+        {
+            s.Query(Element.Tag);
+            s.Filter("TagName", Operation.Containing, "Something");
+            s.Verify("Value", Operation.EqualTo, 12);
+        });
 
-        var variable = new Variable("Test", 123);
-        source.AddOverride(variable);
+        source.AddOverride(spec);
         source.Overrides.Should().HaveCount(1);
 
-        source.RemoveOverride(variable);
+        source.RemoveOverride(spec);
         source.Overrides.Should().BeEmpty();
     }
 
@@ -126,9 +143,18 @@ public class SourceTests
     public void ClearOverrides_WhenCalled_ShouldHaveExpectedCount()
     {
         var source = new Source();
-
-        source.AddOverride(new Variable("Test", 123));
-        source.AddOverride(new Variable("Another", 123));
+        source.AddOverride(Node.NewSpec("test", s =>
+        {
+            s.Query(Element.Tag);
+            s.Filter("TagName", Operation.Containing, "Something");
+            s.Verify("Value", Operation.EqualTo, 12);
+        }));
+        source.AddOverride(Node.NewSpec("test", s =>
+        {
+            s.Query(Element.Tag);
+            s.Filter("TagName", Operation.Containing, "Something");
+            s.Verify("Value", Operation.EqualTo, 12);
+        }));
 
         source.ClearOverrides();
 

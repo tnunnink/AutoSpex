@@ -9,20 +9,16 @@
         <StackPanel Spacing="10" Margin="60">
             <ContentControl
                 Content="{x:Static components:TestData.SpecNode}"
-                ContentTemplate="{DynamicResource BreadcrumbLink}"
+                ContentTemplate="{DynamicResource Breadcrumb}"
                 Padding="10" />
             <ContentControl
                 Content="{x:Static components:TestData.SpecNode}"
                 ContentTemplate="{DynamicResource BreadcrumbLabel}"
                 Padding="10" />
-            <ContentControl
-                Content="{x:Static components:TestData.SpecNode}"
-                ContentTemplate="{DynamicResource BreadcrumbPath}"
-                Padding="10" />
         </StackPanel>
     </Design.PreviewWith>
 
-    <DataTemplate x:Key="BreadcrumbLink" x:DataType="observers:NodeObserver">
+    <DataTemplate x:Key="Breadcrumb" x:DataType="observers:NodeObserver">
         <Border>
             <StackPanel Orientation="Horizontal">
 
@@ -116,37 +112,6 @@
             </ItemsControl.ItemTemplate>
 
         </ItemsControl>
-    </DataTemplate>
-
-    <DataTemplate x:Key="BreadcrumbPath" x:DataType="observers:NodeObserver">
-        <Border>
-            <StackPanel Orientation="Horizontal">
-                <ItemsControl ItemsSource="{Binding Path}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate x:DataType="observers:NodeObserver">
-                            <StackPanel Orientation="Horizontal" Spacing="2">
-                                <TextBlock
-                                    x:Name="Separator"
-                                    Text="/"
-                                    Padding="2 0"
-                                    IsVisible="{Binding Model.Parent, Converter={x:Static ObjectConverters.IsNotNull}}"
-                                    Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
-                                <controls:HighlightableTextBlock
-                                    Text="{Binding Name}"
-                                    HighlightedText="{Binding FilterText}"
-                                    Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
-                                    Padding="0 0 2 0" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </StackPanel>
-        </Border>
     </DataTemplate>
 
 </ResourceDictionary>

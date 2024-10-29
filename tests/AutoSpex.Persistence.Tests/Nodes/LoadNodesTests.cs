@@ -76,38 +76,4 @@ public class LoadNodesTests
         result.Value.Should().HaveCount(1);
         result.Value.First().Spec.Should().BeEquivalentTo(node.Spec);
     }
-
-    [Test]
-    public async Task LoadSpecs_SeededSpecWithVariableUpdateValue_ShouldBeSuccessAndHaveCorrectVariableValue()
-    {
-        using var context = new TestContext();
-        var mediator = context.Resolve<IMediator>();
-
-        var node = Node.NewSpec("Test");
-        var variable = node.AddVariable("MyVar", "SomeValue");
-        var reference = variable.Reference();
-        node.Configure(c =>
-        {
-            c.Query(Element.Tag);
-            c.Filter("TagName", Operation.Containing, reference);
-            c.Verify("Comment", Operation.EqualTo, reference);
-        });
-        await mediator.Send(new CreateNode(node));
-
-        variable.Value = "MostRecentValue";
-        await mediator.Send(new SaveNode(node));
-
-        var result = await mediator.Send(new LoadNodes([node.NodeId]));
-
-        result.IsSuccess.Should().BeTrue();
-        result.Value.Should().HaveCount(1);
-
-        var spec = result.Value.First().Spec;
-
-        spec.Filters[0].Argument.Value.As<Reference>()
-            .Should().BeEquivalentTo(reference, o => o.Excluding(r => r.Value));
-
-        spec.Verifications[0].Argument.Value.As<Reference>()
-            .Should().BeEquivalentTo(reference, o => o.Excluding(r => r.Value));
-    }
 }

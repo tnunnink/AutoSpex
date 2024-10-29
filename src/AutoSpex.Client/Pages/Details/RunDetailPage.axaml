@@ -34,14 +34,10 @@
 
                 <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
 
-                    <Button
-                        Command="{Binding SaveCommand}"
-                        Classes="save" />
-
                     <Panel>
                         <Button
-                            Command="{Binding Run.ExecuteCommand}"
-                            Classes="run accent"
+                            Command="{Binding RunAgainCommand}"
+                            Classes="run-again accent"
                             CornerRadius="{a:ThemeResource ButtonCornerRadius}"
                             IsVisible="{Binding Run.Result, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:ResultState.Pending}}" />
 
@@ -57,7 +53,7 @@
             </Grid>
         </Border>
 
-        <ContentControl Content="{Binding OutcomePage^}" />
+        <ContentControl Content="{Binding OutcomePage}" />
 
     </DockPanel>
 </UserControl>

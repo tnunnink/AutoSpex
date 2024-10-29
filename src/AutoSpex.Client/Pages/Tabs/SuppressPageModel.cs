@@ -72,6 +72,7 @@ public partial class SuppressPageModel : PageViewModel,
         {
             case SuppressionObserver suppression when Suppressions.Any(s => s.Is(suppression)):
                 Suppressions.Remove(suppression);
+                Suppressions.AcceptChanges();
                 break;
             case NodeObserver node when Suppressions.Any(s => s.Model.NodeId == node.Id):
                 Suppressions.RemoveAny(s => s.Model.NodeId == node.Id);

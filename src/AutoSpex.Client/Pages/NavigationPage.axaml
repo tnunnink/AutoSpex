@@ -61,7 +61,7 @@
                         Theme="{StaticResource IconButton}"
                         properties:Icon.Theme="{StaticResource IconLineUpload}"
                         ToolTip.Tip="Import" />
-                    
+
                     <Button
                         Theme="{StaticResource IconButton}"
                         properties:Icon.Theme="{StaticResource IconLineSearch}"
@@ -74,6 +74,7 @@
                         ToolTip.Tip="Sources" />
 
                     <Button
+                        Command="{Binding OpenHistoryCommand}"
                         Theme="{StaticResource IconButton}"
                         properties:Icon.Theme="{StaticResource IconLineHistory}"
                         ToolTip.Tip="History" />

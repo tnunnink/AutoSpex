@@ -71,21 +71,4 @@ public class SaveNodeTests
 
         result.IsSuccess.Should().BeTrue();
     }
-
-    [Test]
-    public async Task SaveNode_SpecWithVariables_ShouldBeSuccess()
-    {
-        using var context = new TestContext();
-        var mediator = context.Resolve<IMediator>();
-        var node = Node.NewSpec();
-        await mediator.Send(new CreateNode(node));
-
-        node.AddVariable(new Variable("bool", true));
-        node.AddVariable(new Variable("number", 123));
-        node.AddVariable(new Variable("enum", Radix.Decimal));
-
-        var result = await mediator.Send(new SaveNode(node));
-
-        result.IsSuccess.Should().BeTrue();
-    }
 }

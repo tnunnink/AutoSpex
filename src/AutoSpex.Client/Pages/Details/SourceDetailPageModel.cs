@@ -41,6 +41,6 @@ public class SourceDetailPageModel : DetailPageModel
     {
         await Navigator.Navigate(() => new ContentPageModel(Source));
         await Navigator.Navigate(() => new SuppressPageModel(Source));
-        /*await Navigator.Navigate(() => new OverridesPageModel(Source));*/
+        await Navigator.Navigate(() => new OverridesPageModel(Source));
     }
 }
