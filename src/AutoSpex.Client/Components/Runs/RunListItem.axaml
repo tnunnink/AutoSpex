@@ -1,6 +1,117 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui">
-    
-    
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+
+    <Design.PreviewWith>
+        <ListBox
+            Margin="20" Width="1000" Height="200"
+            ItemsSource="{x:Static components:TestData.Runs}"
+            ItemTemplate="{DynamicResource RunListItem}"
+            ItemContainerTheme="{DynamicResource ListBoxItemEntry}"
+            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+            BorderThickness="1" CornerRadius="5" VerticalAlignment="Top" />
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="RunListItem" DataType="observers:RunObserver">
+
+        <Border
+            Background="Transparent"
+            Focusable="True"
+            IsTabStop="False"
+            Padding="{a:ThemeResource ListItemPadding}">
+
+            <Border.KeyBindings>
+                <KeyBinding Gesture="Delete" Command="{Binding DeleteCommand}" />
+            </Border.KeyBindings>
+
+            <Border.ContextFlyout>
+                <MenuFlyout
+                    ItemsSource="{Binding ContextItems}"
+                    ItemContainerTheme="{StaticResource MenuActionItem}"
+                    Placement="Pointer" />
+            </Border.ContextFlyout>
+
+            <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+
+                <PathIcon
+                    Grid.Column="0"
+                    Theme="{Binding Result, Converter={StaticResource ResultStateIconConverter}}"
+                    VerticalAlignment="Top" Margin="0 3 0 0" />
+
+                <StackPanel Grid.Column="1" Spacing="5" Margin="10 0">
+
+                    <Button
+                        Command="{Binding NavigateCommand}"
+                        Theme="{a:ControlTheme ButtonInvisible}"
+                        HorizontalAlignment="Left">
+                        <controls:HighlightableTextBlock
+                            Text="{Binding Name}"
+                            HighlightedText="{Binding FilterText}"
+                            FontSize="{a:ThemeResource DefaultFontSizeMedium}"
+                            FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
+                        <Button.Styles>
+                            <Style Selector="Button:pointerover">
+                                <Setter
+                                    Property="Foreground"
+                                    Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+                            </Style>
+                        </Button.Styles>
+                    </Button>
+
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <TextBlock Classes="faint" Text="Ran on" />
+                        <TextBlock Classes="faint" Text="{Binding RanOn}" />
+                        <TextBlock Classes="faint" Text="by" />
+                        <TextBlock Classes="faint" Text="{Binding RanBy}" />
+                    </StackPanel>
+
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="20" Margin="20 0">
+
+                    <StackPanel Orientation="Horizontal" Spacing="7">
+                        <PathIcon
+                            Theme="{Binding Node.Type.Name, Converter={StaticResource KeyIconConverter}}"
+                            Classes="size-sm centered" />
+                        <controls:HighlightableTextBlock
+                            Text="{Binding Node.Name}"
+                            HighlightedText="{Binding FilterText}"
+                            Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Spacing="7">
+                        <PathIcon
+                            Theme="{StaticResource IconThemedSource}"
+                            Classes="size-sm centered" />
+                        <controls:HighlightableTextBlock
+                            Text="{Binding Source.Name}"
+                            HighlightedText="{Binding FilterText}"
+                            Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                    </StackPanel>
+
+                </StackPanel>
+
+                <Button
+                    Grid.Column="3"
+                    Theme="{StaticResource IconButton}"
+                    properties:Icon.Theme="{StaticResource IconEllipsis}" ToolTip.Tip="Options"
+                    HorizontalAlignment="Right">
+                    <Button.Flyout>
+                        <MenuFlyout
+                            ItemsSource="{Binding MenuItems}"
+                            ItemContainerTheme="{StaticResource MenuActionItem}"
+                            Placement="BottomEdgeAlignedRight" HorizontalOffset="8" VerticalOffset="5" />
+                    </Button.Flyout>
+                </Button>
+
+            </Grid>
+
+        </Border>
+
+    </DataTemplate>
+
 </ResourceDictionary>
