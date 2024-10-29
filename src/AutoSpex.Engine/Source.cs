@@ -10,7 +10,7 @@ namespace AutoSpex.Engine;
 public class Source
 {
     private readonly Dictionary<Guid, Suppression> _suppressions = [];
-    private readonly Dictionary<Guid, Spec> _overrides = [];
+    private readonly Dictionary<Guid, Node> _overrides = [];
 
     /// <summary>
     /// Creates a new <see cref="Source"/> with no content. 
@@ -108,11 +108,11 @@ public class Source
     public IEnumerable<Suppression> Suppressions => _suppressions.Values;
 
     /// <summary>
-    /// Gets the collection of <see cref="Spec"/> objects representing the overrides that allow the user to
+    /// Gets the collection of <see cref="Override"/> objects representing the overrides that allow the user to
     /// change the configuration of a spec when this source is run.
     /// </summary>
     [JsonInclude]
-    public IEnumerable<Spec> Overrides => _overrides.Values;
+    public IEnumerable<Node> Overrides => _overrides.Values;
 
     /// <summary>
     /// Represents an empty source object with default property values and an empty source id.
@@ -140,24 +140,23 @@ public class Source
     }
 
     /// <summary>
-    /// Adds a new override <paramref name="spec"/> to the source.
+    /// 
     /// </summary>
-    /// <param name="spec">The spec to be added as an override.</param>
-    public void AddOverride(Spec spec)
+    /// <param name="node"></param>
+    public void AddOverride(Node node)
     {
-        ArgumentNullException.ThrowIfNull(spec);
-        var copy = spec.Copy();
-        _overrides[copy.SpecId] = copy.Copy();
+        ArgumentNullException.ThrowIfNull(node);
+        _overrides[node.NodeId] = node;
     }
 
     /// <summary>
-    /// Removes the specified override from the list of overrides in the source.
+    /// 
     /// </summary>
-    /// <param name="spec">The spec representing the override to be removed.</param>
-    public void RemoveOverride(Spec spec)
+    /// <param name="node"></param>
+    public void RemoveOverride(Node node)
     {
-        ArgumentNullException.ThrowIfNull(spec);
-        _overrides.Remove(spec.SpecId);
+        ArgumentNullException.ThrowIfNull(node);
+        _overrides.Remove(node.NodeId);
     }
 
     /// <summary>
@@ -215,8 +214,8 @@ public class Source
     {
         foreach (var node in nodes)
         {
-            if (!_overrides.TryGetValue(node.Spec.SpecId, out var spec)) continue;
-            node.Configure(spec);
+            if (!_overrides.TryGetValue(node.NodeId, out var match)) continue;
+            node.Configure(match.Spec);
         }
     }
 
