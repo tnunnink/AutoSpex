@@ -11,9 +11,10 @@
     <Design.Height>400</Design.Height>
     <Design.Width>600</Design.Width>
 
-    <DockPanel Background="{a:ThemeResource Container2BackgroundBrush}">
+    <DockPanel>
 
-        <Border DockPanel.Dock="Top" Padding="10" Height="50">
+        <Border DockPanel.Dock="Top" Padding="10" Height="50"
+                Background="{a:ThemeResource Container2BackgroundBrush}">
 
             <Grid ColumnDefinitions="*,Auto">
 
@@ -32,18 +33,6 @@
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="7">
-
-                    <Button
-                        Command="{Binding TestCommand}"
-                        Theme="{StaticResource IconButton}"
-                        properties:Icon.Theme="{StaticResource IconFilledLightning}"
-                        Classes="accent"
-                        ToolTip.Tip="Run Spec"
-                        ToolTip.Placement="BottomEdgeAlignedRight">
-                        <Interaction.Behaviors>
-                            <behaviors:ToggleDrawerOnClickBehavior AlwaysOpen="True" />
-                        </Interaction.Behaviors>
-                    </Button>
 
                     <Button
                         Theme="{StaticResource IconButton}"
