@@ -1,0 +1,122 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
+
+    <Design.PreviewWith>
+        <controls:ListView
+            DefaultIcon="{StaticResource IconFilledCog}"
+            DefaultMessage="No items configured"
+            DefaultCaption="Add items to the collection to view content in the list"
+            MinWidth="600" Height="200" Margin="20">
+            <controls:ListView.Header>
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <PathIcon Theme="{StaticResource IconAdd}" Classes="size-sm" />
+                    <PathIcon Theme="{StaticResource IconEllipsis}" Classes="size-sm" />
+                </StackPanel>
+            </controls:ListView.Header>
+        </controls:ListView>
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type controls:ListView}" TargetType="controls:ListView">
+        <Setter Property="ItemContainerTheme" Value="{StaticResource ListBoxItemEntry}" />
+        <Setter Property="SelectionMode" Value="Multiple" />
+        <Setter Property="AutoScrollToSelectedItem" Value="True" />
+
+        <Setter Property="Template">
+            <ControlTemplate>
+
+                <DockPanel>
+
+                    <Border
+                        DockPanel.Dock="Top"
+                        Background="{a:ThemeResource Container2BackgroundBrush}"
+                        BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="4 4 0 0"
+                        MinHeight="40">
+
+                        <Grid ColumnDefinitions="*,Auto">
+
+                            <TextBox
+                                Grid.Column="0"
+                                Text="{TemplateBinding Filter, Mode=TwoWay}"
+                                Watermark="Search specs"
+                                Theme="{StaticResource TextBoxSimple}"
+                                FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                                VerticalContentAlignment="Center"
+                                BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                                CornerRadius="0" BorderThickness="0" Padding="0 10">
+                                <TextBox.InnerLeftContent>
+                                    <PathIcon
+                                        Theme="{StaticResource IconLineSearch}"
+                                        VerticalAlignment="Center" Margin="10 0"
+                                        Classes="size-sm"
+                                        Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                                </TextBox.InnerLeftContent>
+                                <Interaction.Behaviors>
+                                    <SelectAllOnGotFocusBehavior />
+                                </Interaction.Behaviors>
+                            </TextBox>
+
+                            <ContentPresenter
+                                x:Name="PART_ActionPresenter"
+                                Grid.Column="1"
+                                VerticalAlignment="Center"
+                                Content="{TemplateBinding Header}"
+                                ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                Margin="10 0" />
+
+                        </Grid>
+
+                    </Border>
+
+                    <Border
+                        BorderThickness="1 0 1 1"
+                        BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                        CornerRadius="0 0 4 4"
+                        VerticalAlignment="Top">
+
+                        <Panel>
+
+                            <controls:DefaultMessage
+                                IsVisible="{Binding !HasItems, RelativeSource={RelativeSource TemplatedParent}}"
+                                HeaderIcon="{TemplateBinding DefaultIcon}"
+                                Header="{TemplateBinding DefaultMessage}"
+                                Message="{TemplateBinding DefaultCaption}"
+                                Margin="20" />
+
+                            <controls:DefaultMessage
+                                HeaderIcon="{StaticResource IconLineSearch}"
+                                Header="No items found"
+                                Message="Could not find any items matching the current filter text."
+                                Margin="20">
+                                <controls:DefaultMessage.IsVisible>
+                                    <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                        <Binding Path="HasItems" RelativeSource="{RelativeSource TemplatedParent}" />
+                                        <Binding Path="!ItemCount" RelativeSource="{RelativeSource TemplatedParent}" />
+                                    </MultiBinding>
+                                </controls:DefaultMessage.IsVisible>
+                            </controls:DefaultMessage>
+
+                            <ListBox
+                                ItemsSource="{TemplateBinding ItemsSource}"
+                                SelectedItems="{TemplateBinding SelectedItems, Mode=TwoWay}"
+                                ItemTemplate="{TemplateBinding ItemTemplate}"
+                                ItemContainerTheme="{TemplateBinding ItemContainerTheme}"
+                                IsVisible="{Binding ItemCount, RelativeSource={RelativeSource TemplatedParent}}"
+                                AutoScrollToSelectedItem="{TemplateBinding AutoScrollToSelectedItem}"
+                                SelectionMode="{TemplateBinding SelectionMode}"
+                                BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                                CornerRadius="5" />
+
+                        </Panel>
+
+                    </Border>
+
+                </DockPanel>
+
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>
