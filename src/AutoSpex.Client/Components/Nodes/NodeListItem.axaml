@@ -12,12 +12,18 @@
             ItemTemplate="{DynamicResource NodeListItem}"
             Width="700" Height="250" Margin="10"
             SelectionMode="Multiple"
-            Background="{a:ThemeResource Container1BackgroundBrush}" />
+            Background="{a:ThemeResource Container1BackgroundBrush}"
+            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+            CornerRadius="5" BorderThickness="1" />
     </Design.PreviewWith>
 
     <DataTemplate x:Key="NodeListItem" x:DataType="observers:NodeObserver">
 
-        <Border x:Name="Border" Focusable="True" IsTabStop="False" Background="Transparent" Padding="5 0">
+        <Border
+            Background="Transparent"
+            Focusable="True"
+            IsTabStop="False"
+            Padding="{a:ThemeResource ListItemPadding}">
 
             <Border.ContextFlyout>
                 <MenuFlyout
@@ -26,49 +32,32 @@
                     Placement="Pointer" />
             </Border.ContextFlyout>
 
-            <DockPanel LastChildFill="False">
+            <Grid ColumnDefinitions="*,Auto">
 
-                <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" Spacing="5">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10">
 
                     <PathIcon
                         Theme="{Binding Type.Name, Converter={StaticResource KeyIconConverter}}" />
 
-                    <Button
-                        Command="{Binding NavigateCommand}"
-                        Theme="{a:ControlTheme ButtonInvisible}"
-                        Padding="{a:ThemeResource ButtonPadding }">
-                        <controls:HighlightableTextBlock
-                            Text="{Binding Name}"
-                            HighlightedText="{Binding FilterText}"
-                            FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
-                        <Button.Styles>
-                            <Style Selector="Button:pointerover">
-                                <Setter
-                                    Property="Foreground"
-                                    Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
-                            </Style>
-                        </Button.Styles>
-                    </Button>
-
                     <ContentControl
                         Content="{Binding }"
-                        ContentTemplate="{StaticResource BreadcrumbLabel}" />
+                        ContentTemplate="{StaticResource ObserverLink}" />
+
+                    <controls:HighlightableTextBlock
+                        Text="{Binding Model.Route}"
+                        HighlightedText="{Binding FilterText}"
+                        Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
 
                 </StackPanel>
 
-                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="5" Margin="5 0"
-                            IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}">
 
-                </StackPanel>
-
-            </DockPanel>
+            </Grid>
 
             <Interaction.Behaviors>
                 <ExecuteCommandOnKeyDownBehavior
                     Key="Delete"
                     Command="{Binding DeleteSelectedCommand}"
-                    MarkAsHandled="True"
-                    FocusControl="Border" />
+                    MarkAsHandled="True" />
                 <ExecuteCommandOnKeyDownBehavior
                     Gesture="Ctrl+D"
                     Command="{Binding DuplicateCommand}"

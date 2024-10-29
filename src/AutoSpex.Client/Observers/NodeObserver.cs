@@ -39,6 +39,7 @@ public partial class NodeObserver : Observer<Node>,
     public override string Icon => Type.Name;
     public Guid ParentId => Model.ParentId;
     public NodeType Type => Model.Type;
+    public string Route => Model.Route;
     public bool IsVirtual => Type != NodeType.Collection && ParentId == Guid.Empty;
 
     [Required]
@@ -55,7 +56,8 @@ public partial class NodeObserver : Observer<Node>,
     /// <inheritdoc />
     public override bool Filter(string? filter)
     {
-        return base.Filter(filter) || Model.Path.Satisfies(filter);
+        FilterText = filter;
+        return string.IsNullOrEmpty(filter) || Name.Satisfies(filter) || Model.Route.Satisfies(filter);
     }
 
     /// <summary>
@@ -181,7 +183,7 @@ public partial class NodeObserver : Observer<Node>,
 
         var run = new RunObserver(result.Value);
 
-        await Navigator.Navigate(() => new RunDetailPageModel(run, true));
+        await Navigator.Navigate(() => new RunDetailPageModel(run));
     }
 
     /// <inheritdoc />

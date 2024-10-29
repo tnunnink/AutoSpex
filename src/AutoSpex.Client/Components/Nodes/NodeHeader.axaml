@@ -20,14 +20,17 @@
 
         <StackPanel Orientation="Horizontal" Spacing="10">
 
-            <controls:HighlightableTextBlock
-                Text="{Binding Name}"
-                HighlightedText="{Binding FilterText}"
-                FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
+            <PathIcon
+                Theme="{Binding Type.Name, Converter={StaticResource KeyIconConverter}}" />
 
             <ContentControl
-                Content="{Binding}"
-                ContentTemplate="{StaticResource BreadcrumbLabel}" />
+                Content="{Binding }"
+                ContentTemplate="{StaticResource ObserverLink}" />
+
+            <controls:HighlightableTextBlock
+                Text="{Binding Route}"
+                HighlightedText="{Binding FilterText}"
+                Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
 
         </StackPanel>
 
@@ -35,16 +38,25 @@
 
     <DataTemplate x:Key="NodeHeaderVeritical" x:DataType="observers:NodeObserver">
 
-        <StackPanel Spacing="3">
+        <StackPanel Orientation="Horizontal" Spacing="10">
 
-            <controls:HighlightableTextBlock
-                Text="{Binding Name}"
-                HighlightedText="{Binding FilterText}"
-                FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
+            <PathIcon
+                Theme="{Binding Type.Name, Converter={StaticResource KeyIconConverter}}"
+                VerticalAlignment="Top" Margin="0 1 0 0" />
 
-            <ContentControl
-                Content="{Binding}"
-                ContentTemplate="{StaticResource BreadcrumbLabel}" />
+            <StackPanel Spacing="3">
+
+                <ContentControl
+                    Content="{Binding }"
+                    ContentTemplate="{StaticResource ObserverLink}"
+                    HorizontalAlignment="Left" />
+
+                <controls:HighlightableTextBlock
+                    Text="{Binding Route}"
+                    HighlightedText="{Binding FilterText}"
+                    Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+
+            </StackPanel>
 
         </StackPanel>
 
