@@ -1,0 +1,41 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:shared="clr-namespace:AutoSpex.Client.Shared"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+
+    <Design.PreviewWith>
+        <StackPanel Spacing="5" Margin="50">
+            <ContentControl
+                Content="{x:Static components:TestData.SpecNode}"
+                ContentTemplate="{DynamicResource ObserverLink}"
+                Padding="10" />
+            <ContentControl
+                Content="{x:Static components:TestData.SpecNode}"
+                ContentTemplate="{DynamicResource ObserverLink}"
+                Padding="10" />
+        </StackPanel>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="ObserverLink" x:DataType="shared:Observer">
+        <Button
+            Command="{Binding NavigateCommand}"
+            Theme="{a:ControlTheme ButtonInvisible}">
+
+            <controls:HighlightableTextBlock
+                Text="{Binding Name}"
+                HighlightedText="{Binding FilterText}"
+                FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
+
+            <Button.Styles>
+                <Style Selector="Button:pointerover">
+                    <Setter
+                        Property="Foreground"
+                        Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+                </Style>
+            </Button.Styles>
+
+        </Button>
+    </DataTemplate>
+</ResourceDictionary>
