@@ -36,8 +36,8 @@
 
                     <Panel>
                         <Button
-                            Command="{Binding Run.ExecuteCommand}"
-                            Classes="run accent"
+                            Command="{Binding RunAgainCommand}"
+                            Classes="run-again accent"
                             CornerRadius="{a:ThemeResource ButtonCornerRadius}"
                             IsVisible="{Binding Run.Result, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:ResultState.Pending}}" />
 
@@ -53,7 +53,7 @@
             </Grid>
         </Border>
 
-        <ContentControl Content="{Binding OutcomePage^}" />
+        <ContentControl Content="{Binding OutcomePage}" />
 
     </DockPanel>
 </UserControl>
