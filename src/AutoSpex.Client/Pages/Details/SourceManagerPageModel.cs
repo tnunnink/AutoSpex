@@ -23,11 +23,12 @@ public partial class SourceManagerPageModel() : DetailPageModel("Sources"), IRec
 
     [ObservableProperty] private string? _filter;
 
+    /// <inheritdoc />
     public override async Task Load()
     {
         var sources = await Mediator.Send(new ListSources());
-
         Sources.Bind(sources.ToList(), s => new SourceObserver(s));
+        RegisterDisposable(Sources);
     }
 
     [RelayCommand]
@@ -49,9 +50,9 @@ public partial class SourceManagerPageModel() : DetailPageModel("Sources"), IRec
         if (message.Observer is not SourceObserver observer) return;
         if (!Sources.Any(s => s.Is(observer))) return;
 
-        foreach (var source in Selected)
+        foreach (var item in Selected)
         {
-            message.Reply(source);
+            message.Reply(item);
         }
     }
 
@@ -59,8 +60,6 @@ public partial class SourceManagerPageModel() : DetailPageModel("Sources"), IRec
     {
         if (message.Observer is not SourceObserver observer) return;
         Sources.Remove(observer);
-
-        base.Receive(message);
     }
 
     partial void OnFilterChanged(string? value)
