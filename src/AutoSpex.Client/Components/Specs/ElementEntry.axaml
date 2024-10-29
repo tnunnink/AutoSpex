@@ -28,9 +28,9 @@
                 <DataTemplate x:DataType="engine:Element">
                     <StackPanel Orientation="Horizontal" Spacing="10">
                         <PathIcon
-                            Theme="{StaticResource IconThemedSource}" />
+                            Theme="{StaticResource IconLineXml}" />
                         <TextBlock
-                            Text="{Binding Name}" />
+                            Text="{Binding Name}" FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
                         <PathIcon
                             Theme="{StaticResource IconLineExpand}"
                             Classes="size-sm" />
@@ -52,7 +52,7 @@
                                     Theme="{a:ControlTheme ButtonSubtle}"
                                     HorizontalContentAlignment="Stretch">
                                     <StackPanel Orientation="Horizontal" Spacing="10">
-                                        <PathIcon Theme="{StaticResource IconThemedSource}" />
+                                        <PathIcon Theme="{StaticResource IconLineXml}" />
                                         <TextBlock Text="{Binding Name}" />
                                     </StackPanel>
                                     <Interaction.Behaviors>
