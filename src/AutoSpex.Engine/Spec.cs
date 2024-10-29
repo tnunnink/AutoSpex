@@ -42,13 +42,13 @@ public class Spec() : IEquatable<Spec>
     /// The collection of <see cref="Criterion"/> that define how to filter elements to return candidates for verification.
     /// </summary>
     [JsonInclude]
-    public List<Criterion> Filters { get; init; } = [];
+    public List<Criterion> Filters { get; private init; } = [];
 
     /// <summary>
     /// The collection of <see cref="Criterion"/> that define the checks to perform for each candidate element.
     /// </summary>
     [JsonInclude]
-    public List<Criterion> Verifications { get; init; } = [];
+    public List<Criterion> Verifications { get; private init; } = [];
 
     /// <summary>
     /// The <see cref="Inclusion"/> specifying how to evaluate the filters of the spec (All/Any).
