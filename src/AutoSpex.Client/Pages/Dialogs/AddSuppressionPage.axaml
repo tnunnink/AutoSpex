@@ -26,7 +26,7 @@
                 <Label Content="Spec" FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
 
                 <controls:Entry
-                    ButtonTheme="{a:ControlTheme ButtonOutline}"
+                    ButtonTheme="{a:ControlTheme ButtonSoft}"
                     Watermark="Select specification"
                     FontFamily="{a:ThemeResource DefaultFontFamily}"
                     Value="{Binding Node}"
@@ -52,9 +52,10 @@
                 <Label Content="Reason" FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
 
                 <TextBox
-                    Theme="{StaticResource TextBoxOutlineHighlight}"
                     Text="{Binding Reason}"
-                    Watermark="Why suppress this spec?"
+                    Theme="{StaticResource TextBoxOutlineHighlight}"
+                    BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                    Watermark="Enter the reason for suppressing this spec"
                     VerticalContentAlignment="Top"
                     Width="400" MinHeight="80"
                     TextWrapping="Wrap" />
