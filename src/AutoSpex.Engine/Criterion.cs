@@ -85,6 +85,12 @@ public class Criterion : IEquatable<Criterion>
     public Property Property { get; set; } = Property.Default;
 
     /// <summary>
+    /// A flag to negate the result of the operation for this criterion. 
+    /// </summary>
+    [JsonConverter(typeof(SmartEnumNameConverter<Negation, bool>))]
+    public Negation Negation { get; set; } = Negation.Is;
+
+    /// <summary>
     /// The operation the evaluation will execute on the input and argument values.
     /// </summary>
     [JsonConverter(typeof(SmartEnumNameConverter<Operation, string>))]
@@ -94,12 +100,6 @@ public class Criterion : IEquatable<Criterion>
     /// The collection of argument values required for the operation to execute.
     /// </summary>
     public Argument Argument { get; set; } = Argument.Default;
-
-    /// <summary>
-    /// A flag to negate the result of the operation for this criterion. 
-    /// </summary>
-    [JsonConverter(typeof(SmartEnumNameConverter<Negation, bool>))]
-    public Negation Negation { get; set; } = Negation.Is;
 
     /// <summary>
     /// Represents a criterion that always evaluates to true.

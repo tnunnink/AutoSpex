@@ -30,7 +30,6 @@ public partial class SpecObserver : Observer<Spec>,
     }
 
     public override Guid Id => Model.SpecId;
-    protected override bool PromptForDeletion => false;
 
     public Element Element
     {
@@ -95,7 +94,7 @@ public partial class SpecObserver : Observer<Spec>,
 
         var copies = criteria.Select(c => new CriterionObserver(new Criterion(Element.Type)
         {
-            Property = Element.Property(c.Property.Path) ?? new Property(c.Property.Path, typeof(object), Element.This),
+            Property = Element.Property(c.Property.Path),
             Negation = c.Negation,
             Operation = c.Operation,
             Argument = c.Argument
@@ -124,7 +123,7 @@ public partial class SpecObserver : Observer<Spec>,
 
         var copies = criteria.Select(c => new CriterionObserver(new Criterion(Element.Type)
         {
-            Property = Element.Property(c.Property.Path) ?? new Property(c.Property.Path, typeof(object), Element.This),
+            Property = Element.Property(c.Property.Path),
             Negation = c.Negation,
             Operation = c.Operation,
             Argument = c.Argument

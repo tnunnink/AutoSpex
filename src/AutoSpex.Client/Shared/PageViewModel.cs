@@ -31,7 +31,7 @@ public abstract partial class PageViewModel() : TrackableViewModel, IEquatable<P
     public virtual string Icon => "None";
 
     /// <summary>
-    /// 
+    /// Represents the filter string used for querying or filtering data in the page view model.
     /// </summary>
     [ObservableProperty] private string? _filter;
 

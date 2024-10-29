@@ -135,12 +135,4 @@
         <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftWarning}" />
     </Style>
 
-    <Style Selector="controls|DrawerView.vertical">
-        <Setter Property="DrawerOpenLength"
-                Value="{Binding $parent[controls:DrawerView].Bounds.Width, Converter={StaticResource MathConverter}, ConverterParameter='x / 3'}" />
-    </Style>
-    <Style Selector="controls|DrawerView.horizontal">
-        <Setter Property="DrawerOpenLength"
-                Value="{Binding $parent[controls:DrawerView].Bounds.Height, Converter={StaticResource MathConverter}, ConverterParameter='x / 3'}" />
-    </Style>
 </Styles>
