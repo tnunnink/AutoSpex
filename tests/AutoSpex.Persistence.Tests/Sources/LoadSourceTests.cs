@@ -31,7 +31,7 @@ public class LoadSourceTests
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().BeEquivalentTo(source, o => o.Excluding(s => s.Content));
     }
-    
+
     [Test]
     public async Task LoadSource_SeededTestSource_ShouldBeSuccessAndEquivalent()
     {
@@ -45,7 +45,7 @@ public class LoadSourceTests
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().BeEquivalentTo(source, o => o.Excluding(s => s.Content));
     }
-    
+
     [Test]
     public async Task LoadSource_WithSourceWithSuppressions_ShouldBeSuccessAndExpected()
     {
@@ -73,7 +73,7 @@ public class LoadSourceTests
         result.Value.Should().BeEquivalentTo(source, o => o.Excluding(s => s.Content));
     }
 
-    /*[Test]
+    [Test]
     public async Task LoadSource_WithSourceWithOverrides_ShouldBeSuccessAndExpected()
     {
         using var context = new TestContext();
@@ -81,22 +81,37 @@ public class LoadSourceTests
 
         //Create node.
         var container = Node.NewContainer();
-        var var01 = container.AddVariable("TestVar", 123);
-        var var02 = container.AddVariable("AnotherVar", Radix.Decimal);
-        var var03 = container.AddVariable("ComplexVar", new Tag("Test", new TIMER()));
-        await mediator.Send(new CreateNode(container));
+        var spec01 = container.AddSpec("Test", s =>
+        {
+            s.Query(Element.Tag);
+            s.Filter("TagName", Operation.Containing, "Something");
+            s.Verify("Value", Operation.EqualTo, 12);
+        });
+        var spec02 = container.AddSpec("Test", s =>
+        {
+            s.Query(Element.Tag);
+            s.Filter("TagName", Operation.Containing, "Something");
+            s.Verify("Value", Operation.EqualTo, 12);
+        });
+        var spec03 = container.AddSpec("Test", s =>
+        {
+            s.Query(Element.Tag);
+            s.Filter("TagName", Operation.Containing, "Something");
+            s.Verify("Value", Operation.EqualTo, 12);
+        });
+        await mediator.Send(new CreateNodes([container, spec01, spec02, spec03]));
 
         //Create source.
         var source = new Source();
         await mediator.Send(new CreateSource(source));
-        source.AddOverride(var01);
-        source.AddOverride(var02);
-        source.AddOverride(var03);
+        source.AddOverride(spec01);
+        source.AddOverride(spec01);
+        source.AddOverride(spec01);
         await mediator.Send(new SaveSource(source));
 
         var result = await mediator.Send(new LoadSource(source.SourceId));
 
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().BeEquivalentTo(source, o => o.Excluding(s => s.Content));
-    }*/
+    }
 }

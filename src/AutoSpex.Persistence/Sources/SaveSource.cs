@@ -25,7 +25,7 @@ internal class SaveSourceHandler(IConnectionManager manager) : IRequestHandler<S
         "INSERT INTO Suppression (SourceId, NodeId, Reason) VALUES (@SourceId, @NodeId, @Reason)";
 
     private const string InsertOverride =
-        "INSERT INTO Override (SourceId, SpecId, Config) VALUES (@SourceId, @SpecId, @Config)";
+        "INSERT INTO Override (SourceId, NodeId, Config) VALUES (@SourceId, @NodeId, @Config)";
 
     public async Task<Result> Handle(SaveSource request, CancellationToken cancellationToken)
     {
@@ -41,20 +41,20 @@ internal class SaveSourceHandler(IConnectionManager manager) : IRequestHandler<S
         await connection.ExecuteAsync(DeleteOverrides, new { request.Source.SourceId }, transaction);
 
         await connection.ExecuteAsync(InsertSuppressions,
-            request.Source.Suppressions.Select(suppression => new
+            request.Source.Suppressions.Select(x => new
             {
                 request.Source.SourceId,
-                suppression.NodeId,
-                suppression.Reason
+                x.NodeId,
+                x.Reason
             }),
             transaction);
 
         await connection.ExecuteAsync(InsertOverride,
-            request.Source.Overrides.Select(spec => new
+            request.Source.Overrides.Select(x => new
                 {
                     request.Source.SourceId,
-                    spec.SpecId,
-                    Config = spec
+                    x.NodeId,
+                    Config = x.Spec
                 }
             ),
             transaction);

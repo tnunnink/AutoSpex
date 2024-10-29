@@ -73,7 +73,7 @@ public class SaveSourceTests
         result.IsSuccess.Should().BeTrue();
     }
 
-    /*[Test]
+    [Test]
     public async Task SaveSource_SeededWithSourceWithOverrides_ShouldBeSuccess()
     {
         using var context = new TestContext();
@@ -81,21 +81,36 @@ public class SaveSourceTests
 
         //Create node.
         var container = Node.NewContainer();
-        var var01 = container.AddVariable("TestVar", 123);
-        var var02 = container.AddVariable("AnotherVar", Radix.Decimal);
-        var var03 = container.AddVariable("ComplexVar", new Tag("Test", new TIMER()));
-        await mediator.Send(new CreateNode(container));
+        var spec01 = container.AddSpec("Test", s =>
+        {
+            s.Query(Element.Tag);
+            s.Filter("TagName", Operation.Containing, "Something");
+            s.Verify("Value", Operation.EqualTo, 12);
+        });
+        var spec02 = container.AddSpec("Test", s =>
+        {
+            s.Query(Element.Tag);
+            s.Filter("TagName", Operation.Containing, "Something");
+            s.Verify("Value", Operation.EqualTo, 12);
+        });
+        var spec03 = container.AddSpec("Test", s =>
+        {
+            s.Query(Element.Tag);
+            s.Filter("TagName", Operation.Containing, "Something");
+            s.Verify("Value", Operation.EqualTo, 12);
+        });
+        await mediator.Send(new CreateNodes([container, spec01, spec02, spec03]));
 
         //Create source.
         var source = new Source();
         await mediator.Send(new CreateSource(source));
 
         //Add overrides to source.
-        source.AddOverride(var01);
-        source.AddOverride(var02);
-        source.AddOverride(var03);
+        source.AddOverride(spec01);
+        source.AddOverride(spec01);
+        source.AddOverride(spec01);
 
         var result = await mediator.Send(new SaveSource(source));
         result.IsSuccess.Should().BeTrue();
-    }*/
+    }
 }
