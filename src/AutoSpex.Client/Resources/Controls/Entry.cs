@@ -16,6 +16,8 @@ using Avalonia.Interactivity;
 using Avalonia.Styling;
 using Avalonia.VisualTree;
 
+// ReSharper disable MemberCanBePrivate.Global
+
 namespace AutoSpex.Client.Resources.Controls;
 
 [PseudoClasses(ClassEmpty)]
@@ -70,6 +72,10 @@ public class Entry : TemplatedControl
     public static readonly StyledProperty<bool> UseExpanderProperty =
         AvaloniaProperty.Register<Entry, bool>(
             nameof(UseExpander));
+
+    public static readonly StyledProperty<int> PopulationDelayProperty =
+        AvaloniaProperty.Register<Entry, int>(
+            nameof(PopulationDelay), defaultValue: 5);
 
     public static readonly StyledProperty<Func<string?, CancellationToken, Task<IEnumerable<object>>>?>
         PopulateProperty =
@@ -171,6 +177,12 @@ public class Entry : TemplatedControl
         set => SetValue(UseExpanderProperty, value);
     }
 
+    public int PopulationDelay
+    {
+        get => GetValue(PopulationDelayProperty);
+        set => SetValue(PopulationDelayProperty, value);
+    }
+
     public Func<string?, CancellationToken, Task<IEnumerable<object>>>? Populate
     {
         get => GetValue(PopulateProperty);
@@ -262,8 +274,7 @@ public class Entry : TemplatedControl
     /// </summary>
     private void OnButtonKeyDown(object? sender, KeyEventArgs e)
     {
-        if (e.Key is Key.Tab || e.KeyModifiers != KeyModifiers.None) return;
-        
+        if (e.Key is not Key.Enter || e.KeyModifiers != KeyModifiers.None) return;
         if (IsDropDownOpen) return;
         IsDropDownOpen = true;
         e.Handled = true;
@@ -442,8 +453,7 @@ public class Entry : TemplatedControl
 
         if (Populate is null) return;
 
-        //todo Could make timeout configurable.
-        var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+        var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(PopulationDelay));
 
         try
         {
