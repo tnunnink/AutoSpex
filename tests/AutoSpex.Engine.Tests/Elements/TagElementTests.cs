@@ -57,14 +57,14 @@ public class TagElementTests
 
         var property = element.Property("Name");
         
-        property?.Origin.Should().Be(typeof(Tag));
-        property?.Type.Should().Be(typeof(string));
-        property?.Name.Should().Be("Name");
-        property?.Path.Should().Be("Name");
-        property?.Group.Should().Be(TypeGroup.Text);
-        property?.DisplayName.Should().Be("string");
-        property?.Options.Should().BeEmpty();
-        property?.Properties.Should().BeEmpty();
+        property.Origin.Should().Be(typeof(Tag));
+        property.Type.Should().Be(typeof(string));
+        property.Name.Should().Be("Name");
+        property.Path.Should().Be("Name");
+        property.Group.Should().Be(TypeGroup.Text);
+        property.DisplayName.Should().Be("string");
+        property.Options.Should().BeEmpty();
+        property.Properties.Should().BeEmpty();
     }
     
     [Test]
@@ -74,14 +74,14 @@ public class TagElementTests
 
         var property = element.Property("Radix.Name");
         
-        property?.Origin.Should().Be(typeof(Tag));
-        property?.Type.Should().Be(typeof(string));
-        property?.Name.Should().Be("Name");
-        property?.Path.Should().Be("Radix.Name");
-        property?.Group.Should().Be(TypeGroup.Text);
-        property?.DisplayName.Should().Be("string");
-        property?.Options.Should().BeEmpty();
-        property?.Properties.Should().BeEmpty();
+        property.Origin.Should().Be(typeof(Tag));
+        property.Type.Should().Be(typeof(string));
+        property.Name.Should().Be("Name");
+        property.Path.Should().Be("Radix.Name");
+        property.Group.Should().Be(TypeGroup.Text);
+        property.DisplayName.Should().Be("string");
+        property.Options.Should().BeEmpty();
+        property.Properties.Should().BeEmpty();
     }
     
     [Test]
@@ -91,13 +91,23 @@ public class TagElementTests
 
         var property = element.Property("Root.Root.Parent");
         
-        property?.Origin.Should().Be(typeof(Tag));
-        property?.Type.Should().Be(typeof(Tag));
-        property?.Name.Should().Be("Parent");
-        property?.Path.Should().Be("Root.Root.Parent");
-        property?.Group.Should().Be(TypeGroup.Element);
-        property?.DisplayName.Should().Be("Tag");
-        property?.Options.Should().BeEmpty();
-        property?.Properties.Should().NotBeEmpty();
+        property.Origin.Should().Be(typeof(Tag));
+        property.Type.Should().Be(typeof(Tag));
+        property.Name.Should().Be("Parent");
+        property.Path.Should().Be("Root.Root.Parent");
+        property.Group.Should().Be(TypeGroup.Element);
+        property.DisplayName.Should().Be("Tag");
+        property.Options.Should().BeEmpty();
+        property.Properties.Should().NotBeEmpty();
+    }
+
+    [Test]
+    public void PropertiesShouldContainThisReference()
+    {
+        var element = Element.Tag;
+
+        var property = element.Properties.FirstOrDefault(p => p.Name == "This");
+
+        property.Should().NotBeNull();
     }
 }
