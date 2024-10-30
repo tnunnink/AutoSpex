@@ -4,19 +4,33 @@
 public class PropertyTests
 {
     [Test]
-    public void New_ValidPropertyInfo_ShouldNotBeNull()
+    public void New_ValidPropertyFromTag_ShouldNotBeNull()
     {
         var property = new Property("Name", typeof(string), Element.Tag.This);
+
         property.Should().NotBeNull();
     }
-    
+
     [Test]
     public void New_InvalidPropertyInfo_ShouldNotBeNull()
     {
         var property = new Property("Fake", typeof(string), Element.Tag.This);
+
         property.Should().NotBeNull();
     }
-    
+
+    [Test]
+    public void New_ValidPropertyFromString_ShouldhaveExpectedValues()
+    {
+        var property = new Property("Length", typeof(int), Property.This(typeof(string)));
+
+        property.Key.Should().Be("System.String.Length");
+        property.Origin.Should().Be(typeof(string));
+        property.Name.Should().Be("Length");
+        property.Type.Should().Be(typeof(int));
+        property.Path.Should().Be("Length");
+    }
+
     [Test]
     public void New_InvalidPropertyInfo_ShouldhaveExpectedValues()
     {
@@ -83,7 +97,7 @@ public class PropertyTests
         property?.Origin.Should().Be(typeof(Tag));
         property?.Type.Should().Be(typeof(Tag));
     }
-    
+
     [Test]
     public void GetProperty_InvalidProperty_ShouldRetrunUnknown()
     {
@@ -269,17 +283,41 @@ public class PropertyTests
         value.Should().BeOfType<Tag>();
         value.Should().BeEquivalentTo(expected);
     }
+    
+    [Test]
+    public void This_PrimitiveType_ShouldBeExpected()
+    {
+        var property = Property.This(typeof(int));
+
+        property.Key.Should().Be("System.Int32.This");
+        property.Origin.Should().Be(typeof(int));
+        property.Name.Should().Be("This");
+        property.Type.Should().Be(typeof(int));
+        property.Path.Should().Be("This");
+    }
+    
+    [Test]
+    public void This_ComponentType_ShouldBeExpected()
+    {
+        var property = Property.This(typeof(Tag));
+
+        property.Key.Should().Be("L5Sharp.Core.Tag.This");
+        property.Origin.Should().Be(typeof(Tag));
+        property.Name.Should().Be("This");
+        property.Type.Should().Be(typeof(Tag));
+        property.Path.Should().Be("This");
+    }
 
     [Test]
     public void Default_WhenCalled_HasExpectedValues()
     {
         var property = Property.Default;
 
-        property.Key.Should().Be("System.Object");
+        property.Key.Should().Be("System.Object.This");
         property.Origin.Should().Be(typeof(object));
         property.Parent.Should().BeNull();
         property.Name.Should().Be("This");
-        property.Path.Should().BeEmpty();
+        property.Path.Should().Be("This");
         property.DisplayName.Should().Be("Object");
         property.Group.Should().Be(TypeGroup.Default);
         property.Options.Should().BeEmpty();

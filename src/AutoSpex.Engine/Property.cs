@@ -164,6 +164,9 @@ public class Property : IEquatable<Property>
     /// </remarks>
     public Property GetProperty(string? path)
     {
+        //Allows support for a special self-referencing property, same as is done in .NET.
+        if (path == nameof(This)) return this;
+
         var property = this;
         var properties = Properties.ToList();
 
@@ -417,7 +420,7 @@ public class Property : IEquatable<Property>
             current = current.Parent;
         }
 
-        return path;
+        return !string.IsNullOrEmpty(path) ? path : Name;
     }
 
     /// <summary>
