@@ -262,7 +262,8 @@ public class Entry : TemplatedControl
     /// </summary>
     private void OnButtonKeyDown(object? sender, KeyEventArgs e)
     {
-        if (e.Key is Key.Tab) return;
+        if (e.Key is Key.Tab || e.KeyModifiers != KeyModifiers.None) return;
+        
         if (IsDropDownOpen) return;
         IsDropDownOpen = true;
         e.Handled = true;
