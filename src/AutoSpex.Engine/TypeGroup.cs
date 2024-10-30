@@ -114,6 +114,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
             typeof(LogixData),
             typeof(AtomicData),
             typeof(Dimensions),
+            typeof(Revision),
             typeof(ProductType),
             typeof(Vendor)
         ];
@@ -158,7 +159,6 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
             typeof(STRING),
             typeof(NeutralText),
             typeof(TagName),
-            typeof(Revision),
             typeof(L5Sharp.Core.Argument),
             typeof(IPAddress),
             typeof(Scope)
