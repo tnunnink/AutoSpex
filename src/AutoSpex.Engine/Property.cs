@@ -50,10 +50,7 @@ public class Property : IEquatable<Property>
     /// <exception cref="ArgumentNullException"><paramref name="type"/> is null.</exception>
     public Property(string name, Type type, Property? parent = default, Func<object?, object?>? getter = default)
     {
-        if (string.IsNullOrEmpty(name))
-            throw new ArgumentException("Name can not be null or empty to initialize a property.");
-
-        Name = name;
+        Name = name ?? throw new ArgumentNullException(nameof(name));
         Type = type ?? throw new ArgumentNullException(nameof(type));
         Parent = parent;
         _getter = getter;
@@ -141,7 +138,7 @@ public class Property : IEquatable<Property>
     /// Represents a default or property that is just a reference to <see cref="object"/>. We can use this in place
     /// of a null property instance.
     /// </summary>
-    public static Property Default => This(typeof(object));
+    public static Property Default => new(string.Empty, typeof(object), null, x => x);
 
     /// <summary>
     /// Creates a default self-referential property called "This" with a null parent, which can be used as a root
@@ -164,11 +161,8 @@ public class Property : IEquatable<Property>
     /// </remarks>
     public Property GetProperty(string? path)
     {
-        //Allows support for a special self-referencing property, same as is done in .NET.
-        if (path == nameof(This)) return this;
-
         var property = this;
-        var properties = Properties.ToList();
+        /*var properties = Properties.ToList();*/
 
         while (!string.IsNullOrEmpty(path))
         {
@@ -186,16 +180,24 @@ public class Property : IEquatable<Property>
             {
                 index = path.IndexOfAny(Separators);
                 member = index > 0 ? path[..index] : path;
-                var defined = properties.SingleOrDefault(p => p.Name == member);
-                if (defined is null) return new Property(member, typeof(object), property);
-                property = new Property(defined, property);
+                property = GetSubProperty(member, property);
             }
 
-            properties = property.Properties.ToList();
             path = index > 0 ? path[index..].TrimStart(MemberSeparator) : string.Empty;
         }
 
         return property;
+
+        Property GetSubProperty(string target, Property current)
+        {
+            if (target == nameof(This)) return current;
+
+            var defined = current.Properties.SingleOrDefault(p => p.Name == target);
+
+            return defined is not null
+                ? new Property(defined, current)
+                : new Property(target, typeof(object), current);
+        }
     }
 
     /// <summary>

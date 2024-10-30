@@ -313,11 +313,11 @@ public class PropertyTests
     {
         var property = Property.Default;
 
-        property.Key.Should().Be("System.Object.This");
+        property.Key.Should().Be("System.Object");
         property.Origin.Should().Be(typeof(object));
         property.Parent.Should().BeNull();
-        property.Name.Should().Be("This");
-        property.Path.Should().Be("This");
+        property.Name.Should().BeEmpty();
+        property.Path.Should().BeEmpty();
         property.DisplayName.Should().Be("Object");
         property.Group.Should().Be(TypeGroup.Default);
         property.Options.Should().BeEmpty();
