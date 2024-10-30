@@ -25,7 +25,6 @@ public abstract class Element : SmartEnum<Element, string>
     private Element(Type type) : base(type.Name, type.Name)
     {
         Type = type ?? throw new ArgumentNullException(nameof(type));
-        _customProperties.Add(This);
     }
 
     private Element(string name, Type type) : base(name, type.FullName ?? throw new ArgumentNullException(nameof(type)))
