@@ -24,6 +24,7 @@
                 Origin: L5Sharp.Core.Tag,
                 Path: Name
               },
+              Negation: Is,
               Operation: Like,
               Argument: {
                 ArgumentId: Guid_6,
@@ -31,8 +32,7 @@
                   Type: System.String,
                   Data: someName
                 }
-              },
-              Negation: Is
+              }
             }
           ],
           Verifications: [
@@ -43,6 +43,7 @@
                 Origin: L5Sharp.Core.Tag,
                 Path: Value
               },
+              Negation: Is,
               Operation: Equal To,
               Argument: {
                 ArgumentId: Guid_8,
@@ -50,8 +51,7 @@
                   Type: System.Int32,
                   Data: 123
                 }
-              },
-              Negation: Is
+              }
             }
           ],
           FilterInclusion: 0,
@@ -74,6 +74,7 @@
                 Origin: L5Sharp.Core.Tag,
                 Path: Name
               },
+              Negation: Is,
               Operation: Containing,
               Argument: {
                 ArgumentId: Guid_12,
@@ -81,8 +82,7 @@
                   Type: System.String,
                   Data: anotherName
                 }
-              },
-              Negation: Is
+              }
             }
           ],
           Verifications: [
@@ -93,6 +93,7 @@
                 Origin: L5Sharp.Core.Tag,
                 Path: Value
               },
+              Negation: Is,
               Operation: Greater Than,
               Argument: {
                 ArgumentId: Guid_14,
@@ -100,8 +101,7 @@
                   Type: System.Int32,
                   Data: 456
                 }
-              },
-              Negation: Is
+              }
             }
           ],
           FilterInclusion: 0,
@@ -124,6 +124,7 @@
                 Origin: L5Sharp.Core.Tag,
                 Path: Name
               },
+              Negation: Is,
               Operation: Equal To,
               Argument: {
                 ArgumentId: Guid_18,
@@ -131,8 +132,7 @@
                   Type: System.String,
                   Data: yetAnotherName
                 }
-              },
-              Negation: Is
+              }
             }
           ],
           Verifications: [
@@ -143,6 +143,7 @@
                 Origin: L5Sharp.Core.Tag,
                 Path: Value
               },
+              Negation: Not,
               Operation: Equal To,
               Argument: {
                 ArgumentId: Guid_20,
@@ -150,8 +151,7 @@
                   Type: System.Int32,
                   Data: 678
                 }
-              },
-              Negation: Not
+              }
             }
           ],
           FilterInclusion: 0,

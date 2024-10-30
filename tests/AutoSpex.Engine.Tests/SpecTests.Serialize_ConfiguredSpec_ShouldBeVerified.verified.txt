@@ -9,6 +9,7 @@
         Origin: L5Sharp.Core.Tag,
         Path: Name
       },
+      Negation: Is,
       Operation: Containing,
       Argument: {
         ArgumentId: Guid_3,
@@ -16,8 +17,7 @@
           Type: System.String,
           Data: Test
         }
-      },
-      Negation: Is
+      }
     }
   ],
   Verifications: [
@@ -28,12 +28,12 @@
         Origin: L5Sharp.Core.Tag,
         Path: DataType
       },
+      Negation: Not,
       Operation: Null Or Empty,
       Argument: {
         ArgumentId: Guid_5,
         Value: null
-      },
-      Negation: Not
+      }
     }
   ],
   FilterInclusion: 0,
