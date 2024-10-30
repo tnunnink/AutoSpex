@@ -34,7 +34,7 @@
         <PackageReference Include="Avalonia.Xaml.Behaviors" Version="11.1.0.3"/>
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2"/>
         <PackageReference Include="FluentResults" Version="3.16.0"/>
-        <PackageReference Include="JetBrains.Annotations" Version="2024.2.0"/>
+        <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" />
         <PackageReference Include="Lamar" Version="13.1.0"/>
         <PackageReference Include="MediatR" Version="12.4.1"/>
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0"/>
