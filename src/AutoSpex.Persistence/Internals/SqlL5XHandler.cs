@@ -18,13 +18,13 @@ public class SqlL5XHandler : SqlMapper.TypeHandler<L5X>
         parameter.Value = content.Serialize().ToString().Compress();
     }
 
-    public override L5X? Parse(object? value)
+    public override L5X Parse(object? value)
     {
         var data = value?.ToString();
 
         if (string.IsNullOrEmpty(data))
             return L5X.Empty();
 
-        return L5X.Parse(data.Decompress());
+        return L5X.Parse(data.Decompress(), L5XOptions.Index);
     }
 }

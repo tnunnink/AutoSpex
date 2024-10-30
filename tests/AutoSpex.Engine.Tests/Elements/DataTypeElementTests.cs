@@ -38,8 +38,8 @@ public class DataTypeElementTests
         var property = element.Property("Name");
 
         property.Should().NotBeNull();
-        property?.Path.Should().Be("Name");
-        property?.Type.Should().Be(typeof(string));
+        property.Path.Should().Be("Name");
+        property.Type.Should().Be(typeof(string));
     }
     
     [Test]
@@ -50,8 +50,8 @@ public class DataTypeElementTests
         var property = element.Property("Description");
 
         property.Should().NotBeNull();
-        property?.Path.Should().Be("Description");
-        property?.Type.Should().Be(typeof(string));
+        property.Path.Should().Be("Description");
+        property.Type.Should().Be(typeof(string));
     }
     
     [Test]
@@ -72,8 +72,8 @@ public class DataTypeElementTests
         var property = element.Property("Class");
 
         property.Should().NotBeNull();
-        property?.Path.Should().Be("Class");
-        property?.Type.Should().Be(typeof(DataTypeClass));
+        property.Path.Should().Be("Class");
+        property.Type.Should().Be(typeof(DataTypeClass));
     }
     
     [Test]
@@ -84,11 +84,11 @@ public class DataTypeElementTests
         var property = element.Property("Members");
 
         property.Should().NotBeNull();
-        property?.Path.Should().Be("Members");
-        property?.Type.Should().Be(typeof(LogixContainer<DataTypeMember>));
-        property?.DisplayName.Should().Be("DataTypeMember[]");
-        property?.Options.Should().BeEmpty();
-        property?.Group.Should().Be(TypeGroup.Collection);
+        property.Path.Should().Be("Members");
+        property.Type.Should().Be(typeof(LogixContainer<DataTypeMember>));
+        property.DisplayName.Should().Be("DataTypeMember[]");
+        property.Options.Should().BeEmpty();
+        property.Group.Should().Be(TypeGroup.Collection);
     }
     
     [Test]
@@ -99,8 +99,8 @@ public class DataTypeElementTests
         var property = element.Property("Scope");
 
         property.Should().NotBeNull();
-        property?.Path.Should().Be("Scope");
-        property?.Type.Should().Be(typeof(Scope));
+        property.Path.Should().Be("Scope");
+        property.Type.Should().Be(typeof(Scope));
     }
 
     [Test]

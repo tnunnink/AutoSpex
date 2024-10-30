@@ -132,9 +132,9 @@ public abstract class Element : SmartEnum<Element, string>
     {
         public AddOnInstructionElement() : base(typeof(AddOnInstruction))
         {
-            Register<Controller>("Controller", x => (x as DataType)?.L5X?.Controller);
-            Register<List<LogixComponent>>("Dependencies", x => (x as DataType)?.Dependencies().ToList());
-            Register<List<CrossReference>>("References", x => (x as DataType)?.References().ToList());
+            Register<Controller>("Controller", x => (x as AddOnInstruction)?.L5X?.Controller);
+            Register<List<LogixComponent>>("Dependencies", x => (x as AddOnInstruction)?.Dependencies().ToList());
+            Register<List<CrossReference>>("References", x => (x as AddOnInstruction)?.References().ToList());
         }
     }
 
@@ -143,6 +143,8 @@ public abstract class Element : SmartEnum<Element, string>
         public ModuleElement() : base(typeof(Module))
         {
             Register<Controller>("Controller", x => (x as Module)?.L5X?.Controller);
+            Register<List<LogixComponent>>("Dependencies", x => (x as Module)?.Dependencies().ToList());
+            Register<List<CrossReference>>("References", x => (x as Module)?.References().ToList());
         }
     }
 
@@ -151,6 +153,8 @@ public abstract class Element : SmartEnum<Element, string>
         public TagElement() : base(typeof(Tag))
         {
             Register<Controller>("Controller", x => (x as Tag)?.L5X?.Controller);
+            Register<List<LogixComponent>>("Dependencies", x => (x as Tag)?.Dependencies().ToList());
+            Register<List<CrossReference>>("References", x => (x as Tag)?.References().ToList());
             Register<IList<Tag>>("Members", x => (x as Tag)?.Members().ToList() ?? []);
         }
     }
@@ -160,6 +164,8 @@ public abstract class Element : SmartEnum<Element, string>
         public ProgramElement() : base(typeof(Program))
         {
             Register<Controller>("Controller", x => (x as Program)?.L5X?.Controller);
+            Register<List<LogixComponent>>("Dependencies", x => (x as Program)?.Dependencies().ToList());
+            Register<List<CrossReference>>("References", x => (x as Program)?.References().ToList());
         }
     }
 
@@ -168,6 +174,8 @@ public abstract class Element : SmartEnum<Element, string>
         public RoutineElement() : base(typeof(Routine))
         {
             Register<Controller>("Controller", x => (x as Routine)?.L5X?.Controller);
+            Register<List<LogixComponent>>("Dependencies", x => (x as Routine)?.Dependencies().ToList());
+            Register<List<CrossReference>>("References", x => (x as Routine)?.References().ToList());
         }
     }
 
@@ -176,6 +184,8 @@ public abstract class Element : SmartEnum<Element, string>
         public TaskElement() : base(typeof(Task))
         {
             Register<Controller>("Controller", x => (x as Task)?.L5X?.Controller);
+            Register<List<LogixComponent>>("Dependencies", x => (x as Task)?.Dependencies().ToList());
+            Register<List<CrossReference>>("References", x => (x as Task)?.References().ToList());
         }
     }
 
@@ -269,6 +279,7 @@ public abstract class Element : SmartEnum<Element, string>
     {
         public RungElement() : base(typeof(Rung))
         {
+            Register<List<CrossReference>>("References", x => (x as Rung)?.References().ToList());
             Register<IEnumerable<Instruction>>("Instructions", x => (x as Rung)?.Text.Instructions());
             Register<IEnumerable<TagName>>("Tags", x => (x as Rung)?.Text.Tags());
         }
