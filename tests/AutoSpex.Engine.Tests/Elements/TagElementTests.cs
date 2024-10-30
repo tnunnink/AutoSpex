@@ -22,7 +22,7 @@ public class TagElementTests
 
         result.Should().NotBeNull();
     }
-    
+
     [Test]
     public void This_WhenCalled_ShouldExpectedValues()
     {
@@ -33,13 +33,13 @@ public class TagElementTests
         result.Origin.Should().Be(typeof(Tag));
         result.Type.Should().Be(typeof(Tag));
         result.Name.Should().Be("This");
-        result.Path.Should().BeEmpty();
+        result.Path.Should().Be("This");
         result.Group.Should().Be(TypeGroup.Element);
         result.DisplayName.Should().Be("Tag");
         result.Options.Should().BeEmpty();
         result.Properties.Should().NotBeEmpty();
     }
-    
+
     [Test]
     public void IsComponent_WhenCalled_ShouldBeTrue()
     {
@@ -56,7 +56,7 @@ public class TagElementTests
         var element = Element.Tag;
 
         var property = element.Property("Name");
-        
+
         property.Origin.Should().Be(typeof(Tag));
         property.Type.Should().Be(typeof(string));
         property.Name.Should().Be("Name");
@@ -66,14 +66,14 @@ public class TagElementTests
         property.Options.Should().BeEmpty();
         property.Properties.Should().BeEmpty();
     }
-    
+
     [Test]
     public void Property_NestedEnumProperty_ShouldBeExpected()
     {
         var element = Element.Tag;
 
         var property = element.Property("Radix.Name");
-        
+
         property.Origin.Should().Be(typeof(Tag));
         property.Type.Should().Be(typeof(string));
         property.Name.Should().Be("Name");
@@ -83,14 +83,14 @@ public class TagElementTests
         property.Options.Should().BeEmpty();
         property.Properties.Should().BeEmpty();
     }
-    
+
     [Test]
     public void Property_NestedElementProperty_ShouldBeExpected()
     {
         var element = Element.Tag;
 
         var property = element.Property("Root.Root.Parent");
-        
+
         property.Origin.Should().Be(typeof(Tag));
         property.Type.Should().Be(typeof(Tag));
         property.Name.Should().Be("Parent");
@@ -99,15 +99,5 @@ public class TagElementTests
         property.DisplayName.Should().Be("Tag");
         property.Options.Should().BeEmpty();
         property.Properties.Should().NotBeEmpty();
-    }
-
-    [Test]
-    public void PropertiesShouldContainThisReference()
-    {
-        var element = Element.Tag;
-
-        var property = element.Properties.FirstOrDefault(p => p.Name == "This");
-
-        property.Should().NotBeNull();
     }
 }

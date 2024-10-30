@@ -94,8 +94,8 @@ public class PropertyTests
         var property = Element.Tag.Property("[PRE]");
 
         property.Should().NotBeNull();
-        property?.Origin.Should().Be(typeof(Tag));
-        property?.Type.Should().Be(typeof(Tag));
+        property.Origin.Should().Be(typeof(Tag));
+        property.Type.Should().Be(typeof(Tag));
     }
 
     [Test]
@@ -190,7 +190,7 @@ public class PropertyTests
         var property = Element.Tag.Property("Radix.Name");
         property.Should().NotBeNull();
 
-        var value = property?.GetValue(tag);
+        var value = property.GetValue(tag);
 
         value.Should().Be(Radix.Binary.Name);
     }
@@ -248,7 +248,7 @@ public class PropertyTests
         var instance = new Tag("Test", new TIMER());
         var property = Element.Tag.Property("Members");
 
-        var value = property?.GetValue(instance);
+        var value = property.GetValue(instance);
 
         value.Should().NotBeNull();
         value.Should().BeOfType<List<Tag>>();
@@ -277,13 +277,13 @@ public class PropertyTests
         var expected = instance["PRE"];
         var property = Element.Tag.Property("[PRE]");
 
-        var value = property?.GetValue(instance);
+        var value = property.GetValue(instance);
 
         value.Should().NotBeNull();
         value.Should().BeOfType<Tag>();
         value.Should().BeEquivalentTo(expected);
     }
-    
+
     [Test]
     public void This_PrimitiveType_ShouldBeExpected()
     {
@@ -295,7 +295,7 @@ public class PropertyTests
         property.Type.Should().Be(typeof(int));
         property.Path.Should().Be("This");
     }
-    
+
     [Test]
     public void This_ComponentType_ShouldBeExpected()
     {
@@ -331,11 +331,11 @@ public class PropertyTests
     {
         var property = Element.Tag.Property("Name");
 
-        var graph = property?.TypeGraph;
+        var graph = property.TypeGraph;
 
         graph.Should().NotBeNull();
         graph.Should().HaveCount(2);
-        graph?[0].Should().Be(typeof(Tag));
-        graph?[1].Should().Be(typeof(string));
+        graph[0].Should().Be(typeof(Tag));
+        graph[1].Should().Be(typeof(string));
     }
 }

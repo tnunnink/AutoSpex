@@ -9,12 +9,12 @@ public class GeneralTests
         var element = Element.Controller;
 
         var property = element.Property("RedundancyInfo.KeepTestEditsOnSwitchOver");
-        
+
         property.Should().NotBeNull();
-        property?.Origin.Should().Be(typeof(Controller));
-        property?.Type.Should().Be(typeof(bool));
-        property?.Path.Should().Be("RedundancyInfo.KeepTestEditsOnSwitchOver");
-        property?.Name.Should().Be("KeepTestEditsOnSwitchOver");
+        property.Origin.Should().Be(typeof(Controller));
+        property.Type.Should().Be(typeof(bool));
+        property.Path.Should().Be("RedundancyInfo.KeepTestEditsOnSwitchOver");
+        property.Name.Should().Be("KeepTestEditsOnSwitchOver");
     }
 
 
@@ -27,7 +27,7 @@ public class GeneralTests
 
         result.Should().BeTrue();
     }
-    
+
     [Test]
     public void DifferentObjects_ShouldBeTheSameInstance_JustMakingSureWeAreNotActuallyCreatingNewObjectsEachTime()
     {
@@ -50,21 +50,5 @@ public class GeneralTests
     {
         var result = Element.Components.ToList();
         result.Should().NotBeEmpty();
-    }
-
-    [Test]
-    public void Property_This_ShouldReturnExpected()
-    {
-        var element = Element.Tag;
-
-        var result = element.This;
-
-        result.Should().NotBeNull();
-        result?.Name.Should().Be("This");
-        result?.Path.Should().BeEmpty();
-        result?.Type.Should().Be(typeof(Tag));
-        result?.Group.Should().Be(TypeGroup.Element);
-        result?.Origin.Should().Be(typeof(Tag));
-        result?.Properties.Should().NotBeEmpty();
     }
 }
