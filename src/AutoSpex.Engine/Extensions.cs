@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.IO.Compression;
-using System.Reflection;
 using System.Text;
 using L5Sharp.Core;
 
@@ -27,7 +26,7 @@ public static class Extensions
     }
 
     /// <summary>
-    /// Gets a friendly type name for the provided type. I want this for the UI so it is easier to read what the type
+    /// Gets a friendly type name for the provided type. I want this for the UI so that it is easier to read what the type
     /// is.
     /// </summary>
     /// <param name="type">The type to get the identifier for.</param>
@@ -211,7 +210,7 @@ public static class Extensions
 
         var firstHalf = g1[..(g1.Length / 2)];
         var secondHalf = g2[..(g2.Length / 2)];
-        
+
         return Guid.Parse(firstHalf + secondHalf);
     }
 }

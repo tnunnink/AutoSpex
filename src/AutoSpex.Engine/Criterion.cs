@@ -17,7 +17,7 @@ namespace AutoSpex.Engine;
 /// using the local <see cref="Evaluate"/> method call so that this in theory could be used to build up a more complex
 /// expression tree.
 /// </remarks>
-public class Criterion : IEquatable<Criterion>
+public class Criterion
 {
     /// <summary>
     /// Creates a new default <see cref="Criterion"/> instance with an empty property, no operation and no arguments.
@@ -61,12 +61,6 @@ public class Criterion : IEquatable<Criterion>
         Operation = operation;
         Argument = arguments.ToList();
     }
-
-    /// <summary>
-    /// A <see cref="Guid"/> that uniquely identifies this object.
-    /// </summary>
-    [JsonInclude]
-    public Guid CriterionId { get; private init; } = Guid.NewGuid();
 
     /// <summary>
     /// The type this criterion represents. This is not used when evaluation is called, but
@@ -136,35 +130,38 @@ public class Criterion : IEquatable<Criterion>
     }
 
     /// <summary>
-    /// Determines if the provided criterion is this or a nested criterion object, meaning that one of this criterion's
-    /// arguments or descendent arguments is this criterion object.
+    /// Determines if the provided criterion instance is this or a nested criterion object
+    /// (meaning that one of this criterion's arguments or descendent arguments is the same criterion instance).
     /// </summary>
     /// <param name="criterion">The criterion to search for in the object graph.</param>
     /// <returns>
-    /// <c>true</c> if this criterion contains the provided criterion within it's nested argument structure;
+    /// <c>true</c> if this criterion contains the provided criterion instance within it's nested argument structure;
     /// Otherwise, <c>false</c>.
     /// </returns>
-    /// <remarks>This allows us to determine if one criterion is or contains the provided instance.</remarks>
+    /// <remarks>
+    /// This allows us to determine if one criterion is or contains the provided instance.
+    /// This uses reference equality.
+    /// </remarks>
     public bool Contains(Criterion criterion)
     {
-        if (CriterionId == criterion.CriterionId) return true;
+        if (ReferenceEquals(this, criterion)) return true;
         if (Argument.Value is not Criterion other) return false;
-        return other.CriterionId == criterion.CriterionId || other.Contains(criterion);
+        return ReferenceEquals(other, criterion) || other.Contains(criterion);
     }
 
     /// <summary>
-    /// Determines whether this or a nested criterion contains the specified argument id.
+    /// 
     /// </summary>
-    /// <param name="argumentId">The argument id to search for.</param>
-    /// <returns>True if a criterion with the specified argument ID is found, otherwise false.</returns>
-    public bool Contains(Guid argumentId)
+    /// <param name="argument"></param>
+    /// <returns></returns>
+    public bool Contains(Argument argument)
     {
-        if (Argument.ArgumentId == argumentId) return true;
+        if (ReferenceEquals(Argument, argument)) return true;
 
         return Argument.Value switch
         {
-            Criterion criterion => criterion.Contains(argumentId),
-            IEnumerable<Argument> arguments => arguments.Any(a => a.ArgumentId == argumentId),
+            Criterion criterion => criterion.Contains(argument),
+            IEnumerable<Argument> arguments => arguments.Any(a => ReferenceEquals(a, argument)),
             _ => false
         };
     }
@@ -226,15 +223,6 @@ public class Criterion : IEquatable<Criterion>
     /// criterion instance.
     /// </returns>
     public IEnumerable<object> GetExpected() => Argument.Expected();
-
-    public bool Equals(Criterion? other)
-    {
-        if (ReferenceEquals(null, other)) return false;
-        return ReferenceEquals(this, other) || CriterionId.Equals(other.CriterionId);
-    }
-
-    public override bool Equals(object? obj) => obj is Criterion other && Equals(other);
-    public override int GetHashCode() => CriterionId.GetHashCode();
 
     public static implicit operator Func<object, bool>(Criterion criterion) => x => criterion.Evaluate(x);
     public static implicit operator Expression<Func<object, bool>>(Criterion criterion) => criterion.ToExpression();

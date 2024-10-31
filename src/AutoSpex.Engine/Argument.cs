@@ -3,7 +3,7 @@ using L5Sharp.Core;
 
 namespace AutoSpex.Engine;
 
-public class Argument : IEquatable<Argument>
+public class Argument
 {
     /// <summary>
     /// Creates a new <see cref="Argument"/> with the null value.
@@ -20,12 +20,6 @@ public class Argument : IEquatable<Argument>
     {
         Value = value;
     }
-
-    /// <summary>
-    /// A <see cref="Guid"/> that uniquely identifies this object.
-    /// </summary>
-    [JsonInclude]
-    public Guid ArgumentId { get; private init; } = Guid.NewGuid();
 
     /// <summary>
     /// The value of the argument, which is just a generic object, since the user can enter primitive or complex types.
@@ -46,10 +40,6 @@ public class Argument : IEquatable<Argument>
     /// <param name="type">The type for which to resolve or convert to.</param>
     /// <returns>An object value of the specified type.</returns>
     /// <remarks>
-    /// This method if detect <see cref="Variable"/> type and use the inner value first. If <see cref="Value"/>
-    /// is actually a<see cref="Criterion"/>  will return that regardless of provided type. If type is null we
-    /// will return whatever value we have. And finally this method will attempt to parse the value if it is a string
-    /// and the specified type is something other than a string type.
     /// </remarks>
     public object ResolveAs(Type? type)
     {
@@ -71,8 +61,8 @@ public class Argument : IEquatable<Argument>
 
     /// <summary>
     /// Traverses the argument value and retrieves the final expected argument value(s).
-    /// Since an argument value can be a <see cref="Reference"/> or inner <see cref="Criterion"/> or a collection of
-    /// inner <see cref="Argument"/> values, we want to check them and get the values which are going to be used in the operation.
+    /// Since an argument value can be a nested <see cref="Criterion"/> or collection of <see cref="Argument"/> values,
+    /// we want to check them and get the values which are going to be used in the operation.
     /// </summary>
     /// <returns>A collection of object values that represent the final arguments.</returns>
     public IEnumerable<object> Expected()
@@ -93,19 +83,6 @@ public class Argument : IEquatable<Argument>
 
     /// <inheritdoc />
     public override string ToString() => Value.ToText();
-
-    /// <inheritdoc />
-    public bool Equals(Argument? other)
-    {
-        if (ReferenceEquals(null, other)) return false;
-        return ReferenceEquals(this, other) || ArgumentId.Equals(other.ArgumentId);
-    }
-
-    /// <inheritdoc />
-    public override bool Equals(object? obj) => obj is Argument other && Equals(other);
-
-    /// <inheritdoc />
-    public override int GetHashCode() => ArgumentId.GetHashCode();
 
     public static implicit operator Argument(ValueType value) => new(value);
     public static implicit operator Argument(string value) => new(value);

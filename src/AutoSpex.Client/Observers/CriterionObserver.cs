@@ -33,8 +33,6 @@ public partial class CriterionObserver : Observer<Criterion>,
         Track(Argument);
     }
 
-    public override Guid Id => Model.CriterionId;
-
     [Required]
     public Property Property
     {
@@ -242,7 +240,7 @@ public partial class CriterionObserver : Observer<Criterion>,
     /// </summary>
     public void Receive(ArgumentObserver.SuggestionRequest message)
     {
-        if (!IsParentOf(message.Argument)) return;
+        if (!Model.Contains(message.Argument)) return;
 
         Property.Type.GetOptions().Select(x => new ValueObserver(x))
             .Where(v => v.Filter(message.Filter)).ToList()
@@ -293,17 +291,6 @@ public partial class CriterionObserver : Observer<Criterion>,
     {
         var filtered = Operation.Supporting(Property).Where(o => o.Name.Satisfies(filter));
         return Task.FromResult(filtered.Cast<object>());
-    }
-
-    /// <summary>
-    /// Determines if the provided argument is contained by this criterion.
-    /// </summary>
-    private bool IsParentOf(ArgumentObserver argument)
-    {
-        if (Argument.Id == argument.Id) return true;
-        if (Argument.Value is not ObserverCollection<Argument, ArgumentObserver> collection) return false;
-        if (collection.Any(a => a.Id == argument.Id)) return true;
-        return false;
     }
 
     /// <summary>

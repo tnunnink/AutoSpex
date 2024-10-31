@@ -3,7 +3,6 @@
   Element: Tag,
   Filters: [
     {
-      CriterionId: Guid_2,
       Type: L5Sharp.Core.Tag,
       Property: {
         Origin: L5Sharp.Core.Tag,
@@ -12,7 +11,6 @@
       Negation: Is,
       Operation: Containing,
       Argument: {
-        ArgumentId: Guid_3,
         Value: {
           Type: System.String,
           Data: Test
@@ -22,7 +20,6 @@
   ],
   Verifications: [
     {
-      CriterionId: Guid_4,
       Type: L5Sharp.Core.Tag,
       Property: {
         Origin: L5Sharp.Core.Tag,
@@ -31,7 +28,6 @@
       Negation: Not,
       Operation: Null Or Empty,
       Argument: {
-        ArgumentId: Guid_5,
         Value: null
       }
     }

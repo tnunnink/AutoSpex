@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
-using AutoSpex.Persistence;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 using Argument = AutoSpex.Engine.Argument;
-
-// ReSharper disable TailRecursiveCall
 
 namespace AutoSpex.Client.Observers;
 
@@ -29,9 +25,6 @@ public partial class ArgumentObserver : Observer<Argument>
         Track(Value);
     }
 
-    /// <inheritdoc />
-    public override Guid Id => Model.ArgumentId;
-
     /// <summary>
     /// The value of the argument. This is expected to be some <see cref="ITrackable"/> observer or observer collection
     /// so that we can detect and respond to changes. The underlying value is initially set from the passed in mode
@@ -44,7 +37,7 @@ public partial class ArgumentObserver : Observer<Argument>
     /// Gets the parent criterion that contains the argument. We need this to determine the property type and operation
     /// so that we can get suggesstable values and parse the input text correctly.
     /// </summary>
-    public CriterionObserver? Criterion => GetObserver<CriterionObserver>(IsParent);
+    public CriterionObserver? Criterion => GetObserver<CriterionObserver>(c => c.Model.Contains(Model));
 
     /// <summary>
     /// The function that retrieves a collection of object values that are suggestions to the entry control.
@@ -148,19 +141,6 @@ public partial class ArgumentObserver : Observer<Argument>
         var message = Messenger.Send(new SuggestionRequest(this, filter));
         var response = await message.GetResponsesAsync(token);
         return response;
-    }
-
-    /// <summary>
-    /// Determines whether the specified criterion is a parent of the current argument observer.
-    /// </summary>
-    /// <param name="criterion">The criterion to check if it is a parent.</param>
-    /// <returns>True if the criterion is a parent, otherwise false.</returns>
-    private bool IsParent(CriterionObserver criterion)
-    {
-        if (criterion.Argument.Id == Id) return true;
-        if (criterion.Argument.Value is not ObserverCollection<Argument, ArgumentObserver> collection) return false;
-        if (collection.Any(a => a.Id == Id)) return true;
-        return false;
     }
 
     /// <summary>
