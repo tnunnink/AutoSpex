@@ -10,6 +10,7 @@ using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using AutoSpex.Persistence;
 using Avalonia.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FluentResults;
@@ -32,7 +33,10 @@ public partial class NodeObserver : Observer<Node>,
             clear: () => Model.ClearNodes(),
             count: () => Model.Nodes.Count());
 
+        Spec = new SpecObserver(Model.Spec);
+
         RegisterDisposable(Nodes);
+        RegisterDisposable(Spec);
     }
 
     public override Guid Id => Model.NodeId;
@@ -49,6 +53,7 @@ public partial class NodeObserver : Observer<Node>,
         set => SetProperty(Model.Name, value, Model, (s, v) => s.Name = v, true);
     }
 
+    [ObservableProperty] private SpecObserver _spec;
     public ObserverCollection<Node, NodeObserver> Nodes { get; }
     public IEnumerable<NodeObserver> Crumbs => Model.Ancestors().Select(n => new NodeObserver(n));
     public IEnumerable<NodeObserver> Path => Model.AncestorsAndSelf().Select(n => new NodeObserver(n));
