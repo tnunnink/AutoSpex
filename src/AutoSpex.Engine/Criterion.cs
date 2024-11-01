@@ -157,13 +157,8 @@ public class Criterion
     public bool Contains(Argument argument)
     {
         if (ReferenceEquals(Argument, argument)) return true;
-
-        return Argument.Value switch
-        {
-            Criterion criterion => criterion.Contains(argument),
-            IEnumerable<Argument> arguments => arguments.Any(a => ReferenceEquals(a, argument)),
-            _ => false
-        };
+        if (Argument.Value is not IEnumerable<Argument> arguments) return false;
+        return arguments.Any(a => ReferenceEquals(a, argument));
     }
 
     /// <summary>

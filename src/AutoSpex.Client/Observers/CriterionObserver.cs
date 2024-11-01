@@ -145,21 +145,17 @@ public partial class CriterionObserver : Observer<Criterion>,
         Forget(Argument);
         Argument.Dispose();
 
-        if (Operation is NoneOperation)
-            Argument = new ArgumentObserver(Engine.Argument.Default);
+        Model.Argument = Operation switch
+        {
+            NoneOperation => new Argument(),
+            BinaryOperation => new Argument(),
+            TernaryOperation => new Argument(new List<Argument> { new(), new() }),
+            CollectionOperation => new Argument(new Criterion(Property.InnerType)),
+            InOperation => new Argument(new List<Argument> { new() }),
+            _ => Model.Argument
+        };
 
-        if (Operation is BinaryOperation)
-            Argument = new ArgumentObserver(new Argument());
-
-        if (Operation is TernaryOperation)
-            Argument = new ArgumentObserver(new Argument(new List<Argument> { new(), new() }));
-
-        if (Operation is CollectionOperation)
-            Argument = new ArgumentObserver(new Argument(new Criterion(Property.InnerType)));
-
-        if (Operation is InOperation)
-            Argument = new ArgumentObserver(new Argument(new List<Argument> { new() }));
-
+        Argument = new ArgumentObserver(Model.Argument);
         Track(Argument);
     }
 
@@ -201,10 +197,10 @@ public partial class CriterionObserver : Observer<Criterion>,
     {
         if (!TryGetSpec(out var spec)) return Task.CompletedTask;
 
-        if (spec.Filters.Contains(this))
+        if (spec.Filters.Has(this))
             spec.Filters.Add(new CriterionObserver(Model.Duplicate()));
 
-        if (spec.Verifications.Contains(this))
+        if (spec.Verifications.Has(this))
             spec.Verifications.Add(new CriterionObserver(Model.Duplicate()));
 
         return Task.CompletedTask;
