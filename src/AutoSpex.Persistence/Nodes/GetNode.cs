@@ -43,7 +43,7 @@ internal class GetNodeHandler(IConnectionManager manager) : IRequestHandler<GetN
 
         SELECT NodeId, ParentId, Type, Name
         FROM Children
-        ORDEr BY Depth
+        ORDER BY Depth
         """;
 
     public async Task<Result<Node>> Handle(GetNode request, CancellationToken cancellationToken)
