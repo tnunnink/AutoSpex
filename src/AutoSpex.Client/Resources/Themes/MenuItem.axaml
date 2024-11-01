@@ -86,7 +86,7 @@
                         Grid.Column="0"
                         Theme="{TemplateBinding Icon}"
                         IsVisible="{TemplateBinding Icon, Converter={x:Static ObjectConverters.IsNotNull}}"
-                        FontSize="14"
+                        FontSize="12"
                         Margin="7 0 0 0"
                         HorizontalAlignment="Center" VerticalAlignment="Center" />
 

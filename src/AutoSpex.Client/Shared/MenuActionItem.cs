@@ -17,8 +17,8 @@ public class MenuActionItem : ObservableObject
     public KeyGesture? Gesture { get; set; }
     public ICommand? Command { get; set; }
     public object? CommandParameter { get; set; }
-    public bool IsVisible => DetermineVisibility?.Invoke() ?? true;
-    public Func<bool> DetermineVisibility { get; set; } = () => true;
+    public bool IsVisible => DetermineVisibility.Invoke();
+    public Func<bool> DetermineVisibility { get; init; } = () => true;
     public IList<MenuActionItem> Items { get; set; } = [];
     public static MenuActionItem Separator => new() { Header = "-" };
 }
