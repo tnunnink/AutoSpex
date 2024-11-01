@@ -7,13 +7,18 @@
         <ResourceInclude Source="ArgumentBinaryEntry.axaml" />
         <ResourceInclude Source="ArgumentInEntry.axaml" />
         <ResourceInclude Source="ArgumentTernaryEntry.axaml" />
+        <ResourceInclude Source="CriteriaActions.axaml" />
         <ResourceInclude Source="CriterionEntry.axaml" />
         <ResourceInclude Source="CriterionListItem.axaml" />
         <ResourceInclude Source="ElementDisplay.axaml" />
         <ResourceInclude Source="ElementEntry.axaml" />
         <ResourceInclude Source="FilterFlyout.axaml" />
+        <ResourceInclude Source="FilterStep.axaml" />
         <ResourceInclude Source="InclusionSelectors.axaml" />
+        <ResourceInclude Source="QueryStep.axaml" />
+        <ResourceInclude Source="SpecEntry.axaml" />
         <ResourceInclude Source="VerificationFlyout.axaml" />
+        <ResourceInclude Source="VerificationStep.axaml" />
     </ResourceDictionary.MergedDictionaries>
 
     <components:ArgumentSelector x:Key="ArgumentSelector">
