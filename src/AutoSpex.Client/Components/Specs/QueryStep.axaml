@@ -1,0 +1,36 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+
+    <Design.PreviewWith>
+        <Border Width="600" Height="300">
+            <ContentControl
+                Content="{x:Static components:TestData.SpecObserverManyCriterion}"
+                ContentTemplate="{DynamicResource QueryStep}"
+                Margin="20" VerticalAlignment="Top" />
+        </Border>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="QueryStep" x:DataType="observers:SpecObserver">
+
+        <controls:Section
+            Header="Query"
+            Description="Select the element type to query when this specification is run."
+            ShowContent="False">
+
+            <controls:Section.Icon>
+                <PathIcon Theme="{StaticResource IconFilledBinoculars}" />
+            </controls:Section.Icon>
+
+            <controls:Section.Action>
+                <ContentControl
+                    Content="{Binding }"
+                    ContentTemplate="{StaticResource ElementEntry}" />
+            </controls:Section.Action>
+
+        </controls:Section>
+
+    </DataTemplate>
+</ResourceDictionary>
