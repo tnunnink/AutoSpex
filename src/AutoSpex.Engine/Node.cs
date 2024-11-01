@@ -216,6 +216,7 @@ public class Node : IEquatable<Node>
     public void AddNode(Node node)
     {
         ArgumentNullException.ThrowIfNull(node);
+        
         if (_nodes.Contains(node)) return;
 
         node.Parent?.RemoveNode(node);
@@ -294,16 +295,16 @@ public class Node : IEquatable<Node>
     {
         var duplicate = new Node
         {
+            ParentId = ParentId,
             Type = Type,
-            Name = name ?? $"{Name} Copy"
+            Name = name ?? Name,
+            Spec = Spec.Duplicate()
         };
 
-        foreach (var child in _nodes)
-            duplicate.AddNode(child.Duplicate());
-
-        duplicate.Configure(Spec.Duplicate());
-
-        Parent?.AddNode(duplicate);
+        foreach (var node in _nodes)
+        {
+            duplicate.AddNode(node.Duplicate());
+        }
 
         return duplicate;
     }
