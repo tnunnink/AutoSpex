@@ -91,7 +91,7 @@ public abstract class Operation(string name, string value) : SmartEnum<Operation
     /// </summary>
     public static readonly Operation LessThanOrEqualTo = new LessThanOrEqualToOperation();
 
-    /// <summary>
+    /*/// <summary>
     /// Returns the <see cref="Operation"/> which evaluates whether an input value is <c>true</c>. 
     /// </summary>
     public static readonly Operation True = new TrueOperation();
@@ -99,7 +99,7 @@ public abstract class Operation(string name, string value) : SmartEnum<Operation
     /// <summary>
     /// Returns the <see cref="Operation"/> which evaluates whether an input value is <c>false</c>. 
     /// </summary>
-    public static readonly Operation False = new FalseOperation();
+    public static readonly Operation False = new FalseOperation();*/
 
     /// <summary>
     /// Represents an operation that checks for null values. It returns true 
