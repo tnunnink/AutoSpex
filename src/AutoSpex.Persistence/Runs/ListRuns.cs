@@ -11,7 +11,12 @@ public record ListRuns : IRequest<IEnumerable<Run>>;
 [UsedImplicitly]
 internal class ListRunsHandler(IConnectionManager manager) : IRequestHandler<ListRuns, IEnumerable<Run>>
 {
-    private const string ListRuns = "SELECT RunId, Name, Node, Source, Result, RanOn, RanBy FROM RUN";
+    private const string ListRuns =
+        """
+        SELECT RunId, Name, Node, Source, Result, RanOn, RanBy 
+        FROM RUN
+        ORDER BY RanOn DESC
+        """;
 
     public async Task<IEnumerable<Run>> Handle(ListRuns request, CancellationToken cancellationToken)
     {
