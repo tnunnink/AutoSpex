@@ -314,7 +314,7 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
     protected override void MoveItem(int oldIndex, int newIndex)
     {
         base.MoveItem(oldIndex, newIndex);
-        
+
         //Abort if refreshing to avoid circular calls.
         if (_refreshing) return;
 
@@ -462,5 +462,11 @@ public static class ObservableCollectionExtensions
         var item = list[oldIndex];
         list.RemoveAt(oldIndex);
         list.Insert(newIndex, item);
+    }
+    
+    public static ObserverCollection<TModel, TObserver> ToObserver<TModel, TObserver>(this IList<TModel> list,
+        Func<TModel, TObserver> wrapper) where TObserver : Observer<TModel>
+    {
+        return new ObserverCollection<TModel, TObserver>(list, wrapper);
     }
 }
