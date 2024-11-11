@@ -35,36 +35,35 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     public virtual Guid Id { get; } = Guid.NewGuid();
 
     /// <summary>
-    /// The name of the observer. Most observers will have a name but if not then this can be left alone. Deriving classes
-    /// can implement how this property is set and retrieved.
+    /// The name of the observer. Most observers will have a name but if not then this can be left alone.
+    /// Deriving classes can implement how this property is set and retrieved.
     /// </summary>
     public virtual string Name { get; set; } = string.Empty;
 
     /// <summary>
-    /// The name of the icon that commonly represents this observer. This can be used in data templates to bind to
-    /// and along with our K
+    /// The name of the icon that commonly represents this observer.
+    /// This can be used in data templates to bind to and along with our KeyIconConverter.
     /// </summary>
     public virtual string Icon => string.Empty;
 
     /// <summary>
-    /// Indicates that this observer should be visible in the UI. This property is set via the <see cref="Filter"/>
-    /// method based on the input <see cref="FilterText"/>
+    /// Indicates that this observer should be visible in the UI.
     /// </summary>
     [ObservableProperty] private bool _isVisible = true;
 
     /// <summary>
-    /// Indicates that this observer is selected in the UI. Controls can bind to this to control the state.
+    /// Indicates that this observer is selected in the UI.
     /// </summary>
     [ObservableProperty] private bool _isSelected;
 
     /// <summary>
-    /// Indicates that this observer is expanded in the UI (assuming it's a tree view item). this can be bound to in
-    /// order to control the expanded state of the tree.
+    /// Indicates that this observer is expanded in the UI (assuming it's a tree view item).
+    /// This can be bound to in order to control the expanded state of the tree.
     /// </summary>
     [ObservableProperty] private bool _isExpanded;
 
     /// <summary>
-    /// Indicates that this observer is "checked" in the UI. This can be bound to from a checkbox control or similar
+    /// Indicates that this observer is checked in the UI. This can be bound to from a checkbox control or similar
     /// to control the selection of items.
     /// </summary>
     [ObservableProperty] private bool _isChecked;
@@ -77,15 +76,15 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
 
     /// <summary>
     /// The current filter text being applied to the observer. This is here because many observers we want trigger
-    /// filtering based on some entered text/keyword. When changed, the <see cref="Filter"/> method will be called and
-    /// deriving classes can define how the observer is filtered. This property can also be bound to highlight the
-    /// portion of the item template that matches the input filter.
+    /// filtering based on some entered text/keyword. The <see cref="Filter"/> method by default will set this to the
+    /// text that is provided to the filter function. This allows controls to bind to and display/highlight the current
+    /// filter text.
     /// </summary>
     [ObservableProperty] private string? _filterText;
 
     /// <summary>
     /// The collection of <see cref="MenuActionItem"/> objects configured for the observer which are shown in the
-    /// context menu when an observer is right-clicked. These are configured since we want to control some of the options
+    /// flyout menu when the use clicks an ellipsis. These are configured since we want to control some of the options
     /// dynamically.
     /// </summary>
     public IEnumerable<MenuActionItem> MenuItems => GenerateMenuItems();
@@ -139,26 +138,6 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
         return string.IsNullOrEmpty(filter) || Name.Satisfies(filter);
     }
 
-    /// <summary>
-    /// Attempts to find a parent observer instance of the specified type using the current observer <see cref="Id"/>.
-    /// This would allow observer or page to request its parent from another observer/page assuming it is in memory.
-    /// This allows for loose coupling of parent child relationships and the ability to get a references to a specific
-    /// object from across pages in the application.
-    /// </summary>
-    /// <typeparam name="TObserver">The observer type to find.</typeparam>
-    /// <returns>
-    /// The observer instance of the specified type that contains (depending on how handler logic) the provided id.
-    /// </returns>
-    /// <remarks>
-    /// If the instance is not in memory, and therefore the message has no response, this method returns
-    /// null, and it is up to the caller to handle this situation.
-    /// </remarks>
-    protected TObserver? GetObserver<TObserver>(Func<TObserver, bool> predicate) where TObserver : Observer
-    {
-        var request = new Get<TObserver>(predicate);
-        Messenger.Send(request);
-        return request.HasReceivedResponse ? request.Response : default;
-    }
 
     #region Commands
 
@@ -223,7 +202,7 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     /// </summary>
     /// <param name="name">The new name of the item.</param>
     [RelayCommand]
-    protected virtual async Task Rename(string? name)
+    private async Task Rename(string? name)
     {
         //If empty prompt the user for a new name.
         if (string.IsNullOrEmpty(name))
@@ -280,33 +259,6 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
         var clipboard = Shell.Clipboard;
         if (clipboard is null) return;
         await clipboard.SetTextAsync(Name);
-    }
-
-    /// <summary>
-    /// A helper method that allows derived classes to get data from the clipboard. This assumes a collection of
-    /// objects of the specified type have been serialized to the clipboard as JSON. This is how we will handle copying
-    /// objects since the current Avalonia CLipboard does not support getting data objects in memory.
-    /// </summary>
-    /// <typeparam name="TData">The model type that was set on the clipboard.</typeparam>
-    protected async Task<List<TData>> GetClipboardObservers<TData>()
-    {
-        try
-        {
-            var clipboard = Shell.Clipboard;
-            if (clipboard is null) return [];
-
-            var json = await clipboard.GetTextAsync();
-            if (json is null) return [];
-
-            var observers = JsonSerializer.Deserialize<List<TData>>(json);
-            return observers ?? [];
-        }
-        catch (Exception e)
-        {
-            Notifier.ShowError("Unable to parse data from clipboard.", e.Message);
-        }
-
-        return [];
     }
 
     #endregion
@@ -425,6 +377,54 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     #endregion
 
     /// <summary>
+    /// Attempts to find a parent observer instance of the specified type using the current observer <see cref="Id"/>.
+    /// This would allow observer or page to request its parent from another observer/page assuming it is in memory.
+    /// This allows for loose coupling of parent child relationships and the ability to get a references to a specific
+    /// object from across pages in the application.
+    /// </summary>
+    /// <typeparam name="TObserver">The observer type to find.</typeparam>
+    /// <returns>
+    /// The observer instance of the specified type that contains (depending on how handler logic) the provided id.
+    /// </returns>
+    /// <remarks>
+    /// If the instance is not in memory, and therefore the message has no response, this method returns
+    /// null, and it is up to the caller to handle this situation.
+    /// </remarks>
+    protected TObserver? GetObserver<TObserver>(Func<TObserver, bool> predicate) where TObserver : Observer
+    {
+        var request = new Get<TObserver>(predicate);
+        Messenger.Send(request);
+        return request.HasReceivedResponse ? request.Response : default;
+    }
+
+    /// <summary>
+    /// A helper method that allows derived classes to get data from the clipboard. This assumes a collection of
+    /// objects of the specified type have been serialized to the clipboard as JSON. This is how we will handle copying
+    /// objects since the current Avalonia Clipboard does not support getting data objects in memory.
+    /// </summary>
+    /// <typeparam name="TData">The model type that was set on the clipboard.</typeparam>
+    protected async Task<List<TData>> GetClipboardObservers<TData>()
+    {
+        try
+        {
+            var clipboard = Shell.Clipboard;
+            if (clipboard is null) return [];
+
+            var json = await clipboard.GetTextAsync();
+            if (json is null) return [];
+
+            var observers = JsonSerializer.Deserialize<List<TData>>(json);
+            return observers ?? [];
+        }
+        catch (Exception e)
+        {
+            Notifier.ShowError("Unable to parse data from clipboard.", e.Message);
+        }
+
+        return [];
+    }
+
+    /// <summary>
     /// A method to update the underlying model name property and send any necessary command to update the name in the
     /// database.
     /// </summary>
@@ -467,16 +467,11 @@ public abstract class Observer<TModel> : Observer
     /// <typeparam name="TModel">The model type to wrap.</typeparam>
     protected Observer(TModel model)
     {
-        Model = model ?? throw new ArgumentNullException(nameof(model));
+        Model = model;
     }
 
     /// <summary>
     /// The underlying model object that is being wrapped by the observer.
     /// </summary>
     public TModel Model { get; }
-}
-
-public abstract class NullableObserver<TModel>(TModel? model) : Observer
-{
-    public TModel? Model { get; } = model;
 }
