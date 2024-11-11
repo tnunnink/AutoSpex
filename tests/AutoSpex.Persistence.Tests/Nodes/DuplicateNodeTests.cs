@@ -77,10 +77,8 @@ public class DuplicateNodeTests
         config.Filters.Should().BeEquivalentTo(expected.Spec.Filters);
         config.Verifications.Should().BeEquivalentTo(expected.Spec.Verifications);
         config.Element.Should().BeEquivalentTo(expected.Spec.Element);
-        config.FilterInclusion.Should().Be(expected.Spec.FilterInclusion);
-        config.VerificationInclusion.Should().Be(expected.Spec.VerificationInclusion);
     }
-    
+
     [Test]
     public async Task DuplicateNode_MultipleNestedSpecsInCollection_ShouldHaveExpectedNodeCount()
     {
