@@ -57,7 +57,6 @@ public class PropertyTests
         property.Properties.Should().BeEmpty();
         property.DisplayName.Should().Be("string");
         property.Group.Should().Be(TypeGroup.Text);
-        property.Options.Should().BeEmpty();
         property.TypeGraph.Should().HaveCount(2);
         property.InnerType.Should().Be(typeof(string));
     }
@@ -78,14 +77,6 @@ public class PropertyTests
         var property = new Property("ConsumeInfo.Producer", typeof(string), Element.Tag.This);
 
         property.Path.Should().Be("ConsumeInfo.Producer");
-    }
-
-    [Test]
-    public void Options_EnumProperty_ShouldNotBeEmpty()
-    {
-        var property = new Property("ExternalAccess", typeof(ExternalAccess), Element.Tag.This);
-
-        property.Options.Should().HaveCount(3);
     }
 
     [Test]
@@ -320,7 +311,6 @@ public class PropertyTests
         property.Path.Should().BeEmpty();
         property.DisplayName.Should().Be("Object");
         property.Group.Should().Be(TypeGroup.Default);
-        property.Options.Should().BeEmpty();
         property.Properties.Should().BeEmpty();
         property.InnerType.Should().Be(typeof(object));
         property.TypeGraph.Should().HaveCount(1);
