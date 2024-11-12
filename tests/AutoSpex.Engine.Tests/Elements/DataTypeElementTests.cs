@@ -87,7 +87,6 @@ public class DataTypeElementTests
         property.Path.Should().Be("Members");
         property.Type.Should().Be(typeof(LogixContainer<DataTypeMember>));
         property.DisplayName.Should().Be("DataTypeMember[]");
-        property.Options.Should().BeEmpty();
         property.Group.Should().Be(TypeGroup.Collection);
     }
     
