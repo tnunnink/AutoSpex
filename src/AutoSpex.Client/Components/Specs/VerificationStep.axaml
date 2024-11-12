@@ -38,12 +38,12 @@
                         ToolTip.Tip="Add Verification"
                         ToolTip.Placement="BottomEdgeAlignedRight" />
 
-                    <Button
+                    <!--<Button
                         Theme="{StaticResource IconButton}"
                         properties:Icon.Theme="{StaticResource IconEllipsis}"
                         ToolTip.Tip="Options"
                         ToolTip.Placement="BottomEdgeAlignedRight">
-                    </Button>
+                    </Button>-->
 
                 </StackPanel>
             </controls:Section.Action>

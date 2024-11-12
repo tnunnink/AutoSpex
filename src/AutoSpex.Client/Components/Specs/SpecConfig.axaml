@@ -8,12 +8,12 @@
         <Border Width="600" Height="800">
             <ContentControl
                 Content="{x:Static components:TestData.SpecObserverManyCriterion}"
-                ContentTemplate="{DynamicResource SpecEntry}"
+                ContentTemplate="{DynamicResource SpecConfig}"
                 Margin="20" />
         </Border>
     </Design.PreviewWith>
 
-    <DataTemplate x:Key="SpecEntry" DataType="observers:SpecObserver">
+    <DataTemplate x:Key="SpecConfig" DataType="observers:SpecObserver">
 
         <StackPanel Spacing="20">
 
