@@ -4,6 +4,7 @@ using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using Avalonia.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace AutoSpex.Client.Observers;
 
@@ -24,18 +25,39 @@ public partial class SuppressionObserver : Observer<Suppression>
 
     protected override bool PromptForDeletion => false;
 
+    /// <inheritdoc />
     public override bool Filter(string? filter)
     {
         FilterText = filter;
         return string.IsNullOrEmpty(filter) || Node?.Filter(filter) is true || Reason.Satisfies(filter);
     }
 
+    /// <inheritdoc />
+    protected override async Task Navigate()
+    {
+        if (Node is null) return;
+        await Navigator.Navigate(Node);
+    }
+
+    [RelayCommand]
+    private void EditReason()
+    {
+    }
+
     protected override IEnumerable<MenuActionItem> GenerateContextItems()
     {
         yield return new MenuActionItem
         {
+            Header = "Open Spec",
+            Icon = Resource.Find("IconLineLaunch"),
+            Command = NavigateCommand
+        };
+
+        yield return new MenuActionItem
+        {
             Header = "Edit Reason",
             Icon = Resource.Find("IconFilledPencil"),
+            Command = EditReasonCommand
         };
 
         yield return new MenuActionItem
@@ -44,6 +66,32 @@ public partial class SuppressionObserver : Observer<Suppression>
             Icon = Resource.Find("IconFilledTrash"),
             Classes = "danger",
             Command = DeleteSelectedCommand,
+            Gesture = new KeyGesture(Key.Delete)
+        };
+    }
+
+    protected override IEnumerable<MenuActionItem> GenerateMenuItems()
+    {
+        yield return new MenuActionItem
+        {
+            Header = "Open Spec",
+            Icon = Resource.Find("IconLineLaunch"),
+            Command = NavigateCommand
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Edit Reason",
+            Icon = Resource.Find("IconFilledPencil"),
+            Command = EditReasonCommand
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Delete",
+            Icon = Resource.Find("IconFilledTrash"),
+            Classes = "danger",
+            Command = DeleteCommand,
             Gesture = new KeyGesture(Key.Delete)
         };
     }

@@ -32,32 +32,37 @@
                     Placement="Pointer" />
             </Border.ContextFlyout>
 
-            <Grid ColumnDefinitions="*,Auto,Auto">
+            <Grid ColumnDefinitions="*,Auto">
 
-                <ContentControl
-                    Content="{Binding Node}"
-                    ContentTemplate="{StaticResource NodeHeaderVeritical}" />
-
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="7" Margin="10 0">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="7" ClipToBounds="True">
 
                     <PathIcon Theme="{StaticResource IconThemedSuppressed}" />
+
+                    <ContentControl
+                        Content="{Binding Node}"
+                        ContentTemplate="{StaticResource ObserverLink}" />
 
                     <controls:HighlightableTextBlock
                         Text="{Binding Reason}"
                         HighlightedText="{Binding FilterText}"
                         Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
-                        MaxWidth="400"
                         TextTrimming="CharacterEllipsis"
                         ToolTip.Tip="{Binding Reason}" />
 
                 </StackPanel>
 
                 <Button
-                    Grid.Column="2"
-                    Command="{Binding DeleteCommand}"
-                    Theme="{StaticResource IconButton}"
-                    properties:Icon.Theme="{StaticResource IconFilledTrash}"
-                    ToolTip.Tip="Remove" />
+                    Grid.Column="1"
+                    Theme="{StaticResource IconButtonSmall}"
+                    properties:Icon.Theme="{StaticResource IconEllipsis}"
+                    ToolTip.Tip="Options">
+                    <Button.Flyout>
+                        <MenuFlyout
+                            ItemsSource="{Binding MenuItems}"
+                            ItemContainerTheme="{StaticResource MenuActionItem}"
+                            Placement="BottomEdgeAlignedRight" HorizontalOffset="8" VerticalOffset="5" />
+                    </Button.Flyout>
+                </Button>
 
             </Grid>
 

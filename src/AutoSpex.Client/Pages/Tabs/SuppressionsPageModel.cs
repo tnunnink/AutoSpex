@@ -8,14 +8,14 @@ using CommunityToolkit.Mvvm.Messaging;
 
 namespace AutoSpex.Client.Pages;
 
-public partial class SuppressPageModel : PageViewModel,
+public partial class SuppressionsPageModel : PageViewModel,
     IRecipient<Observer.GetSelected>,
     IRecipient<Observer.Deleted>
 {
     private readonly SourceObserver _source;
 
     /// <inheritdoc/>
-    public SuppressPageModel(SourceObserver source) : base("Suppress")
+    public SuppressionsPageModel(SourceObserver source) : base("Suppressions")
     {
         _source = source;
 
