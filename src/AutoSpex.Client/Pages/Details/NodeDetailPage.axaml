@@ -1,6 +1,5 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
              xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
              xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
@@ -12,38 +11,29 @@
 
     <DockPanel>
 
-        <Border DockPanel.Dock="Top" Padding="20" Background="{a:ThemeResource Container2BackgroundBrush}">
+        <Border DockPanel.Dock="Top" Padding="20 15">
 
-            <Grid ColumnDefinitions="Auto,*,Auto">
+            <Grid ColumnDefinitions="*,Auto">
 
-                <StackPanel Grid.Column="0" Spacing="3">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5">
 
-                    <StackPanel Orientation="Horizontal" Spacing="5" Margin="5 0 0 0">
-                        <PathIcon
-                            Theme="{Binding Node.Icon, Converter={StaticResource KeyIconConverter}}"
-                            Classes="size-lg" />
-                        <ContentControl
-                            HorizontalAlignment="Left"
-                            Content="{Binding Node}"
-                            ContentTemplate="{StaticResource NameEntry}" />
-                    </StackPanel>
+                    <PathIcon
+                        Theme="{Binding Node.Icon, Converter={StaticResource KeyIconConverter}}" />
 
                     <ContentControl
                         Content="{Binding Node}"
-                        ContentTemplate="{StaticResource Breadcrumb}" />
+                        ContentTemplate="{StaticResource BreadcrumbLink}" />
 
                 </StackPanel>
 
-                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+
+                    <Button Command="{Binding RunCommand}" Classes="run accent" />
 
                     <Button
                         IsVisible="{Binding Node.Type, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:NodeType.Spec}}"
                         Command="{Binding SaveCommand}"
                         Classes="save" />
-
-                    <Button
-                        Command="{Binding RunCommand}"
-                        Classes="run accent" />
 
                     <Button Classes="more">
                         <Button.Flyout>
