@@ -75,7 +75,7 @@ public static class Extensions
             string text => text, // this needs to be before IEnumerable since string is enumerable
             ICollection collection => $"[{collection.Count}]",
             IEnumerable enumerable =>
-                $"{string.Join(", ", enumerable.GetType().GetGenericArguments().Select(CommonName).ToArray())}s",
+                $"{string.Join(", ", enumerable.GetType().GetGenericArguments().Select(DisplayName).ToArray())}s",
             _ => candidate?.ToString() ?? "null"
         };
     }
