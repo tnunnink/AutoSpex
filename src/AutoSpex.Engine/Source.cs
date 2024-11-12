@@ -143,9 +143,9 @@ public class Source
     }
 
     /// <summary>
-    /// 
+    /// Adds the specified node as an override to the source.
     /// </summary>
-    /// <param name="node"></param>
+    /// <param name="node">The node to add as an override.</param>
     public void AddOverride(Node node)
     {
         ArgumentNullException.ThrowIfNull(node);
@@ -153,9 +153,9 @@ public class Source
     }
 
     /// <summary>
-    /// 
+    /// Removes the specified node override from the source.
     /// </summary>
-    /// <param name="node"></param>
+    /// <param name="node">The node to remove as an override.</param>
     public void RemoveOverride(Node node)
     {
         ArgumentNullException.ThrowIfNull(node);
