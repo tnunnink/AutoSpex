@@ -12,29 +12,36 @@
 
     <DockPanel>
 
-        <Border DockPanel.Dock="Top" Padding="20" Background="{a:ThemeResource Container2BackgroundBrush}">
+        <Border DockPanel.Dock="Top" Padding="20 15">
 
-            <Grid ColumnDefinitions="Auto,*,Auto">
+            <Grid ColumnDefinitions="*,Auto">
 
                 <StackPanel Grid.Column="0" Spacing="5" HorizontalAlignment="Left" Orientation="Horizontal">
-                    <PathIcon
-                        Theme="{Binding Icon, Converter={StaticResource KeyIconConverter}}"
-                        Classes="size-lg" />
+                    <PathIcon Theme="{Binding Icon, Converter={StaticResource KeyIconConverter}}" />
                     <ContentControl
                         Content="{Binding Source}"
                         ContentTemplate="{StaticResource NameEntry}" />
                 </StackPanel>
 
-                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10">
-                    <Button
-                        Command="{Binding SaveCommand}"
-                        Classes="save" />
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
                     <Button
                         Classes="run accent"
                         CornerRadius="{a:ThemeResource ButtonCornerRadius}" />
+                    <Button
+                        Command="{Binding SaveCommand}"
+                        Classes="save" />
+                    <Button Classes="more">
+                        <Button.Flyout>
+                            <MenuFlyout
+                                ItemsSource="{Binding Source.MenuItems}"
+                                ItemContainerTheme="{StaticResource MenuActionItem}"
+                                Placement="BottomEdgeAlignedRight" HorizontalOffset="8" VerticalOffset="5" />
+                        </Button.Flyout>
+                    </Button>
                 </StackPanel>
-
+                
             </Grid>
+            
         </Border>
 
         <DockPanel>
@@ -43,8 +50,7 @@
                 ItemsSource="{Binding Tabs}"
                 SelectedItem="{Binding Tab}"
                 ItemContainerTheme="{StaticResource TabStripItemStandard}"
-                Background="{a:ThemeResource Container2BackgroundBrush}"
-                BorderThickness="0"
+                BorderBrush="{a:ThemeResource Container1BorderBrush}"
                 Padding="20 0">
 
                 <TabStrip.ItemsPanel>
