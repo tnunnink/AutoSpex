@@ -16,7 +16,7 @@
             BorderThickness="1"
             CornerRadius="5"
             Background="Transparent"
-            Width="600" Height="200" Margin="10" />
+            Width="600" Height="300" Margin="10" />
     </Design.PreviewWith>
 
     <DataTemplate x:Key="CriterionListItem" x:DataType="observers:CriterionObserver">
