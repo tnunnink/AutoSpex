@@ -1,0 +1,45 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             x:Class="AutoSpex.Client.Pages.PropertyTreePage"
+             x:DataType="pages:PropertyTreePageModel"
+             MinWidth="300" MaxHeight="500">
+
+    <DockPanel>
+
+        <TextBox
+            DockPanel.Dock="Top"
+            Text="{Binding Filter}"
+            Watermark="Search properties"
+            Theme="{StaticResource TextBoxSimple}"
+            VerticalContentAlignment="Center"
+            FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+            Background="Transparent"
+            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+            Padding="0 10" BorderThickness="0 0 0 1" CornerRadius="0">
+            <TextBox.InnerLeftContent>
+                <PathIcon Theme="{StaticResource IconLineSearch}"
+                          VerticalAlignment="Center" Margin="10 0"
+                          Classes="size-sm"
+                          Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+            </TextBox.InnerLeftContent>
+            <Interaction.Behaviors>
+                <SelectAllOnGotFocusBehavior />
+            </Interaction.Behaviors>
+        </TextBox>
+
+        <Panel>
+
+            <TreeView
+                ItemsSource="{Binding Properties}"
+                ItemTemplate="{StaticResource PropertyTreeItem}"
+                ItemContainerTheme="{StaticResource PropertyTreeItemTheme}"
+                Padding="5"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
+
+        </Panel>
+
+    </DockPanel>
+
+</UserControl>
