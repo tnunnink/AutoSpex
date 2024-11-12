@@ -11,28 +11,18 @@
 
     <DockPanel>
 
-        <Border DockPanel.Dock="Top" Padding="20" Background="{a:ThemeResource Container2BackgroundBrush}">
+        <Border DockPanel.Dock="Top" Padding="20 15">
 
-            <Grid ColumnDefinitions="Auto,*,Auto">
+            <Grid ColumnDefinitions="*,Auto">
 
-                <StackPanel Grid.Column="0" Spacing="10">
-
-                    <StackPanel Orientation="Horizontal" Spacing="5" Margin="5 0 0 0">
-                        <PathIcon
-                            Theme="{Binding Icon, Converter={StaticResource KeyIconConverter}}"
-                            Classes="size-lg" />
-                        <ContentControl
-                            Content="{Binding Run}"
-                            ContentTemplate="{StaticResource NameEntry}" />
-                    </StackPanel>
-
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5">
+                    <PathIcon Theme="{Binding Icon, Converter={StaticResource KeyIconConverter}}" />
                     <ContentControl
                         Content="{Binding Run}"
-                        ContentTemplate="{StaticResource RunSummary}" />
-
+                        ContentTemplate="{StaticResource NameEntry}" />
                 </StackPanel>
 
-                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
 
                     <Panel>
                         <Button
@@ -53,7 +43,14 @@
             </Grid>
         </Border>
 
-        <ContentControl Content="{Binding OutcomePage}" />
+        <ContentControl
+            DockPanel.Dock="Top"
+            Content="{Binding Run}"
+            ContentTemplate="{StaticResource RunSummary}"
+            Padding="20 0" />
+
+        <ContentControl
+            Content="{Binding OutcomePage}" />
 
     </DockPanel>
 </UserControl>
