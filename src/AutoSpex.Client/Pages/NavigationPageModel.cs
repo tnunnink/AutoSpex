@@ -95,11 +95,17 @@ public partial class NavigationPageModel : PageViewModel
     }
 
     [RelayCommand]
+    private async Task OpenSearch()
+    {
+        await Prompter.Show(() => new SearchPageModel());
+    }
+
+    [RelayCommand]
     private async Task OpenSources()
     {
         await Navigator.Navigate<SourceManagerPageModel>();
     }
-    
+
     [RelayCommand]
     private async Task OpenHistory()
     {
