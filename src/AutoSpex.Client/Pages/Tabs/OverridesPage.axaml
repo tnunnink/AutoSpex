@@ -1,8 +1,8 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
              xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
              x:Class="AutoSpex.Client.Pages.OverridesPage"
              x:DataType="pages:OverridesPageModel">
 
@@ -13,32 +13,9 @@
 
         <Grid ColumnDefinitions="*,Auto" Margin="0 0 0 20">
 
-            <StackPanel Spacing="3">
-                <TextBlock
-                    Text="Overrides"
-                    FontSize="{a:ThemeResource DefaultFontSizeLarge}"
-                    FontWeight="{a:ThemeResource HeadingFontWeightLarge}" />
-                <TextBlock
-                    Text="Configure this source to override spec configurations when run."
-                    Classes="faint" />
-            </StackPanel>
-
-            <Button
-                Grid.Column="1"
-                Command="{Binding AddOverrideCommand}"
-                Theme="{a:ControlTheme ButtonSolid}"
-                VerticalAlignment="Center"
-                Classes="accent">
-                <StackPanel Orientation="Horizontal" Spacing="7">
-                    <PathIcon
-                        Theme="{StaticResource IconAdd}"
-                        Foreground="{Binding $parent[Button].Foreground}"
-                        Classes="size-sm" />
-                    <TextBlock
-                        Text="Add Spec"
-                        FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
-                </StackPanel>
-            </Button>
+            <TextBlock
+                Text="Configure this source to override spec configurations when run."
+                Classes="faint" />
 
         </Grid>
 
@@ -51,7 +28,17 @@
             HasItems="{Binding Overrides.HasItems}"
             DefaultIcon="{StaticResource IconFilledClipboard}"
             DefaultMessage="No specs configured"
-            DefaultCaption="Add and update spec criteria to override the configuration" />
+            DefaultCaption="Add and update spec criteria to override the configuration">
+
+            <controls:ListView.Header>
+                <Button
+                    Command="{Binding AddOverrideCommand}"
+                    Theme="{StaticResource IconButton}"
+                    properties:Icon.Theme="{StaticResource IconAdd}"
+                    Classes="accent" />
+            </controls:ListView.Header>
+
+        </controls:ListView>
 
     </Grid>
 
