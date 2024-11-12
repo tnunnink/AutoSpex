@@ -2,9 +2,9 @@
 
 namespace AutoSpex.Client.Pages;
 
-public partial class SuppressPage : UserControl
+public partial class SearchPage : UserControl
 {
-    public SuppressPage()
+    public SearchPage()
     {
         InitializeComponent();
     }
