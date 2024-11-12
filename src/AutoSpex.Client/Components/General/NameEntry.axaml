@@ -11,10 +11,6 @@
                 Content="{x:Static components:TestData.SpecNode}"
                 ContentTemplate="{DynamicResource NameEntry}"
                 Padding="10" />
-            <ContentControl
-                Content="{x:Static components:TestData.SpecNode}"
-                ContentTemplate="{DynamicResource NameEntry}"
-                Padding="10" />
         </StackPanel>
     </Design.PreviewWith>
 
@@ -23,8 +19,7 @@
             x:Name="NameEntry"
             Value="{Binding}"
             FontFamily="{a:ThemeResource DefaultFontFamily}"
-            FontSize="15"
-            FontWeight="{a:ThemeResource HeadingFontWeightMedium}"
+            FontWeight="{a:ThemeResource HeadingFontWeightSmall}"
             CommitCommand="{Binding RenameCommand}"
             MinDropDownWidth="{Binding #NameEntry.Bounds.Width}"
             Padding="7 5"
@@ -33,9 +28,7 @@
                 <DataTemplate x:DataType="shared:Observer">
                     <TextBlock
                         Text="{Binding Name}"
-                        FontSize="15"
-                        Padding="0 0 0 1"
-                        FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
+                        FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
                 </DataTemplate>
             </controls:Entry.ValueTemplate>
             <Interaction.Behaviors>
