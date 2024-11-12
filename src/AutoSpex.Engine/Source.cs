@@ -35,6 +35,7 @@ public class Source
         Description = content.Controller.Description ?? string.Empty;
 
         InjectMetadata(content);
+        ScrubData(content);
         Content = content;
     }
 
@@ -364,5 +365,18 @@ public class Source
     private void InjectMetadata(L5X content)
     {
         content.Serialize().SetAttributeValue("SourceId", SourceId.ToString());
+    }
+
+    /// <summary>
+    /// Removes unused L5K data from the source content. This data can add a lot to the total space of the source, and
+    /// we want to do our best to conserve that, so we can basically delete a lot of info that is uneeded. The file
+    /// can still be restored without L5K data anyway. We are only interested in decorated clear text data.
+    /// </summary>
+    /// <param name="content">The L5X content from which to scrub the data.</param>
+    private static void ScrubData(L5X content)
+    {
+        content.Serialize().Descendants(L5XName.Data)
+            .Where(d => d.Attribute(L5XName.Format)?.Value == "L5K")
+            .Remove();
     }
 }
