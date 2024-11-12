@@ -387,7 +387,7 @@ public class NodeTests
         {
             c.Query(Element.Program);
             c.Filter("Name", Operation.Like, "%Test");
-            c.Verify("Disabled", Operation.False);
+            c.Verify("Disabled", Operation.EqualTo, true);
         });
 
         node.Spec.Element.Should().Be(Element.Program);
@@ -447,7 +447,7 @@ public class NodeTests
         node.Configure(c =>
         {
             c.Query(Element.Program);
-            c.Verify("Disabled", Operation.False);
+            c.Verify("Disabled", Operation.EqualTo, false);
         });
 
         var verification = await node.Run(content);
