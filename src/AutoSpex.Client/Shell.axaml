@@ -22,6 +22,8 @@
                     Command="{Binding AppPage.DetailsPage.SaveAllCommand, FallbackValue={x:Null}}" />
         <KeyBinding Gesture="Ctrl+Shift+W"
                     Command="{Binding AppPage.DetailsPage.CloseAllTabsCommand, FallbackValue={x:Null}}" />
+        <KeyBinding Gesture="Ctrl+F"
+                    Command="{Binding AppPage.NavigationPage.OpenSearchCommand, FallbackValue={x:Null}}" />
     </Window.KeyBindings>
 
     <Panel a:BorderChildClipConverter.ClipToContainingBorder="True">
