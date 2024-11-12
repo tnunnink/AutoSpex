@@ -141,7 +141,8 @@
 
                 <ContentControl
                     Content="{Binding Argument}"
-                    ContentTemplate="{StaticResource ArgumentSelector}" />
+                    ContentTemplate="{StaticResource ArgumentSelector}"
+                    IsVisible="{Binding AcceptsArgs}" />
 
             </StackPanel>
 
