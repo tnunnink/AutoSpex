@@ -11,7 +11,7 @@
 
         <ContentControl
             Content="{Binding Spec}"
-            ContentTemplate="{StaticResource SpecEntry}"
+            ContentTemplate="{StaticResource SpecConfig}"
             Margin="20" />
 
     </ScrollViewer>
