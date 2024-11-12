@@ -59,7 +59,6 @@
             CornerRadius="0 0 4 4">
 
             <controls:DrawerView
-                IsDrawerOpen="{Binding ShowResults, Mode=TwoWay}"
                 DrawerMinLength="40"
                 DrawerPlacement="Bottom"
                 HideSplitter="False"
@@ -120,7 +119,18 @@
 
                                     <StackPanel Orientation="Horizontal" Spacing="7">
 
+                                        <ToggleButton
+                                            IsVisible="{Binding $parent[controls:DrawerView].IsDrawerOpen}"
+                                            IsChecked="{Binding #SearchTextBox.IsVisible}"
+                                            Theme="{StaticResource IconToggleButton}"
+                                            properties:Icon.Theme="{StaticResource IconLineSearch}"
+                                            Padding="1 0 0 0"
+                                            HotKey="Ctrl+F"
+                                            ToolTip.Tip="Search"
+                                            ToolTip.Placement="BottomEdgeAlignedRight" />
+
                                         <Button
+                                            IsVisible="{Binding $parent[controls:DrawerView].IsDrawerOpen}"
                                             IsEnabled="{Binding Outcome.Result.IsSuppressible, FallbackValue={x:False}}"
                                             Theme="{StaticResource IconButton}"
                                             properties:Icon.Theme="{StaticResource IconLineBan}"
@@ -139,6 +149,7 @@
                                         </Button>
 
                                         <Button
+                                            IsVisible="{Binding $parent[controls:DrawerView].IsDrawerOpen}"
                                             Command="{Binding Outcome.Node.NavigateCommand, FallbackValue={x:Null}}"
                                             Theme="{StaticResource IconButton}"
                                             properties:Icon.Theme="{StaticResource IconLineLaunch}"
@@ -171,9 +182,10 @@
                         </Border>
 
                         <TextBox
+                            x:Name="SearchTextBox"
                             DockPanel.Dock="Top"
                             Text="{Binding Filter}"
-                            IsVisible="{Binding Outcome, Converter={x:Static ObjectConverters.IsNotNull}}"
+                            IsVisible="False"
                             Watermark="Search results"
                             Theme="{StaticResource TextBoxSimple}"
                             VerticalContentAlignment="Center"
@@ -188,6 +200,15 @@
                                     Classes="size-sm"
                                     Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
                             </TextBox.InnerLeftContent>
+                            <Interaction.Behaviors>
+                                <DataTriggerBehavior
+                                    Binding="{Binding #SearchTextBox.IsVisible}"
+                                    ComparisonCondition="Equal"
+                                    Value="True">
+                                    <FocusControlAction TargetControl="SearchTextBox" />
+                                </DataTriggerBehavior>
+                                <SelectAllOnGotFocusBehavior />
+                            </Interaction.Behaviors>
                         </TextBox>
 
                         <Panel>
@@ -200,7 +221,7 @@
 
                             <ContentControl
                                 Content="{Binding Outcome}"
-                                ContentTemplate="{StaticResource OutcomeList}"
+                                ContentTemplate="{StaticResource EvaluationList}"
                                 IsVisible="{Binding Outcome, Converter={x:Static ObjectConverters.IsNotNull}}" />
 
                         </Panel>
