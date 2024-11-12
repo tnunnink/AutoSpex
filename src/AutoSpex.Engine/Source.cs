@@ -241,17 +241,22 @@ public class Source
     /// <returns>A new <see cref="Source"/> object that is a duplicate of the current instance.</returns>
     public Source Duplicate()
     {
-        var duplicate = new Source(Content);
-
-        foreach (var variable in _overrides.Values)
+        var duplicate = new Source
         {
-            duplicate.AddOverride(variable);
-        }
+            Name = Name,
+            TargetName = TargetName,
+            TargetType = TargetType,
+            ExportedOn = ExportedOn,
+            ExportedBy = ExportedBy,
+            Description = Description,
+            Content = Content
+        };
 
-        foreach (var node in _suppressions.Values)
-        {
-            duplicate.AddSuppression(node);
-        }
+        foreach (var node in _overrides.Values)
+            duplicate.AddOverride(node);
+
+        foreach (var suppression in _suppressions.Values)
+            duplicate.AddSuppression(suppression);
 
         return duplicate;
     }
