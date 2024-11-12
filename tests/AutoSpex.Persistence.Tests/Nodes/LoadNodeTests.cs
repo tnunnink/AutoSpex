@@ -65,7 +65,7 @@ public class LoadNodeTests
         {
             s.Query(Element.Program)
                 .Filter("Name", Operation.EqualTo, "SomeName")
-                .Verify("Disabled", Operation.False);
+                .Verify("Disabled", Operation.EqualTo, false);
         });
         await mediator.Send(new CreateNode(node));
 
