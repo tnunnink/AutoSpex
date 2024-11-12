@@ -99,7 +99,7 @@ public class Source
     /// The <see cref="L5X"/> content this source contains.
     /// </summary>
     [JsonIgnore]
-    public L5X Content { get; private set; } = L5X.Empty();
+    public L5X? Content { get; private set; }
 
     /// <summary>
     /// Represents the collection of nodes that should be ignored when this source is run.
