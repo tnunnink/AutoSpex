@@ -13,8 +13,12 @@
 
     <DockPanel>
 
-        <Border DockPanel.Dock="Top" Padding="10" Height="50"
-                Background="{a:ThemeResource Container2BackgroundBrush}">
+        <Border
+            DockPanel.Dock="Top"
+            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+            BorderThickness="0 0 0 1"
+            Padding="10"
+            Height="50">
 
             <Grid ColumnDefinitions="*,Auto">
 
@@ -33,6 +37,15 @@
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="7">
+
+                    <ToggleButton
+                        IsVisible="{Binding $parent[controls:DrawerView].IsDrawerOpen}"
+                        IsChecked="{Binding #SearchTextBox.IsVisible}"
+                        Theme="{StaticResource IconToggleButton}"
+                        properties:Icon.Theme="{StaticResource IconLineSearch}"
+                        Padding="1 0 0 0"
+                        ToolTip.Tip="Search"
+                        ToolTip.Placement="BottomEdgeAlignedRight" />
 
                     <Button
                         Theme="{StaticResource IconButton}"
@@ -54,16 +67,17 @@
         </Border>
 
         <TextBox
+            x:Name="SearchTextBox"
             DockPanel.Dock="Top"
+            IsVisible="False"
             Text="{Binding Filter}"
-            IsVisible="{Binding $parent[controls:DrawerView].IsDrawerOpen}"
             Watermark="Search results"
             Theme="{StaticResource TextBoxSimple}"
             VerticalContentAlignment="Center"
             HorizontalContentAlignment="Stretch"
             Background="Transparent"
             BorderBrush="{a:ThemeResource Container1BorderBrush}"
-            Padding="0 10" BorderThickness="0 1 0 1" CornerRadius="0">
+            Padding="0 10" BorderThickness="0 0 0 1" CornerRadius="0">
             <TextBox.InnerLeftContent>
                 <PathIcon
                     Theme="{StaticResource IconLineSearch}"
@@ -72,11 +86,20 @@
                     Classes="size-sm"
                     Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
             </TextBox.InnerLeftContent>
+            <Interaction.Behaviors>
+                <DataTriggerBehavior
+                    Binding="{Binding #SearchTextBox.IsVisible}"
+                    ComparisonCondition="Equal"
+                    Value="True">
+                    <FocusControlAction TargetControl="SearchTextBox" />
+                </DataTriggerBehavior>
+                <SelectAllOnGotFocusBehavior />
+            </Interaction.Behaviors>
         </TextBox>
 
         <ContentControl
             Content="{Binding Outcome}"
-            ContentTemplate="{StaticResource OutcomeList}"
+            ContentTemplate="{StaticResource EvaluationList}"
             IsVisible="{Binding $parent[controls:DrawerView].IsDrawerOpen}" />
 
     </DockPanel>
