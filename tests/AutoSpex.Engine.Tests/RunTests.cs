@@ -55,7 +55,7 @@ public class RunTests
         var source = new Source(L5X.Load(Known.Test));
 
         var spec = Node.NewSpec("Test",
-            s => { s.Query(Element.Module).Verify("Inhibited", Operation.False); });
+            s => { s.Query(Element.Module).Verify("Inhibited", Operation.EqualTo, false); });
 
         var run = new Run(spec, source);
 
