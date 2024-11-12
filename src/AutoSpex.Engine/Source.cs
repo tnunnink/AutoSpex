@@ -137,6 +137,7 @@ public class Source
         Description = content.Controller.Description ?? string.Empty;
 
         InjectMetadata(content);
+        ScrubData(content);
         Content = content;
     }
 
