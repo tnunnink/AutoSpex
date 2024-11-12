@@ -20,7 +20,7 @@
 
 
     <DataTemplate x:Key="ElementListItem" x:DataType="observers:ElementObserver">
-        
+
         <Border x:Name="Border"
                 Background="Transparent"
                 Focusable="True"
@@ -43,61 +43,38 @@
                     <controls:HighlightableTextBlock
                         Text="{Binding Name}"
                         HighlightedText="{Binding FilterText}"
-                        Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
-                        FontWeight="{a:ThemeResource HeadingFontWeightSmall}"
-                        FontSize="{a:ThemeResource DefaultFontSizeSmall}" />
-
-                    <Ellipse
-                        Height="5" Width="5"
-                        Fill="{a:ThemeResource Container5BackgroundBrush}"
-                        Margin="0 2 0 0"
-                        IsVisible="{Binding Description, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                        FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
 
                     <controls:HighlightableTextBlock
-                        Text="{Binding Container}"
-                        HighlightedText="{Binding FilterText}"
-                        Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
-                        FontSize="{a:ThemeResource DefaultFontSizeSmall}"
-                        ToolTip.Tip="Scope" />
-
-                    <Ellipse
-                        Height="5" Width="5"
-                        Fill="{a:ThemeResource Container5BackgroundBrush}"
-                        Margin="0 2 0 0"
-                        IsVisible="{Binding Description, Converter={x:Static ObjectConverters.IsNotNull}}" />
-
-                    <controls:HighlightableTextBlock
-                        IsVisible="{Binding Description, Converter={x:Static ObjectConverters.IsNotNull}}"
-                        Text="{Binding Description}"
+                        Text="{Binding Scope}"
                         HighlightedText="{Binding FilterText}"
                         Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
-                        FontSize="{a:ThemeResource DefaultFontSizeSmall}"
-                        FontStyle="Italic"
-                        MaxLines="1"
-                        TextWrapping="NoWrap"
-                        TextTrimming="CharacterEllipsis"
-                        ToolTip.Tip="{Binding Description}" />
+                        ToolTip.Tip="Scope" />
 
                 </StackPanel>
 
-                <Border Grid.Column="1" MinHeight="20" Padding="10 0 5 0">
+                <Border Grid.Column="1" MinHeight="20">
 
                     <StackPanel Orientation="Horizontal" Spacing="5"
                                 IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}">
 
                         <Button
-                            Command="{Binding CopyElementCommand}"
+                            Command="{Binding CopyCommand}"
                             Theme="{StaticResource IconButtonSmall}"
-                            properties:Icon.Theme="{StaticResource IconFilledClone}"
+                            properties:Icon.Theme="{StaticResource IconFilledCopy}"
                             IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}"
-                            ToolTip.Tip="Copy Element" />
+                            ToolTip.Tip="Copy" />
 
                         <Button
-                            Command="{Binding ViewPropertiesCommand}"
                             Theme="{StaticResource IconButtonSmall}"
-                            properties:Icon.Theme="{StaticResource IconFilledBinoculars}"
-                            IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}"
-                            ToolTip.Tip="View Properties" />
+                            properties:Icon.Theme="{StaticResource IconLineListStaggered}"
+                            ToolTip.Tip="Properties">
+                            <Button.Flyout>
+                                <Flyout Placement="BottomEdgeAlignedRight" HorizontalOffset="-8" VerticalOffset="5">
+                                    <ContentControl Content="{Binding ProeprtyTree^}" />
+                                </Flyout>
+                            </Button.Flyout>
+                        </Button>
 
                         <Button
                             Theme="{StaticResource IconButtonSmall}"

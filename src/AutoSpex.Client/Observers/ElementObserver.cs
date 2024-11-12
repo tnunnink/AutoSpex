@@ -1,35 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using AutoSpex.Client.Pages;
 using AutoSpex.Client.Resources;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
-using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
+using Avalonia.Input;
 using L5Sharp.Core;
 
 namespace AutoSpex.Client.Observers;
 
-public partial class ElementObserver : Observer<LogixElement>
+public class ElementObserver(LogixElement model) : Observer<LogixElement>(model)
 {
-    /// <inheritdoc/>
-    public ElementObserver(LogixElement model) : base(model)
-    {
-        Description = DetermineDescription();
-        Container = DetermineContainer();
-        Type = Element.FromName(Model.GetType().Name);
-    }
-
     public override string Name => DetermineName();
-    public string? Description { get; }
-    public string? Container { get; }
-    public Element Type { get; }
-    public IEnumerable<PropertyObserver> Properties => GetProperties();
+    public string? Scope => Model is LogixScoped scoped ? scoped.Scope.Path : default;
+    public Element Type => Element.FromName(Model.GetType().Name);
+    public Task<PropertyTreePageModel> ProeprtyTree => Navigator.Navigate(() => new PropertyTreePageModel(this));
 
     #region Commands
 
-    [RelayCommand]
-    private async Task CopyElement()
+    /// <inheritdoc />
+    protected override async Task Copy()
     {
         try
         {
@@ -43,45 +35,16 @@ public partial class ElementObserver : Observer<LogixElement>
         }
     }
 
-    [RelayCommand]
-    private async Task CopyName()
-    {
-        try
-        {
-            var clipboard = Shell.Clipboard;
-            if (clipboard is null) return;
-            await clipboard.SetTextAsync(Name);
-        }
-        catch (Exception e)
-        {
-            Notifier.ShowError("Command failed", e.Message);
-        }
-    }
-
-    [RelayCommand]
-    private void ViewProperties()
-    {
-        try
-        {
-            Messenger.Send(new ShowProperties(this));
-        }
-        catch (Exception e)
-        {
-            Notifier.ShowError("Command failed", e.Message);
-        }
-    }
-
     #endregion
-
-    #region Messages
 
     /// <summary>
-    /// A message that can be sent to a parent page to signal the opening of the properties for this element.
+    /// 
     /// </summary>
-    /// <param name="Element">The element instance for which to view properties.</param>
-    public record ShowProperties(ElementObserver Element);
-
-    #endregion
+    /// <returns></returns>
+    public IEnumerable<PropertyObserver> GetProperties()
+    {
+        return Type.This.Properties.Select(p => new PropertyObserver(p, this));
+    }
 
     /// <summary>
     /// Filters this element observer using the provide filter text. This filter will check if this element has any
@@ -92,7 +55,7 @@ public partial class ElementObserver : Observer<LogixElement>
     public override bool Filter(string? filter)
     {
         FilterText = filter;
-        return Name.Satisfies(filter) || Container.Satisfies(filter) || Description.Satisfies(filter);
+        return Name.Satisfies(filter) || Scope.Satisfies(filter);
     }
 
     public override string ToString() => DetermineName();
@@ -102,23 +65,10 @@ public partial class ElementObserver : Observer<LogixElement>
     {
         yield return new MenuActionItem
         {
-            Header = "Copy Element",
-            Icon = Resource.Find("IconFilledClone"),
-            Command = CopyElementCommand
-        };
-
-        yield return new MenuActionItem
-        {
-            Header = "Copy Name",
-            Icon = Resource.Find("IconFilledClone"),
-            Command = CopyNameCommand
-        };
-
-        yield return new MenuActionItem
-        {
-            Header = "View Properties",
-            Icon = Resource.Find("IconFilledBinoculars"),
-            Command = ViewPropertiesCommand
+            Header = "Copy",
+            Icon = Resource.Find("IconFilledCopy"),
+            Command = CopyCommand,
+            Gesture = new KeyGesture(Key.C, KeyModifiers.Control)
         };
     }
 
@@ -127,26 +77,11 @@ public partial class ElementObserver : Observer<LogixElement>
     {
         yield return new MenuActionItem
         {
-            Header = "Copy Element",
-            Icon = Resource.Find("IconFilledClone"),
-            Command = CopyElementCommand,
-            DetermineVisibility = () => HasSingleSelection
-        };
-
-        yield return new MenuActionItem
-        {
-            Header = "Copy Name",
-            Icon = Resource.Find("IconFilledClone"),
-            Command = CopyNameCommand,
-            DetermineVisibility = () => HasSingleSelection
-        };
-
-        yield return new MenuActionItem
-        {
-            Header = "View Properties",
-            Icon = Resource.Find("IconFilledBinoculars"),
-            Command = ViewPropertiesCommand,
-            DetermineVisibility = () => HasSingleSelection
+            Header = "Copy",
+            Icon = Resource.Find("IconFilledCopy"),
+            Command = CopyCommand,
+            DetermineVisibility = () => HasSingleSelection,
+            Gesture = new KeyGesture(Key.C, KeyModifiers.Control)
         };
     }
 
@@ -172,18 +107,6 @@ public partial class ElementObserver : Observer<LogixElement>
             LogixComponent component => component.Description,
             _ => null
         };
-    }
-
-    private string? DetermineContainer()
-    {
-        return Model is LogixScoped scoped
-            ? $"{scoped.Scope.Controller}/{scoped.Scope.Program}/{scoped.Scope.Routine}".Trim('/')
-            : default;
-    }
-
-    private IEnumerable<PropertyObserver> GetProperties()
-    {
-        return Type.This.Properties.Select(p => new PropertyObserver(p, this));
     }
 
     public static implicit operator LogixElement(ElementObserver observer) => observer.Model;

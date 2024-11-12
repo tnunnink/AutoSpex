@@ -1,178 +1,84 @@
 ﻿using System;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
+using System.Xml.Linq;
 using AutoSpex.Client.Observers;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
-using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
 using L5Sharp.Core;
 
 namespace AutoSpex.Client.Pages;
 
 [UsedImplicitly]
-public partial class ContentPageModel : PageViewModel,
-    IRecipient<ElementObserver.ShowProperties>,
-    IRecipient<Observer.GetSelected>
+public partial class ContentPageModel(SourceObserver source) : PageViewModel("Content")
 {
-    private readonly SourceObserver _source;
-    private readonly L5X? _content;
+    private static readonly HashSet<string> ScopeTypes = ScopeType.All().Select(x => x.Name).ToHashSet();
 
-    /// <inheritdoc/>
-    public ContentPageModel(SourceObserver source) : base("Content")
-    {
-        _source = source;
-        _content = _source.Model.Content;
-    }
-
-    public override string Route => $"{nameof(Source)}/{_source.Id}/{Title}";
+    public override string Route => $"{nameof(Source)}/{source.Id}/{Title}";
+    public ObserverCollection<LogixElement, ElementObserver> Elements { get; } = [];
 
     [ObservableProperty] private Element _type = Element.Tag;
 
-    [ObservableProperty] private ElementObserver? _selectedElement;
+    [ObservableProperty] private ElementObserver? _selected;
 
-    [ObservableProperty] private string? _elementFilter;
+    [ObservableProperty] private int _pageSize = 50;
 
-    [ObservableProperty] private string? _propertyFilter;
+    /// <inheritdoc />
+    protected override async void FilterChanged(string? filter)
+    {
+        await Search();
+    }
 
-    [ObservableProperty] private int _pageSize = 100;
-
-    [ObservableProperty] private bool _showProperties = true;
-    public ObservableCollection<ElementObserver> Elements { get; } = [];
-    public ObserverCollection<Property, PropertyObserver> Properties { get; } = [];
-
-    public override async Task Load()
+    /// <summary>
+    /// Kicks off the async query of elements and provides it with a cancellation of 10 seconds to prevent overly
+    /// long processing times. In theory the page size limits should help prevent cancellations. We should jsut build in a cancel button, but most queries probably won't take more than 10 seconds.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanSearch))]
+    private async Task Search()
     {
         var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(10));
 
         try
         {
-            await QueryElements(cancellation.Token);
+            var elements = await QueryElements(cancellation.Token);
+            Elements.Refresh(elements);
         }
         catch (OperationCanceledException)
         {
         }
-    }
-
-    [RelayCommand]
-    private void ToggleProperties()
-    {
-        ShowProperties = !ShowProperties;
-    }
-
-    /// <summary>
-    /// Handles the show properties message by setting the selected element and toggling the properties view.
-    /// </summary>
-    public void Receive(ElementObserver.ShowProperties message)
-    {
-        var target = Elements.FirstOrDefault(e => e.Is(message.Element));
-        if (target is null) return;
-        SelectedElement = target;
-        ShowProperties = true;
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public void Receive(Observer.GetSelected message)
-    {
-        if (message.Observer is not ElementObserver observer) return;
-        if (!Elements.Any(e => e.Is(observer))) return;
-        if (SelectedElement is null) return;
-        message.Reply(SelectedElement);
-    }
-
-    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
-    {
-        base.OnPropertyChanged(e);
-
-        switch (e.PropertyName)
+        catch (Exception e)
         {
-            case nameof(Type) or nameof(ElementFilter):
-                UpdateElements();
-                break;
-            case nameof(SelectedElement) or nameof(PropertyFilter):
-                UpdateProperties();
-                break;
+            Notifier.ShowError("Failed to search content", e.Message);
         }
     }
 
-    /// <summary>
-    /// Kicks off the async query element method and provides it with a cancellation of 10 seconds to prevent overly
-    /// long processing times. In theory the page size limits should help precent cancellations.
-    /// </summary>
-    private async void UpdateElements()
-    {
-        var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+    private bool CanSearch() => !string.IsNullOrEmpty(Filter) && source.Model.Content is not null;
 
-        try
-        {
-            await QueryElements(cancellation.Token);
-        }
-        catch (OperationCanceledException)
-        {
-        }
-    }
-
-    private Task QueryElements(CancellationToken token)
+    private Task<IEnumerable<ElementObserver>> QueryElements(CancellationToken token)
     {
         return Task.Run(() =>
         {
-            if (_content is null) return;
+            if (source.Model.Content is null || string.IsNullOrEmpty(Filter)) return [];
 
-            var element = Type;
-            var filter = ElementFilter;
+            var content = source.Model.Content;
+            var filter = Filter;
             var size = PageSize;
 
-            //Whether this is a tag name or not, we can treat is as such to easily parse the string.
-            var tagName = !string.IsNullOrEmpty(filter) ? new TagName(filter) : TagName.Empty;
-            var root = tagName.Root;
+            var elements = content.Controller.Serialize().Descendants()
+                .Where(e => e.Attributes().Any(a => a.Value.Satisfies(filter)) || e.Value.Satisfies(filter))
+                .Select(e => e.AncestorsAndSelf().FirstOrDefault(a => ScopeTypes.Contains(a.Name.LocalName)))
+                .Distinct()
+                .Where(e => e is not null)
+                .Cast<XElement>()
+                .Select(e => e.Deserialize<LogixElement>())
+                .Take(size);
 
-            var results = _content.Query(element.Type)
-                .Select(e => new ElementObserver(e))
-                .Where(x => x.Filter(root))
-                .Take(size)
-                .ToList();
-
-            //If not a tag or the provided name is not a nested tag input, just return the top level results.
-            if (element != Element.Tag || tagName.Depth < 1)
-            {
-                Dispatcher.UIThread.Invoke(() => Elements.Refresh(results));
-                return;
-            }
-
-            //If a tag and the tag name has members, we want to return the results that match.
-            var tags = results
-                .Select(r => r.Model)
-                .Where(x => x is Tag)
-                .Cast<Tag>()
-                .SelectMany(t => t.Members())
-                .Where(t => t.TagName.Contains(tagName))
-                .Take(size)
-                .Select(t => new ElementObserver(t))
-                .ToList();
-
-            Dispatcher.UIThread.Invoke(() => Elements.Refresh(tags));
+            return elements.Select(e => new ElementObserver(e) { FilterText = filter });
         }, token);
-    }
-
-    /// <summary>
-    /// Updates the <see cref="Properties"/> collection using the selected element and current property filter text.
-    /// </summary>
-    private void UpdateProperties()
-    {
-        //Get the properties from the selected element, or empty list of no selection is made.
-        var properties = SelectedElement?.Properties.ToList() ?? [];
-
-        //Apply filter to resulting properties.
-        var filtered = properties.Where(p => p.Filter(PropertyFilter));
-
-        //Update the bound collection with results.
-        Properties.Refresh(filtered);
     }
 }
