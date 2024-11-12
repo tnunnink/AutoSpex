@@ -98,12 +98,21 @@ public record Evaluation
     public static Evaluation Passed(Criterion criterion, object candidate, object? actual) =>
         new(ResultState.Passed, criterion, candidate, actual);
 
+    /// <summary>
+    /// Cretes a new failed <see cref="Evaluation"/> with the provided criterion, candidate, and actual value. 
+    /// </summary>
     public static Evaluation Failed(Criterion criterion, object candidate, object? actual) =>
         new(ResultState.Failed, criterion, candidate, actual);
 
+    /// <summary>
+    /// Cretes a new errored <see cref="Evaluation"/> with the provided criterion, candidate, and the produced exception. 
+    /// </summary>
     public static Evaluation Errored(Criterion criterion, object candidate, Exception exception) =>
         new(ResultState.Errored, criterion, candidate, exception);
 
+    /// <summary>
+    /// Cretes a new errored <see cref="Evaluation"/> a produced exception. 
+    /// </summary>
     public static Evaluation Errored(Exception exception) =>
         new(ResultState.Errored, exception);
 
