@@ -8,11 +8,11 @@
     <Design.PreviewWith>
         <ContentControl
             Content="{x:Static components:TestData.DefaultOutcome}"
-            ContentTemplate="{DynamicResource OutcomeList}"
+            ContentTemplate="{DynamicResource EvaluationList}"
             Margin="20" />
     </Design.PreviewWith>
 
-    <DataTemplate x:Key="OutcomeList" x:DataType="observers:OutcomeObserver">
+    <DataTemplate x:Key="EvaluationList" x:DataType="observers:OutcomeObserver">
 
         <Panel>
 
