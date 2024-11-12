@@ -10,7 +10,6 @@ using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using AutoSpex.Persistence;
 using Avalonia.Input;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FluentResults;
@@ -33,10 +32,7 @@ public partial class NodeObserver : Observer<Node>,
             clear: () => Model.ClearNodes(),
             count: () => Model.Nodes.Count());
 
-        Spec = new SpecObserver(Model.Spec);
-
         RegisterDisposable(Nodes);
-        RegisterDisposable(Spec);
     }
 
     public override Guid Id => Model.NodeId;
@@ -44,6 +40,7 @@ public partial class NodeObserver : Observer<Node>,
     public Guid ParentId => Model.ParentId;
     public NodeType Type => Model.Type;
     public string Route => Model.Route;
+    public string Path => Model.Path;
     public bool IsVirtual => Type != NodeType.Collection && ParentId == Guid.Empty;
 
     [Required]
@@ -53,10 +50,8 @@ public partial class NodeObserver : Observer<Node>,
         set => SetProperty(Model.Name, value, Model, (s, v) => s.Name = v, true);
     }
 
-    [ObservableProperty] private SpecObserver _spec;
     public ObserverCollection<Node, NodeObserver> Nodes { get; }
     public IEnumerable<NodeObserver> Crumbs => Model.Ancestors().Select(n => new NodeObserver(n));
-    public IEnumerable<NodeObserver> Path => Model.AncestorsAndSelf().Select(n => new NodeObserver(n));
 
     /// <inheritdoc />
     public override bool Filter(string? filter)
@@ -475,6 +470,50 @@ public partial class NodeObserver : Observer<Node>,
             Icon = Resource.Find("IconFilledTrash"),
             Classes = "danger",
             Command = DeleteSelectedCommand,
+            Gesture = new KeyGesture(Key.Delete)
+        };
+    }
+
+    /// <inheritdoc />
+    protected override IEnumerable<MenuActionItem> GenerateMenuItems()
+    {
+        yield return new MenuActionItem
+        {
+            Header = "Duplicate",
+            Icon = Resource.Find("IconFilledClone"),
+            Command = DuplicateCommand,
+            Gesture = new KeyGesture(Key.D, KeyModifiers.Control)
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Reaplce",
+            Icon = Resource.Find("IconLineSearch"),
+            Gesture = new KeyGesture(Key.H, KeyModifiers.Control)
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Move",
+            Icon = Resource.Find("IconLineMove"),
+            Command = MoveToCommand,
+            DetermineVisibility = () => Type != NodeType.Collection
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Export",
+            Icon = Resource.Find("IconLineDownload"),
+            Command = ExportCommand,
+            DetermineVisibility = () => Type == NodeType.Collection
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Delete",
+            Icon = Resource.Find("IconFilledTrash"),
+            Classes = "danger",
+            Command = DeleteCommand,
             Gesture = new KeyGesture(Key.Delete)
         };
     }
