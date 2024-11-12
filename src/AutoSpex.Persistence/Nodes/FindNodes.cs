@@ -27,12 +27,12 @@ internal class FindNodesHandler(IConnectionManager manager) : IRequestHandler<Fi
         FROM Tree
         ORDER BY Depth, Name;
         """;
-    
+
     public async Task<IEnumerable<Node>> Handle(FindNodes request, CancellationToken cancellationToken)
     {
         using var connection = await manager.Connect(cancellationToken);
         var nodes = (await connection.QueryAsync<Node>(GetNodeTree)).BuildTree();
-        var results = nodes.Values.Where(request.Predicate).AsEnumerable();
+        var results = nodes.Values.Where(request.Predicate);
         return results;
     }
 }
