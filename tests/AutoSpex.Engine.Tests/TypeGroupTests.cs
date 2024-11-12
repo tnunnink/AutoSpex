@@ -76,24 +76,6 @@ public class TypeGroupTests
     }
 
     [Test]
-    public void Criterion_WhenCalled_ShouldBeExpected()
-    {
-        var group = TypeGroup.Criterion;
-
-        group.Name.Should().Be("Criterion");
-        group.Value.Should().Be(8);
-    }
-
-    [Test]
-    public void Argument_WhenCalled_ShouldBeExpected()
-    {
-        var group = TypeGroup.Argument;
-
-        group.Name.Should().Be("Argument");
-        group.Value.Should().Be(9);
-    }
-
-    [Test]
     public void Selectable_WhenCalled_ShouldNotBeEmpty()
     {
         var groups = TypeGroup.Selectable;

@@ -44,14 +44,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
 
     public static readonly TypeGroup Element = new ElementTypeGroup();
 
-    public static readonly TypeGroup Criterion = new CriterionTypeGroup();
-
-    public static readonly TypeGroup Argument = new ArgumentTypeGroup();
-
-    private static readonly List<TypeGroup> Exclusions = [Default, Criterion, Argument, Collection];
-
-    public static IEnumerable<TypeGroup> Selectable =>
-        List.Where(t => Exclusions.All(e => e != t)).OrderBy(x => x.Value);
+    public static IEnumerable<TypeGroup> Selectable => List.Where(t => t != Default).OrderBy(x => x.Value);
 
     public static TypeGroup FromType(Type? type)
     {
@@ -63,8 +56,6 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
         if (Enum.AppliesTo(type)) return Enum;
         if (Collection.AppliesTo(type)) return Collection;
         if (Element.AppliesTo(type)) return Element;
-        if (Criterion.AppliesTo(type)) return Criterion;
-        if (Argument.AppliesTo(type)) return Argument;
         return Default;
     }
 
@@ -89,6 +80,12 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
 
         public override bool TryParse(string text, out object? value)
         {
+            if (bool.TryParse(text, out var boolean))
+            {
+                value = boolean;
+                return true;
+            }
+
             value = BOOL.TryParse(text);
             return value is not null;
         }
@@ -126,16 +123,31 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
             return NumericTypes.Contains(type);
         }
 
+        /// <summary>
+        /// For numbers, I will just try to use an int/double for everything.
+        /// If not an int, then use the Radix which supports all primitive numeric types.
+        /// If not and the element is parsable, try to parse as LogixData which can be a number too (AtomicData).
+        /// </summary>
         public override bool TryParse(string text, out object? value)
         {
-            //Radix TryInfer will support .NET primitives.
+            if (int.TryParse(text, out var i))
+            {
+                value = i;
+                return true;
+            }
+
+            if (double.TryParse(text, out var d))
+            {
+                value = d;
+                return true;
+            }
+
             if (Radix.TryInfer(text, out var radix))
             {
                 value = radix.ParseValue(text);
                 return true;
             }
 
-            //This is to support LogixData
             try
             {
                 var element = XElement.Parse(text);
@@ -159,7 +171,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
             typeof(STRING),
             typeof(NeutralText),
             typeof(TagName),
-            typeof(L5Sharp.Core.Argument),
+            typeof(Argument),
             typeof(IPAddress),
             typeof(Scope)
         ];
@@ -254,28 +266,6 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
                 value = null;
                 return false;
             }
-        }
-    }
-
-    private class CriterionTypeGroup() : TypeGroup(nameof(Criterion), 8)
-    {
-        protected override bool AppliesTo(Type type) => type == typeof(Criterion);
-
-        public override bool TryParse(string text, out object? value)
-        {
-            value = null;
-            return false;
-        }
-    }
-
-    private class ArgumentTypeGroup() : TypeGroup(nameof(Argument), 9)
-    {
-        protected override bool AppliesTo(Type type) => type == typeof(Argument);
-
-        public override bool TryParse(string text, out object? value)
-        {
-            value = new Argument(text);
-            return true;
         }
     }
 }
