@@ -31,8 +31,9 @@ public static class Extensions
     /// </summary>
     /// <param name="type">The type to get the identifier for.</param>
     /// <returns>A string representing a UI friendly name of the type.</returns>
-    public static string CommonName(this Type type)
+    public static string DisplayName(this Type? type)
     {
+        if (type is null) return "unknown";
         if (type == typeof(bool)) return "bool";
         if (type == typeof(byte)) return "byte";
         if (type == typeof(sbyte)) return "sbyte";
@@ -48,15 +49,15 @@ public static class Extensions
         if (type == typeof(string)) return "string";
 
         if (type.IsEnumerable())
-            return $"{string.Join(", ", type.GetGenericArguments().Select(CommonName).ToArray())}[]";
+            return $"{string.Join(", ", type.GetGenericArguments().Select(DisplayName).ToArray())}[]";
 
         if (type.IsNullable())
             // ReSharper disable once TailRecursiveCall dont care
-            return Nullable.GetUnderlyingType(type)!.CommonName();
+            return Nullable.GetUnderlyingType(type)!.DisplayName();
 
         if (type.IsGenericType)
             return type.Name.Split('`')[0] + "<" +
-                   string.Join(", ", type.GetGenericArguments().Select(CommonName).ToArray()) + ">";
+                   string.Join(", ", type.GetGenericArguments().Select(DisplayName).ToArray()) + ">";
 
         return type.Name;
     }
