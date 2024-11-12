@@ -105,17 +105,12 @@ public class Property : IEquatable<Property>
     /// <summary>
     /// A user-friendly type name for the property. This can be used to display in the client UI.
     /// </summary>
-    public string DisplayName => Type.CommonName();
+    public string DisplayName => Type.DisplayName();
 
     /// <summary>
     /// The <see cref="TypeGroup"/> in which this property's return type belongs.
     /// </summary>
     public TypeGroup Group => TypeGroup.FromType(Type);
-
-    /// <summary>
-    /// The set of object values that represent the options (enum/bool values) for the property type.
-    /// </summary>
-    public IEnumerable<object> Options => Type.GetOptions();
 
     /// <summary>
     /// The set of child properties which can be navigated to from this property's type.

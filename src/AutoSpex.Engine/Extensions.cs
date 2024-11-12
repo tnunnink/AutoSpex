@@ -81,26 +81,6 @@ public static class Extensions
     }
 
     /// <summary>
-    /// Given a type returns a collection of possible values. This is meant primarily for enumeration types so that we
-    /// can provide the user with a selectable set of options for a given enum value. This however will also return
-    /// true/false for boolean type and empty collection for anything else (numbers, string, collections, complex objects).
-    /// </summary>
-    /// <param name="type">The type for which to determine the options.</param>
-    /// <returns>A collection of typed value options for the specified type if found. Otherwise, and empty collection.</returns>
-    public static IEnumerable<object> GetOptions(this Type type)
-    {
-        var group = TypeGroup.FromType(type);
-
-        if (group == TypeGroup.Boolean)
-            return new object[] { true, false };
-
-        if (type.IsEnum)
-            return Enum.GetNames(type);
-
-        return typeof(LogixEnum).IsAssignableFrom(type) ? LogixEnum.Options(type) : Enumerable.Empty<object>();
-    }
-
-    /// <summary>
     /// Returns the <see cref="Type"/> object from a given type name.
     /// </summary>
     /// <param name="typeName">The name of the type.</param>
