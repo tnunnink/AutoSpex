@@ -10,16 +10,17 @@
             ItemsSource="{x:Static components:TestData.SpecsNodes}"
             ItemContainerTheme="{StaticResource ListBoxItemSimple}"
             ItemTemplate="{DynamicResource NodeListItemSimple}"
-            Width="700" Height="250" Margin="10"
+            Width="500" Height="250" Margin="10"
             SelectionMode="Multiple"
-            Background="{a:ThemeResource Container1BackgroundBrush}" />
+            Background="{a:ThemeResource Container1BackgroundBrush}"
+            ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
     </Design.PreviewWith>
 
     <DataTemplate x:Key="NodeListItemSimple" x:DataType="observers:NodeObserver">
 
         <Border Padding="{a:ThemeResource ListItemPadding}">
 
-            <StackPanel Orientation="Horizontal" Spacing="10">
+            <StackPanel Orientation="Horizontal" Spacing="10" ClipToBounds="True">
 
                 <PathIcon
                     Theme="{Binding Type.Name, Converter={StaticResource KeyIconConverter}}" />
@@ -30,12 +31,16 @@
                     FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
 
                 <controls:HighlightableTextBlock
-                    Text="{Binding Model.Route}"
+                    Text="{Binding Path}"
                     HighlightedText="{Binding FilterText}"
-                    Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                    Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                    TextTrimming="CharacterEllipsis"
+                    TextWrapping="NoWrap"
+                    ToolTip.Tip="{Binding Path}" />
 
             </StackPanel>
 
         </Border>
+
     </DataTemplate>
 </ResourceDictionary>
