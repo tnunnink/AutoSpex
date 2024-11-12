@@ -1,0 +1,31 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+
+    <Design.PreviewWith>
+        <StackPanel Spacing="50" Margin="20">
+            <ContentControl
+                Content="{x:Static components:TestData.SpecNode}"
+                ContentTemplate="{DynamicResource NodeDisplay}" />
+        </StackPanel>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="NodeDisplay" x:DataType="observers:NodeObserver">
+
+        <StackPanel Orientation="Horizontal" Spacing="10" ClipToBounds="True">
+
+            <PathIcon Theme="{Binding Type.Name, Converter={StaticResource KeyIconConverter}}" />
+
+            <controls:HighlightableTextBlock
+                Text="{Binding Name}"
+                HighlightedText="{Binding FilterText}"
+                FontWeight="{a:ThemeResource HeadingFontWeightSmall}"
+                ToolTip.Tip="{Binding Route}" />
+
+        </StackPanel>
+
+    </DataTemplate>
+</ResourceDictionary>
