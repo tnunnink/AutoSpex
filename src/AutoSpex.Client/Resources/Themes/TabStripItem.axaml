@@ -142,7 +142,7 @@
         <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="Padding" Value="5 7" />
+        <Setter Property="Padding" Value="4 10" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Panel>
@@ -176,7 +176,7 @@
         </Style>
 
         <Style Selector="^:selected">
-            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+            <Setter Property="Foreground" Value="{a:ThemeResource TabItemForegroundBrushOutlinePointerOver}" />
             <Setter Property="BorderBrush" Value="{a:ThemeResource TabItemBorderBrushSubtleSelected}" />
             <Style Selector="^ /template/ Border#PART_SelectedPipe">
                 <Setter Property="IsVisible" Value="True" />
