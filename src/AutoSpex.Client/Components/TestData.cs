@@ -8,7 +8,7 @@ using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using JetBrains.Annotations;
 using L5Sharp.Core;
-using Argument = AutoSpex.Engine.Argument;
+using Range = AutoSpex.Engine.Range;
 
 namespace AutoSpex.Client.Components;
 
@@ -52,17 +52,17 @@ public static class TestData
     #region Properties
 
     public static PropertyObserver RadixPropertyObserver = new(
-        Element.Tag.This.GetProperty("Radix")!,
+        Element.Tag.This.GetProperty("Radix"),
         new ElementObserver(new Tag { Name = "MyTag" })
     );
 
     public static PropertyObserver TagNamePropertyObserver => new(
-        Element.Tag.This.GetProperty("TagName")!,
+        Element.Tag.This.GetProperty("TagName"),
         new ElementObserver(new Tag { Name = "MyTag" })
     );
 
     public static PropertyObserver MembersPropertyObserver => new(
-        Element.Tag.This.GetProperty("Members")!,
+        Element.Tag.This.GetProperty("Members"),
         new ElementObserver(new Tag { Name = "MyTag", Value = new TIMER() })
     );
 
@@ -125,25 +125,24 @@ public static class TestData
             c.Filter("TagName", Operation.Containing, "TestTag");
             c.Filter("DataType", Operation.EqualTo, "MyType");
             c.Filter("ExternalAccess", Operation.In,
-                new List<Argument> { ExternalAccess.ReadOnly, ExternalAccess.ReadWrite });
+                new List<object> { ExternalAccess.ReadOnly, ExternalAccess.ReadWrite });
             c.Verify("Value", Operation.GreaterThan, 123);
             c.Verify("Description", Operation.EndingWith, "Some text value");
             c.Verify("Scope.Program", Negation.Not, Operation.EqualTo, "MyContianer");
         })
     );
 
-    /*public static ObservableCollection<SpecObserver> Specs =
-        new(GenerateSpecs().SelectMany(n => n.Specs.Select(s => new SpecObserver(s))));*/
-
     #endregion
 
     #region Criterion
 
+    public static readonly CriterionObserver EmptyCriterion = new Criterion();
+
     public static readonly CriterionObserver BoolCriterion =
-        new(new Criterion(Element.Tag.Property("Constant"), Operation.True));
+        new(new Criterion(Element.Tag.Property("Constant"), Operation.EqualTo, true));
 
     public static readonly CriterionObserver NumberCriterion =
-        new(new Criterion(Element.Tag.Property("Dimensions"), Operation.GreaterThanOrEqualTo, new Argument(10)));
+        new(new Criterion(Element.Tag.Property("Dimensions"), Operation.GreaterThanOrEqualTo, 10));
 
     public static readonly CriterionObserver TextCriterion =
         new(new Criterion(Element.Tag.Property("Name"), Operation.EqualTo, "Test"));
@@ -155,41 +154,29 @@ public static class TestData
         new(new Criterion(Element.Tag.Property("Members"), Operation.Any,
             new Criterion(Element.Tag.Property("TagName"), Operation.Like, "%MemberName")));
 
+    public static readonly CriterionObserver TernaryCriterion =
+        new(new Criterion(Element.Tag.Property("Value"), Operation.Between, 1, 12));
+
+    public static readonly CriterionObserver InCriterion =
+        new(new Criterion(Element.Tag.Property("TagName"), Operation.In, "First", "Second", "Third Or Longer"));
+
     public static readonly ObservableCollection<CriterionObserver> Criteria =
     [
+        EmptyCriterion,
         BoolCriterion,
         NumberCriterion,
         TextCriterion,
         EnumCriterion,
-        InnerCriterion
-    ];
-
-    #endregion
-
-    #region Arguments
-
-    public static ArgumentObserver EmptyArgument = new Argument(string.Empty);
-
-    public static ArgumentObserver TextArgument = new Argument("Literal Text Value");
-
-    public static ArgumentObserver EnumArgument = new Argument(ExternalAccess.ReadOnly);
-
-    public static ArgumentObserver TernaryArgument = new Argument(new List<Argument> { 1, 12 });
-
-    public static ArgumentObserver CollectionArgument = new(new Argument(new List<Argument> { new(), new(), new() }));
-
-    public static ObservableCollection<ArgumentObserver> Arguments =
-    [
-        EmptyArgument,
-        TextArgument,
-        EnumArgument
+        InnerCriterion,
+        TernaryCriterion,
+        InCriterion
     ];
 
     #endregion
 
     #region Values
 
-    public static ValueObserver NullValue = new(null);
+    public static ValueObserver NullValue = new(() => null);
     public static ValueObserver BooleanTrueValue = new(true);
     public static ValueObserver BooleanFalseValue = new(false);
     public static ValueObserver IntegerValue = new(34567);
@@ -207,7 +194,15 @@ public static class TestData
     public static ValueObserver RungValue = new(new Rung("XIC(Testing)"));
     public static ValueObserver TagValue = new(new Tag("TestTag", new DINT()));
 
-    public static ValueObserver CollectionValue = new(new List<Argument> { new(), new(), new() });
+    public static ValueObserver NumberCollectionValue = new(
+        new ObserverCollection<object?, ValueObserver>([1, 2, 3], x => new ValueObserver(x))
+    );
+
+    #endregion
+
+    #region Range
+
+    public static RangeObserver RangeValue = new(new Range(1, 12));
 
     #endregion
 
