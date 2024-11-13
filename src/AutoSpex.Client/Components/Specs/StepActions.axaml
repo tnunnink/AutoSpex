@@ -37,17 +37,6 @@
                     </Grid>
                 </Button>
 
-                <Button Command="{Binding ToggleFilterInclusionCommand}">
-                    <Grid ColumnDefinitions="20,*,Auto">
-                        <PathIcon Theme="{StaticResource IconFilledCheck}" Classes="size-sm" />
-                        <StackPanel Grid.Column="1" Orientation="Horizontal">
-                            <TextBlock Text="Satisfy" Padding="5 0 3 0" />
-                            <TextBlock Text="{Binding FilterInclusion}" />
-                        </StackPanel>
-
-                    </Grid>
-                </Button>
-
                 <Button Command="{Binding PasteFiltersCommand}">
                     <Grid ColumnDefinitions="20,*,Auto">
                         <PathIcon Theme="{StaticResource IconFilledPaste}" Classes="size-sm" />
