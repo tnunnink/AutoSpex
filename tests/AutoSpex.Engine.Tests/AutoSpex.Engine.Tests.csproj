@@ -32,9 +32,6 @@
       <None Update="Test.xml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="ArgumentTests.Serialize_SimpleValue_ShouldBeVerified.verified.txt">
-        <DependentUpon>ArgumentTests.cs</DependentUpon>
-      </None>
       <None Update="OutcomeTests.Serialize_WithNode_ShouldBeVerified.verified.txt">
         <DependentUpon>OutcomeTests.cs</DependentUpon>
       </None>
@@ -49,6 +46,33 @@
       </None>
       <None Update="VerificationTests.Serialized_Verification_ShouldBeVerified.verified.txt">
         <DependentUpon>VerificationTests.cs</DependentUpon>
+      </None>
+      <None Update="SpecTests.Serialize_ConfiguredSpecWithRange_ShouldBeVerified.verified.txt">
+        <DependentUpon>SpecTests.cs</DependentUpon>
+      </None>
+      <None Update="CriterionTests.Serialize_ValidCriterion_ShouldBeVerified.verified.txt">
+        <DependentUpon>CriterionTests.cs</DependentUpon>
+      </None>
+      <None Update="Converters\JsonObjectConverterTests.Serialize_NullValue_ShouldBeVerified.verified.txt">
+        <DependentUpon>JsonObjectConverterTests.cs</DependentUpon>
+      </None>
+      <None Update="Converters\JsonObjectConverterTests.Serialize_BooleanValue_ShouldBeVerified.verified.txt">
+        <DependentUpon>JsonObjectConverterTests.cs</DependentUpon>
+      </None>
+      <None Update="Converters\JsonObjectConverterTests.Serialize_ElementValue_ShouldBeVerified.verified.txt">
+        <DependentUpon>JsonObjectConverterTests.cs</DependentUpon>
+      </None>
+      <None Update="Converters\JsonObjectConverterTests.Serialize_NumberCollectionValue_ShouldBeVerified.verified.txt">
+        <DependentUpon>JsonObjectConverterTests.cs</DependentUpon>
+      </None>
+      <None Update="Converters\JsonObjectConverterTests.Serialize_TextCollectionValue_ShouldBeVerified.verified.txt">
+        <DependentUpon>JsonObjectConverterTests.cs</DependentUpon>
+      </None>
+      <None Update="Converters\JsonObjectConverterTests.Serialize_CriterionValue_ShouldBeVerified.verified.txt">
+        <DependentUpon>JsonObjectConverterTests.cs</DependentUpon>
+      </None>
+      <None Update="CriterionTests.Serialize_ConfiguredSpecWithRange_ShouldBeVerified.verified.txt">
+        <DependentUpon>CriterionTests.cs</DependentUpon>
       </None>
     </ItemGroup>
 

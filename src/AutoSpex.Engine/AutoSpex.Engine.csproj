@@ -18,8 +18,4 @@
       <None Remove="AutoSpex.Engine.csproj.DotSettings" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Compile Remove="Reference.cs" />
-    </ItemGroup>
-
 </Project>
