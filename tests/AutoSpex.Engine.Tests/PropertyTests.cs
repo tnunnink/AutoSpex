@@ -24,7 +24,7 @@ public class PropertyTests
     {
         var property = new Property("Length", typeof(int), Property.This(typeof(string)));
 
-        property.Key.Should().Be("System.String.Length");
+        property.Key.Should().Be("System.String:Length");
         property.Origin.Should().Be(typeof(string));
         property.Name.Should().Be("Length");
         property.Type.Should().Be(typeof(int));
@@ -36,7 +36,7 @@ public class PropertyTests
     {
         var property = new Property("Fake", typeof(string), Element.Tag.This);
 
-        property.Key.Should().Be("L5Sharp.Core.Tag.Fake");
+        property.Key.Should().Be("L5Sharp.Core.Tag:Fake");
         property.Origin.Should().Be(typeof(Tag));
         property.Name.Should().Be("Fake");
         property.Type.Should().Be(typeof(string));
@@ -48,7 +48,7 @@ public class PropertyTests
     {
         var property = new Property("Name", typeof(string), Element.Tag.This);
 
-        property.Key.Should().Be("L5Sharp.Core.Tag.Name");
+        property.Key.Should().Be("L5Sharp.Core.Tag:Name");
         property.Origin.Should().Be(typeof(Tag));
         property.Parent.Should().BeEquivalentTo(Element.Tag.This);
         property.Path.Should().Be("Name");
@@ -85,8 +85,12 @@ public class PropertyTests
         var property = Element.Tag.Property("[PRE]");
 
         property.Should().NotBeNull();
+        property.Key.Should().Be("L5Sharp.Core.Tag:[PRE]");
         property.Origin.Should().Be(typeof(Tag));
+        property.Name.Should().Be("[PRE]");
         property.Type.Should().Be(typeof(Tag));
+        property.Parent.Should().BeEquivalentTo(Element.Tag.This);
+        property.Path.Should().Be("[PRE]");
     }
 
     [Test]
@@ -110,7 +114,7 @@ public class PropertyTests
         var property = origin.GetProperty("Name");
 
         property.Should().NotBeNull();
-        property.Key.Should().Be("L5Sharp.Core.Tag.Name");
+        property.Key.Should().Be("L5Sharp.Core.Tag:Name");
         property.Origin.Should().Be(typeof(Tag));
         property.Path.Should().Be("Name");
         property.Name.Should().Be("Name");
@@ -126,7 +130,7 @@ public class PropertyTests
         var property = origin.GetProperty("Radix.Name");
 
         property.Should().NotBeNull();
-        property.Key.Should().Be("L5Sharp.Core.Tag.Radix.Name");
+        property.Key.Should().Be("L5Sharp.Core.Tag:Radix.Name");
         property.Origin.Should().Be(typeof(Tag));
         property.Path.Should().Be("Radix.Name");
         property.Name.Should().Be("Name");
@@ -142,7 +146,7 @@ public class PropertyTests
         var property = origin.GetProperty("Members[1]");
 
         property.Should().NotBeNull();
-        property.Key.Should().Be("L5Sharp.Core.Tag.Members[1]");
+        property.Key.Should().Be("L5Sharp.Core.Tag:Members[1]");
         property.Origin.Should().Be(typeof(Tag));
         property.Path.Should().Be("Members[1]");
         property.Name.Should().Be("[1]");
@@ -280,7 +284,7 @@ public class PropertyTests
     {
         var property = Property.This(typeof(int));
 
-        property.Key.Should().Be("System.Int32.This");
+        property.Key.Should().Be("System.Int32:This");
         property.Origin.Should().Be(typeof(int));
         property.Name.Should().Be("This");
         property.Type.Should().Be(typeof(int));
@@ -292,7 +296,7 @@ public class PropertyTests
     {
         var property = Property.This(typeof(Tag));
 
-        property.Key.Should().Be("L5Sharp.Core.Tag.This");
+        property.Key.Should().Be("L5Sharp.Core.Tag:This");
         property.Origin.Should().Be(typeof(Tag));
         property.Name.Should().Be("This");
         property.Type.Should().Be(typeof(Tag));

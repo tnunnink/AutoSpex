@@ -10,6 +10,7 @@ namespace AutoSpex.Engine;
 /// </summary>
 public class Property : IEquatable<Property>
 {
+    private const char KeySeparator = ':';
     private const char MemberSeparator = '.';
     private const char IndexOpenSeparator = '[';
     private const char IndexCloseSeparator = ']';
@@ -75,7 +76,7 @@ public class Property : IEquatable<Property>
     /// <summary>
     /// The string that uniquely identifies this property using the origin type and property path.
     /// </summary>
-    public string Key => string.Concat(Origin, MemberSeparator, Path).TrimEnd(MemberSeparator);
+    public string Key => string.Concat(Origin, KeySeparator, Path).TrimEnd(KeySeparator);
 
     /// <summary>
     /// The root or originating type to which this property belongs.
