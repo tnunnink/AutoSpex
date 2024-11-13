@@ -16,10 +16,13 @@
   Verifications: [
     {
       Type: L5Sharp.Core.Tag,
-      Property: L5Sharp.Core.Tag:DataType,
-      Negation: Not,
-      Operation: Null Or Empty,
-      Argument: null
+      Property: L5Sharp.Core.Tag:Value,
+      Negation: Is,
+      Operation: Between,
+      Argument: {
+        Group: Default,
+        Data: null
+      }
     }
   ]
 }

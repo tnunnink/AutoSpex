@@ -1,0 +1,10 @@
+﻿{
+  Type: L5Sharp.Core.Tag,
+  Property: L5Sharp.Core.Tag:Name,
+  Negation: Is,
+  Operation: Equal To,
+  Argument: {
+    Group: Text,
+    Data: Testing
+  }
+}
