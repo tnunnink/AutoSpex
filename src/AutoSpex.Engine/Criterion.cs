@@ -1,6 +1,8 @@
 ﻿using System.Linq.Expressions;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 using Ardalis.SmartEnum.SystemTextJson;
+using L5Sharp.Core;
 
 namespace AutoSpex.Engine;
 
@@ -40,12 +42,12 @@ public class Criterion
     /// <param name="property">The name of the property for which to retrieve the value from the candidate.</param>
     /// <param name="operation">The operation to perform when evaluating.</param>
     /// <param name="argument">The argument value to use when evaluating.</param>
-    public Criterion(Property? property, Operation operation, Argument? argument = default)
+    public Criterion(Property? property, Operation operation, object? argument = default)
     {
         Type = property?.Origin ?? typeof(object);
         Property = property ?? Property.Default;
         Operation = operation;
-        Argument = argument ?? Argument.Default;
+        Argument = argument;
     }
 
     /// <summary>
@@ -54,7 +56,7 @@ public class Criterion
     /// <param name="property">The name of the property for which to retrieve the value from the candidate.</param>
     /// <param name="operation">The operation to perform when evaluating.</param>
     /// <param name="arguments">The argument values to use when evaluating.</param>
-    public Criterion(Property? property, Operation operation, params Argument[] arguments)
+    public Criterion(Property? property, Operation operation, params object[] arguments)
     {
         Type = property?.Origin ?? typeof(object);
         Property = property ?? Property.Default;
@@ -91,19 +93,41 @@ public class Criterion
     public Operation Operation { get; set; } = Operation.None;
 
     /// <summary>
-    /// The collection of argument values required for the operation to execute.
+    /// The value of the argument, which is just a generic object, since the user can enter primitive or complex types.
+    /// This value is persisted and materialized using a custom JSON serializer.
     /// </summary>
-    public Argument Argument { get; set; } = Argument.Default;
+    [JsonConverter(typeof(JsonObjectConverter))]
+    public object? Argument { get; set; }
 
     /// <summary>
-    /// Represents a criterion that always evaluates to true.
+    /// Parses the given text to create a new <see cref="Criterion"/> instance based on the specified type and text.
     /// </summary>
-    public static Criterion True => new() { Operation = Operation.None, Negation = Negation.Not };
+    /// <param name="type">The type to be used for the Criterion instance.</param>
+    /// <param name="text">The text containing the criteria information.</param>
+    /// <returns>A new <see cref="Criterion"/> instance based on the provided type and text.</returns>
+    public static Criterion Parse(Type type, string text)
+    {
+        var operations = string.Join("|", Operation.List.Select(o => o.Name));
+        var pattern = $"(^[^\\ ]+) (Is|Not) ({operations})(.*?)$";
 
-    /// <summary>
-    /// Represents a criterion that always evaluates to false.
-    /// </summary>
-    public static Criterion False => new() { Operation = Operation.None };
+        var match = Regex.Match(text, pattern);
+        if (!match.Success || match.Groups.Count < 3)
+            throw new FormatException($"The input text '{text}' is not a valid Criterion pattern.");
+
+        var property = Property.This(type).GetProperty(match.Groups[1].Value);
+        var negation = Negation.FromName(match.Groups[2].Value);
+        var operation = Operation.FromName(match.Groups[3].Value);
+        var argument = ParseArgument(property, operation, match.Groups[4].Value.Trim());
+
+        return new Criterion
+        {
+            Type = type,
+            Property = property,
+            Negation = negation,
+            Operation = operation,
+            Argument = argument
+        };
+    }
 
     /// <summary>
     /// Evaluates a candidate object using the current state/properties of the criterion object.
@@ -116,7 +140,7 @@ public class Criterion
         {
             var value = Property != Property.Default ? Property.GetValue(candidate) : candidate;
             var valueType = value?.GetType();
-            var argument = Argument.ResolveAs(valueType);
+            var argument = ResolveArgument(Argument, valueType, candidate);
             var result = Operation.Execute(value, argument);
 
             return Negation.Satisfies(result)
@@ -145,20 +169,8 @@ public class Criterion
     public bool Contains(Criterion criterion)
     {
         if (ReferenceEquals(this, criterion)) return true;
-        if (Argument.Value is not Criterion other) return false;
+        if (Argument is not Criterion other) return false;
         return ReferenceEquals(other, criterion) || other.Contains(criterion);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="argument"></param>
-    /// <returns></returns>
-    public bool Contains(Argument argument)
-    {
-        if (ReferenceEquals(Argument, argument)) return true;
-        if (Argument.Value is not IEnumerable<Argument> arguments) return false;
-        return arguments.Any(a => ReferenceEquals(a, argument));
     }
 
     /// <summary>
@@ -178,19 +190,19 @@ public class Criterion
             Property = Property,
             Operation = Operation,
             Negation = Negation,
-            Argument = Argument.Duplicate()
+            Argument = Argument
         };
     }
 
     /// <inheritdoc />
     public override string ToString()
     {
-        var final = GetExpected().ToList();
+        var arguments = GetExpected().ToList();
 
-        var expected = final.Count switch
+        var expected = arguments.Count switch
         {
-            1 => final[0].ToText(),
-            > 1 => $"[{string.Join(',', final.Select(x => x.ToText()))}]",
+            1 => arguments[0].ToText(),
+            > 1 => $"[{string.Join(',', arguments.Select(x => x.ToText()))}]",
             _ => string.Empty
         };
 
@@ -206,7 +218,7 @@ public class Criterion
     public string GetCriteria()
     {
         var rootText = $"{Property.Path} {Negation} {Operation}";
-        var innerText = Argument is { Value: Criterion criterion } ? criterion.GetCriteria() : string.Empty;
+        var innerText = Argument is Criterion criterion ? criterion.GetCriteria() : string.Empty;
         return $"{rootText} {innerText}".Trim();
     }
 
@@ -217,10 +229,81 @@ public class Criterion
     /// A collection of object values that represent the final resolved (and perhaps nested) argument values for this
     /// criterion instance.
     /// </returns>
-    public IEnumerable<object> GetExpected() => Argument.Expected();
+    public IEnumerable<object> GetExpected() => Expected();
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="argument"></param>
+    /// <param name="type"></param>
+    /// <param name="candidate"></param>
+    /// <returns></returns>
+    private static object? ResolveArgument(object? argument, Type? type, object? candidate)
+    {
+        var value = argument switch
+        {
+            Criterion criterion => criterion,
+            Range range => new List<object?> { range.Min, range.Max },
+            Property property => property.GetValue(candidate),
+            List<object> collection => collection.Select(x => ResolveArgument(x, type, candidate)).ToList(),
+            string text when type is not null && type != typeof(string) => text.TryParse(type),
+            _ => argument
+        };
+
+        return value;
+    }
+
+    /// <summary>
+    /// Traverses the argument value and retrieves the final expected argument value(s).
+    /// Since an argument value may be a nested <see cref="Criterion"/> or collection of objects,
+    /// we want to check them and get the values which are going to be used in the operation.
+    /// </summary>
+    /// <returns>A collection of object values that represent the final arguments.</returns>
+    private IEnumerable<object> Expected()
+    {
+        return Argument switch
+        {
+            Criterion criterion => criterion.Expected(),
+            _ => Argument is not null ? [Argument] : []
+        };
+    }
 
     public static implicit operator Func<object, bool>(Criterion criterion) => x => criterion.Evaluate(x);
     public static implicit operator Expression<Func<object, bool>>(Criterion criterion) => criterion.ToExpression();
+
+    // ReSharper disable once ConvertIfStatementToSwitchStatement
+    private static object? ParseArgument(Property property, Operation operation, string text)
+    {
+        if (operation is UnaryOperation || string.IsNullOrEmpty(text))
+            return default;
+
+        if (operation is BinaryOperation)
+        {
+            return property.Group.TryParse(text, out var parsed) ? parsed : text;
+        }
+
+        if (operation is TernaryOperation)
+        {
+            var values = text.Split(" and ", StringSplitOptions.RemoveEmptyEntries);
+            return property.Group.TryParse(values[0], out var min) && property.Group.TryParse(values[1], out var max)
+                ? new Range(min, max)
+                : new Range();
+        }
+
+        if (operation is InOperation)
+        {
+            var values = text.TrimStart('[').TrimEnd(']').Split(',');
+            var list = values.Select(v => property.Group.TryParse(v, out var parsed) ? parsed : v).ToList();
+            return list;
+        }
+
+        if (operation is CollectionOperation)
+        {
+            return Parse(property.InnerType, text);
+        }
+
+        return default;
+    }
 
     /// <summary>
     /// Converts the current <see cref="Criterion"/> instance into an expression tree.

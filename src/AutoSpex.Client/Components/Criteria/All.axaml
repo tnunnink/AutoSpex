@@ -1,0 +1,43 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceInclude Source="ArgumentEntry.axaml" />
+        <ResourceInclude Source="ArgumentCollection.axaml" />
+        <ResourceInclude Source="ArgumentRange.axaml" />
+        <ResourceInclude Source="CriterionEntry.axaml" />
+        <ResourceInclude Source="CriterionListItem.axaml" />
+        <ResourceInclude Source="CriterionReplaceListItem.axaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <components:ArgumentSelector x:Key="ArgumentSelector" DefaultTemplate="{StaticResource ArgumentEntry}">
+
+        <components:ArgumentSelector.RangeTemplate>
+            <DataTemplate x:DataType="observers:ValueObserver">
+                <ContentControl
+                    Content="{Binding Value}"
+                    ContentTemplate="{StaticResource ArgumentRange}" />
+            </DataTemplate>
+        </components:ArgumentSelector.RangeTemplate>
+
+        <components:ArgumentSelector.CollectionTemplate>
+            <DataTemplate x:DataType="observers:ValueObserver">
+                <ContentControl
+                    Content="{Binding }"
+                    ContentTemplate="{StaticResource ArgumentCollection}" />
+            </DataTemplate>
+        </components:ArgumentSelector.CollectionTemplate>
+
+        <components:ArgumentSelector.CriterionTemplate>
+            <DataTemplate x:DataType="observers:ValueObserver">
+                <ContentControl
+                    Content="{Binding Value}"
+                    ContentTemplate="{StaticResource CriterionEntry}" />
+            </DataTemplate>
+        </components:ArgumentSelector.CriterionTemplate>
+
+    </components:ArgumentSelector>
+
+</ResourceDictionary>

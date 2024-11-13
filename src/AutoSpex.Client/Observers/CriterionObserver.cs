@@ -12,20 +12,16 @@ using AutoSpex.Engine;
 using Avalonia.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
-using CommunityToolkit.Mvvm.Messaging.Messages;
 using L5Sharp.Core;
-using Argument = AutoSpex.Engine.Argument;
+using Range = AutoSpex.Engine.Range;
 
 namespace AutoSpex.Client.Observers;
 
-public partial class CriterionObserver : Observer<Criterion>,
-    IRecipient<Observer.Get<CriterionObserver>>,
-    IRecipient<ArgumentObserver.SuggestionRequest>
+public partial class CriterionObserver : Observer<Criterion>
 {
     public CriterionObserver(Criterion model) : base(model)
     {
-        Argument = new ArgumentObserver(Model.Argument);
+        Argument = new ValueObserver(GetArgument, ParseArgument, SetArgument, GetSuggesstions);
 
         Track(nameof(Property));
         Track(nameof(Negation));
@@ -54,13 +50,15 @@ public partial class CriterionObserver : Observer<Criterion>,
         set => SetProperty(Model.Operation, value, Model, (c, o) => c.Operation = o, true);
     }
 
-    [ObservableProperty] private ArgumentObserver _argument;
+    [ObservableProperty] private ValueObserver _argument;
 
     public Func<string?, CancellationToken, Task<IEnumerable<object>>> PopulateProperties => GetProperties;
     public Func<string?, CancellationToken, Task<IEnumerable<object>>> PopulateOperations => GetOperations;
 
     /// <inheritdoc />
     protected override bool PromptForDeletion => false;
+
+    public bool AcceptsArgs => Operation != Operation.None && Operation is not UnaryOperation;
 
     /// <inheritdoc />
     /// <remarks>
@@ -76,15 +74,26 @@ public partial class CriterionObserver : Observer<Criterion>,
         {
             case nameof(Property):
                 Operation = Operation.Supports(Property) ? Operation : Operation.None;
+                OnPropertyChanged(nameof(AcceptsArgs));
                 break;
             case nameof(Operation):
-                UpdateArgument();
-                break;
-            case nameof(Argument):
-                Model.Argument = Argument.Model;
+                ResetArgument();
                 break;
         }
     }
+
+    /// <inheritdoc />
+    public override bool Filter(string? filter)
+    {
+        FilterText = filter;
+        
+        return Property.Path.Satisfies(filter) 
+               || Negation.Name.Satisfies(filter) 
+               || Operation.Name.Satisfies(filter) 
+               || Argument.Filter(filter);
+    }
+
+    #region Commands
 
     /// <summary>
     /// Command to update the configured <see cref="Property"/> for this Criterion given the input object.
@@ -133,30 +142,6 @@ public partial class CriterionObserver : Observer<Criterion>,
                 Operation = found ? parsed : Operation.None;
                 return;
         }
-    }
-
-    /// <summary>
-    /// Updates the criterion arguments collection based on the selected operation.
-    /// Each operation type expects a certain number of arguments (except for In).
-    /// Collection operations expect an inner criterion that's type needs to be the inner type of the collection.
-    /// </summary>
-    private void UpdateArgument()
-    {
-        Forget(Argument);
-        Argument.Dispose();
-
-        Model.Argument = Operation switch
-        {
-            NoneOperation => new Argument(),
-            BinaryOperation => new Argument(),
-            TernaryOperation => new Argument(new List<Argument> { new(), new() }),
-            CollectionOperation => new Argument(new Criterion(Property.InnerType)),
-            InOperation => new Argument(new List<Argument> { new() }),
-            _ => Model.Argument
-        };
-
-        Argument = new ArgumentObserver(Model.Argument);
-        Track(Argument);
     }
 
     /// <inheritdoc />
@@ -218,30 +203,7 @@ public partial class CriterionObserver : Observer<Criterion>,
         await clipboard.SetTextAsync(data);
     }
 
-    /// <summary>
-    /// Reply with this criterion observer instance if the id matches or the id is that of a child argument.
-    /// </summary>
-    public void Receive(Get<CriterionObserver> message)
-    {
-        if (message.HasReceivedResponse) return;
-
-        if (message.Predicate.Invoke(this))
-        {
-            message.Reply(this);
-        }
-    }
-
-    /// <summary>
-    /// Handle the suggesstion request for an argument by replying with the potential property options.
-    /// </summary>
-    public void Receive(ArgumentObserver.SuggestionRequest message)
-    {
-        if (!Model.Contains(message.Argument)) return;
-
-        Property.Type.GetOptions().Select(x => new ValueObserver(x))
-            .Where(v => v.Filter(message.Filter)).ToList()
-            .ForEach(message.Reply);
-    }
+    #endregion
 
     /// <summary>
     /// Retrieves a list of properties based on the specified filter.
@@ -262,12 +224,8 @@ public partial class CriterionObserver : Observer<Criterion>,
         //While we are inside an indexer, we want to suggest tag names from the source instead of properties.
         if (filter.Count(x => x == '[') != filter.Count(x => x == ']'))
         {
-            //Only support tag lookup for verifications because we need to use the filters to narrow the search space.
-            var spec = GetObserver<SpecObserver>(x => x.Verifications.Any(v => v.Id == Id));
-            if (spec is null) return [];
             var tagName = filter[(filter.LastIndexOf('[') + 1)..];
-            var message = Messenger.Send(new TagNameRequest(spec, tagName));
-            return await message.GetResponsesAsync(token);
+            return await GetTagNames(tagName, token);
         }
 
         var memeberIndex = filter.LastIndexOf('.');
@@ -290,6 +248,106 @@ public partial class CriterionObserver : Observer<Criterion>,
     }
 
     /// <summary>
+    /// Updates the criterion arguments collection based on the selected operation.
+    /// Each operation type expects a certain number of arguments (except for In).
+    /// Collection operations expect an inner criterion that's type needs to be the inner type of the collection.
+    /// </summary>
+    private void ResetArgument()
+    {
+        Model.Argument = Operation switch
+        {
+            TernaryOperation => new Range(),
+            InOperation => new List<object?>(),
+            CollectionOperation => new Criterion(Property.InnerType),
+            _ => null
+        };
+
+        Forget(Argument);
+        Argument = new ValueObserver(GetArgument, ParseArgument, SetArgument, GetSuggesstions);
+        Track(Argument);
+    }
+
+    /// <summary>
+    /// Updates the argument based on the received value type from the entry field.
+    /// If user enters simple text we would like to parse it as the strong type to let our data templates work.
+    /// If user enters a value observer object, then it was selected from the suggestions, and we can just use that.
+    /// Anything else just wrap in a value observer and set accordingly.
+    /// </summary>
+    private object? GetArgument()
+    {
+        return Model.Argument switch
+        {
+            Range range => new RangeObserver(range),
+            List<object?> list => list.ToObserver(x => new ValueObserver(x)),
+            Criterion criterion => new CriterionObserver(criterion),
+            _ => Model.Argument
+        };
+    }
+
+    /// <summary>
+    /// Updates the argument based on the received value type from the entry field. It is expected that this value is
+    /// the parsed value that we can directly set argument to.
+    /// </summary>
+    private void SetArgument(object? value)
+    {
+        Model.Argument = value;
+    }
+
+    /// <summary>
+    /// Parses the input value to the type expected by the criterion property.
+    /// If user enters simple text we would like to parse it as the strong type to let our data templates work.
+    /// If user enters a value observer object, then it was selected from the suggestions, and we can just use that.
+    /// Anything else just wrap in a value observer and set accordingly.
+    /// </summary>
+    private object? ParseArgument(object? value)
+    {
+        var group = Property.Group;
+
+        return value switch
+        {
+            string text when group.TryParse(text, out var parsed) && parsed is not null => parsed,
+            ValueObserver observer => observer.Value,
+            _ => value
+        };
+    }
+
+    /// <summary>
+    /// Attempts to get the loaded target source and find suggestable values based on the current propert and
+    /// input filter. This code is handled in the source object, and will basically query the file and use the
+    /// configured property to pull out strongly typed values so the user can easily configure the criterion as needed.
+    /// </summary>
+    private Task<IEnumerable<object>> GetSuggesstions(string? filter, CancellationToken token)
+    {
+        if (!TryGetSource(out var source) || token.IsCancellationRequested)
+            return Task.FromResult(Enumerable.Empty<object>());
+
+        var values = source.Model.FindValues(Property)
+            .Select(v => new ValueObserver(v))
+            .Where(x => x.Filter(filter))
+            .Cast<object>();
+
+        return Task.FromResult(values);
+    }
+
+    /// <summary>
+    /// Attempts to get the loaded target source and fine suggestable tag names based on the current spec and input
+    /// filter. This code is handled in the source object, and will basically query the file and use the
+    /// configured data to pull out known tag names so the user can easily configure the criterion as needed.
+    /// </summary>
+    /// <param name="filter"></param>
+    /// <param name="token"></param>
+    /// <returns></returns>
+    private Task<IEnumerable<object>> GetTagNames(string? filter, CancellationToken token)
+    {
+        if (!TryGetSource(out var source) || !TryGetSpec(out var spec) || token.IsCancellationRequested)
+            return Task.FromResult(Enumerable.Empty<object>());
+
+        var tagNames = source.Model.FindTagNames(spec, filter).Cast<object>();
+
+        return Task.FromResult(tagNames);
+    }
+
+    /// <summary>
     /// Tries to get the corresponding SpecObserver for this criterion instance.
     /// </summary>
     private bool TryGetSpec(out SpecObserver spec)
@@ -303,6 +361,23 @@ public partial class CriterionObserver : Observer<Criterion>,
         }
 
         spec = result;
+        return true;
+    }
+
+    /// <summary>
+    /// Tries to get the loaded target soruce to use as the basis for finding suggestible data.
+    /// </summary>
+    private bool TryGetSource(out SourceObserver source)
+    {
+        var result = GetObserver<SourceObserver>(s => s.Model is { IsTarget: true, Content: not null });
+
+        if (result is null)
+        {
+            source = default!;
+            return false;
+        }
+
+        source = result;
         return true;
     }
 
@@ -330,7 +405,7 @@ public partial class CriterionObserver : Observer<Criterion>,
             Header = "Delete",
             Icon = Resource.Find("IconFilledTrash"),
             Classes = "danger",
-            Command = DeleteSelectedCommand,
+            Command = DeleteCommand,
             Gesture = new KeyGesture(Key.Delete)
         };
     }
@@ -363,24 +438,6 @@ public partial class CriterionObserver : Observer<Criterion>,
             Command = DeleteSelectedCommand,
             Gesture = new KeyGesture(Key.Delete)
         };
-    }
-
-    /// <summary>
-    /// A request message the retrieve all potential tag name suggesstions for tag type properties
-    /// when the user inputs a collection indexer expression.
-    /// </summary>
-    public class TagNameRequest(Spec spec, string? filter) : AsyncCollectionRequestMessage<TagName>
-    {
-        /// <summary>
-        /// The spec instance that the criterion belongs to. We need to use this to execute filters to narrow the
-        /// search space down to applicable tag names.
-        /// </summary>
-        public Spec Spec { get; } = spec;
-
-        /// <summary>
-        /// The current entered filter text for the property which we use to filter the list further.
-        /// </summary>
-        public string? Filter { get; } = filter;
     }
 
     public static implicit operator Criterion(CriterionObserver observer) => observer.Model;

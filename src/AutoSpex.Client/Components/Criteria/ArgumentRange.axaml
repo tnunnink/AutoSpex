@@ -1,0 +1,37 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers">
+
+    <Design.PreviewWith>
+        <Border Padding="20" Height="100" Width="300">
+            <ContentControl
+                VerticalAlignment="Center" HorizontalAlignment="Center"
+                Content="{x:Static components:TestData.RangeValue}"
+                ContentTemplate="{DynamicResource ArgumentRange}" />
+        </Border>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="ArgumentRange" x:DataType="observers:RangeObserver">
+
+        <StackPanel Orientation="Horizontal" Spacing="2">
+
+            <ContentControl
+                Content="{Binding Min}"
+                ContentTemplate="{StaticResource ArgumentEntry}" />
+
+            <TextBlock
+                x:Name="AndText"
+                Text="and"
+                Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+
+            <ContentControl
+                Content="{Binding Max}"
+                ContentTemplate="{StaticResource ArgumentEntry}" />
+
+        </StackPanel>
+
+    </DataTemplate>
+
+</ResourceDictionary>

@@ -1,0 +1,45 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+
+    <Design.PreviewWith>
+        <Border Padding="20" Height="300" Width="600">
+            <StackPanel Spacing="10" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <ContentControl
+                    Content="{x:Static components:TestData.NullValue}"
+                    ContentTemplate="{DynamicResource ArgumentEntry}" />
+                <ContentControl
+                    Content="{x:Static components:TestData.BooleanTrueValue}"
+                    ContentTemplate="{DynamicResource ArgumentEntry}" />
+                <ContentControl
+                    Content="{x:Static components:TestData.RadixValue}"
+                    ContentTemplate="{DynamicResource ArgumentEntry}" />
+                <ContentControl
+                    Content="{x:Static components:TestData.IntegerValue}"
+                    ContentTemplate="{DynamicResource ArgumentEntry}" />
+                <ContentControl
+                    Content="{x:Static components:TestData.DoubleValue}"
+                    ContentTemplate="{DynamicResource ArgumentEntry}" />
+                <ContentControl
+                    Content="{x:Static components:TestData.TextValue}"
+                    ContentTemplate="{DynamicResource ArgumentEntry}" />
+            </StackPanel>
+        </Border>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="ArgumentEntry" x:DataType="observers:ValueObserver">
+
+        <controls:Entry
+            Watermark="Enter value"
+            Value="{Binding }"
+            ValueTemplate="{StaticResource ValueDisplay}"
+            ItemTemplate="{StaticResource ValueItemTemplate}"
+            IsEmpty="{Binding IsEmpty}"
+            Populate="{Binding Suggestions}"
+            CommitCommand="{Binding UpdateValueCommand}" />
+
+    </DataTemplate>
+
+</ResourceDictionary>

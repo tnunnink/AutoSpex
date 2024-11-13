@@ -1,0 +1,75 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+
+    <Design.PreviewWith>
+        <Border Padding="20" Height="300" Width="300">
+            <ContentControl
+                Content="{x:Static components:TestData.NumberCollectionValue}"
+                ContentTemplate="{DynamicResource ArgumentCollection}"
+                VerticalAlignment="Top" HorizontalAlignment="Center" />
+        </Border>
+    </Design.PreviewWith>
+
+
+    <DataTemplate x:Key="ArgumentCollection" x:DataType="observers:ValueObserver">
+
+        <Button Theme="{a:ControlTheme ButtonSubtle}">
+
+            <ContentControl
+                Content="{Binding }"
+                ContentTemplate="{StaticResource ValueDisplay}"
+                FontFamily="{a:ThemeResource CodeFontFamily}" />
+
+            <Button.Flyout>
+                <Flyout Placement="Bottom">
+
+                    <StackPanel Margin="5" Spacing="3">
+
+                        <ListBox
+                            ItemsSource="{Binding Value}"
+                            ItemContainerTheme="{StaticResource ListBoxItemSimple}">
+
+                            <ListBox.ItemTemplate>
+                                <DataTemplate x:DataType="observers:ValueObserver">
+                                    <Border Padding="{a:ThemeResource ButtonPadding}">
+                                        <Grid ColumnDefinitions="*,Auto">
+                                            <ContentControl
+                                                Content="{Binding }"
+                                                ContentTemplate="{StaticResource ValueDisplay}"
+                                                FontFamily="{a:ThemeResource CodeFontFamily}" />
+                                            <Border Grid.Column="1" Height="18" Width="18" Margin="5 0 -5 0">
+                                                <Button
+                                                    IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}"
+                                                    Command="{Binding $parent[ListBox].((observers:ValueObserver)DataContext).RemoveValueCommand, FallbackValue={x:Null}}"
+                                                    CommandParameter="{Binding}"
+                                                    Theme="{StaticResource IconButtonSmall}"
+                                                    properties:Icon.Theme="{StaticResource IconClose}"
+                                                    Height="16" Width="16" FontSize="8" Padding="4" />
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+
+                        </ListBox>
+
+                        <controls:Entry
+                            Watermark="Add value"
+                            IsEmpty="True"
+                            ItemTemplate="{StaticResource ValueItemTemplate}"
+                            Populate="{Binding Suggestions}"
+                            CommitCommand="{Binding AddValueCommand}" />
+
+                    </StackPanel>
+                </Flyout>
+            </Button.Flyout>
+        </Button>
+
+    </DataTemplate>
+
+</ResourceDictionary>
