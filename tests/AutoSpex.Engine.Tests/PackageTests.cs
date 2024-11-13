@@ -27,16 +27,15 @@ public class PackageTests
             s.Query(Element.Tag);
             s.Filter("Name", Operation.EqualTo, "yetAnotherName");
             s.Verify("Value", Negation.Not, Operation.EqualTo, 678);
-            s.VerificationInclusion = Inclusion.Any;
         });
-        
+
         var package = new Package(collection, 10000);
 
         var json = JsonSerializer.Serialize(package);
 
         return VerifyJson(json);
     }
-    
+
     [Test]
     public void ShouldBeEquivalentWhenDeserialized()
     {
@@ -58,13 +57,12 @@ public class PackageTests
             s.Query(Element.Tag);
             s.Filter("Name", Operation.EqualTo, "yetAnotherName");
             s.Verify("Value", Negation.Not, Operation.EqualTo, 678);
-            s.VerificationInclusion = Inclusion.Any;
         });
-        
+
         var package = new Package(collection, 10000);
         var json = JsonSerializer.Serialize(package);
 
-        var result = JsonSerializer.Deserialize<Package>(json, new JsonSerializerOptions {IncludeFields = true});
+        var result = JsonSerializer.Deserialize<Package>(json, new JsonSerializerOptions { IncludeFields = true });
 
         result.Should().BeEquivalentTo(package);
     }
