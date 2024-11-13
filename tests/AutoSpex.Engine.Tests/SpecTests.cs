@@ -15,8 +15,6 @@ public class SpecTests
         spec.Element.Should().Be(Element.Default);
         spec.Filters.Should().BeEmpty();
         spec.Verifications.Should().BeEmpty();
-        spec.FilterInclusion.Should().Be(Inclusion.All);
-        spec.VerificationInclusion.Should().Be(Inclusion.All);
     }
 
     [Test]
@@ -68,7 +66,7 @@ public class SpecTests
         var content = L5X.Load(Known.Test);
 
         spec.Query(Element.Module)
-            .Verify("Inhibited", Negation.Is, Operation.False);
+            .Verify("Inhibited", Negation.Is, Operation.EqualTo, false);
 
         var verification = await spec.RunAsync(content);
 
@@ -86,7 +84,7 @@ public class SpecTests
             var spec = Spec.Configure(c =>
             {
                 c.Query(Element.Module);
-                c.Verify("Inhibited", Negation.Is, Operation.False);
+                c.Verify("Inhibited", Negation.Is, Operation.EqualTo, false);
             });
 
             var verification = spec.Run(content);
@@ -116,6 +114,18 @@ public class SpecTests
     }
 
     [Test]
+    public Task Serialize_ConfiguredSpecWithRange_ShouldBeVerified()
+    {
+        var spec = new Spec();
+
+        spec.Query(Element.Tag)
+            .Filter("Name", Operation.Containing, "Test")
+            .Verify("Value", Negation.Is, Operation.Between, new Range(1, 10));
+
+        return VerifyJson(JsonSerializer.Serialize(spec));
+    }
+
+    [Test]
     public void Deserialize_WhenCalled_ShouldBeExpected()
     {
         var spec = new Spec();
@@ -127,10 +137,22 @@ public class SpecTests
         var result = JsonSerializer.Deserialize<Spec>(data);
 
         result?.Element.Should().Be(Element.Tag);
-        result?.FilterInclusion.Should().Be(Inclusion.All);
-        result?.VerificationInclusion.Should().Be(Inclusion.All);
         result?.Filters.Should().HaveCount(1);
         result?.Verifications.Should().HaveCount(1);
+
+        result.Should().BeEquivalentTo(spec);
+    }
+
+    [Test]
+    public void Deserialize_SpecWithRange_ShouldBeExpected()
+    {
+        var spec = new Spec();
+        spec.Query(Element.Tag)
+            .Filter("Name", Operation.Containing, "Test")
+            .Verify("Value", Negation.Is, Operation.Between, new Range(1, 10));
+        var data = JsonSerializer.Serialize(spec);
+
+        var result = JsonSerializer.Deserialize<Spec>(data);
 
         result.Should().BeEquivalentTo(spec);
     }
