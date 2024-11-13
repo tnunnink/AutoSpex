@@ -37,7 +37,7 @@
                         ToolTip.Tip="Add Filter"
                         ToolTip.Placement="BottomEdgeAlignedRight" />
 
-                    <Button
+                    <!--<Button
                         Theme="{StaticResource IconButton}"
                         properties:Icon.Theme="{StaticResource IconEllipsis}"
                         ToolTip.Tip="Options"
@@ -49,7 +49,7 @@
                                     ContentTemplate="{StaticResource CriteriaActions}" />
                             </Flyout>
                         </Button.Flyout>
-                    </Button>
+                    </Button>-->
 
                 </StackPanel>
 
