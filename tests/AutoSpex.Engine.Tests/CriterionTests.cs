@@ -1,4 +1,6 @@
 ﻿using System.Linq.Expressions;
+using System.Text.Json;
+using Task = System.Threading.Tasks.Task;
 
 namespace AutoSpex.Engine.Tests;
 
@@ -14,8 +16,7 @@ public class CriterionTests
         criterion.Type.Should().Be(typeof(object));
         criterion.Property.Should().Be(Property.Default);
         criterion.Operation.Should().Be(Operation.None);
-        criterion.Argument.Should().NotBeNull();
-        criterion.Argument.Value.Should().BeNull();
+        criterion.Argument.Should().BeNull();
     }
 
     [Test]
@@ -26,8 +27,8 @@ public class CriterionTests
         criterion.Type.Should().Be(typeof(Tag));
         criterion.Property.Should().Be(Element.Tag.Property("Value"));
         criterion.Operation.Should().Be(Operation.Between);
-        criterion.Argument.Value.Should().BeOfType<List<Argument>>();
-        criterion.Argument.Value.As<List<Argument>>().Should().HaveCount(2);
+        criterion.Argument.Should().BeOfType<List<object>>();
+        criterion.Argument.As<List<object>>().Should().HaveCount(2);
     }
 
     [Test]
@@ -39,8 +40,8 @@ public class CriterionTests
         criterion.Type.Should().Be(typeof(Tag));
         criterion.Property.Should().Be(Element.Tag.Property("Members"));
         criterion.Operation.Should().Be(Operation.Any);
-        criterion.Argument.Value.Should().BeOfType<Criterion>();
-        criterion.Argument.Value.Should().BeEquivalentTo(innerCriterion);
+        criterion.Argument.Should().BeOfType<Criterion>();
+        criterion.Argument.Should().BeEquivalentTo(innerCriterion);
     }
 
     [Test]
@@ -53,18 +54,6 @@ public class CriterionTests
         var evaluation = criterion.Evaluate(tag);
 
         evaluation.Result.Should().Be(ResultState.Passed);
-    }
-
-    [Test]
-    public void Evaluate_StringPropertyWithNumericArguments_ShouldHaveFailedButNotErrorBecauseTheArgumentsAreConverted()
-    {
-        var tag = new Tag { Name = "Test" };
-
-        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Between, 1, 10);
-
-        var evaluation = criterion.Evaluate(tag);
-
-        evaluation.Result.Should().Be(ResultState.Failed);
     }
 
     [Test]
@@ -93,54 +82,6 @@ public class CriterionTests
         result.Should().BeTrue();
     }
 
-    /*[Test]
-    public void VariableArgument_WhenEvaluated_ShouldRunCorrectly()
-    {
-        var tag = new Tag { Name = "MyTestTag" };
-        var variable = new Variable("MyVar", "Test");
-        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Containing, variable.Reference());
-
-        var eval = criterion.Evaluate(tag);
-
-        eval.Result.Should().Be(ResultState.Passed);
-    }
-
-    [Test]
-    public void VariableArgument_EnumStringValue_ShouldRunCorrectly()
-    {
-        var tag = new Tag { Name = "MyTestTag", Value = 123 };
-        var variable = new Variable("MyVar", "Decimal");
-        var criterion = new Criterion(Element.Tag.Property("Radix"), Operation.EqualTo, variable.Reference());
-
-        var eval = criterion.Evaluate(tag);
-
-        eval.Result.Should().Be(ResultState.Passed);
-    }
-
-    [Test]
-    public void VariableArgument_LogixTypeStringValue_ShouldRunCorrectly()
-    {
-        var tag = new Tag { Name = "TestTag", Value = 1.21f };
-        var variable = new Variable("Value", "1.221");
-        var criterion = new Criterion(Element.Tag.Property("Value"), Operation.GreaterThan, variable.Reference());
-
-        var eval = criterion.Evaluate(tag);
-
-        eval.Result.Should().Be(ResultState.Failed);
-    }
-
-    [Test]
-    public void VariableArgument_LogixTypeFloatEquals_ShouldRunCorrectly()
-    {
-        var tag = new Tag { Name = "TestTag", Value = 1.2345f };
-        var variable = new Variable("Value", new REAL(1.2345f));
-        var criterion = new Criterion(Element.Tag.Property("Value"), Operation.EqualTo, variable.Reference());
-
-        var eval = criterion.Evaluate(tag);
-
-        eval.Result.Should().Be(ResultState.Passed);
-    }*/
-
     [Test]
     public void ToString_SimpleStringArgument_ShouldBeExpected()
     {
@@ -164,11 +105,11 @@ public class CriterionTests
     [Test]
     public void ToString_SimpleUnaryOperation_ShouldBeExpected()
     {
-        var criterion = new Criterion(Element.Tag.Property("Constant"), Operation.False);
+        var criterion = new Criterion(Element.Tag.Property("Constant"), Operation.Null);
 
         var result = criterion.ToString();
 
-        result.Should().Be("Constant Is False");
+        result.Should().Be("Constant Is Null");
     }
 
     [Test]
@@ -183,62 +124,161 @@ public class CriterionTests
     }
 
     [Test]
-    public void True_WhenEvaluatedWithSomeString_ShouldBePassed()
+    public void Parse_ValidExampleUnaryOperationOnTag_ShouldBeExpected()
     {
-        var criterion = Criterion.True;
+        var type = typeof(Tag);
+        const string text = "TagName Is Null";
 
-        var evaluation = criterion.Evaluate("This should not matter");
+        var criterion = Criterion.Parse(type, text);
 
-        evaluation.Result.Should().Be(ResultState.Passed);
+        criterion.Should().NotBeNull();
+        criterion.Type.Should().Be(typeof(Tag));
+        criterion.Property.Should().Be(Property.This(type).GetProperty("TagName"));
+        criterion.Negation.Should().Be(Negation.Is);
+        criterion.Operation.Should().Be(Operation.Null);
+        criterion.Argument.Should().BeNull();
     }
 
     [Test]
-    public void True_WhenEvaluatedWithFalse_ShouldBePassed()
+    public void Parse_ValidExampleBinaryOperationOnTag_ShouldBeExpected()
     {
-        var criterion = Criterion.True;
+        var type = typeof(Tag);
+        const string text = "Value Is Equal To 123";
 
-        var evaluation = criterion.Evaluate(false);
+        var criterion = Criterion.Parse(type, text);
 
-        evaluation.Result.Should().Be(ResultState.Passed);
+        criterion.Should().NotBeNull();
+        criterion.Type.Should().Be(typeof(Tag));
+        criterion.Property.Should().Be(Property.This(type).GetProperty("Value"));
+        criterion.Negation.Should().Be(Negation.Is);
+        criterion.Operation.Should().Be(Operation.EqualTo);
+        criterion.Argument.Should().Be(123);
     }
 
     [Test]
-    public void True_WhenEvaluatedWithNull_ShouldBePassed()
+    public void Parse_ValidExampleTernaryOperationOnTag_ShouldBeExpected()
     {
-        var criterion = Criterion.True;
+        var type = typeof(Tag);
+        const string text = "Value Is Between 1 and 10";
 
-        var evaluation = criterion.Evaluate(null!);
+        var criterion = Criterion.Parse(type, text);
 
-        evaluation.Result.Should().Be(ResultState.Passed);
+        criterion.Should().NotBeNull();
+        criterion.Type.Should().Be(typeof(Tag));
+        criterion.Property.Should().Be(Property.This(type).GetProperty("Value"));
+        criterion.Negation.Should().Be(Negation.Is);
+        criterion.Operation.Should().Be(Operation.Between);
+        criterion.Argument.Should().BeEquivalentTo(new Range(1, 10));
     }
 
     [Test]
-    public void False_WhenEvaluatedWithSomeString_ShouldBeFailed()
+    public void Parse_ValidExampleCollectionOperationOnTag_ShouldBeExpected()
     {
-        var criterion = Criterion.False;
+        var type = typeof(Tag);
+        const string text = "Members Is Any TagName Is Containing This is some text";
 
-        var evaluation = criterion.Evaluate("This should not matter");
+        var criterion = Criterion.Parse(type, text);
 
-        evaluation.Result.Should().Be(ResultState.Failed);
+        criterion.Should().NotBeNull();
+        criterion.Type.Should().Be(typeof(Tag));
+        criterion.Property.Should().Be(Property.This(type).GetProperty("Members"));
+        criterion.Negation.Should().Be(Negation.Is);
+        criterion.Operation.Should().Be(Operation.Any);
+        criterion.Argument.Should().BeOfType<Criterion>();
+        criterion.Argument.As<Criterion>().Property.Should().Be(Property.This(typeof(Tag)).GetProperty("TagName"));
+        criterion.Argument.As<Criterion>().Negation.Should().Be(Negation.Is);
+        criterion.Argument.As<Criterion>().Operation.Should().Be(Operation.Containing);
+        criterion.Argument.As<Criterion>().Argument.Should().Be("This is some text");
     }
 
     [Test]
-    public void False_WhenEvaluatedWithFalse_ShouldBeFailed()
+    public void Parse_ValidExampleInOperationOnTagEnum_ShouldBeExpected()
     {
-        var criterion = Criterion.False;
+        var type = typeof(Tag);
+        const string text = "Radix Not In [Decimal,Octal,Binary]";
 
-        var evaluation = criterion.Evaluate(false);
+        var criterion = Criterion.Parse(type, text);
 
-        evaluation.Result.Should().Be(ResultState.Failed);
+        criterion.Should().NotBeNull();
+        criterion.Type.Should().Be(typeof(Tag));
+        criterion.Property.Should().Be(Property.This(type).GetProperty("Radix"));
+        criterion.Negation.Should().Be(Negation.Not);
+        criterion.Operation.Should().Be(Operation.In);
+        criterion.Argument.Should().BeOfType<List<object>>();
+        criterion.Argument.As<List<object>>().Should().ContainInOrder([Radix.Decimal, Radix.Octal, Radix.Binary]);
     }
 
     [Test]
-    public void False_WhenEvaluatedWithNull_ShouldBeFailed()
+    public void Parse_InvalidPropertyName_ShouldWorkButNotParseValue()
     {
-        var criterion = Criterion.False;
+        var type = typeof(Tag);
+        const string text = "WTF Not Equal To Something";
 
-        var evaluation = criterion.Evaluate(null!);
+        var criterion = Criterion.Parse(type, text);
 
-        evaluation.Result.Should().Be(ResultState.Failed);
+        criterion.Should().NotBeNull();
+        criterion.Type.Should().Be(typeof(Tag));
+        criterion.Property.Should().Be(Property.This(type).GetProperty("WTF"));
+        criterion.Negation.Should().Be(Negation.Not);
+        criterion.Operation.Should().Be(Operation.EqualTo);
+        criterion.Argument.Should().Be("Something");
+    }
+
+    [Test]
+    public void Parse_InvalidNegation_ShouldThrowException()
+    {
+        var type = typeof(Tag);
+        const string text = "TagName IsNot Equal To Something";
+
+        FluentActions.Invoking(() => Criterion.Parse(type, text)).Should().Throw<FormatException>();
+    }
+
+    [Test]
+    public void Parse_InvalidOperation_ShouldThrowException()
+    {
+        var type = typeof(Tag);
+        const string text = "TagName Is Whatever Something";
+
+        FluentActions.Invoking(() => Criterion.Parse(type, text)).Should().Throw<FormatException>();
+    }
+
+    [Test]
+    public Task Serialize_ValidCriterion_ShouldBeVerified()
+    {
+        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.EqualTo, "Testing");
+
+        var json = JsonSerializer.Serialize(criterion);
+
+        return VerifyJson(json);
+    }
+
+    [Test]
+    public Task Serialize_ConfiguredSpecWithRange_ShouldBeVerified()
+    {
+        var spec = new Spec();
+
+        spec.Query(Element.Tag)
+            .Filter("Name", Operation.Containing, "Test")
+            .Verify("Value", Negation.Is, Operation.Between, new Range(1, 10));
+
+        return VerifyJson(JsonSerializer.Serialize(spec));
+    }
+
+    [Test]
+    public void Deserialize_WhenCalled_ShouldBeExpected()
+    {
+        var spec = new Spec();
+        spec.Query(Element.Tag)
+            .Filter("Name", Operation.Containing, "Test")
+            .Verify("DataType", Negation.Not, Operation.NullOrEmpty);
+        var data = JsonSerializer.Serialize(spec);
+
+        var result = JsonSerializer.Deserialize<Spec>(data);
+
+        result?.Element.Should().Be(Element.Tag);
+        result?.Filters.Should().HaveCount(1);
+        result?.Verifications.Should().HaveCount(1);
+
+        result.Should().BeEquivalentTo(spec);
     }
 }
