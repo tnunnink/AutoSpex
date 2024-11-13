@@ -1,131 +1,46 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
              xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
              x:Class="AutoSpex.Client.Pages.SpecsPage"
              x:DataType="pages:SpecsPageModel">
 
     <Design.Height>800</Design.Height>
     <Design.Width>1000</Design.Width>
 
-    <Grid RowDefinitions="Auto,Auto,*" Margin="20">
+    <Grid RowDefinitions="Auto,*" Margin="20">
 
-        <Grid ColumnDefinitions="*,Auto" Margin="0 0 0 20">
+        <Grid ColumnDefinitions="*,Auto" Margin="0 0 0 10">
 
-            <StackPanel Spacing="3">
-                <TextBlock
-                    Text="Specifications"
-                    FontSize="{a:ThemeResource DefaultFontSizeLarge}"
-                    FontWeight="{a:ThemeResource HeadingFontWeightLarge}" />
-                <TextBlock
-                    Text="View and manage all specification configured for this container."
-                    Classes="faint" />
-            </StackPanel>
-
-            <Button
-                Grid.Column="1"
-                Command="{Binding AddSpecCommand}"
-                Theme="{a:ControlTheme ButtonSolid}"
-                VerticalAlignment="Center"
-                Classes="accent">
-                <StackPanel Orientation="Horizontal" Spacing="7">
-                    <PathIcon
-                        Theme="{StaticResource IconAdd}"
-                        Foreground="{Binding $parent[Button].Foreground}"
-                        Classes="size-sm" />
-                    <TextBlock
-                        Text="Add Spec"
-                        FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
-                </StackPanel>
-            </Button>
+            <TextBlock
+                Text="View and manage all specification configured for this container."
+                Classes="faint" />
 
         </Grid>
 
-        <Border
+
+        <controls:ListView
             Grid.Row="1"
-            Background="{a:ThemeResource Container2BackgroundBrush}"
-            BorderBrush="{a:ThemeResource Container1BorderBrush}"
-            BorderThickness="1"
-            CornerRadius="4 4 0 0"
-            MinHeight="40">
+            ItemsSource="{Binding Specs}"
+            SelectedItems="{Binding Selected}"
+            ItemTemplate="{StaticResource NodeListItem}"
+            Filter="{Binding Filter}"
+            HasItems="{Binding Specs.HasItems}"
+            DefaultIcon="{StaticResource IconFilledClipboard}"
+            DefaultMessage="No specs defined"
+            DefaultCaption="Add a spec to this collection to get started">
 
-            <Grid ColumnDefinitions="*,Auto">
+            <controls:ListView.Header>
+                <Button
+                    Command="{Binding AddSpecCommand}"
+                    Theme="{StaticResource IconButton}"
+                    properties:Icon.Theme="{StaticResource IconAdd}"
+                    VerticalAlignment="Center"
+                    Classes="accent" />
+            </controls:ListView.Header>
 
-                <TextBox
-                    Grid.Column="0"
-                    Text="{Binding Filter}"
-                    Watermark="Search specs"
-                    Theme="{StaticResource TextBoxSimple}"
-                    FontSize="{a:ThemeResource DefaultFontSizeSmall}"
-                    VerticalContentAlignment="Center"
-                    BorderBrush="{a:ThemeResource Container1BorderBrush}"
-                    CornerRadius="0" BorderThickness="0" Padding="0 10">
-                    <TextBox.InnerLeftContent>
-                        <PathIcon
-                            Theme="{StaticResource IconLineSearch}"
-                            VerticalAlignment="Center" Margin="10 0"
-                            Classes="size-sm"
-                            Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
-                    </TextBox.InnerLeftContent>
-                    <Interaction.Behaviors>
-                        <SelectAllOnGotFocusBehavior />
-                    </Interaction.Behaviors>
-                </TextBox>
-
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="7" Margin="10 0"
-                            VerticalAlignment="Center">
-
-
-                </StackPanel>
-
-            </Grid>
-
-        </Border>
-
-        <Border
-            Grid.Row="2"
-            BorderThickness="1 0 1 1"
-            BorderBrush="{a:ThemeResource Container1BorderBrush}"
-            CornerRadius="0 0 4 4"
-            VerticalAlignment="Top">
-
-            <Panel>
-
-                <controls:DefaultMessage
-                    IsVisible="{Binding !Specs.HasItems}"
-                    HeaderIcon="{StaticResource IconFilledClipboard}"
-                    Header="No specs defined"
-                    Message="Add a new spec to this collection to get started."
-                    Margin="20" />
-
-                <controls:DefaultMessage
-                    HeaderIcon="{StaticResource IconLineSearch}"
-                    Header="No specs found"
-                    Message="Could not find any specs matching the current filter text."
-                    Margin="20">
-                    <controls:DefaultMessage.IsVisible>
-                        <MultiBinding Converter="{x:Static BoolConverters.And}">
-                            <Binding Path="Specs.HasItems" />
-                            <Binding Path="!Specs.Count" />
-                        </MultiBinding>
-                    </controls:DefaultMessage.IsVisible>
-                </controls:DefaultMessage>
-
-                <ListBox
-                    ItemsSource="{Binding Specs}"
-                    SelectedItems="{Binding Selected}"
-                    ItemTemplate="{StaticResource NodeListItem}"
-                    ItemContainerTheme="{StaticResource ListBoxItemEntry}"
-                    IsVisible="{Binding Specs.Count}"
-                    SelectionMode="Multiple"
-                    AutoScrollToSelectedItem="True"
-                    BorderBrush="{a:ThemeResource Container1BorderBrush}"
-                    CornerRadius="5" />
-
-            </Panel>
-
-        </Border>
+        </controls:ListView>
 
     </Grid>
 
