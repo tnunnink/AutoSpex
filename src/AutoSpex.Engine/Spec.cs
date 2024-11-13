@@ -51,18 +51,6 @@ public class Spec() : IEquatable<Spec>
     public List<Criterion> Verifications { get; private init; } = [];
 
     /// <summary>
-    /// The <see cref="Inclusion"/> specifying how to evaluate the filters of the spec (All/Any).
-    /// </summary>
-    [JsonInclude]
-    public Inclusion FilterInclusion { get; set; } = Inclusion.All;
-
-    /// <summary>
-    /// The <see cref="Inclusion"/> specifying how to evaluate the verifications of the spec (All/Any). 
-    /// </summary>
-    [JsonInclude]
-    public Inclusion VerificationInclusion { get; set; } = Inclusion.All;
-
-    /// <summary>
     /// Creates a new <see cref="Spec"/> with the provided configuration.
     /// </summary>
     /// <param name="config">The config to apply to the new spec.</param>
@@ -90,9 +78,9 @@ public class Spec() : IEquatable<Spec>
     /// </summary>
     /// <param name="property">The property name to select for the filter criterion.</param>
     /// <param name="operation">The <see cref="Operation"/> the criterion will perform.</param>
-    /// <param name="args">The collection of <see cref="Argument"/> to supply to the criterion operation.</param>
+    /// <param name="args">The argument to supply to the criterion operation.</param>
     /// <returns>The configured spec instance.</returns>
-    public Spec Filter(string? property, Operation operation, Argument? args = default)
+    public Spec Filter(string? property, Operation operation, object? args = default)
     {
         Filters.Add(new Criterion(Element.Property(property), operation, args));
         return this;
@@ -103,9 +91,9 @@ public class Spec() : IEquatable<Spec>
     /// </summary>
     /// <param name="property">The property name to select for the filter criterion.</param>
     /// <param name="operation">The <see cref="Operation"/> the criterion will perform.</param>
-    /// <param name="args">The collection of <see cref="Argument"/> to supply to the criterion operation.</param>
+    /// <param name="args">The argument to supply to the criterion operation.</param>
     /// <returns>The configured spec instance.</returns>
-    public Spec Verify(string? property, Operation operation, Argument? args = default)
+    public Spec Verify(string? property, Operation operation, object? args = default)
     {
         Verifications.Add(new Criterion(Element.Property(property), operation, args));
         return this;
@@ -117,9 +105,9 @@ public class Spec() : IEquatable<Spec>
     /// <param name="property">The property name to select for the filter criterion.</param>
     /// <param name="negation">The negation option to use for the vierifcation.</param>
     /// <param name="operation">The <see cref="Operation"/> the criterion will perform.</param>
-    /// <param name="args">The collection of <see cref="Argument"/> to supply to the criterion operation.</param>
+    /// <param name="args">The argument to supply to the criterion operation.</param>
     /// <returns>The configured spec instance.</returns>
-    public Spec Verify(string? property, Negation negation, Operation operation, Argument? args = default)
+    public Spec Verify(string? property, Negation negation, Operation operation, object? args = default)
     {
         Verifications.Add(new Criterion(Element.Property(property), operation, args) { Negation = negation });
         return this;
@@ -135,9 +123,7 @@ public class Spec() : IEquatable<Spec>
         {
             Element = Element,
             Filters = Filters.Select(x => x.Duplicate()).ToList(),
-            Verifications = Verifications.Select(x => x.Duplicate()).ToList(),
-            FilterInclusion = FilterInclusion,
-            VerificationInclusion = VerificationInclusion
+            Verifications = Verifications.Select(x => x.Duplicate()).ToList()
         };
     }
 
@@ -163,6 +149,23 @@ public class Spec() : IEquatable<Spec>
     }
 
     /// <summary>
+    /// Determines whether the Spec contains the given text in any of its Filters or Verifications.
+    /// </summary>
+    /// <param name="text">The text to search for within the Spec's Filters or Verifications.</param>
+    /// <returns>True if the text is found in any of the Filters or Verifications of the Spec; otherwise, false.</returns>
+    public bool Contains(string? text)
+    {
+        if (string.IsNullOrEmpty(text)) return false;
+        return Filters.Any(c => c.ToString().Satisfies(text)) || Verifications.Any(c => c.ToString().Satisfies(text));
+    }
+
+    /// <summary>
+    /// Represents the criteria that define a Spec, including filters and verifications.
+    /// </summary>
+    /// <returns>An IEnumerable of Criterion objects representing the criteria.</returns>
+    public IEnumerable<Criterion> Criteria() => Filters.Concat(Verifications);
+
+    /// <summary>
     /// Runs the configured specification against the provided L5X content and returns a verification result.
     /// </summary>
     /// <param name="content">The L5X content to run this specification against.</param>
@@ -185,6 +188,16 @@ public class Spec() : IEquatable<Spec>
         return Task.Run(() => RunSpec(content), token);
     }
 
+    public bool Equals(Spec? other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        return ReferenceEquals(this, other) || SpecId.Equals(other.SpecId);
+    }
+
+    public override bool Equals(object? obj) => obj is Spec other && Equals(other);
+
+    public override int GetHashCode() => SpecId.GetHashCode();
+
     /// <summary>
     /// Executes the configured specification against the provided source content.
     /// </summary>
@@ -202,15 +215,15 @@ public class Spec() : IEquatable<Spec>
             var elements = content.Query(Element.Type);
 
             //2. Filter the resulting elements.
-            var candidates = elements.Where(FilterElement).ToList();
+            var candidates = elements.Where(e => Filters.All(f => f.Evaluate(e))).ToList();
 
             //3. Verify the candidates elements.
-            var verifications = candidates.Select(VerifyElement).ToList();
+            var evaluations = candidates.SelectMany(c => Verifications.Select(v => v.Evaluate(c))).ToList();
 
             stopwatch.Stop();
 
-            //Merge/flatten into single verification object.
-            return Verification.Merge(verifications, stopwatch.ElapsedMilliseconds);
+            //Create the verification object that contains the total result and all evaluation information.
+            return Verification.For(evaluations, stopwatch.ElapsedMilliseconds);
         }
         catch (Exception e)
         {
@@ -218,60 +231,4 @@ public class Spec() : IEquatable<Spec>
             return Verification.For(Evaluation.Errored(e));
         }
     }
-
-    /// <summary>
-    /// Runs the configured spec to return a collection of candidate elements that would be validated when this spec is run.
-    /// This basically just queries the provided content and runs the results through the configured filters.
-    /// </summary>
-    /// <param name="content">The L5X content to query.</param>
-    /// <returns>A collection of <see cref="LogixElement"/> representing the candidates for the spec.</returns>
-    public IEnumerable<LogixElement> GetCandidates(L5X content)
-    {
-        ArgumentNullException.ThrowIfNull(content);
-
-        var elements = content.Query(Element.Type);
-        var candidates = elements.Where(FilterElement).ToList();
-        return candidates;
-    }
-
-    /// <summary>
-    /// Given a target object, runs the configured <see cref="Filters"/> to evaluate whether this object should be
-    /// considered a candidate for verification of this spec.
-    /// </summary>
-    /// <param name="target">An object for which to filter.</param>
-    /// <returns><c>true</c> if this target object passes the specified criterion filters. The target can pass any or
-    /// all filters as defined by the <see cref="FilterInclusion"/> of the spec.</returns>
-    private bool FilterElement(LogixElement target)
-    {
-        var evaluations = Filters.Select(f => f.Evaluate(target)).ToList();
-
-        return FilterInclusion == Inclusion.All
-            ? evaluations.All(e => e.Result == ResultState.Passed)
-            : evaluations.Any(e => e.Result == ResultState.Passed);
-    }
-
-    /// <summary>
-    /// Given a candidate object, runs the configured <see cref="Verifications"/> to evaluate whether this object
-    /// passes or fails the defined specification.
-    /// </summary>
-    /// <param name="candidate">A <see cref="LogixElement"/> for which to verify.</param>
-    /// <returns>A <see cref="Verification"/> which is a grouped set of <see cref="Evaluation"/> results for a single
-    /// candidate object.</returns>
-    private Verification VerifyElement(LogixElement candidate)
-    {
-        var evaluations = Verifications.Select(v => v.Evaluate(candidate)).ToArray();
-
-        return VerificationInclusion == Inclusion.All
-            ? Verification.All(evaluations)
-            : Verification.Any(evaluations);
-    }
-
-    public bool Equals(Spec? other)
-    {
-        if (ReferenceEquals(null, other)) return false;
-        return ReferenceEquals(this, other) || SpecId.Equals(other.SpecId);
-    }
-
-    public override bool Equals(object? obj) => obj is Spec other && Equals(other);
-    public override int GetHashCode() => SpecId.GetHashCode();
 }

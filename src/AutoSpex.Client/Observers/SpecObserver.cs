@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
@@ -23,8 +22,6 @@ public partial class SpecObserver : Observer<Spec>,
             Model.Verifications, m => new CriterionObserver(m));
 
         Track(nameof(Element));
-        Track(nameof(FilterInclusion));
-        Track(nameof(VerificationInclusion));
         Track(Filters);
         Track(Verifications);
     }
@@ -37,24 +34,10 @@ public partial class SpecObserver : Observer<Spec>,
         set => SetProperty(Model.Element, value, Model, (s, v) => s.Element = v);
     }
 
-    public Inclusion FilterInclusion
-    {
-        get => Model.FilterInclusion;
-        set => SetProperty(Model.FilterInclusion, value, Model, (s, v) => s.FilterInclusion = v);
-    }
-
-    public Inclusion VerificationInclusion
-    {
-        get => Model.VerificationInclusion;
-        set => SetProperty(Model.VerificationInclusion, value, Model, (s, v) => s.VerificationInclusion = v);
-    }
-
     public ObserverCollection<Criterion, CriterionObserver> Filters { get; }
     public ObserverCollection<Criterion, CriterionObserver> Verifications { get; }
     public ObservableCollection<CriterionObserver> SelectedFilters { get; } = [];
     public ObservableCollection<CriterionObserver> SelectedVerifications { get; } = [];
-
-    [ObservableProperty] private bool _showFilters;
 
     /// <summary>
     /// Updates the specification query element type and resets all the criteria. We may not do this in the future
@@ -85,6 +68,16 @@ public partial class SpecObserver : Observer<Spec>,
     }
 
     /// <summary>
+    /// Adds a verification to the specification.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanAddCriteria))]
+    private void AddVerification()
+    {
+        if (Element == Element.Default) return;
+        Verifications.Add(new CriterionObserver(new Criterion(Element.Type)));
+    }
+
+    /// <summary>
     /// Command to add the criteria copied to the clipboard to the current spec filters.
     /// </summary>
     [RelayCommand(CanExecute = nameof(CanAddCriteria))]
@@ -101,16 +94,6 @@ public partial class SpecObserver : Observer<Spec>,
         }));
 
         Filters.AddRange(copies);
-    }
-
-    /// <summary>
-    /// Adds a verification to the specification.
-    /// </summary>
-    [RelayCommand(CanExecute = nameof(CanAddCriteria))]
-    private void AddVerification()
-    {
-        if (Element == Element.Default) return;
-        Verifications.Add(new CriterionObserver(new Criterion(Element.Type)));
     }
 
     /// <summary>
@@ -133,46 +116,9 @@ public partial class SpecObserver : Observer<Spec>,
     }
 
     /// <summary>
-    /// Adds a verification to the specification.
-    /// </summary>
-    [RelayCommand(CanExecute = nameof(CanAddCriteria))]
-    private void AddRange()
-    {
-        if (Element == Element.Default) return;
-        Verifications.Add(new CriterionObserver(new Criterion(Element.Type)));
-    }
-
-    /// <summary>
     /// Determines if we can add and filter or verifications which should depend on if an element is selected.
     /// </summary>
     private bool CanAddCriteria() => Element != Element.Default;
-
-    /// <summary>
-    /// Changes the state of the filter inclusion property to the opposite value.
-    /// </summary>
-    [RelayCommand]
-    private void ToggleCriteriaView()
-    {
-        ShowFilters = !ShowFilters;
-    }
-
-    /// <summary>
-    /// Changes the state of the filter inclusion property to the opposite value.
-    /// </summary>
-    [RelayCommand]
-    private void ToggleFilterInclusion()
-    {
-        FilterInclusion = FilterInclusion == Inclusion.All ? Inclusion.Any : Inclusion.All;
-    }
-
-    /// <summary>
-    /// Changes the state of the filter inclusion property to the opposite value.
-    /// </summary>
-    [RelayCommand]
-    private void ToggleVerificationInclusion()
-    {
-        VerificationInclusion = VerificationInclusion == Inclusion.All ? Inclusion.Any : Inclusion.All;
-    }
 
     /// <summary>
     /// Handles the request to get the spec observer that passes the provied predicate. This allows child criteria
