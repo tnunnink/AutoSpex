@@ -26,10 +26,8 @@
               Negation: Is,
               Operation: Like,
               Argument: {
-                Value: {
-                  Type: System.String,
-                  Data: someName
-                }
+                Type: System.String,
+                Data: someName
               }
             }
           ],
@@ -43,15 +41,11 @@
               Negation: Is,
               Operation: Equal To,
               Argument: {
-                Value: {
-                  Type: System.Int32,
-                  Data: 123
-                }
+                Type: System.Int32,
+                Data: 123
               }
             }
-          ],
-          FilterInclusion: 0,
-          VerificationInclusion: 0
+          ]
         }
       },
       {
@@ -72,10 +66,8 @@
               Negation: Is,
               Operation: Containing,
               Argument: {
-                Value: {
-                  Type: System.String,
-                  Data: anotherName
-                }
+                Type: System.String,
+                Data: anotherName
               }
             }
           ],
@@ -89,15 +81,11 @@
               Negation: Is,
               Operation: Greater Than,
               Argument: {
-                Value: {
-                  Type: System.Int32,
-                  Data: 456
-                }
+                Type: System.Int32,
+                Data: 456
               }
             }
-          ],
-          FilterInclusion: 0,
-          VerificationInclusion: 0
+          ]
         }
       },
       {
@@ -118,10 +106,8 @@
               Negation: Is,
               Operation: Equal To,
               Argument: {
-                Value: {
-                  Type: System.String,
-                  Data: yetAnotherName
-                }
+                Type: System.String,
+                Data: yetAnotherName
               }
             }
           ],
@@ -135,23 +121,17 @@
               Negation: Not,
               Operation: Equal To,
               Argument: {
-                Value: {
-                  Type: System.Int32,
-                  Data: 678
-                }
+                Type: System.Int32,
+                Data: 678
               }
             }
-          ],
-          FilterInclusion: 0,
-          VerificationInclusion: 1
+          ]
         }
       }
     ],
     Spec: {
       SpecId: Guid_9,
-      Element: None,
-      FilterInclusion: 0,
-      VerificationInclusion: 0
+      Element: None
     }
   }
 }
