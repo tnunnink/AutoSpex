@@ -165,10 +165,10 @@ public static class Extensions
     /// </summary>
     /// <param name="type">The type to evaluate.</param>
     /// <returns>True if the type is enumerable, false otherwise.</returns>
-    private static bool IsEnumerable(this Type type)
+    public static bool IsEnumerable(this Type type)
     {
-        return type.IsAssignableTo(typeof(IEnumerable)) || type.GetInterfaces()
-            .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>));
+        return type.IsAssignableTo(typeof(IEnumerable)) ||
+               type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>));
     }
 
     /// <summary>
