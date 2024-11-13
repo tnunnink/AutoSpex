@@ -1,6 +1,0 @@
-﻿{
-  Value: {
-    Type: System.Int32,
-    Data: 123
-  }
-}
