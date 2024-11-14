@@ -1,0 +1,17 @@
+﻿{
+  SchemaVersion: 1,
+  SpecId: Guid_1,
+  Element: Controller,
+  Verifications: [
+    {
+      Type: L5Sharp.Core.Controller,
+      Property: L5Sharp.Core.Controller:Tags.Count,
+      Negation: Is,
+      Operation: Less Than Or Equal To,
+      Argument: {
+        Group: Number,
+        Data: 30
+      }
+    }
+  ]
+}

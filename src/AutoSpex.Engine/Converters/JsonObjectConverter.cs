@@ -31,7 +31,7 @@ public class JsonObjectConverter : JsonConverter<object?>
         return value;
     }
 
-    public override void Write(Utf8JsonWriter writer, object? value, JsonSerializerOptions options)
+    public override void Write(Utf8JsonWriter writer, object? value, JsonSerializerOptions? options)
     {
         var group = TypeGroup.FromType(value?.GetType());
         group.WriteData(writer, value, options);

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.IO.Compression;
 using System.Text;
+using System.Text.Json;
 using L5Sharp.Core;
 
 // ReSharper disable InvalidXmlDocComment
@@ -158,6 +159,20 @@ public static class Extensions
     {
         if (input is null) return false;
         return string.IsNullOrEmpty(text) || input.Contains(text, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Gets the property value of the specified name from the JSON element.
+    /// </summary>
+    /// <param name="element">The JSON element to get the value from.</param>
+    /// <param name="name">The name of the property to retrieve.</param>
+    /// <returns>The JSON element of the specified name if it exists, null otherwise.</returns>
+    public static JsonElement? Get(this JsonElement element, string name)
+    {
+        if (element.ValueKind is JsonValueKind.Null or JsonValueKind.Undefined)
+            return null;
+
+        return element.TryGetProperty(name, out var value) ? value : null;
     }
 
     /// <summary>

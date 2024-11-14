@@ -253,18 +253,6 @@ public class CriterionTests
     }
 
     [Test]
-    public Task Serialize_ConfiguredSpecWithRange_ShouldBeVerified()
-    {
-        var spec = new Spec();
-
-        spec.Query(Element.Tag)
-            .Filter("Name", Operation.Containing, "Test")
-            .Verify("Value", Negation.Is, Operation.Between, new Range(1, 10));
-
-        return VerifyJson(JsonSerializer.Serialize(spec));
-    }
-
-    [Test]
     public void Deserialize_WhenCalled_ShouldBeExpected()
     {
         var spec = new Spec();

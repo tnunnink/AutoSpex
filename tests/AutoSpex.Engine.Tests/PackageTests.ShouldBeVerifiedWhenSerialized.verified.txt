@@ -14,19 +14,17 @@
         Type: Spec,
         Name: First,
         Spec: {
+          SchemaVersion: 1,
           SpecId: Guid_4,
           Element: Tag,
           Filters: [
             {
               Type: L5Sharp.Core.Tag,
-              Property: {
-                Origin: L5Sharp.Core.Tag,
-                Path: Name
-              },
+              Property: L5Sharp.Core.Tag:Name,
               Negation: Is,
               Operation: Like,
               Argument: {
-                Type: System.String,
+                Group: Text,
                 Data: someName
               }
             }
@@ -34,14 +32,11 @@
           Verifications: [
             {
               Type: L5Sharp.Core.Tag,
-              Property: {
-                Origin: L5Sharp.Core.Tag,
-                Path: Value
-              },
+              Property: L5Sharp.Core.Tag:Value,
               Negation: Is,
               Operation: Equal To,
               Argument: {
-                Type: System.Int32,
+                Group: Number,
                 Data: 123
               }
             }
@@ -54,19 +49,17 @@
         Type: Spec,
         Name: Second,
         Spec: {
+          SchemaVersion: 1,
           SpecId: Guid_6,
           Element: Tag,
           Filters: [
             {
               Type: L5Sharp.Core.Tag,
-              Property: {
-                Origin: L5Sharp.Core.Tag,
-                Path: Name
-              },
+              Property: L5Sharp.Core.Tag:Name,
               Negation: Is,
               Operation: Containing,
               Argument: {
-                Type: System.String,
+                Group: Text,
                 Data: anotherName
               }
             }
@@ -74,14 +67,11 @@
           Verifications: [
             {
               Type: L5Sharp.Core.Tag,
-              Property: {
-                Origin: L5Sharp.Core.Tag,
-                Path: Value
-              },
+              Property: L5Sharp.Core.Tag:Value,
               Negation: Is,
               Operation: Greater Than,
               Argument: {
-                Type: System.Int32,
+                Group: Number,
                 Data: 456
               }
             }
@@ -94,19 +84,17 @@
         Type: Spec,
         Name: Third,
         Spec: {
+          SchemaVersion: 1,
           SpecId: Guid_8,
           Element: Tag,
           Filters: [
             {
               Type: L5Sharp.Core.Tag,
-              Property: {
-                Origin: L5Sharp.Core.Tag,
-                Path: Name
-              },
+              Property: L5Sharp.Core.Tag:Name,
               Negation: Is,
               Operation: Equal To,
               Argument: {
-                Type: System.String,
+                Group: Text,
                 Data: yetAnotherName
               }
             }
@@ -114,14 +102,11 @@
           Verifications: [
             {
               Type: L5Sharp.Core.Tag,
-              Property: {
-                Origin: L5Sharp.Core.Tag,
-                Path: Value
-              },
+              Property: L5Sharp.Core.Tag:Value,
               Negation: Not,
               Operation: Equal To,
               Argument: {
-                Type: System.Int32,
+                Group: Number,
                 Data: 678
               }
             }
@@ -130,6 +115,7 @@
       }
     ],
     Spec: {
+      SchemaVersion: 1,
       SpecId: Guid_9,
       Element: None
     }

@@ -71,8 +71,8 @@
       <None Update="Converters\JsonObjectConverterTests.Serialize_CriterionValue_ShouldBeVerified.verified.txt">
         <DependentUpon>JsonObjectConverterTests.cs</DependentUpon>
       </None>
-      <None Update="CriterionTests.Serialize_ConfiguredSpecWithRange_ShouldBeVerified.verified.txt">
-        <DependentUpon>CriterionTests.cs</DependentUpon>
+      <None Update="Migrations\SpecMigrationV1Tests.Run_ComplexExample_ShouldBeVerified.verified.txt">
+        <DependentUpon>SpecMigrationV1Tests.cs</DependentUpon>
       </None>
     </ItemGroup>
 

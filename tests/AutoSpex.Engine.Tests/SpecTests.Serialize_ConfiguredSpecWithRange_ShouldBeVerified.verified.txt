@@ -1,4 +1,5 @@
 ﻿{
+  SchemaVersion: 1,
   SpecId: Guid_1,
   Element: Tag,
   Filters: [

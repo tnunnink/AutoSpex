@@ -48,7 +48,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
     /// <param name="writer">The Utf8JsonWriter to write the data to.</param>
     /// <param name="value">The object containing the data to be written.</param>
     /// <param name="options">The JsonSerializerOptions to be used during writing.</param>
-    public virtual void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions options)
+    public virtual void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions? options = default)
     {
         writer.WriteStartObject();
         writer.WriteString("Group", Name);
@@ -140,7 +140,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
             return false;
         }
 
-        public override void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions options)
+        public override void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions? options = default)
         {
             writer.WriteStartObject();
             writer.WriteString("Group", Name);
@@ -174,7 +174,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
             return reader.GetBoolean();
         }
 
-        public override void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions options)
+        public override void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions? options = default)
         {
             var data = value is bool boolean ? boolean : throw new ArgumentException(WriteError, nameof(value));
 
@@ -349,7 +349,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
             return data[1].Parse(type);
         }
 
-        public override void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions options)
+        public override void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions? options = default)
         {
             var data = value is LogixEnum enumeration
                 ? string.Concat(enumeration.GetType(), ':', enumeration.Name)
@@ -367,7 +367,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
         protected override bool AppliesTo(Type type)
         {
             type = Nullable.GetUnderlyingType(type) ?? type;
-            return type.IsAssignableTo(typeof(LogixElement));
+            return !type.IsEnumerable() && type.IsAssignableTo(typeof(LogixElement));
         }
 
         public override bool TryParse(string text, out object? value)
@@ -393,7 +393,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
             return element.Deserialize<LogixElement>();
         }
 
-        public override void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions options)
+        public override void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions? options = default)
         {
             var data = value is LogixElement element
                 ? Encoding.UTF8.GetBytes(element.Serialize().ToString())
@@ -454,7 +454,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
             return result;
         }
 
-        public override void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions options)
+        public override void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions? options = default)
         {
             var data = value is IEnumerable enumerable
                 ? enumerable.Cast<object>()
@@ -499,7 +499,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
             return JsonSerializer.Deserialize<Criterion>(ref reader, options);
         }
 
-        public override void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions options)
+        public override void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions? options = default)
         {
             var data = value is Criterion criterion
                 ? JsonSerializer.Serialize(criterion, options)
@@ -536,7 +536,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
             return JsonSerializer.Deserialize<Range>(ref reader, options);
         }
 
-        public override void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions options)
+        public override void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions? options = default)
         {
             var data = value is Range range
                 ? JsonSerializer.Serialize(range, options)

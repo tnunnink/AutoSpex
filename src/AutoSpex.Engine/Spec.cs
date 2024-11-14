@@ -26,6 +26,12 @@ public class Spec() : IEquatable<Spec>
     }
 
     /// <summary>
+    /// The version that identifies the JSON schema of the current object.
+    /// </summary>
+    [JsonInclude]
+    private int SchemaVersion { get; } = 1;
+
+    /// <summary>
     /// The unique id that indietifies this spec aprart from others.
     /// </summary>
     [JsonInclude]

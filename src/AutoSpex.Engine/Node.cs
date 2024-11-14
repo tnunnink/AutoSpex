@@ -77,6 +77,7 @@ public class Node : IEquatable<Node>
     /// Represents the specification associated with a Node.
     /// </summary>
     [JsonInclude]
+    [JsonConverter(typeof(JsonSpecConverter))]
     public Spec Spec { get; private set; } = new();
 
     /// <summary>
@@ -216,7 +217,7 @@ public class Node : IEquatable<Node>
     public void AddNode(Node node)
     {
         ArgumentNullException.ThrowIfNull(node);
-        
+
         if (_nodes.Contains(node)) return;
 
         node.Parent?.RemoveNode(node);
