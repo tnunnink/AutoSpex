@@ -58,6 +58,12 @@ public partial class CriterionObserver : Observer<Criterion>
     /// <inheritdoc />
     protected override bool PromptForDeletion => false;
 
+    /// <summary>
+    /// Gets a value indicating whether this CriterionObserver accepts arguments based on its Operation.
+    /// </summary>
+    /// <remarks>
+    /// Returns true if the Operation is not None and not a UnaryOperation.
+    /// </remarks>
     public bool AcceptsArgs => Operation != Operation.None && Operation is not UnaryOperation;
 
     /// <inheritdoc />
@@ -74,9 +80,9 @@ public partial class CriterionObserver : Observer<Criterion>
         {
             case nameof(Property):
                 Operation = Operation.Supports(Property) ? Operation : Operation.None;
-                OnPropertyChanged(nameof(AcceptsArgs));
                 break;
             case nameof(Operation):
+                OnPropertyChanged(nameof(AcceptsArgs));
                 ResetArgument();
                 break;
         }
@@ -86,10 +92,10 @@ public partial class CriterionObserver : Observer<Criterion>
     public override bool Filter(string? filter)
     {
         FilterText = filter;
-        
-        return Property.Path.Satisfies(filter) 
-               || Negation.Name.Satisfies(filter) 
-               || Operation.Name.Satisfies(filter) 
+
+        return Property.Path.Satisfies(filter)
+               || Negation.Name.Satisfies(filter)
+               || Operation.Name.Satisfies(filter)
                || Argument.Filter(filter);
     }
 
