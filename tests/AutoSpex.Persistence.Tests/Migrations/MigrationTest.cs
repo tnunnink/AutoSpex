@@ -1,4 +1,5 @@
 ﻿using FluentMigrator.Runner;
+using FluentMigrator.Runner.Initialization;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace AutoSpex.Persistence.Tests.Migrations;
@@ -11,7 +12,14 @@ public abstract class MigrationTest
         Runner = provider.GetRequiredService<IMigrationRunner>();
     }
 
-    public IMigrationRunner Runner { get; }
+    protected IMigrationRunner Runner { get; }
+
+    protected static void CleanUp()
+    {
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+        if (File.Exists("app.db")) File.Delete("app.db");
+    }
 
     private static ServiceProvider BuildServiceProvider()
     {
@@ -21,7 +29,9 @@ public abstract class MigrationTest
             .ConfigureRunner(rb => rb
                 .AddSQLite()
                 .WithGlobalConnectionString("DataSource=app.db")
-                .ScanIn(typeof(ServiceExtensions).Assembly).For.Migrations());
+                .ScanIn(typeof(ServiceExtensions).Assembly).For.Migrations()
+                .ScanIn(typeof(MigrationTest).Assembly).For.Migrations()
+            ).Configure<RunnerOptions>(cfg => { cfg.Profile = "Development"; });
 
         return services.BuildServiceProvider();
     }
