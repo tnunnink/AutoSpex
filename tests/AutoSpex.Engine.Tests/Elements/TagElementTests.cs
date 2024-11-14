@@ -96,4 +96,46 @@ public class TagElementTests
         property.DisplayName.Should().Be("Tag");
         property.Properties.Should().NotBeEmpty();
     }
+
+    [Test]
+    public void Property_References_ShouldBeExpected()
+    {
+        var element = Element.Tag;
+
+        var property = element.Property("References");
+
+        property.Origin.Should().Be(typeof(Tag));
+        property.Type.Should().Be(typeof(List<CrossReference>));
+        property.Name.Should().Be("References");
+        property.Path.Should().Be("References");
+        property.Group.Should().Be(TypeGroup.Collection);
+        property.DisplayName.Should().Be("CrossReference[]");
+    }
+
+    [Test]
+    public void GetValue_References_ShouldBeExpected()
+    {
+        var content = L5X.Load(Known.Example, L5XOptions.Index);
+        var tag = content.Get<Tag>("/Air_Supply_01/Tag/AirCompressor");
+        var element = Element.Tag;
+        var property = element.Property("References.Count");
+
+        var references = tag.References().ToList();
+        references.Should().NotBeEmpty();
+
+        var count = property.GetValue(tag);
+        count.Should().Be(references.Count);
+    }
+
+    [Test]
+    public void GetValue_ReferencesOfManyTags_ShouldBeExpected()
+    {
+        var content = L5X.Load(Known.Example, L5XOptions.Index);
+        var tags = content.Query<Tag>().Where(t => t.Scope.Program == "Air_Supply_01");
+        var element = Element.Tag;
+        var property = element.Property("References.Count");
+
+        var counts = tags.Select(t => new { t.TagName, References = property.GetValue(t) });
+        counts.Should().AllSatisfy(x => x.References.As<int>().Should().BeGreaterThan(0));
+    }
 }
