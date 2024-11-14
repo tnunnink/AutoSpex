@@ -2,7 +2,6 @@
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using Ardalis.SmartEnum.SystemTextJson;
-using L5Sharp.Core;
 
 namespace AutoSpex.Engine;
 
@@ -139,8 +138,7 @@ public class Criterion
         try
         {
             var value = Property != Property.Default ? Property.GetValue(candidate) : candidate;
-            var valueType = value?.GetType();
-            var argument = ResolveArgument(Argument, valueType, candidate);
+            var argument = ResolveArgument(Argument);
             var result = Operation.Execute(value, argument);
 
             return Negation.Satisfies(result)
@@ -234,19 +232,14 @@ public class Criterion
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="argument"></param>
-    /// <param name="type"></param>
-    /// <param name="candidate"></param>
-    /// <returns></returns>
-    private static object? ResolveArgument(object? argument, Type? type, object? candidate)
+    private static object? ResolveArgument(object? argument)
     {
         var value = argument switch
         {
             Criterion criterion => criterion,
             Range range => new List<object?> { range.Min, range.Max },
-            Property property => property.GetValue(candidate),
-            List<object> collection => collection.Select(x => ResolveArgument(x, type, candidate)).ToList(),
-            string text when type is not null && type != typeof(string) => text.TryParse(type),
+            List<object> collection => collection.Select(ResolveArgument).ToList(),
+            /*string text when type is not null && type != typeof(string) => text.TryParse(type),*/
             _ => argument
         };
 
