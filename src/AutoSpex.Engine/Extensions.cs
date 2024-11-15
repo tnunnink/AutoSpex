@@ -11,22 +11,6 @@ namespace AutoSpex.Engine;
 public static class Extensions
 {
     /// <summary>
-    /// Returns the current type or the inner generic argument type if the type is a generic type.
-    /// </summary>
-    /// <param name="type">The type ro evaluate.</param>
-    /// <returns>A type representing this type if not generic, or the inner generic argument type if it is.</returns>
-    /// <remarks>
-    /// This is so that collections or other generics we can get the inner type to pass down to nested
-    /// criterion objects, so they know which properties to resolve.
-    /// </remarks>
-    public static Type SelfOrInnerType(this Type type)
-    {
-        if (!type.IsGenericType) return type;
-        var arguments = type.GetGenericArguments();
-        return arguments[0];
-    }
-
-    /// <summary>
     /// Gets a friendly type name for the provided type. I want this for the UI so that it is easier to read what the type
     /// is.
     /// </summary>
