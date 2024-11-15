@@ -153,6 +153,22 @@ public class PropertyTests
         property.Type.Should().Be(typeof(Tag));
         property.Group.Should().Be(TypeGroup.Element);
     }
+    
+    [Test]
+    public void GetProperty_RungInstructionIndexProperty_ShouldReturnExpected()
+    {
+        var origin = Element.Rung.This;
+
+        var property = origin.GetProperty("Instructions[0]");
+
+        property.Should().NotBeNull();
+        property.Key.Should().Be("L5Sharp.Core.Rung:Instructions[0]");
+        property.Origin.Should().Be(typeof(Rung));
+        property.Path.Should().Be("Instructions[0]");
+        property.Name.Should().Be("[0]");
+        property.Type.Should().Be(typeof(Instruction));
+        property.Group.Should().Be(TypeGroup.Text);
+    }
 
     [Test]
     public void GetProperty_CollectionIndexPropertyPartiallyCompleted_ShouldRetrunUnknown()
