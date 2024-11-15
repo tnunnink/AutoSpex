@@ -4,6 +4,7 @@
         <ResourceInclude Source="ElementListItem.axaml" />
         <ResourceInclude Source="OverrideListItem.axaml" />
         <ResourceInclude Source="PropertyTreeItem.axaml" />
+        <ResourceInclude Source="SourceInfo.axaml" />
         <ResourceInclude Source="SourceListItem.axaml" />
         <ResourceInclude Source="SourceTargetButton.axaml" />
         <ResourceInclude Source="SuppressionListItem.axaml" />

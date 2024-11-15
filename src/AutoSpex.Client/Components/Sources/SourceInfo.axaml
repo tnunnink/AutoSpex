@@ -1,0 +1,36 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+
+    <Design.PreviewWith>
+        <ContentControl
+            Content="{x:Static components:TestData.SourceTest}"
+            ContentTemplate="{DynamicResource SourceInfo}"
+            Padding="20" />
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="SourceInfo" x:DataType="observers:SourceObserver">
+
+        <StackPanel Orientation="Horizontal" Spacing="10">
+            <StackPanel.Styles>
+                <Style Selector="TextBlock">
+                    <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                </Style>
+            </StackPanel.Styles>
+
+            <TextBlock Text="{Binding TargetType}" ToolTip.Tip="Target" />
+
+            <Border Width="1" Height="10" Background="{a:ThemeResource Container4BorderBrush}" Margin="0 3 0 1" />
+
+            <TextBlock Text="{Binding ExportedOn}" ToolTip.Tip="ExportedOn" />
+
+            <Border Width="1" Height="10" Background="{a:ThemeResource Container4BorderBrush}" Margin="0 3 0 1" />
+
+            <TextBlock Text="{Binding Description}" ToolTip.Tip="Description" />
+
+        </StackPanel>
+    </DataTemplate>
+
+</ResourceDictionary>

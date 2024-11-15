@@ -70,26 +70,10 @@ public class Verification
     /// In other words, the resulting verification will be Passed only if all provided evaluations Passed.
     /// If any one is marked Failed then the result for the verification will be Failed.
     /// </remarks>
-    public static Verification All(ICollection<Evaluation> evaluations, long duration = 0)
+    public static Verification For(ICollection<Evaluation> evaluations, long duration = 0)
     {
         var result = ResultState.MaxOrDefault(evaluations.Select(e => e.Result).ToList());
         return new Verification(result, evaluations, duration);
-    }
-
-    /// <summary>
-    /// Creates a new <see cref="Verification"/> for the provided collection of evaluations by considering the minimum
-    /// result state of the collection.
-    /// </summary>
-    /// <param name="evaluations">The collection of evaluation instances.</param>
-    /// <returns>A <see cref="Verification"/> with the min result state of the provided evaluations.</returns>
-    /// <remarks>
-    /// In other words, the resulting verification will be Passed only if any single provided evaluation Passed.
-    /// If any one is marked Failed then the result for the verification will still be Passed.
-    /// </remarks>
-    public static Verification Any(ICollection<Evaluation> evaluations)
-    {
-        var result = ResultState.MinOrDefault(evaluations.Select(e => e.Result).ToList());
-        return new Verification(result, evaluations, 0);
     }
 
     /// <summary>

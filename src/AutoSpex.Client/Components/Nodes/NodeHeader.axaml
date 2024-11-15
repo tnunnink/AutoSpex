@@ -9,14 +9,11 @@
         <StackPanel Spacing="50" Margin="20">
             <ContentControl
                 Content="{x:Static components:TestData.SpecNode}"
-                ContentTemplate="{DynamicResource NodeHeaderHorizontal}" />
-            <ContentControl
-                Content="{x:Static components:TestData.SpecNode}"
-                ContentTemplate="{DynamicResource NodeHeaderVeritical}" />
+                ContentTemplate="{DynamicResource NodeHeader}" />
         </StackPanel>
     </Design.PreviewWith>
 
-    <DataTemplate x:Key="NodeHeaderHorizontal" x:DataType="observers:NodeObserver">
+    <DataTemplate x:Key="NodeHeader" x:DataType="observers:NodeObserver">
 
         <StackPanel Orientation="Horizontal" Spacing="10">
 
@@ -28,7 +25,7 @@
                 ContentTemplate="{StaticResource ObserverLink}" />
 
             <controls:HighlightableTextBlock
-                Text="{Binding Route}"
+                Text="{Binding Path}"
                 HighlightedText="{Binding FilterText}"
                 Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
 
@@ -36,29 +33,4 @@
 
     </DataTemplate>
 
-    <DataTemplate x:Key="NodeHeaderVeritical" x:DataType="observers:NodeObserver">
-
-        <StackPanel Orientation="Horizontal" Spacing="10">
-
-            <PathIcon
-                Theme="{Binding Type.Name, Converter={StaticResource KeyIconConverter}}"
-                VerticalAlignment="Top" Margin="0 1 0 0" />
-
-            <StackPanel Spacing="3">
-
-                <ContentControl
-                    Content="{Binding }"
-                    ContentTemplate="{StaticResource ObserverLink}"
-                    HorizontalAlignment="Left" />
-
-                <controls:HighlightableTextBlock
-                    Text="{Binding Route}"
-                    HighlightedText="{Binding FilterText}"
-                    Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
-
-            </StackPanel>
-
-        </StackPanel>
-
-    </DataTemplate>
 </ResourceDictionary>

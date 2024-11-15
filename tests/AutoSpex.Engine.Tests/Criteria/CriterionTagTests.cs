@@ -57,10 +57,4 @@ public class CriterionTagTests
 
         evaluation.Result.Should().Be(ResultState.Passed);
     }
-
-    [Test]
-    public void Evaluate_TagName_ExpectedBehavior()
-    {
-        
-    }
 }

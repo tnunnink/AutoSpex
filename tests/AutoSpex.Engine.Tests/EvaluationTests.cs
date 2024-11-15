@@ -12,8 +12,6 @@ public class EvaluationTests
         var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Containing, "Test");
         var evaluation = Evaluation.Passed(criterion, new Tag("Test", 123), "Test");
 
-        evaluation.CriterionId.Should().NotBeEmpty();
-        evaluation.SourceId.Should().BeEmpty();
         evaluation.Result.Should().Be(ResultState.Passed);
         evaluation.Candidate.Should().Be("/Tag/Test");
         evaluation.Criteria.Should().Be("Name Is Containing");
@@ -21,15 +19,13 @@ public class EvaluationTests
         evaluation.Actual.Should().Be("Test");
         evaluation.Error.Should().BeNull();
     }
-    
+
     [Test]
     public void Failed_ValidData_ShouldBeExpected()
     {
         var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Containing, "Test");
         var evaluation = Evaluation.Failed(criterion, new Tag("Test", 123), "Fake");
 
-        evaluation.CriterionId.Should().NotBeEmpty();
-        evaluation.SourceId.Should().BeEmpty();
         evaluation.Result.Should().Be(ResultState.Failed);
         evaluation.Candidate.Should().Be("/Tag/Test");
         evaluation.Criteria.Should().Be("Name Is Containing");
@@ -37,15 +33,14 @@ public class EvaluationTests
         evaluation.Actual.Should().Be("Fake");
         evaluation.Error.Should().BeNull();
     }
-    
+
     [Test]
     public void Errored_ValidData_ShouldBeExpected()
     {
         var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Containing, "Test");
-        var evaluation = Evaluation.Errored(criterion, new Tag("Test", 123), new InvalidOperationException("This evaluaiton failed to produce."));
+        var evaluation = Evaluation.Errored(criterion, new Tag("Test", 123),
+            new InvalidOperationException("This evaluaiton failed to produce."));
 
-        evaluation.CriterionId.Should().NotBeEmpty();
-        evaluation.SourceId.Should().BeEmpty();
         evaluation.Result.Should().Be(ResultState.Errored);
         evaluation.Candidate.Should().Be("/Tag/Test");
         evaluation.Criteria.Should().Be("Name Is Containing");

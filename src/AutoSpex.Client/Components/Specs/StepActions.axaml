@@ -1,0 +1,63 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+
+    <Design.PreviewWith>
+        <Border MinHeight="200">
+            <ContentControl
+                Content="{x:Static components:TestData.SpecObserverManyCriterion}"
+                ContentTemplate="{DynamicResource CriteriaActions}" />
+        </Border>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="CriteriaActions" x:DataType="observers:SpecObserver">
+
+        <Border Padding="5">
+
+            <StackPanel>
+
+                <StackPanel.Styles>
+                    <Style Selector="Button">
+                        <Setter Property="Theme" Value="{a:ControlTheme ButtonSubtle}" />
+                        <Setter Property="Padding" Value="4" />
+                        <Setter Property="Margin" Value="2" />
+                        <Setter Property="CornerRadius" Value="5" />
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                </StackPanel.Styles>
+
+                <Button Classes="accent"
+                        Foreground="{a:ThemeResource ControlForegroundBrushSoftAccent}">
+                    <Grid ColumnDefinitions="20,*,Auto">
+                        <PathIcon Theme="{StaticResource IconAdd}" Classes="size-sm"
+                                  Foreground="{a:ThemeResource ControlForegroundBrushSoftAccent}" />
+                        <TextBlock Grid.Column="1" Text="Add Filter" Padding="5 0" />
+                    </Grid>
+                </Button>
+
+                <Button Command="{Binding PasteFiltersCommand}">
+                    <Grid ColumnDefinitions="20,*,Auto">
+                        <PathIcon Theme="{StaticResource IconFilledPaste}" Classes="size-sm" />
+                        <TextBlock Grid.Column="1" Text="Paste" Padding="5 0" />
+                    </Grid>
+                </Button>
+
+                <Button Classes="danger"
+                        Foreground="{a:ThemeResource ControlForegroundBrushSoftDanger}">
+                    <Grid ColumnDefinitions="20,*,Auto">
+                        <PathIcon
+                            Theme="{StaticResource IconFilledTrash}" Classes="size-sm"
+                            Foreground="{a:ThemeResource ControlForegroundBrushSoftDanger}" />
+                        <TextBlock Grid.Column="1" Text="Remove" Padding="5 0" />
+                    </Grid>
+                </Button>
+
+
+            </StackPanel>
+        </Border>
+
+
+    </DataTemplate>
+</ResourceDictionary>

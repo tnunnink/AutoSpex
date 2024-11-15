@@ -55,7 +55,6 @@ public class ExportNodeTests
             s.Query(Element.Tag);
             s.Filter("Name", Operation.EqualTo, "yetAnotherName");
             s.Verify("Value", Negation.Not, Operation.EqualTo, 678);
-            s.VerificationInclusion = Inclusion.Any;
         });
         await mediator.Send(new CreateNodes(collection.DescendantsAndSelf()));
 
@@ -90,7 +89,6 @@ public class ExportNodeTests
             s.Query(Element.Tag);
             s.Filter("Name", Operation.EqualTo, "yetAnotherName");
             s.Verify("Value", Negation.Not, Operation.EqualTo, 678);
-            s.VerificationInclusion = Inclusion.Any;
         });
         await mediator.Send(new CreateNodes(collection.DescendantsAndSelf()));
 

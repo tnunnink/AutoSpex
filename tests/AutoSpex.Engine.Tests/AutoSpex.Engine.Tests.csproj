@@ -11,12 +11,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="FluentAssertions" Version="6.12.0" />
+        <PackageReference Include="FluentAssertions" Version="6.12.1" />
         <PackageReference Include="JetBrains.dotMemoryUnit" Version="3.2.20220510" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
-        <PackageReference Include="NUnit" Version="4.1.0" />
-        <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
-        <PackageReference Include="NUnit.Analyzers" Version="4.2.0">
+        <PackageReference Include="NUnit" Version="4.2.2" />
+        <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
+        <PackageReference Include="NUnit.Analyzers" Version="4.3.0">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -32,9 +32,6 @@
       <None Update="Test.xml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="ArgumentTests.Serialize_SimpleValue_ShouldBeVerified.verified.txt">
-        <DependentUpon>ArgumentTests.cs</DependentUpon>
-      </None>
       <None Update="OutcomeTests.Serialize_WithNode_ShouldBeVerified.verified.txt">
         <DependentUpon>OutcomeTests.cs</DependentUpon>
       </None>
@@ -49,6 +46,33 @@
       </None>
       <None Update="VerificationTests.Serialized_Verification_ShouldBeVerified.verified.txt">
         <DependentUpon>VerificationTests.cs</DependentUpon>
+      </None>
+      <None Update="SpecTests.Serialize_ConfiguredSpecWithRange_ShouldBeVerified.verified.txt">
+        <DependentUpon>SpecTests.cs</DependentUpon>
+      </None>
+      <None Update="CriterionTests.Serialize_ValidCriterion_ShouldBeVerified.verified.txt">
+        <DependentUpon>CriterionTests.cs</DependentUpon>
+      </None>
+      <None Update="Converters\JsonObjectConverterTests.Serialize_NullValue_ShouldBeVerified.verified.txt">
+        <DependentUpon>JsonObjectConverterTests.cs</DependentUpon>
+      </None>
+      <None Update="Converters\JsonObjectConverterTests.Serialize_BooleanValue_ShouldBeVerified.verified.txt">
+        <DependentUpon>JsonObjectConverterTests.cs</DependentUpon>
+      </None>
+      <None Update="Converters\JsonObjectConverterTests.Serialize_ElementValue_ShouldBeVerified.verified.txt">
+        <DependentUpon>JsonObjectConverterTests.cs</DependentUpon>
+      </None>
+      <None Update="Converters\JsonObjectConverterTests.Serialize_NumberCollectionValue_ShouldBeVerified.verified.txt">
+        <DependentUpon>JsonObjectConverterTests.cs</DependentUpon>
+      </None>
+      <None Update="Converters\JsonObjectConverterTests.Serialize_TextCollectionValue_ShouldBeVerified.verified.txt">
+        <DependentUpon>JsonObjectConverterTests.cs</DependentUpon>
+      </None>
+      <None Update="Converters\JsonObjectConverterTests.Serialize_CriterionValue_ShouldBeVerified.verified.txt">
+        <DependentUpon>JsonObjectConverterTests.cs</DependentUpon>
+      </None>
+      <None Update="Migrations\SpecMigrationV1Tests.Run_ComplexExample_ShouldBeVerified.verified.txt">
+        <DependentUpon>SpecMigrationV1Tests.cs</DependentUpon>
       </None>
     </ItemGroup>
 

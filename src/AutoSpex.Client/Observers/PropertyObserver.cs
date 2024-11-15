@@ -32,6 +32,11 @@ public partial class PropertyObserver(Property model, ElementObserver element) :
     public string Type => $"{{{Model.DisplayName}}}";
 
     /// <summary>
+    /// 
+    /// </summary>
+    public TypeGroup Group => Model.Group;
+
+    /// <summary>
     /// The value of the property retrieved from the instance help within <see cref="_element"/>. 
     /// </summary>
     public ValueObserver Value => new(Model.GetValue(_element.Model));

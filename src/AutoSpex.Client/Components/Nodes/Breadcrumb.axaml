@@ -9,16 +9,16 @@
         <StackPanel Spacing="10" Margin="60">
             <ContentControl
                 Content="{x:Static components:TestData.SpecNode}"
-                ContentTemplate="{DynamicResource Breadcrumb}"
+                ContentTemplate="{DynamicResource BreadcrumbLink}"
                 Padding="10" />
             <ContentControl
                 Content="{x:Static components:TestData.SpecNode}"
-                ContentTemplate="{DynamicResource BreadcrumbLabel}"
+                ContentTemplate="{DynamicResource BreadcrumbPath}"
                 Padding="10" />
         </StackPanel>
     </Design.PreviewWith>
 
-    <DataTemplate x:Key="Breadcrumb" x:DataType="observers:NodeObserver">
+    <DataTemplate x:Key="BreadcrumbLink" x:DataType="observers:NodeObserver">
         <Border>
             <StackPanel Orientation="Horizontal">
 
@@ -32,60 +32,49 @@
 
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="observers:NodeObserver">
-                            <StackPanel Orientation="Horizontal" Spacing="2">
 
-                                <TextBlock
-                                    x:Name="Separator"
-                                    Text="/"
-                                    Padding="2 0 0 0"
-                                    IsVisible="{Binding Model.Parent, Converter={x:Static ObjectConverters.IsNotNull}}"
-                                    Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                            <StackPanel Orientation="Horizontal" Spacing="2">
 
                                 <Button
                                     Content="{Binding Name}"
+                                    Command="{Binding NavigateCommand}"
                                     Theme="{a:ControlTheme ButtonSubtle}"
                                     Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
                                     FontSize="{a:ThemeResource DefaultFontSizeSmall}"
                                     IsTabStop="False"
-                                    Padding="5 2">
+                                    Padding="5 2" />
 
-                                    <Button.Flyout>
-                                        <Flyout Placement="BottomEdgeAlignedLeft"
-                                                HorizontalOffset="-8"
-                                                VerticalOffset="2">
-                                            <ItemsControl ItemsSource="{Binding Nodes}" Margin="4">
-                                                <ItemsControl.ItemTemplate>
-                                                    <DataTemplate x:DataType="observers:NodeObserver">
-                                                        <Button
-                                                            Command="{Binding NavigateCommand}"
-                                                            Theme="{a:ControlTheme ButtonSubtle}"
-                                                            HorizontalContentAlignment="Stretch"
-                                                            MinWidth="200" MaxWidth="300" Padding="5"
-                                                            IsTabStop="False">
-                                                            <StackPanel Orientation="Horizontal" Spacing="5">
-                                                                <PathIcon
-                                                                    Theme="{Binding Type.Name, Converter={StaticResource KeyIconConverter}}" />
-                                                                <TextBlock
-                                                                    Text="{Binding Name}"
-                                                                    TextTrimming="CharacterEllipsis"
-                                                                    ToolTip.Tip="{Binding Name}" />
-                                                            </StackPanel>
-                                                        </Button>
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                            </ItemsControl>
-                                        </Flyout>
-                                    </Button.Flyout>
-                                </Button>
+                                <TextBlock
+                                    Text="/"
+                                    Padding="2 0 0 1"
+                                    Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+
                             </StackPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
+
                 </ItemsControl>
+
+                <controls:Entry
+                    x:Name="NameEntry"
+                    Value="{Binding Name}"
+                    FontFamily="{a:ThemeResource DefaultFontFamily}"
+                    FontWeight="{a:ThemeResource HeadingFontWeightMedium}"
+                    CommitCommand="{Binding RenameCommand}"
+                    MinDropDownWidth="{Binding #NameEntry.Bounds.Width}"
+                    Padding="5 2">
+                    <Interaction.Behaviors>
+                        <DataTriggerBehavior Binding="{Binding IsNew}" ComparisonCondition="Equal" Value="True">
+                            <ChangePropertyAction TargetObject="NameEntry" PropertyName="IsDropDownOpen" Value="True" />
+                        </DataTriggerBehavior>
+                    </Interaction.Behaviors>
+                </controls:Entry>
+
             </StackPanel>
         </Border>
     </DataTemplate>
 
-    <DataTemplate x:Key="BreadcrumbLabel" x:DataType="observers:NodeObserver">
+    <DataTemplate x:Key="BreadcrumbPath" x:DataType="observers:NodeObserver">
         <ItemsControl ItemsSource="{Binding Crumbs}">
 
             <ItemsControl.ItemsPanel>

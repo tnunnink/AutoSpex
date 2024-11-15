@@ -63,15 +63,16 @@
                         </PathIcon.Styles>
                     </PathIcon>
 
-                    <ContentControl
-                        Content="{Binding}"
-                        ContentTemplate="{StaticResource ObserverLink}" />
+                    <controls:HighlightableTextBlock
+                        Text="{Binding Name}"
+                        HighlightedText="{Binding FilterText}"
+                        FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
 
                     <controls:HighlightableTextBlock
-                        Text="{Binding Node.Model.Route, FallbackValue='Node not found'}"
+                        Text="{Binding Node.Model.Route, FallbackValue='Spec not found'}"
                         Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
                         HighlightedText="{Binding FilterText}"
-                        ToolTip.Tip="{Binding Node.Model.Route, FallbackValue='Node not found'}" />
+                        ToolTip.Tip="{Binding Node.Model.Route, FallbackValue='The spec that produced this result no longer exists'}" />
 
                 </StackPanel>
 

@@ -63,9 +63,10 @@
                         ToolTip.Tip="Import" />
 
                     <Button
+                        Command="{Binding OpenSearchCommand}"
                         Theme="{StaticResource IconButton}"
                         properties:Icon.Theme="{StaticResource IconLineSearch}"
-                        ToolTip.Tip="Find" />
+                        ToolTip.Tip="Search" />
 
                     <Button
                         Command="{Binding OpenSourcesCommand}"
@@ -110,7 +111,7 @@
             <Border
                 Grid.Row="1"
                 BorderBrush="{a:ThemeResource Container1BorderBrush}"
-                BorderThickness="0 1 0 0" Padding="10">
+                BorderThickness="0 1 0 0" Padding="10" Height="50">
                 <ContentControl Content="{Binding SourceSelector^}" />
             </Border>
 

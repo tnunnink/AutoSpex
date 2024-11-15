@@ -1,0 +1,38 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine">
+
+    <Design.PreviewWith>
+        <Border Width="600" Height="800">
+            <ContentControl
+                Content="{x:Static components:TestData.SpecObserverManyCriterion}"
+                ContentTemplate="{DynamicResource SpecConfig}"
+                Margin="20" />
+        </Border>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="SpecConfig" DataType="observers:SpecObserver">
+
+        <StackPanel Spacing="20">
+
+            <ContentControl
+                Content="{Binding}"
+                ContentTemplate="{StaticResource QueryStep}" />
+
+            <ContentControl
+                Content="{Binding}"
+                ContentTemplate="{StaticResource FilterStep}"
+                IsVisible="{Binding Element, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Element.Default}}" />
+
+            <ContentControl
+                Content="{Binding}"
+                ContentTemplate="{StaticResource VerificationStep}"
+                IsVisible="{Binding Element, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Element.Default}}" />
+
+        </StackPanel>
+
+    </DataTemplate>
+
+</ResourceDictionary>

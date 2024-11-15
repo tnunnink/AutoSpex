@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.IO.Compression;
-using System.Reflection;
 using System.Text;
+using System.Text.Json;
 using L5Sharp.Core;
 
 // ReSharper disable InvalidXmlDocComment
@@ -11,29 +11,14 @@ namespace AutoSpex.Engine;
 public static class Extensions
 {
     /// <summary>
-    /// Returns the current type or the inner generic argument type if the type is a generic type.
-    /// </summary>
-    /// <param name="type">The type ro evaluate.</param>
-    /// <returns>A type representing this type if not generic, or the inner generic argument type if it is.</returns>
-    /// <remarks>
-    /// This is so that collections or other generics we can get the inner type to pass down to nested
-    /// criterion objects, so they know which properties to resolve.
-    /// </remarks>
-    public static Type SelfOrInnerType(this Type type)
-    {
-        if (!type.IsGenericType) return type;
-        var arguments = type.GetGenericArguments();
-        return arguments[0];
-    }
-
-    /// <summary>
-    /// Gets a friendly type name for the provided type. I want this for the UI so it is easier to read what the type
+    /// Gets a friendly type name for the provided type. I want this for the UI so that it is easier to read what the type
     /// is.
     /// </summary>
     /// <param name="type">The type to get the identifier for.</param>
     /// <returns>A string representing a UI friendly name of the type.</returns>
-    public static string CommonName(this Type type)
+    public static string DisplayName(this Type? type)
     {
+        if (type is null) return "unknown";
         if (type == typeof(bool)) return "bool";
         if (type == typeof(byte)) return "byte";
         if (type == typeof(sbyte)) return "sbyte";
@@ -48,16 +33,19 @@ public static class Extensions
         if (type == typeof(decimal)) return "decimal";
         if (type == typeof(string)) return "string";
 
+        if (type.IsArray)
+            return $"{type.GetElementType().DisplayName()}[]";
+
         if (type.IsEnumerable())
-            return $"{string.Join(", ", type.GetGenericArguments().Select(CommonName).ToArray())}[]";
+            return $"{string.Join(", ", type.GetGenericArguments().Select(DisplayName).ToArray())}[]";
 
         if (type.IsNullable())
             // ReSharper disable once TailRecursiveCall dont care
-            return Nullable.GetUnderlyingType(type)!.CommonName();
+            return Nullable.GetUnderlyingType(type)!.DisplayName();
 
         if (type.IsGenericType)
             return type.Name.Split('`')[0] + "<" +
-                   string.Join(", ", type.GetGenericArguments().Select(CommonName).ToArray()) + ">";
+                   string.Join(", ", type.GetGenericArguments().Select(DisplayName).ToArray()) + ">";
 
         return type.Name;
     }
@@ -73,30 +61,11 @@ public static class Extensions
             LogixEnum enumeration => enumeration.Name,
             LogixScoped scoped => scoped.Scope,
             string text => text, // this needs to be before IEnumerable since string is enumerable
+            ICollection collection => $"[{collection.Count}]",
             IEnumerable enumerable =>
-                $"{string.Join(", ", enumerable.GetType().GetGenericArguments().Select(CommonName).ToArray())}s",
+                $"{string.Join(", ", enumerable.GetType().GetGenericArguments().Select(DisplayName).ToArray())}s",
             _ => candidate?.ToString() ?? "null"
         };
-    }
-
-    /// <summary>
-    /// Given a type returns a collection of possible values. This is meant primarily for enumeration types so that we
-    /// can provide the user with a selectable set of options for a given enum value. This however will also return
-    /// true/false for boolean type and empty collection for anything else (numbers, string, collections, complex objects).
-    /// </summary>
-    /// <param name="type">The type for which to determine the options.</param>
-    /// <returns>A collection of typed value options for the specified type if found. Otherwise, and empty collection.</returns>
-    public static IEnumerable<object> GetOptions(this Type type)
-    {
-        var group = TypeGroup.FromType(type);
-
-        if (group == TypeGroup.Boolean)
-            return new object[] { true, false };
-
-        if (type.IsEnum)
-            return Enum.GetNames(type);
-
-        return typeof(LogixEnum).IsAssignableFrom(type) ? LogixEnum.Options(type) : Enumerable.Empty<object>();
     }
 
     /// <summary>
@@ -180,14 +149,28 @@ public static class Extensions
     }
 
     /// <summary>
+    /// Gets the property value of the specified name from the JSON element.
+    /// </summary>
+    /// <param name="element">The JSON element to get the value from.</param>
+    /// <param name="name">The name of the property to retrieve.</param>
+    /// <returns>The JSON element of the specified name if it exists, null otherwise.</returns>
+    public static JsonElement? Get(this JsonElement element, string name)
+    {
+        if (element.ValueKind is JsonValueKind.Null or JsonValueKind.Undefined)
+            return null;
+
+        return element.TryGetProperty(name, out var value) ? value : null;
+    }
+
+    /// <summary>
     /// Determines whether the given type is enumerable.
     /// </summary>
     /// <param name="type">The type to evaluate.</param>
     /// <returns>True if the type is enumerable, false otherwise.</returns>
-    private static bool IsEnumerable(this Type type)
+    public static bool IsEnumerable(this Type type)
     {
-        return type.IsAssignableTo(typeof(IEnumerable)) || type.GetInterfaces()
-            .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>));
+        return type.IsAssignableTo(typeof(IEnumerable)) ||
+               type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>));
     }
 
     /// <summary>
@@ -196,22 +179,4 @@ public static class Extensions
     /// <param name="type">The type to evaluate.</param>
     /// <returns>True if the type is nullable, false otherwise.</returns>
     private static bool IsNullable(this Type type) => Nullable.GetUnderlyingType(type) is not null;
-
-    /// <summary>
-    /// Combines two Guid values by concatenating the first half of the string representation of the first Guid
-    /// with the first half of the string representation of the second Guid to create a new Guid.
-    /// </summary>
-    /// <param name="first">The first Guid value to combine.</param>
-    /// <param name="second">The second Guid value to combine.</param>
-    /// <returns>A new Guid formed by combining the first halves of the string representations of the input Guid values.</returns>
-    public static Guid Combine(this Guid first, Guid second)
-    {
-        var g1 = first.ToString();
-        var g2 = second.ToString();
-
-        var firstHalf = g1[..(g1.Length / 2)];
-        var secondHalf = g2[..(g2.Length / 2)];
-        
-        return Guid.Parse(firstHalf + secondHalf);
-    }
 }

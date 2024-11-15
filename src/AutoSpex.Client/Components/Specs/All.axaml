@@ -1,46 +1,16 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
-                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ResourceDictionary.MergedDictionaries>
-        <ResourceInclude Source="ArgumentBinaryEntry.axaml" />
-        <ResourceInclude Source="ArgumentInEntry.axaml" />
-        <ResourceInclude Source="ArgumentTernaryEntry.axaml" />
-        <ResourceInclude Source="CriterionEntry.axaml" />
-        <ResourceInclude Source="CriterionListItem.axaml" />
         <ResourceInclude Source="ElementDisplay.axaml" />
         <ResourceInclude Source="ElementEntry.axaml" />
         <ResourceInclude Source="FilterFlyout.axaml" />
-        <ResourceInclude Source="InclusionSelectors.axaml" />
+        <ResourceInclude Source="FilterStep.axaml" />
+        <ResourceInclude Source="QueryStep.axaml" />
+        <ResourceInclude Source="SpecConfig.axaml" />
+        <ResourceInclude Source="StepActions.axaml" />
         <ResourceInclude Source="VerificationFlyout.axaml" />
+        <ResourceInclude Source="VerificationStep.axaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <components:ArgumentSelector x:Key="ArgumentSelector">
-
-        <DataTemplate x:Key="BinaryOperation" x:DataType="observers:ArgumentObserver">
-            <ContentControl
-                Content="{Binding}"
-                ContentTemplate="{StaticResource ArgumentBinaryEntry}" />
-        </DataTemplate>
-
-        <DataTemplate x:Key="TernaryOperation" x:DataType="observers:ArgumentObserver">
-            <ContentControl
-                Content="{Binding}"
-                ContentTemplate="{StaticResource ArgumentTernaryEntry}" />
-        </DataTemplate>
-
-        <DataTemplate x:Key="CollectionOperation" x:DataType="observers:ArgumentObserver">
-            <ContentControl
-                Content="{Binding Value}"
-                ContentTemplate="{StaticResource CriterionEntry}" />
-        </DataTemplate>
-
-        <DataTemplate x:Key="InOperation" x:DataType="observers:ArgumentObserver">
-            <ContentControl
-                Content="{Binding}"
-                ContentTemplate="{StaticResource ArgumentInEntry}" />
-        </DataTemplate>
-
-    </components:ArgumentSelector>
 </ResourceDictionary>

@@ -14,156 +14,110 @@
         Type: Spec,
         Name: First,
         Spec: {
+          SchemaVersion: 1,
           SpecId: Guid_4,
           Element: Tag,
           Filters: [
             {
-              CriterionId: Guid_5,
               Type: L5Sharp.Core.Tag,
-              Property: {
-                Origin: L5Sharp.Core.Tag,
-                Path: Name
-              },
+              Property: L5Sharp.Core.Tag:Name,
               Negation: Is,
               Operation: Like,
               Argument: {
-                ArgumentId: Guid_6,
-                Value: {
-                  Type: System.String,
-                  Data: someName
-                }
+                Group: Text,
+                Data: someName
               }
             }
           ],
           Verifications: [
             {
-              CriterionId: Guid_7,
               Type: L5Sharp.Core.Tag,
-              Property: {
-                Origin: L5Sharp.Core.Tag,
-                Path: Value
-              },
+              Property: L5Sharp.Core.Tag:Value,
               Negation: Is,
               Operation: Equal To,
               Argument: {
-                ArgumentId: Guid_8,
-                Value: {
-                  Type: System.Int32,
-                  Data: 123
-                }
+                Group: Number,
+                Data: 123
               }
             }
-          ],
-          FilterInclusion: 0,
-          VerificationInclusion: 0
+          ]
         }
       },
       {
-        NodeId: Guid_9,
+        NodeId: Guid_5,
         ParentId: Guid_2,
         Type: Spec,
         Name: Second,
         Spec: {
-          SpecId: Guid_10,
+          SchemaVersion: 1,
+          SpecId: Guid_6,
           Element: Tag,
           Filters: [
             {
-              CriterionId: Guid_11,
               Type: L5Sharp.Core.Tag,
-              Property: {
-                Origin: L5Sharp.Core.Tag,
-                Path: Name
-              },
+              Property: L5Sharp.Core.Tag:Name,
               Negation: Is,
               Operation: Containing,
               Argument: {
-                ArgumentId: Guid_12,
-                Value: {
-                  Type: System.String,
-                  Data: anotherName
-                }
+                Group: Text,
+                Data: anotherName
               }
             }
           ],
           Verifications: [
             {
-              CriterionId: Guid_13,
               Type: L5Sharp.Core.Tag,
-              Property: {
-                Origin: L5Sharp.Core.Tag,
-                Path: Value
-              },
+              Property: L5Sharp.Core.Tag:Value,
               Negation: Is,
               Operation: Greater Than,
               Argument: {
-                ArgumentId: Guid_14,
-                Value: {
-                  Type: System.Int32,
-                  Data: 456
-                }
+                Group: Number,
+                Data: 456
               }
             }
-          ],
-          FilterInclusion: 0,
-          VerificationInclusion: 0
+          ]
         }
       },
       {
-        NodeId: Guid_15,
+        NodeId: Guid_7,
         ParentId: Guid_2,
         Type: Spec,
         Name: Third,
         Spec: {
-          SpecId: Guid_16,
+          SchemaVersion: 1,
+          SpecId: Guid_8,
           Element: Tag,
           Filters: [
             {
-              CriterionId: Guid_17,
               Type: L5Sharp.Core.Tag,
-              Property: {
-                Origin: L5Sharp.Core.Tag,
-                Path: Name
-              },
+              Property: L5Sharp.Core.Tag:Name,
               Negation: Is,
               Operation: Equal To,
               Argument: {
-                ArgumentId: Guid_18,
-                Value: {
-                  Type: System.String,
-                  Data: yetAnotherName
-                }
+                Group: Text,
+                Data: yetAnotherName
               }
             }
           ],
           Verifications: [
             {
-              CriterionId: Guid_19,
               Type: L5Sharp.Core.Tag,
-              Property: {
-                Origin: L5Sharp.Core.Tag,
-                Path: Value
-              },
+              Property: L5Sharp.Core.Tag:Value,
               Negation: Not,
               Operation: Equal To,
               Argument: {
-                ArgumentId: Guid_20,
-                Value: {
-                  Type: System.Int32,
-                  Data: 678
-                }
+                Group: Number,
+                Data: 678
               }
             }
-          ],
-          FilterInclusion: 0,
-          VerificationInclusion: 1
+          ]
         }
       }
     ],
     Spec: {
-      SpecId: Guid_21,
-      Element: None,
-      FilterInclusion: 0,
-      VerificationInclusion: 0
+      SchemaVersion: 1,
+      SpecId: Guid_9,
+      Element: None
     }
   }
 }

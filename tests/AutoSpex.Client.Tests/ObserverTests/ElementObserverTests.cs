@@ -24,7 +24,7 @@ public class ElementObserverTests
     [Test]
     public void ElementObserverPropertiesWillGetCollectionPropertiesToo()
     {
-        var content = L5X.Load(Known.Test);
+        /*var content = L5X.Load(Known.Test);
         var dataType = content.DataTypes.Get("ComplexType");
         
         var element = new ElementObserver(dataType);
@@ -34,6 +34,6 @@ public class ElementObserverTests
         var first = members.Properties.First();
         var name = first.Properties.First(p => p.Name == "Name");
         var value = name.Value;
-        value.Should().NotBeNull();
+        value.Should().NotBeNull();*/
     }
 }

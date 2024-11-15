@@ -19,6 +19,7 @@
     </Design.PreviewWith>
 
     <DataTemplate x:Key="ObserverLink" x:DataType="shared:Observer">
+
         <Button
             Command="{Binding NavigateCommand}"
             Theme="{a:ControlTheme ButtonInvisible}">
@@ -37,5 +38,6 @@
             </Button.Styles>
 
         </Button>
+
     </DataTemplate>
 </ResourceDictionary>

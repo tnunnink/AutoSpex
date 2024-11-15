@@ -11,15 +11,11 @@
       <PackageReference Include="Ardalis.SmartEnum" Version="8.0.0" />
       <PackageReference Include="Ardalis.SmartEnum.SystemTextJson" Version="8.0.0" />
       <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" />
-      <PackageReference Include="L5Sharp" Version="4.3.0" />
+      <PackageReference Include="L5Sharp" Version="4.7.1" />
     </ItemGroup>
 
     <ItemGroup>
       <None Remove="AutoSpex.Engine.csproj.DotSettings" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Compile Remove="Reference.cs" />
     </ItemGroup>
 
 </Project>

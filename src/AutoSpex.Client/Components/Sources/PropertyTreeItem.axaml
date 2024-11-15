@@ -40,6 +40,8 @@
             <Grid ColumnDefinitions="*,Auto">
 
                 <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5" ClipToBounds="True">
+                    <PathIcon
+                        Theme="{Binding Group, Converter={StaticResource TypeGroupIconConverter}}" />
                     <TextBlock
                         Text="{Binding Name}" />
                     <TextBlock
@@ -64,18 +66,6 @@
                             properties:Icon.Theme="{StaticResource IconFilledClone}"
                             IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}"
                             ToolTip.Tip="Copy Element" />
-
-                        <Button
-                            Theme="{StaticResource IconButtonSmall}"
-                            properties:Icon.Theme="{StaticResource IconEllipsis}"
-                            ToolTip.Tip="Options">
-                            <Button.Flyout>
-                                <MenuFlyout
-                                    ItemsSource="{Binding MenuItems}"
-                                    ItemContainerTheme="{StaticResource MenuActionItem}"
-                                    Placement="Pointer" HorizontalOffset="8" VerticalOffset="5" />
-                            </Button.Flyout>
-                        </Button>
 
                     </StackPanel>
                 </Border>

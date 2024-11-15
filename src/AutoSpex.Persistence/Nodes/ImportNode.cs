@@ -27,7 +27,6 @@ internal class ImportNodeHandler(IConnectionManager manager) : IRequestHandler<I
         VALUES (@SpecId, @NodeId, @Config)
         """;
 
-
     public async Task<Result<Node>> Handle(ImportNode request, CancellationToken cancellationToken)
     {
         using var connection = await manager.Connect(cancellationToken);

@@ -1,5 +1,4 @@
-﻿using L5Sharp.Core;
-using Task = System.Threading.Tasks.Task;
+﻿using Task = System.Threading.Tasks.Task;
 
 namespace AutoSpex.Persistence.Tests.Nodes;
 
@@ -43,7 +42,7 @@ public class SaveNodeTests
         {
             c.Query(Element.Program);
             c.Filter("Name", Operation.EqualTo, "SomeName");
-            c.Verify("Disabled", Operation.False);
+            c.Verify("Disabled", Operation.EqualTo, false);
         });
 
 
@@ -64,7 +63,7 @@ public class SaveNodeTests
         {
             c.Query(Element.Program);
             c.Filter("Name", Operation.EqualTo, "SomeName");
-            c.Verify("Disabled", Operation.False);
+            c.Verify("Disabled", Operation.EqualTo, false);
         });
 
         var result = await mediator.Send(new SaveNode(node));

@@ -7,7 +7,7 @@
         <StackPanel Margin="20" Spacing="10">
             <a:ToggleThemeButton
                 Theme="{a:ControlTheme TitleBarToggleThemeButton}" />
-            <controls:HighlightableTextBlock Text="This is a test" HighlightedText="test" />
+            <controls:HighlightableTextBlock Text="This is a test" HighlightedText="test" ToolTip.Tip="This is a test" />
             <controls:HighlightableTextBlock Text="This is a another test" HighlightedText="another" />
             <controls:HighlightableTextBlock Text="This is a test" />
         </StackPanel>
@@ -16,25 +16,27 @@
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Light">
             <SolidColorBrush x:Key="HighlightTextBackgroundBrush" Color="#9ee5ff" />
-            <SolidColorBrush x:Key="HighlightTextForegroundBrush" Color="#4e727e" />
+            <SolidColorBrush x:Key="HighlightTextForegroundBrush" Color="#ff6402" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Dark">
             <SolidColorBrush x:Key="HighlightTextBackgroundBrush" Color="#2d687d" />
-            <SolidColorBrush x:Key="HighlightTextForegroundBrush" Color="#55c6ef" />
+            <SolidColorBrush x:Key="HighlightTextForegroundBrush" Color="#ffb641" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
     <ControlTheme x:Key="{x:Type controls:HighlightableTextBlock}" TargetType="controls:HighlightableTextBlock">
-        <Setter Property="SelectionBrush" Value="{DynamicResource HighlightTextBackgroundBrush}" />
+        <!--<Setter Property="SelectionBrush" Value="{DynamicResource HighlightTextBackgroundBrush}" />-->
         <Setter Property="SelectionForegroundBrush" Value="{DynamicResource HighlightTextForegroundBrush}" />
         <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="(ToolTip.ShowOnDisabled)" Value="True"></Setter>
 
         <Setter Property="IsEnabled" Value="False" />
 
         <Style Selector="^[IsEnabled=True]">
             <Setter Property="ContextFlyout">
                 <MenuFlyout Placement="Bottom">
-                    <MenuItem x:Name="SelectableTextBlockContextFlyoutCopyItem" Header="Copy"
+                    <MenuItem x:Name="SelectableTextBlockContextFlyoutCopyItem"
+                              Header="Copy"
                               Command="{Binding $parent[SelectableTextBlock].Copy}"
                               IsEnabled="{Binding $parent[SelectableTextBlock].CanCopy}"
                               InputGesture="{x:Static TextBox.CopyGesture}" />

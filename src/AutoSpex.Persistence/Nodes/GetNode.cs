@@ -7,7 +7,7 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record GetNode(Guid NodeId) : IDbQuery<Result<Node>>;
+public record GetNode(Guid NodeId) : IRequest<Result<Node>>;
 
 [UsedImplicitly]
 internal class GetNodeHandler(IConnectionManager manager) : IRequestHandler<GetNode, Result<Node>>
@@ -43,7 +43,7 @@ internal class GetNodeHandler(IConnectionManager manager) : IRequestHandler<GetN
 
         SELECT NodeId, ParentId, Type, Name
         FROM Children
-        ORDEr BY Depth
+        ORDER BY Depth
         """;
 
     public async Task<Result<Node>> Handle(GetNode request, CancellationToken cancellationToken)

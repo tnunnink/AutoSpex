@@ -1,0 +1,17 @@
+﻿{
+  Group: Collection,
+  Data: [
+    {
+      Group: Text,
+      Data: First
+    },
+    {
+      Group: Text,
+      Data: Second
+    },
+    {
+      Group: Text,
+      Data: Third
+    }
+  ]
+}

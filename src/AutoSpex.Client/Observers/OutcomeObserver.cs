@@ -59,16 +59,6 @@ public partial class OutcomeObserver : Observer<Outcome>,
                || Node?.Filter(filter) is true;
     }
 
-    /// <inheritdoc />
-    /// <remarks>
-    /// For an outcome we want to repurpose the navigate command to show the outcome result details in the parent list.
-    /// </remarks>
-    protected override Task Navigate()
-    {
-        Messenger.Send(new Open(this));
-        return Task.CompletedTask;
-    }
-
     /// <summary>
     /// Applies a filter to the evaluations in the OutcomeObserver based on the specified ResultState.
     /// </summary>
@@ -78,12 +68,6 @@ public partial class OutcomeObserver : Observer<Outcome>,
     {
         FilterState = state ?? ResultState.None;
         Evaluations.Filter(x => FilterState == ResultState.None || x.Result == FilterState);
-    }
-
-    [RelayCommand]
-    private Task Run()
-    {
-        return Task.CompletedTask;
     }
 
     [RelayCommand(CanExecute = nameof(CanAddSuppression))]
@@ -148,23 +132,9 @@ public partial class OutcomeObserver : Observer<Outcome>,
     /// <param name="Outcome">The outcome produced by the run.</param>
     public record Complete(Outcome Outcome);
 
-    /// <summary>
-    /// A message to nofiy the containing list to select and show the details for this outcome.
-    /// </summary>
-    /// <param name="Outcome">The outcome to open in the containing list.</param>
-    public record Open(OutcomeObserver Outcome);
-
     /// <inheritdoc />
     protected override IEnumerable<MenuActionItem> GenerateContextItems()
     {
-        yield return new MenuActionItem
-        {
-            Header = "Run Spec",
-            Icon = Resource.Find("IconFilledLightning"),
-            Classes = "accent",
-            Command = RunCommand
-        };
-
         yield return new MenuActionItem
         {
             Header = "Add Suppression",

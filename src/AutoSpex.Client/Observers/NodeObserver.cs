@@ -40,6 +40,7 @@ public partial class NodeObserver : Observer<Node>,
     public Guid ParentId => Model.ParentId;
     public NodeType Type => Model.Type;
     public string Route => Model.Route;
+    public string Path => Model.Path;
     public bool IsVirtual => Type != NodeType.Collection && ParentId == Guid.Empty;
 
     [Required]
@@ -51,7 +52,6 @@ public partial class NodeObserver : Observer<Node>,
 
     public ObserverCollection<Node, NodeObserver> Nodes { get; }
     public IEnumerable<NodeObserver> Crumbs => Model.Ancestors().Select(n => new NodeObserver(n));
-    public IEnumerable<NodeObserver> Path => Model.AncestorsAndSelf().Select(n => new NodeObserver(n));
 
     /// <inheritdoc />
     public override bool Filter(string? filter)
@@ -198,24 +198,18 @@ public partial class NodeObserver : Observer<Node>,
             var name = await Prompter.PromptNewName(this);
             if (name is null) return;
 
-            var load = await Mediator.Send(new LoadNode(Id));
-            if (Notifier.ShowIfFailed(load)) return;
+            var duplicate = await Mediator.Send(new DuplicateNode(Id, name));
+            if (Notifier.ShowIfFailed(duplicate)) return;
 
-            var duplicate = load.Value.Duplicate(name);
+            var node = new NodeObserver(duplicate.Value);
 
-            var result = await Mediator.Send(new CreateNode(duplicate));
-            if (Notifier.ShowIfFailed(result)) return;
-
-            Messenger.Send(new Created<NodeObserver>(new NodeObserver(duplicate)));
-            Notifier.ShowSuccess(
-                "Create node request complete",
-                $"{duplicate.Name} was successfully created @ {DateTime.Now}"
-            );
+            Messenger.Send(new Created<NodeObserver>(node));
+            Notifier.ShowSuccess("Duplicate node request complete",
+                $"{node.Name} was successfully created @ {DateTime.Now}");
         }
         catch (Exception e)
         {
-            Notifier.ShowError("Request Failed", e.Message);
-            throw;
+            Notifier.ShowError("Duplicate request failed", e.Message);
         }
     }
 
@@ -470,6 +464,50 @@ public partial class NodeObserver : Observer<Node>,
             Icon = Resource.Find("IconFilledTrash"),
             Classes = "danger",
             Command = DeleteSelectedCommand,
+            Gesture = new KeyGesture(Key.Delete)
+        };
+    }
+
+    /// <inheritdoc />
+    protected override IEnumerable<MenuActionItem> GenerateMenuItems()
+    {
+        yield return new MenuActionItem
+        {
+            Header = "Duplicate",
+            Icon = Resource.Find("IconFilledClone"),
+            Command = DuplicateCommand,
+            Gesture = new KeyGesture(Key.D, KeyModifiers.Control)
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Reaplce",
+            Icon = Resource.Find("IconLineSearch"),
+            Gesture = new KeyGesture(Key.H, KeyModifiers.Control)
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Move",
+            Icon = Resource.Find("IconLineMove"),
+            Command = MoveToCommand,
+            DetermineVisibility = () => Type != NodeType.Collection
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Export",
+            Icon = Resource.Find("IconLineDownload"),
+            Command = ExportCommand,
+            DetermineVisibility = () => Type == NodeType.Collection
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Delete",
+            Icon = Resource.Find("IconFilledTrash"),
+            Classes = "danger",
+            Command = DeleteCommand,
             Gesture = new KeyGesture(Key.Delete)
         };
     }

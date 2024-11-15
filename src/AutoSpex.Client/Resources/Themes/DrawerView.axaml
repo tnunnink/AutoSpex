@@ -35,6 +35,7 @@
     </Design.PreviewWith>
 
     <ControlTheme x:Key="{x:Type controls:DrawerView}" TargetType="controls:DrawerView">
+        <Setter Property="BorderBrush" Value="{actipro:ThemeResource Container1BorderBrush}" />
 
         <Style Selector="^:left">
             <Setter Property="Template">
@@ -60,6 +61,7 @@
                             Grid.Column="1"
                             IsEnabled="{TemplateBinding IsDrawerOpen}"
                             Theme="{StaticResource GridSplitterHighlight}"
+                            Background="{TemplateBinding BorderBrush}"
                             Width="1">
                             <GridSplitter.IsVisible>
                                 <MultiBinding Converter="{x:Static BoolConverters.Or}">
@@ -103,6 +105,7 @@
                             Grid.Column="1"
                             IsEnabled="{TemplateBinding IsDrawerOpen}"
                             Theme="{StaticResource GridSplitterHighlight}"
+                            Background="{TemplateBinding BorderBrush}"
                             Width="1">
                             <GridSplitter.IsVisible>
                                 <MultiBinding Converter="{x:Static BoolConverters.Or}">
@@ -146,6 +149,7 @@
                             Grid.Row="1"
                             IsEnabled="{TemplateBinding IsDrawerOpen}"
                             Theme="{StaticResource GridSplitterHighlight}"
+                            Background="{TemplateBinding BorderBrush}"
                             Height="1">
                             <GridSplitter.IsVisible>
                                 <MultiBinding Converter="{x:Static BoolConverters.Or}">
@@ -189,6 +193,7 @@
                             Grid.Row="1"
                             IsEnabled="{TemplateBinding IsDrawerOpen}"
                             Theme="{StaticResource GridSplitterHighlight}"
+                            Background="{TemplateBinding BorderBrush}"
                             Height="1">
                             <GridSplitter.IsVisible>
                                 <MultiBinding Converter="{x:Static BoolConverters.Or}">

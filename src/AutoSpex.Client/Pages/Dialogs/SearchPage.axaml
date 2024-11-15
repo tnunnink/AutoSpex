@@ -1,0 +1,154 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+             x:Class="AutoSpex.Client.Pages.SearchPage"
+             x:DataType="pages:SearchPageModel"
+             Height="800" Width="800">
+
+    <controls:Prompt
+        HeaderIcon="{StaticResource IconLineSearch}"
+        UseButtonPanel="False"
+        Classes="accent"
+        Padding="0">
+
+        <controls:Prompt.Header>
+            <Grid ColumnDefinitions="*,Auto">
+
+                <TextBlock
+                    Grid.Column="0"
+                    Text="Search criteria"
+                    FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
+
+                    <TextBlock Text="in" Classes="faint" />
+
+                    <DropDownButton
+                        Theme="{a:ControlTheme DropDownButtonSoft}">
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <PathIcon
+                                Theme="{Binding Scope.Type.Name, Converter={StaticResource KeyIconConverter}, FallbackValue={x:Null}}" />
+                            <Label
+                                Content="{Binding Scope.Name, FallbackValue='Select Node'}"
+                                FontSize="{a:ThemeResource DefaultFontSizeSmall}" />
+                        </StackPanel>
+                        <DropDownButton.Flyout>
+                            <Flyout Placement="BottomEdgeAlignedRight" HorizontalOffset="8" VerticalOffset="3">
+                                <ContentControl Content="{Binding NodeSelector^}" />
+                            </Flyout>
+                        </DropDownButton.Flyout>
+                        <DropDownButton.Styles>
+                            <Style Selector="TextBlock">
+                                <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeSmall}" />
+                                <Setter Property="FontWeight" Value="Normal" />
+                            </Style>
+                        </DropDownButton.Styles>
+                    </DropDownButton>
+
+                </StackPanel>
+
+            </Grid>
+        </controls:Prompt.Header>
+
+        <Border>
+
+            <Grid RowDefinitions="Auto,Auto,*">
+
+                <TextBox
+                    Grid.Row="0"
+                    Text="{Binding SearchText}"
+                    Watermark="Search"
+                    Theme="{a:ControlTheme TextBoxOutline}"
+                    Background="Transparent"
+                    BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                    BorderThickness="0 0 0 1" CornerRadius="0" Padding="0 10"
+                    VerticalContentAlignment="Center">
+                    <TextBox.InnerLeftContent>
+                        <PathIcon Theme="{StaticResource IconLineSearch}" Classes="size-sm" Margin="15 0 10 0" />
+                    </TextBox.InnerLeftContent>
+                    <Interaction.Behaviors>
+                        <ExecuteCommandOnKeyDownBehavior Key="Enter" Command="{Binding SearchCommand}" />
+                    </Interaction.Behaviors>
+                </TextBox>
+
+                <TextBox
+                    Grid.Row="1"
+                    Text="{Binding ReplaceText}"
+                    IsVisible="{Binding ShowReplace}"
+                    Watermark="Replace"
+                    Theme="{a:ControlTheme TextBoxOutline}"
+                    Background="Transparent"
+                    BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                    BorderThickness="0 0 0 1" CornerRadius="0" Padding="0 10"
+                    VerticalContentAlignment="Center">
+                    <TextBox.InnerLeftContent>
+                        <PathIcon Theme="{StaticResource IconLineSearch}" Classes="size-sm" Margin="15 0 10 0" />
+                    </TextBox.InnerLeftContent>
+                </TextBox>
+
+                <controls:DefaultMessage
+                    Grid.Row="2"
+                    Message="Enter search text to find specs containing the .."
+                    IsVisible="{Binding !Instances.Count}" />
+
+                <ListBox
+                    Grid.Row="2"
+                    ItemsSource="{Binding Instances}"
+                    SelectedItem="{Binding Selected}"
+                    IsVisible="{Binding Instances.Count}"
+                    ItemTemplate="{StaticResource CriterionReplaceListItem}"
+                    ItemContainerTheme="{StaticResource ListBoxItemSimple}"
+                    SelectionMode="AlwaysSelected"
+                    BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                    BorderThickness="0" Padding="5" />
+
+            </Grid>
+
+        </Border>
+
+        <controls:Prompt.Footer>
+            <DockPanel LastChildFill="False" Margin="5 0">
+
+                <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" Spacing="10"
+                            IsVisible="{Binding Selected, Converter={x:Static ObjectConverters.IsNotNull}}">
+
+                    <TextBlock
+                        Text="{Binding Selected.Name, FallbackValue={x:Null}}"
+                        FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
+
+                    <TextBlock
+                        Text="{Binding Selected.Node.Path, FallbackValue={x:Null}}"
+                        Classes="faint" />
+
+                    <Button
+                        Command="{Binding OpenSpecCommand}"
+                        CommandParameter="{Binding $parent[Window]}"
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconLineLaunch}" />
+
+                </StackPanel>
+
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="10">
+
+                    <Button
+                        Command="{Binding ReplaceAllCommand}"
+                        Content="Replace All" />
+
+                    <Button
+                        Command="{Binding ReplaceCommand}"
+                        CommandParameter="{Binding Selected}"
+                        Theme="{a:ControlTheme ButtonSolid}"
+                        Content="Replace"
+                        Classes="accent" />
+
+                </StackPanel>
+
+            </DockPanel>
+        </controls:Prompt.Footer>
+
+    </controls:Prompt>
+
+</UserControl>

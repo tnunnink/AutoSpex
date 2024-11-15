@@ -40,7 +40,7 @@ public class SourceDetailPageModel : DetailPageModel
     protected override async Task NavigateTabs()
     {
         await Navigator.Navigate(() => new ContentPageModel(Source));
-        await Navigator.Navigate(() => new SuppressPageModel(Source));
+        await Navigator.Navigate(() => new SuppressionsPageModel(Source));
         await Navigator.Navigate(() => new OverridesPageModel(Source));
     }
 }

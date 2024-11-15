@@ -111,7 +111,7 @@
         <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushEnum}" />
         <Setter Property="FontSize" Value="15" />
     </ControlTheme>
-    <ControlTheme x:Key="IconThemedElement" TargetType="PathIcon" BasedOn="{StaticResource IconLineXml}">
+    <ControlTheme x:Key="IconThemedElement" TargetType="PathIcon" BasedOn="{StaticResource IconFilledCube}">
         <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushElement}" />
         <Setter Property="FontSize" Value="15" />
     </ControlTheme>

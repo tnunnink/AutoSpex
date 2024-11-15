@@ -1,5 +1,4 @@
-﻿using L5Sharp.Core;
-using Task = System.Threading.Tasks.Task;
+﻿using Task = System.Threading.Tasks.Task;
 
 namespace AutoSpex.Persistence.Tests.Nodes;
 
@@ -71,7 +70,6 @@ public class CreateNodeTests
             c.Query(Element.Tag);
             c.Filter("TagName", Operation.Containing, "Test");
             c.Verify("Value", Operation.EqualTo, 123);
-            c.FilterInclusion = Inclusion.Any;
         });
 
         var result = await mediator.Send(new CreateNode(node));

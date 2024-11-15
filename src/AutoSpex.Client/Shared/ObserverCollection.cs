@@ -93,6 +93,37 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
     }
 
     /// <summary>
+    /// Binds this observer collection to the provided list using the specified wrapper function.
+    /// </summary>
+    /// <param name="models">The list of models to bind to the ObserverCollection</param>
+    /// <param name="wrapper">A function that wraps a model into its corresponding observer</param>
+    public void Bind(IList<TModel> models, Func<TModel, TObserver> wrapper)
+    {
+        _refresh = () => models.Select(wrapper).ToList();
+        _add = (_, m) => models.Add(m);
+        _insert = models.Insert;
+        _remove = (_, m) => models.Remove(m);
+        _move = models.Move;
+        _clear = models.Clear;
+        _count = () => models.Count;
+
+        RefreshCollection(_refresh());
+    }
+
+    /// <summary>
+    /// Binds this observer collection to the provided list of observer objects.
+    /// This does not bind any mutation methods (add, remove, etc.) as it is only expected to be read from and filtered
+    /// but never changed.
+    /// </summary>
+    /// <param name="observers">The list of models to bind to the ObserverCollection</param>
+    public void BindReadOnly(IList<TObserver> observers)
+    {
+        _refresh = () => observers;
+        _count = () => observers.Count;
+        RefreshCollection(_refresh());
+    }
+
+    /// <summary>
     /// Tries to add the specified observer to the <see cref="ObserverCollection{TModel, TObserver}"/>.
     /// If an observer with the same ID already exists in the collection, it will not be added.
     /// </summary>
@@ -124,34 +155,13 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
     }
 
     /// <summary>
-    /// Binds this observer collection to the provided list using the specified wrapper function.
+    /// Checks if this collection contains the provided observer instance using referential equality. 
     /// </summary>
-    /// <param name="models">The list of models to bind to the ObserverCollection</param>
-    /// <param name="wrapper">A function that wraps a model into its corresponding observer</param>
-    public void Bind(IList<TModel> models, Func<TModel, TObserver> wrapper)
+    /// <param name="observer">The observer to check for equality.</param>
+    /// <returns>True if any observer in the collection is equal to the specified observer; otherwise, false.</returns>
+    public bool Has(Observer observer)
     {
-        _refresh = () => models.Select(wrapper).ToList();
-        _add = (_, m) => models.Add(m);
-        _insert = models.Insert;
-        _remove = (_, m) => models.Remove(m);
-        _move = models.Move;
-        _clear = models.Clear;
-        _count = () => models.Count;
-
-        RefreshCollection(_refresh());
-    }
-
-    /// <summary>
-    /// Binds this observer collection to the provided list of observer objects.
-    /// This does not bind any mutation methods (add, remove, etc.) as it is only expected to be read from and filtered
-    /// but never changed.
-    /// </summary>
-    /// <param name="observers">The list of models to bind to the ObserverCollection</param>
-    public void BindReadOnly(IList<TObserver> observers)
-    {
-        _refresh = () => observers;
-        _count = () => observers.Count;
-        RefreshCollection(_refresh());
+        return this.Any(x => x.Is(observer));
     }
 
     /// <summary>
@@ -304,7 +314,7 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
     protected override void MoveItem(int oldIndex, int newIndex)
     {
         base.MoveItem(oldIndex, newIndex);
-        
+
         //Abort if refreshing to avoid circular calls.
         if (_refreshing) return;
 
@@ -452,5 +462,11 @@ public static class ObservableCollectionExtensions
         var item = list[oldIndex];
         list.RemoveAt(oldIndex);
         list.Insert(newIndex, item);
+    }
+    
+    public static ObserverCollection<TModel, TObserver> ToObserver<TModel, TObserver>(this IList<TModel> list,
+        Func<TModel, TObserver> wrapper) where TObserver : Observer<TModel>
+    {
+        return new ObserverCollection<TModel, TObserver>(list, wrapper);
     }
 }

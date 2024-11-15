@@ -1,0 +1,13 @@
+﻿{
+  Type: L5Sharp.Core.Tag,
+  Property: {
+    Origin: L5Sharp.Core.Tag,
+    Path: [Alarms.SP.ChFaultEnabled].Value
+  },
+  Negation: Is,
+  Operation: Equal To,
+  Argument: {
+    Type: L5Sharp.Core.SINT,
+    Data: 1
+  }
+}

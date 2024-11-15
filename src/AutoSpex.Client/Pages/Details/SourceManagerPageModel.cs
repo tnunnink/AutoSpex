@@ -16,9 +16,7 @@ public partial class SourceManagerPageModel() : DetailPageModel("Sources"), IRec
 {
     public override string Route => "Sources";
     public override string Icon => "Source";
-
     public ObserverCollection<Source, SourceObserver> Sources { get; } = [];
-
     public ObservableCollection<SourceObserver> Selected { get; } = [];
 
     [ObservableProperty] private string? _filter;

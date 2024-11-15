@@ -1,0 +1,72 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+             xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors"
+             x:Class="AutoSpex.Client.Pages.NodeSelectorPage"
+             x:DataType="pages:NodeSelectorPageModel"
+             Padding="5" MinWidth="300" MaxHeight="500">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <TextBox
+            Grid.Row="0"
+            Text="{Binding Filter}"
+            Watermark="Search nodes"
+            Theme="{a:ControlTheme TextBoxOutline}"
+            BorderThickness="0 0 0 1"
+            CornerRadius="0"
+            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+            Padding="10 7" />
+
+        <Panel Grid.Row="1">
+
+            <TextBlock
+                Text="No nodes defined"
+                Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                IsVisible="{Binding !Nodes.HasItems}"
+                Padding="10" />
+
+            <TextBlock
+                Text="No nodes match filter text"
+                Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                Padding="10">
+                <TextBlock.IsVisible>
+                    <MultiBinding Converter="{x:Static BoolConverters.And}">
+                        <Binding Path="Nodes.HasItems" />
+                        <Binding Path="!Nodes.Count" />
+                    </MultiBinding>
+                </TextBlock.IsVisible>
+            </TextBlock>
+
+            <ListBox
+                IsVisible="{Binding Nodes.Count}"
+                ItemsSource="{Binding Nodes}"
+                ItemContainerTheme="{StaticResource ListBoxItemSimple}"
+                Padding="5"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate x:DataType="observers:NodeObserver">
+                        <Button
+                            Content="{Binding}"
+                            ContentTemplate="{StaticResource NodeDisplay}"
+                            Command="{Binding $parent[ItemsControl].((pages:NodeSelectorPageModel)DataContext).SelectNodeCommand, FallbackValue={x:Null}}"
+                            CommandParameter="{Binding}"
+                            Theme="{a:ControlTheme ButtonInvisible}"
+                            HorizontalContentAlignment="Stretch"
+                            Padding="{a:ThemeResource ButtonPadding}">
+                            <Interaction.Behaviors>
+                                <behaviors:HideFlyoutOnClickedBehavior />
+                            </Interaction.Behaviors>
+                        </Button>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+
+            </ListBox>
+
+        </Panel>
+    </Grid>
+
+</UserControl>

@@ -1,0 +1,73 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+
+    <Design.PreviewWith>
+        <Border Width="600" Height="300">
+            <ContentControl
+                Content="{x:Static components:TestData.SpecObserverManyCriterion}"
+                ContentTemplate="{DynamicResource VerificationStep}"
+                Margin="20" VerticalAlignment="Top" />
+        </Border>
+    </Design.PreviewWith>
+    
+
+    <DataTemplate x:Key="VerificationStep" x:DataType="observers:SpecObserver">
+
+        <controls:Section
+            Header="Verify"
+            Description="Add verifications to define the criteria of the specification."
+            ShowContent="{Binding Verifications.HasItems}">
+
+            <controls:Section.Icon>
+                <PathIcon Theme="{StaticResource IconFilledPatch}" />
+            </controls:Section.Icon>
+
+            <controls:Section.Action>
+                <StackPanel Spacing="5" Orientation="Horizontal"  Margin="7 0">
+
+                    <Button
+                        Command="{Binding AddVerificationCommand}"
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconAdd}"
+                        Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
+                        ToolTip.Tip="Add Verification"
+                        ToolTip.Placement="BottomEdgeAlignedRight" />
+
+                    <!--<Button
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconEllipsis}"
+                        ToolTip.Tip="Options"
+                        ToolTip.Placement="BottomEdgeAlignedRight">
+                    </Button>-->
+
+                </StackPanel>
+            </controls:Section.Action>
+
+            <ListBox
+                IsVisible="{Binding Verifications.HasItems}"
+                ItemsSource="{Binding Verifications}"
+                SelectedItems="{Binding SelectedVerifications}"
+                ItemTemplate="{StaticResource CriterionListItem}"
+                ItemContainerTheme="{StaticResource CriterionItemTheme}"
+                SelectionMode="Multiple"
+                BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                BorderThickness="1" CornerRadius="5"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                KeyboardNavigation.TabNavigation="Continue">
+                <Interaction.Behaviors>
+                    <ExecuteCommandOnKeyDownBehavior
+                        Gesture="Ctrl+V"
+                        Command="{Binding PasteVerificationsCommand}"
+                        MarkAsHandled="True" />
+                </Interaction.Behaviors>
+            </ListBox>
+
+        </controls:Section>
+
+    </DataTemplate>
+</ResourceDictionary>

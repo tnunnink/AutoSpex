@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using JetBrains.Annotations;
+using L5Sharp.Core;
 using Task = System.Threading.Tasks.Task;
 
 namespace AutoSpex.Engine;
@@ -96,7 +97,7 @@ public class Run
             throw new ArgumentNullException(nameof(source));
 
         source.Override(nodes);
-        
+
         await RunAllNodes(nodes, source, running, complete, token);
 
         Result = ResultState.MaxOrDefault(_outcomes.Select(o => o.Value.Verification.Result).ToList());
@@ -113,7 +114,7 @@ public class Run
         Action<Outcome>? complete,
         CancellationToken token)
     {
-        var content = source.Content;
+        var content = source.Content ?? L5X.Empty();
 
         foreach (var node in nodes)
         {

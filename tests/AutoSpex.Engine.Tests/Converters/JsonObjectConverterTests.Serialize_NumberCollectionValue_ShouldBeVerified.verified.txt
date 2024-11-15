@@ -1,0 +1,25 @@
+﻿{
+  Group: Collection,
+  Data: [
+    {
+      Group: Number,
+      Data: 1
+    },
+    {
+      Group: Number,
+      Data: 2
+    },
+    {
+      Group: Number,
+      Data: 3
+    },
+    {
+      Group: Number,
+      Data: 3
+    },
+    {
+      Group: Number,
+      Data: 4
+    }
+  ]
+}

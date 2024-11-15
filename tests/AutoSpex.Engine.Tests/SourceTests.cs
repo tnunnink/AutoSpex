@@ -16,7 +16,7 @@ public class SourceTests
         source.TargetType.Should().BeEmpty();
         source.ExportedOn.Should().BeEmpty();
         source.ExportedBy.Should().BeEmpty();
-        source.Content.Should().NotBeNull();
+        source.Content.Should().BeNull();
         source.Overrides.Should().BeEmpty();
     }
 
@@ -64,7 +64,7 @@ public class SourceTests
         var source = new Source(L5X.Load(Known.Test));
 
         var content = source.Content;
-        var sourceId = content.Serialize().Attribute("SourceId")?.Value.Parse<Guid>();
+        var sourceId = content?.Serialize().Attribute("SourceId")?.Value.Parse<Guid>();
 
         sourceId.Should().Be(source.SourceId);
     }
@@ -76,7 +76,7 @@ public class SourceTests
         source.Update(L5X.Load(Known.Test));
 
         var content = source.Content;
-        var sourceId = content.Serialize().Attribute("SourceId")?.Value.Parse<Guid>();
+        var sourceId = content?.Serialize().Attribute("SourceId")?.Value.Parse<Guid>();
 
         sourceId.Should().Be(source.SourceId);
     }

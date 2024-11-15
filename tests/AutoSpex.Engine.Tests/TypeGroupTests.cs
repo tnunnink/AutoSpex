@@ -58,39 +58,21 @@ public class TypeGroupTests
     }
 
     [Test]
-    public void Collection_WhenCalled_ShouldBeExpected()
-    {
-        var group = TypeGroup.Collection;
-
-        group.Name.Should().Be("Collection");
-        group.Value.Should().Be(6);
-    }
-
-    [Test]
     public void Element_WhenCalled_ShouldBeExpected()
     {
         var group = TypeGroup.Element;
 
         group.Name.Should().Be("Element");
+        group.Value.Should().Be(6);
+    }
+
+    [Test]
+    public void Collection_WhenCalled_ShouldBeExpected()
+    {
+        var group = TypeGroup.Collection;
+
+        group.Name.Should().Be("Collection");
         group.Value.Should().Be(7);
-    }
-
-    [Test]
-    public void Criterion_WhenCalled_ShouldBeExpected()
-    {
-        var group = TypeGroup.Criterion;
-
-        group.Name.Should().Be("Criterion");
-        group.Value.Should().Be(8);
-    }
-
-    [Test]
-    public void Argument_WhenCalled_ShouldBeExpected()
-    {
-        var group = TypeGroup.Argument;
-
-        group.Name.Should().Be("Argument");
-        group.Value.Should().Be(9);
     }
 
     [Test]

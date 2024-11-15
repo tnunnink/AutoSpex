@@ -1,0 +1,4 @@
+﻿{
+  Group: Enum,
+  Data: L5Sharp.Core.Radix+DecimalRadix:Decimal
+}

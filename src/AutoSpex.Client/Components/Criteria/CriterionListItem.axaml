@@ -1,0 +1,106 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+                    xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors">
+
+    <Design.PreviewWith>
+        <ListBox
+            ItemsSource="{x:Static components:TestData.Criteria}"
+            ItemTemplate="{DynamicResource CriterionListItem}"
+            ItemContainerTheme="{DynamicResource CriterionItemTheme}"
+            SelectionMode="Multiple"
+            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+            BorderThickness="1"
+            CornerRadius="5"
+            Background="Transparent"
+            Width="600" Height="300" Margin="10" />
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="CriterionListItem" x:DataType="observers:CriterionObserver">
+
+        <Border
+            x:Name="Border"
+            Background="Transparent"
+            Focusable="True"
+            IsTabStop="False">
+
+            <Border.ContextFlyout>
+                <MenuFlyout
+                    Placement="Bottom"
+                    ItemContainerTheme="{StaticResource MenuActionItem}"
+                    ItemsSource="{Binding ContextItems}" />
+            </Border.ContextFlyout>
+
+            <Grid ColumnDefinitions="*,Auto">
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5" Margin="5 0">
+
+                    <PathIcon
+                        Theme="{StaticResource IconFilledGrip}"
+                        Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                        FontSize="10"
+                        ToolTip.Tip="Move"
+                        ToolTip.Placement="BottomEdgeAlignedLeft">
+                        <Interaction.Behaviors>
+                            <behaviors:DraggableBehavior Context="{Binding }" />
+                        </Interaction.Behaviors>
+                    </PathIcon>
+
+                    <ContentControl
+                        Content="{Binding}"
+                        ContentTemplate="{StaticResource CriterionEntry}" />
+
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="5" Margin="5 0">
+
+                    <Button
+                        properties:Icon.Theme="{StaticResource IconEllipsis}"
+                        Theme="{StaticResource IconButtonSmall}"
+                        Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                        ToolTip.Tip="Options"
+                        ToolTip.Placement="BottomEdgeAlignedRight">
+                        <Button.Flyout>
+                            <MenuFlyout
+                                Placement="BottomEdgeAlignedRight" HorizontalOffset="8"
+                                ItemContainerTheme="{StaticResource MenuActionItem}"
+                                ItemsSource="{Binding MenuItems}" />
+                        </Button.Flyout>
+                    </Button>
+
+                </StackPanel>
+
+            </Grid>
+
+            <Interaction.Behaviors>
+                <ExecuteCommandOnKeyDownBehavior
+                    Key="Delete"
+                    Command="{Binding DeleteSelectedCommand}"
+                    MarkAsHandled="True"
+                    FocusControl="Border" />
+                <ExecuteCommandOnKeyDownBehavior
+                    Gesture="Ctrl+D"
+                    Command="{Binding DuplicateCommand}"
+                    MarkAsHandled="True" />
+                <ExecuteCommandOnKeyDownBehavior
+                    Gesture="Ctrl+C"
+                    Command="{Binding CopyCommand}"
+                    MarkAsHandled="True" />
+                <behaviors:ExecuteCommandOnDropBehavior
+                    Command="{Binding MoveCommand}"
+                    StyleElement="{Binding $parent[ListBoxItem]}" />
+            </Interaction.Behaviors>
+        </Border>
+    </DataTemplate>
+
+    <ControlTheme x:Key="CriterionItemTheme" TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemEntry}"
+                  x:DataType="observers:CriterionObserver">
+        <Style Selector="^.dragover /template/ Border#RootBorder">
+            <Setter Property="BorderBrush" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+            <Setter Property="BorderThickness" Value="0 0 0 2" />
+        </Style>
+    </ControlTheme>
+</ResourceDictionary>

@@ -1,6 +1,5 @@
 ﻿using AutoSpex.Engine;
 using Dapper;
-using FluentResults;
 using JetBrains.Annotations;
 using MediatR;
 
@@ -33,7 +32,6 @@ internal class ListNodesHandler(IConnectionManager manager) : IRequestHandler<Li
     {
         using var connection = await manager.Connect(cancellationToken);
         var nodes = (await connection.QueryAsync<Node>(GetNodeTree)).BuildTree();
-        var results = nodes.Values.Where(x => x.Depth == 0).AsEnumerable();
-        return results;
+        return nodes.Values.Where(x => x.Depth == 0).AsEnumerable();
     }
 }

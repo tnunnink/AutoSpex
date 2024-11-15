@@ -1,6 +1,4 @@
 ﻿{
-  CriterionId: Guid_1,
-  SourceId: Guid_Empty,
   Result: Passed,
   Candidate: /Tag/Test,
   Criteria: Name Is Containing,

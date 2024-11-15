@@ -1,0 +1,45 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+             x:Class="AutoSpex.Client.Pages.SuppressionsPage"
+             x:DataType="pages:SuppressionsPageModel">
+
+    <Design.Height>800</Design.Height>
+    <Design.Width>1000</Design.Width>
+
+    <Grid RowDefinitions="Auto,*" Margin="20">
+
+        <Grid ColumnDefinitions="*,Auto" Margin="0 0 0 20">
+
+            <TextBlock
+                Text="Configure this source to suppress specific specifications when run."
+                Classes="faint" />
+
+        </Grid>
+
+        <controls:ListView
+            Grid.Row="1"
+            ItemsSource="{Binding Suppressions}"
+            SelectedItems="{Binding Selected}"
+            ItemTemplate="{StaticResource SuppresionListItem}"
+            Filter="{Binding Filter}"
+            HasItems="{Binding Suppressions.HasItems}"
+            DefaultIcon="{StaticResource IconFilledClipboard}"
+            DefaultMessage="No specs configured"
+            DefaultCaption="Configure which specs should be suppressed when this source is run">
+
+            <controls:ListView.Header>
+                <Button
+                    Command="{Binding AddSuppressionCommand}"
+                    Theme="{StaticResource IconButton}"
+                    properties:Icon.Theme="{StaticResource IconAdd}"
+                    Classes="accent" />
+            </controls:ListView.Header>
+        </controls:ListView>
+
+    </Grid>
+
+</UserControl>

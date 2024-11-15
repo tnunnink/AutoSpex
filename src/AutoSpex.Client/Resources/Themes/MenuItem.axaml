@@ -22,10 +22,12 @@
                 <Button.Flyout>
                     <MenuFlyout>
                         <MenuItem Theme="{DynamicResource ContextMenuItem}"
-                                  Header="Delete Item" />
+                                  Header="Delete Item"
+                                  Classes="warning"/>
                         <MenuItem Icon="{StaticResource IconFilledClipboard}"
                                   Theme="{DynamicResource ContextMenuItem}"
-                                  Header="Add Item" />
+                                  Header="Add Item"
+                                  Classes="accent"/>
                         <MenuItem Icon="{StaticResource IconFilledLightning}"
                                   Theme="{DynamicResource ContextMenuItem}"
                                   Header="Play Item"
@@ -217,8 +219,17 @@
                 <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushSoftAccent}" />
             </Style>
             <Style Selector="^:selected /template/ Border#border">
-                <Setter Property="Background" Value="{actipro:ThemeResource ControlBackgroundBrushSoftAccent}" />
-                <Setter Property="BorderBrush" Value="{actipro:ThemeResource ControlBackgroundBrushSoftAccent}" />
+                <Setter Property="Background" Value="{actipro:ThemeResource ControlBackgroundBrushSolidAccent}" />
+                <Setter Property="BorderBrush" Value="{actipro:ThemeResource ControlBackgroundBrushSolidAccent}" />
+            </Style>
+            <Style Selector="^:selected /template/ PathIcon#iconHost">
+                <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushSolidAccent}" />
+            </Style>
+            <Style Selector="^:selected /template/ ContentPresenter#headerPresenter">
+                <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushSolidAccent}" />
+            </Style>
+            <Style Selector="^:selected /template/ TextBlock#inputGestureTextBlock">
+                <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushSolidAccent}" />
             </Style>
         </Style>
 
@@ -230,8 +241,17 @@
                 <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushSoftDanger}" />
             </Style>
             <Style Selector="^:selected /template/ Border#border">
-                <Setter Property="Background" Value="{actipro:ThemeResource ControlBackgroundBrushSoftDanger}" />
-                <Setter Property="BorderBrush" Value="{actipro:ThemeResource ControlBackgroundBrushSoftDanger}" />
+                <Setter Property="Background" Value="{actipro:ThemeResource ControlBackgroundBrushSolidDanger}" />
+                <Setter Property="BorderBrush" Value="{actipro:ThemeResource ControlBackgroundBrushSolidDanger}" />
+            </Style>
+            <Style Selector="^:selected /template/ PathIcon#iconHost">
+                <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushSolidDanger}" />
+            </Style>
+            <Style Selector="^:selected /template/ ContentPresenter#headerPresenter">
+                <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushSolidDanger}" />
+            </Style>
+            <Style Selector="^:selected /template/ TextBlock#inputGestureTextBlock">
+                <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushSolidDanger}" />
             </Style>
         </Style>
 
@@ -243,8 +263,17 @@
                 <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushSoftSuccess}" />
             </Style>
             <Style Selector="^:selected /template/ Border#border">
-                <Setter Property="Background" Value="{actipro:ThemeResource ControlBackgroundBrushSoftSuccess}" />
-                <Setter Property="BorderBrush" Value="{actipro:ThemeResource ControlBackgroundBrushSoftSuccess}" />
+                <Setter Property="Background" Value="{actipro:ThemeResource ControlBackgroundBrushSolidSuccess}" />
+                <Setter Property="BorderBrush" Value="{actipro:ThemeResource ControlBackgroundBrushSolidSuccess}" />
+            </Style>
+            <Style Selector="^:selected /template/ PathIcon#iconHost">
+                <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushSolidSuccess}" />
+            </Style>
+            <Style Selector="^:selected /template/ ContentPresenter#headerPresenter">
+                <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushSolidSuccess}" />
+            </Style>
+            <Style Selector="^:selected /template/ TextBlock#inputGestureTextBlock">
+                <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushSolidSuccess}" />
             </Style>
         </Style>
 
@@ -256,8 +285,17 @@
                 <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushSoftWarning}" />
             </Style>
             <Style Selector="^:selected /template/ Border#border">
-                <Setter Property="Background" Value="{actipro:ThemeResource ControlBackgroundBrushSoftWarning}" />
-                <Setter Property="BorderBrush" Value="{actipro:ThemeResource ControlBackgroundBrushSoftWarning}" />
+                <Setter Property="Background" Value="{actipro:ThemeResource ControlBackgroundBrushSolidWarning}" />
+                <Setter Property="BorderBrush" Value="{actipro:ThemeResource ControlBackgroundBrushSolidWarning}" />
+            </Style>
+            <Style Selector="^:selected /template/ PathIcon#iconHost">
+                <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushSolidWarning}" />
+            </Style>
+            <Style Selector="^:selected /template/ ContentPresenter#headerPresenter">
+                <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushSolidWarning}" />
+            </Style>
+            <Style Selector="^:selected /template/ TextBlock#inputGestureTextBlock">
+                <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushSolidWarning}" />
             </Style>
         </Style>
     </ControlTheme>

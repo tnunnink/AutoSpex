@@ -77,6 +77,7 @@ public class Node : IEquatable<Node>
     /// Represents the specification associated with a Node.
     /// </summary>
     [JsonInclude]
+    [JsonConverter(typeof(JsonSpecConverter))]
     public Spec Spec { get; private set; } = new();
 
     /// <summary>
@@ -216,6 +217,7 @@ public class Node : IEquatable<Node>
     public void AddNode(Node node)
     {
         ArgumentNullException.ThrowIfNull(node);
+
         if (_nodes.Contains(node)) return;
 
         node.Parent?.RemoveNode(node);
@@ -294,16 +296,16 @@ public class Node : IEquatable<Node>
     {
         var duplicate = new Node
         {
+            ParentId = ParentId,
             Type = Type,
-            Name = name ?? $"{Name} Copy"
+            Name = name ?? Name,
+            Spec = Spec.Duplicate()
         };
 
-        foreach (var child in _nodes)
-            duplicate.AddNode(child.Duplicate());
-
-        duplicate.Configure(Spec.Duplicate());
-
-        Parent?.AddNode(duplicate);
+        foreach (var node in _nodes)
+        {
+            duplicate.AddNode(node.Duplicate());
+        }
 
         return duplicate;
     }
@@ -458,7 +460,6 @@ public class Node : IEquatable<Node>
     /// <returns>A <see cref="Task"/> that excutes the specs and returns the flattened <see cref="Verification"/> result.</returns>
     public async Task<Verification> Run(L5X content, CancellationToken token = default)
     {
-        //Run the specification and return the resulting verification.
         return await Spec.RunAsync(content, token);
     }
 

@@ -10,6 +10,7 @@ namespace AutoSpex.Engine;
 /// </summary>
 public class Property : IEquatable<Property>
 {
+    private const char KeySeparator = ':';
     private const char MemberSeparator = '.';
     private const char IndexOpenSeparator = '[';
     private const char IndexCloseSeparator = ']';
@@ -75,7 +76,7 @@ public class Property : IEquatable<Property>
     /// <summary>
     /// The string that uniquely identifies this property using the origin type and property path.
     /// </summary>
-    public string Key => string.Concat(Origin, MemberSeparator, Path).TrimEnd(MemberSeparator);
+    public string Key => string.Concat(Origin, KeySeparator, Path).TrimEnd(KeySeparator);
 
     /// <summary>
     /// The root or originating type to which this property belongs.
@@ -105,17 +106,12 @@ public class Property : IEquatable<Property>
     /// <summary>
     /// A user-friendly type name for the property. This can be used to display in the client UI.
     /// </summary>
-    public string DisplayName => Type.CommonName();
+    public string DisplayName => Type.DisplayName();
 
     /// <summary>
     /// The <see cref="TypeGroup"/> in which this property's return type belongs.
     /// </summary>
     public TypeGroup Group => TypeGroup.FromType(Type);
-
-    /// <summary>
-    /// The set of object values that represent the options (enum/bool values) for the property type.
-    /// </summary>
-    public IEnumerable<object> Options => Type.GetOptions();
 
     /// <summary>
     /// The set of child properties which can be navigated to from this property's type.
@@ -132,7 +128,7 @@ public class Property : IEquatable<Property>
     /// generic parameter type. Otherwise, it will return the same type as <see cref="Type"/>. This is useful for collections
     /// where we want to know what the types of the items in the collection.
     /// </summary>
-    public Type InnerType => Type.SelfOrInnerType();
+    public Type InnerType => GetInnerType();
 
     /// <summary>
     /// Represents a default or property that is just a reference to <see cref="object"/>. We can use this in place
@@ -174,7 +170,7 @@ public class Property : IEquatable<Property>
             {
                 index = path.IndexOf(IndexCloseSeparator) + 1;
                 member = index > 0 ? path[..index] : path;
-                property = new Property(member, Type.SelfOrInnerType(), property);
+                property = new Property(member, property.InnerType, property);
             }
             else
             {
@@ -423,6 +419,21 @@ public class Property : IEquatable<Property>
         }
 
         return !string.IsNullOrEmpty(path) ? path : Name;
+    }
+
+    /// <summary>
+    /// Gets the inner type for the collection type and if not found returns a generic type of object.
+    /// </summary>
+    /// <returns></returns>
+    private Type GetInnerType()
+    {
+        if (Type.IsGenericType)
+            return Type.GetGenericArguments()[0];
+
+        if (Type.IsArray)
+            return Type.GetElementType() ?? typeof(object);
+
+        return Type;
     }
 
     /// <summary>

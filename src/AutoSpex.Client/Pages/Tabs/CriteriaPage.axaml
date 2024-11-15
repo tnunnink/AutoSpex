@@ -1,163 +1,18 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
-             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
-             xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
              x:Class="AutoSpex.Client.Pages.CriteriaPage"
              x:DataType="pages:CriteriaPageModel">
 
     <Design.Width>800</Design.Width>
     <Design.Height>600</Design.Height>
 
-    <UserControl.Styles>
-        <Style Selector="Button.add-criteria">
-            <Setter Property="Theme" Value="{a:ControlTheme ButtonSubtle}" />
-            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
-            <Setter Property="Content">
-                <Template>
-                    <StackPanel Orientation="Horizontal" Spacing="5">
-                        <PathIcon
-                            Theme="{StaticResource IconAdd}"
-                            Foreground="{Binding $parent[Button].Foreground}"
-                            Classes="size-sm centered" />
-                        <TextBlock Text="Add Critera" />
-                    </StackPanel>
-                </Template>
-            </Setter>
-        </Style>
-    </UserControl.Styles>
-
     <ScrollViewer HorizontalScrollBarVisibility="Disabled">
 
-        <Panel Margin="20">
-
-            <StackPanel Spacing="20">
-
-                <controls:Section
-                    Header="Query"
-                    Description="Select the element type to query when this specification is run."
-                    ShowContent="False">
-
-                    <controls:Section.Icon>
-                        <PathIcon Theme="{StaticResource IconFilledBinoculars}" />
-                    </controls:Section.Icon>
-
-                    <controls:Section.Action>
-                        <ContentControl
-                            Content="{Binding Spec}"
-                            ContentTemplate="{StaticResource ElementEntry}" />
-                    </controls:Section.Action>
-
-                </controls:Section>
-
-                <controls:Section
-                    Header="Filter"
-                    Description="Add filters to target specific elements for verification."
-                    ShowContent="{Binding Spec.Filters.HasItems}"
-                    IsVisible="{Binding Spec.Element, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Element.Default}}">
-
-                    <controls:Section.Icon>
-                        <PathIcon Theme="{StaticResource IconFilledFunnel}" />
-                    </controls:Section.Icon>
-
-                    <controls:Section.Action>
-                        <StackPanel Spacing="10" Orientation="Horizontal">
-
-                            <ContentControl
-                                Content="{Binding Spec}"
-                                ContentTemplate="{StaticResource FilterInclusion}"
-                                IsVisible="{Binding Spec.Filters.HasItems}"
-                                VerticalAlignment="Center" />
-
-                            <Button
-                                Command="{Binding Spec.AddFilterCommand}"
-                                Theme="{a:ControlTheme ButtonSoft}">
-                                <StackPanel Orientation="Horizontal" Spacing="7">
-                                    <PathIcon Theme="{StaticResource IconAdd}" Classes="size-sm accent" />
-                                    <TextBlock Text="Add Filter" />
-                                </StackPanel>
-                            </Button>
-
-                        </StackPanel>
-                    </controls:Section.Action>
-
-                    <ListBox
-                        IsVisible="{Binding Spec.Filters.HasItems}"
-                        ItemsSource="{Binding Spec.Filters}"
-                        SelectedItems="{Binding Spec.SelectedFilters}"
-                        ItemTemplate="{StaticResource CriterionListItem}"
-                        ItemContainerTheme="{StaticResource CriterionItemTheme}"
-                        SelectionMode="Multiple"
-                        BorderBrush="{a:ThemeResource Container1BorderBrush}"
-                        BorderThickness="1" CornerRadius="5"
-                        ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                        KeyboardNavigation.TabNavigation="Continue">
-                        <Interaction.Behaviors>
-                            <ExecuteCommandOnKeyDownBehavior
-                                Gesture="Ctrl+V"
-                                Command="{Binding Spec.PasteFiltersCommand}"
-                                MarkAsHandled="True" />
-                        </Interaction.Behaviors>
-                    </ListBox>
-
-                </controls:Section>
-
-                <controls:Section
-                    Header="Verify"
-                    Description="Add verifications to define the criteria of the specification."
-                    ShowContent="{Binding Spec.Verifications.HasItems}"
-                    IsVisible="{Binding Spec.Element, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Element.Default}}">
-
-                    <controls:Section.Icon>
-                        <PathIcon Theme="{StaticResource IconFilledPatch}" />
-                    </controls:Section.Icon>
-
-                    <controls:Section.Action>
-                        <StackPanel Spacing="10" Orientation="Horizontal">
-
-                            <ContentControl
-                                Content="{Binding Spec}"
-                                ContentTemplate="{StaticResource VerificationInclusion}"
-                                IsVisible="{Binding Spec.Verifications.HasItems}"
-                                VerticalAlignment="Center" />
-
-                            <Button
-                                Command="{Binding Spec.AddVerificationCommand}"
-                                Theme="{a:ControlTheme ButtonSoft}">
-                                <StackPanel Orientation="Horizontal" Spacing="7">
-                                    <PathIcon Theme="{StaticResource IconAdd}" Classes="size-sm accent" />
-                                    <TextBlock Text="Add Verification" />
-                                </StackPanel>
-                            </Button>
-
-                        </StackPanel>
-                    </controls:Section.Action>
-
-                    <ListBox
-                        IsVisible="{Binding Spec.Verifications.HasItems}"
-                        ItemsSource="{Binding Spec.Verifications}"
-                        SelectedItems="{Binding Spec.SelectedVerifications}"
-                        ItemTemplate="{StaticResource CriterionListItem}"
-                        ItemContainerTheme="{StaticResource CriterionItemTheme}"
-                        SelectionMode="Multiple"
-                        BorderBrush="{a:ThemeResource Container1BorderBrush}"
-                        BorderThickness="1" CornerRadius="5"
-                        ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                        KeyboardNavigation.TabNavigation="Continue">
-                        <Interaction.Behaviors>
-                            <ExecuteCommandOnKeyDownBehavior
-                                Gesture="Ctrl+V"
-                                Command="{Binding Spec.PasteVerificationsCommand}"
-                                MarkAsHandled="True" />
-                        </Interaction.Behaviors>
-                    </ListBox>
-
-                </controls:Section>
-
-            </StackPanel>
-
-        </Panel>
+        <ContentControl
+            Content="{Binding Spec}"
+            ContentTemplate="{StaticResource SpecConfig}"
+            Margin="20" />
 
     </ScrollViewer>
 </UserControl>

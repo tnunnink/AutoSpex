@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using System.Xml.Linq;
 using L5Sharp.Core;
 
 namespace AutoSpex.Engine;
@@ -35,6 +36,7 @@ public class Source
         Description = content.Controller.Description ?? string.Empty;
 
         InjectMetadata(content);
+        ScrubData(content);
         Content = content;
     }
 
@@ -97,7 +99,7 @@ public class Source
     /// The <see cref="L5X"/> content this source contains.
     /// </summary>
     [JsonIgnore]
-    public L5X Content { get; private set; } = L5X.Empty();
+    public L5X? Content { get; private set; }
 
     /// <summary>
     /// Represents the collection of nodes that should be ignored when this source is run.
@@ -136,13 +138,14 @@ public class Source
         Description = content.Controller.Description ?? string.Empty;
 
         InjectMetadata(content);
+        ScrubData(content);
         Content = content;
     }
 
     /// <summary>
-    /// 
+    /// Adds the specified node as an override to the source.
     /// </summary>
-    /// <param name="node"></param>
+    /// <param name="node">The node to add as an override.</param>
     public void AddOverride(Node node)
     {
         ArgumentNullException.ThrowIfNull(node);
@@ -150,9 +153,9 @@ public class Source
     }
 
     /// <summary>
-    /// 
+    /// Removes the specified node override from the source.
     /// </summary>
-    /// <param name="node"></param>
+    /// <param name="node">The node to remove as an override.</param>
     public void RemoveOverride(Node node)
     {
         ArgumentNullException.ThrowIfNull(node);
@@ -238,17 +241,22 @@ public class Source
     /// <returns>A new <see cref="Source"/> object that is a duplicate of the current instance.</returns>
     public Source Duplicate()
     {
-        var duplicate = new Source(Content);
-
-        foreach (var variable in _overrides.Values)
+        var duplicate = new Source
         {
-            duplicate.AddOverride(variable);
-        }
+            Name = Name,
+            TargetName = TargetName,
+            TargetType = TargetType,
+            ExportedOn = ExportedOn,
+            ExportedBy = ExportedBy,
+            Description = Description,
+            Content = Content
+        };
 
-        foreach (var node in _suppressions.Values)
-        {
-            duplicate.AddSuppression(node);
-        }
+        foreach (var node in _overrides.Values)
+            duplicate.AddOverride(node);
+
+        foreach (var suppression in _suppressions.Values)
+            duplicate.AddSuppression(suppression);
 
         return duplicate;
     }
@@ -274,11 +282,108 @@ public class Source
     }
 
     /// <summary>
+    /// Finds values based on the specified property for elements in the content source.
+    /// </summary>
+    /// <param name="property">The property for which values need to be found.</param>
+    /// <returns>An enumerable collection of distinct values for the specified property.</returns>
+    public IEnumerable<object> FindValues(Property property)
+    {
+        if (Content is null) return [];
+
+        //For any statically known value type like boolean or enum we can return early with predefined options.
+        if (property.Group == TypeGroup.Boolean || property.Group == TypeGroup.Enum)
+            return GetOptions(property.Type);
+
+        try
+        {
+            //Since every property origin is/should be the L5Sharp type, we can use that to query for elements in the source.
+            var elements = Content.Query(property.Origin);
+
+            //Essentially just get non-null distinct values for the specified property for all elements of the origin type.
+            var values = elements.Select(property.GetValue).Where(x => x is not null).Cast<object>().Distinct();
+
+            return values.ToList();
+        }
+        catch (Exception)
+        {
+            // Ignored because this is just optional.
+            // It's only to suggest possible values based on a known source content.
+            return [];
+        }
+    }
+
+    /// <summary>
+    /// Handles the request for tag names to suggest to the user as then enter text in a property entry with indexer
+    /// notation. This is very usefuly because we don't need to look up the tag structure,
+    /// and instead we can have it prompted to us.
+    /// </summary>
+    public IEnumerable<TagName> FindTagNames(Spec spec, string? filter)
+    {
+        if (Content is null) return [];
+
+        //This only applies to tag elements. Guard agains anything else.
+        if (spec.Element != Element.Tag) return [];
+
+        try
+        {
+            //Ideally we want to narrow the search space for tag names using the currently configured filters to
+            //improve the performance of this lookup which will happen continuously as text changes
+
+            /*var elements = spec.GetCandidates(Content);*/
+
+            var tags = Content.Query<Tag>().Where(t => spec.Filters.All(f => f.Evaluate(t))).ToList();
+
+            /*return tags.SelectMany(t => t.TagNames()).Select(t => t.Path).Distinct().Select(x => new TagName(x));*/
+
+            var tagNames = tags
+                .SelectMany(t => t.TagNames())
+                .Select(t => t.Path)
+                .Distinct()
+                .Where(t => !string.IsNullOrEmpty(t) && t.Satisfies(filter))
+                .OrderBy(t => t)
+                .Select(t => new TagName($"[{t}]"));
+
+            return tagNames.ToList();
+        }
+        catch (Exception)
+        {
+            // ignored because this is just optional.
+            // If the user enteres invalid tagnames it will result in and errored evaluation telling them the issue.
+            return [];
+        }
+    }
+
+    /// <summary>
+    /// Returns a collection of possible values. This is meant primarily for enumeration types so that we
+    /// can provide the user with a selectable set of options for a given enum value. This however will also return
+    /// true/false for boolean type and empty collection for anything else (numbers, string, collections, complex objects).
+    /// </summary>
+    private static IEnumerable<object> GetOptions(Type type)
+    {
+        var group = TypeGroup.FromType(type);
+        if (group == TypeGroup.Boolean) return new object[] { true, false };
+        return typeof(LogixEnum).IsAssignableFrom(type) ? LogixEnum.Options(type) : [];
+    }
+
+    /// <summary>
     /// Adds/sets the source metadata to the L5X content.
     /// This is so we can read back this data from the element without having to find the source information.
     /// </summary>
     private void InjectMetadata(L5X content)
     {
         content.Serialize().SetAttributeValue("SourceId", SourceId.ToString());
+    }
+
+    /// <summary>
+    /// Removes unused L5K data from the source content. This data can add a lot to the total space of the source, and
+    /// we want to do our best to conserve that, so we can basically delete a lot of info that is uneeded. The file
+    /// can still be restored without L5K data anyway. We are only interested in decorated clear text data.
+    /// </summary>
+    /// <param name="content">The L5X content from which to scrub the data.</param>
+    private static void ScrubData(L5X content)
+    {
+        content.Serialize().Descendants(L5XName.Data)
+            .Where(d => d.Attribute(L5XName.Format)?.Value == "L5K")
+            .Remove();
     }
 }

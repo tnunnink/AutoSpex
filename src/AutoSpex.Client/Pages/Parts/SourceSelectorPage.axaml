@@ -79,7 +79,7 @@
                 IsVisible="{Binding !Sources.HasItems}"
                 HeaderIcon="{StaticResource IconThemedSource}"
                 Header="No sources configured"
-                Message="Add source fils to run your configured specs against." />
+                Message="Add source fils to run configured specs against." />
 
             <controls:DefaultMessage
                 HeaderIcon="{StaticResource IconLineSearch}"
