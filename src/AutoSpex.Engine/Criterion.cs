@@ -69,7 +69,7 @@ public class Criterion
     /// </summary>
     [JsonConverter(typeof(JsonTypeConverter))]
     [JsonInclude]
-    public Type Type { get; private set; } = typeof(object);
+    public Type Type { get; set; } = typeof(object);
 
     /// <summary>
     /// The property of the provided object which will be the target or input value of the evaluation. If null,

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using AutoSpex.Client.Shared;
@@ -50,11 +51,20 @@ public partial class SpecObserver : Observer<Spec>,
 
         Element = element;
 
-        Filters.Clear();
-        Verifications.Clear();
+        UpdateCriterion(Filters, Element);
+        UpdateCriterion(Verifications, Element);
 
         AddFilterCommand.NotifyCanExecuteChanged();
         AddVerificationCommand.NotifyCanExecuteChanged();
+    }
+
+    private static void UpdateCriterion(IEnumerable<CriterionObserver> criteria, Element element)
+    {
+        foreach (var criterion in criteria)
+        {
+            criterion.Model.Type = element.Type;
+            criterion.Property = element.Property(criterion.Property.Path);
+        }
     }
 
     /// <summary>
