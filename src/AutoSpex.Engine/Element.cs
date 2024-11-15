@@ -280,8 +280,8 @@ public abstract class Element : SmartEnum<Element, string>
         public RungElement() : base(typeof(Rung))
         {
             Register<List<CrossReference>>("References", x => (x as Rung)?.References().ToList());
-            Register<IEnumerable<Instruction>>("Instructions", x => (x as Rung)?.Text.Instructions());
-            Register<IEnumerable<TagName>>("Tags", x => (x as Rung)?.Text.Tags());
+            Register<List<Instruction>>("Instructions", x => (x as Rung)?.Text.Instructions().ToList());
+            Register<List<TagName>>("Tags", x => (x as Rung)?.Text.Tags().ToList());
         }
     }
 
