@@ -270,6 +270,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
             typeof(StringData),
             typeof(STRING),
             typeof(NeutralText),
+            typeof(Instruction),
             typeof(TagName),
             typeof(Scope),
             typeof(Argument),
