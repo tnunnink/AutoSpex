@@ -198,24 +198,18 @@ public partial class NodeObserver : Observer<Node>,
             var name = await Prompter.PromptNewName(this);
             if (name is null) return;
 
-            var load = await Mediator.Send(new LoadNode(Id));
-            if (Notifier.ShowIfFailed(load)) return;
+            var duplicate = await Mediator.Send(new DuplicateNode(Id, name));
+            if (Notifier.ShowIfFailed(duplicate)) return;
 
-            var duplicate = load.Value.Duplicate(name);
+            var node = new NodeObserver(duplicate.Value);
 
-            var result = await Mediator.Send(new CreateNode(duplicate));
-            if (Notifier.ShowIfFailed(result)) return;
-
-            Messenger.Send(new Created<NodeObserver>(new NodeObserver(duplicate)));
-            Notifier.ShowSuccess(
-                "Create node request complete",
-                $"{duplicate.Name} was successfully created @ {DateTime.Now}"
-            );
+            Messenger.Send(new Created<NodeObserver>(node));
+            Notifier.ShowSuccess("Duplicate node request complete",
+                $"{node.Name} was successfully created @ {DateTime.Now}");
         }
         catch (Exception e)
         {
-            Notifier.ShowError("Request Failed", e.Message);
-            throw;
+            Notifier.ShowError("Duplicate request failed", e.Message);
         }
     }
 
