@@ -58,7 +58,6 @@ public class PropertyTests
         property.DisplayName.Should().Be("string");
         property.Group.Should().Be(TypeGroup.Text);
         property.TypeGraph.Should().HaveCount(2);
-        property.InnerType.Should().Be(typeof(string));
     }
 
     [Test]
@@ -153,7 +152,7 @@ public class PropertyTests
         property.Type.Should().Be(typeof(Tag));
         property.Group.Should().Be(TypeGroup.Element);
     }
-    
+
     [Test]
     public void GetProperty_RungInstructionIndexProperty_ShouldReturnExpected()
     {

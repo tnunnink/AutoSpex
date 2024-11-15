@@ -433,7 +433,7 @@ public class Property : IEquatable<Property>
         if (Type.IsArray)
             return Type.GetElementType() ?? typeof(object);
 
-        return typeof(object);
+        return Type;
     }
 
     /// <summary>
