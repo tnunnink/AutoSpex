@@ -128,7 +128,7 @@ public class Property : IEquatable<Property>
     /// generic parameter type. Otherwise, it will return the same type as <see cref="Type"/>. This is useful for collections
     /// where we want to know what the types of the items in the collection.
     /// </summary>
-    public Type InnerType => Type.IsGenericType ? Type.GetGenericArguments()[0] : Type;
+    public Type InnerType => GetInnerType();
 
     /// <summary>
     /// Represents a default or property that is just a reference to <see cref="object"/>. We can use this in place
@@ -419,6 +419,21 @@ public class Property : IEquatable<Property>
         }
 
         return !string.IsNullOrEmpty(path) ? path : Name;
+    }
+
+    /// <summary>
+    /// Gets the inner type for the collection type and if not found returns a generic type of object.
+    /// </summary>
+    /// <returns></returns>
+    private Type GetInnerType()
+    {
+        if (Type.IsGenericType)
+            return Type.GetGenericArguments()[0];
+
+        if (Type.IsArray)
+            return Type.GetElementType() ?? typeof(object);
+
+        return typeof(object);
     }
 
     /// <summary>

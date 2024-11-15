@@ -33,6 +33,9 @@ public static class Extensions
         if (type == typeof(decimal)) return "decimal";
         if (type == typeof(string)) return "string";
 
+        if (type.IsArray)
+            return $"{type.GetElementType().DisplayName()}[]";
+
         if (type.IsEnumerable())
             return $"{string.Join(", ", type.GetGenericArguments().Select(DisplayName).ToArray())}[]";
 
