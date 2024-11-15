@@ -274,6 +274,7 @@
         <entry key="AutoSpex.Client/Components/Runs/RunSourceSelector.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Components/Runs/RunSummary.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Components/Runs/RunTemplates.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
+        <entry key="AutoSpex.Client/Components/Runs/Test.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Components/Section.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Components/SettingItem.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Components/SourceListItem.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />

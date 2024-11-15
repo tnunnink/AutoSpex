@@ -5,9 +5,9 @@
              xmlns:resources="clr-namespace:AutoSpex.Client.Resources"
              x:Class="AutoSpex.Client.App">
     <Application.DataTemplates>
-        <shared:PageLocator/>
+        <shared:PageLocator />
     </Application.DataTemplates>
-    
+
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -16,7 +16,7 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
-    
+
     <Application.Styles>
         <FluentTheme />
         <a:ModernTheme Includes="All">
@@ -26,7 +26,8 @@
         </a:ModernTheme>
         <StyleInclude Source="Resources/Styles.axaml" />
         <StyleInclude Source="Components/Styles/AppButtons.axaml" />
+
     </Application.Styles>
-    
-   
+
+
 </Application>
