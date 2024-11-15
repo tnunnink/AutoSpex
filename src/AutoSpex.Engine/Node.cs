@@ -460,7 +460,6 @@ public class Node : IEquatable<Node>
     /// <returns>A <see cref="Task"/> that excutes the specs and returns the flattened <see cref="Verification"/> result.</returns>
     public async Task<Verification> Run(L5X content, CancellationToken token = default)
     {
-        //Run the specification and return the resulting verification.
         return await Spec.RunAsync(content, token);
     }
 
