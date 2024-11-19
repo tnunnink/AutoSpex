@@ -17,7 +17,7 @@ public class Property : IEquatable<Property>
     private static readonly char[] Separators = [MemberSeparator, IndexOpenSeparator];
 
     //These are properties that I don't want to show up for the user because they are not really useful and are confusing.
-    private static readonly List<string> PropertyExclusions = ["L5X", "L5XType", "Length"];
+    private static readonly List<string> PropertyExclusions = ["L5X", "L5XType", "Length", "Capacity"];
 
     /// <summary>
     /// 
@@ -158,7 +158,6 @@ public class Property : IEquatable<Property>
     public Property GetProperty(string? path)
     {
         var property = this;
-        /*var properties = Properties.ToList();*/
 
         while (!string.IsNullOrEmpty(path))
         {
