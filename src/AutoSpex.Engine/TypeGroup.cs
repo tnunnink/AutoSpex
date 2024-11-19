@@ -551,5 +551,44 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
         }
     }
 
+    private class ReferenceTypeGroup() : TypeGroup(nameof(Reference), 10)
+    {
+        protected override bool AppliesTo(Type type) => type == typeof(Reference);
+
+        public override bool TryParse(string text, out object? value)
+        {
+            try
+            {
+                //todo
+                value = string.Empty;
+                return true;
+            }
+            catch (Exception)
+            {
+                value = null;
+                return false;
+            }
+        }
+
+        public override object? ReadData(ref Utf8JsonReader reader, JsonSerializerOptions options)
+        {
+            var bytes = reader.GetBytesFromBase64();
+            var data = Encoding.UTF8.GetString(bytes);
+            return TryParse(data, out var reference) ? reference : default;
+        }
+
+        public override void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions? options = default)
+        {
+            var data = value is Reference reference
+                ? reference.ToString()
+                : throw new InvalidOperationException($"The provided value is not a {Name} type group value.");
+
+            writer.WriteStartObject();
+            writer.WriteString("Group", Name);
+            writer.WriteBase64String("Data", Encoding.UTF8.GetBytes(data));
+            writer.WriteEndObject();
+        }
+    }
+
     #endregion
 }
