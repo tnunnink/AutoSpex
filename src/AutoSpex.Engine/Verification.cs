@@ -69,6 +69,7 @@ public class Verification
     /// <remarks>
     /// In other words, the resulting verification will be Passed only if all provided evaluations Passed.
     /// If any one is marked Failed then the result for the verification will be Failed.
+    /// If any one is marked Errored then the result for the verification will be Errored.
     /// </remarks>
     public static Verification For(ICollection<Evaluation> evaluations, long duration = 0)
     {
