@@ -42,11 +42,10 @@
                                     Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
                                     FontSize="{a:ThemeResource DefaultFontSizeSmall}"
                                     IsTabStop="False"
-                                    Padding="5 2" />
+                                    Padding="5 2 5 1" />
 
                                 <TextBlock
                                     Text="/"
-                                    Padding="2 0 0 1"
                                     Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
 
                             </StackPanel>
@@ -59,10 +58,10 @@
                     x:Name="NameEntry"
                     Value="{Binding Name}"
                     FontFamily="{a:ThemeResource DefaultFontFamily}"
-                    FontWeight="{a:ThemeResource HeadingFontWeightMedium}"
+                    FontWeight="{a:ThemeResource HeadingFontWeightSmall}"
                     CommitCommand="{Binding RenameCommand}"
                     MinDropDownWidth="{Binding #NameEntry.Bounds.Width}"
-                    Padding="5 2">
+                    Padding="5 2 5 1">
                     <Interaction.Behaviors>
                         <DataTriggerBehavior Binding="{Binding IsNew}" ComparisonCondition="Equal" Value="True">
                             <ChangePropertyAction TargetObject="NameEntry" PropertyName="IsDropDownOpen" Value="True" />
