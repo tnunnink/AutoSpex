@@ -11,9 +11,9 @@ public static class ServiceExtensions
     public static void RegisterPersistence(this IServiceCollection services)
     {
         services.AddMediatR(c =>
-            c.RegisterServicesFromAssembly(typeof(ServiceExtensions).Assembly)
-                .AddOpenBehavior(typeof(NotificationBehavior<,>))
-                /*.AddOpenBehavior(typeof(ChangeLogBehavior<,>))*/
+                c.RegisterServicesFromAssembly(typeof(ServiceExtensions).Assembly)
+                    .AddOpenBehavior(typeof(NotificationBehavior<,>))
+            /*.AddOpenBehavior(typeof(ChangeLogBehavior<,>))*/
         );
 
         services.AddTransient<IConnectionManager, ConnectionManager>();
@@ -34,7 +34,8 @@ public static class ServiceExtensions
         SqlMapper.AddTypeHandler(new SmartEnumByNameTypeHandler<TypeGroup, int>());
         SqlMapper.AddTypeHandler(new SmartEnumByNameTypeHandler<ResultState, int>());
         SqlMapper.AddTypeHandler(new SmartEnumByNameTypeHandler<Negation, bool>());
-        
+        SqlMapper.AddTypeHandler(new SmartEnumByNameTypeHandler<Chain, int>());
+
         Migrate();
     }
 
