@@ -522,8 +522,28 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
         {
             try
             {
-                value = JsonSerializer.Deserialize<Range>(text);
-                return true;
+                var values = text.Split(" and ", StringSplitOptions.RemoveEmptyEntries);
+
+                if (values.Length != 2)
+                {
+                    value = null;
+                    return false;
+                }
+
+                if (Number.TryParse(values[0], out var min) && Number.TryParse(values[1], out var max))
+                {
+                    value = new Range(min, max);
+                    return true;
+                }
+
+                if (Date.TryParse(values[0], out var start) && Date.TryParse(values[1], out var end))
+                {
+                    value = new Range(start, end);
+                    return true;
+                }
+
+                value = null;
+                return false;
             }
             catch (Exception)
             {

@@ -74,6 +74,15 @@ public class TypeGroupTests
         group.Name.Should().Be("Collection");
         group.Value.Should().Be(7);
     }
+    
+    [Test]
+    public void Criterion_WhenCalled_ShouldBeExpected()
+    {
+        var group = TypeGroup.Criterion;
+
+        group.Name.Should().Be("Criterion");
+        group.Value.Should().Be(8);
+    }
 
     [Test]
     public void Selectable_WhenCalled_ShouldNotBeEmpty()
