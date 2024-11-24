@@ -55,9 +55,6 @@ public partial class CriterionObserver : Observer<Criterion>
     public Func<string?, CancellationToken, Task<IEnumerable<object>>> PopulateProperties => GetProperties;
     public Func<string?, CancellationToken, Task<IEnumerable<object>>> PopulateOperations => GetOperations;
 
-    /// <inheritdoc />
-    protected override bool PromptForDeletion => false;
-
     /// <summary>
     /// Gets a value indicating whether this CriterionObserver accepts arguments based on its Operation.
     /// </summary>
@@ -65,6 +62,14 @@ public partial class CriterionObserver : Observer<Criterion>
     /// Returns true if the Operation is not None and not a UnaryOperation.
     /// </remarks>
     public bool AcceptsArgs => Operation != Operation.None && Operation is not UnaryOperation;
+
+    /// <summary>
+    /// Gets the input property type for this criterion instance using the containing spec object.
+    /// </summary>
+    private Property Input => TryGetSpec(out var spec) ? spec.Model.InputTo(Model) : Property.Default;
+
+    /// <inheritdoc />
+    protected override bool PromptForDeletion => false;
 
     /// <inheritdoc />
     /// <remarks>
@@ -108,16 +113,18 @@ public partial class CriterionObserver : Observer<Criterion>
     [RelayCommand]
     private void UpdateProperty(object? value)
     {
+        var origin = TryGetSpec(out var spec) ? spec.Model.InputTo(Model) : Property.Default;
+
         switch (value)
         {
             case Property property:
                 Property = property;
                 return;
             case string path:
-                Property = Property.This(Model.Type).GetProperty(path);
+                Property = origin.GetProperty(path);
                 return;
             case TagName tagName:
-                Property = Property.This(Model.Type).GetProperty(tagName);
+                Property = origin.GetProperty(tagName);
                 return;
         }
     }
@@ -154,10 +161,9 @@ public partial class CriterionObserver : Observer<Criterion>
     protected override Task Move(object? source)
     {
         if (source is not CriterionObserver criterion) return Task.CompletedTask;
-        if (!TryGetSpec(out var spec)) return Task.CompletedTask;
+        if (!TryGetStep(out var step)) return Task.CompletedTask;
 
-        MoveItem(spec.Filters, criterion);
-        MoveItem(spec.Verifications, criterion);
+        MoveItem(step.Criteria, criterion);
 
         return Task.CompletedTask;
 
@@ -178,22 +184,15 @@ public partial class CriterionObserver : Observer<Criterion>
     {
         if (source is not CriterionObserver other) return false;
         if (this == other) return false;
-        if (!TryGetSpec(out var spec)) return false;
-        return (spec.Filters.Contains(this) && spec.Filters.Contains(other)) ||
-               (spec.Verifications.Contains(this) && spec.Verifications.Contains(other));
+        if (!TryGetStep(out var step)) return false;
+        return step.Criteria.Has(this) && step.Criteria.Has(other);
     }
 
     /// <inheritdoc />
     protected override Task Duplicate()
     {
-        if (!TryGetSpec(out var spec)) return Task.CompletedTask;
-
-        if (spec.Filters.Has(this))
-            spec.Filters.Add(new CriterionObserver(Model.Duplicate()));
-
-        if (spec.Verifications.Has(this))
-            spec.Verifications.Add(new CriterionObserver(Model.Duplicate()));
-
+        if (!TryGetStep(out var step) || !step.Criteria.Has(this)) return Task.CompletedTask;
+        step.Criteria.Add(new CriterionObserver(Model.Duplicate()));
         return Task.CompletedTask;
     }
 
@@ -212,48 +211,6 @@ public partial class CriterionObserver : Observer<Criterion>
     #endregion
 
     /// <summary>
-    /// Retrieves a list of properties based on the specified filter.
-    /// </summary>
-    /// <param name="filter">The filter to apply to the properties. If null or empty, all properties are returned.</param>
-    /// <param name="token">The cancellation token used to cancel the operation.</param>
-    /// <returns>A task that represents the asynchronous operation. The task result contains the list of properties.</returns>
-    private async Task<IEnumerable<object>> GetProperties(string? filter, CancellationToken token)
-    {
-        var type = Model.Type;
-        var origin = Property.This(type);
-
-        if (string.IsNullOrEmpty(filter))
-        {
-            return origin.Properties;
-        }
-
-        //While we are inside an indexer, we want to suggest tag names from the source instead of properties.
-        if (filter.Count(x => x == '[') != filter.Count(x => x == ']'))
-        {
-            var tagName = filter[(filter.LastIndexOf('[') + 1)..];
-            return await GetTagNames(tagName, token);
-        }
-
-        var memeberIndex = filter.LastIndexOf('.');
-        var path = memeberIndex > -1 ? filter[..memeberIndex] : string.Empty;
-        var member = memeberIndex > -1 ? filter[(memeberIndex + 1)..] : filter;
-
-        var property = origin.GetProperty(path);
-        var properties = property.Properties;
-        return properties.Where(p => p.Name.Satisfies(member)).OrderBy(p => p.Name);
-    }
-
-    /// <summary>
-    /// Gets all <see cref="Engine.Operation"/> types that are supported by the current configured property, and filters
-    /// them based on the entry text.
-    /// </summary>
-    private Task<IEnumerable<object>> GetOperations(string? filter, CancellationToken token)
-    {
-        var filtered = Operation.Supporting(Property).Where(o => o.Name.Satisfies(filter));
-        return Task.FromResult(filtered.Cast<object>());
-    }
-
-    /// <summary>
     /// Updates the criterion arguments collection based on the selected operation.
     /// Each operation type expects a certain number of arguments (except for In).
     /// Collection operations expect an inner criterion that's type needs to be the inner type of the collection.
@@ -262,9 +219,9 @@ public partial class CriterionObserver : Observer<Criterion>
     {
         Model.Argument = Operation switch
         {
-            TernaryOperation => new Range(),
+            BetweenOperation => new Range(),
             InOperation => new List<object?>(),
-            CollectionOperation => new Criterion(Property.InnerType),
+            CollectionOperation => new Criterion(),
             _ => null
         };
 
@@ -318,6 +275,49 @@ public partial class CriterionObserver : Observer<Criterion>
     }
 
     /// <summary>
+    /// Retrieves a list of properties based on the specified filter.
+    /// </summary>
+    /// <param name="filter">The filter to apply to the properties. If null or empty, all properties are returned.</param>
+    /// <param name="token">The cancellation token used to cancel the operation.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result contains the list of properties.</returns>
+    private async Task<IEnumerable<object>> GetProperties(string? filter, CancellationToken token)
+    {
+        if (!TryGetSpec(out var spec) || token.IsCancellationRequested) return [];
+
+        var origin = spec.Model.InputTo(Model);
+
+        if (string.IsNullOrEmpty(filter))
+        {
+            return origin.Properties;
+        }
+
+        //While we are inside an indexer, we want to suggest tag names from the source instead of properties.
+        if (filter.Count(x => x == '[') != filter.Count(x => x == ']'))
+        {
+            var tagName = filter[(filter.LastIndexOf('[') + 1)..];
+            return await GetTagNames(tagName, token);
+        }
+
+        var memeberIndex = filter.LastIndexOf('.');
+        var path = memeberIndex > -1 ? filter[..memeberIndex] : string.Empty;
+        var member = memeberIndex > -1 ? filter[(memeberIndex + 1)..] : filter;
+
+        var property = origin.GetProperty(path);
+        var properties = property.Properties;
+        return properties.Where(p => p.Name.Satisfies(member)).OrderBy(p => p.Name);
+    }
+
+    /// <summary>
+    /// Gets all <see cref="Engine.Operation"/> types that are supported by the current configured property, and filters
+    /// them based on the entry text.
+    /// </summary>
+    private Task<IEnumerable<object>> GetOperations(string? filter, CancellationToken token)
+    {
+        var filtered = Operation.Supporting(Property).Where(o => o.Name.Satisfies(filter));
+        return Task.FromResult(filtered.Cast<object>());
+    }
+
+    /// <summary>
     /// Attempts to get the loaded target source and find suggestable values based on the current propert and
     /// input filter. This code is handled in the source object, and will basically query the file and use the
     /// configured property to pull out strongly typed values so the user can easily configure the criterion as needed.
@@ -367,6 +367,23 @@ public partial class CriterionObserver : Observer<Criterion>
         }
 
         spec = result;
+        return true;
+    }
+
+    /// <summary>
+    /// Tries to get the corresponding StepObserver for this criterion instance.
+    /// </summary>
+    private bool TryGetStep(out StepObserver step)
+    {
+        var result = GetObserver<StepObserver>(s => s.Criteria.Any(c => c.Is(this)));
+
+        if (result is null)
+        {
+            step = default!;
+            return false;
+        }
+
+        step = result;
         return true;
     }
 

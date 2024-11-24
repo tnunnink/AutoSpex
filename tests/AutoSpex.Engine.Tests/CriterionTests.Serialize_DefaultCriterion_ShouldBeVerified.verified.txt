@@ -1,0 +1,6 @@
+﻿{
+  "Property": "System.Object",
+  "Negation": "Is",
+  "Operation": "None",
+  "Argument": null
+}

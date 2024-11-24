@@ -1,6 +1,6 @@
 ﻿{
   "Property": "L5Sharp.Core.Tag:Name",
-  "Negation": "Is",
+  "Negation": "Not",
   "Operation": "Equal To",
   "Argument": {
     "Group": "Text",
