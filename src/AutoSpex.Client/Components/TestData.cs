@@ -89,7 +89,7 @@ public static class TestData
     private static IEnumerable<Node> GenerateSpecs()
     {
         var collection = Node.NewContainer();
-        collection.AddSpec("Test Spec", s => s.Query(Element.Tag).Filter("TagName", Operation.Containing, "Test"));
+        collection.AddSpec("Test Spec", s => s.Fetch(Element.Tag).Where("TagName", Operation.Containing, "Test"));
         collection.AddSpec("Another Spec");
         collection.AddSpec("A Spec with a longer name then most of the other specs that you'd want");
         var folder = collection.AddContainer();
@@ -113,22 +113,22 @@ public static class TestData
 
     public static SpecObserver SpecObserver = new(Spec.Configure(c =>
         {
-            c.Query(Element.Tag);
-            c.Filter("TagName", Operation.Containing, "TestTag");
-            c.Verify("Value", Operation.EqualTo, 123);
+            c.Fetch(Element.Tag);
+            c.Where("TagName", Operation.Containing, "TestTag");
+            c.Confirm("Value", Operation.EqualTo, 123);
         })
     );
 
     public static SpecObserver SpecObserverManyCriterion = new(Spec.Configure(c =>
         {
-            c.Query(Element.Tag);
-            c.Filter("TagName", Operation.Containing, "TestTag");
-            c.Filter("DataType", Operation.EqualTo, "MyType");
-            c.Filter("ExternalAccess", Operation.In,
+            c.Fetch(Element.Tag);
+            c.Where("TagName", Operation.Containing, "TestTag");
+            c.Where("DataType", Operation.EqualTo, "MyType");
+            c.Where("ExternalAccess", Operation.In,
                 new List<object> { ExternalAccess.ReadOnly, ExternalAccess.ReadWrite });
-            c.Verify("Value", Operation.GreaterThan, 123);
-            c.Verify("Description", Operation.EndingWith, "Some text value");
-            c.Verify("Scope.Program", Negation.Not, Operation.EqualTo, "MyContianer");
+            c.Confirm("Value", Operation.GreaterThan, 123);
+            c.Confirm("Description", Operation.EndingWith, "Some text value");
+            c.Confirm("Scope.Program", Negation.Not, Operation.EqualTo, "MyContianer");
         })
     );
 
@@ -155,10 +155,15 @@ public static class TestData
             new Criterion(Element.Tag.Property("TagName"), Operation.Like, "%MemberName")));
 
     public static readonly CriterionObserver TernaryCriterion =
-        new(new Criterion(Element.Tag.Property("Value"), Operation.Between, 1, 12));
+        new(new Criterion(Element.Tag.Property("Value"), Operation.Between, new Range(1, 12)));
 
-    public static readonly CriterionObserver InCriterion =
-        new(new Criterion(Element.Tag.Property("TagName"), Operation.In, "First", "Second", "Third Or Longer"));
+    public static readonly CriterionObserver InCriterion = new(
+        new Criterion(
+            Element.Tag.Property("TagName"),
+            Operation.In,
+            new List<string> { "First", "Second", "Third Or Longer" }
+        )
+    );
 
     public static readonly ObservableCollection<CriterionObserver> Criteria =
     [
