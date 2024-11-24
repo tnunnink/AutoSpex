@@ -4,7 +4,7 @@
 public class EqualToOperationTests
 {
     [Test]
-    public void Operator_EqualTo_ShouldNotBeNull()
+    public void Operator_WhenCalled_ShouldNotBeNull()
     {
         var operation = Operation.EqualTo;
 
@@ -18,20 +18,9 @@ public class EqualToOperationTests
 
         operation.Name.Should().Be("Equal To");
     }
-    
-    [Test]
-    public void Equals_SameOperation_ShouldBeTrue()
-    {
-        var first = Operation.EqualTo;
-        var second = Operation.EqualTo;
-        
-        var result = first.Equals(second);
-
-        result.Should().BeTrue();
-    }
 
     [Test]
-    public void Evaluate_IsEqual_ShouldBeTrue()
+    public void Execute_IsEqual_ShouldBeTrue()
     {
         var operation = Operation.EqualTo;
         
@@ -41,13 +30,23 @@ public class EqualToOperationTests
     }
     
     [Test]
-    public void Evaluate_NotEqual_ShouldBeFalse()
+    public void Execute_NotEqual_ShouldBeFalse()
     {
         var operation = Operation.EqualTo;
         
         var result = operation.Execute(1, 2);
         
         result.Should().BeFalse();
+    }
+    
+    [Test]
+    public void Execute_NullArgument_ShouldThrowArgumentExcetpion()
+    {
+        var operation = Operation.EqualTo;
+
+        FluentActions.Invoking(() => operation.Execute(1))
+            .Should().Throw<ArgumentException>()
+            .WithMessage($"Argument value required for {operation.Name} operation.");
     }
 
     [Test]

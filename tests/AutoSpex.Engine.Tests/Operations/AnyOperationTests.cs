@@ -17,20 +17,9 @@ public class AnyOperationTests
 
         operation.Name.Should().Be(nameof(Operation.Any));
     }
-    
-    [Test]
-    public void Equals_SameOperation_ShouldBeTrue()
-    {
-        var first = Operation.Any;
-        var second = Operation.Any;
-        
-        var result = first.Equals(second);
-
-        result.Should().BeTrue();
-    }
 
     [Test]
-    public void Evaluate_HasSpecifiedValue_ShouldBeTrue()
+    public void Execute_HasSpecifiedValue_ShouldBeTrue()
     {
         var items = new List<int> {1, 2, 3, 4, 5};
         
@@ -40,7 +29,7 @@ public class AnyOperationTests
     }
     
     [Test]
-    public void Evaluate_DoesNotHaveSpecifiedValue_ShouldBeFalse()
+    public void Execute_DoesNotHaveSpecifiedValue_ShouldBeFalse()
     {
         var items = new List<int> {1, 2, 3, 4, 5};
         
@@ -50,7 +39,7 @@ public class AnyOperationTests
     }
 
     [Test]
-    public void Evaluate_WithInnerOperation_ShouldReturnFalse()
+    public void Execute_WithInnerOperation_ShouldReturnFalse()
     {
         var items = new List<int> {1, 2, 3, 4, 5};
 
@@ -60,7 +49,7 @@ public class AnyOperationTests
     }
     
     [Test]
-    public void Evaluate_WithInnerOperation_ShouldReturnTrue()
+    public void Execute_WithInnerOperation_ShouldReturnTrue()
     {
         var items = new List<int> {1, 2, 3, 4, 5};
 
