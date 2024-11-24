@@ -88,6 +88,26 @@ public class JsonObjectConverterTests
 
         return VerifyJson(json);
     }
+    
+    [Test]
+    public Task Serialize_RangeValue_ShouldBeVerified()
+    {
+        var value = new Range(1, 20);
+
+        var json = WriteJson(value);
+
+        return VerifyJson(json);
+    }
+    
+    /*[Test]
+    public Task Serialize_PropertyValue_ShouldBeVerified()
+    {
+        var value = Property.This(typeof(Tag)).GetProperty("Description");
+
+        var json = WriteJson(value);
+
+        return VerifyJson(json);
+    }*/
 
     [Test]
     public void Deserialize_NullValue_ShouldBeVerified()

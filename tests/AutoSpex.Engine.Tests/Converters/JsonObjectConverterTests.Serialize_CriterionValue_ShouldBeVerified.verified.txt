@@ -1,7 +1,6 @@
 ﻿{
   Group: Criterion,
   Data: {
-    Type: L5Sharp.Core.Tag,
     Property: L5Sharp.Core.Tag:TagName,
     Negation: Is,
     Operation: Containing,
