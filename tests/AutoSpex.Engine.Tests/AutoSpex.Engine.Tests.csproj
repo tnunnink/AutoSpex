@@ -74,6 +74,72 @@
       <None Update="Migrations\SpecMigrationV1Tests.Run_ComplexExample_ShouldBeVerified.verified.txt">
         <DependentUpon>SpecMigrationV1Tests.cs</DependentUpon>
       </None>
+      <None Update="SpecTests.Serialize_Default_ShouldBeVerified.verified.txt">
+        <DependentUpon>SpecTests.cs</DependentUpon>
+      </None>
+      <None Update="CriterionTests.Serialize_DefaultCriterion_ShouldBeVerified.verified.txt">
+        <DependentUpon>CriterionTests.cs</DependentUpon>
+      </None>
+      <None Update="CriterionTests.Serialize_WithProperty_ShouldBeVerified.verified.txt">
+        <DependentUpon>CriterionTests.cs</DependentUpon>
+      </None>
+      <None Update="CriterionTests.Serialize_RangeArgument_ShouldBeVerified.verified.txt">
+        <DependentUpon>CriterionTests.cs</DependentUpon>
+      </None>
+      <None Update="CriterionTests.Serialize_CollectionArgument_ShouldBeVerified.verified.txt">
+        <DependentUpon>CriterionTests.cs</DependentUpon>
+      </None>
+      <None Update="CriterionTests.Serialize_CriterionArgument_ShouldBeVerified.verified.txt">
+        <DependentUpon>CriterionTests.cs</DependentUpon>
+      </None>
+      <None Update="Steps\FilterTests.Serialize_DefaultInstance_ShouldBeVerified.verified.txt">
+        <ParentFile>FilterTests</ParentFile>
+        <DependentUpon>FilterTests.cs</DependentUpon>
+      </None>
+      <None Update="Steps\FilterTests.Serialize_ConfiguredTypeAndCriteria_ShouldBeVerified.verified.txt">
+        <DependentUpon>FilterTests.cs</DependentUpon>
+        <ParentFile>FilterTests</ParentFile>
+      </None>
+      <None Update="Steps\FilterTests.Serialize_ConfiguredTypeAndCriteriaAsStep_ShouldBeVerified.verified.txt">
+        <ParentFile>FilterTests</ParentFile>
+        <DependentUpon>FilterTests.cs</DependentUpon>
+      </None>
+      <None Update="Steps\SelectTests.Serialize_DefaultInstance_ShouldBeVerified.verified.txt">
+        <DependentUpon>SelectTests.cs</DependentUpon>
+      </None>
+      <None Update="Steps\SelectTests.Serialize_Configured_ShouldBeVerified.verified.txt">
+        <DependentUpon>SelectTests.cs</DependentUpon>
+      </None>
+      <None Update="Converters\SpecConverterTestsFromV0.Deserialize_Version0SimpleSpec_ShouldBeExpected.verified.txt">
+        <DependentUpon>SpecConverterTestsFromV0.cs</DependentUpon>
+      </None>
+      <None Update="Converters\SpecConverterTestsFromV0.Deserialize_Version0ComplexSpec_ShouldBeExpected.verified.txt">
+        <DependentUpon>SpecConverterTestsFromV0.cs</DependentUpon>
+      </None>
+      <None Update="Converters\SpecConverterTestsFromV1.Deserialize_Example03_ShouldBeExpected.verified.txt">
+        <DependentUpon>SpecConverterTestsFromV1.cs</DependentUpon>
+      </None>
+      <None Update="Converters\SpecConverterTestsFromV1.Deserialize_Example02_ShouldBeExpected.verified.txt">
+        <DependentUpon>SpecConverterTestsFromV1.cs</DependentUpon>
+      </None>
+      <None Update="Converters\SpecConverterTestsFromV1.Deserialize_Example01_ShouldBeExpected.verified.txt">
+        <DependentUpon>SpecConverterTestsFromV1.cs</DependentUpon>
+      </None>
+      <None Update="Converters\JsonObjectConverterTests.Serialize_RangeValue_ShouldBeVerified.verified.txt">
+        <DependentUpon>JsonObjectConverterTests.cs</DependentUpon>
+      </None>
+      <None Update="Steps\QueryTests.Serialize_DefaultInstance_ShouldBeVerified.verified.txt">
+        <DependentUpon>QueryTests.cs</DependentUpon>
+      </None>
+      <None Update="Steps\VerifyTests.Serialize_DefaultInstance_ShouldBeVerified.verified.txt">
+        <DependentUpon>VerifyTests.cs</DependentUpon>
+      </None>
+      <None Update="Steps\VerifyTests.Serialize_ConfiguredTypeAndCriteria_ShouldBeVerified.verified.txt">
+        <DependentUpon>VerifyTests.cs</DependentUpon>
+      </None>
+      <None Update="Steps\VerifyTests.Serialize_ConfiguredTypeAndCriteriaAsStep_ShouldBeVerified.verified.txt">
+        <DependentUpon>VerifyTests.cs</DependentUpon>
+      </None>
     </ItemGroup>
 
     <ItemGroup>
