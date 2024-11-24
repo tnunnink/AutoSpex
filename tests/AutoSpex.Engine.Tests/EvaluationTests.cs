@@ -15,7 +15,7 @@ public class EvaluationTests
         evaluation.Result.Should().Be(ResultState.Passed);
         evaluation.Candidate.Should().Be("/Tag/Test");
         evaluation.Criteria.Should().Be("Name Is Containing");
-        evaluation.Expected.Should().HaveCount(1);
+        evaluation.Expected.Should().Be("Test");
         evaluation.Actual.Should().Be("Test");
         evaluation.Error.Should().BeNull();
     }
@@ -29,7 +29,7 @@ public class EvaluationTests
         evaluation.Result.Should().Be(ResultState.Failed);
         evaluation.Candidate.Should().Be("/Tag/Test");
         evaluation.Criteria.Should().Be("Name Is Containing");
-        evaluation.Expected.Should().HaveCount(1);
+        evaluation.Expected.Should().Be("Test");
         evaluation.Actual.Should().Be("Fake");
         evaluation.Error.Should().BeNull();
     }
@@ -44,7 +44,7 @@ public class EvaluationTests
         evaluation.Result.Should().Be(ResultState.Errored);
         evaluation.Candidate.Should().Be("/Tag/Test");
         evaluation.Criteria.Should().Be("Name Is Containing");
-        evaluation.Expected.Should().HaveCount(1);
+        evaluation.Expected.Should().Be("Test");
         evaluation.Actual.Should().BeEmpty();
         evaluation.Error.Should().Be("This evaluaiton failed to produce.");
     }

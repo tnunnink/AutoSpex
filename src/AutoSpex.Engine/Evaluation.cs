@@ -8,8 +8,8 @@ namespace AutoSpex.Engine;
 public record Evaluation
 {
     [JsonConstructor]
-    private Evaluation(ResultState result, string candidate, string criteria, IEnumerable<string> expected,
-        string actual, string? error)
+    private Evaluation(ResultState result, string candidate, string criteria, string expected, string actual,
+        string? error)
     {
         Result = result;
         Candidate = candidate;
@@ -27,7 +27,7 @@ public record Evaluation
         Result = result;
         Candidate = candidate.ToText();
         Criteria = criterion.GetCriteria();
-        Expected = criterion.GetExpected().Select(x => x.ToText());
+        Expected = criterion.GetExpected().ToText();
         Actual = actual.ToText();
     }
 
@@ -39,7 +39,7 @@ public record Evaluation
         Result = result;
         Candidate = candidate.ToText();
         Criteria = criterion.GetCriteria();
-        Expected = criterion.GetExpected().Select(x => x.ToText());
+        Expected = criterion.GetExpected().ToText();
         Error = exception.Message;
     }
 
@@ -76,7 +76,7 @@ public record Evaluation
     /// The set of values that the evaluation was expecting to find.
     /// </summary>
     [JsonInclude]
-    public IEnumerable<string> Expected { get; private init; } = [];
+    public string Expected { get; private init; } = string.Empty;
 
     /// <summary>
     /// The actual value that the was obtained from the candidate object. 
@@ -90,7 +90,6 @@ public record Evaluation
     /// </summary>
     [JsonInclude]
     public string? Error { get; private init; }
-
 
     /// <summary>
     /// Cretes a new passing <see cref="Evaluation"/> with the provided criterion, candidate, and actual value. 
