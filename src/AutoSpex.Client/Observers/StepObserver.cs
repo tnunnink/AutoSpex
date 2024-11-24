@@ -18,12 +18,12 @@ public abstract partial class StepObserver : Observer<Step>,
 {
     protected StepObserver(Step model) : base(model)
     {
-        //todo move?
         Criteria = new ObserverCollection<Criterion, CriterionObserver>
         (
             refresh: () => Model.Criteria.Select(c => new CriterionObserver(c)).ToList(),
             add: (_, m) => Model.Add(m),
             remove: (_, m) => Model.Remove(m),
+            move: (o, n) => Model.Move(o, n),
             clear: () => Model.Clear(),
             count: () => Model.Criteria.Count()
         );
