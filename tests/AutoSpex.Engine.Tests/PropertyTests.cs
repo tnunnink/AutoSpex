@@ -347,4 +347,76 @@ public class PropertyTests
         graph[0].Should().Be(typeof(Tag));
         graph[1].Should().Be(typeof(string));
     }
+    
+    [Test]
+    public void Parse_PrimitiveTypeNoPath_ShouldBeExpected()
+    {
+        var property = Property.Parse("System.Int32");
+
+        property.Key.Should().Be("System.Int32:This");
+        property.Origin.Should().Be(typeof(int));
+        property.Name.Should().Be("This");
+        property.Type.Should().Be(typeof(int));
+        property.Path.Should().Be("This");
+    }
+    
+    [Test]
+    public void Parse_PrimitiveTypeThisPath_ShouldBeExpected()
+    {
+        var property = Property.Parse("System.Int32:This");
+
+        property.Key.Should().Be("System.Int32:This");
+        property.Origin.Should().Be(typeof(int));
+        property.Name.Should().Be("This");
+        property.Type.Should().Be(typeof(int));
+        property.Path.Should().Be("This");
+    }
+    
+    [Test]
+    public void Parse_ElementTypeNoPath_ShouldBeExpected()
+    {
+        var property = Property.Parse("L5Sharp.Core.Tag");
+
+        property.Key.Should().Be("L5Sharp.Core.Tag:This");
+        property.Origin.Should().Be(typeof(Tag));
+        property.Name.Should().Be("This");
+        property.Type.Should().Be(typeof(Tag));
+        property.Path.Should().Be("This");
+    }
+    
+    [Test]
+    public void Parse_ElementTypeThisPath_ShouldBeExpected()
+    {
+        var property = Property.Parse("L5Sharp.Core.Tag:This");
+
+        property.Key.Should().Be("L5Sharp.Core.Tag:This");
+        property.Origin.Should().Be(typeof(Tag));
+        property.Name.Should().Be("This");
+        property.Type.Should().Be(typeof(Tag));
+        property.Path.Should().Be("This");
+    }
+    
+    [Test]
+    public void Parse_ElementTypeValidPath_ShouldBeExpected()
+    {
+        var property = Property.Parse("L5Sharp.Core.Tag:TagName.Member");
+
+        property.Key.Should().Be("L5Sharp.Core.Tag:TagName.Member");
+        property.Origin.Should().Be(typeof(Tag));
+        property.Name.Should().Be("Member");
+        property.Type.Should().Be(typeof(string));
+        property.Path.Should().Be("TagName.Member");
+    }
+    
+    [Test]
+    public void Parse_ElementTypeInvalidPath_ShouldBeExpected()
+    {
+        var property = Property.Parse("L5Sharp.Core.Tag:Fake.Member");
+
+        property.Key.Should().Be("L5Sharp.Core.Tag:Fake.Member");
+        property.Origin.Should().Be(typeof(Tag));
+        property.Name.Should().Be("Member");
+        property.Type.Should().Be(typeof(object));
+        property.Path.Should().Be("Fake.Member");
+    }
 }

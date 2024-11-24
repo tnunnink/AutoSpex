@@ -146,6 +146,32 @@ public class Property : IEquatable<Property>
     public static Property This(Type type) => new(nameof(This), type, null, x => x);
 
     /// <summary>
+    /// Parses the provided key string to create a new <see cref="Property"/> instance based on the key parts.
+    /// </summary>
+    /// <param name="key">The key string to parse into a <see cref="Property"/>.</param>
+    /// <returns>A <see cref="Property"/> instance corresponding to the parsed key.</returns>
+    /// <exception cref="ArgumentException">Thrown when the provided key is null or empty.</exception>
+    /// <exception cref="FormatException">Thrown when the key format is invalid and cannot be parsed into a valid property.</exception>
+    public static Property Parse(string? key)
+    {
+        if (string.IsNullOrEmpty(key))
+            throw new ArgumentException("Can not parse null or empty property key.");
+
+        var parts = key.Split(KeySeparator, StringSplitOptions.RemoveEmptyEntries);
+
+        if (parts.Length == 0 || parts[0].ToType() is not { } type)
+            throw new ArgumentException($"Could not determine origin type from key '{key}'.");
+
+        return parts.Length switch
+        {
+            1 when type == typeof(object) => Default,
+            1 => This(type),
+            2 => This(type).GetProperty(parts[1]),
+            _ => throw new FormatException($"Could not parse key '{key}' as valid property")
+        };
+    }
+
+    /// <summary>
     /// Gets a specified nested property using the provided property path name.
     /// </summary>
     /// <param name="path">The path of the property from the current type.</param>
