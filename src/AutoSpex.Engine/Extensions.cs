@@ -60,11 +60,9 @@ public static class Extensions
             bool b => b.ToString().ToLowerInvariant(),
             LogixEnum enumeration => enumeration.Name,
             LogixScoped scoped => scoped.Scope,
-            string text => text, // this needs to be before IEnumerable since string is enumerable
-            ICollection collection => $"[{collection.Count}]",
-            IEnumerable enumerable =>
-                $"{string.Join(", ", enumerable.GetType().GetGenericArguments().Select(DisplayName).ToArray())}s",
-            _ => candidate?.ToString() ?? "null"
+            string text => text,
+            IEnumerable enumerable => $"[{string.Join(',', enumerable.Cast<object>().Select(x => x.ToText()))}]",
+            _ => candidate?.ToString() ?? string.Empty
         };
     }
 
