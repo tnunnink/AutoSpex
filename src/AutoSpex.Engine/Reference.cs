@@ -10,17 +10,14 @@ public class Reference
 {
     public const char StartKey = '{';
     public const char EndKey = '}';
+
+    public Guid SourceId { get; set; } = Guid.Empty;
     
     /// <summary>
     /// The scope of the logix object to obtain. 
     /// </summary>
     public Scope Scope { get; set; } = Scope.Empty;
-    
-    /// <summary>
-    /// The optional property that specifies a sub value of the returned object instance.
-    /// </summary>
-    public Property Property { get; private set; } = Property.Default;
-    
+
     /// <summary>
     /// The element type of the reference. This is parsed from the scope type for which we have a matching element
     /// that gives us necessary type information.
@@ -28,13 +25,9 @@ public class Reference
     public Element Element => Scope.Type != ScopeType.Null ? Element.FromName(Scope.Type) : Element.Default;
 
     /// <summary>
-    /// 
+    /// The optional property path that specifies a sub value of the returned object instance.
     /// </summary>
-    /// <param name="property"></param>
-    public void Use(string property)
-    {
-        Property = Element.Property(property);
-    }
+    public string Property { get; private set; } = string.Empty;
 
     /// <summary>
     /// Given an object, try to resolve the value based on this configured reference. This assumes the provided object
@@ -50,14 +43,17 @@ public class Reference
         
         //We want to use Get because if the scope is invalid we will get and exception and report that to the user.
         var scoped = element.L5X.Get(Scope);
+
+        if (string.IsNullOrEmpty(Property)) return scoped;
         
         //If configured return the sub property value of the object.
-        return Property == Property.Default ? scoped : Property.GetValue(scoped);
+        var property = Element.This.GetProperty(Property);
+        return property.GetValue(scoped);
     }
     
     /// <inheritdoc />
     public override string ToString()
     {
-        return string.Concat(StartKey, Scope, EndKey, '.', Property.Path);
+        return string.Concat(StartKey, Scope, EndKey, '.', Property);
     }
 }
