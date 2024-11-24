@@ -8,11 +8,11 @@
         <Border MinHeight="200">
             <ContentControl
                 Content="{x:Static components:TestData.SpecObserverManyCriterion}"
-                ContentTemplate="{DynamicResource CriteriaActions}" />
+                ContentTemplate="{DynamicResource StepMenu}" />
         </Border>
     </Design.PreviewWith>
 
-    <DataTemplate x:Key="CriteriaActions" x:DataType="observers:SpecObserver">
+    <DataTemplate x:Key="StepMenu" x:DataType="observers:StepObserver">
 
         <Border Padding="5">
 
@@ -37,7 +37,7 @@
                     </Grid>
                 </Button>
 
-                <Button Command="{Binding PasteFiltersCommand}">
+                <Button Command="{Binding PasteCriteriaCommand}">
                     <Grid ColumnDefinitions="20,*,Auto">
                         <PathIcon Theme="{StaticResource IconFilledPaste}" Classes="size-sm" />
                         <TextBlock Grid.Column="1" Text="Paste" Padding="5 0" />
