@@ -37,7 +37,6 @@ public abstract class Element : SmartEnum<Element, string>
     public IEnumerable<Property> Properties => This.Properties;
     public IEnumerable<Property> CustomProperties => _customProperties;
     public bool IsComponent => Type.IsAssignableTo(typeof(LogixComponent));
-    public static IEnumerable<Element> Components => List.Where(e => e.IsComponent);
     public static IEnumerable<Element> Selectable => List.Where(e => e.IsComponent || e == Rung);
 
     public static readonly Element Default = new DefaultElement();
