@@ -36,7 +36,7 @@ public class Source
         Description = content.Controller.Description ?? string.Empty;
 
         InjectMetadata(content);
-        ScrubData(content);
+        ScrubContent(content);
         Content = content;
     }
 
@@ -138,7 +138,7 @@ public class Source
         Description = content.Controller.Description ?? string.Empty;
 
         InjectMetadata(content);
-        ScrubData(content);
+        ScrubContent(content);
         Content = content;
     }
 
@@ -321,29 +321,30 @@ public class Source
     {
         if (Content is null) return [];
 
-        //This only applies to tag elements. Guard agains anything else.
-        if (spec.Element != Element.Tag) return [];
-
         try
         {
-            //Ideally we want to narrow the search space for tag names using the currently configured filters to
+            var tagNames = new HashSet<TagName>();
+
+            //Ideally we want to narrow the search space for tag names using the currently configured criteria to
             //improve the performance of this lookup which will happen continuously as text changes
+            //todo how are we getting the step
+            var data = spec.RunTo(new Filter(), Content);
 
-            /*var elements = spec.GetCandidates(Content);*/
+            foreach (var item in data)
+            {
+                if (item is Tag tag)
+                {
+                    foreach (var path in tag.TagNames().Select(t => t.Path))
+                        tagNames.Add(path);
+                }
 
-            var tags = Content.Query<Tag>().Where(t => spec.Filters.All(f => f.Evaluate(t))).ToList();
+                //todo module? andything else?
+            }
 
-            /*return tags.SelectMany(t => t.TagNames()).Select(t => t.Path).Distinct().Select(x => new TagName(x));*/
-
-            var tagNames = tags
-                .SelectMany(t => t.TagNames())
-                .Select(t => t.Path)
-                .Distinct()
-                .Where(t => !string.IsNullOrEmpty(t) && t.Satisfies(filter))
+            return tagNames
+                .Where(t => !string.IsNullOrEmpty(t) && t.Contains(filter))
                 .OrderBy(t => t)
                 .Select(t => new TagName($"[{t}]"));
-
-            return tagNames.ToList();
         }
         catch (Exception)
         {
@@ -380,7 +381,7 @@ public class Source
     /// can still be restored without L5K data anyway. We are only interested in decorated clear text data.
     /// </summary>
     /// <param name="content">The L5X content from which to scrub the data.</param>
-    private static void ScrubData(L5X content)
+    private static void ScrubContent(L5X content)
     {
         content.Serialize().Descendants(L5XName.Data)
             .Where(d => d.Attribute(L5XName.Format)?.Value == "L5K")

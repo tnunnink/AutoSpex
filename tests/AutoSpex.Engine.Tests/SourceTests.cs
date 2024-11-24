@@ -17,6 +17,7 @@ public class SourceTests
         source.ExportedOn.Should().BeEmpty();
         source.ExportedBy.Should().BeEmpty();
         source.Content.Should().BeNull();
+        source.Suppressions.Should().BeEmpty();
         source.Overrides.Should().BeEmpty();
     }
 
@@ -35,6 +36,7 @@ public class SourceTests
         source.ExportedOn.Should().NotBeEmpty();
         source.ExportedBy.Should().NotBeEmpty();
         source.Content.Should().NotBeNull();
+        source.Suppressions.Should().BeEmpty();
         source.Overrides.Should().BeEmpty();
     }
 
@@ -55,6 +57,7 @@ public class SourceTests
         source.ExportedOn.Should().NotBeEmpty();
         source.ExportedBy.Should().NotBeEmpty();
         source.Content.Should().NotBeNull();
+        source.Suppressions.Should().BeEmpty();
         source.Overrides.Should().BeEmpty();
     }
 
@@ -87,9 +90,9 @@ public class SourceTests
         var source = new Source();
         var spec = Node.NewSpec("test", s =>
         {
-            s.Query(Element.Tag);
-            s.Filter("TagName", Operation.Containing, "Something");
-            s.Verify("Value", Operation.EqualTo, 12);
+            s.Fetch(Element.Tag);
+            s.Where("TagName", Operation.Containing, "Something");
+            s.Confirm("Value", Operation.EqualTo, 12);
         });
 
         source.AddOverride(spec);
@@ -111,9 +114,9 @@ public class SourceTests
         var source = new Source();
         var spec = Node.NewSpec("test", s =>
         {
-            s.Query(Element.Tag);
-            s.Filter("TagName", Operation.Containing, "Something");
-            s.Verify("Value", Operation.EqualTo, 12);
+            s.Fetch(Element.Tag);
+            s.Where("TagName", Operation.Containing, "Something");
+            s.Confirm("Value", Operation.EqualTo, 12);
         });
 
         source.RemoveOverride(spec);
@@ -127,9 +130,9 @@ public class SourceTests
         var source = new Source();
         var spec = Node.NewSpec("test", s =>
         {
-            s.Query(Element.Tag);
-            s.Filter("TagName", Operation.Containing, "Something");
-            s.Verify("Value", Operation.EqualTo, 12);
+            s.Fetch(Element.Tag);
+            s.Where("TagName", Operation.Containing, "Something");
+            s.Confirm("Value", Operation.EqualTo, 12);
         });
 
         source.AddOverride(spec);
@@ -145,15 +148,15 @@ public class SourceTests
         var source = new Source();
         source.AddOverride(Node.NewSpec("test", s =>
         {
-            s.Query(Element.Tag);
-            s.Filter("TagName", Operation.Containing, "Something");
-            s.Verify("Value", Operation.EqualTo, 12);
+            s.Fetch(Element.Tag);
+            s.Where("TagName", Operation.Containing, "Something");
+            s.Confirm("Value", Operation.EqualTo, 12);
         }));
         source.AddOverride(Node.NewSpec("test", s =>
         {
-            s.Query(Element.Tag);
-            s.Filter("TagName", Operation.Containing, "Something");
-            s.Verify("Value", Operation.EqualTo, 12);
+            s.Fetch(Element.Tag);
+            s.Where("TagName", Operation.Containing, "Something");
+            s.Confirm("Value", Operation.EqualTo, 12);
         }));
 
         source.ClearOverrides();
