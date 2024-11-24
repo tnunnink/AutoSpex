@@ -41,11 +41,7 @@ public class CriterionReplaceObserver(Criterion model, Node node) : Observer<Cri
 
         try
         {
-            var parsed = Criterion.Parse(Model.Type, updated);
-            Model.Property = parsed.Property;
-            Model.Negation = parsed.Negation;
-            Model.Operation = parsed.Operation;
-            Model.Argument = parsed.Argument;
+            Model.Update(updated);
             return Result.Ok();
         }
         catch (FormatException e)
