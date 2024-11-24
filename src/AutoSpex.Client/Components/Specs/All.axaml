@@ -8,9 +8,9 @@
         <ResourceInclude Source="FilterStep.axaml" />
         <ResourceInclude Source="QueryStep.axaml" />
         <ResourceInclude Source="SpecConfig.axaml" />
-        <ResourceInclude Source="StepActions.axaml" />
+        <ResourceInclude Source="StepMenu.axaml" />
         <ResourceInclude Source="VerificationFlyout.axaml" />
-        <ResourceInclude Source="VerificationStep.axaml" />
+        <ResourceInclude Source="VerifyStep.axaml" />
     </ResourceDictionary.MergedDictionaries>
 
 </ResourceDictionary>
