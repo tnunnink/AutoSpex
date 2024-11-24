@@ -14,31 +14,38 @@
         Type: Spec,
         Name: First,
         Spec: {
-          SchemaVersion: 1,
+          SchemaVersion: 2,
           SpecId: Guid_4,
-          Element: Tag,
-          Filters: [
+          Steps: [
             {
-              Type: L5Sharp.Core.Tag,
-              Property: L5Sharp.Core.Tag:Name,
-              Negation: Is,
-              Operation: Like,
-              Argument: {
-                Group: Text,
-                Data: someName
-              }
-            }
-          ],
-          Verifications: [
+              Element: Tag
+            },
             {
-              Type: L5Sharp.Core.Tag,
-              Property: L5Sharp.Core.Tag:Value,
-              Negation: Is,
-              Operation: Equal To,
-              Argument: {
-                Group: Number,
-                Data: 123
-              }
+              Match: All,
+              Criteria: [
+                {
+                  Property: L5Sharp.Core.Tag:Name,
+                  Negation: Is,
+                  Operation: Like,
+                  Argument: {
+                    Group: Text,
+                    Data: someName
+                  }
+                }
+              ]
+            },
+            {
+              Criteria: [
+                {
+                  Property: L5Sharp.Core.Tag:Value,
+                  Negation: Is,
+                  Operation: Equal To,
+                  Argument: {
+                    Group: Number,
+                    Data: 123
+                  }
+                }
+              ]
             }
           ]
         }
@@ -49,31 +56,38 @@
         Type: Spec,
         Name: Second,
         Spec: {
-          SchemaVersion: 1,
+          SchemaVersion: 2,
           SpecId: Guid_6,
-          Element: Tag,
-          Filters: [
+          Steps: [
             {
-              Type: L5Sharp.Core.Tag,
-              Property: L5Sharp.Core.Tag:Name,
-              Negation: Is,
-              Operation: Containing,
-              Argument: {
-                Group: Text,
-                Data: anotherName
-              }
-            }
-          ],
-          Verifications: [
+              Element: Tag
+            },
             {
-              Type: L5Sharp.Core.Tag,
-              Property: L5Sharp.Core.Tag:Value,
-              Negation: Is,
-              Operation: Greater Than,
-              Argument: {
-                Group: Number,
-                Data: 456
-              }
+              Match: All,
+              Criteria: [
+                {
+                  Property: L5Sharp.Core.Tag:Name,
+                  Negation: Is,
+                  Operation: Containing,
+                  Argument: {
+                    Group: Text,
+                    Data: anotherName
+                  }
+                }
+              ]
+            },
+            {
+              Criteria: [
+                {
+                  Property: L5Sharp.Core.Tag:Value,
+                  Negation: Is,
+                  Operation: Greater Than,
+                  Argument: {
+                    Group: Number,
+                    Data: 456
+                  }
+                }
+              ]
             }
           ]
         }
@@ -84,40 +98,52 @@
         Type: Spec,
         Name: Third,
         Spec: {
-          SchemaVersion: 1,
+          SchemaVersion: 2,
           SpecId: Guid_8,
-          Element: Tag,
-          Filters: [
+          Steps: [
             {
-              Type: L5Sharp.Core.Tag,
-              Property: L5Sharp.Core.Tag:Name,
-              Negation: Is,
-              Operation: Equal To,
-              Argument: {
-                Group: Text,
-                Data: yetAnotherName
-              }
-            }
-          ],
-          Verifications: [
+              Element: Tag
+            },
             {
-              Type: L5Sharp.Core.Tag,
-              Property: L5Sharp.Core.Tag:Value,
-              Negation: Not,
-              Operation: Equal To,
-              Argument: {
-                Group: Number,
-                Data: 678
-              }
+              Match: All,
+              Criteria: [
+                {
+                  Property: L5Sharp.Core.Tag:Name,
+                  Negation: Is,
+                  Operation: Equal To,
+                  Argument: {
+                    Group: Text,
+                    Data: yetAnotherName
+                  }
+                }
+              ]
+            },
+            {
+              Criteria: [
+                {
+                  Property: L5Sharp.Core.Tag:Value,
+                  Negation: Not,
+                  Operation: Equal To,
+                  Argument: {
+                    Group: Number,
+                    Data: 678
+                  }
+                }
+              ]
             }
           ]
         }
       }
     ],
     Spec: {
-      SchemaVersion: 1,
+      SchemaVersion: 2,
       SpecId: Guid_9,
-      Element: None
+      Steps: [
+        {
+          Element: None
+        },
+        {}
+      ]
     }
   }
 }
