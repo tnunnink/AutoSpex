@@ -1,8 +1,8 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
-                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
-                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine">
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
 
     <Design.PreviewWith>
         <Border Width="600" Height="800">
@@ -15,23 +15,40 @@
 
     <DataTemplate x:Key="SpecConfig" DataType="observers:SpecObserver">
 
-        <StackPanel Spacing="20">
+        <ItemsControl ItemsSource="{Binding Steps}">
 
-            <ContentControl
-                Content="{Binding}"
-                ContentTemplate="{StaticResource QueryStep}" />
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Spacing="20" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
 
-            <ContentControl
-                Content="{Binding}"
-                ContentTemplate="{StaticResource FilterStep}"
-                IsVisible="{Binding Element, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Element.Default}}" />
+            <ItemsControl.ItemTemplate>
+                <a:TypedDataTemplateSelector>
+                    <DataTemplate x:DataType="observers:QueryObserver">
+                        <ContentControl
+                            Content="{Binding}"
+                            ContentTemplate="{StaticResource QueryStep}" />
+                    </DataTemplate>
+                    <DataTemplate x:DataType="observers:FilterObserver">
+                        <ContentControl
+                            Content="{Binding}"
+                            ContentTemplate="{StaticResource FilterStep}" />
+                    </DataTemplate>
+                    <!--<DataTemplate x:DataType="observers:SelectObserver">
+                        <ContentControl
+                            Content="{Binding}"
+                            ContentTemplate="{StaticResource Selec}" />
+                    </DataTemplate>-->
+                    <DataTemplate x:DataType="observers:VerifyObserver">
+                        <ContentControl
+                            Content="{Binding}"
+                            ContentTemplate="{StaticResource VerifyStep}" />
+                    </DataTemplate>
+                </a:TypedDataTemplateSelector>
+            </ItemsControl.ItemTemplate>
 
-            <ContentControl
-                Content="{Binding}"
-                ContentTemplate="{StaticResource VerificationStep}"
-                IsVisible="{Binding Element, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Element.Default}}" />
-
-        </StackPanel>
+        </ItemsControl>
 
     </DataTemplate>
 

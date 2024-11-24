@@ -1,0 +1,30 @@
+﻿{
+  "SchemaVersion": 2,
+  "SpecId": "90f4dbce-1033-42fd-8f45-3cdb0b03d5db",
+  "Steps": [
+    {
+      "$type": "Query",
+      "Element": "Controller",
+      "Criteria": []
+    },
+    {
+      "$type": "Filter",
+      "Match": "All",
+      "Criteria": []
+    },
+    {
+      "$type": "Verify",
+      "Criteria": [
+        {
+          "Property": "L5Sharp.Core.Controller:Tags.Count",
+          "Negation": "Is",
+          "Operation": "Less Than Or Equal To",
+          "Argument": {
+            "Group": "Number",
+            "Data": "30"
+          }
+        }
+      ]
+    }
+  ]
+}

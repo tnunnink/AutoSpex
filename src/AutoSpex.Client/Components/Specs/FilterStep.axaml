@@ -15,12 +15,12 @@
         </Border>
     </Design.PreviewWith>
 
-    <DataTemplate x:Key="FilterStep" x:DataType="observers:SpecObserver">
+    <DataTemplate x:Key="FilterStep" x:DataType="observers:FilterObserver">
 
         <controls:Section
             Header="Filter"
             Description="Add filters to target specific elements for verification."
-            ShowContent="{Binding Filters.HasItems}">
+            ShowContent="{Binding Criteria.HasItems}">
 
             <controls:Section.Icon>
                 <PathIcon Theme="{StaticResource IconFilledFunnel}" />
@@ -30,7 +30,7 @@
                 <StackPanel Spacing="5" Orientation="Horizontal" Margin="7 0">
 
                     <Button
-                        Command="{Binding AddFilterCommand}"
+                        Command="{Binding AddCriteriaCommand}"
                         Theme="{StaticResource IconButton}"
                         properties:Icon.Theme="{StaticResource IconAdd}"
                         Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
@@ -56,9 +56,9 @@
             </controls:Section.Action>
 
             <ListBox
-                IsVisible="{Binding Filters.HasItems}"
-                ItemsSource="{Binding Filters}"
-                SelectedItems="{Binding SelectedFilters}"
+                IsVisible="{Binding Criteria.HasItems}"
+                ItemsSource="{Binding Criteria}"
+                SelectedItems="{Binding Selected}"
                 ItemTemplate="{StaticResource CriterionListItem}"
                 ItemContainerTheme="{StaticResource CriterionItemTheme}"
                 SelectionMode="Multiple"
@@ -69,7 +69,7 @@
                 <Interaction.Behaviors>
                     <ExecuteCommandOnKeyDownBehavior
                         Gesture="Ctrl+V"
-                        Command="{Binding PasteFiltersCommand}"
+                        Command="{Binding PasteCriteriaCommand}"
                         MarkAsHandled="True" />
                 </Interaction.Behaviors>
             </ListBox>

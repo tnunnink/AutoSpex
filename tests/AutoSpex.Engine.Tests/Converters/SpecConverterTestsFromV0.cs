@@ -1,14 +1,19 @@
 ﻿using System.Text.Json;
+using Task = System.Threading.Tasks.Task;
 
 namespace AutoSpex.Engine.Tests.Converters;
 
 [TestFixture]
-public class SpecConverterTests
+public class SpecConverterTestsFromV0
 {
-    private static readonly JsonSerializerOptions Options = new() { Converters = { new JsonSpecConverter() } };
+    private static readonly JsonSerializerOptions Options = new()
+    {
+        WriteIndented = true,
+        Converters = { new JsonSpecConverter() }
+    };
 
     [Test]
-    public void Deserialize_Version0SimpleSpec_ShouldBeExpected()
+    public Task Deserialize_Version0SimpleSpec_ShouldBeExpected()
     {
         const string json = """
                             {
@@ -40,21 +45,14 @@ public class SpecConverterTests
                             """;
 
         var spec = JsonSerializer.Deserialize<Spec>(json, Options);
-
         spec.Should().NotBeNull();
-        spec?.SpecId.Should().Be("90f4dbce-1033-42fd-8f45-3cdb0b03d5db");
-        spec?.Element.Should().Be(Element.Controller);
-        spec?.Filters.Should().BeEmpty();
-        spec?.Verifications.Should().HaveCount(1);
-        spec?.Verifications[0].Type.Should().Be(typeof(Controller));
-        spec?.Verifications[0].Property.Key.Should().Be("L5Sharp.Core.Controller:Tags.Count");
-        spec?.Verifications[0].Negation.Should().Be(Negation.Is);
-        spec?.Verifications[0].Operation.Should().Be(Operation.LessThanOrEqualTo);
-        spec?.Verifications[0].Argument.Should().Be(30);
+
+        var result = JsonSerializer.Serialize(spec, Options);
+        return Verify(result);
     }
-    
+
     [Test]
-    public void Deserialize_Version0ComplexSpec_ShouldBeExpected()
+    public Task Deserialize_Version0ComplexSpec_ShouldBeExpected()
     {
         const string json = """
                             {
@@ -166,11 +164,9 @@ public class SpecConverterTests
                             """;
 
         var spec = JsonSerializer.Deserialize<Spec>(json, Options);
-
         spec.Should().NotBeNull();
-        spec?.SpecId.Should().Be("1dbb81da-42dd-40b9-a77b-75db7042ce77");
-        spec?.Element.Should().Be(Element.Module);
-        spec?.Filters.Should().HaveCount(3);
-        spec?.Verifications.Should().HaveCount(3);
+
+        var result = JsonSerializer.Serialize(spec, Options);
+        return Verify(result);
     }
 }

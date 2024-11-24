@@ -14,7 +14,7 @@
         </Border>
     </Design.PreviewWith>
 
-    <DataTemplate x:Key="FilterFlyout" x:DataType="observers:SpecObserver">
+    <DataTemplate x:Key="FilterFlyout" x:DataType="observers:FilterObserver">
 
         <Button
             Theme="{StaticResource IconButton}"
@@ -46,7 +46,7 @@
 
                                 <Button
                                     Grid.Column="1"
-                                    Command="{Binding AddFilterCommand}"
+                                    Command="{Binding AddCriteriaCommand}"
                                     Theme="{StaticResource IconButtonSmall}"
                                     properties:Icon.Theme="{StaticResource IconAdd}"
                                     Classes="accent size-sm"
@@ -58,8 +58,8 @@
                         </Border>
 
                         <ListBox
-                            ItemsSource="{Binding Filters}"
-                            SelectedItems="{Binding SelectedFilters}"
+                            ItemsSource="{Binding Criteria}"
+                            SelectedItems="{Binding Selected}"
                             ItemTemplate="{StaticResource CriterionListItem}"
                             ItemContainerTheme="{StaticResource ListBoxItemEntry}"
                             SelectionMode="Multiple"

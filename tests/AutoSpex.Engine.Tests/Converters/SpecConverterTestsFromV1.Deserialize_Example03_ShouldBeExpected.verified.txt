@@ -1,0 +1,20 @@
+﻿{
+  "SchemaVersion": 2,
+  "SpecId": "b5019ba9-81a3-451a-ad2e-c612ffad97c6",
+  "Steps": [
+    {
+      "$type": "Query",
+      "Element": "None",
+      "Criteria": []
+    },
+    {
+      "$type": "Filter",
+      "Match": "All",
+      "Criteria": []
+    },
+    {
+      "$type": "Verify",
+      "Criteria": []
+    }
+  ]
+}

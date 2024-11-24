@@ -10,28 +10,28 @@
         <Border Width="600" Height="300">
             <ContentControl
                 Content="{x:Static components:TestData.SpecObserverManyCriterion}"
-                ContentTemplate="{DynamicResource VerificationStep}"
+                ContentTemplate="{DynamicResource VerifyStep}"
                 Margin="20" VerticalAlignment="Top" />
         </Border>
     </Design.PreviewWith>
-    
 
-    <DataTemplate x:Key="VerificationStep" x:DataType="observers:SpecObserver">
+
+    <DataTemplate x:Key="VerifyStep" x:DataType="observers:VerifyObserver">
 
         <controls:Section
             Header="Verify"
             Description="Add verifications to define the criteria of the specification."
-            ShowContent="{Binding Verifications.HasItems}">
+            ShowContent="{Binding Criteria.HasItems}">
 
             <controls:Section.Icon>
                 <PathIcon Theme="{StaticResource IconFilledPatch}" />
             </controls:Section.Icon>
 
             <controls:Section.Action>
-                <StackPanel Spacing="5" Orientation="Horizontal"  Margin="7 0">
+                <StackPanel Spacing="5" Orientation="Horizontal" Margin="7 0">
 
                     <Button
-                        Command="{Binding AddVerificationCommand}"
+                        Command="{Binding AddCriteriaCommand}"
                         Theme="{StaticResource IconButton}"
                         properties:Icon.Theme="{StaticResource IconAdd}"
                         Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
@@ -49,9 +49,9 @@
             </controls:Section.Action>
 
             <ListBox
-                IsVisible="{Binding Verifications.HasItems}"
-                ItemsSource="{Binding Verifications}"
-                SelectedItems="{Binding SelectedVerifications}"
+                IsVisible="{Binding Criteria.HasItems}"
+                ItemsSource="{Binding Criteria}"
+                SelectedItems="{Binding Selected}"
                 ItemTemplate="{StaticResource CriterionListItem}"
                 ItemContainerTheme="{StaticResource CriterionItemTheme}"
                 SelectionMode="Multiple"
@@ -62,7 +62,7 @@
                 <Interaction.Behaviors>
                     <ExecuteCommandOnKeyDownBehavior
                         Gesture="Ctrl+V"
-                        Command="{Binding PasteVerificationsCommand}"
+                        Command="{Binding PasteCriteriaCommand}"
                         MarkAsHandled="True" />
                 </Interaction.Behaviors>
             </ListBox>

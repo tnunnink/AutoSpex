@@ -1,0 +1,24 @@
+﻿{
+  $type: Filter,
+  Match: All,
+  Criteria: [
+    {
+      Property: L5Sharp.Core.Tag:TagName,
+      Negation: Is,
+      Operation: Containing,
+      Argument: {
+        Group: Text,
+        Data: this is a test
+      }
+    },
+    {
+      Property: L5Sharp.Core.Tag:Value,
+      Negation: Is,
+      Operation: Equal To,
+      Argument: {
+        Group: Number,
+        Data: 123
+      }
+    }
+  ]
+}

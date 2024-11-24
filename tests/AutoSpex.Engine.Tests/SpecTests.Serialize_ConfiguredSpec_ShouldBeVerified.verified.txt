@@ -1,26 +1,37 @@
 ﻿{
-  SchemaVersion: 1,
-  SpecId: Guid_1,
-  Element: Tag,
-  Filters: [
+  "SchemaVersion": 2,
+  "SpecId": "Guid_1",
+  "Steps": [
     {
-      Type: L5Sharp.Core.Tag,
-      Property: L5Sharp.Core.Tag:Name,
-      Negation: Is,
-      Operation: Containing,
-      Argument: {
-        Group: Text,
-        Data: Test
-      }
-    }
-  ],
-  Verifications: [
+      "$type": "Query",
+      "Element": "Tag",
+      "Criteria": []
+    },
     {
-      Type: L5Sharp.Core.Tag,
-      Property: L5Sharp.Core.Tag:DataType,
-      Negation: Not,
-      Operation: Null Or Empty,
-      Argument: null
+      "$type": "Filter",
+      "Match": "All",
+      "Criteria": [
+        {
+          "Property": "L5Sharp.Core.Tag:Name",
+          "Negation": "Is",
+          "Operation": "Containing",
+          "Argument": {
+            "Group": "Text",
+            "Data": "Test"
+          }
+        }
+      ]
+    },
+    {
+      "$type": "Verify",
+      "Criteria": [
+        {
+          "Property": "L5Sharp.Core.Tag:DataType",
+          "Negation": "Not",
+          "Operation": "Void",
+          "Argument": null
+        }
+      ]
     }
   ]
 }

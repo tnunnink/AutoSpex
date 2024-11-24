@@ -1,0 +1,39 @@
+﻿{
+  "SchemaVersion": 2,
+  "SpecId": "4379b169-be95-48c3-a1ee-40e90d74540b",
+  "Steps": [
+    {
+      "$type": "Query",
+      "Element": "Program",
+      "Criteria": []
+    },
+    {
+      "$type": "Filter",
+      "Match": "All",
+      "Criteria": []
+    },
+    {
+      "$type": "Verify",
+      "Criteria": [
+        {
+          "Property": "L5Sharp.Core.Program:Disabled",
+          "Negation": "Is",
+          "Operation": "Equal To",
+          "Argument": {
+            "Group": "Boolean",
+            "Data": false
+          }
+        },
+        {
+          "Property": "L5Sharp.Core.Program:Children",
+          "Negation": "Is",
+          "Operation": "Any",
+          "Argument": {
+            "Group": "Criterion",
+            "Data": {"Property":"System.String:This","Negation":"Is","Operation":"Containing","Argument":{"Group":"Text","Data":"Main"}}
+          }
+        }
+      ]
+    }
+  ]
+}

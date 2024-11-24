@@ -1,0 +1,48 @@
+﻿{
+  "SchemaVersion": 2,
+  "SpecId": "1dbb81da-42dd-40b9-a77b-75db7042ce77",
+  "Steps": [
+    {
+      "$type": "Query",
+      "Element": "Module",
+      "Criteria": []
+    },
+    {
+      "$type": "Filter",
+      "Match": "All",
+      "Criteria": []
+    },
+    {
+      "$type": "Verify",
+      "Criteria": [
+        {
+          "Property": "L5Sharp.Core.Module:Inhibited",
+          "Negation": "Is",
+          "Operation": "Equal To",
+          "Argument": {
+            "Group": "Boolean",
+            "Data": false
+          }
+        },
+        {
+          "Property": "L5Sharp.Core.Module:Vendor",
+          "Negation": "Is",
+          "Operation": "Greater Than Or Equal To",
+          "Argument": {
+            "Group": "Number",
+            "Data": "12"
+          }
+        },
+        {
+          "Property": "L5Sharp.Core.Module:Revision",
+          "Negation": "Is",
+          "Operation": "Greater Than",
+          "Argument": {
+            "Group": "Number",
+            "Data": "5.1"
+          }
+        }
+      ]
+    }
+  ]
+}
