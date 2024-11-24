@@ -55,7 +55,7 @@ public class RunTests
         var source = new Source(L5X.Load(Known.Test));
 
         var spec = Node.NewSpec("Test",
-            s => { s.Query(Element.Module).Verify("Inhibited", Operation.EqualTo, false); });
+            s => { s.Fetch(Element.Module).Confirm("Inhibited", Operation.EqualTo, false); });
 
         var run = new Run(spec, source);
 
@@ -74,9 +74,9 @@ public class RunTests
 
         var spec = Node.NewSpec("Test", s =>
         {
-            s.Query(Element.DataType)
-                .Filter("Name", Operation.EqualTo, "ComplexType")
-                .Verify("Members", Operation.Any,
+            s.Fetch(Element.DataType)
+                .Where("Name", Operation.EqualTo, "ComplexType")
+                .Confirm("Members", Operation.Any,
                     new Criterion(Element.DataTypeMember.Property("DataType"), Operation.EqualTo, "SimpleType"));
         });
 
