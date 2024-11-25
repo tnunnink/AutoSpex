@@ -2,6 +2,7 @@
 using System.Net;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Ardalis.SmartEnum;
 using L5Sharp.Core;
@@ -16,44 +17,6 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
 
     private TypeGroup(string name, int value) : base(name, value)
     {
-    }
-
-    /// <summary>
-    /// Determines if this <see cref="TypeGroup"/> applies to the specficied <see cref="Type"/>.
-    /// </summary>
-    /// <param name="type">The type to check.</param>
-    /// <returns><c>true</c> if this group applies to the secified type; otherwise, <c>false</c>.</returns>
-    protected abstract bool AppliesTo(Type type);
-
-    /// <summary>
-    /// Tries to parse the specified text into an object of this TypeGroup.
-    /// </summary>
-    /// <param name="text">The text to parse.</param>
-    /// <param name="value">The parsed object if the parsing was successful, otherwise null.</param>
-    /// <returns>True if the parsing was successful; otherwise, false.</returns>
-    public abstract bool TryParse(string text, out object? value);
-
-    /// <summary>
-    /// Reads and constructs an object from the provided Utf8JsonReader using the specified JsonSerializerOptions.
-    /// </summary>
-    /// <param name="reader">The Utf8JsonReader used to read the JSON data.</param>
-    /// <param name="options">The JsonSerializerOptions used during deserialization.</param>
-    /// <returns>The deserialized object constructed from the JSON data.</returns>
-    public virtual object? ReadData(ref Utf8JsonReader reader, JsonSerializerOptions options) => default;
-
-    /// <summary>
-    /// Writes the data from the specified object to a Utf8JsonWriter using the specified JsonSerializerOptions
-    /// based on the object's type group.
-    /// </summary>
-    /// <param name="writer">The Utf8JsonWriter to write the data to.</param>
-    /// <param name="value">The object containing the data to be written.</param>
-    /// <param name="options">The JsonSerializerOptions to be used during writing.</param>
-    public virtual void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions? options = default)
-    {
-        writer.WriteStartObject();
-        writer.WriteString("Group", Name);
-        writer.WriteString("Data", value?.ToString() ?? string.Empty);
-        writer.WriteEndObject();
     }
 
     /// <summary>
@@ -106,8 +69,6 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
     /// </summary>
     public static readonly TypeGroup Range = new RangeTypeGroup();
 
-    public static IEnumerable<TypeGroup> Selectable => List.Where(t => t != Default).OrderBy(x => x.Value);
-
     /// <summary>
     /// Retrieves the corresponding <see cref="TypeGroup"/> based on the provided <see cref="Type"/>.
     /// </summary>
@@ -116,16 +77,68 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
     public static TypeGroup FromType(Type? type)
     {
         if (type is null) return Default;
-        if (Boolean.AppliesTo(type)) return Boolean;
-        if (Number.AppliesTo(type)) return Number;
-        if (Text.AppliesTo(type)) return Text;
-        if (Date.AppliesTo(type)) return Date;
-        if (Enum.AppliesTo(type)) return Enum;
-        if (Element.AppliesTo(type)) return Element;
-        if (Collection.AppliesTo(type)) return Collection;
-        if (Criterion.AppliesTo(type)) return Criterion;
-        if (Range.AppliesTo(type)) return Range;
+
+        foreach (var group in List.OrderBy(x => x.Value))
+            if (group.AppliesTo(type))
+                return group;
+
         return Default;
+    }
+
+    /// <summary>
+    /// Attempts to parse the provided input text as a strongly typed object by inferring the type group and
+    /// then calling the corresponding <see cref="TryParse"/> methods for that group.
+    /// </summary>
+    /// <param name="value">The input text to parse.</param>
+    /// <returns></returns>
+    public static object? Parse(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return default;
+
+        //Obviously need to exlude the Text group since it will always a string.
+        foreach (var group in List.Where(x => x != Text).OrderBy(x => x.Value))
+            if (group.TryParse(value, out var result))
+                return result;
+
+        return value;
+    }
+
+    /// <summary>
+    /// Determines if this <see cref="TypeGroup"/> applies to the specficied <see cref="Type"/>.
+    /// </summary>
+    /// <param name="type">The type to check.</param>
+    /// <returns><c>true</c> if this group applies to the secified type; otherwise, <c>false</c>.</returns>
+    protected abstract bool AppliesTo(Type type);
+
+    /// <summary>
+    /// Tries to parse the specified text into an object of this TypeGroup.
+    /// </summary>
+    /// <param name="text">The text to parse.</param>
+    /// <param name="value">The parsed object if the parsing was successful, otherwise null.</param>
+    /// <returns>True if the parsing was successful; otherwise, false.</returns>
+    public abstract bool TryParse(string text, out object? value);
+
+    /// <summary>
+    /// Reads and constructs an object from the provided Utf8JsonReader using the specified JsonSerializerOptions.
+    /// </summary>
+    /// <param name="reader">The Utf8JsonReader used to read the JSON data.</param>
+    /// <param name="options">The JsonSerializerOptions used during deserialization.</param>
+    /// <returns>The deserialized object constructed from the JSON data.</returns>
+    public virtual object? ReadData(ref Utf8JsonReader reader, JsonSerializerOptions options) => default;
+
+    /// <summary>
+    /// Writes the data from the specified object to a Utf8JsonWriter using the specified JsonSerializerOptions
+    /// based on the object's type group.
+    /// </summary>
+    /// <param name="writer">The Utf8JsonWriter to write the data to.</param>
+    /// <param name="value">The object containing the data to be written.</param>
+    /// <param name="options">The JsonSerializerOptions to be used during writing.</param>
+    public virtual void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions? options = default)
+    {
+        writer.WriteStartObject();
+        writer.WriteString("Group", Name);
+        writer.WriteString("Data", value?.ToString() ?? string.Empty);
+        writer.WriteEndObject();
     }
 
     #region Internal
@@ -165,8 +178,8 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
                 return true;
             }
 
-            value = BOOL.TryParse(text);
-            return value is not null;
+            value = default;
+            return false;
         }
 
         public override object ReadData(ref Utf8JsonReader reader, JsonSerializerOptions options)
@@ -333,7 +346,6 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
 
         public override bool TryParse(string text, out object? value)
         {
-            //if we don't know the type the user input, all we can do is get the first matching name. 
             var match = LogixEnum.Options().SelectMany(e => e.Value).FirstOrDefault(x => x.Name == text);
             value = match;
             return value is not null;
@@ -409,13 +421,21 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
 
     private class CollectionTypeGroup() : TypeGroup(nameof(Collection), 7)
     {
-        protected override bool AppliesTo(Type type) => type.IsEnumerable();
+        protected override bool AppliesTo(Type type) => type != typeof(string) && type.IsEnumerable();
 
         public override bool TryParse(string text, out object? value)
         {
             try
             {
-                value = JsonSerializer.Deserialize<List<object>>(text);
+                if (!(text.StartsWith('[') && text.EndsWith(']')))
+                {
+                    value = null;
+                    return false;
+                }
+
+                var values = text.TrimStart('[').TrimEnd(']').Split(',');
+                var collection = values.Select(Parse).ToList();
+                value = collection;
                 return true;
             }
             catch (Exception)
@@ -485,7 +505,21 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
         {
             try
             {
-                value = JsonSerializer.Deserialize<Criterion>(text);
+                var operations = string.Join("|", Operation.List.Select(o => o.Name));
+                var pattern = $"(^[^\\ ]+) (Is|Not) ({operations})(.*?)$";
+
+                var match = Regex.Match(text, pattern);
+                if (!match.Success || match.Groups.Count < 3)
+                {
+                    value = null;
+                    return false;
+                }
+
+                var property = match.Groups[1].Value;
+                var negation = Negation.FromName(match.Groups[2].Value);
+                var operation = Operation.FromName(match.Groups[3].Value);
+                var argument = Parse(match.Groups[4].Value.Trim());
+                value = new Criterion(property, negation, operation, argument);
                 return true;
             }
             catch (Exception)
