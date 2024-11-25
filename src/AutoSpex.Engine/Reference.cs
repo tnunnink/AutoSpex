@@ -3,31 +3,54 @@
 namespace AutoSpex.Engine;
 
 /// <summary>
-/// A type that can allow us to dynamically specify/retreive a value from a different part of the source file so that
-/// we don't have to statically configure an argument.
+/// A type that allows us to dynamically specify how to retreive a value at runtime so that we don't have to statically
+/// configure a criterion argument.
 /// </summary>
-public class Reference
+public class Reference()
 {
-    public const char StartKey = '{';
-    public const char EndKey = '}';
+    public const char KeyStart = '{';
+    public const char KeyEnd = '}';
+    public const char PropertySeprarotr = '.';
+    public const char SpecialStart = '$';
+    public const char VariableStart = '@';
+    
+    private readonly Func<object?, object?>? _resolver;
+    
+    private Reference(string key, Func<object?, object?> resolver) : this()
+    {
+        Key = key;
+        _resolver = resolver;
+    }
 
-    public Guid SourceId { get; set; } = Guid.Empty;
+    public Reference(string key) : this()
+    {
+        Key = key;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public string Key { get; private set; } = string.Empty;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public string? Property { get; private set; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public object? Value { get; private set; }
     
     /// <summary>
-    /// The scope of the logix object to obtain. 
+    /// 
     /// </summary>
-    public Scope Scope { get; set; } = Scope.Empty;
-
+    public static Reference This => new Reference("$this", x => x);
+    
     /// <summary>
-    /// The element type of the reference. This is parsed from the scope type for which we have a matching element
-    /// that gives us necessary type information.
+    /// 
     /// </summary>
-    public Element Element => Scope.Type != ScopeType.Null ? Element.FromName(Scope.Type) : Element.Default;
-
-    /// <summary>
-    /// The optional property path that specifies a sub value of the returned object instance.
-    /// </summary>
-    public string Property { get; private set; } = string.Empty;
+    public static Reference Required => new Reference("$required", x => throw new InvalidOperationException(""));
 
     /// <summary>
     /// Given an object, try to resolve the value based on this configured reference. This assumes the provided object
@@ -39,21 +62,47 @@ public class Reference
     /// <returns>The object that represents the referenced value.</returns>
     public object? Resolve(object? candidate)
     {
-        if (candidate is not LogixElement element || element.L5X is null) return null;
+        //For special built-in references use the specified resolver function.
+        //These reference should not rely on external data (other than perhaps the input object).  
+        if (_resolver is not null)
+        {
+            _resolver.Invoke(candidate);
+        }
         
+        return Value;
+        /*if (candidate is not LogixElement element || element.L5X is null) return null;
+
         //We want to use Get because if the scope is invalid we will get and exception and report that to the user.
         var scoped = element.L5X.Get(Scope);
 
         if (string.IsNullOrEmpty(Property)) return scoped;
-        
+
         //If configured return the sub property value of the object.
         var property = Element.This.GetProperty(Property);
-        return property.GetValue(scoped);
+        return property.GetValue(scoped);*/
     }
     
     /// <inheritdoc />
     public override string ToString()
     {
-        return string.Concat(StartKey, Scope, EndKey, '.', Property);
+        return string.Concat(KeyStart, Key, KeyEnd, PropertySeprarotr, Property).TrimEnd(PropertySeprarotr);
+    }
+
+    /// <inheritdoc />
+    public override bool Equals(object? obj)
+    {
+        if (ReferenceEquals(this, obj)) return true;
+
+        return obj switch
+        {
+            Reference other => Key == other.Key && Property == other.Property, 
+            _ => false
+        };
+    }
+
+    /// <inheritdoc />
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Key, Property);
     }
 }
