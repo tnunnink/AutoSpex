@@ -1,5 +1,5 @@
 ﻿{
-  "Property": "L5Sharp.Core.Tag:Name",
+  "Property": "Name",
   "Negation": "Is",
   "Operation": "Equal To",
   "Argument": {

@@ -139,30 +139,25 @@ public static class TestData
     public static readonly CriterionObserver EmptyCriterion = new Criterion();
 
     public static readonly CriterionObserver BoolCriterion =
-        new(new Criterion(Element.Tag.Property("Constant"), Operation.EqualTo, true));
+        new(new Criterion("Constant", Operation.EqualTo, true));
 
     public static readonly CriterionObserver NumberCriterion =
-        new(new Criterion(Element.Tag.Property("Dimensions"), Operation.GreaterThanOrEqualTo, 10));
+        new(new Criterion("Dimensions", Operation.GreaterThanOrEqualTo, 10));
 
     public static readonly CriterionObserver TextCriterion =
-        new(new Criterion(Element.Tag.Property("Name"), Operation.EqualTo, "Test"));
+        new(new Criterion("Name", Operation.EqualTo, "Test"));
 
     public static readonly CriterionObserver EnumCriterion =
-        new(new Criterion(Element.Tag.Property("Radix"), Operation.EqualTo, Radix.Binary));
+        new(new Criterion("Radix", Operation.EqualTo, Radix.Binary));
 
     public static readonly CriterionObserver InnerCriterion =
-        new(new Criterion(Element.Tag.Property("Members"), Operation.Any,
-            new Criterion(Element.Tag.Property("TagName"), Operation.Like, "%MemberName")));
+        new(new Criterion("Members", Operation.Any, new Criterion("TagName", Operation.Like, "%MemberName")));
 
     public static readonly CriterionObserver TernaryCriterion =
-        new(new Criterion(Element.Tag.Property("Value"), Operation.Between, new Range(1, 12)));
+        new(new Criterion("Value", Operation.Between, new Range(1, 12)));
 
     public static readonly CriterionObserver InCriterion = new(
-        new Criterion(
-            Element.Tag.Property("TagName"),
-            Operation.In,
-            new List<string> { "First", "Second", "Third Or Longer" }
-        )
+        new Criterion("TagName", Operation.In, new List<string> { "First", "Second", "Third Or Longer" })
     );
 
     public static readonly ObservableCollection<CriterionObserver> Criteria =
@@ -231,20 +226,20 @@ public static class TestData
 
     public static EvaluationObserver PassedEvaluation = new(
         Evaluation.Passed(
-            new Criterion(Element.Tag.Property("DataType"), Operation.EqualTo, "DINT"),
+            new Criterion("DataType", Operation.EqualTo, "DINT"),
             new Tag("TestTag", new DINT()),
             "DINT")
     );
 
     public static EvaluationObserver FailedEvaluation = new(
-        Evaluation.Failed(new Criterion(Element.Tag.Property("DataType"), Operation.Containing, "Pump"),
+        Evaluation.Failed(new Criterion("DataType", Operation.Containing, "Pump"),
             new Tag("TestTag", new DINT()),
             "DINT")
     );
 
     public static EvaluationObserver ErroredEvaluation = new(
         Evaluation.Errored(
-            new Criterion(Element.Tag.Property("DataType"), Operation.EqualTo, "DINT"),
+            new Criterion("DataType", Operation.EqualTo, "DINT"),
             new Tag("TestTag", new DINT()),
             new ArgumentException("Could not execute code due to this throw exception"))
     );

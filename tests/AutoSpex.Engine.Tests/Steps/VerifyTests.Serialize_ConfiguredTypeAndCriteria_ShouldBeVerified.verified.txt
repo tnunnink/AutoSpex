@@ -1,7 +1,7 @@
 ﻿{
   Criteria: [
     {
-      Property: L5Sharp.Core.Tag:TagName,
+      Property: TagName,
       Negation: Is,
       Operation: Containing,
       Argument: {
@@ -10,7 +10,7 @@
       }
     },
     {
-      Property: L5Sharp.Core.Tag:Value,
+      Property: Value,
       Negation: Is,
       Operation: Equal To,
       Argument: {

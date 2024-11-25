@@ -140,6 +140,12 @@
       <None Update="Steps\VerifyTests.Serialize_ConfiguredTypeAndCriteriaAsStep_ShouldBeVerified.verified.txt">
         <DependentUpon>VerifyTests.cs</DependentUpon>
       </None>
+      <None Update="Converters\SpecConverterTestsFromV2.Deserialize_Example01_ShouldBeExpected.verified.txt">
+        <DependentUpon>SpecConverterTestsFromV2.cs</DependentUpon>
+      </None>
+      <None Update="Converters\SpecConverterTestsFromV2.Deserialize_Example03_ShouldBeExpected.verified.txt">
+        <DependentUpon>SpecConverterTestsFromV2.cs</DependentUpon>
+      </None>
     </ItemGroup>
 
     <ItemGroup>

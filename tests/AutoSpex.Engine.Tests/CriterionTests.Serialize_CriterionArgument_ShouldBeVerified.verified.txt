@@ -1,11 +1,11 @@
 ﻿{
-  "Property": "L5Sharp.Core.Tag:Members",
+  "Property": "Members",
   "Negation": "Is",
   "Operation": "Any",
   "Argument": {
     "Group": "Criterion",
     "Data": {
-  "Property": "L5Sharp.Core.Tag:TagName",
+  "Property": "TagName",
   "Negation": "Is",
   "Operation": "Containing",
   "Argument": {

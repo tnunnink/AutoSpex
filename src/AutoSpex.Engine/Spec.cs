@@ -142,7 +142,7 @@ public class Spec() : IEquatable<Spec>
 
         if (step is null)
             throw new ArgumentException("This spec does not contain the provided criterion.");
-        
+
         var previous = _steps[.._steps.IndexOf(step)];
 
         return previous.Aggregate(Property.Default, (property, item) => item switch
@@ -177,17 +177,15 @@ public class Spec() : IEquatable<Spec>
     /// </summary>
     /// <param name="property">The property name to select for the criterion.</param>
     /// <param name="operation">The <see cref="Operation"/> the criterion will perform.</param>
-    /// <param name="args">The argument to supply to the criterion operation.</param>
+    /// <param name="argument">The argument to supply to the criterion operation.</param>
     /// <returns>The current configured <see cref="Spec"/> instance.</returns>
-    public Spec Where(string? property, Operation operation, object? args = default)
+    public Spec Where(string property, Operation operation, object? argument = default)
     {
         if (_steps.All(s => s is not Filter))
             AddStep(new Filter());
 
         var filter = (Filter)_steps.First(x => x is Filter);
-        var input = InputTo(filter);
-        filter.Add(new Criterion(input.GetProperty(property), operation, args));
-
+        filter.Add(new Criterion(property, operation, argument));
         return this;
     }
 
@@ -216,15 +214,14 @@ public class Spec() : IEquatable<Spec>
     /// </summary>
     /// <param name="property">The property name to select for the criterion.</param>
     /// <param name="operation">The <see cref="Operation"/> the criterion will perform.</param>
-    /// <param name="args">The argument to supply to the criterion operation.</param>
+    /// <param name="argument">The argument to supply to the criterion operation.</param>
     /// <returns>The current configured <see cref="Spec"/> instance.</returns>
-    public Spec Confirm(string? property, Operation operation, object? args = default)
+    public Spec Confirm(string property, Operation operation, object? argument = default)
     {
         if (_steps.LastOrDefault() is not Verify verify)
             throw new InvalidOperationException("Spec does not contain a verify step.");
 
-        var input = InputTo(verify);
-        verify.Add(new Criterion(input.GetProperty(property), operation, args));
+        verify.Add(new Criterion(property, operation, argument));
         return this;
     }
 
@@ -237,15 +234,14 @@ public class Spec() : IEquatable<Spec>
     /// <param name="property">The property name to select for the criterion.</param>
     /// <param name="negation">The negation option to use for the criterion.</param>
     /// <param name="operation">The <see cref="Operation"/> the criterion will perform.</param>
-    /// <param name="args">The argument to supply to the criterion operation.</param>
+    /// <param name="argument">The argument to supply to the criterion operation.</param>
     /// <returns>The current configured <see cref="Spec"/> instance.</returns>
-    public Spec Confirm(string? property, Negation negation, Operation operation, object? args = default)
+    public Spec Confirm(string property, Negation negation, Operation operation, object? argument = default)
     {
         if (_steps.LastOrDefault() is not Verify verify)
             throw new InvalidOperationException("Spec does not contain a verify step.");
 
-        var input = InputTo(verify);
-        verify.Add(new Criterion(input.GetProperty(property), operation, args) { Negation = negation });
+        verify.Add(new Criterion(property, operation, argument) { Negation = negation });
         return this;
     }
 

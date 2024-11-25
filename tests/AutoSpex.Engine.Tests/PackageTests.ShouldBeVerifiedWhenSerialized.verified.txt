@@ -24,7 +24,7 @@
               Match: All,
               Criteria: [
                 {
-                  Property: L5Sharp.Core.Tag:Name,
+                  Property: Name,
                   Negation: Is,
                   Operation: Like,
                   Argument: {
@@ -37,7 +37,7 @@
             {
               Criteria: [
                 {
-                  Property: L5Sharp.Core.Tag:Value,
+                  Property: Value,
                   Negation: Is,
                   Operation: Equal To,
                   Argument: {
@@ -66,7 +66,7 @@
               Match: All,
               Criteria: [
                 {
-                  Property: L5Sharp.Core.Tag:Name,
+                  Property: Name,
                   Negation: Is,
                   Operation: Containing,
                   Argument: {
@@ -79,7 +79,7 @@
             {
               Criteria: [
                 {
-                  Property: L5Sharp.Core.Tag:Value,
+                  Property: Value,
                   Negation: Is,
                   Operation: Greater Than,
                   Argument: {
@@ -108,7 +108,7 @@
               Match: All,
               Criteria: [
                 {
-                  Property: L5Sharp.Core.Tag:Name,
+                  Property: Name,
                   Negation: Is,
                   Operation: Equal To,
                   Argument: {
@@ -121,7 +121,7 @@
             {
               Criteria: [
                 {
-                  Property: L5Sharp.Core.Tag:Value,
+                  Property: Value,
                   Negation: Not,
                   Operation: Equal To,
                   Argument: {

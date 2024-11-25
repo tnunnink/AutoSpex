@@ -52,7 +52,7 @@ public class FilterTests
     {
         var filter = new Filter();
 
-        filter.Add(new Criterion(Element.Tag.Property("TagName"), Operation.Containing, "this is a test"));
+        filter.Add(new Criterion("TagName", Operation.Containing, "this is a test"));
 
         filter.Criteria.Should().HaveCount(1);
     }
@@ -95,7 +95,7 @@ public class FilterTests
     public void Remove_ConfigredCriterion_ShouldBeEmpty()
     {
         var filter = new Filter();
-        var criterion = new Criterion(Element.Tag.Property("TagName"), Operation.Containing, "this is a test");
+        var criterion = new Criterion("TagName", Operation.Containing, "this is a test");
         filter.Add(criterion);
 
         filter.Remove(criterion);
@@ -107,7 +107,7 @@ public class FilterTests
     public void Remove_MultipleConfigredCriterion_ShouldHaveExpectedCount()
     {
         var filter = new Filter();
-        var criterion = new Criterion(Element.Tag.Property("TagName"), Operation.Containing, "this is a test");
+        var criterion = new Criterion("TagName", Operation.Containing, "this is a test");
         filter.Add(criterion);
         filter.Add(criterion);
         filter.Add(criterion);
@@ -208,7 +208,7 @@ public class FilterTests
             new("MyTestTag", "This is a value")
         };
         var filter = new Filter();
-        filter.Add(new Criterion(Element.Tag.Property("Name"), Operation.Containing, "Test"));
+        filter.Add(new Criterion("Name", Operation.Containing, "Test"));
 
         var results = filter.Process(tags).ToList();
 
@@ -230,8 +230,8 @@ public class FilterTests
     public Task Serialize_ConfiguredTypeAndCriteria_ShouldBeVerified()
     {
         var filter = new Filter();
-        filter.Add(new Criterion(Element.Tag.Property("TagName"), Operation.Containing, "this is a test"));
-        filter.Add(new Criterion(Element.Tag.Property("Value"), Operation.EqualTo, 123));
+        filter.Add(new Criterion("TagName", Operation.Containing, "this is a test"));
+        filter.Add(new Criterion("Value", Operation.EqualTo, 123));
 
         var json = JsonSerializer.Serialize(filter);
 
@@ -242,8 +242,8 @@ public class FilterTests
     public Task Serialize_ConfiguredTypeAndCriteriaAsStep_ShouldBeVerified()
     {
         var filter = new Filter();
-        filter.Add(new Criterion(Element.Tag.Property("TagName"), Operation.Containing, "this is a test"));
-        filter.Add(new Criterion(Element.Tag.Property("Value"), Operation.EqualTo, 123));
+        filter.Add(new Criterion("TagName", Operation.Containing, "this is a test"));
+        filter.Add(new Criterion("Value", Operation.EqualTo, 123));
         var step = filter as Step;
 
         var json = JsonSerializer.Serialize(step);
@@ -278,8 +278,8 @@ public class FilterTests
     public void Deserialize_ConfiguredTypeAndCriteria_ShouldBeExpected()
     {
         var expected = new Filter();
-        expected.Add(new Criterion(Element.Tag.Property("TagName"), Operation.Containing, "this is a test"));
-        expected.Add(new Criterion(Element.Tag.Property("Value"), Operation.EqualTo, 123));
+        expected.Add(new Criterion("TagName", Operation.Containing, "this is a test"));
+        expected.Add(new Criterion("Value", Operation.EqualTo, 123));
         var json = JsonSerializer.Serialize(expected);
 
         var result = JsonSerializer.Deserialize<Filter>(json);
@@ -302,8 +302,8 @@ public class FilterTests
     public void Deserialize_ConfiguredTypeAndCriteriaAsStep_ShouldBeExpected()
     {
         var expected = new Filter();
-        expected.Add(new Criterion(Element.Tag.Property("TagName"), Operation.Containing, "this is a test"));
-        expected.Add(new Criterion(Element.Tag.Property("Value"), Operation.EqualTo, 123));
+        expected.Add(new Criterion("TagName", Operation.Containing, "this is a test"));
+        expected.Add(new Criterion("Value", Operation.EqualTo, 123));
         var step = expected as Step;
         var json = JsonSerializer.Serialize(step);
 

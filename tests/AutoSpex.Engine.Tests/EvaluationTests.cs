@@ -9,7 +9,7 @@ public class EvaluationTests
     [Test]
     public void Passed_ValidData_ShouldBeExpected()
     {
-        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Containing, "Test");
+        var criterion = new Criterion("Name", Operation.Containing, "Test");
         var evaluation = Evaluation.Passed(criterion, new Tag("Test", 123), "Test");
 
         evaluation.Result.Should().Be(ResultState.Passed);
@@ -23,7 +23,7 @@ public class EvaluationTests
     [Test]
     public void Failed_ValidData_ShouldBeExpected()
     {
-        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Containing, "Test");
+        var criterion = new Criterion("Name", Operation.Containing, "Test");
         var evaluation = Evaluation.Failed(criterion, new Tag("Test", 123), "Fake");
 
         evaluation.Result.Should().Be(ResultState.Failed);
@@ -37,7 +37,7 @@ public class EvaluationTests
     [Test]
     public void Errored_ValidData_ShouldBeExpected()
     {
-        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Containing, "Test");
+        var criterion = new Criterion("Name", Operation.Containing, "Test");
         var evaluation = Evaluation.Errored(criterion, new Tag("Test", 123),
             new InvalidOperationException("This evaluaiton failed to produce."));
 
@@ -52,7 +52,7 @@ public class EvaluationTests
     [Test]
     public Task Serialized_Evaluation_ShouldBeVerified()
     {
-        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Containing, "Test");
+        var criterion = new Criterion("Name", Operation.Containing, "Test");
         var evaluation = Evaluation.Passed(criterion, new Tag("Test", 123), "Test");
 
         var json = JsonSerializer.Serialize(evaluation);
@@ -63,7 +63,7 @@ public class EvaluationTests
     [Test]
     public void Deserialize_JosnString_ShouldNotBeNull()
     {
-        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Containing, "Test");
+        var criterion = new Criterion("Name", Operation.Containing, "Test");
         var evaluation = Evaluation.Passed(criterion, new Tag("Test", 123), "Test");
         var json = JsonSerializer.Serialize(evaluation);
 
@@ -75,7 +75,7 @@ public class EvaluationTests
     [Test]
     public void Deserialize_JosnString_ShouldBeEquivalentToOriginal()
     {
-        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Containing, "Test");
+        var criterion = new Criterion("Name", Operation.Containing, "Test");
         var evaluation = Evaluation.Passed(criterion, new Tag("Test", 123), "Test");
         var json = JsonSerializer.Serialize(evaluation);
 

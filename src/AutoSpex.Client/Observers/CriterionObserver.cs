@@ -29,12 +29,15 @@ public partial class CriterionObserver : Observer<Criterion>
         Track(Argument);
     }
 
-    [Required]
-    public Property Property
-    {
-        get => Model.Property;
-        set => SetProperty(Model.Property, value, Model, (c, p) => c.Property = p);
-    }
+    /// <summary>
+    /// Gets the input property type for this criterion instance using the containing spec object.
+    /// </summary>
+    private Property Input => TryGetSpec(out var spec) ? spec.Model.InputTo(Model) : Property.Default;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public Property Property => Input.GetProperty(Model.Property);
 
     [Required]
     public Negation Negation
@@ -62,11 +65,6 @@ public partial class CriterionObserver : Observer<Criterion>
     /// Returns true if the Operation is not None and not a UnaryOperation.
     /// </remarks>
     public bool AcceptsArgs => Operation != Operation.None && Operation is not UnaryOperation;
-
-    /// <summary>
-    /// Gets the input property type for this criterion instance using the containing spec object.
-    /// </summary>
-    private Property Input => TryGetSpec(out var spec) ? spec.Model.InputTo(Model) : Property.Default;
 
     /// <inheritdoc />
     protected override bool PromptForDeletion => false;
@@ -113,20 +111,20 @@ public partial class CriterionObserver : Observer<Criterion>
     [RelayCommand]
     private void UpdateProperty(object? value)
     {
-        var origin = TryGetSpec(out var spec) ? spec.Model.InputTo(Model) : Property.Default;
-
         switch (value)
         {
             case Property property:
-                Property = property;
+                Model.Property = property.Path;
                 return;
             case string path:
-                Property = origin.GetProperty(path);
+                Model.Property = path;
                 return;
             case TagName tagName:
-                Property = origin.GetProperty(tagName);
+                Model.Property = tagName;
                 return;
         }
+
+        OnPropertyChanged(nameof(Property));
     }
 
     /// <summary>

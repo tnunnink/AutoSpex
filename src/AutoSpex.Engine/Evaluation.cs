@@ -19,7 +19,7 @@ public record Evaluation
         Error = error;
     }
 
-    private Evaluation(ResultState result, Criterion criterion, object candidate, object? actual)
+    private Evaluation(ResultState result, Criterion criterion, object? candidate, object? actual)
     {
         ArgumentNullException.ThrowIfNull(result);
         ArgumentNullException.ThrowIfNull(criterion);
@@ -31,7 +31,7 @@ public record Evaluation
         Actual = actual.ToText();
     }
 
-    private Evaluation(ResultState result, Criterion criterion, object candidate, Exception exception)
+    private Evaluation(ResultState result, Criterion criterion, object? candidate, Exception exception)
     {
         ArgumentNullException.ThrowIfNull(result);
         ArgumentNullException.ThrowIfNull(criterion);
@@ -94,19 +94,19 @@ public record Evaluation
     /// <summary>
     /// Cretes a new passing <see cref="Evaluation"/> with the provided criterion, candidate, and actual value. 
     /// </summary>
-    public static Evaluation Passed(Criterion criterion, object candidate, object? actual) =>
+    public static Evaluation Passed(Criterion criterion, object? candidate, object? actual) =>
         new(ResultState.Passed, criterion, candidate, actual);
 
     /// <summary>
     /// Cretes a new failed <see cref="Evaluation"/> with the provided criterion, candidate, and actual value. 
     /// </summary>
-    public static Evaluation Failed(Criterion criterion, object candidate, object? actual) =>
+    public static Evaluation Failed(Criterion criterion, object? candidate, object? actual) =>
         new(ResultState.Failed, criterion, candidate, actual);
 
     /// <summary>
     /// Cretes a new errored <see cref="Evaluation"/> with the provided criterion, candidate, and the produced exception. 
     /// </summary>
-    public static Evaluation Errored(Criterion criterion, object candidate, Exception exception) =>
+    public static Evaluation Errored(Criterion criterion, object? candidate, Exception exception) =>
         new(ResultState.Errored, criterion, candidate, exception);
 
     /// <summary>

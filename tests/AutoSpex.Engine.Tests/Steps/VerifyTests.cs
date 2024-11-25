@@ -41,7 +41,7 @@ public class VerifyTests
     {
         var step = new Verify();
 
-        step.Add(new Criterion(Element.Tag.Property("TagName"), Operation.Containing, "this is a test"));
+        step.Add(new Criterion("TagName", Operation.Containing, "this is a test"));
 
         step.Criteria.Should().HaveCount(1);
     }
@@ -84,7 +84,7 @@ public class VerifyTests
     public void Remove_ConfigredCriterion_ShouldBeEmpty()
     {
         var step = new Verify();
-        var criterion = new Criterion(Element.Tag.Property("TagName"), Operation.Containing, "this is a test");
+        var criterion = new Criterion("TagName", Operation.Containing, "this is a test");
         step.Add(criterion);
 
         step.Remove(criterion);
@@ -96,7 +96,7 @@ public class VerifyTests
     public void Remove_MultipleConfigredCriterion_ShouldHaveExpectedCount()
     {
         var step = new Verify();
-        var criterion = new Criterion(Element.Tag.Property("TagName"), Operation.Containing, "this is a test");
+        var criterion = new Criterion("TagName", Operation.Containing, "this is a test");
         step.Add(criterion);
         step.Add(criterion);
         step.Add(criterion);
@@ -197,7 +197,7 @@ public class VerifyTests
             new("MyTestTag", "This is a value")
         };
         var step = new Verify();
-        step.Add(new Criterion(Element.Tag.Property("Name"), Operation.Containing, "Test"));
+        step.Add(new Criterion("Name", Operation.Containing, "Test"));
 
         var results = step.Process(tags).ToList();
 
@@ -219,8 +219,8 @@ public class VerifyTests
     public Task Serialize_ConfiguredTypeAndCriteria_ShouldBeVerified()
     {
         var step = new Verify();
-        step.Add(new Criterion(Element.Tag.Property("TagName"), Operation.Containing, "this is a test"));
-        step.Add(new Criterion(Element.Tag.Property("Value"), Operation.EqualTo, 123));
+        step.Add(new Criterion("TagName", Operation.Containing, "this is a test"));
+        step.Add(new Criterion("Value", Operation.EqualTo, 123));
 
         var json = JsonSerializer.Serialize(step);
 
@@ -231,8 +231,8 @@ public class VerifyTests
     public Task Serialize_ConfiguredTypeAndCriteriaAsStep_ShouldBeVerified()
     {
         var step = new Verify();
-        step.Add(new Criterion(Element.Tag.Property("TagName"), Operation.Containing, "this is a test"));
-        step.Add(new Criterion(Element.Tag.Property("Value"), Operation.EqualTo, 123));
+        step.Add(new Criterion("TagName", Operation.Containing, "this is a test"));
+        step.Add(new Criterion("Value", Operation.EqualTo, 123));
 
         var json = JsonSerializer.Serialize(step as Step);
 
@@ -254,8 +254,8 @@ public class VerifyTests
     public void Deserialize_ConfiguredTypeAndCriteria_ShouldBeExpected()
     {
         var expected = new Verify();
-        expected.Add(new Criterion(Element.Tag.Property("TagName"), Operation.Containing, "this is a test"));
-        expected.Add(new Criterion(Element.Tag.Property("Value"), Operation.EqualTo, 123));
+        expected.Add(new Criterion("TagName", Operation.Containing, "this is a test"));
+        expected.Add(new Criterion("Value", Operation.EqualTo, 123));
         var json = JsonSerializer.Serialize(expected);
 
         var result = JsonSerializer.Deserialize<Verify>(json);
@@ -267,8 +267,8 @@ public class VerifyTests
     public void Deserialize_ConfiguredTypeAndCriteriaAsStep_ShouldBeExpected()
     {
         var expected = new Verify();
-        expected.Add(new Criterion(Element.Tag.Property("TagName"), Operation.Containing, "this is a test"));
-        expected.Add(new Criterion(Element.Tag.Property("Value"), Operation.EqualTo, 123));
+        expected.Add(new Criterion("TagName", Operation.Containing, "this is a test"));
+        expected.Add(new Criterion("Value", Operation.EqualTo, 123));
         var step = expected as Step;
         var json = JsonSerializer.Serialize(step);
 

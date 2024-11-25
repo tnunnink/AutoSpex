@@ -1,5 +1,5 @@
 ﻿{
-  "Property": "System.Object",
+  "Property": "",
   "Negation": "Is",
   "Operation": "None",
   "Argument": null

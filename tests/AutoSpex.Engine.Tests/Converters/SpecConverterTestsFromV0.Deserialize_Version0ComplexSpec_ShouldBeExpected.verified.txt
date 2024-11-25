@@ -1,5 +1,5 @@
 ﻿{
-  "SchemaVersion": 2,
+  "SchemaVersion": 3,
   "SpecId": "1dbb81da-42dd-40b9-a77b-75db7042ce77",
   "Steps": [
     {
@@ -12,16 +12,16 @@
       "Match": "All",
       "Criteria": [
         {
-          "Property": "L5Sharp.Core.Module:Modules",
+          "Property": "Modules",
           "Negation": "Is",
           "Operation": "Any",
           "Argument": {
             "Group": "Criterion",
-            "Data": {"Property":"L5Sharp.Core.Module:CatalogNumber","Negation":"Is","Operation":"Ending With","Argument":{"Group":"Text","Data":"1756-IB16"}}
+            "Data": {"Property":"CatalogNumber","Negation":"Is","Operation":"Ending With","Argument":{"Group":"Text","Data":"1756-IB16"}}
           }
         },
         {
-          "Property": "L5Sharp.Core.Module:Vendor",
+          "Property": "Vendor",
           "Negation": "Is",
           "Operation": "Greater Than Or Equal To",
           "Argument": {
@@ -30,7 +30,7 @@
           }
         },
         {
-          "Property": "L5Sharp.Core.Module:Inhibited",
+          "Property": "Inhibited",
           "Negation": "Is",
           "Operation": "Equal To",
           "Argument": {
@@ -44,7 +44,7 @@
       "$type": "Verify",
       "Criteria": [
         {
-          "Property": "L5Sharp.Core.Module:Inhibited",
+          "Property": "Inhibited",
           "Negation": "Is",
           "Operation": "Equal To",
           "Argument": {
@@ -53,7 +53,7 @@
           }
         },
         {
-          "Property": "L5Sharp.Core.Module:Vendor",
+          "Property": "Vendor",
           "Negation": "Is",
           "Operation": "Greater Than Or Equal To",
           "Argument": {
@@ -62,7 +62,7 @@
           }
         },
         {
-          "Property": "L5Sharp.Core.Module:Revision",
+          "Property": "Revision",
           "Negation": "Is",
           "Operation": "Greater Than",
           "Argument": {

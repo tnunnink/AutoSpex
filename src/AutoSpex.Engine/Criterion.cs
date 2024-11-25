@@ -1,6 +1,5 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
 using Ardalis.SmartEnum.SystemTextJson;
 
 namespace AutoSpex.Engine;
@@ -28,23 +27,40 @@ public class Criterion
     }
 
     /// <summary>
-    /// Creates a new <see cref="Criterion"/> with the provided default property.
+    /// Creates a new <see cref="Criterion"/> with the provided parameters.
     /// </summary>
-    /// <param name="property">The property for which to retrieve the value from the candidate.</param>
-    public Criterion(Property? property)
+    /// <param name="operation">The operation to perform when evaluating.</param>
+    /// <param name="argument">The argument value to use when evaluating.</param>
+    public Criterion(Operation operation, object? argument = default)
     {
-        Property = property ?? Property.Default;
+        Operation = operation;
+        Argument = argument;
     }
 
     /// <summary>
-    /// Creates a new <see cref="Criterion"/> with the provided arguments.
+    /// Creates a new <see cref="Criterion"/> with the provided parameters.
     /// </summary>
     /// <param name="property">The name of the property for which to retrieve the value from the candidate.</param>
     /// <param name="operation">The operation to perform when evaluating.</param>
     /// <param name="argument">The argument value to use when evaluating.</param>
-    public Criterion(Property? property, Operation operation, object? argument = default)
+    public Criterion(string property, Operation operation, object? argument = default)
     {
-        Property = property ?? Property.Default;
+        Property = property;
+        Operation = operation;
+        Argument = argument;
+    }
+
+    /// <summary>
+    /// Creates a new <see cref="Criterion"/> with the provided parameters.
+    /// </summary>
+    /// <param name="property">The name of the property for which to retrieve the value from the candidate.</param>
+    /// <param name="negation">The negation option to use on the operation result (Is/Not).</param>
+    /// <param name="operation">The operation to perform when evaluating.</param>
+    /// <param name="argument">The argument value to use when evaluating.</param>
+    public Criterion(string property, Negation negation, Operation operation, object? argument = default)
+    {
+        Property = property;
+        Negation = negation;
         Operation = operation;
         Argument = argument;
     }
@@ -54,8 +70,8 @@ public class Criterion
     /// then <see cref="Evaluate"/> will simply use the provided candidate object itself as the target of the
     /// evaluation. This allows use to pass simple or complex objects to the criterion and specify which property to evaluate.
     /// </summary>
-    [JsonConverter(typeof(JsonPropertyConverter))]
-    public Property Property { get; set; } = Property.Default;
+    [JsonInclude]
+    public string Property { get; set; } = string.Empty;
 
     /// <summary>
     /// A flag to negate the result of the operation for this criterion. 
@@ -77,40 +93,20 @@ public class Criterion
     public object? Argument { get; set; }
 
     /// <summary>
-    /// Updates this <see cref="Criterion"/> object by parsing the provided textual representation of a criterion instance.
-    /// </summary>
-    /// <param name="text">The textual representation of a criterion.</param>
-    /// <exception cref="FormatException">Thrown when <paramref name="text"/> is not a valid criterion format.</exception>
-    /// <remarks>
-    /// This is primarily so that we can find and replace the properties of a criterion object.
-    /// It does require that the current criterion instance has a property of the same origin type configured.
-    /// Otherwise, the property configured will have an origin of object.
-    /// </remarks>
-    public void Update(string text)
-    {
-        var operations = string.Join("|", Operation.List.Select(o => o.Name));
-        var pattern = $"(^[^\\ ]+) (Is|Not) ({operations})(.*?)$";
-
-        var match = Regex.Match(text, pattern);
-        if (!match.Success || match.Groups.Count < 3)
-            throw new FormatException($"The input text '{text}' is not a valid Criterion pattern.");
-
-        Property = Property.This(Property.Origin).GetProperty(match.Groups[1].Value);
-        Negation = Negation.FromName(match.Groups[2].Value);
-        Operation = Operation.FromName(match.Groups[3].Value);
-        Argument = ParseArgument(Property, Operation, match.Groups[4].Value.Trim());
-    }
-
-    /// <summary>
     /// Evaluates a candidate object using the current state/properties of the criterion object.
     /// </summary>
     /// <param name="candidate">The object to be evaluated.</param>
     /// <returns>An Evaluation object indicating the result of the evaluation.</returns>
-    public Evaluation Evaluate(object candidate)
+    public Evaluation Evaluate(object? candidate)
     {
+        var origin = candidate is not null
+            ? Engine.Property.This(candidate.GetType())
+            : Engine.Property.Default;
+
         try
         {
-            var value = Property.GetValue(candidate);
+            var property = origin.GetProperty(Property);
+            var value = property.GetValue(candidate);
             var argument = ResolveArgument(Argument, candidate);
             var result = Operation.Execute(value, argument);
 
@@ -171,7 +167,7 @@ public class Criterion
     /// <returns>A <see cref="string"/> containing the criteria text.</returns>
     public string GetCriteria()
     {
-        var rootText = $"{Property.Path} {Negation} {Operation}";
+        var rootText = $"{Property} {Negation} {Operation}";
         var innerText = Argument is Criterion criterion ? criterion.GetCriteria() : string.Empty;
         return $"{rootText} {innerText}".Trim();
     }
@@ -208,37 +204,5 @@ public class Criterion
             Reference reference => reference.Resolve(candidate),
             _ => argument
         };
-    }
-
-    // ReSharper disable once ConvertIfStatementToSwitchStatement
-    private static object? ParseArgument(Property property, Operation operation, string text)
-    {
-        if (operation is UnaryOperation || string.IsNullOrEmpty(text)) return default;
-
-        if (operation is BetweenOperation)
-        {
-            return TypeGroup.Range.TryParse(text, out var value) ? value : default;
-        }
-
-        if (operation is InOperation)
-        {
-            var values = text.TrimStart('[').TrimEnd(']').Split(',');
-            var list = values.Select(v => property.Group.TryParse(v, out var parsed) ? parsed : v).ToList();
-            return list;
-        }
-
-        if (operation is CollectionOperation)
-        {
-            var criterion = new Criterion(Property.This(property.InnerType));
-            criterion.Update(text);
-            return criterion;
-        }
-
-        if (operation is BinaryOperation)
-        {
-            return property.Group.TryParse(text, out var parsed) ? parsed : text;
-        }
-
-        return default;
     }
 }

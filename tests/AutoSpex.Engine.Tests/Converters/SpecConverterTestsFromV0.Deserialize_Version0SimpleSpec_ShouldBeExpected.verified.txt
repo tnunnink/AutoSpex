@@ -1,5 +1,5 @@
 ﻿{
-  "SchemaVersion": 2,
+  "SchemaVersion": 3,
   "SpecId": "90f4dbce-1033-42fd-8f45-3cdb0b03d5db",
   "Steps": [
     {
@@ -16,7 +16,7 @@
       "$type": "Verify",
       "Criteria": [
         {
-          "Property": "L5Sharp.Core.Controller:Tags.Count",
+          "Property": "Tags.Count",
           "Negation": "Is",
           "Operation": "Less Than Or Equal To",
           "Argument": {

@@ -39,9 +39,15 @@ public class CriterionReplaceObserver(Criterion model, Node node) : Observer<Cri
     {
         var updated = Criteria.Replace(search, replace, StringComparison.OrdinalIgnoreCase);
 
+        //todo maybe this needs to be reworked now. Should we include the step type for the criterion?
         try
         {
-            Model.Update(updated);
+            /*if (!TypeGroup.Criterion.TryParse(updated, out var criterion))
+            {
+                return Result.Fail("");
+            }
+
+            Model.Update(updated);*/
             return Result.Ok();
         }
         catch (FormatException e)

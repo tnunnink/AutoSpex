@@ -74,10 +74,9 @@ public class RunTests
 
         var spec = Node.NewSpec("Test", s =>
         {
-            s.Fetch(Element.DataType)
-                .Where("Name", Operation.EqualTo, "ComplexType")
-                .Confirm("Members", Operation.Any,
-                    new Criterion(Element.DataTypeMember.Property("DataType"), Operation.EqualTo, "SimpleType"));
+            s.Fetch(Element.DataType);
+            s.Where("Name", Operation.EqualTo, "ComplexType");
+            s.Confirm("Members", Operation.Any, new Criterion("DataType", Operation.EqualTo, "SimpleType"));
         });
 
         var run = new Run(spec, source);
