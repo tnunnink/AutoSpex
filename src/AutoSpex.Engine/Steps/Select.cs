@@ -6,50 +6,43 @@ namespace AutoSpex.Engine;
 /// <summary>
 /// 
 /// </summary>
-public class Select : Step
+public class Select() : Step
 {
     /// <summary>
-    /// Used to construct object using Json serializer.
+    /// Creates a new default <see cref="Select"/> step with default values.
     /// </summary>
-    [JsonConstructor]
-    private Select(Property property)
+    public Select(string property) : this()
     {
         Property = property;
     }
 
     /// <summary>
-    /// Creates a new default <see cref="Filter"/> object with default values.
-    /// </summary>
-    public Select()
-    {
-    }
-
-    /// <summary>
     /// The property of the input type to select and return the value of to the next step in the chain.
     /// </summary>
-    [JsonConverter(typeof(JsonPropertyConverter))]
-    public Property Property { get; set; } = Property.Default;
+    [JsonInclude]
+    public string Property { get; set; } = string.Empty;
 
 
     /// <inheritdoc />
-    public override IEnumerable<object> Process(IEnumerable<object> input)
+    public override IEnumerable<object?> Process(IEnumerable<object?> input)
     {
-        var results = new List<object>();
+        var results = new List<object?>();
 
         foreach (var item in input)
         {
-            var value = Property != Property.Default ? Property.GetValue(item) : item;
+            var origin = item is not null ? Engine.Property.This(item.GetType()) : Engine.Property.Default;
+            var property = origin.GetProperty(Property);
+            var value = property.GetValue(item);
 
             switch (value)
             {
-                //this is because string is IEnumerable
                 case string text:
                     results.Add(text);
                     break;
                 case IEnumerable collection:
                     results.AddRange(collection.Cast<object>());
                     break;
-                case not null: //todo I think we migth ultimately need to add null unless specified otherwise (criteria?)
+                default:
                     results.Add(value);
                     break;
             }

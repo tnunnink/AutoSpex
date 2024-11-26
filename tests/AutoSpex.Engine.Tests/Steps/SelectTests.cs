@@ -13,8 +13,7 @@ public class SelectTests
     {
         var step = new Select();
 
-        step.Property.Should().Be(Property.Default);
-        step.Criteria.Should().BeEmpty();
+        step.Property.Should().BeEmpty();
     }
 
     [Test]
@@ -22,16 +21,16 @@ public class SelectTests
     {
         var step = new Select();
 
-        step.Property = Element.Tag.Property("Value");
+        step.Property = "Value";
 
-        step.Property.Should().Be(Element.Tag.Property("Value"));
+        step.Property.Should().Be("Value");
     }
 
     [Test]
     public void Process_SimpleProperty_ShouldBeExpected()
     {
         var step = new Select();
-        step.Property = Element.Tag.Property("Value");
+        step.Property = "Value";
 
         var input = new List<Tag>
         {
@@ -47,14 +46,14 @@ public class SelectTests
         results.Should().AllBeAssignableTo<LogixData>();
         results[0].Should().Be(123);
         results[1].Should().BeEquivalentTo(new TIMER());
-        results[2].ToString().Should().Be("This is a value");
+        results[2]?.ToString().Should().Be("This is a value");
     }
 
     [Test]
     public void Process_TagParentProperty_ShouldBeExpected()
     {
         var step = new Select();
-        step.Property = Element.Tag.Property("Parent");
+        step.Property = "Parent";
 
         var input = new List<Tag>
         {
@@ -74,7 +73,7 @@ public class SelectTests
     public void Process_MembersProperty_ShouldBeExpected()
     {
         var step = new Select();
-        step.Property = Element.Tag.Property("Members");
+        step.Property = "Members";
 
         var input = new List<Tag>
         {
@@ -93,7 +92,7 @@ public class SelectTests
     public void Process_NestedProperty_ShouldBeExpected()
     {
         var step = new Select();
-        step.Property = Element.Tag.Property("TagName.Operand");
+        step.Property = "TagName.Operand";
 
         var input = new List<Tag>
         {
@@ -122,7 +121,7 @@ public class SelectTests
     public Task Serialize_Configured_ShouldBeVerified()
     {
         var step = new Select();
-        step.Property = Element.Tag.Property("Radix.Value");
+        step.Property = "Radix.Value";
 
         var json = JsonSerializer.Serialize(step);
 
@@ -144,7 +143,7 @@ public class SelectTests
     public void Deserialize_Configured_ShouldBeExpected()
     {
         var step = new Select();
-        step.Property = Element.Program.Property("MainRoutineName");
+        step.Property = "MainRoutineName";
         var json = JsonSerializer.Serialize(step);
 
         var result = JsonSerializer.Deserialize<Select>(json);
@@ -156,7 +155,7 @@ public class SelectTests
     public void Deserialize_ConfiguredAsStep_ShouldBeExpected()
     {
         var expected = new Select();
-        expected.Property = Element.Task.Property("Rate");
+        expected.Property = "Rate";
         var step = expected as Step;
         var json = JsonSerializer.Serialize(step);
 
