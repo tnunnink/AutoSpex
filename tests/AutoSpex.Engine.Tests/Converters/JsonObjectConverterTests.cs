@@ -99,15 +99,15 @@ public class JsonObjectConverterTests
         return VerifyJson(json);
     }
     
-    /*[Test]
-    public Task Serialize_PropertyValue_ShouldBeVerified()
+    [Test]
+    public Task Serialize_ReferenceValue_ShouldBeVerified()
     {
-        var value = Property.This(typeof(Tag)).GetProperty("Description");
+        var value = new Reference("$this", "Value");
 
         var json = WriteJson(value);
 
         return VerifyJson(json);
-    }*/
+    }
 
     [Test]
     public void Deserialize_NullValue_ShouldBeVerified()
