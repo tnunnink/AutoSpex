@@ -91,20 +91,21 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
     }
 
     /// <summary>
-    /// Attempts to parse the provided input text as a strongly typed object by inferring the type group and
-    /// then calling the corresponding <see cref="TryParse"/> methods for that group.
+    /// Attempts to parse the provided input text as a strongly typed object by calling each <see cref="TryParse"/>
+    /// method in order from most primitive (bool) to more complex/custom.
     /// </summary>
     /// <param name="value">The input text to parse.</param>
-    /// <returns></returns>
+    /// <returns>The stronly typed object value the input text represents.</returns>
     public static object? Parse(string? value)
     {
         if (string.IsNullOrWhiteSpace(value)) return default;
 
-        //Obviously need to exlude the Text group since it will always a string.
+        //Obviously need to exlude the Text group since it will always be a string.
         foreach (var group in List.Where(x => x != Text).OrderBy(x => x.Value))
             if (group.TryParse(value, out var result))
                 return result;
 
+        //If nothing worked we assume Text.
         return value;
     }
 

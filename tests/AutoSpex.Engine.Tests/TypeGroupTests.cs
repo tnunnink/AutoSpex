@@ -94,6 +94,15 @@ public class TypeGroupTests
         group.Name.Should().Be("Range");
         group.Value.Should().Be(9);
     }
+    
+    [Test]
+    public void Reference_WhenCalled_ShouldBeExpected()
+    {
+        var group = TypeGroup.Reference;
+
+        group.Name.Should().Be("Reference");
+        group.Value.Should().Be(10);
+    }
 
     [Test]
     public void FromType_Bool_ShouldBeBoolean()
@@ -107,6 +116,14 @@ public class TypeGroupTests
     public void FromType_Int_ShouldBeNumber()
     {
         var group = TypeGroup.FromType(typeof(int));
+
+        group.Should().Be(TypeGroup.Number);
+    }
+    
+    [Test]
+    public void FromType_Double_ShouldBeNumber()
+    {
+        var group = TypeGroup.FromType(typeof(double));
 
         group.Should().Be(TypeGroup.Number);
     }
@@ -452,6 +469,24 @@ public class TypeGroupTests
 
         result.Should().BeOfType<string>();
         result.Should().Be("TagName Is Whatever Something");
+    }
+    
+    [Test]
+    public void Parse_Range_ShouldBeExpected()
+    {
+        var result = TypeGroup.Parse("12 and 1230");
+
+        result.Should().BeOfType<Range>();
+        result.Should().BeEquivalentTo(new Range(12, 1230));
+    }
+
+    [Test]
+    public void Parse_Reference_ShouldBeExpected()
+    {
+        var result = TypeGroup.Parse("{MySource/Tag/MyTag}.Value");
+
+        result.Should().BeOfType<Reference>();
+        result.Should().BeEquivalentTo(new Reference("MySource/Tag/MyTag", "Value"));
     }
 
     #endregion
