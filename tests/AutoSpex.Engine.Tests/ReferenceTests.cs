@@ -276,4 +276,55 @@ public class ReferenceTests
             .Should().Throw<InvalidOperationException>()
             .WithMessage("Value is required for evaluation. Confiugre an override to replace required reference(s).");
     }
+
+    [Test]
+    public void Resolve_WithResolverSet_ShouldReturnExpectedValue()
+    {
+        var reference = new Reference("@SomeValue");
+        reference.ResolveTo(_ => 123);
+
+        var result = reference.Resolve(null);
+
+        result.Should().Be(123);
+    }
+
+    [Test]
+    public void ResolveTo_SourceReference_ShouldReturnExpectedValue()
+    {
+        var source = L5X.Load(Known.Test);
+        var reference = new Reference("/Tag/TestComplexTag");
+        reference.ResolveTo(x =>
+        {
+            if (x is not Reference r)
+                throw new InvalidOperationException("Expecting reference objec input");
+
+            return source.Get(r.Scope);
+        });
+        
+        var result = reference.Resolve("this doesn't matter and I'm proving it");
+        
+        result.Should().NotBeNull();
+        result.Should().BeOfType<Tag>();
+        result.As<Tag>().Name.Should().Be("TestComplexTag");
+    }
+    
+    [Test]
+    public void ResolveTo_SourceReferenceWithProperty_ShouldReturnExpectedValue()
+    {
+        var source = L5X.Load(Known.Test);
+        var reference = new Reference("/Tag/TestComplexTag", "Description");
+        reference.ResolveTo(x =>
+        {
+            if (x is not Reference r)
+                throw new InvalidOperationException("Expecting reference objec input");
+
+            return source.Get(r.Scope);
+        });
+        
+        var result = reference.Resolve("this doesn't matter and I'm proving it");
+        
+        result.Should().NotBeNull();
+        result.Should().BeOfType<string>();
+        result.Should().Be("Base");
+    }
 }
