@@ -70,6 +70,11 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
     public static readonly TypeGroup Range = new RangeTypeGroup();
 
     /// <summary>
+    /// Represents a type group that handles <see cref="Engine.Reference"/> values.
+    /// </summary>
+    public static readonly TypeGroup Reference = new ReferenceTypeGroup();
+
+    /// <summary>
     /// Retrieves the corresponding <see cref="TypeGroup"/> based on the provided <see cref="Type"/>.
     /// </summary>
     /// <param name="type">The type to determine the group for.</param>
@@ -613,8 +618,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
         {
             try
             {
-                //todo
-                value = string.Empty;
+                value = Engine.Reference.Parse(text);
                 return true;
             }
             catch (Exception)
@@ -624,11 +628,10 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
             }
         }
 
-        public override object? ReadData(ref Utf8JsonReader reader, JsonSerializerOptions options)
+        public override object ReadData(ref Utf8JsonReader reader, JsonSerializerOptions options)
         {
-            var bytes = reader.GetBytesFromBase64();
-            var data = Encoding.UTF8.GetString(bytes);
-            return TryParse(data, out var reference) ? reference : default;
+            var data = reader.GetString();
+            return Engine.Reference.Parse(data);
         }
 
         public override void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions? options = default)
@@ -639,7 +642,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
 
             writer.WriteStartObject();
             writer.WriteString("Group", Name);
-            writer.WriteBase64String("Data", Encoding.UTF8.GetBytes(data));
+            writer.WriteString("Data", data);
             writer.WriteEndObject();
         }
     }
