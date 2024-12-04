@@ -197,10 +197,7 @@ public class Criterion
     {
         return argument switch
         {
-            Criterion criterion => criterion,
-            Range range => range,
             List<object> collection => collection.Select(x => ResolveArgument(x, candidate)).ToList(),
-            Property property => property.GetValue(candidate),
             Reference reference => reference.Resolve(candidate),
             _ => argument
         };
