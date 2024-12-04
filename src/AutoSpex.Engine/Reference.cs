@@ -20,7 +20,8 @@ public class Reference
     /// The collection of preconfigured special reference objects that we can resolve data for statically
     /// (without use of external resources).
     /// </summary>
-    private static readonly Dictionary<string, Func<object?, object?>> Special = new Dictionary<string, Func<object?, object?>>()
+    private static readonly Dictionary<string, Func<object?, object?>> Resolvers = 
+        new Dictionary<string, Func<object?, object?>>()
     {
         {"$this", x => x},
         {"$required", _ => throw new InvalidOperationException("Value is required for evaluation. Confiugre an override to replace required reference(s).")},
@@ -47,7 +48,7 @@ public class Reference
         Property = property;
         
         //If the key is a known special key then we will configure the resolver.
-        if (Special.TryGetValue(key, out Func<object?, object?>? resolver))
+        if (Resolvers.TryGetValue(key, out Func<object?, object?>? resolver))
         {
             _resolver = resolver;
         }
@@ -93,6 +94,11 @@ public class Reference
     /// Indicates whether this reference represents a variable reference (starts with '@').
     /// </summary>
     public bool IsVariable => Key.StartsWith(VariableStart);
+
+    /// <summary>
+    /// Gets the collection of special predefined references that have static resolver funtions (e.g. $this, $required, etc.).
+    /// </summary>
+    public static IEnumerable<Reference> Special => Resolvers.Select(r => new Reference(r.Key));
     
     /// <summary>
     /// Creates a new special self reference that will always resolve to the object provided bo the resolve function.
@@ -123,6 +129,16 @@ public class Reference
         var property = text[(text.IndexOf(KeyEnd) + 1)..].TrimStart(PropertySeparator);
 
         return new Reference(key, property);
+    }
+
+    /// <summary>
+    /// Checks if the provided text starts with the KeyStart character and contains the KeyEnd character.
+    /// </summary>
+    /// <param name="text">The text to be validated.</param>
+    /// <returns>True if the text starts with the KeyStart character and contains the KeyEnd character, otherwise false.</returns>
+    public static bool IsValid(string text)
+    {
+        return text.StartsWith(Reference.KeyStart) && text.Contains(Reference.KeyEnd);
     }
 
     /// <summary>
@@ -163,7 +179,8 @@ public class Reference
         if (_resolver is null)
             throw new InvalidOperationException($"Could not resolve reference {Key} to a runtime value.");
         
-        var value = _resolver.Invoke(candidate);
+        //Special reference use provided candidate. All other (external) references need this reference to resolve.
+        var value = IsSpecial ? _resolver.Invoke(candidate): _resolver.Invoke(this);
         
         if (value is null || string.IsNullOrEmpty(Property)) return value;
         
@@ -171,7 +188,7 @@ public class Reference
         var property = origin.GetProperty(Property);
         return property.GetValue(value);
     }
-    
+
     /// <inheritdoc />
     public override string ToString()
     {
