@@ -1,0 +1,99 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+
+    <Design.PreviewWith>
+        <Border Width="800" Height="300">
+            <ContentControl
+                Content="{x:Static components:TestData.FilterObserver}"
+                ContentTemplate="{DynamicResource FilterSection}"
+                Margin="20" VerticalAlignment="Top" />
+        </Border>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="FilterSection" x:DataType="observers:FilterObserver">
+
+
+        <controls:Section
+            Header="Filter"
+            Description="Add filters to target specific elements for verification."
+            ShowContent="{Binding Criteria.HasItems}">
+
+            <controls:Section.Icon>
+                <PathIcon Theme="{StaticResource IconFilledFunnel}" />
+            </controls:Section.Icon>
+
+            <controls:Section.Action>
+
+                <StackPanel Orientation="Horizontal" Spacing="20">
+
+                    <StackPanel Orientation="Horizontal" Spacing="2">
+                        <TextBlock Text="Match" Classes="faint" />
+                        <Button
+                            Command="{Binding ToggleMatchCommand}"
+                            Content="{Binding Match}"
+                            Theme="{a:ControlTheme ButtonSubtle}"
+                            FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                            FontWeight="{a:ThemeResource HeadingFontWeightSmall}"
+                            Classes="accent"
+                            Padding="4 0" />
+                        <TextBlock Text="Criteria" Classes="faint" />
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+
+                        <Button
+                            Command="{Binding AddCriteriaCommand}"
+                            Theme="{StaticResource IconButton}"
+                            properties:Icon.Theme="{StaticResource IconAdd}"
+                            Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
+                            ToolTip.Tip="Add Criteria"
+                            ToolTip.Placement="BottomEdgeAlignedRight" />
+
+                        <Button
+                            Command="{Binding PasteCriteriaCommand}"
+                            Theme="{StaticResource IconButton}"
+                            properties:Icon.Theme="{StaticResource IconFilledPaste}"
+                            ToolTip.Tip="Paste Criteria"
+                            ToolTip.Placement="BottomEdgeAlignedRight" />
+
+                        <Button
+                            Command="{Binding DeleteCommand}"
+                            Theme="{StaticResource IconButton}"
+                            properties:Icon.Theme="{StaticResource IconFilledTrash}"
+                            ToolTip.Tip="Remove Step"
+                            ToolTip.Placement="BottomEdgeAlignedRight" />
+
+                    </StackPanel>
+
+                </StackPanel>
+
+            </controls:Section.Action>
+
+            <ListBox
+                IsVisible="{Binding Criteria.HasItems}"
+                ItemsSource="{Binding Criteria}"
+                SelectedItems="{Binding Selected}"
+                ItemTemplate="{StaticResource CriterionListItem}"
+                ItemContainerTheme="{StaticResource CriterionItemTheme}"
+                SelectionMode="Multiple"
+                BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                BorderThickness="1" CornerRadius="5"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                KeyboardNavigation.TabNavigation="Continue">
+                <Interaction.Behaviors>
+                    <ExecuteCommandOnKeyDownBehavior
+                        Gesture="Ctrl+V"
+                        Command="{Binding PasteCriteriaCommand}"
+                        MarkAsHandled="True" />
+                </Interaction.Behaviors>
+            </ListBox>
+
+        </controls:Section>
+
+    </DataTemplate>
+</ResourceDictionary>

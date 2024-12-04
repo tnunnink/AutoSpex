@@ -59,9 +59,8 @@ internal static class RegistrationExtensions
 
     internal static void RegisterMediatr(this ServiceRegistry registry)
     {
-        registry.AddMediatR(cfg =>
-            cfg.RegisterServicesFromAssemblyContaining<Container>()
-                .AddOpenBehavior(typeof(LoggingBehavior<,>)));
+        registry.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Container>()
+            .AddOpenBehavior(typeof(LoggingBehavior<,>)));
 
         registry.For(typeof(IRequestExceptionHandler<,,>)).Use(typeof(ExceptionBehavior<,,>));
     }

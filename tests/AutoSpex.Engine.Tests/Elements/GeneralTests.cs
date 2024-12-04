@@ -44,11 +44,4 @@ public class GeneralTests
 
         result.Should().NotBeEmpty();
     }
-
-    [Test]
-    public void Components_WhenCalled_ShouldNotBeEmpty()
-    {
-        var result = Element.Components.ToList();
-        result.Should().NotBeEmpty();
-    }
 }

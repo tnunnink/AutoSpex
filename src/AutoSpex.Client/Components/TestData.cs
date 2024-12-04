@@ -89,7 +89,7 @@ public static class TestData
     private static IEnumerable<Node> GenerateSpecs()
     {
         var collection = Node.NewContainer();
-        collection.AddSpec("Test Spec", s => s.Query(Element.Tag).Filter("TagName", Operation.Containing, "Test"));
+        collection.AddSpec("Test Spec", s => s.Get(Element.Tag).Where("TagName", Operation.Containing, "Test"));
         collection.AddSpec("Another Spec");
         collection.AddSpec("A Spec with a longer name then most of the other specs that you'd want");
         var folder = collection.AddContainer();
@@ -113,23 +113,37 @@ public static class TestData
 
     public static SpecObserver SpecObserver = new(Spec.Configure(c =>
         {
-            c.Query(Element.Tag);
-            c.Filter("TagName", Operation.Containing, "TestTag");
-            c.Verify("Value", Operation.EqualTo, 123);
+            c.Get(Element.Tag);
+            c.Where("TagName", Operation.Containing, "TestTag");
+            c.Validate("Value", Operation.EqualTo, 123);
         })
     );
 
     public static SpecObserver SpecObserverManyCriterion = new(Spec.Configure(c =>
         {
-            c.Query(Element.Tag);
-            c.Filter("TagName", Operation.Containing, "TestTag");
-            c.Filter("DataType", Operation.EqualTo, "MyType");
-            c.Filter("ExternalAccess", Operation.In,
+            c.Get(Element.Tag);
+            c.Where("TagName", Operation.Containing, "TestTag");
+            c.Where("DataType", Operation.EqualTo, "MyType");
+            c.Where("ExternalAccess", Operation.In,
                 new List<object> { ExternalAccess.ReadOnly, ExternalAccess.ReadWrite });
-            c.Verify("Value", Operation.GreaterThan, 123);
-            c.Verify("Description", Operation.EndingWith, "Some text value");
-            c.Verify("Scope.Program", Negation.Not, Operation.EqualTo, "MyContianer");
+            c.Validate("Value", Operation.GreaterThan, 123);
+            c.Validate("Description", Operation.EndingWith, "Some text value");
+            c.Validate("Scope.Program", Negation.Not, Operation.EqualTo, "MyContianer");
         })
+    );
+
+    #endregion
+
+    #region Query
+
+    public static FilterObserver FilterObserver = new(new Filter("TagName", Operation.Containing, "TestTag"));
+    public static SelectObserver SelectObserver = new(new Select("TagName.Operand"));
+
+    public static QueryObserver QueryObserver = new(
+        new Query(
+            Element.Tag,
+            [new Filter("TagName", Operation.Containing, "TestTag"), new Select("TagName.Operand")]
+        )
     );
 
     #endregion
@@ -139,26 +153,26 @@ public static class TestData
     public static readonly CriterionObserver EmptyCriterion = new Criterion();
 
     public static readonly CriterionObserver BoolCriterion =
-        new(new Criterion(Element.Tag.Property("Constant"), Operation.EqualTo, true));
+        new(new Criterion("Constant", Operation.EqualTo, true));
 
     public static readonly CriterionObserver NumberCriterion =
-        new(new Criterion(Element.Tag.Property("Dimensions"), Operation.GreaterThanOrEqualTo, 10));
+        new(new Criterion("Dimensions", Operation.GreaterThanOrEqualTo, 10));
 
     public static readonly CriterionObserver TextCriterion =
-        new(new Criterion(Element.Tag.Property("Name"), Operation.EqualTo, "Test"));
+        new(new Criterion("Name", Operation.EqualTo, "Test"));
 
     public static readonly CriterionObserver EnumCriterion =
-        new(new Criterion(Element.Tag.Property("Radix"), Operation.EqualTo, Radix.Binary));
+        new(new Criterion("Radix", Operation.EqualTo, Radix.Binary));
 
     public static readonly CriterionObserver InnerCriterion =
-        new(new Criterion(Element.Tag.Property("Members"), Operation.Any,
-            new Criterion(Element.Tag.Property("TagName"), Operation.Like, "%MemberName")));
+        new(new Criterion("Members", Operation.Any, new Criterion("TagName", Operation.Like, "%MemberName")));
 
-    public static readonly CriterionObserver TernaryCriterion =
-        new(new Criterion(Element.Tag.Property("Value"), Operation.Between, 1, 12));
+    public static readonly CriterionObserver RangeCriterion =
+        new(new Criterion("Value", Operation.Between, new Range(1, 12)));
 
-    public static readonly CriterionObserver InCriterion =
-        new(new Criterion(Element.Tag.Property("TagName"), Operation.In, "First", "Second", "Third Or Longer"));
+    public static readonly CriterionObserver InCriterion = new(
+        new Criterion("TagName", Operation.In, new List<object> { "First", "Second", "Third Or Longer" })
+    );
 
     public static readonly ObservableCollection<CriterionObserver> Criteria =
     [
@@ -168,20 +182,34 @@ public static class TestData
         TextCriterion,
         EnumCriterion,
         InnerCriterion,
-        TernaryCriterion,
+        RangeCriterion,
         InCriterion
     ];
 
     #endregion
 
+    public static readonly ArgumentInput EmptyArgument = EmptyCriterion.Argument;
+    public static readonly ArgumentInput BoolArgument = BoolCriterion.Argument;
+    public static readonly ArgumentInput NumberArgument = NumberCriterion.Argument;
+    public static readonly ArgumentInput EnumArgument = EnumCriterion.Argument;
+    public static readonly ArgumentInput TextArgument = TextCriterion.Argument;
+    public static readonly ArgumentInput CollectionArgument = InCriterion.Argument;
+
+
     #region Values
 
-    public static ValueObserver NullValue = new(() => null);
+    public static ValueObserver NullValue = new(null);
     public static ValueObserver BooleanTrueValue = new(true);
     public static ValueObserver BooleanFalseValue = new(false);
     public static ValueObserver IntegerValue = new(34567);
     public static ValueObserver DoubleValue = new(1.234);
     public static ValueObserver TextValue = new("SomeTestValue");
+
+    public static ValueObserver TextOverlowValue =
+        new(
+            "SomeTestValue SomeTestValue SomeTestValue SomeTestValue SomeTestValue SomeTestValue SomeTestValue SomeTestValue");
+
+    public static ValueObserver DateValue = new(DateTime.Now);
 
     public static ValueObserver AtomicBoolValue = new(new BOOL(true));
     public static ValueObserver AtomicSintValue = new(new SINT(12));
@@ -193,6 +221,9 @@ public static class TestData
     public static ValueObserver DataTypeValue = new(new DataType("TestType"));
     public static ValueObserver RungValue = new(new Rung("XIC(Testing)"));
     public static ValueObserver TagValue = new(new Tag("TestTag", new DINT()));
+
+    public static ValueObserver ReferenceThisValue = new(new Reference("$this"));
+    public static ValueObserver ReferenceRequiredValue = new(new Reference("$required"));
 
     public static ValueObserver NumberCollectionValue = new(
         new ObserverCollection<object?, ValueObserver>([1, 2, 3], x => new ValueObserver(x))
@@ -226,20 +257,20 @@ public static class TestData
 
     public static EvaluationObserver PassedEvaluation = new(
         Evaluation.Passed(
-            new Criterion(Element.Tag.Property("DataType"), Operation.EqualTo, "DINT"),
+            new Criterion("DataType", Operation.EqualTo, "DINT"),
             new Tag("TestTag", new DINT()),
             "DINT")
     );
 
     public static EvaluationObserver FailedEvaluation = new(
-        Evaluation.Failed(new Criterion(Element.Tag.Property("DataType"), Operation.Containing, "Pump"),
+        Evaluation.Failed(new Criterion("DataType", Operation.Containing, "Pump"),
             new Tag("TestTag", new DINT()),
             "DINT")
     );
 
     public static EvaluationObserver ErroredEvaluation = new(
         Evaluation.Errored(
-            new Criterion(Element.Tag.Property("DataType"), Operation.EqualTo, "DINT"),
+            new Criterion("DataType", Operation.EqualTo, "DINT"),
             new Tag("TestTag", new DINT()),
             new ArgumentException("Could not execute code due to this throw exception"))
     );

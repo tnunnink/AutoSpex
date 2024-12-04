@@ -204,14 +204,13 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     [RelayCommand]
     private async Task Rename(string? name)
     {
-        //If empty prompt the user for a new name.
+        //If empty prompt the user for a new name. This makes this command more flexible (can be used in multiple ways).
         if (string.IsNullOrEmpty(name))
         {
             name = await Prompter.PromptRename(this);
         }
 
-        //If still null or empty return.
-        if (string.IsNullOrEmpty(name)) return;
+        if (string.IsNullOrEmpty(name) || Name == name) return;
 
         var result = await UpdateName(name);
         if (Notifier.ShowIfFailed(result, $"Failed to rename item: {result.Reasons}")) return;

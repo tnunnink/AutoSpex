@@ -16,7 +16,7 @@
     </Design.PreviewWith>
 
 
-    <DataTemplate x:Key="ElementEntry" x:DataType="observers:SpecObserver">
+    <DataTemplate x:Key="ElementEntry" x:DataType="observers:QueryObserver">
 
         <Button
             x:Name="ElementSelector"
@@ -47,7 +47,7 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="engine:Element">
                                 <Button
-                                    Command="{Binding $parent[ItemsControl].((observers:SpecObserver)DataContext).UpdateElementCommand, FallbackValue={x:Null}}"
+                                    Command="{Binding $parent[ItemsControl].((observers:QueryObserver)DataContext).UpdateElementCommand, FallbackValue={x:Null}}"
                                     CommandParameter="{Binding}"
                                     Theme="{a:ControlTheme ButtonSubtle}"
                                     HorizontalContentAlignment="Stretch">

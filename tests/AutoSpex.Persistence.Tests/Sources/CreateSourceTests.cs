@@ -1,5 +1,6 @@
 ﻿
 
+using AutoSpex.Persistence.References;
 using L5Sharp.Core;
 using Task = System.Threading.Tasks.Task;
 
@@ -30,5 +31,19 @@ public class CreateSourceTests
         var result = await mediator.Send(new CreateSource(source));
         
         result.IsSuccess.Should().BeTrue();
+    }
+    
+    [Test]
+    public async Task CreateSource_NewTestInstance_ShouldSeedReferences()
+    {
+        using var context = new TestContext();
+        var mediator = context.Resolve<IMediator>();
+        var source = new Source(L5X.Load(Known.Test));
+        
+        await mediator.Send(new CreateSource(source));
+
+        var references = await mediator.Send(new ListSourceReferences(source.Name));
+        
+        references.Should().NotBeEmpty();
     }
 }

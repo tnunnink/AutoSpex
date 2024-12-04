@@ -9,7 +9,7 @@ public class InOperation() : Operation("In")
         if (value is not IEnumerable enumerable)
             throw new ArgumentException("In operation require an enumerable argument value", nameof(value));
 
-        return input is not null && enumerable.Cast<object>().Contains(input);
+        return input is not null && enumerable.Cast<object>().Any(x => Equals(input, x));
     }
 
     protected override bool Supports(TypeGroup group) => group != TypeGroup.Collection && group != TypeGroup.Boolean;

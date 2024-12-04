@@ -64,9 +64,9 @@ public class DuplicateNodeTests
         var mediator = context.Resolve<IMediator>();
         var expected = Node.NewSpec("Test", s =>
         {
-            s.Query(Element.Tag);
-            s.Filter("TagName", Operation.EqualTo, "Something");
-            s.Verify("Value", Operation.GreaterThan, 123);
+            s.Get(Element.Tag);
+            s.Where("TagName", Operation.EqualTo, "Something");
+            s.Validate("Value", Operation.GreaterThan, 123);
         });
         await mediator.Send(new CreateNode(expected));
 
@@ -74,9 +74,8 @@ public class DuplicateNodeTests
 
         var config = result.Value.Spec;
         config.SpecId.Should().NotBe(expected.Spec.SpecId);
-        config.Filters.Should().BeEquivalentTo(expected.Spec.Filters);
-        config.Verifications.Should().BeEquivalentTo(expected.Spec.Verifications);
-        config.Element.Should().BeEquivalentTo(expected.Spec.Element);
+        config.Query.Should().BeEquivalentTo(expected.Spec.Query);
+        config.Verify.Should().BeEquivalentTo(expected.Spec.Verify);
     }
 
     [Test]

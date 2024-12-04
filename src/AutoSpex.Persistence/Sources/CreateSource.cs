@@ -12,25 +12,46 @@ public record CreateSource(Source Source) : IDbCommand<Result>;
 [UsedImplicitly]
 internal class CreateSourceHandler(IConnectionManager manager) : IRequestHandler<CreateSource, Result>
 {
+    private const string TargetCount = "SELECT COUNT() FROM Source WHERE IsTarget = 1";
+
     private const string InsertSource =
         """
         INSERT INTO Source (SourceId, Name, IsTarget, TargetName, TargetType, ExportedOn, ExportedBy, Description, Content) 
         VALUES (@SourceId, @Name, @IsTarget, @TargetName, @TargetType, @ExportedOn, @ExportedBy, @Description, @Content)
         """;
 
-    private const string TargetCount = "SELECT COUNT() FROM Source WHERE IsTarget = 1";
+    private const string InsertReference =
+        """
+        INSERT INTO Reference (ReferenceId, SourceId, Element, Scope) 
+        VALUES (@ReferenceId, @SourceId, @Element, @Scope)
+        """;
 
     public async Task<Result> Handle(CreateSource request, CancellationToken cancellationToken)
     {
         using var connection = await manager.Connect(cancellationToken);
+        using var transaction = connection.BeginTransaction();
 
         //Check if any sources are targeted. If not then we want to set the new source to be the target by default.
-        var targets = await connection.QuerySingleAsync<int>(TargetCount);
+        var targets = await connection.QuerySingleAsync<int>(TargetCount, transaction);
         if (targets == 0)
             request.Source.IsTarget = true;
-        
-        await connection.ExecuteAsync(InsertSource, request.Source);
-        
+
+        await connection.ExecuteAsync(InsertSource, request.Source, transaction);
+
+        var scopes = request.Source.Content?.Scopes().Select(s => s.Path[s.Path.IndexOf('/')..]).ToList() ?? [];
+
+        await connection.ExecuteAsync(InsertReference,
+            scopes.Select(s => new
+            {
+                ReferenceId = Guid.NewGuid(),
+                request.Source.SourceId,
+                Element = Element.FromScope(s),
+                Scope = s
+            }),
+            transaction
+        );
+
+        transaction.Commit();
         return Result.Ok();
     }
 }

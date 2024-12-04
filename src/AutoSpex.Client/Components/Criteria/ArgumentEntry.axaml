@@ -8,32 +8,29 @@
         <Border Padding="20" Height="300" Width="600">
             <StackPanel Spacing="10" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <ContentControl
-                    Content="{x:Static components:TestData.NullValue}"
+                    Content="{x:Static components:TestData.EmptyArgument}"
                     ContentTemplate="{DynamicResource ArgumentEntry}" />
                 <ContentControl
-                    Content="{x:Static components:TestData.BooleanTrueValue}"
+                    Content="{x:Static components:TestData.BoolArgument}"
                     ContentTemplate="{DynamicResource ArgumentEntry}" />
                 <ContentControl
-                    Content="{x:Static components:TestData.RadixValue}"
+                    Content="{x:Static components:TestData.EnumArgument}"
                     ContentTemplate="{DynamicResource ArgumentEntry}" />
                 <ContentControl
-                    Content="{x:Static components:TestData.IntegerValue}"
+                    Content="{x:Static components:TestData.NumberArgument}"
                     ContentTemplate="{DynamicResource ArgumentEntry}" />
                 <ContentControl
-                    Content="{x:Static components:TestData.DoubleValue}"
-                    ContentTemplate="{DynamicResource ArgumentEntry}" />
-                <ContentControl
-                    Content="{x:Static components:TestData.TextValue}"
+                    Content="{x:Static components:TestData.TextArgument}"
                     ContentTemplate="{DynamicResource ArgumentEntry}" />
             </StackPanel>
         </Border>
     </Design.PreviewWith>
 
-    <DataTemplate x:Key="ArgumentEntry" x:DataType="observers:ValueObserver">
+    <DataTemplate x:Key="ArgumentEntry" x:DataType="observers:ArgumentInput">
 
         <controls:Entry
             Watermark="Enter value"
-            Value="{Binding }"
+            Value="{Binding Value}"
             ValueTemplate="{StaticResource ValueDisplay}"
             ItemTemplate="{StaticResource ValueItemTemplate}"
             IsEmpty="{Binding IsEmpty}"

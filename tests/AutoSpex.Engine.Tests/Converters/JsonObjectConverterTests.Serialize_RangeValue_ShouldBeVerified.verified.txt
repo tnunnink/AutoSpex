@@ -1,0 +1,13 @@
+﻿{
+  Group: Range,
+  Data: {
+    Min: {
+      Group: Number,
+      Data: 1
+    },
+    Max: {
+      Group: Number,
+      Data: 20
+    }
+  }
+}

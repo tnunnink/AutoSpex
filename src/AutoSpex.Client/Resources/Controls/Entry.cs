@@ -69,10 +69,6 @@ public class Entry : TemplatedControl
         AvaloniaProperty.Register<Entry, int>(
             nameof(MaxDropDownWidth));
 
-    public static readonly StyledProperty<bool> UseExpanderProperty =
-        AvaloniaProperty.Register<Entry, bool>(
-            nameof(UseExpander));
-
     public static readonly StyledProperty<int> PopulationDelayProperty =
         AvaloniaProperty.Register<Entry, int>(
             nameof(PopulationDelay), defaultValue: 5);
@@ -169,12 +165,6 @@ public class Entry : TemplatedControl
     {
         get => GetValue(MinDropDownWidthProperty);
         set => SetValue(MinDropDownWidthProperty, value);
-    }
-
-    public bool UseExpander
-    {
-        get => GetValue(UseExpanderProperty);
-        set => SetValue(UseExpanderProperty, value);
     }
 
     public int PopulationDelay

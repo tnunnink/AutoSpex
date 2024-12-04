@@ -44,7 +44,7 @@ public static class DesignData
 
     private static LogixCode DesignRung()
     {
-        var rung = SourceTest.Model.Content.Query<Rung>().First();
+        var rung = SourceTest.Model.Content?.Query<Rung>().First();
         rung.Text = "XIC(Some_Tag_Name)[GRT(MyTag,1)NEQ(AnotherTag.Member,0)]MOV(0,OutputTag);";
         rung.Comment = "This is a test rung that we are using to mock the look of the UI.";
         return rung;

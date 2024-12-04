@@ -9,7 +9,7 @@ public class VerificationTests
     [Test]
     public Task Serialized_Verification_ShouldBeVerified()
     {
-        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Containing, "Test");
+        var criterion = new Criterion("Name", Operation.Containing, "Test");
         var evaluation = Evaluation.Passed(criterion, new Tag("Test", 123), "Test");
         var verification = Verification.For(evaluation);
 
@@ -21,7 +21,7 @@ public class VerificationTests
     [Test]
     public void Deserialize_JosnString_ShouldNotBeNull()
     {
-        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Containing, "Test");
+        var criterion = new Criterion("Name", Operation.Containing, "Test");
         var evaluation = Evaluation.Passed(criterion, new Tag("Test", 123), "Test");
         var verification = Verification.For(evaluation);
         var json = JsonSerializer.Serialize(verification);
@@ -34,7 +34,7 @@ public class VerificationTests
     [Test]
     public void Deserialize_JosnString_ShouldBeEquivalentToOriginal()
     {
-        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Containing, "Test");
+        var criterion = new Criterion("Name", Operation.Containing, "Test");
         var evaluation = Evaluation.Passed(criterion, new Tag("Test", 123), "Test");
         var verification = Verification.For(evaluation);
         var json = JsonSerializer.Serialize(verification);

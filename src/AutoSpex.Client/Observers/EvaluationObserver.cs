@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using AutoSpex.Client.Shared;
+﻿using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 
 namespace AutoSpex.Client.Observers;
@@ -24,10 +21,9 @@ public class EvaluationObserver : Observer<Evaluation>
     public ResultState Result => Model.Result;
     public string Candidate => Model.Candidate;
     public string Criteria => Model.Criteria;
-    public ObservableCollection<string> Expected => new(Model.Expected);
+    public string Expected => Model.Expected;
     public string Actual => Model.Actual;
     public string? Error => Model.Error;
-    public string ExpectedSeparator => Expected.Count == 2 ? "and" : Expected.Count > 2 ? "," : string.Empty;
 
 
     /// <inheritdoc />
@@ -38,7 +34,7 @@ public class EvaluationObserver : Observer<Evaluation>
         var passes = string.IsNullOrEmpty(filter)
                      || Candidate.Satisfies(filter)
                      || Criteria.Satisfies(filter)
-                     || Expected.Any(x => x.Satisfies(filter))
+                     || Expected.Satisfies(filter)
                      || Actual.Satisfies(filter)
                      || Error is not null && Error.Satisfies(filter);
 

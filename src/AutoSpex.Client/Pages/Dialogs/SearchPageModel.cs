@@ -15,7 +15,7 @@ namespace AutoSpex.Client.Pages;
 [UsedImplicitly]
 public partial class SearchPageModel : PageViewModel
 {
-    private readonly ObserverCollection<Criterion, CriterionReplaceObserver> _criteria = [];
+    private readonly ObserverCollection<Criterion, ReplaceObserver> _criteria = [];
 
     public SearchPageModel(NodeObserver? scope = default)
     {
@@ -30,8 +30,8 @@ public partial class SearchPageModel : PageViewModel
 
     [ObservableProperty] private string? _replaceText;
 
-    [ObservableProperty] private CriterionReplaceObserver? _selected;
-    public ObservableCollection<CriterionReplaceObserver> Instances { get; } = [];
+    [ObservableProperty] private ReplaceObserver? _selected;
+    public ObservableCollection<ReplaceObserver> Instances { get; } = [];
 
     public Task<NodeSelectorPageModel> NodeSelector => Navigator.Navigate(() => new NodeSelectorPageModel(UpdateScope));
 
@@ -39,7 +39,7 @@ public partial class SearchPageModel : PageViewModel
     public override async Task Load()
     {
         var nodes = (await Mediator.Send(new LoadAllNodes())).ToList();
-        var criteria = nodes.SelectMany(n => n.Spec.Criteria(), (n, c) => new CriterionReplaceObserver(c, n));
+        var criteria = nodes.SelectMany(n => n.Spec.GetAllCriteria(), (n, c) => new ReplaceObserver(c, n));
         _criteria.BindReadOnly(criteria.ToList());
         RegisterDisposable(_criteria);
     }
@@ -51,7 +51,7 @@ public partial class SearchPageModel : PageViewModel
     }
 
     [RelayCommand]
-    private async Task Replace(CriterionReplaceObserver? observer)
+    private async Task Replace(ReplaceObserver? observer)
     {
         if (observer is null || string.IsNullOrEmpty(SearchText)) return;
 

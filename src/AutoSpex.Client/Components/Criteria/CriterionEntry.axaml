@@ -35,9 +35,9 @@
 
                 <controls:Entry
                     Watermark="Enter property"
-                    Value="{Binding Property}"
-                    Populate="{Binding PopulateProperties}"
-                    CommitCommand="{Binding UpdatePropertyCommand}">
+                    Value="{Binding Property.Value}"
+                    Populate="{Binding Property.Suggestions}"
+                    CommitCommand="{Binding Property.UpdateCommand}">
                     <controls:Entry.ValueTemplate>
                         <DataTemplate x:DataType="engine:Property">
                             <StackPanel Orientation="Horizontal" Spacing="7">
@@ -94,9 +94,9 @@
                     </controls:Entry.ItemTemplate>
                     <controls:Entry.IsEmpty>
                         <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                            <Binding Path="Property"
+                            <Binding Path="Property.Value"
                                      Converter="{x:Static ObjectConverters.IsNull}" />
-                            <Binding Path="Property"
+                            <Binding Path="Property.Value"
                                      Converter="{StaticResource EqualToConverter}"
                                      ConverterParameter="{x:Static engine:Property.Default}" />
                         </MultiBinding>
@@ -106,7 +106,7 @@
                 <Button
                     Command="{Binding ToggleNegationCommand}"
                     Content="{Binding Negation}"
-                    IsVisible="{Binding Property, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Property.Default}}"
+                    IsVisible="{Binding Property.Value, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Property.Default}}"
                     FontFamily="{a:ThemeResource CodeFontFamily}"
                     FontSize="{a:ThemeResource DefaultFontSizeSmall}"
                     Theme="{a:ControlTheme ButtonSubtle}"
@@ -115,9 +115,9 @@
                 <controls:Entry
                     Watermark="Select operation"
                     Value="{Binding Operation}"
-                    Populate="{Binding PopulateOperations}"
+                    Populate="{Binding Operations}"
                     CommitCommand="{Binding UpdateOperationCommand}"
-                    IsVisible="{Binding Property, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Property.Default}}">
+                    IsVisible="{Binding Property.Value, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Property.Default}}">
                     <controls:Entry.ItemTemplate>
                         <DataTemplate x:DataType="engine:Operation">
                             <Border Padding="{a:ThemeResource ListItemPadding}">

@@ -67,9 +67,9 @@ public class CreateNodeTests
         var mediator = context.Resolve<IMediator>();
         var node = Node.NewSpec("MySpec", c =>
         {
-            c.Query(Element.Tag);
-            c.Filter("TagName", Operation.Containing, "Test");
-            c.Verify("Value", Operation.EqualTo, 123);
+            c.Get(Element.Tag);
+            c.Where("TagName", Operation.Containing, "Test");
+            c.Validate("Value", Operation.EqualTo, 123);
         });
 
         var result = await mediator.Send(new CreateNode(node));
