@@ -5,7 +5,7 @@
                     xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
 
 
-    <DataTemplate x:Key="CriterionReplaceListItem" x:DataType="observers:CriterionReplaceObserver">
+    <DataTemplate x:Key="ReplaceListItem" x:DataType="observers:ReplaceObserver">
 
         <Border Background="Transparent" Focusable="True" IsTabStop="False" Padding="{a:ThemeResource ListItemPadding}">
 

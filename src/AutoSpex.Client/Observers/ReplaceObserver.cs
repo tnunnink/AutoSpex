@@ -5,7 +5,7 @@ using FluentResults;
 
 namespace AutoSpex.Client.Observers;
 
-public class CriterionReplaceObserver(Criterion model, Node node) : Observer<Criterion>(model)
+public class ReplaceObserver(Criterion model, Node node) : Observer<Criterion>(model)
 {
     /// <summary>
     /// The name of the node/spec that contains the criterion.
