@@ -101,7 +101,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
         if (string.IsNullOrWhiteSpace(value)) return default;
 
         //Obviously need to exlude the Text group since it will always be a string.
-        foreach (var group in List.Where(x => x != Text).OrderBy(x => x.Value))
+        foreach (var group in List.Where(x => x != Default && x != Text).OrderBy(x => x.Value))
             if (group.TryParse(value, out var result))
                 return result;
 
@@ -151,14 +151,30 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
 
     private class DefaultTypeGroup() : TypeGroup(nameof(Default), 0)
     {
-        protected override bool AppliesTo(Type? type) => type is null;
+        /// <inheritdoc />
+        protected override bool AppliesTo(Type? type) => type is null || type == typeof(object);
 
+        /// <inheritdoc />
         public override bool TryParse(string text, out object? value)
         {
-            value = null;
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                value = null;
+                return false;
+            }
+
+            foreach (var group in List.Where(x => x != Default && x != Text).OrderBy(x => x.Value))
+            {
+                if (!group.TryParse(text, out var result)) continue;
+                value = result;
+                return true;
+            }
+
+            value = text;
             return false;
         }
 
+        /// <inheritdoc />
         public override void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions? options = default)
         {
             writer.WriteStartObject();
@@ -170,12 +186,14 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
 
     private class BooleanTypeGroup() : TypeGroup(nameof(Boolean), 1)
     {
+        /// <inheritdoc />
         protected override bool AppliesTo(Type type)
         {
             type = Nullable.GetUnderlyingType(type) ?? type;
             return type == typeof(bool) || type == typeof(BOOL);
         }
 
+        /// <inheritdoc />
         public override bool TryParse(string text, out object? value)
         {
             if (bool.TryParse(text, out var boolean))
@@ -188,11 +206,13 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
             return false;
         }
 
+        /// <inheritdoc />
         public override object ReadData(ref Utf8JsonReader reader, JsonSerializerOptions options)
         {
             return reader.GetBoolean();
         }
 
+        /// <inheritdoc />
         public override void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions? options = default)
         {
             var data = value is bool boolean ? boolean : throw new ArgumentException(WriteError, nameof(value));
@@ -229,18 +249,19 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
             typeof(Vendor)
         ];
 
-
+        /// <inheritdoc />
         protected override bool AppliesTo(Type type)
         {
             type = Nullable.GetUnderlyingType(type) ?? type;
             return NumericTypes.Contains(type);
         }
 
-        /// <summary>
+        /// <inheritdoc />
+        /// <remarks>
         /// For numbers, I will just try to use an int/double for everything.
-        /// If not an int, then use the Radix which supports all primitive numeric types.
+        /// If not an int/double, then use the Radix which supports all primitive numeric types.
         /// If not and the element is parsable, try to parse as LogixData which can be a number too (AtomicData).
-        /// </summary>
+        /// </remarks>
         public override bool TryParse(string text, out object? value)
         {
             if (int.TryParse(text, out var i))
@@ -274,6 +295,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
             }
         }
 
+        /// <inheritdoc />
         public override object? ReadData(ref Utf8JsonReader reader, JsonSerializerOptions options)
         {
             var value = reader.GetString();
@@ -297,19 +319,21 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
             typeof(IPAddress)
         ];
 
-
+        /// <inheritdoc />
         protected override bool AppliesTo(Type type)
         {
             type = Nullable.GetUnderlyingType(type) ?? type;
             return TextTypes.Contains(type);
         }
 
+        /// <inheritdoc />
         public override bool TryParse(string text, out object? value)
         {
             value = text;
             return true;
         }
 
+        /// <inheritdoc />
         public override object? ReadData(ref Utf8JsonReader reader, JsonSerializerOptions options)
         {
             return reader.GetString();
@@ -318,12 +342,14 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
 
     private class DateTypeGroup() : TypeGroup(nameof(Date), 4)
     {
+        /// <inheritdoc />
         protected override bool AppliesTo(Type type)
         {
             type = Nullable.GetUnderlyingType(type) ?? type;
             return type == typeof(DateTime);
         }
 
+        /// <inheritdoc />
         public override bool TryParse(string text, out object? value)
         {
             if (DateTime.TryParse(text, out var parsed))
@@ -336,6 +362,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
             return false;
         }
 
+        /// <inheritdoc />
         public override object ReadData(ref Utf8JsonReader reader, JsonSerializerOptions options)
         {
             return reader.GetDateTime();
