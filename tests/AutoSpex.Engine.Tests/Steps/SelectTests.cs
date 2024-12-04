@@ -64,9 +64,8 @@ public class SelectTests
 
         var results = step.Process(input).ToList();
 
-        results.Should().HaveCount(5);
-        results.Should().AllBeOfType<Tag>();
-        results.Cast<Tag>().Should().AllSatisfy(t => t.Name.Should().Be("AnotherTag"));
+        results.Should().HaveCount(8);
+        results.Where(t => t is not null).Cast<Tag>().Should().AllSatisfy(t => t.Name.Should().Be("AnotherTag"));
     }
 
     [Test]

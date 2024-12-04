@@ -5,12 +5,12 @@
         <ResourceInclude Source="ElementDisplay.axaml" />
         <ResourceInclude Source="ElementEntry.axaml" />
         <ResourceInclude Source="FilterFlyout.axaml" />
-        <ResourceInclude Source="FilterStep.axaml" />
-        <ResourceInclude Source="QueryStep.axaml" />
+        <ResourceInclude Source="FilterSection.axaml" />
+        <ResourceInclude Source="QuerySection.axaml" />
+        <ResourceInclude Source="SelectSection.axaml" />
         <ResourceInclude Source="SpecConfig.axaml" />
-        <ResourceInclude Source="StepMenu.axaml" />
         <ResourceInclude Source="VerificationFlyout.axaml" />
-        <ResourceInclude Source="VerifyStep.axaml" />
+        <ResourceInclude Source="VerifySection.axaml" />
     </ResourceDictionary.MergedDictionaries>
 
 </ResourceDictionary>

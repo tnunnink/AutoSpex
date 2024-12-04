@@ -14,17 +14,17 @@ public class ArgumentSelector : IDataTemplate
 
     public Control? Build(object? param)
     {
-        if (param is not ValueObserver observer)
+        if (param is not ArgumentInput input)
             return default;
 
-        return observer.Value switch
+        return input.Value switch
         {
-            RangeObserver => RangeTemplate?.Build(observer),
-            ObserverCollection<object?, ValueObserver> => CollectionTemplate?.Build(observer),
+            RangeObserver => RangeTemplate?.Build(input),
+            ObserverCollection<object?, ValueObserver> => CollectionTemplate?.Build(input),
             CriterionObserver criterion => CriterionTemplate?.Build(criterion),
-            _ => DefaultTemplate?.Build(observer)
+            _ => DefaultTemplate?.Build(input)
         };
     }
 
-    public bool Match(object? data) => data is ValueObserver;
+    public bool Match(object? data) => data is ArgumentInput;
 }

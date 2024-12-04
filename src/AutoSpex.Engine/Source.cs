@@ -8,7 +8,7 @@ namespace AutoSpex.Engine;
 /// Represents a source L5X content that can be run against any set of specifications.
 /// Source content will be stored locally and the user can inspect, update, and create runs against the source.
 /// </summary>
-public class Source
+public class Source()
 {
     private readonly Dictionary<Guid, Suppression> _suppressions = [];
     private readonly Dictionary<Guid, Node> _overrides = [];
@@ -16,19 +16,20 @@ public class Source
     /// <summary>
     /// Creates a new <see cref="Source"/> with no content. 
     /// </summary>
-    public Source()
+    public Source(string? name = default) : this()
     {
+        Name = name ?? "New Source";
     }
 
     /// <summary>
     /// Creates a new <see cref="Source"/> provided the location on disc of the L5X file.
     /// </summary>
-    public Source(L5X content)
+    public Source(L5X content, string? name = default) : this()
     {
         if (content is null)
             throw new ArgumentNullException(nameof(content));
 
-        Name = content.Info.TargetName ?? "New Source";
+        Name = name ?? content.Info.TargetName ?? "New Source";
         TargetName = content.Info.TargetName ?? string.Empty;
         TargetType = content.Info.TargetType ?? string.Empty;
         ExportedOn = content.Info.ExportDate?.ToString() ?? string.Empty;
@@ -279,91 +280,6 @@ public class Source
             ExportedBy = ExportedBy,
             Description = Description
         };
-    }
-
-    /// <summary>
-    /// Finds values based on the specified property for elements in the content source.
-    /// </summary>
-    /// <param name="property">The property for which values need to be found.</param>
-    /// <returns>An enumerable collection of distinct values for the specified property.</returns>
-    public IEnumerable<object> FindValues(Property property)
-    {
-        if (Content is null) return [];
-
-        //For any statically known value type like boolean or enum we can return early with predefined options.
-        if (property.Group == TypeGroup.Boolean || property.Group == TypeGroup.Enum)
-            return GetOptions(property.Type);
-
-        try
-        {
-            //Since every property origin is/should be the L5Sharp type, we can use that to query for elements in the source.
-            var elements = Content.Query(property.Origin);
-
-            //Essentially just get non-null distinct values for the specified property for all elements of the origin type.
-            var values = elements.Select(property.GetValue).Where(x => x is not null).Cast<object>().Distinct();
-
-            return values.ToList();
-        }
-        catch (Exception)
-        {
-            // Ignored because this is just optional.
-            // It's only to suggest possible values based on a known source content.
-            return [];
-        }
-    }
-
-    /// <summary>
-    /// Handles the request for tag names to suggest to the user as then enter text in a property entry with indexer
-    /// notation. This is very usefuly because we don't need to look up the tag structure,
-    /// and instead we can have it prompted to us.
-    /// </summary>
-    public IEnumerable<TagName> FindTagNames(Spec spec, string? filter)
-    {
-        if (Content is null) return [];
-
-        try
-        {
-            var tagNames = new HashSet<TagName>();
-
-            //Ideally we want to narrow the search space for tag names using the currently configured criteria to
-            //improve the performance of this lookup which will happen continuously as text changes
-            //todo how are we getting the step
-            var data = spec.RunTo(new Filter(), Content);
-
-            foreach (var item in data)
-            {
-                if (item is Tag tag)
-                {
-                    foreach (var path in tag.TagNames().Select(t => t.Path))
-                        tagNames.Add(path);
-                }
-
-                //todo module? andything else?
-            }
-
-            return tagNames
-                .Where(t => !string.IsNullOrEmpty(t) && t.Contains(filter))
-                .OrderBy(t => t)
-                .Select(t => new TagName($"[{t}]"));
-        }
-        catch (Exception)
-        {
-            // ignored because this is just optional.
-            // If the user enteres invalid tagnames it will result in and errored evaluation telling them the issue.
-            return [];
-        }
-    }
-
-    /// <summary>
-    /// Returns a collection of possible values. This is meant primarily for enumeration types so that we
-    /// can provide the user with a selectable set of options for a given enum value. This however will also return
-    /// true/false for boolean type and empty collection for anything else (numbers, string, collections, complex objects).
-    /// </summary>
-    private static IEnumerable<object> GetOptions(Type type)
-    {
-        var group = TypeGroup.FromType(type);
-        if (group == TypeGroup.Boolean) return new object[] { true, false };
-        return typeof(LogixEnum).IsAssignableFrom(type) ? LogixEnum.Options(type) : [];
     }
 
     /// <summary>

@@ -14,7 +14,7 @@ public class Property : IEquatable<Property>
     private const char MemberSeparator = '.';
     private const char IndexOpenSeparator = '[';
     private const char IndexCloseSeparator = ']';
-    private static readonly char[] Separators = [MemberSeparator, IndexOpenSeparator];
+    public static readonly char[] Separators = [MemberSeparator, IndexOpenSeparator];
 
     //These are properties that I don't want to show up for the user because they are not really useful and are confusing.
     private static readonly List<string> PropertyExclusions = ["L5X", "L5XType", "Length", "Capacity"];

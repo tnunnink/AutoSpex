@@ -83,21 +83,21 @@ public class LoadSourceTests
         var container = Node.NewContainer();
         var spec01 = container.AddSpec("Test", s =>
         {
-            s.Fetch(Element.Tag);
+            s.Get(Element.Tag);
             s.Where("TagName", Operation.Containing, "Something");
-            s.Confirm("Value", Operation.EqualTo, 12);
+            s.Validate("Value", Operation.EqualTo, 12);
         });
         var spec02 = container.AddSpec("Test", s =>
         {
-            s.Fetch(Element.Tag);
+            s.Get(Element.Tag);
             s.Where("TagName", Operation.Containing, "Something");
-            s.Confirm("Value", Operation.EqualTo, 12);
+            s.Validate("Value", Operation.EqualTo, 12);
         });
         var spec03 = container.AddSpec("Test", s =>
         {
-            s.Fetch(Element.Tag);
+            s.Get(Element.Tag);
             s.Where("TagName", Operation.Containing, "Something");
-            s.Confirm("Value", Operation.EqualTo, 12);
+            s.Validate("Value", Operation.EqualTo, 12);
         });
         await mediator.Send(new CreateNodes([container, spec01, spec02, spec03]));
 

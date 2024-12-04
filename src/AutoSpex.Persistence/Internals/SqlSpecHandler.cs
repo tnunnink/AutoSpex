@@ -24,6 +24,7 @@ public class SqlSpecHandler : SqlMapper.TypeHandler<Spec>
     private static JsonSerializerOptions GetOptions()
     {
         var options = new JsonSerializerOptions();
+        options.Converters.Add(new JsonSpecConverter());
         options.Converters.Add(new JsonObjectConverter());
         return options;
     }

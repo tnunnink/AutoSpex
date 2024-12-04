@@ -10,9 +10,8 @@ public static class ServiceExtensions
 {
     public static void RegisterPersistence(this IServiceCollection services)
     {
-        services.AddMediatR(c =>
-                c.RegisterServicesFromAssembly(typeof(ServiceExtensions).Assembly)
-                    .AddOpenBehavior(typeof(NotificationBehavior<,>))
+        services.AddMediatR(c => c.RegisterServicesFromAssembly(typeof(ServiceExtensions).Assembly)
+                .AddOpenBehavior(typeof(NotificationBehavior<,>))
             /*.AddOpenBehavior(typeof(ChangeLogBehavior<,>))*/
         );
 

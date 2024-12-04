@@ -4,24 +4,23 @@ using Ardalis.SmartEnum.SystemTextJson;
 namespace AutoSpex.Engine;
 
 /// <summary>
-/// A step of a specification that will filter input objects based on a configured collection of <see cref="Criterion"/>. 
+/// A step of a specification that will filter input objects based on a configured <see cref="Criteria"/>. 
 /// </summary>
 public class Filter : Step
 {
     /// <summary>
-    /// Used to construct object using Json serializer.
-    /// </summary>
-    [JsonConstructor]
-    private Filter(Match match, IEnumerable<Criterion> criteria) : base(criteria)
-    {
-        Match = match;
-    }
-
-    /// <summary>
-    /// Creates a new default <see cref="Filter"/> object with default values.
+    /// Creates a new default <see cref="Filter"/> step with default values.
     /// </summary>
     public Filter()
     {
+    }
+
+    /// <summary>
+    /// Creates a new default <see cref="Filter"/> step initialized with a criterion defined by the provided parameters.
+    /// </summary>
+    public Filter(string property, Operation operation, object? argument = default)
+    {
+        Criteria.Add(new Criterion(property, operation, argument));
     }
 
     /// <summary>
@@ -31,11 +30,10 @@ public class Filter : Step
     [JsonConverter(typeof(SmartEnumNameConverter<Match, int>))]
     public Match Match { get; set; } = Match.All;
 
-
     /// <inheritdoc />
-    public override IEnumerable<object> Process(IEnumerable<object> input)
+    public override IEnumerable<object?> Process(IEnumerable<object?> input)
     {
-        var filtered = new List<object>();
+        var filtered = new List<object?>();
 
         foreach (var item in input)
         {

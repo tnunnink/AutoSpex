@@ -8,8 +8,7 @@ using CommunityToolkit.Mvvm.Messaging;
 namespace AutoSpex.Client.Observers;
 
 /// <summary>
-/// Base class for all step observer types.
-/// This observer implments the common criteria collection functionality.
+/// Base class for all step types. We need this to use with generic ObserverCollection in QueryObserver
 /// </summary>
 public abstract partial class StepObserver : Observer<Step>,
     IRecipient<Observer.Deleted>,
@@ -18,21 +17,22 @@ public abstract partial class StepObserver : Observer<Step>,
 {
     protected StepObserver(Step model) : base(model)
     {
-        Criteria = new ObserverCollection<Criterion, CriterionObserver>
-        (
-            refresh: () => Model.Criteria.Select(c => new CriterionObserver(c)).ToList(),
-            add: (_, m) => Model.Add(m),
-            remove: (_, m) => Model.Remove(m),
-            move: (o, n) => Model.Move(o, n),
-            clear: () => Model.Clear(),
-            count: () => Model.Criteria.Count()
-        );
-
+        Criteria = new ObserverCollection<Criterion, CriterionObserver>(Model.Criteria, c => new CriterionObserver(c));
         Track(Criteria);
     }
 
+    /// <summary>
+    /// The collection of <see cref="Criterion"/> that define the step.
+    /// </summary>
     public ObserverCollection<Criterion, CriterionObserver> Criteria { get; }
+
+    /// <summary>
+    /// The collection of criteria that are selected from the UI.
+    /// </summary>
     public ObservableCollection<CriterionObserver> Selected { get; } = [];
+
+    /// <inheritdoc />
+    protected override bool PromptForDeletion => false;
 
     /// <summary>
     /// Adds a filter to the specification.
@@ -74,7 +74,7 @@ public abstract partial class StepObserver : Observer<Step>,
         foreach (var observer in Selected)
             message.Reply(observer);
     }
-    
+
     /// <summary>
     /// Handles the request to get the observer that passes the provied predicate.
     /// This allows child criteria to have access to the step that contains them.
@@ -91,8 +91,7 @@ public abstract partial class StepObserver : Observer<Step>,
 }
 
 /// <summary>
-/// Base class for all step observer types.
-/// This observer implements the common criteria collection functionality.
+/// Base class for all step types. We need this to use with generic ObserverCollection in QueryObserver
 /// </summary>
 public abstract class StepObserver<TStep> : StepObserver where TStep : Step
 {
@@ -104,9 +103,9 @@ public abstract class StepObserver<TStep> : StepObserver where TStep : Step
     {
         Model = model;
     }
-    
+
     /// <summary>
     /// The underlying model object that is being wrapped by the observer.
     /// </summary>
-    protected new TStep Model { get; }
+    public new TStep Model { get; }
 }

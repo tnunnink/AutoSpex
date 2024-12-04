@@ -16,38 +16,38 @@
         Spec: {
           SchemaVersion: 2,
           SpecId: Guid_4,
-          Steps: [
-            {
-              Element: Tag
-            },
-            {
-              Match: All,
-              Criteria: [
-                {
-                  Property: Name,
-                  Negation: Is,
-                  Operation: Like,
-                  Argument: {
-                    Group: Text,
-                    Data: someName
+          Query: {
+            Element: Tag,
+            Steps: [
+              {
+                Match: All,
+                Criteria: [
+                  {
+                    Property: Name,
+                    Negation: Is,
+                    Operation: Like,
+                    Argument: {
+                      Group: Text,
+                      Data: someName
+                    }
                   }
+                ]
+              }
+            ]
+          },
+          Verify: {
+            Criteria: [
+              {
+                Property: Value,
+                Negation: Is,
+                Operation: Equal To,
+                Argument: {
+                  Group: Number,
+                  Data: 123
                 }
-              ]
-            },
-            {
-              Criteria: [
-                {
-                  Property: Value,
-                  Negation: Is,
-                  Operation: Equal To,
-                  Argument: {
-                    Group: Number,
-                    Data: 123
-                  }
-                }
-              ]
-            }
-          ]
+              }
+            ]
+          }
         }
       },
       {
@@ -58,38 +58,38 @@
         Spec: {
           SchemaVersion: 2,
           SpecId: Guid_6,
-          Steps: [
-            {
-              Element: Tag
-            },
-            {
-              Match: All,
-              Criteria: [
-                {
-                  Property: Name,
-                  Negation: Is,
-                  Operation: Containing,
-                  Argument: {
-                    Group: Text,
-                    Data: anotherName
+          Query: {
+            Element: Tag,
+            Steps: [
+              {
+                Match: All,
+                Criteria: [
+                  {
+                    Property: Name,
+                    Negation: Is,
+                    Operation: Containing,
+                    Argument: {
+                      Group: Text,
+                      Data: anotherName
+                    }
                   }
+                ]
+              }
+            ]
+          },
+          Verify: {
+            Criteria: [
+              {
+                Property: Value,
+                Negation: Is,
+                Operation: Greater Than,
+                Argument: {
+                  Group: Number,
+                  Data: 456
                 }
-              ]
-            },
-            {
-              Criteria: [
-                {
-                  Property: Value,
-                  Negation: Is,
-                  Operation: Greater Than,
-                  Argument: {
-                    Group: Number,
-                    Data: 456
-                  }
-                }
-              ]
-            }
-          ]
+              }
+            ]
+          }
         }
       },
       {
@@ -100,50 +100,48 @@
         Spec: {
           SchemaVersion: 2,
           SpecId: Guid_8,
-          Steps: [
-            {
-              Element: Tag
-            },
-            {
-              Match: All,
-              Criteria: [
-                {
-                  Property: Name,
-                  Negation: Is,
-                  Operation: Equal To,
-                  Argument: {
-                    Group: Text,
-                    Data: yetAnotherName
+          Query: {
+            Element: Tag,
+            Steps: [
+              {
+                Match: All,
+                Criteria: [
+                  {
+                    Property: Name,
+                    Negation: Is,
+                    Operation: Equal To,
+                    Argument: {
+                      Group: Text,
+                      Data: yetAnotherName
+                    }
                   }
+                ]
+              }
+            ]
+          },
+          Verify: {
+            Criteria: [
+              {
+                Property: Value,
+                Negation: Not,
+                Operation: Equal To,
+                Argument: {
+                  Group: Number,
+                  Data: 678
                 }
-              ]
-            },
-            {
-              Criteria: [
-                {
-                  Property: Value,
-                  Negation: Not,
-                  Operation: Equal To,
-                  Argument: {
-                    Group: Number,
-                    Data: 678
-                  }
-                }
-              ]
-            }
-          ]
+              }
+            ]
+          }
         }
       }
     ],
     Spec: {
       SchemaVersion: 2,
       SpecId: Guid_9,
-      Steps: [
-        {
-          Element: None
-        },
-        {}
-      ]
+      Query: {
+        Element: None
+      },
+      Verify: {}
     }
   }
 }

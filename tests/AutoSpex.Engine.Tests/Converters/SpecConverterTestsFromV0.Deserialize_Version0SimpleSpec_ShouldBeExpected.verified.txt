@@ -11,15 +11,17 @@
       }
     ]
   },
-  "Criteria": [
-    {
-      "Property": "Tags.Count",
-      "Negation": "Is",
-      "Operation": "Less Than Or Equal To",
-      "Argument": {
-        "Group": "Number",
-        "Data": "30"
+  "Verify": {
+    "Criteria": [
+      {
+        "Property": "Tags.Count",
+        "Negation": "Is",
+        "Operation": "Less Than Or Equal To",
+        "Argument": {
+          "Group": "Number",
+          "Data": "30"
+        }
       }
-    }
-  ]
+    ]
+  }
 }

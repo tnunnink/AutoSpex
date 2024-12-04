@@ -40,21 +40,21 @@ public class ExportNodeTests
         var collection = Node.NewCollection();
         collection.AddSpec("First", s =>
         {
-            s.Fetch(Element.Tag);
+            s.Get(Element.Tag);
             s.Where("Name", Operation.Like, "someName");
-            s.Confirm("Value", Operation.EqualTo, 123);
+            s.Validate("Value", Operation.EqualTo, 123);
         });
         collection.AddSpec("Second", s =>
         {
-            s.Fetch(Element.Tag);
+            s.Get(Element.Tag);
             s.Where("Name", Operation.Containing, "anotherName");
-            s.Confirm("Value", Operation.GreaterThan, 456);
+            s.Validate("Value", Operation.GreaterThan, 456);
         });
         collection.AddSpec("Third", s =>
         {
-            s.Fetch(Element.Tag);
+            s.Get(Element.Tag);
             s.Where("Name", Operation.EqualTo, "yetAnotherName");
-            s.Confirm("Value", Negation.Not, Operation.EqualTo, 678);
+            s.Validate("Value", Negation.Not, Operation.EqualTo, 678);
         });
         await mediator.Send(new CreateNodes(collection.DescendantsAndSelf()));
 
@@ -74,21 +74,21 @@ public class ExportNodeTests
         var spec = collection.AddSpec("Test");
         spec.Configure(s =>
         {
-            s.Fetch(Element.Tag);
+            s.Get(Element.Tag);
             s.Where("Name", Operation.Like, "someName");
-            s.Confirm("Value", Operation.EqualTo, 123);
+            s.Validate("Value", Operation.EqualTo, 123);
         });
         spec.Configure(s =>
         {
-            s.Fetch(Element.Tag);
+            s.Get(Element.Tag);
             s.Where("Name", Operation.Containing, "anotherName");
-            s.Confirm("Value", Operation.GreaterThan, 456);
+            s.Validate("Value", Operation.GreaterThan, 456);
         });
         spec.Configure(s =>
         {
-            s.Fetch(Element.Tag);
+            s.Get(Element.Tag);
             s.Where("Name", Operation.EqualTo, "yetAnotherName");
-            s.Confirm("Value", Negation.Not, Operation.EqualTo, 678);
+            s.Validate("Value", Negation.Not, Operation.EqualTo, 678);
         });
         await mediator.Send(new CreateNodes(collection.DescendantsAndSelf()));
 

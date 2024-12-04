@@ -16,22 +16,12 @@ namespace AutoSpex.Engine;
 public class Spec() : IEquatable<Spec>
 {
     /// <summary>
-    /// The internal collection intermediate of steps that define how to execute this spec.
+    /// Creates a new spec with the data from another spec.
     /// </summary>
-    private readonly List<Step> _steps = [new Query(Element.Default), new Verify()];
-
-    /// <summary>
-    /// The constructor used by internal methods and the JsonSerializer to instantiate instance from serialized configs.
-    /// </summary>
-    /// <param name="schemaVersion">The current schema version that defines the spec.</param>
-    /// <param name="specId">The unique spec id identifying this spec relative to others.</param>
-    /// <param name="steps">The collection of steps that define the spec.</param>
-    [JsonConstructor]
-    private Spec(int schemaVersion, Guid specId, IEnumerable<Step> steps) : this()
+    private Spec(Spec spec) : this()
     {
-        SchemaVersion = schemaVersion;
-        SpecId = specId;
-        _steps = steps.ToList();
+        Query = spec.Query;
+        Verify = spec.Verify;
     }
 
     /// <summary>
@@ -40,7 +30,7 @@ public class Spec() : IEquatable<Spec>
     /// <param name="element">The <see cref="Element"/> type the spec represents.</param>
     public Spec(Element element) : this()
     {
-        _steps = [new Query(element), new Verify()];
+        Query = new Query(element);
     }
 
     /// <summary>
@@ -56,16 +46,16 @@ public class Spec() : IEquatable<Spec>
     public Guid SpecId { get; private init; } = Guid.NewGuid();
 
     /// <summary>
-    /// The collection of <see cref="Step"/> that define the spec.
+    /// The <see cref="Engine.Query"/> that defines what data to retrieve from the source.
     /// </summary>
-    /// <remarks>
-    /// Each step is run in sequence to produce the result. All specs are by default initialized with a <see cref="Query"/>
-    /// and <see cref="Verify"/> step which can't be removed. All specs at least need to run these steps to get data
-    /// from and L5X and verify it based on some criteria. The user can also add intermediate <see cref="Filter"/> and
-    /// <see cref="Select"/> steps to find specific candidates and proeprties for verifcation.
-    /// </remarks>
     [JsonInclude]
-    public IEnumerable<Step> Steps => _steps;
+    public Query Query { get; private init; } = new(Element.Default);
+
+    /// <summary>
+    /// The collection of <see cref="Criterion"/> that define what this specification is verifying.
+    /// </summary>
+    [JsonInclude]
+    public Verify Verify { get; private init; } = new();
 
     /// <summary>
     /// Creates a new <see cref="Spec"/> with the provided configuration.
@@ -80,92 +70,15 @@ public class Spec() : IEquatable<Spec>
     }
 
     /// <summary>
-    /// Adds the provided <see cref="Step"/> to the list of <see cref="Steps"/> to process when this spec is run.
-    /// </summary>
-    /// <param name="step">The <see cref="Step"/> to add to this spec.</param>
-    /// <remarks>
-    /// Since the Query and Verify steps are preconfigured, the user is only allowed to add Filter and Select steps.
-    /// These steps will be inserted before the verify step.
-    /// </remarks>
-    public void AddStep(Step step)
-    {
-        if (step is Query or Verify)
-            throw new InvalidOperationException(
-                "Can only add Filter or Select steps to a spec. Query and Verify are predefined.");
-
-        //Always add the new filter or select step as the second to last step (before verify).
-        _steps.Insert(_steps.Count - 1, step);
-    }
-
-    /// <summary>
-    /// Removes the specified step from the list of steps in the spec.
-    /// </summary>
-    /// <param name="step">The step to be removed from the spec.</param>
-    /// <exception cref="InvalidOperationException">Thrown when trying to remove a required Query or Verify step.</exception>
-    public void RemoveStep(Step step)
-    {
-        if (step is Query or Verify)
-            throw new InvalidOperationException("Can not remove the required query or verify step from a spec.");
-
-        _steps.Remove(step);
-    }
-
-    /// <summary>
-    /// Get the input property for the specified step.
-    /// </summary>
-    /// <param name="step">The step to get the input for.</param>
-    /// <returns>The <see cref="Property"/> representing the input for the specified step.</returns>
-    public Property InputTo(Step step)
-    {
-        if (!_steps.Contains(step))
-            throw new ArgumentException("This spec does not contain the provided step.");
-
-        var previous = _steps[.._steps.IndexOf(step)];
-
-        return previous.Aggregate(Property.Default, (property, item) => item switch
-        {
-            Query query => query.Element.This,
-            Select select => select.Property,
-            _ => property
-        });
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="criterion"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentException"></exception>
-    public Property InputTo(Criterion criterion)
-    {
-        var step = _steps.SingleOrDefault(s => s.Contains(criterion));
-
-        if (step is null)
-            throw new ArgumentException("This spec does not contain the provided criterion.");
-
-        var previous = _steps[.._steps.IndexOf(step)];
-
-        return previous.Aggregate(Property.Default, (property, item) => item switch
-        {
-            Query query => query.Element.This,
-            Select select => select.Property,
-            _ => property
-        });
-    }
-
-    /// <summary>
     /// Configures the <see cref="Element"/> type to query when this specification is run.
     /// This is exlusivley a method to help easily configure a simple spec object for testing purposes.
     /// The application will primarily add and configure steps manually.
     /// </summary>
     /// <param name="element">The <see cref="Engine.Element"/> option to query.</param>
     /// <returns>The configured spec instance.</returns>
-    public Spec Fetch(Element element)
+    public Spec Get(Element element)
     {
-        if (_steps.FirstOrDefault() is not Query query)
-            throw new InvalidOperationException("Spec does not contain a query step.");
-
-        query.Element = element;
+        Query.Element = element;
         return this;
     }
 
@@ -181,11 +94,11 @@ public class Spec() : IEquatable<Spec>
     /// <returns>The current configured <see cref="Spec"/> instance.</returns>
     public Spec Where(string property, Operation operation, object? argument = default)
     {
-        if (_steps.All(s => s is not Filter))
-            AddStep(new Filter());
+        if (Query.Steps.All(s => s is not Filter))
+            Query.Steps.Add(new Filter());
 
-        var filter = (Filter)_steps.First(x => x is Filter);
-        filter.Add(new Criterion(property, operation, argument));
+        var filter = (Filter)Query.Steps.First(x => x is Filter);
+        filter.Criteria.Add(new Criterion(property, operation, argument));
         return this;
     }
 
@@ -194,15 +107,13 @@ public class Spec() : IEquatable<Spec>
     /// </summary>
     /// <param name="property"></param>
     /// <returns></returns>
-    public Spec Choose(string property)
+    public Spec Select(string property)
     {
-        if (_steps.All(s => s is not Select))
-            AddStep(new Select());
+        if (Query.Steps.All(s => s is not Engine.Select))
+            Query.Steps.Add(new Select());
 
-        var select = (Select)_steps.First(x => x is Select);
-        var input = InputTo(select);
-        select.Property = input.GetProperty(property);
-
+        var select = (Select)Query.Steps.First(x => x is Select);
+        select.Property = property;
         return this;
     }
 
@@ -216,12 +127,9 @@ public class Spec() : IEquatable<Spec>
     /// <param name="operation">The <see cref="Operation"/> the criterion will perform.</param>
     /// <param name="argument">The argument to supply to the criterion operation.</param>
     /// <returns>The current configured <see cref="Spec"/> instance.</returns>
-    public Spec Confirm(string property, Operation operation, object? argument = default)
+    public Spec Validate(string property, Operation operation, object? argument = default)
     {
-        if (_steps.LastOrDefault() is not Verify verify)
-            throw new InvalidOperationException("Spec does not contain a verify step.");
-
-        verify.Add(new Criterion(property, operation, argument));
+        Verify.Criteria.Add(new Criterion(property, operation, argument));
         return this;
     }
 
@@ -236,12 +144,9 @@ public class Spec() : IEquatable<Spec>
     /// <param name="operation">The <see cref="Operation"/> the criterion will perform.</param>
     /// <param name="argument">The argument to supply to the criterion operation.</param>
     /// <returns>The current configured <see cref="Spec"/> instance.</returns>
-    public Spec Confirm(string property, Negation negation, Operation operation, object? argument = default)
+    public Spec Validate(string property, Negation negation, Operation operation, object? argument = default)
     {
-        if (_steps.LastOrDefault() is not Verify verify)
-            throw new InvalidOperationException("Spec does not contain a verify step.");
-
-        verify.Add(new Criterion(property, operation, argument) { Negation = negation });
+        Verify.Criteria.Add(new Criterion(property, negation, operation, argument));
         return this;
     }
 
@@ -252,40 +157,40 @@ public class Spec() : IEquatable<Spec>
     public Spec Duplicate()
     {
         var data = JsonSerializer.Serialize(this);
-        var spec = JsonSerializer.Deserialize<Spec>(data);
-
-        if (spec is null)
-            throw new ArgumentException("Could not materialize new spec instance.");
-
-        return new Spec(spec.SchemaVersion, Guid.NewGuid(), spec.Steps);
+        var spec = JsonSerializer.Deserialize<Spec>(data)!;
+        return new Spec(spec);
     }
 
     /// <summary>
-    /// Creates a deep copy of this spec instance, returning the same configuration and same <see cref="SpecId"/>.
+    /// Checks if this spec contains the given criterion in any filter step or verification.
     /// </summary>
-    /// <returns>The new copied spec instance.</returns>
-    public Spec Copy()
-    {
-        var data = JsonSerializer.Serialize(this);
-        var spec = JsonSerializer.Deserialize<Spec>(data);
-        return spec ?? throw new ArgumentException("Could not materialize new spec instance.");
-    }
-
-    /// <summary>
-    /// Checks if the Spec contains the given Criterion in its Filters or Verifications.
-    /// </summary>
-    /// <param name="criterion">The Criterion to check for within the Spec.</param>
-    /// <returns>True if the Spec contains the Criterion, false otherwise.</returns>
+    /// <param name="criterion">The criterion to check for within the spec.</param>
+    /// <returns>True if the spec contains the criterion, false otherwise.</returns>
     public bool Contains(Criterion criterion)
     {
-        return _steps.Any(s => s.Contains(criterion));
+        if (Verify.Criteria.Any(c => c.Contains(criterion))) return true;
+        var filters = Query.Steps.Where(s => s is Filter).Cast<Filter>().SelectMany(f => f.Criteria);
+        return filters.Any(f => f.Contains(criterion));
     }
 
     /// <summary>
-    /// Returns a collection of all <see cref="Criterion"/> for any configured step that defined the spec.
+    /// Retrieves all <see cref="Criterion"/> found in the spec in both verifications and filters.
     /// </summary>
-    /// <returns>A collection of <see cref="Criterion"/> objects representing the criteria for the spec.</returns>
-    public IEnumerable<Criterion> Criteria() => _steps.SelectMany(s => s.Criteria);
+    /// <returns>A flat collection of Criterion objects found in the spec.</returns>
+    public IEnumerable<Criterion> GetAllCriteria()
+    {
+        var filters = Query.Steps.Where(s => s is Filter).Cast<Filter>().SelectMany(f => f.Criteria).ToList();
+        return filters.Concat(Verify.Criteria);
+    }
+
+    /// <summary>
+    /// Retrieves all <see cref="Reference"/> arguments from the criteria associated with the spec.
+    /// </summary>
+    /// <returns>A collection of Reference objects found in the criteria.</returns>
+    public IEnumerable<Reference> GetAllReferences()
+    {
+        return GetAllCriteria().Select(c => c.Argument).Where(a => a is Reference).Cast<Reference>();
+    }
 
     /// <summary>
     /// Runs the configured specification against the provided L5X content and returns a verification result.
@@ -311,17 +216,6 @@ public class Spec() : IEquatable<Spec>
     }
 
     /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="step"></param>
-    /// <param name="content"></param>
-    /// <returns></returns>
-    public IEnumerable<object> RunTo(Step step, L5X content)
-    {
-        return RunSpecTo(step, content);
-    }
-
-    /// <summary>
     /// Executes the configured specification against the provided source content.
     /// </summary>
     /// <param name="content">The L5X content to run this spec against.</param>
@@ -332,10 +226,9 @@ public class Spec() : IEquatable<Spec>
 
         try
         {
-            var data = new List<object> { content }.AsEnumerable();
-
             var stopwatch = Stopwatch.StartNew();
-            var evaluations = _steps.Aggregate(data, (input, step) => step.Process(input)).Cast<Evaluation>().ToList();
+            var candidates = Query.Execute(content).ToList();
+            var evaluations = Verify.Process(candidates).Cast<Evaluation>().ToList();
             stopwatch.Stop();
 
             return Verification.For(evaluations, stopwatch.ElapsedMilliseconds);
@@ -344,35 +237,6 @@ public class Spec() : IEquatable<Spec>
         {
             //If anything fails just return a single failed verification with the exception message.
             return Verification.For(Evaluation.Errored(e));
-        }
-    }
-
-    /// <summary>
-    /// Runs all steps of the spec excluding the last verify step. This essentially gets all the objects that will be
-    /// returned by the configured spec.
-    /// </summary>
-    /// <param name="content"></param>
-    /// <param name="target"></param>
-    /// <returns></returns>
-    private IEnumerable<object> RunSpecTo(Step target, L5X content)
-    {
-        ArgumentNullException.ThrowIfNull(content);
-        ArgumentNullException.ThrowIfNull(target);
-
-        if (!_steps.Contains(target))
-            throw new ArgumentException("This spec does not contain the provided step.");
-
-        var data = new List<object> { content }.AsEnumerable();
-        var index = _steps.IndexOf(target) + 1;
-        var steps = _steps[..index];
-
-        try
-        {
-            return steps.Aggregate(data, (input, step) => step.Process(input));
-        }
-        catch (Exception)
-        {
-            return [];
         }
     }
 

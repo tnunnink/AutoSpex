@@ -37,157 +37,6 @@ public class VerifyTests
     }
 
     [Test]
-    public void Add_Criterion_ShouldBeExpectedCount()
-    {
-        var step = new Verify();
-
-        step.Add(new Criterion("TagName", Operation.Containing, "this is a test"));
-
-        step.Criteria.Should().HaveCount(1);
-    }
-
-    [Test]
-    public void Remove_NoCriteria_ShouldBeEmpty()
-    {
-        var step = new Verify();
-
-        step.Remove(new Criterion());
-
-        step.Criteria.Should().BeEmpty();
-    }
-
-    [Test]
-    public void Remove_SingleCriteria_ShouldBeEmpty()
-    {
-        var step = new Verify();
-        var criterion = step.Add();
-
-        step.Remove(criterion);
-
-        step.Criteria.Should().BeEmpty();
-    }
-
-    [Test]
-    public void Remove_MultipleCriteria_ShouldHaveExpectedCount()
-    {
-        var step = new Verify();
-        var first = step.Add();
-        step.Add();
-        step.Add();
-
-        step.Remove(first);
-
-        step.Criteria.Should().HaveCount(2);
-    }
-
-    [Test]
-    public void Remove_ConfigredCriterion_ShouldBeEmpty()
-    {
-        var step = new Verify();
-        var criterion = new Criterion("TagName", Operation.Containing, "this is a test");
-        step.Add(criterion);
-
-        step.Remove(criterion);
-
-        step.Criteria.Should().BeEmpty();
-    }
-
-    [Test]
-    public void Remove_MultipleConfigredCriterion_ShouldHaveExpectedCount()
-    {
-        var step = new Verify();
-        var criterion = new Criterion("TagName", Operation.Containing, "this is a test");
-        step.Add(criterion);
-        step.Add(criterion);
-        step.Add(criterion);
-
-        step.Remove(criterion);
-
-        step.Criteria.Should().HaveCount(2);
-    }
-
-    [Test]
-    public void Move_InvalidIndex_ShouldThrowIndex()
-    {
-        var step = new Verify();
-
-        FluentActions.Invoking(() => step.Move(-1, 2)).Should().Throw<ArgumentOutOfRangeException>();
-    }
-
-    [Test]
-    public void Move_InvalidNewIndex_ShouldBeExpected()
-    {
-        var step = new Verify();
-        step.Add();
-        step.Add();
-        step.Add();
-
-        FluentActions.Invoking(() => step.Move(1, 5)).Should().Throw<ArgumentOutOfRangeException>();
-    }
-
-    [Test]
-    public void Move_ValidIndexLowerToHigher_ShouldBeExpected()
-    {
-        var step = new Verify();
-        var first = step.Add();
-        var second = step.Add();
-        var third = step.Add();
-
-        step.Move(1, 2);
-
-        step.Criteria.Should().ContainInOrder(first, third, second);
-    }
-
-    [Test]
-    public void Move_ValidIndexHigherToLower_ShouldBeExpected()
-    {
-        var step = new Verify();
-        var first = step.Add();
-        var second = step.Add();
-        var third = step.Add();
-
-        step.Move(2, 0);
-
-        step.Criteria.Should().ContainInOrder(third, first, second);
-    }
-
-    [Test]
-    public void Move_ValidIndexSameIndex_ShouldBeExpected()
-    {
-        var step = new Verify();
-        var first = step.Add();
-        var second = step.Add();
-        var third = step.Add();
-
-        step.Move(1, 1);
-
-        step.Criteria.Should().ContainInOrder(first, second, third);
-    }
-
-    [Test]
-    public void Clear_NoCriteria_ShouldBeEmpty()
-    {
-        var step = new Verify();
-
-        step.Clear();
-
-        step.Criteria.Should().BeEmpty();
-    }
-
-    [Test]
-    public void Clear_ManyCriteria_ShouldBeEmpty()
-    {
-        var step = new Verify();
-        step.Add();
-        step.Add();
-        step.Add();
-
-        step.Clear();
-
-        step.Criteria.Should().BeEmpty();
-    }
-
-    [Test]
     public void Process_ValidElements_ShouldBeExpected()
     {
         var tags = new List<Tag>
@@ -197,7 +46,7 @@ public class VerifyTests
             new("MyTestTag", "This is a value")
         };
         var step = new Verify();
-        step.Add(new Criterion("Name", Operation.Containing, "Test"));
+        step.Criteria.Add(new Criterion("Name", Operation.Containing, "Test"));
 
         var results = step.Process(tags).ToList();
 
@@ -219,8 +68,8 @@ public class VerifyTests
     public Task Serialize_ConfiguredTypeAndCriteria_ShouldBeVerified()
     {
         var step = new Verify();
-        step.Add(new Criterion("TagName", Operation.Containing, "this is a test"));
-        step.Add(new Criterion("Value", Operation.EqualTo, 123));
+        step.Criteria.Add(new Criterion("TagName", Operation.Containing, "this is a test"));
+        step.Criteria.Add(new Criterion("Value", Operation.EqualTo, 123));
 
         var json = JsonSerializer.Serialize(step);
 
@@ -231,8 +80,8 @@ public class VerifyTests
     public Task Serialize_ConfiguredTypeAndCriteriaAsStep_ShouldBeVerified()
     {
         var step = new Verify();
-        step.Add(new Criterion("TagName", Operation.Containing, "this is a test"));
-        step.Add(new Criterion("Value", Operation.EqualTo, 123));
+        step.Criteria.Add(new Criterion("TagName", Operation.Containing, "this is a test"));
+        step.Criteria.Add(new Criterion("Value", Operation.EqualTo, 123));
 
         var json = JsonSerializer.Serialize(step as Step);
 
@@ -254,23 +103,9 @@ public class VerifyTests
     public void Deserialize_ConfiguredTypeAndCriteria_ShouldBeExpected()
     {
         var expected = new Verify();
-        expected.Add(new Criterion("TagName", Operation.Containing, "this is a test"));
-        expected.Add(new Criterion("Value", Operation.EqualTo, 123));
+        expected.Criteria.Add(new Criterion("TagName", Operation.Containing, "this is a test"));
+        expected.Criteria.Add(new Criterion("Value", Operation.EqualTo, 123));
         var json = JsonSerializer.Serialize(expected);
-
-        var result = JsonSerializer.Deserialize<Verify>(json);
-
-        result.Should().BeEquivalentTo(expected);
-    }
-
-    [Test]
-    public void Deserialize_ConfiguredTypeAndCriteriaAsStep_ShouldBeExpected()
-    {
-        var expected = new Verify();
-        expected.Add(new Criterion("TagName", Operation.Containing, "this is a test"));
-        expected.Add(new Criterion("Value", Operation.EqualTo, 123));
-        var step = expected as Step;
-        var json = JsonSerializer.Serialize(step);
 
         var result = JsonSerializer.Deserialize<Verify>(json);
 

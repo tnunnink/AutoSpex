@@ -10,13 +10,13 @@
         <Border Width="600" Height="300">
             <ContentControl
                 Content="{x:Static components:TestData.SpecObserverManyCriterion}"
-                ContentTemplate="{DynamicResource VerifyStep}"
+                ContentTemplate="{DynamicResource VerifySection}"
                 Margin="20" VerticalAlignment="Top" />
         </Border>
     </Design.PreviewWith>
 
 
-    <DataTemplate x:Key="VerifyStep" x:DataType="observers:VerifyObserver">
+    <DataTemplate x:Key="VerifySection" x:DataType="observers:VerifyObserver">
 
         <controls:Section
             Header="Verify"
@@ -37,13 +37,6 @@
                         Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
                         ToolTip.Tip="Add Verification"
                         ToolTip.Placement="BottomEdgeAlignedRight" />
-
-                    <!--<Button
-                        Theme="{StaticResource IconButton}"
-                        properties:Icon.Theme="{StaticResource IconEllipsis}"
-                        ToolTip.Tip="Options"
-                        ToolTip.Placement="BottomEdgeAlignedRight">
-                    </Button>-->
 
                 </StackPanel>
             </controls:Section.Action>

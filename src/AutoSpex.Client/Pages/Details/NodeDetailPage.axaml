@@ -26,7 +26,7 @@
 
                 </StackPanel>
 
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
 
                     <Button Command="{Binding RunCommand}" Classes="run accent" />
 

@@ -52,150 +52,9 @@ public class FilterTests
     {
         var filter = new Filter();
 
-        filter.Add(new Criterion("TagName", Operation.Containing, "this is a test"));
+        filter.Criteria.Add(new Criterion("TagName", Operation.Containing, "this is a test"));
 
         filter.Criteria.Should().HaveCount(1);
-    }
-
-    [Test]
-    public void Remove_NoCriteria_ShouldBeEmpty()
-    {
-        var filter = new Filter();
-
-        filter.Remove(new Criterion());
-
-        filter.Criteria.Should().BeEmpty();
-    }
-
-    [Test]
-    public void Remove_SingleCriteria_ShouldBeEmpty()
-    {
-        var filter = new Filter();
-        var criterion = filter.Add();
-
-        filter.Remove(criterion);
-
-        filter.Criteria.Should().BeEmpty();
-    }
-
-    [Test]
-    public void Remove_MultipleCriteria_ShouldHaveExpectedCount()
-    {
-        var filter = new Filter();
-        var first = filter.Add();
-        filter.Add();
-        filter.Add();
-
-        filter.Remove(first);
-
-        filter.Criteria.Should().HaveCount(2);
-    }
-
-    [Test]
-    public void Remove_ConfigredCriterion_ShouldBeEmpty()
-    {
-        var filter = new Filter();
-        var criterion = new Criterion("TagName", Operation.Containing, "this is a test");
-        filter.Add(criterion);
-
-        filter.Remove(criterion);
-
-        filter.Criteria.Should().BeEmpty();
-    }
-
-    [Test]
-    public void Remove_MultipleConfigredCriterion_ShouldHaveExpectedCount()
-    {
-        var filter = new Filter();
-        var criterion = new Criterion("TagName", Operation.Containing, "this is a test");
-        filter.Add(criterion);
-        filter.Add(criterion);
-        filter.Add(criterion);
-
-        filter.Remove(criterion);
-
-        filter.Criteria.Should().HaveCount(2);
-    }
-
-    [Test]
-    public void Move_InvalidIndex_ShouldThrowIndex()
-    {
-        var filter = new Filter();
-
-        FluentActions.Invoking(() => filter.Move(-1, 2)).Should().Throw<ArgumentOutOfRangeException>();
-    }
-
-    [Test]
-    public void Move_InvalidNewIndex_ShouldBeExpected()
-    {
-        var filter = new Filter();
-        filter.Add();
-        filter.Add();
-        filter.Add();
-
-        FluentActions.Invoking(() => filter.Move(1, 5)).Should().Throw<ArgumentOutOfRangeException>();
-    }
-
-    [Test]
-    public void Move_ValidIndexLowerToHigher_ShouldBeExpected()
-    {
-        var filter = new Filter();
-        var first = filter.Add();
-        var second = filter.Add();
-        var third = filter.Add();
-
-        filter.Move(1, 2);
-
-        filter.Criteria.Should().ContainInOrder(first, third, second);
-    }
-
-    [Test]
-    public void Move_ValidIndexHigherToLower_ShouldBeExpected()
-    {
-        var filter = new Filter();
-        var first = filter.Add();
-        var second = filter.Add();
-        var third = filter.Add();
-
-        filter.Move(2, 0);
-
-        filter.Criteria.Should().ContainInOrder(third, first, second);
-    }
-
-    [Test]
-    public void Move_ValidIndexSameIndex_ShouldBeExpected()
-    {
-        var filter = new Filter();
-        var first = filter.Add();
-        var second = filter.Add();
-        var third = filter.Add();
-
-        filter.Move(1, 1);
-
-        filter.Criteria.Should().ContainInOrder(first, second, third);
-    }
-
-    [Test]
-    public void Clear_NoCriteria_ShouldBeEmpty()
-    {
-        var filter = new Filter();
-
-        filter.Clear();
-
-        filter.Criteria.Should().BeEmpty();
-    }
-
-    [Test]
-    public void Clear_ManyCriteria_ShouldBeEmpty()
-    {
-        var filter = new Filter();
-        filter.Add();
-        filter.Add();
-        filter.Add();
-
-        filter.Clear();
-
-        filter.Criteria.Should().BeEmpty();
     }
 
     [Test]
@@ -208,7 +67,7 @@ public class FilterTests
             new("MyTestTag", "This is a value")
         };
         var filter = new Filter();
-        filter.Add(new Criterion("Name", Operation.Containing, "Test"));
+        filter.Criteria.Add(new Criterion("Name", Operation.Containing, "Test"));
 
         var results = filter.Process(tags).ToList();
 
@@ -230,8 +89,8 @@ public class FilterTests
     public Task Serialize_ConfiguredTypeAndCriteria_ShouldBeVerified()
     {
         var filter = new Filter();
-        filter.Add(new Criterion("TagName", Operation.Containing, "this is a test"));
-        filter.Add(new Criterion("Value", Operation.EqualTo, 123));
+        filter.Criteria.Add(new Criterion("TagName", Operation.Containing, "this is a test"));
+        filter.Criteria.Add(new Criterion("Value", Operation.EqualTo, 123));
 
         var json = JsonSerializer.Serialize(filter);
 
@@ -242,8 +101,8 @@ public class FilterTests
     public Task Serialize_ConfiguredTypeAndCriteriaAsStep_ShouldBeVerified()
     {
         var filter = new Filter();
-        filter.Add(new Criterion("TagName", Operation.Containing, "this is a test"));
-        filter.Add(new Criterion("Value", Operation.EqualTo, 123));
+        filter.Criteria.Add(new Criterion("TagName", Operation.Containing, "this is a test"));
+        filter.Criteria.Add(new Criterion("Value", Operation.EqualTo, 123));
         var step = filter as Step;
 
         var json = JsonSerializer.Serialize(step);
@@ -278,8 +137,8 @@ public class FilterTests
     public void Deserialize_ConfiguredTypeAndCriteria_ShouldBeExpected()
     {
         var expected = new Filter();
-        expected.Add(new Criterion("TagName", Operation.Containing, "this is a test"));
-        expected.Add(new Criterion("Value", Operation.EqualTo, 123));
+        expected.Criteria.Add(new Criterion("TagName", Operation.Containing, "this is a test"));
+        expected.Criteria.Add(new Criterion("Value", Operation.EqualTo, 123));
         var json = JsonSerializer.Serialize(expected);
 
         var result = JsonSerializer.Deserialize<Filter>(json);
@@ -288,22 +147,11 @@ public class FilterTests
     }
 
     [Test]
-    public void Deserialize_AsStep_ShouldBeExpected()
-    {
-        var expected = (Step)new Filter();
-        var json = JsonSerializer.Serialize(expected);
-
-        var result = JsonSerializer.Deserialize<Step>(json);
-
-        result.Should().BeEquivalentTo(expected);
-    }
-
-    [Test]
     public void Deserialize_ConfiguredTypeAndCriteriaAsStep_ShouldBeExpected()
     {
         var expected = new Filter();
-        expected.Add(new Criterion("TagName", Operation.Containing, "this is a test"));
-        expected.Add(new Criterion("Value", Operation.EqualTo, 123));
+        expected.Criteria.Add(new Criterion("TagName", Operation.Containing, "this is a test"));
+        expected.Criteria.Add(new Criterion("Value", Operation.EqualTo, 123));
         var step = expected as Step;
         var json = JsonSerializer.Serialize(step);
 

@@ -6,18 +6,26 @@ namespace AutoSpex.Engine;
 
 /// <summary>
 /// A object that defines how to retrieve a set of data from a source file. The query will start with an known
-/// element type, and then send those data through the configured steps (filter/select) to return the resulting
-/// data.
+/// element type to query. It will then send each element through the configured steps (filter/select)
+/// to return the resulting data.
 /// </summary>
 public class Query()
 {
     /// <summary>
     /// Creates a new <see cref="Query"/> initialized with the provided element type.
     /// </summary>
-    /// <param name="element"></param>
     public Query(Element element) : this()
     {
         Element = element;
+    }
+
+    /// <summary>
+    /// Creates a new <see cref="Query"/> initialized with the provided element type and steps.
+    /// </summary>
+    public Query(Element element, IEnumerable<Step> steps) : this()
+    {
+        Element = element;
+        Steps = steps.ToList();
     }
 
     /// <summary>

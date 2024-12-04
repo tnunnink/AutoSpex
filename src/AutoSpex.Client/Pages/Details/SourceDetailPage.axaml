@@ -16,20 +16,25 @@
 
             <Grid ColumnDefinitions="*,Auto">
 
-                <StackPanel Grid.Column="0" Spacing="5" HorizontalAlignment="Left" Orientation="Horizontal">
-                    <PathIcon Theme="{Binding Icon, Converter={StaticResource KeyIconConverter}}" />
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5">
+
+                    <PathIcon
+                        Theme="{Binding Icon, Converter={StaticResource KeyIconConverter}}" />
+
                     <ContentControl
                         Content="{Binding Source}"
                         ContentTemplate="{StaticResource NameEntry}" />
+
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
-                    <Button
-                        Classes="run accent"
-                        CornerRadius="{a:ThemeResource ButtonCornerRadius}" />
+
+                    <Button  Classes="run accent" />
+
                     <Button
                         Command="{Binding SaveCommand}"
                         Classes="save" />
+
                     <Button Classes="more">
                         <Button.Flyout>
                             <MenuFlyout
@@ -38,13 +43,15 @@
                                 Placement="BottomEdgeAlignedRight" HorizontalOffset="8" VerticalOffset="5" />
                         </Button.Flyout>
                     </Button>
+
                 </StackPanel>
-                
+
             </Grid>
-            
+
         </Border>
 
         <DockPanel>
+            
             <TabStrip
                 DockPanel.Dock="Top"
                 ItemsSource="{Binding Tabs}"
@@ -76,5 +83,6 @@
             </ContentControl>
 
         </DockPanel>
+        
     </DockPanel>
 </UserControl>

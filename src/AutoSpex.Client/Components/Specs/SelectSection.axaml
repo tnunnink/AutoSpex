@@ -2,36 +2,45 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
-                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
-                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
                     xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
                     xmlns:core="clr-namespace:L5Sharp.Core;assembly=L5Sharp.Core">
 
     <Design.PreviewWith>
-        <StackPanel Spacing="10" Margin="10" Height="300" Width="600">
-            <StackPanel>
-                <StackPanel.Styles>
-                    <Style Selector="ContentControl.criterion">
-                        <Setter Property="ContentTemplate" Value="{DynamicResource CriterionEntry}" />
-                        <Setter Property="BorderBrush" Value="{a:ThemeResource Container1BorderBrush}" />
-                        <Setter Property="BorderThickness" Value="1 0 1 1" />
-                        <Setter Property="Padding" Value="5" />
-                    </Style>
-                </StackPanel.Styles>
-                <ContentControl Content="{x:Static components:TestData.BoolCriterion}" Classes="criterion" />
-                <ContentControl Content="{x:Static components:TestData.NumberCriterion}" Classes="criterion" />
-                <ContentControl Content="{x:Static components:TestData.TextCriterion}" Classes="criterion" />
-                <ContentControl Content="{x:Static components:TestData.EnumCriterion}" Classes="criterion" />
-                <ContentControl Content="{x:Static components:TestData.InnerCriterion}" Classes="criterion" />
-            </StackPanel>
-        </StackPanel>
+        <Border Width="600" Height="300">
+            <ContentControl
+                Content="{x:Static components:TestData.SelectObserver}"
+                ContentTemplate="{DynamicResource SelectSection}"
+                Margin="20" VerticalAlignment="Top" />
+        </Border>
     </Design.PreviewWith>
 
-    <DataTemplate x:Key="CriterionEntry" x:DataType="observers:CriterionObserver">
+    <DataTemplate x:Key="SelectSection" x:DataType="observers:SelectObserver">
 
-        <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Hidden">
+        <controls:Section
+            Header="Select"
+            Description="Enter a property to change the selected value.">
 
-            <StackPanel Orientation="Horizontal">
+            <controls:Section.Icon>
+                <PathIcon Theme="{StaticResource IconFilledHand}" />
+            </controls:Section.Icon>
+
+            <controls:Section.Action>
+
+                <Button
+                    Command="{Binding DeleteCommand}"
+                    Theme="{StaticResource IconButton}"
+                    properties:Icon.Theme="{StaticResource IconFilledTrash}"
+                    ToolTip.Tip="Remove Step"
+                    ToolTip.Placement="BottomEdgeAlignedRight" />
+
+            </controls:Section.Action>
+
+            <Border BorderThickness="1"
+                    BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                    CornerRadius="5">
 
                 <controls:Entry
                     Watermark="Enter property"
@@ -46,6 +55,7 @@
                             </StackPanel>
                         </DataTemplate>
                     </controls:Entry.ValueTemplate>
+
                     <controls:Entry.ItemTemplate>
                         <a:TypedDataTemplateSelector>
                             <DataTemplate x:DataType="engine:Property">
@@ -92,6 +102,7 @@
                             </DataTemplate>
                         </a:TypedDataTemplateSelector>
                     </controls:Entry.ItemTemplate>
+
                     <controls:Entry.IsEmpty>
                         <MultiBinding Converter="{x:Static BoolConverters.Or}">
                             <Binding Path="Property.Value"
@@ -101,53 +112,10 @@
                                      ConverterParameter="{x:Static engine:Property.Default}" />
                         </MultiBinding>
                     </controls:Entry.IsEmpty>
+
                 </controls:Entry>
-
-                <Button
-                    Command="{Binding ToggleNegationCommand}"
-                    Content="{Binding Negation}"
-                    IsVisible="{Binding Property.Value, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Property.Default}}"
-                    FontFamily="{a:ThemeResource CodeFontFamily}"
-                    FontSize="{a:ThemeResource DefaultFontSizeSmall}"
-                    Theme="{a:ControlTheme ButtonSubtle}"
-                    ToolTip.Tip="Negate" />
-
-                <controls:Entry
-                    Watermark="Select operation"
-                    Value="{Binding Operation}"
-                    Populate="{Binding Operations}"
-                    CommitCommand="{Binding UpdateOperationCommand}"
-                    IsVisible="{Binding Property.Value, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Property.Default}}">
-                    <controls:Entry.ItemTemplate>
-                        <DataTemplate x:DataType="engine:Operation">
-                            <Border Padding="{a:ThemeResource ListItemPadding}">
-                                <TextBlock
-                                    Text="{Binding Name}"
-                                    Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
-                                    FontFamily="{a:ThemeResource CodeFontFamily}" />
-                            </Border>
-                        </DataTemplate>
-                    </controls:Entry.ItemTemplate>
-                    <controls:Entry.IsEmpty>
-                        <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                            <Binding Path="Operation"
-                                     Converter="{x:Static ObjectConverters.IsNull}" />
-                            <Binding Path="Operation"
-                                     Converter="{StaticResource EqualToConverter}"
-                                     ConverterParameter="{x:Static engine:Operation.None}" />
-                        </MultiBinding>
-                    </controls:Entry.IsEmpty>
-                </controls:Entry>
-
-                <ContentControl
-                    Content="{Binding Argument}"
-                    ContentTemplate="{StaticResource ArgumentSelector}"
-                    IsVisible="{Binding AcceptsArgs}" />
-
-            </StackPanel>
-
-        </ScrollViewer>
+            </Border>
+        </controls:Section>
 
     </DataTemplate>
-
 </ResourceDictionary>

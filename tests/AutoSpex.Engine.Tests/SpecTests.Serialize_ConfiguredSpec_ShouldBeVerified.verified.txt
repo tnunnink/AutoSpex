@@ -21,12 +21,14 @@
       }
     ]
   },
-  "Criteria": [
-    {
-      "Property": "DataType",
-      "Negation": "Not",
-      "Operation": "Void",
-      "Argument": null
-    }
-  ]
+  "Verify": {
+    "Criteria": [
+      {
+        "Property": "DataType",
+        "Negation": "Not",
+        "Operation": "Void",
+        "Argument": null
+      }
+    ]
+  }
 }

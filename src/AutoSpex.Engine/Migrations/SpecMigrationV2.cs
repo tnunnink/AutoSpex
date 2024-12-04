@@ -25,7 +25,7 @@ public class SpecMigrationV2 : ISpecMigration
         writer.WriteString("SpecId", root.GetProperty("SpecId").GetString());
 
         WriterQuery(writer, root);
-        WriteVerifications(writer, root);
+        WriteVerify(writer, root);
 
         writer.WriteEndObject();
         writer.Flush();
@@ -64,10 +64,13 @@ public class SpecMigrationV2 : ISpecMigration
     /// <summary>
     /// Write the verification criteria. 
     /// </summary>
-    private static void WriteVerifications(Utf8JsonWriter writer, JsonElement root)
+    private static void WriteVerify(Utf8JsonWriter writer, JsonElement root)
     {
+        writer.WritePropertyName("Verify");
+        writer.WriteStartObject();
         writer.WritePropertyName("Criteria");
         WriteCriteria(writer, root.GetProperty("Verifications"));
+        writer.WriteEndObject();
     }
 
     /// <summary>
@@ -102,8 +105,8 @@ public class SpecMigrationV2 : ISpecMigration
                 continue;
             }
 
-            if (property.NameEquals("Argument") && 
-                property.Value.ValueKind != JsonValueKind.Null && 
+            if (property.NameEquals("Argument") &&
+                property.Value.ValueKind != JsonValueKind.Null &&
                 property.Value.GetProperty("Group").GetString() == "Criterion")
             {
                 var argument = property.Value;

@@ -22,7 +22,6 @@ public class Select() : Step
     [JsonInclude]
     public string Property { get; set; } = string.Empty;
 
-
     /// <inheritdoc />
     public override IEnumerable<object?> Process(IEnumerable<object?> input)
     {

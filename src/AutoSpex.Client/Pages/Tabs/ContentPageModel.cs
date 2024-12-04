@@ -18,8 +18,9 @@ namespace AutoSpex.Client.Pages;
 public partial class ContentPageModel(SourceObserver source) : PageViewModel("Content")
 {
     private static readonly HashSet<string> ScopeTypes = ScopeType.All().Select(x => x.Name).ToHashSet();
-
     public override string Route => $"{nameof(Source)}/{source.Id}/{Title}";
+
+    public QueryObserver Query { get; set; } = new(new Query(), source);
     public ObserverCollection<LogixElement, ElementObserver> Elements { get; } = [];
 
     [ObservableProperty] private Element _type = Element.Tag;

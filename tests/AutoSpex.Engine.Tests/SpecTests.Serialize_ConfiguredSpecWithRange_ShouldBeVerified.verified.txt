@@ -21,14 +21,15 @@
       }
     ]
   },
-  "Criteria": [
-    {
-      "Property": "Value",
-      "Negation": "Is",
-      "Operation": "Between",
-      "Argument": {
-        "Group": "Range",
-        "Data": {
+  "Verify": {
+    "Criteria": [
+      {
+        "Property": "Value",
+        "Negation": "Is",
+        "Operation": "Between",
+        "Argument": {
+          "Group": "Range",
+          "Data": {
   "Min": {
     "Group": "Number",
     "Data": "1"
@@ -38,7 +39,8 @@
     "Data": "10"
   }
 }
+        }
       }
-    }
-  ]
+    ]
+  }
 }

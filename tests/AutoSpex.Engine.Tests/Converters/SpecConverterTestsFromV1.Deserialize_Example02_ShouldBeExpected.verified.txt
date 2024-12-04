@@ -11,24 +11,26 @@
       }
     ]
   },
-  "Criteria": [
-    {
-      "Property": "Disabled",
-      "Negation": "Is",
-      "Operation": "Equal To",
-      "Argument": {
-        "Group": "Boolean",
-        "Data": false
+  "Verify": {
+    "Criteria": [
+      {
+        "Property": "Disabled",
+        "Negation": "Is",
+        "Operation": "Equal To",
+        "Argument": {
+          "Group": "Boolean",
+          "Data": false
+        }
+      },
+      {
+        "Property": "Children",
+        "Negation": "Is",
+        "Operation": "Any",
+        "Argument": {
+          "Group": "Criterion",
+          "Data": {"Property":"This","Negation":"Is","Operation":"Containing","Argument":{"Group":"Text","Data":"Main"}}
+        }
       }
-    },
-    {
-      "Property": "Children",
-      "Negation": "Is",
-      "Operation": "Any",
-      "Argument": {
-        "Group": "Criterion",
-        "Data": {"Property":"This","Negation":"Is","Operation":"Containing","Argument":{"Group":"Text","Data":"Main"}}
-      }
-    }
-  ]
+    ]
+  }
 }

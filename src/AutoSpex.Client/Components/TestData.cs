@@ -115,7 +115,7 @@ public static class TestData
         {
             c.Get(Element.Tag);
             c.Where("TagName", Operation.Containing, "TestTag");
-            c.Verify("Value", Operation.EqualTo, 123);
+            c.Validate("Value", Operation.EqualTo, 123);
         })
     );
 
@@ -126,9 +126,9 @@ public static class TestData
             c.Where("DataType", Operation.EqualTo, "MyType");
             c.Where("ExternalAccess", Operation.In,
                 new List<object> { ExternalAccess.ReadOnly, ExternalAccess.ReadWrite });
-            c.Verify("Value", Operation.GreaterThan, 123);
-            c.Verify("Description", Operation.EndingWith, "Some text value");
-            c.Verify("Scope.Program", Negation.Not, Operation.EqualTo, "MyContianer");
+            c.Validate("Value", Operation.GreaterThan, 123);
+            c.Validate("Description", Operation.EndingWith, "Some text value");
+            c.Validate("Scope.Program", Negation.Not, Operation.EqualTo, "MyContianer");
         })
     );
 

@@ -5,5 +5,7 @@
     "Element": "None",
     "Steps": []
   },
-  "Criteria": []
+  "Verify": {
+    "Criteria": []
+  }
 }

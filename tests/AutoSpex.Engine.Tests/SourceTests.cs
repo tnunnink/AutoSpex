@@ -90,9 +90,9 @@ public class SourceTests
         var source = new Source();
         var spec = Node.NewSpec("test", s =>
         {
-            s.Fetch(Element.Tag);
+            s.Get(Element.Tag);
             s.Where("TagName", Operation.Containing, "Something");
-            s.Confirm("Value", Operation.EqualTo, 12);
+            s.Validate("Value", Operation.EqualTo, 12);
         });
 
         source.AddOverride(spec);
@@ -114,9 +114,9 @@ public class SourceTests
         var source = new Source();
         var spec = Node.NewSpec("test", s =>
         {
-            s.Fetch(Element.Tag);
+            s.Get(Element.Tag);
             s.Where("TagName", Operation.Containing, "Something");
-            s.Confirm("Value", Operation.EqualTo, 12);
+            s.Validate("Value", Operation.EqualTo, 12);
         });
 
         source.RemoveOverride(spec);
@@ -130,9 +130,9 @@ public class SourceTests
         var source = new Source();
         var spec = Node.NewSpec("test", s =>
         {
-            s.Fetch(Element.Tag);
+            s.Get(Element.Tag);
             s.Where("TagName", Operation.Containing, "Something");
-            s.Confirm("Value", Operation.EqualTo, 12);
+            s.Validate("Value", Operation.EqualTo, 12);
         });
 
         source.AddOverride(spec);
@@ -148,15 +148,15 @@ public class SourceTests
         var source = new Source();
         source.AddOverride(Node.NewSpec("test", s =>
         {
-            s.Fetch(Element.Tag);
+            s.Get(Element.Tag);
             s.Where("TagName", Operation.Containing, "Something");
-            s.Confirm("Value", Operation.EqualTo, 12);
+            s.Validate("Value", Operation.EqualTo, 12);
         }));
         source.AddOverride(Node.NewSpec("test", s =>
         {
-            s.Fetch(Element.Tag);
+            s.Get(Element.Tag);
             s.Where("TagName", Operation.Containing, "Something");
-            s.Confirm("Value", Operation.EqualTo, 12);
+            s.Validate("Value", Operation.EqualTo, 12);
         }));
 
         source.ClearOverrides();

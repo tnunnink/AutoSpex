@@ -40,9 +40,9 @@ public class SaveNodeTests
 
         node.Configure(c =>
         {
-            c.Fetch(Element.Program);
+            c.Get(Element.Program);
             c.Where("Name", Operation.EqualTo, "SomeName");
-            c.Confirm("Disabled", Operation.EqualTo, false);
+            c.Validate("Disabled", Operation.EqualTo, false);
         });
 
 
@@ -61,9 +61,9 @@ public class SaveNodeTests
 
         node.Configure(c =>
         {
-            c.Fetch(Element.Program);
+            c.Get(Element.Program);
             c.Where("Name", Operation.EqualTo, "SomeName");
-            c.Confirm("Disabled", Operation.EqualTo, false);
+            c.Validate("Disabled", Operation.EqualTo, false);
         });
 
         var result = await mediator.Send(new SaveNode(node));

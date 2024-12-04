@@ -385,9 +385,9 @@ public class NodeTests
 
         node.Configure(c =>
         {
-            c.Fetch(Element.Program);
+            c.Get(Element.Program);
             c.Where("Name", Operation.Like, "%Test");
-            c.Confirm("Disabled", Operation.EqualTo, true);
+            c.Validate("Disabled", Operation.EqualTo, true);
         });
 
         node.Spec.Should().NotBeNull();
@@ -419,9 +419,9 @@ public class NodeTests
 
         var node = Node.NewSpec("Test", s =>
         {
-            s.Fetch(Element.Tag);
+            s.Get(Element.Tag);
             s.Where("TagName", Operation.EqualTo, "TestSimpleTag");
-            s.Confirm("DataType", Operation.EqualTo, "SimpleType");
+            s.Validate("DataType", Operation.EqualTo, "SimpleType");
         });
 
         var verification = await node.Run(content);
@@ -438,14 +438,14 @@ public class NodeTests
         var node = Node.NewSpec("Test");
         node.Configure(spec =>
         {
-            spec.Fetch(Element.Tag);
+            spec.Get(Element.Tag);
             spec.Where("TagName", Operation.EqualTo, "TestSimpleTag");
-            spec.Confirm("DataType", Operation.EqualTo, "SimpleType");
+            spec.Validate("DataType", Operation.EqualTo, "SimpleType");
         });
         node.Configure(c =>
         {
-            c.Fetch(Element.Program);
-            c.Confirm("Disabled", Operation.EqualTo, false);
+            c.Get(Element.Program);
+            c.Validate("Disabled", Operation.EqualTo, false);
         });
 
         var verification = await node.Run(content);

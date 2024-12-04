@@ -27,6 +27,15 @@ public class QueryTests
     }
 
     [Test]
+    public void New_ElementAndSteps_ShouldBeExpected()
+    {
+        var query = new Query(Element.Tag, [new Filter("Name", Operation.Containing, "Test")]);
+
+        query.Element.Should().Be(Element.Tag);
+        query.Steps.Should().ContainSingle().Which.Should().BeOfType<Filter>();
+    }
+
+    [Test]
     public void Element_SetValue_ShouldBeExpected()
     {
         var query = new Query();
@@ -105,6 +114,40 @@ public class QueryTests
         var result = query.Execute(content).ToList();
 
         result.Should().NotBeEmpty();
+    }
+
+    [Test]
+    public void Execute_TagWithManySteps_ShouldBeExpected()
+    {
+        var content = L5X.Load(Known.Test);
+        var query = new Query(Element.Tag);
+        query.Steps.Add(new Filter("Name", Operation.Containing, "Test"));
+        query.Steps.Add(new Select("Members"));
+        query.Steps.Add(new Select("TagName"));
+        query.Steps.Add(new Filter("Depth", Operation.GreaterThan, 2));
+
+        var result = query.Execute(content).ToList();
+
+        result.Should().NotBeEmpty();
+        result.Should().AllBeOfType<TagName>();
+        result.Cast<TagName>().Should().AllSatisfy(t => t.ToString().Should().Contain("Test"));
+    }
+
+    [Test]
+    public void ExecuteTo_TagWithManySteps_ShouldBeExpected()
+    {
+        var content = L5X.Load(Known.Test);
+        var query = new Query(Element.Tag);
+        query.Steps.Add(new Filter("Name", Operation.Containing, "Test"));
+        query.Steps.Add(new Select("Members"));
+        query.Steps.Add(new Select("TagName"));
+        query.Steps.Add(new Filter("Depth", Operation.GreaterThan, 2));
+
+        var result = query.ExecuteTo(content, 2).ToList();
+
+        result.Should().NotBeEmpty();
+        result.Should().AllBeOfType<Tag>();
+        result.Cast<Tag>().Should().AllSatisfy(t => t.TagName.ToString().Should().Contain("Test"));
     }
 
     [Test]
