@@ -77,6 +77,17 @@ public abstract class Element : SmartEnum<Element, string>
     #endregion
 
     /// <summary>
+    /// Retrieves an Element based on the provided Scope.
+    /// </summary>
+    /// <param name="scope">The Scope for which to retrieve the Element.</param>
+    /// <returns>The Element corresponding to the provided Scope. If the Scope represents an Instruction, returns the AddOnInstruction Element; otherwise, retrieves the Element using the Scope's type.</returns>
+    public static Element FromScope(Scope scope)
+    {
+        if (scope.Type == ScopeType.Instruction) return AddOnInstruction;
+        return FromName(scope.Type);
+    }
+    
+    /// <summary>
     /// Retrieves a property from the current object based on the specified path.
     /// </summary>
     /// <param name="path">The path to the desired property, separated by dots.</param>
