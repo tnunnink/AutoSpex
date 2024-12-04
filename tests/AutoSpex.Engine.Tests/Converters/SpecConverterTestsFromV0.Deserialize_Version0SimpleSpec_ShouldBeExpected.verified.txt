@@ -1,30 +1,25 @@
 ﻿{
-  "SchemaVersion": 3,
+  "SchemaVersion": 2,
   "SpecId": "90f4dbce-1033-42fd-8f45-3cdb0b03d5db",
-  "Steps": [
+  "Query": {
+    "Element": "Controller",
+    "Steps": [
+      {
+        "$type": "Filter",
+        "Match": "All",
+        "Criteria": []
+      }
+    ]
+  },
+  "Criteria": [
     {
-      "$type": "Query",
-      "Element": "Controller",
-      "Criteria": []
-    },
-    {
-      "$type": "Filter",
-      "Match": "All",
-      "Criteria": []
-    },
-    {
-      "$type": "Verify",
-      "Criteria": [
-        {
-          "Property": "Tags.Count",
-          "Negation": "Is",
-          "Operation": "Less Than Or Equal To",
-          "Argument": {
-            "Group": "Number",
-            "Data": "30"
-          }
-        }
-      ]
+      "Property": "Tags.Count",
+      "Negation": "Is",
+      "Operation": "Less Than Or Equal To",
+      "Argument": {
+        "Group": "Number",
+        "Data": "30"
+      }
     }
   ]
 }

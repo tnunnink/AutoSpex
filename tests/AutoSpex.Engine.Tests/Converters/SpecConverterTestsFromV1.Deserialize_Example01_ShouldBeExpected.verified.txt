@@ -1,48 +1,43 @@
 ﻿{
-  "SchemaVersion": 3,
+  "SchemaVersion": 2,
   "SpecId": "1dbb81da-42dd-40b9-a77b-75db7042ce77",
-  "Steps": [
+  "Query": {
+    "Element": "Module",
+    "Steps": [
+      {
+        "$type": "Filter",
+        "Match": "All",
+        "Criteria": []
+      }
+    ]
+  },
+  "Criteria": [
     {
-      "$type": "Query",
-      "Element": "Module",
-      "Criteria": []
+      "Property": "Inhibited",
+      "Negation": "Is",
+      "Operation": "Equal To",
+      "Argument": {
+        "Group": "Boolean",
+        "Data": false
+      }
     },
     {
-      "$type": "Filter",
-      "Match": "All",
-      "Criteria": []
+      "Property": "Vendor",
+      "Negation": "Is",
+      "Operation": "Greater Than Or Equal To",
+      "Argument": {
+        "Group": "Number",
+        "Data": "12"
+      }
     },
     {
-      "$type": "Verify",
-      "Criteria": [
-        {
-          "Property": "Inhibited",
-          "Negation": "Is",
-          "Operation": "Equal To",
-          "Argument": {
-            "Group": "Boolean",
-            "Data": false
-          }
-        },
-        {
-          "Property": "Vendor",
-          "Negation": "Is",
-          "Operation": "Greater Than Or Equal To",
-          "Argument": {
-            "Group": "Number",
-            "Data": "12"
-          }
-        },
-        {
-          "Property": "Revision",
-          "Negation": "Is",
-          "Operation": "Greater Than",
-          "Argument": {
-            "Group": "Number",
-            "Data": "5.1"
-          }
-        }
-      ]
+      "Property": "Revision",
+      "Negation": "Is",
+      "Operation": "Greater Than",
+      "Argument": {
+        "Group": "Number",
+        "Data": "5.1"
+      }
     }
   ]
 }

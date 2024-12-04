@@ -1,39 +1,34 @@
 ﻿{
-  "SchemaVersion": 3,
+  "SchemaVersion": 2,
   "SpecId": "4379b169-be95-48c3-a1ee-40e90d74540b",
-  "Steps": [
+  "Query": {
+    "Element": "Program",
+    "Steps": [
+      {
+        "$type": "Filter",
+        "Match": "All",
+        "Criteria": []
+      }
+    ]
+  },
+  "Criteria": [
     {
-      "$type": "Query",
-      "Element": "Program",
-      "Criteria": []
+      "Property": "Disabled",
+      "Negation": "Is",
+      "Operation": "Equal To",
+      "Argument": {
+        "Group": "Boolean",
+        "Data": false
+      }
     },
     {
-      "$type": "Filter",
-      "Match": "All",
-      "Criteria": []
-    },
-    {
-      "$type": "Verify",
-      "Criteria": [
-        {
-          "Property": "Disabled",
-          "Negation": "Is",
-          "Operation": "Equal To",
-          "Argument": {
-            "Group": "Boolean",
-            "Data": false
-          }
-        },
-        {
-          "Property": "Children",
-          "Negation": "Is",
-          "Operation": "Any",
-          "Argument": {
-            "Group": "Criterion",
-            "Data": {"Property":"This","Negation":"Is","Operation":"Containing","Argument":{"Group":"Text","Data":"Main"}}
-          }
-        }
-      ]
+      "Property": "Children",
+      "Negation": "Is",
+      "Operation": "Any",
+      "Argument": {
+        "Group": "Criterion",
+        "Data": {"Property":"This","Negation":"Is","Operation":"Containing","Argument":{"Group":"Text","Data":"Main"}}
+      }
     }
   ]
 }
