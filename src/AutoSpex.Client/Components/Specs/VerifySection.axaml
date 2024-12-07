@@ -7,9 +7,9 @@
                     xmlns:components="clr-namespace:AutoSpex.Client.Components">
 
     <Design.PreviewWith>
-        <Border Width="600" Height="300">
+        <Border Width="800">
             <ContentControl
-                Content="{x:Static components:TestData.SpecObserverManyCriterion}"
+                Content="{x:Static components:TestData.VerifyObserver}"
                 ContentTemplate="{DynamicResource VerifySection}"
                 Margin="20" VerticalAlignment="Top" />
         </Border>
@@ -28,17 +28,34 @@
             </controls:Section.Icon>
 
             <controls:Section.Action>
-                <StackPanel Spacing="5" Orientation="Horizontal" Margin="7 0">
+
+                <StackPanel Orientation="Horizontal">
 
                     <Button
                         Command="{Binding AddCriteriaCommand}"
-                        Theme="{StaticResource IconButton}"
+                        Theme="{StaticResource IconButtonPillLeft}"
                         properties:Icon.Theme="{StaticResource IconAdd}"
                         Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
-                        ToolTip.Tip="Add Verification"
+                        ToolTip.Tip="Add Criteria"
                         ToolTip.Placement="BottomEdgeAlignedRight" />
 
+                    <Button
+                        Command="{Binding PasteCriteriaCommand}"
+                        Theme="{StaticResource IconButtonPillCenter}"
+                        properties:Icon.Theme="{StaticResource IconFilledPaste}"
+                        ToolTip.Tip="Paste Criteria"
+                        ToolTip.Placement="BottomEdgeAlignedRight" />
+
+                    <Button
+                        Command="{Binding PasteCriteriaCommand}"
+                        Theme="{StaticResource IconButtonPillRight}"
+                        properties:Icon.Theme="{StaticResource IconEllipsis}"
+                        ToolTip.Tip="Paste Criteria"
+                        ToolTip.Placement="BottomEdgeAlignedRight">
+                    </Button>
+
                 </StackPanel>
+
             </controls:Section.Action>
 
             <ListBox

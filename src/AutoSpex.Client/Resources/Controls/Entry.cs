@@ -347,7 +347,7 @@ public class Entry : TemplatedControl
 
     /// <summary>
     /// Handles navigation of the suggested items list. When the user presses the tab key, we will commit the selected
-    /// value but not close the flyout. This allows effectively updates the text entry with the selected value and allows
+    /// value but not close the flyout. This effectively updates the text entry with the selected value and allows
     /// continuation of field entry, which we need to dot down path entry.
     /// </summary>
     private void HandleTabNavigation()

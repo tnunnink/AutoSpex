@@ -6,22 +6,22 @@ using MediatR;
 namespace AutoSpex.Persistence.References;
 
 [PublicAPI]
-public record ListSourceReferences(string Key) : IRequest<IEnumerable<Reference>>;
+public record ListReferences(string Key) : IRequest<IEnumerable<Reference>>;
 
 [UsedImplicitly]
-internal class ListSourceReferencesHandler(IConnectionManager manager)
-    : IRequestHandler<ListSourceReferences, IEnumerable<Reference>>
+internal class ListReferencesHandler(IConnectionManager manager)
+    : IRequestHandler<ListReferences, IEnumerable<Reference>>
 {
-    private const string GetSourceId = 
+    private const string GetSourceId =
         "SELECT SourceId FROM Source WHERE Name = @Name";
-    
-    private const string ListSourceNames = 
+
+    private const string ListSourceNames =
         "SELECT Name FROM Source WHERE Name LIKE '%' || @Key || '%'";
-    
-    private const string ListScopesWith = 
+
+    private const string ListScopesWith =
         "SELECT Scope FROM Reference WHERE Scope LIKE '%' || @Key || '%'";
-    
-    private const string ListScopesFor = 
+
+    private const string ListScopesFor =
         """
         SELECT S.Name || Scope 
         FROM Reference R 
@@ -29,7 +29,7 @@ internal class ListSourceReferencesHandler(IConnectionManager manager)
         WHERE R.SourceId = @SourceId AND Scope LIKE '%' || @Path || '%'
         """;
 
-    public async Task<IEnumerable<Reference>> Handle(ListSourceReferences request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Reference>> Handle(ListReferences request, CancellationToken cancellationToken)
     {
         var connection = await manager.Connect(cancellationToken);
 

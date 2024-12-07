@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using CommunityToolkit.Mvvm.Messaging;
@@ -27,8 +28,7 @@ public class SpecObserver : Observer<Spec>,
     /// The reference to the targeted source for the application. This is the source we need to find suggestions for
     /// nested criterion objects of this spec observer.
     /// </summary>
-    private SourceObserver? Source =>
-        GetObserver<SourceObserver>(s => s.Model is { IsTarget: true, Content: not null });
+    private SourceObserver? Source => GetObserver<SourceObserver>(s => s.Model is { IsTarget: true, Content: not null });
 
     /// <summary>
     /// Handles the request to get the spec observer that passes the provied predicate. This allows child criteria
@@ -63,23 +63,20 @@ public class SpecObserver : Observer<Spec>,
     /// </summary>
     public void Receive(PropertyInput.GetDataTo message)
     {
+        if (Source?.Model.Content is null) return;
         if (message.Observer is not CriterionObserver criterion) return;
         if (!Verify.Criteria.Has(criterion)) return;
 
-        if (Source?.Model.Content is null)
-        {
-            message.Reply([]);
-            return;
-        }
-
         try
         {
-            var data = Query.Model.Execute(Source.Model.Content);
-            message.Reply(data);
+            var data = Query.Model.Execute(Source.Model.Content).ToList();
+            data.ForEach(message.Reply);
         }
         catch (Exception)
         {
-            message.Reply([]);
+            // Ignored because this is just optional.
+            // It's only to suggest possible values based on a known source content and current property type.
+            // If getting object value fails then it could be because the user configured the criterion incorrectly.
         }
     }
 

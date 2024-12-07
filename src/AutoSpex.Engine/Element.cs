@@ -84,9 +84,9 @@ public abstract class Element : SmartEnum<Element, string>
     public static Element FromScope(Scope scope)
     {
         if (scope.Type == ScopeType.Instruction) return AddOnInstruction;
-        return FromName(scope.Type);
+        return TryFromName(scope.Type, out var match) ? match : Default;
     }
-    
+
     /// <summary>
     /// Retrieves a property from the current object based on the specified path.
     /// </summary>

@@ -22,7 +22,7 @@ public partial class CriterionObserver : Observer<Criterion>,
     public CriterionObserver(Criterion model) : base(model)
     {
         Property = new PropertyInput(this);
-        Argument = new ArgumentInput(() => Model.Argument, x => Model.Argument = x, () => Property.Type);
+        Argument = new ArgumentInput(() => Model.Argument, x => Model.Argument = x, () => Property.Value);
 
         Track(Property);
         Track(nameof(Negation));
@@ -219,8 +219,7 @@ public partial class CriterionObserver : Observer<Criterion>,
         if (!observer.Is(criterion)) return;
 
         //For nested criterion the input type is the inner type of this collection property.
-        var type = Property.Value.InnerType;
-        var input = Engine.Property.This(type);
+        var input = Engine.Property.This(Property.Value.InnerType);
         message.Reply(input);
     }
 

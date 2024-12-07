@@ -4,8 +4,7 @@
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
                     xmlns:components="clr-namespace:AutoSpex.Client.Components"
                     xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
-                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
-                    xmlns:core="clr-namespace:L5Sharp.Core;assembly=L5Sharp.Core">
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
 
     <Design.PreviewWith>
         <StackPanel Spacing="10" Margin="10" Height="300" Width="600">
@@ -31,77 +30,11 @@
 
         <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Hidden">
 
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" ClipToBounds="True">
 
-                <controls:Entry
-                    Watermark="Enter property"
-                    Value="{Binding Property.Value}"
-                    Populate="{Binding Property.Suggestions}"
-                    CommitCommand="{Binding Property.UpdateCommand}">
-                    <controls:Entry.ValueTemplate>
-                        <DataTemplate x:DataType="engine:Property">
-                            <StackPanel Orientation="Horizontal" Spacing="7">
-                                <PathIcon Theme="{Binding Group, Converter={StaticResource TypeGroupIconConverter}}" />
-                                <TextBlock Text="{Binding Path}" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </controls:Entry.ValueTemplate>
-                    <controls:Entry.ItemTemplate>
-                        <a:TypedDataTemplateSelector>
-                            <DataTemplate x:DataType="engine:Property">
-                                <Border Padding="{a:ThemeResource ListItemPadding}">
-                                    <Grid ColumnDefinitions="Auto,*,Auto">
-                                        <PathIcon
-                                            Grid.Column="0"
-                                            Theme="{Binding Group, Converter={StaticResource TypeGroupIconConverter}}"
-                                            Margin="0 0 10 0" />
-                                        <TextBlock
-                                            Grid.Column="1"
-                                            Text="{Binding Name}"
-                                            Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
-                                            FontFamily="{a:ThemeResource CodeFontFamily}" />
-                                        <TextBlock
-                                            Grid.Column="2"
-                                            Text="{Binding DisplayName}"
-                                            Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
-                                            FontFamily="{a:ThemeResource CodeFontFamily}"
-                                            Margin="20 0 10 0" FontSize="12" />
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                            <DataTemplate x:DataType="core:TagName">
-                                <Border Padding="{a:ThemeResource ListItemPadding}">
-                                    <Grid ColumnDefinitions="Auto,*,Auto">
-                                        <PathIcon
-                                            Grid.Column="0"
-                                            Theme="{StaticResource IconThemedTag}"
-                                            Margin="0 0 10 0" />
-                                        <TextBlock
-                                            Grid.Column="1"
-                                            Text="{Binding }"
-                                            Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
-                                            FontFamily="{a:ThemeResource CodeFontFamily}" />
-                                        <TextBlock
-                                            Grid.Column="2"
-                                            Text="TagName"
-                                            Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
-                                            FontFamily="{a:ThemeResource CodeFontFamily}"
-                                            Margin="20 0 10 0" FontSize="12" />
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </a:TypedDataTemplateSelector>
-                    </controls:Entry.ItemTemplate>
-                    <controls:Entry.IsEmpty>
-                        <MultiBinding Converter="{x:Static BoolConverters.Or}">
-                            <Binding Path="Property.Value"
-                                     Converter="{x:Static ObjectConverters.IsNull}" />
-                            <Binding Path="Property.Value"
-                                     Converter="{StaticResource EqualToConverter}"
-                                     ConverterParameter="{x:Static engine:Property.Default}" />
-                        </MultiBinding>
-                    </controls:Entry.IsEmpty>
-                </controls:Entry>
+                <ContentControl
+                    Content="{Binding Property}"
+                    ContentTemplate="{StaticResource PropertyEntry}" />
 
                 <Button
                     Command="{Binding ToggleNegationCommand}"

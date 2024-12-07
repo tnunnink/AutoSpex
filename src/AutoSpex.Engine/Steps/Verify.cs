@@ -5,6 +5,21 @@
 /// </summary>
 public class Verify : Step
 {
+    /// <summary>
+    /// Creates a new default <see cref="Verify"/> step with default values.
+    /// </summary>
+    public Verify()
+    {
+    }
+    
+    /// <summary>
+    /// Creates a new default <see cref="Filter"/> step initialized with a criterion defined by the provided parameters.
+    /// </summary>
+    public Verify(string property, Operation operation, object? argument = default)
+    {
+        Criteria.Add(new Criterion(property, operation, argument));
+    }
+    
     /// <inheritdoc />
     public override IEnumerable<object> Process(IEnumerable<object?> input)
     {

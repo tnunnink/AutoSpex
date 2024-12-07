@@ -46,12 +46,6 @@ public class Reference
         
         Key = key;
         Property = property;
-        
-        //If the key is a known special key then we will configure the resolver.
-        if (Resolvers.TryGetValue(key, out Func<object?, object?>? resolver))
-        {
-            _resolver = resolver;
-        }
     }
 
     /// <summary>
@@ -142,30 +136,66 @@ public class Reference
     }
 
     /// <summary>
-    /// Configures this reference to resolve to the provided value when the <see cref="Resolve"/> function is invoked.
-    /// </summary>
-    /// <param name="value">The object value to return when this reference is resolved.</param>
-    /// <exception cref="InvalidOperationException">Throw when this reference is a special preconfigured reference.</exception>
-    public void ResolveTo(object? value)
-    {
-        if (IsSpecial)
-            throw new InvalidOperationException("Special references are predefined and can not resolve to external data.");
-        
-        _resolver = _ => value;
-    }
-
-    /// <summary>
     /// Configures this reference to use the provided resolver function to obtain the value needed when
     /// the <see cref="Resolve"/> function is invoked.
     /// </summary>
     /// <param name="resolver">The function that resolves the value based on the configured reference.</param>
     /// <exception cref="InvalidOperationException">Throw when this reference is a special preconfigured reference.</exception>
-    public void ResolveTo(Func<object?, object?> resolver)
+    public void ResolveUsing(Func<object?, object?> resolver)
     {
         if (IsSpecial)
             throw new InvalidOperationException("Special references are predefined and can not resolve to external data.");
         
         _resolver = resolver;
+    }
+
+    /// <summary>
+    /// Extracts the value this reference refers to from the provided source and sets the internal resolver funtion
+    /// to return that value so that when <see cref="Resolve"/> is called the correct object is returned.
+    /// </summary>
+    /// <param name="content">The source <see cref="L5X"/> needed to resolve this reference.</param>
+    /// <exception cref="InvalidOperationException">This is not a <see cref="IsSource"/> reference.</exception>
+    public void ResolveUsing(L5X? content)
+    {
+        if (!IsSource)
+            throw new InvalidOperationException("Can only resolve source type references to an L5X.");
+
+        if (content is null)
+        {
+            _resolver = _ => throw new InvalidOperationException($"No source with name '{Scope.Controller}' was found.");
+            return;
+        }
+        
+        //strip off the source and use the local path. 
+        var path = Scope.IsRelative ? Scope.Path : Scope.Path[Scope.Path.IndexOf('/')..];
+        if (!content.TryGet(path, out var element))
+        {
+            _resolver = _ => throw new InvalidOperationException($"No element with scope '{Scope}' was found.");
+            return;
+        }
+
+        //Cloning will ensure the instance doesn't hold onto the root L5X which will comsume more memory.
+        //We just want the object/value defined by this reference.
+        //If we encounter an exception then the resolver will re-throw it.
+        
+        if (element is null || string.IsNullOrEmpty(Property))
+        {
+            var instance = element?.Clone();
+            _resolver = _ => instance;
+            return;
+        }
+        
+        try
+        {
+            var property = Engine.Property.This(element.GetType()).GetProperty(Property);
+            var value = property.GetValue(element);
+            value = value is LogixElement nested ? nested.Clone() : value;
+            _resolver = _ => value;
+        }
+        catch (Exception e)
+        {
+            _resolver = _ => throw e;
+        }
     }
 
     /// <summary>
@@ -176,17 +206,21 @@ public class Reference
     /// <exception cref="InvalidOperationException">Throw when the reference resolver has not been configured..</exception>
     public object? Resolve(object? candidate)
     {
+        //Special references will be handled separately since we want to then use the property extension.
+        if (IsSpecial && Resolvers.TryGetValue(Key, out var resolver))
+        {
+            var value = resolver.Invoke(candidate);
+            if (value is null || string.IsNullOrEmpty(Property)) return value;
+            var property = Engine.Property.This(value.GetType()).GetProperty(Property);
+            return property.GetValue(value);
+        }
+        
+        //Any other unknown reference is subject to being resolved externally.
         if (_resolver is null)
             throw new InvalidOperationException($"Could not resolve reference {Key} to a runtime value.");
         
-        //Special reference use provided candidate. All other (external) references need this reference to resolve.
-        var value = IsSpecial ? _resolver.Invoke(candidate): _resolver.Invoke(this);
-        
-        if (value is null || string.IsNullOrEmpty(Property)) return value;
-        
-        var origin = Engine.Property.This(value.GetType());
-        var property = origin.GetProperty(Property);
-        return property.GetValue(value);
+        //External references will get this reference instance instead of the candidate object.
+        return _resolver.Invoke(this);
     }
 
     /// <inheritdoc />

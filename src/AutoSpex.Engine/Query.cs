@@ -93,7 +93,7 @@ public class Query()
     {
         return Steps.Aggregate(Element.This, (property, step) => step switch
         {
-            Select select => property.GetProperty(select.Property),
+            Select select => Property.This(property.GetProperty(select.Property).InnerType),
             _ => property
         });
     }

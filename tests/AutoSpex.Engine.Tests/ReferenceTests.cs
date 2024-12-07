@@ -278,53 +278,55 @@ public class ReferenceTests
     }
 
     [Test]
-    public void Resolve_WithResolverSet_ShouldReturnExpectedValue()
+    public void ResolveUsing_SimpleResolver_ShouldReturnExpectedValue()
     {
         var reference = new Reference("@SomeValue");
-        reference.ResolveTo(_ => 123);
+        
+        reference.ResolveUsing(_ => 123);
 
         var result = reference.Resolve(null);
-
         result.Should().Be(123);
     }
 
     [Test]
-    public void ResolveTo_SourceReference_ShouldReturnExpectedValue()
+    public void ResolveUsing_SourceReference_ShouldReturnExpectedValue()
     {
         var source = L5X.Load(Known.Test);
         var reference = new Reference("/Tag/TestComplexTag");
-        reference.ResolveTo(x =>
-        {
-            if (x is not Reference r)
-                throw new InvalidOperationException("Expecting reference objec input");
-
-            return source.Get(r.Scope);
-        });
         
-        var result = reference.Resolve("this doesn't matter and I'm proving it");
+        reference.ResolveUsing(source);
         
+        var result = reference.Resolve(null);
         result.Should().NotBeNull();
         result.Should().BeOfType<Tag>();
         result.As<Tag>().Name.Should().Be("TestComplexTag");
     }
     
     [Test]
-    public void ResolveTo_SourceReferenceWithProperty_ShouldReturnExpectedValue()
+    public void ResolveUsing_SourceReferenceWithProperty_ShouldReturnExpectedValue()
     {
         var source = L5X.Load(Known.Test);
         var reference = new Reference("/Tag/TestComplexTag", "Description");
-        reference.ResolveTo(x =>
-        {
-            if (x is not Reference r)
-                throw new InvalidOperationException("Expecting reference objec input");
-
-            return source.Get(r.Scope);
-        });
         
-        var result = reference.Resolve("this doesn't matter and I'm proving it");
+        reference.ResolveUsing(source);
         
+        var result = reference.Resolve(null);
         result.Should().NotBeNull();
         result.Should().BeOfType<string>();
         result.Should().Be("Base");
+    }
+    
+    [Test]
+    public void ResolveUsing_AbsolueSourceReference_ShouldReturnExpectedValue()
+    {
+        var source = L5X.Load(Known.Test);
+        var reference = new Reference("MySourceName/Tag/TestComplexTag", "ExternalAccess");
+        
+        reference.ResolveUsing(source);
+        
+        var result = reference.Resolve(null);
+        result.Should().NotBeNull();
+        result.Should().BeOfType<ExternalAccess>();
+        result.Should().Be(ExternalAccess.None);
     }
 }

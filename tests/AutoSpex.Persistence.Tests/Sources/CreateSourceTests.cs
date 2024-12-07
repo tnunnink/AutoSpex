@@ -42,7 +42,7 @@ public class CreateSourceTests
         
         await mediator.Send(new CreateSource(source));
 
-        var references = await mediator.Send(new ListSourceReferences(source.Name));
+        var references = await mediator.Send(new ListReferences(source.Name));
         
         references.Should().NotBeEmpty();
     }

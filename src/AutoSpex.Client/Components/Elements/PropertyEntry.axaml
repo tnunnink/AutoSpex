@@ -1,0 +1,47 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:core="clr-namespace:L5Sharp.Core;assembly=L5Sharp.Core">
+
+
+    <DataTemplate x:Key="PropertyEntry" x:DataType="observers:PropertyInput">
+
+        <controls:Entry
+            Watermark="Enter property"
+            Value="{Binding Value}"
+            Populate="{Binding Suggestions}"
+            CommitCommand="{Binding UpdateCommand}"
+            IsEmpty="{Binding IsEmpty}">
+
+            <controls:Entry.ValueTemplate>
+                <DataTemplate x:DataType="engine:Property">
+                    <StackPanel Orientation="Horizontal" Spacing="7">
+                        <PathIcon Theme="{Binding Group, Converter={StaticResource TypeGroupIconConverter}}" />
+                        <TextBlock Text="{Binding Path}" />
+                    </StackPanel>
+                </DataTemplate>
+            </controls:Entry.ValueTemplate>
+
+            <controls:Entry.ItemTemplate>
+                <a:TypedDataTemplateSelector>
+                    <DataTemplate x:DataType="engine:Property">
+                        <ContentControl
+                            Content="{Binding }"
+                            ContentTemplate="{StaticResource PropertyListItem}" />
+                    </DataTemplate>
+                    <DataTemplate x:DataType="core:TagName">
+                        <ContentControl
+                            Content="{Binding }"
+                            ContentTemplate="{StaticResource TagNameListItem}" />
+                    </DataTemplate>
+                </a:TypedDataTemplateSelector>
+            </controls:Entry.ItemTemplate>
+
+        </controls:Entry>
+
+    </DataTemplate>
+
+</ResourceDictionary>

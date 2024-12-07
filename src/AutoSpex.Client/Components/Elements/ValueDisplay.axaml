@@ -7,7 +7,7 @@
 
     <Design.PreviewWith>
         <StackPanel>
-            <StackPanel Spacing="10" Margin="50">
+            <StackPanel Spacing="10" Margin="50" MaxWidth="400">
 
                 <StackPanel.Styles>
                     <Style Selector="Button">
@@ -40,8 +40,7 @@
             Text="{Binding Text}"
             properties:StyleClasses.Classes="{Binding Group}"
             MaxLines="1"
-            TextTrimming="CharacterEllipsis"
-            MaxWidth="300">
+            TextTrimming="CharacterEllipsis">
 
             <TextBlock.Styles>
                 <Style Selector="TextBlock.Default">

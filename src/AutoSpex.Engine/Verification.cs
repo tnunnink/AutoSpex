@@ -6,10 +6,10 @@ namespace AutoSpex.Engine;
 public class Verification
 {
     [JsonConstructor]
-    private Verification(ResultState result, IEnumerable<Evaluation> evaluations, long duration)
+    private Verification(ResultState result, IEnumerable<Evaluation>? evaluations = default, long duration = 0)
     {
         Result = result ?? throw new ArgumentNullException(nameof(result));
-        Evaluations = evaluations ?? throw new ArgumentNullException(nameof(evaluations));
+        Evaluations = evaluations ?? [];
         Duration = duration;
     }
 
@@ -31,7 +31,7 @@ public class Verification
     /// These represent the checks that were made and grouped together to form this single verification.
     /// Verification can also be combined to further flatten and group sets of evaluations.
     /// </summary>
-    [JsonInclude]
+    [JsonIgnore]
     public IEnumerable<Evaluation> Evaluations { get; }
 
     /// <summary>
@@ -41,12 +41,12 @@ public class Verification
     /// The None property is a predefined instance of the <see cref="Verification"/> class.
     /// It is useful when you need to initialize a verification object with no evaluations.
     /// </remarks>
-    public static Verification None => new(ResultState.None, [], 0);
+    public static Verification None => new(ResultState.None);
 
     /// <summary>
     /// Represents a verification object with no evaluations and a result state of Suppressed.
     /// </summary>
-    public static Verification Suppressed => new(ResultState.Suppressed, [], 0);
+    public static Verification Suppressed => new(ResultState.Suppressed);
 
     /// <summary>
     /// Creates a new <see cref="Verification"/> for a single evaluation, using the result as the total result for the
@@ -56,7 +56,7 @@ public class Verification
     /// <returns>A <see cref="Verification"/> with the result state of the provided evaluation.</returns>
     public static Verification For(Evaluation evaluation)
     {
-        return new Verification(evaluation.Result, [evaluation], 0);
+        return new Verification(evaluation.Result, [evaluation]);
     }
 
     /// <summary>

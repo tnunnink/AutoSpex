@@ -32,7 +32,7 @@ public partial class ArgumentInput : Observer, IRecipient<ArgumentInput.Suggesti
     /// <summary>
     /// A function that returns the expected input type for this argument value.
     /// </summary>
-    private readonly Func<Type> _type;
+    private readonly Func<Property> _input;
 
     /// <summary>
     /// Instantiates a new <see cref="ArgumentInput"/> observer with the provided functions for getting and setting the
@@ -40,15 +40,15 @@ public partial class ArgumentInput : Observer, IRecipient<ArgumentInput.Suggesti
     /// </summary>
     /// <param name="getter">The funtion that retrieves the underlying argument value.</param>
     /// <param name="setter">The function that sets teh underlying argument value. If not provided we default to nothing (read-only).</param>
-    /// <param name="type">The function that returns the expected <see cref="TypeGroup"/> the argument should belong to.
+    /// <param name="input">The function that returns the expected <see cref="TypeGroup"/> the argument should belong to.
     /// This is used to help parse text inputs to the correct strongly typed value.
     /// If not provided, text inputs will be parsed as the first parsable non-text type.</param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="getter"/> is null.</exception>
-    public ArgumentInput(Func<object?> getter, Action<object?>? setter = default, Func<Type>? type = default)
+    public ArgumentInput(Func<object?> getter, Action<object?>? setter = default, Func<Property>? input = default)
     {
         _getter = getter ?? throw new ArgumentNullException(nameof(getter), "Value observer required a getter.");
         _setter = setter ?? (_ => { });
-        _type = type ?? (() => typeof(object));
+        _input = input ?? (() => Property.Default);
 
         Value = GetObservable();
         Track(Value);
@@ -74,13 +74,6 @@ public partial class ArgumentInput : Observer, IRecipient<ArgumentInput.Suggesti
     /// Indicates that the value is "empty" or has no value (null or empty text/collection).
     /// </summary>
     public bool IsEmpty => Value is ValueObserver { IsEmpty: true } or ICollection { Count: 0 };
-
-    /// <summary>
-    /// The expected argument input property.
-    /// This is the type/property we should resolve inputs to and use to determine which types of values to suggest.
-    /// This will/should ultimately match that of the parent criterion instance. 
-    /// </summary>
-    public Property Input => Property.This(_type.Invoke());
 
     /// <summary>
     /// The function that can retrieve potential values that fit the requirements of the object this observer wraps.
@@ -145,13 +138,13 @@ public partial class ArgumentInput : Observer, IRecipient<ArgumentInput.Suggesti
 
     /// <summary>
     /// Respond to suggestion requests from this observer by returning any static option value based on the expected
-    /// argument input type (<see cref="_type"/>).
+    /// argument input type (<see cref="_input"/>).
     /// </summary>
     public void Receive(SuggestionRequest message)
     {
         if (!message.Argument.Is(this)) return;
 
-        var type = message.Argument._type.Invoke();
+        var type = message.Argument._input.Invoke().Type;
         var group = TypeGroup.FromType(type);
 
         if (group == TypeGroup.Enum && typeof(LogixEnum).IsAssignableFrom(type))
@@ -190,7 +183,7 @@ public partial class ArgumentInput : Observer, IRecipient<ArgumentInput.Suggesti
     /// </summary>
     private object? ParseInput(object? value)
     {
-        var group = TypeGroup.FromType(_type.Invoke());
+        var group = _input.Invoke().Group;
 
         return value switch
         {
@@ -237,56 +230,128 @@ public partial class ArgumentInput : Observer, IRecipient<ArgumentInput.Suggesti
     /// </summary>
     private async Task<IEnumerable<object>> GetSuggestions(string? filter, CancellationToken token)
     {
-        var suggestions = new List<ValueObserver>();
+        var suggestions = new List<object>();
 
         suggestions.AddRange(await GetValueSuggestions(filter, token));
         suggestions.AddRange(GetSpecialReferences(filter, token));
         suggestions.AddRange(await GetSourceReferences(filter, token));
 
-        return suggestions
-            .Where(x => x.Filter(filter))
-            .OrderByDescending(x => x.Text.StartsWith(filter ?? string.Empty))
-            .ThenBy(x => x.Text);
+        return suggestions;
     }
 
     /// <summary>
     /// Sends request to get in memory or static values to suggest based on the input filter and this argument observer input.
     /// </summary>
-    private async Task<IEnumerable<ValueObserver>> GetValueSuggestions(string? filter, CancellationToken token)
+    private async Task<IEnumerable<object>> GetValueSuggestions(string? filter, CancellationToken token)
     {
         if (filter is not null && filter.StartsWith(Reference.KeyStart)) return [];
+
         var message = Messenger.Send(new SuggestionRequest(this));
-        return await message.GetResponsesAsync(token);
+        var suggestions = await message.GetResponsesAsync(token);
+
+        if (string.IsNullOrEmpty(filter)) return suggestions;
+
+        return suggestions
+            .Where(x => x.Filter(filter))
+            .OrderByDescending(x => x.Text.StartsWith(filter))
+            .ThenBy(x => x.Text);
     }
 
     /// <summary>
     /// Returns the static special reference suggestion values if the provided input text contains the correct
     /// starting reference text.
     /// </summary>
-    private static IEnumerable<ValueObserver> GetSpecialReferences(string? filter, CancellationToken token)
+    private static IEnumerable<object> GetSpecialReferences(string? filter, CancellationToken token)
     {
         if (token.IsCancellationRequested) return [];
         if (string.IsNullOrEmpty(filter) || !filter.StartsWith(Reference.KeyStart)) return [];
         if (filter.Count(c => c == Reference.KeyStart) == filter.Count(c => c == Reference.KeyEnd)) return [];
-        return Reference.Special.Select(r => new ValueObserver(r));
+
+        return Reference.Special
+            .Select(r => new ValueObserver(r))
+            .Where(x => x.Filter(filter))
+            .OrderByDescending(x => x.Text.StartsWith(filter))
+            .ThenBy(x => x.Text);
     }
 
     /// <summary>
     /// Sends requests to get source scope references from the database based on the provided input text.
     /// This will return any source scope reference that matches/contains the input text.
     /// </summary>
-    private async Task<IEnumerable<ValueObserver>> GetSourceReferences(string? filter, CancellationToken token)
+    private async Task<IEnumerable<object>> GetSourceReferences(string? filter, CancellationToken token)
     {
         if (token.IsCancellationRequested) return [];
         if (string.IsNullOrEmpty(filter) || !filter.StartsWith(Reference.KeyStart)) return [];
-        if (filter.Count(c => c == Reference.KeyStart) == filter.Count(c => c == Reference.KeyEnd)) return [];
-        
+
+        if (filter.Count(c => c == Reference.KeyStart) == filter.Count(c => c == Reference.KeyEnd))
+            return GetPropertySuggestions(filter, token);
+
         var key = filter.TrimStart(Reference.KeyStart);
-        var references = await Mediator.Send(new ListSourceReferences(key), token);
-        return references.Select(r => new ValueObserver(r));
+
+        try
+        {
+            var references = await Mediator.Send(new ListReferences(key), token);
+
+            return references
+                .Select(r => new ValueObserver(r))
+                .Where(x => x.Filter(filter))
+                .OrderByDescending(x => x.Text.StartsWith(filter))
+                .ThenBy(x => x.Text);
+        }
+        catch (Exception)
+        {
+            // Ignored because this is just optional.
+            // It's only to suggest possible values based on a known source content.
+            return [];
+        }
     }
-    
-    
+
+    /// <summary>
+    /// Handles getting suggestable propertys for a reference input argument based on the current text input.
+    /// This will parse the input, determine the origin type from the reference, and then use that type to return
+    /// a list of possible properties that we know statically and filter them to that of the current text.
+    /// This will not handle nested tagnames like property input. We will get nested tag names from the reference scope/key.
+    /// </summary>
+    private IEnumerable<object> GetPropertySuggestions(string filter, CancellationToken token)
+    {
+        if (token.IsCancellationRequested) return [];
+        if (!filter.Contains("}.")) return [];
+
+        //Get/parse the base reference.
+        var close = filter.IndexOf(Reference.KeyEnd) + 1;
+        var key = filter[..close].TrimStart(Reference.KeyStart).TrimEnd(Reference.KeyEnd);
+        var reference = new Reference(key);
+
+        try
+        {
+            //Determine the origin type.
+            //If not detecable we should return the default property.
+            //$this is special case and points to the current argument input origin type.
+            var origin = reference.IsSource
+                ? Element.FromScope(reference.Scope).This
+                : reference is { IsSpecial: true, Key: "$this" }
+                    ? Property.This(_input().Origin)
+                    : Property.Default;
+
+            //Parse the property path and create suggestions baed on the origin type.
+            var remaining = filter[close..].TrimStart('.');
+            var index = remaining.LastIndexOf('.');
+            var path = index > 0 ? remaining[..index] : string.Empty;
+            var member = index > 0 ? remaining[(index + 1)..] : remaining;
+            var current = origin.GetProperty(path);
+
+            return current.Properties
+                .Where(p => p.Name.Satisfies(member))
+                .OrderByDescending(p => p.Name.StartsWith(member))
+                .ThenBy(p => p.Name);
+        }
+        catch (Exception)
+        {
+            // Ignored because this is just optional.
+            // It's only to suggest possible values based on a known source content.
+            return [];
+        }
+    }
 
     #endregion
 }

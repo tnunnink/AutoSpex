@@ -40,9 +40,10 @@ public partial class PropertyInput : Observer
     public string Path => Value.Path;
 
     /// <summary>
-    /// The actualy poperty return <see cref="System.Type"/>.
+    /// Gets a value indicating whether the PropertyInput is empty.
+    /// Returns true if the Value property is equal to the default Property instance.
     /// </summary>
-    public Type Type => Value.Type;
+    public bool IsEmpty => Value == Property.Default;
 
     /// <summary>
     /// A function that takes some input filter and returns a set of suggesstable property values that can match the
@@ -57,16 +58,16 @@ public partial class PropertyInput : Observer
     [RelayCommand]
     private void Update(object? value)
     {
-        var result = value switch
+        var path = value switch
         {
             Property property => property.Path,
-            string path => path,
+            string text => text,
             TagName tagName => tagName.ToString(),
             _ => string.Empty
         };
 
-        SetProperty(result);
-        OnPropertyChanged(nameof(Value));
+        SetProperty(path);
+        Refresh();
     }
 
     /// <summary>
@@ -84,8 +85,7 @@ public partial class PropertyInput : Observer
             _ => string.Empty
         };
 
-        if (string.IsNullOrEmpty(path)) return Property.Default;
-        return Origin.GetProperty(path);
+        return !string.IsNullOrEmpty(path) ? Origin.GetProperty(path) : Property.Default;
     }
 
     /// <summary>
@@ -172,7 +172,7 @@ public partial class PropertyInput : Observer
         var tagNames = new List<TagName>();
 
         //Sends request to essentially run the query or spec up to the point of this observer to get context data.
-        var data = await Messenger.Send(new GetDataTo(_observer)).Response;
+        var data = await Messenger.Send(new GetDataTo(_observer)).GetResponsesAsync(token);
 
         foreach (var item in data)
         {
@@ -210,7 +210,7 @@ public partial class PropertyInput : Observer
     /// A message that is sent from this wrapper observer to other observers to get a list of potential tag names that
     /// can be used for tag indexer property entries.
     /// </summary>
-    public class GetDataTo(Observer observer) : AsyncRequestMessage<IEnumerable<object?>>
+    public class GetDataTo(Observer observer) : AsyncCollectionRequestMessage<object?>
     {
         public Observer Observer { get; } = observer;
     }

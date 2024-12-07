@@ -35,36 +35,40 @@
                         <TextBlock Text="Match" Classes="faint" />
                         <Button
                             Command="{Binding ToggleMatchCommand}"
+                            VerticalAlignment="Center"
                             Content="{Binding Match}"
                             Theme="{a:ControlTheme ButtonSubtle}"
                             FontSize="{a:ThemeResource DefaultFontSizeSmall}"
                             FontWeight="{a:ThemeResource HeadingFontWeightSmall}"
-                            Classes="accent"
-                            Padding="4 0" />
+                            Classes="accent" 
+                            Padding="4"/>
                         <TextBlock Text="Criteria" Classes="faint" />
                     </StackPanel>
 
-                    <StackPanel Orientation="Horizontal" Spacing="5">
+                    <StackPanel Orientation="Horizontal">
 
                         <Button
                             Command="{Binding AddCriteriaCommand}"
-                            Theme="{StaticResource IconButton}"
+                            Theme="{StaticResource IconButtonPillLeft}"
                             properties:Icon.Theme="{StaticResource IconAdd}"
                             Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
+                            FontSize="12"
                             ToolTip.Tip="Add Criteria"
                             ToolTip.Placement="BottomEdgeAlignedRight" />
 
                         <Button
                             Command="{Binding PasteCriteriaCommand}"
-                            Theme="{StaticResource IconButton}"
+                            Theme="{StaticResource IconButtonPillCenter}"
                             properties:Icon.Theme="{StaticResource IconFilledPaste}"
+                            FontSize="12"
                             ToolTip.Tip="Paste Criteria"
                             ToolTip.Placement="BottomEdgeAlignedRight" />
 
                         <Button
                             Command="{Binding DeleteCommand}"
-                            Theme="{StaticResource IconButton}"
+                            Theme="{StaticResource IconButtonPillRight}"
                             properties:Icon.Theme="{StaticResource IconFilledTrash}"
+                            FontSize="12"
                             ToolTip.Tip="Remove Step"
                             ToolTip.Placement="BottomEdgeAlignedRight" />
 

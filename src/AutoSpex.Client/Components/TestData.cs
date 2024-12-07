@@ -47,9 +47,15 @@ public static class TestData
         yield return new DataType("MyComplexType") { Description = "this is a test element" };
     }
 
+    public static TagName TagNameValue = new("MyTag.Member[1].Value");
+
     #endregion
 
     #region Properties
+
+    public static Property RadixProperty = Element.Tag.This.GetProperty("Radix");
+    public static Property TagNameProperty = Element.Tag.This.GetProperty("TagName");
+    public static Property MembersProperty = Element.Tag.This.GetProperty("Members");
 
     public static PropertyObserver RadixPropertyObserver = new(
         Element.Tag.This.GetProperty("Radix"),
@@ -138,6 +144,7 @@ public static class TestData
 
     public static FilterObserver FilterObserver = new(new Filter("TagName", Operation.Containing, "TestTag"));
     public static SelectObserver SelectObserver = new(new Select("TagName.Operand"));
+    public static VerifyObserver VerifyObserver = new(new Verify("TagName", Operation.Containing, "TestTag"));
 
     public static QueryObserver QueryObserver = new(
         new Query(

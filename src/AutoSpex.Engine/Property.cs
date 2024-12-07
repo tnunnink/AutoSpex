@@ -124,11 +124,11 @@ public class Property : IEquatable<Property>
     public Type[] TypeGraph => GetTypeGraph().ToArray();
 
     /// <summary>
-    /// If this property type is a generic type with a single generic parameter argument, this will return the inner
-    /// generic parameter type. Otherwise, it will return the same type as <see cref="Type"/>. This is useful for collections
-    /// where we want to know what the types of the items in the collection.
+    /// Gets the inner generic parameter or array type if this property type represents a geneic collection or array.
+    /// Otherwise, it will return the same type as <see cref="Type"/>.
+    /// This is useful for collections where we want to know what the types of the items in the collection.
     /// </summary>
-    public Type InnerType => GetInnerType();
+    public Type InnerType => GetSelfOrInnerType();
 
     /// <summary>
     /// Represents a default or property that is just a reference to <see cref="object"/>. We can use this in place
@@ -450,7 +450,7 @@ public class Property : IEquatable<Property>
     /// Gets the inner type for the collection type and if not found returns a generic type of object.
     /// </summary>
     /// <returns></returns>
-    private Type GetInnerType()
+    private Type GetSelfOrInnerType()
     {
         if (Type.IsGenericType)
             return Type.GetGenericArguments()[0];

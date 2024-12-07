@@ -1,14 +1,4 @@
 ﻿{
   Result: Passed,
-  Duration: 0,
-  Evaluations: [
-    {
-      Result: Passed,
-      Candidate: /Tag/Test,
-      Criteria: Name Is Containing,
-      Expected: Test,
-      Actual: Test,
-      Error: null
-    }
-  ]
+  Duration: 0
 }

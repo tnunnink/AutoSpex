@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using AutoSpex.Persistence;
+using AutoSpex.Persistence.References;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -77,21 +78,22 @@ public partial class RunObserver : Observer<Run>, IRecipient<Observer.Get<RunObs
         MarkPending();
 
         //For visual effect only.
-        await Task.Delay(1000, token);
+        await Task.Delay(750, token);
 
         try
         {
-            var loadSource = await LoadSource(token);
-            if (Notifier.ShowIfFailed(loadSource)) return;
-            var source = loadSource.Value;
-
-            var nodes = (await LoadSpecs(token)).ToList();
-
+            var source = await LoadSource(token);
+            var nodes = await LoadSpecs(token);
+            await ResolveReferences(nodes);
             await Model.Execute(nodes, source, OnSpecRunning, OnSpecCompleted, token);
         }
         catch (OperationCanceledException)
         {
             Notifier.ShowWarning("Run canceled", $"{Name} was canceled prior to finishing execution.");
+        }
+        catch (InvalidOperationException e)
+        {
+            Notifier.ShowWarning("Run failed", $"{Name} failed because {e.Message}.");
         }
 
         Result = Model.Result;
@@ -143,22 +145,37 @@ public partial class RunObserver : Observer<Run>, IRecipient<Observer.Get<RunObs
     /// <summary>
     /// Loads the full source object configured for this run. This is the source that all specs will be run against.
     /// </summary>
-    private async Task<Result<Source>> LoadSource(CancellationToken token)
+    private async Task<Source> LoadSource(CancellationToken token)
     {
         var sourceId = Model.Source.SourceId;
         var result = await Mediator.Send(new LoadSource(sourceId), token);
-        return result;
+
+        if (result.IsFailed)
+        {
+            throw new InvalidOperationException(
+                $"Source {Model.Source.Name} could not be loaded. Ensure source exists in application.");
+        }
+
+        return result.Value;
     }
 
     /// <summary>
     /// Load all specs configured for this run. This is executed prior to each run to get the most updated
     /// configuration to execute.
     /// </summary>
-    private async Task<IEnumerable<Node>> LoadSpecs(CancellationToken token)
+    private async Task<List<Node>> LoadSpecs(CancellationToken token)
     {
         var ids = Model.Outcomes.Select(n => n.NodeId);
         var result = await Mediator.Send(new LoadNodes(ids), token);
-        return result.IsSuccess ? result.Value : [];
+        return result.IsSuccess ? result.Value.ToList() : [];
+    }
+
+    /// <summary>
+    /// Sends request to resolve all external source references declared in the provided spec configurations.
+    /// </summary>
+    private Task<Result> ResolveReferences(IEnumerable<Node> nodes)
+    {
+        return Mediator.Send(new ResolveReferences(nodes.Select(n => n.Spec)));
     }
 
     /// <summary>

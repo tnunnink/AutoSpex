@@ -41,6 +41,8 @@ public class VerificationTests
 
         var result = JsonSerializer.Deserialize<Verification>(json);
 
-        result.Should().BeEquivalentTo(verification);
+        result?.Result.Should().Be(ResultState.Passed);
+        result?.Duration.Should().Be(0);
+        result?.Evaluations.Should().BeEmpty();
     }
 }

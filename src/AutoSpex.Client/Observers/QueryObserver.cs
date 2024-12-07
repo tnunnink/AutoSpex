@@ -115,24 +115,20 @@ public partial class QueryObserver : Observer<Query>,
     /// </summary>
     public void Receive(PropertyInput.GetDataTo message)
     {
-        var step = DetermineStep(message.Observer);
-        if (step is null) return;
-
-        if (_source?.Model.Content is null)
-        {
-            message.Reply([]);
-            return;
-        }
+        if (_source?.Model.Content is null) return;
+        if (!TryGetStep(message.Observer, out var step)) return;
 
         try
         {
             var index = Steps.IndexOf(step);
-            var data = Model.ExecuteTo(_source.Model.Content, index);
-            message.Reply(data);
+            var data = Model.ExecuteTo(_source.Model.Content, index).ToList();
+            data.ForEach(message.Reply);
         }
         catch (Exception)
         {
-            message.Reply([]);
+            // Ignored because this is just optional.
+            // It's only to suggest possible values based on a known source content and current property type.
+            // If getting object value fails then it could be because the user configured the criterion incorrectly.
         }
     }
 
@@ -143,18 +139,18 @@ public partial class QueryObserver : Observer<Query>,
     /// </summary>
     public void Receive(ArgumentInput.SuggestionRequest message)
     {
-        if (!Contains(message.Argument)) return;
         if (_source?.Model.Content is null) return;
+        if (!Contains(message.Argument)) return;
+        if (!TryGetStep(message.Argument, out var step)) return;
 
         try
         {
-            //todo this isn't quite right since the argument could be several steps in and idk what the base type is.
-            //It might only make sense to execute the query to get context data and then select values based on argument (criterion) input.
-            //For that we need the step associated with this argument (similar to GetDataTo).
-            var property = message.Argument.Input;
-            var elements = _source.Model.Content.Query(Element.This.Origin);
-            var values = elements.Select(property.GetValue).Where(x => x is not null).Distinct();
-            var suggestions = values.Select(v => new ValueObserver(v)).ToList();
+            var index = Steps.IndexOf(step);
+            var data = Model.ExecuteTo(_source.Model.Content, index);
+            var criterion = step.Criteria.Single(c => c.Contains(message.Argument));
+            var property = criterion.Property.Value;
+            var values = data.Select(property.GetValue).Where(x => x is not null).Distinct();
+            var suggestions = values.Select(v => new ValueObserver(v)).Where(s => !s.IsEmpty).ToList();
             suggestions.ForEach(message.Reply);
         }
         catch (Exception)
@@ -166,7 +162,7 @@ public partial class QueryObserver : Observer<Query>,
     }
 
     /// <summary>
-    /// Gets the <see cref="Property"/> that is the input to the provided criterion or step based on where the object is
+    /// Gets the <see cref="Property"/> that is the input to the provided observer based on where the object is
     /// in the spec configuration.
     /// </summary>
     private Property DetermineInput(Observer observer)
@@ -175,30 +171,39 @@ public partial class QueryObserver : Observer<Query>,
 
         foreach (var step in Steps)
         {
-            if (observer.Is(step)) return property;
-            if (step is FilterObserver filter && filter.Criteria.Has(observer)) return property;
+            if (step.Is(observer) || step.Criteria.Has(observer)) break;
             if (step is not SelectObserver select) continue;
-            property = property.GetProperty(select.Property.Path);
+            //When we get the child property, we want to handle a couple cases.
+            //1. We want the "inner" type property (so collections/arrays is actually the type of the collection).
+            //2. We want this new property to be standalone (not like a nested property).
+            property = Property.This(property.GetProperty(select.Model.Property).InnerType);
         }
-
-        //We want to return a property that wraps the nested type and not one that has the nested path up to this point.
-        //This is so the UI shows the correct path/property when rendering.
-        return Property.This(property.Type);
+        
+        return property;
     }
 
     /// <summary>
     /// Gets the step that contains the provided observer instance. This instance should either be a select step itslef
     /// or a nested criterion observer that is contained by a filter step in the query.
     /// </summary>
-    private StepObserver? DetermineStep(Observer observer)
+    private bool TryGetStep(Observer observer, out StepObserver step)
     {
-        return observer switch
+        var target = observer switch
         {
-            StepObserver step when Steps.Has(step) => step,
-            CriterionObserver criterion when Contains(criterion) => Steps.Single(s =>
-                s is FilterObserver filter && filter.Criteria.Has(observer)),
-            _ => null
+            StepObserver self when Steps.Has(self) => self,
+            CriterionObserver criterion => Steps.SingleOrDefault(s => s.Criteria.Has(criterion)),
+            ArgumentInput argument => Steps.SingleOrDefault(s => s.Criteria.Any(c => c.Contains(argument))),
+            _ => default
         };
+
+        if (target is null)
+        {
+            step = null!;
+            return false;
+        }
+
+        step = target;
+        return true;
     }
 
     /// <summary>
@@ -206,23 +211,14 @@ public partial class QueryObserver : Observer<Query>,
     /// </summary>
     /// <param name="criterion">The criterion to check for.</param>
     /// <returns>True if the Steps collection contains the criterion, otherwise false.</returns>
-    private bool Contains(CriterionObserver criterion)
-    {
-        return Steps.Where(s => s is FilterObserver).Cast<FilterObserver>().Any(f => f.Criteria.Has(criterion));
-    }
+    private bool Contains(CriterionObserver criterion) => Steps.Any(s => s.Criteria.Has(criterion));
 
     /// <summary>
     /// Determines if the specified ArgumentInput is contained in any criteria of the Steps that are FilterObservers.
     /// </summary>
     /// <param name="argument">The ArgumentInput to check for containment.</param>
     /// <returns>True if the ArgumentInput is contained in any criteria, false otherwise.</returns>
-    private bool Contains(ArgumentInput argument)
-    {
-        return Steps
-            .Where(s => s is FilterObserver)
-            .Cast<FilterObserver>()
-            .Any(f => f.Criteria.Any(c => c.Contains(argument)));
-    }
+    private bool Contains(ArgumentInput argument) => Steps.Any(s => s.Criteria.Any(c => c.Contains(argument)));
 
     /// <summary>
     /// Instantiates a StepObserver based on the type of Step provided.

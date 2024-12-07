@@ -116,14 +116,17 @@
         <entry key="AutoSpex.Client/Components/Elements/LogixItemTemplates.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Components/Elements/LogixPopupTemplates.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Components/Elements/LogixTemplates.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
+        <entry key="AutoSpex.Client/Components/Elements/PropertyEntry.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Components/Elements/PropertyGrid.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Components/Elements/PropertyItem.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Components/Elements/PropertyTemplates.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Components/Elements/PropertyTree.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Components/Elements/PropertyValueTable.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Components/Elements/QuerySelector.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
+        <entry key="AutoSpex.Client/Components/Elements/TagNameListItem.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Components/Elements/Test.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Components/Elements/TypeGroupTemplates.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
+        <entry key="AutoSpex.Client/Components/Elements/ValueDisplay.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Components/Elements/ValueTemplates.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Components/Entries/All.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Components/Entries/ArgumentEntry.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
@@ -146,6 +149,7 @@
         <entry key="AutoSpex.Client/Components/General/ElementLabel.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Components/General/NameEntry.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Components/General/ObserverLink.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
+        <entry key="AutoSpex.Client/Components/General/PropertyListItem.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Components/General/ValueDisplay.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Components/General/ValueListItem.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
         <entry key="AutoSpex.Client/Components/HomeMenu.axaml" value="AutoSpex.Client/AutoSpex.Client.csproj" />
