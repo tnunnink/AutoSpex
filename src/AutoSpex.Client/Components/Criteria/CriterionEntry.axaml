@@ -12,9 +12,6 @@
                 <StackPanel.Styles>
                     <Style Selector="ContentControl.criterion">
                         <Setter Property="ContentTemplate" Value="{DynamicResource CriterionEntry}" />
-                        <Setter Property="BorderBrush" Value="{a:ThemeResource Container1BorderBrush}" />
-                        <Setter Property="BorderThickness" Value="1 0 1 1" />
-                        <Setter Property="Padding" Value="5" />
                     </Style>
                 </StackPanel.Styles>
                 <ContentControl Content="{x:Static components:TestData.BoolCriterion}" Classes="criterion" />
@@ -30,7 +27,24 @@
 
         <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Hidden">
 
-            <StackPanel Orientation="Horizontal" ClipToBounds="True">
+            <StackPanel Orientation="Horizontal">
+
+                <StackPanel.Styles>
+                    <Style Selector="controls|Entry">
+                        <Setter Property="ButtonTheme" Value="{a:ControlTheme ButtonSoft}" />
+                        <Setter Property="Background" Value="{a:ThemeResource Container2BackgroundBrush}" />
+                        <Setter Property="CornerRadius" Value="0" />
+                    </Style>
+                    <Style Selector="Button">
+                        <Setter Property="Theme" Value="{a:ControlTheme ButtonSoft}" />
+                        <Setter Property="Background" Value="{a:ThemeResource Container2BackgroundBrush}" />
+                        <Setter Property="BorderBrush" Value="{a:ThemeResource Container1BorderBrush}" />
+                        <Setter Property="BorderThickness" Value="0 0 1 0" />
+                        <Setter Property="FontFamily" Value="{a:ThemeResource CodeFontFamily}" />
+                        <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeSmall}" />
+                        <Setter Property="CornerRadius" Value="0" />
+                    </Style>
+                </StackPanel.Styles>
 
                 <ContentControl
                     Content="{Binding Property}"
@@ -40,9 +54,6 @@
                     Command="{Binding ToggleNegationCommand}"
                     Content="{Binding Negation}"
                     IsVisible="{Binding Property.Value, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Property.Default}}"
-                    FontFamily="{a:ThemeResource CodeFontFamily}"
-                    FontSize="{a:ThemeResource DefaultFontSizeSmall}"
-                    Theme="{a:ControlTheme ButtonSubtle}"
                     ToolTip.Tip="Negate" />
 
                 <controls:Entry

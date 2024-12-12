@@ -20,12 +20,6 @@ internal class CreateSourceHandler(IConnectionManager manager) : IRequestHandler
         VALUES (@SourceId, @Name, @IsTarget, @TargetName, @TargetType, @ExportedOn, @ExportedBy, @Description, @Content)
         """;
 
-    private const string InsertReference =
-        """
-        INSERT INTO Reference (ReferenceId, SourceId, Element, Scope) 
-        VALUES (@ReferenceId, @SourceId, @Element, @Scope)
-        """;
-
     public async Task<Result> Handle(CreateSource request, CancellationToken cancellationToken)
     {
         using var connection = await manager.Connect(cancellationToken);
@@ -37,19 +31,6 @@ internal class CreateSourceHandler(IConnectionManager manager) : IRequestHandler
             request.Source.IsTarget = true;
 
         await connection.ExecuteAsync(InsertSource, request.Source, transaction);
-
-        var scopes = request.Source.Content?.Scopes().Select(s => s.Path[s.Path.IndexOf('/')..]).ToList() ?? [];
-
-        await connection.ExecuteAsync(InsertReference,
-            scopes.Select(s => new
-            {
-                ReferenceId = Guid.NewGuid(),
-                request.Source.SourceId,
-                Element = Element.FromScope(s),
-                Scope = s
-            }),
-            transaction
-        );
 
         transaction.Commit();
         return Result.Ok();

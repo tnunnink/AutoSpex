@@ -15,7 +15,7 @@ public class NodeTests
         node.Parent.Should().BeNull();
         node.Type.Should().Be(NodeType.Collection);
         node.Name.Should().Be("New Collection");
-        node.Comment.Should().BeNull();
+        node.Description.Should().BeNull();
         node.Depth.Should().Be(0);
         node.Path.Should().Be(string.Empty);
         node.Nodes.Should().BeEmpty();
@@ -31,7 +31,7 @@ public class NodeTests
         node.Parent.Should().BeNull();
         node.Type.Should().Be(NodeType.Container);
         node.Name.Should().Be("New Container");
-        node.Comment.Should().BeNull();
+        node.Description.Should().BeNull();
         node.Depth.Should().Be(0);
         node.Path.Should().Be(string.Empty);
         node.Nodes.Should().BeEmpty();
@@ -50,9 +50,9 @@ public class NodeTests
     {
         var node = Node.NewCollection();
 
-        node.Comment = "This is the root collection";
+        node.Description = "This is the root collection";
 
-        node.Comment.Should().NotBeEmpty();
+        node.Description.Should().NotBeEmpty();
     }
 
     [Test]
@@ -65,7 +65,7 @@ public class NodeTests
         node.Parent.Should().BeNull();
         node.Type.Should().Be(NodeType.Spec);
         node.Name.Should().Be("MySpec");
-        node.Comment.Should().BeNull();
+        node.Description.Should().BeNull();
     }
 
     [Test]
@@ -428,30 +428,6 @@ public class NodeTests
 
         verification.Result.Should().Be(ResultState.Passed);
         verification.Evaluations.Should().NotBeEmpty();
-        verification.Duration.Should().BeGreaterThan(0);
-    }
-
-    [Test]
-    public async Task RunAll_MultipleConfiguredSpec_ShouldReturnExpectedResult()
-    {
-        var content = L5X.Load(Known.Test);
-        var node = Node.NewSpec("Test");
-        node.Configure(spec =>
-        {
-            spec.Get(Element.Tag);
-            spec.Where("TagName", Operation.EqualTo, "TestSimpleTag");
-            spec.Validate("DataType", Operation.EqualTo, "SimpleType");
-        });
-        node.Configure(c =>
-        {
-            c.Get(Element.Program);
-            c.Validate("Disabled", Operation.EqualTo, false);
-        });
-
-        var verification = await node.Run(content);
-
-        verification.Result.Should().Be(ResultState.Passed);
-        verification.Evaluations.Should().HaveCountGreaterThan(2);
         verification.Duration.Should().BeGreaterThan(0);
     }
 }

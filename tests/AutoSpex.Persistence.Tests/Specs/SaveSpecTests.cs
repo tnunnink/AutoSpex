@@ -1,37 +1,37 @@
 ﻿using Task = System.Threading.Tasks.Task;
 
-namespace AutoSpex.Persistence.Tests.Nodes;
+namespace AutoSpex.Persistence.Tests.Specs;
 
 [TestFixture]
-public class SaveNodeTests
+public class SaveSpecTests
 {
     [Test]
-    public async Task SaveNode_NoExistingNode_ShouldBeFailed()
+    public async Task SaveSpec_NoExistingNode_ShouldBeFailed()
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-        var node = Node.NewSpec();
+        var spec = new Spec();
 
-        var result = await mediator.Send(new SaveNode(node));
+        var result = await mediator.Send(new SaveSpec(spec));
 
         result.IsFailed.Should().BeTrue();
     }
 
     [Test]
-    public async Task SaveNode_SeededNodeNoChanges_ShouldBeSuccess()
+    public async Task SaveSpec_SeededNodeNoChanges_ShouldBeSuccess()
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
         var node = Node.NewSpec();
         await mediator.Send(new CreateNode(node));
 
-        var result = await mediator.Send(new SaveNode(node));
+        var result = await mediator.Send(new SaveSpec(node.Spec));
 
         result.IsSuccess.Should().BeTrue();
     }
 
     [Test]
-    public async Task SaveNode_ConfiguredSpec_ShouldBeSuccess()
+    public async Task SaveSpec_ConfiguredSpec_ShouldBeSuccess()
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
@@ -46,7 +46,7 @@ public class SaveNodeTests
         });
 
 
-        var result = await mediator.Send(new SaveNode(node));
+        var result = await mediator.Send(new SaveSpec(node.Spec));
 
         result.IsSuccess.Should().BeTrue();
     }
@@ -66,7 +66,7 @@ public class SaveNodeTests
             c.Validate("Disabled", Operation.EqualTo, false);
         });
 
-        var result = await mediator.Send(new SaveNode(node));
+        var result = await mediator.Send(new SaveSpec(node.Spec));
 
         result.IsSuccess.Should().BeTrue();
     }

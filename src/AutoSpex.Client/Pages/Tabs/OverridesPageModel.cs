@@ -40,7 +40,7 @@ public partial class OverridesPageModel : PageViewModel,
         var node = await Prompter.Show<NodeObserver?>(() => new SelectSpecPageModel());
         if (node is null) return;
 
-        var result = await Mediator.Send(new LoadNode(node.Id));
+        var result = await Mediator.Send(new GetNode(node.Id));
         if (Notifier.ShowIfFailed(result)) return;
 
         var observer = new OverrideObserver(result.Value);

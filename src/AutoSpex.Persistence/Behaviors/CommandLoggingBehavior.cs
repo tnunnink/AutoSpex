@@ -6,7 +6,8 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 //Not using this at this point. Could maybe add in the future but not sure if it's really worth it.
-public class CommandLoggingBehavior<TRequest, TResponse>(IConnectionManager manager) : IPipelineBehavior<TRequest, TResponse>
+public class CommandLoggingBehavior<TRequest, TResponse>(IConnectionManager manager)
+    : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IDbCommand<TResponse>, IDbLoggable
     where TResponse : IResultBase
 {

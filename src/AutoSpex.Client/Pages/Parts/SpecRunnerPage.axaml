@@ -15,8 +15,6 @@
 
         <Border
             DockPanel.Dock="Top"
-            BorderBrush="{a:ThemeResource Container1BorderBrush}"
-            BorderThickness="0 0 0 1"
             Padding="10"
             Height="50">
 
@@ -77,7 +75,7 @@
             HorizontalContentAlignment="Stretch"
             Background="Transparent"
             BorderBrush="{a:ThemeResource Container1BorderBrush}"
-            Padding="0 10" BorderThickness="0 0 0 1" CornerRadius="0">
+            Padding="0 10" BorderThickness="0 1 0 1" CornerRadius="0">
             <TextBox.InnerLeftContent>
                 <PathIcon
                     Theme="{StaticResource IconLineSearch}"

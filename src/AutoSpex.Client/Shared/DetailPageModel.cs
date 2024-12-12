@@ -40,7 +40,7 @@ public abstract partial class DetailPageModel(string? title) : PageViewModel(tit
     /// </remarks>
     public override async Task Load()
     {
-        await NavigateTabs();
+        await NavigateContent();
         Dispatcher.UIThread.Invoke(() => SaveCommand.NotifyCanExecuteChanged());
     }
 
@@ -48,26 +48,22 @@ public abstract partial class DetailPageModel(string? title) : PageViewModel(tit
     /// <remarks>
     /// When a node page is saved, it will forward the call to its child tabs to be saved.
     /// </remarks>
-    public override async Task<Result> Save()
+    public override async Task<Result> Save(Result? result = default)
     {
-        var result = Result.Ok();
+        result ??= Result.Ok();
+
+        if (Notifier.ShowIfFailed(result, $"Failed to save {Title}"))
+            return result;
 
         foreach (var tab in Tabs)
         {
             var saved = await tab.Save();
-            result = Result.Merge(result, saved);
+            if (Notifier.ShowIfFailed(result, $"Failed to save {Title}"))
+                return saved;
         }
 
-        if (result.IsFailed)
-        {
-            NotifySaveFailed(result);
-        }
-        else
-        {
-            NotifySaveSuccess();
-            AcceptChanges();
-        }
-
+        Notifier.ShowSuccess($"{Title} Saved", $"{Icon} was saved successfully @ {DateTime.Now.ToShortTimeString()}");
+        AcceptChanges();
         return result;
     }
 
@@ -165,27 +161,7 @@ public abstract partial class DetailPageModel(string? title) : PageViewModel(tit
     /// <summary>
     /// Handles requesting navigation of any child tabs for this node page.
     /// </summary>
-    protected virtual Task NavigateTabs() => Task.CompletedTask;
-
-    /// <summary>
-    /// Sends a notification to the UI that the node was saved successfully.
-    /// </summary>
-    protected void NotifySaveSuccess()
-    {
-        var title = $"{Icon} Saved";
-        var message = $"{Title} was saved successfully @ {DateTime.Now.ToShortTimeString()}";
-        Notifier.ShowSuccess(title, message);
-    }
-
-    /// <summary>
-    /// Sends a notification to the UI that the node failed to save.
-    /// </summary>
-    protected void NotifySaveFailed(IResultBase result)
-    {
-        const string title = "Saved Failed";
-        var message = $"{Title} failed to save @ {DateTime.Now.ToShortTimeString()} {result.Reasons}";
-        Notifier.ShowError(title, message);
-    }
+    protected virtual Task NavigateContent() => Task.CompletedTask;
 
     //We need to notify the SaveCommand when the IsChange property changes since that is what it is controlled on.
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)

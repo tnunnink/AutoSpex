@@ -173,12 +173,11 @@
     </ControlTheme>
 
     <!-- IconButtonPill -->
-    <ControlTheme x:Key="IconButtonPill" TargetType="Button" BasedOn="{StaticResource IconButton}">
+    <ControlTheme x:Key="IconButtonPill" TargetType="Button" BasedOn="{StaticResource IconButtonBase}">
         <Setter Property="BorderBrush" Value="{actipro:ThemeResource Container1BorderBrush}" />
         <Setter Property="CornerRadius" Value="{actipro:ThemeResource ButtonCornerRadius}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Height" Value="30" />
-        <Setter Property="Width" Value="30" />
+        <Setter Property="Padding" Value="{actipro:ThemeResource ButtonPadding}" />
 
         <Style Selector="^:pointerover /template/ Border#border">
             <Setter Property="Background" Value="{actipro:ThemeResource ButtonBackgroundBrushSubtlePointerOver}" />

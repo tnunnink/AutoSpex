@@ -3,6 +3,7 @@
              xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
              xmlns:shared="clr-namespace:AutoSpex.Client.Shared"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
              x:Class="AutoSpex.Client.Pages.SourceDetailPage"
              x:DataType="pages:SourceDetailPageModel">
 
@@ -12,29 +13,18 @@
 
     <DockPanel>
 
-        <Border DockPanel.Dock="Top" Padding="20 15">
-
+        <Border DockPanel.Dock="Top" Padding="20 15" Background="{a:ThemeResource Container2BackgroundBrush}">
+            
             <Grid ColumnDefinitions="*,Auto">
 
                 <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5">
-
-                    <PathIcon
-                        Theme="{Binding Icon, Converter={StaticResource KeyIconConverter}}" />
-
-                    <ContentControl
-                        Content="{Binding Source}"
-                        ContentTemplate="{StaticResource NameEntry}" />
-
+                    <PathIcon Theme="{Binding Icon, Converter={StaticResource KeyIconConverter}}" />
+                    <ContentControl Content="{Binding Source}" ContentTemplate="{StaticResource ObserverName}" />
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
-
-                    <Button  Classes="run accent" />
-
-                    <Button
-                        Command="{Binding SaveCommand}"
-                        Classes="save" />
-
+                    <Button Classes="run accent" />
+                    <Button Command="{Binding SaveCommand}" Classes="save" />
                     <Button Classes="more">
                         <Button.Flyout>
                             <MenuFlyout
@@ -43,21 +33,35 @@
                                 Placement="BottomEdgeAlignedRight" HorizontalOffset="8" VerticalOffset="5" />
                         </Button.Flyout>
                     </Button>
-
                 </StackPanel>
 
             </Grid>
 
         </Border>
+        
+        <controls:DrawerView
+            IsDrawerOpen="{Binding ShowDrawer, Mode=TwoWay}"
+            DrawerMinLength="49"
+            DrawerPlacement="Bottom"
+            HideSplitter="False">
 
-        <DockPanel>
-            
+            <controls:DrawerView.Drawer>
+                <!--<ContentControl Content="{Binding }" />-->
+            </controls:DrawerView.Drawer>
+
+            <!--<ContentControl Content="{Binding CriteriaPage}" />-->
+
+        </controls:DrawerView>
+
+        <!--<DockPanel>
+
             <TabStrip
                 DockPanel.Dock="Top"
                 ItemsSource="{Binding Tabs}"
                 SelectedItem="{Binding Tab}"
                 ItemContainerTheme="{StaticResource TabStripItemStandard}"
-                BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                Background="{a:ThemeResource Container2BackgroundBrush}"
+                BorderThickness="0"
                 Padding="20 0">
 
                 <TabStrip.ItemsPanel>
@@ -82,7 +86,7 @@
                 </ContentControl.ContentTemplate>
             </ContentControl>
 
-        </DockPanel>
-        
+        </DockPanel>-->
+
     </DockPanel>
 </UserControl>

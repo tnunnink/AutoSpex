@@ -146,6 +146,8 @@ public static class TestData
     public static SelectObserver SelectObserver = new(new Select("TagName.Operand"));
     public static VerifyObserver VerifyObserver = new(new Verify("TagName", Operation.Containing, "TestTag"));
 
+    public static QueryObserver DefaultQueryObserver = new(new Query());
+
     public static QueryObserver QueryObserver = new(
         new Query(
             Element.Tag,

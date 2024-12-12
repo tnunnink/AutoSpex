@@ -9,12 +9,12 @@
         <StackPanel Spacing="5" Margin="50">
             <ContentControl
                 Content="{x:Static components:TestData.SpecNode}"
-                ContentTemplate="{DynamicResource NameEntry}"
+                ContentTemplate="{DynamicResource ObserverName}"
                 Padding="10" />
         </StackPanel>
     </Design.PreviewWith>
 
-    <DataTemplate x:Key="NameEntry" x:DataType="shared:Observer">
+    <DataTemplate x:Key="ObserverName" x:DataType="shared:Observer">
         <controls:Entry
             x:Name="NameEntry"
             Value="{Binding}"

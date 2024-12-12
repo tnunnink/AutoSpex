@@ -56,11 +56,14 @@ public partial class QueryObserver : Observer<Query>,
 
     /// <summary>
     /// Command to add a <see cref="Filter"/> step to this query.
+    /// Each filter step will be automatically initialized with a default criterion instance.
     /// </summary>
     [RelayCommand]
     private void AddFitlerStep()
     {
-        Steps.Add(new FilterObserver(new Filter()));
+        var filter = new Filter();
+        filter.Add();
+        Steps.Add(new FilterObserver(filter));
     }
 
     /// <summary>
@@ -148,9 +151,8 @@ public partial class QueryObserver : Observer<Query>,
             var index = Steps.IndexOf(step);
             var data = Model.ExecuteTo(_source.Model.Content, index);
             var criterion = step.Criteria.Single(c => c.Contains(message.Argument));
-            var property = criterion.Property.Value;
-            var values = data.Select(property.GetValue).Where(x => x is not null).Distinct();
-            var suggestions = values.Select(v => new ValueObserver(v)).Where(s => !s.IsEmpty).ToList();
+            var values = criterion.ValuesFor(message.Argument, data);
+            var suggestions = values.Select(v => new ValueObserver(v)).Where(x => !x.IsEmpty).ToList();
             suggestions.ForEach(message.Reply);
         }
         catch (Exception)
@@ -178,7 +180,7 @@ public partial class QueryObserver : Observer<Query>,
             //2. We want this new property to be standalone (not like a nested property).
             property = Property.This(property.GetProperty(select.Model.Property).InnerType);
         }
-        
+
         return property;
     }
 

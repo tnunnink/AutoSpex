@@ -1,7 +1,7 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
-             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
              xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
              x:Class="AutoSpex.Client.Pages.NodeDetailPage"
              x:DataType="pages:NodeDetailPageModel">
@@ -11,7 +11,7 @@
 
     <DockPanel>
 
-        <Border DockPanel.Dock="Top" Padding="20 15">
+        <Border DockPanel.Dock="Top" Padding="20 15" Background="{a:ThemeResource Container2BackgroundBrush}">
 
             <Grid ColumnDefinitions="*,Auto">
 
@@ -49,25 +49,31 @@
             </Grid>
         </Border>
 
-        <controls:DrawerView
-            IsDrawerOpen="{Binding ShowRunner, Mode=TwoWay}"
-            DrawerPlacement="Bottom"
-            Classes.show="{Binding Node.Type, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:NodeType.Spec}}">
+        <DockPanel>
 
-            <ContentControl Content="{Binding ContentPage}" />
+            <TabStrip
+                DockPanel.Dock="Top"
+                ItemsSource="{Binding Tabs}"
+                SelectedItem="{Binding Tab}"
+                ItemContainerTheme="{StaticResource TabStripItemStandard}"
+                Background="{a:ThemeResource Container2BackgroundBrush}"
+                BorderThickness="0"
+                Padding="20 0">
+                <TabStrip.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" Spacing="15" />
+                    </ItemsPanelTemplate>
+                </TabStrip.ItemsPanel>
+                <TabStrip.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Title}" />
+                    </DataTemplate>
+                </TabStrip.ItemTemplate>
+            </TabStrip>
 
-            <controls:DrawerView.Drawer>
-                <ContentControl Content="{Binding RunnerPage}" />
-            </controls:DrawerView.Drawer>
+            <ContentControl Content="{Binding Tab}" />
 
-            <controls:DrawerView.Styles>
-                <Style Selector="controls|DrawerView.show">
-                    <Setter Property="DrawerMinLength" Value="50" />
-                    <Setter Property="HideSplitter" Value="False" />
-                </Style>
-            </controls:DrawerView.Styles>
-
-        </controls:DrawerView>
+        </DockPanel>
 
     </DockPanel>
 </UserControl>

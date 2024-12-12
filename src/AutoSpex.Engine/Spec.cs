@@ -46,6 +46,12 @@ public class Spec() : IEquatable<Spec>
     public Guid SpecId { get; private init; } = Guid.NewGuid();
 
     /// <summary>
+    /// The id of the <see cref="Node"/> this spec belongs to.
+    /// </summary>
+    [JsonIgnore]
+    public Guid NodeId { get; private init; } = Guid.Empty;
+
+    /// <summary>
     /// The <see cref="Engine.Query"/> that defines what data to retrieve from the source.
     /// </summary>
     [JsonInclude]

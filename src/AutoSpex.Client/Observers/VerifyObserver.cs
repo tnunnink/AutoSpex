@@ -2,4 +2,9 @@
 
 namespace AutoSpex.Client.Observers;
 
-public class VerifyObserver(Verify model) : StepObserver<Verify>(model);
+public class VerifyObserver : StepObserver<Verify>
+{
+    public VerifyObserver(Verify model) : base(model)
+    {
+    }
+}

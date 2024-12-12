@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoSpex.Client.Observers;
 using AutoSpex.Client.Pages;
 using AutoSpex.Client.Shared;
+using AutoSpex.Engine;
 using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
 
@@ -167,6 +168,7 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
     private void CleanUp()
     {
         var deactivated = _openPages.Where(p => !p.Value.IsActive).Select(p => p.Key).ToList();
+        
         foreach (var page in deactivated)
         {
             _openPages.Remove(page);
@@ -180,6 +182,7 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
     {
         return observer switch
         {
+            NodeObserver node when node.Type == NodeType.Spec => () => new SpecDetailPageModel(node),
             NodeObserver node => () => new NodeDetailPageModel(node),
             SourceObserver source => () => new SourceDetailPageModel(source),
             RunObserver run => () => new RunDetailPageModel(run),

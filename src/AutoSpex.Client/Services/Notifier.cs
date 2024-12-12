@@ -59,7 +59,7 @@ public sealed class Notifier(Shell shell)
     /// </remarks>
     public bool ShowIfFailed(IResultBase result, string? message = null, string? title = null)
     {
-        if (!result.IsFailed) return false;
+        if (result.IsSuccess) return false;
 
         title ??= "Request failed";
         message ??= result.Errors.FirstOrDefault()?.Message ?? DefaultError;
@@ -67,8 +67,6 @@ public sealed class Notifier(Shell shell)
 
         return true;
     }
-
-    public record NotificationMessage(INotification Notification);
 
     #region CustomMessages
 

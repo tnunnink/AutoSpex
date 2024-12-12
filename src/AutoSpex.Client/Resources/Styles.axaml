@@ -116,6 +116,39 @@
         <Setter Property="HorizontalScrollBarVisibility" Value="Auto" />
     </Style>
 
+    <Style Selector="Button.link-text">
+        <Setter Property="Theme" Value="{a:ControlTheme ButtonSubtle}" />
+        <Setter Property="Padding" Value="2" />
+        <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+
+        <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+        </Style>
+    </Style>
+    
+    <Style Selector="Button.invisible-link">
+        <Setter Property="Theme" Value="{a:ControlTheme ButtonInvisible}" />
+        <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+
+        <Style Selector="^ PathIcon">
+            <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+        </Style>
+
+        <Style Selector="^:pointerover">
+            <Setter
+                Property="Foreground"
+                Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+
+            <Style Selector="^ PathIcon">
+                <Setter
+                    Property="Foreground"
+                    Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+            </Style>
+        </Style>
+    </Style>
+
     <Style Selector="TextBlock.None">
         <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
     </Style>

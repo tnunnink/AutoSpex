@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoSpex.Client.Observers;
 using AutoSpex.Client.Shared;
-using AutoSpex.Engine;
 using AutoSpex.Persistence;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -13,19 +12,13 @@ using FluentResults;
 
 namespace AutoSpex.Client.Pages;
 
-public partial class NodeDetailPageModel : DetailPageModel
+public partial class SpecDetailPageModel(NodeObserver node) : DetailPageModel(node.Name)
 {
-    /// <inheritdoc/>
-    public NodeDetailPageModel(NodeObserver node) : base(node.Name)
-    {
-        Node = node;
-    }
-
-    public override string Route => $"{Node.Type}/{Node.Id}";
+    public override string Route => $"Spec/{Node.Id}";
     public override string Icon => Node.Type.Name;
-    public NodeObserver Node { get; }
+    public NodeObserver Node { get; } = node;
 
-    [ObservableProperty] private PageViewModel? _contentPage;
+    [ObservableProperty] private CriteriaPageModel? _criteriaPage;
 
     [ObservableProperty] private SpecRunnerPageModel? _runnerPage;
 
@@ -36,7 +29,6 @@ public partial class NodeDetailPageModel : DetailPageModel
     public override async Task Load()
     {
         await NavigateContent();
-        await LoadRunner();
 
         //New specs need to enable the save button by default.
         Dispatcher.UIThread.Invoke(() => SaveCommand.NotifyCanExecuteChanged());
@@ -52,15 +44,18 @@ public partial class NodeDetailPageModel : DetailPageModel
     /// </remarks>
     public override async Task<Result> Save(Result? result = default)
     {
-        var errors = Validate().ToList();
+        if (CriteriaPage is null) return Result.Fail($"Failed to load spec config for {Node.Name}");
 
+        var errors = Validate().ToList();
         if (errors.Count > 0)
         {
             Notifier.ShowError($"Failed to save {Title}", $"{errors.FirstOrDefault()?.ErrorMessage}");
             return Result.Fail("Failed to save page due to validation errors.");
         }
 
-        result = Node.IsVirtual ? await CreateNode() : Result.Ok();
+        var created = Node.IsVirtual ? await CreateNode() : Result.Ok();
+        var saved = await CriteriaPage.Save();
+        result = Result.Merge(created, saved);
         return await base.Save(result);
     }
 
@@ -68,42 +63,27 @@ public partial class NodeDetailPageModel : DetailPageModel
     /// <remarks>If this node is virtual then we need to enable the save command.</remarks>
     public override bool CanSave()
     {
-        return base.CanSave() || (Node.Type != NodeType.Collection && Node.ParentId == Guid.Empty);
+        return base.CanSave() || Node.ParentId == Guid.Empty;
     }
 
     /// <summary>
-    /// Runs this node against the target source. This involves loading the source and creating a new run
-    /// instance with this node (and all descendant spec nodes if a container). Then navigates the run detail page into view
-    /// which will execute the created run instance. 
+    /// Uses the current test runner page to execeute this specification.
+    /// Opens the runner drawer if not alread open.
     /// </summary>
     [RelayCommand]
     private async Task Run()
     {
-        var result = await Mediator.Send(new NewRun(Node.Id));
-        if (Notifier.ShowIfFailed(result)) return;
-
-        var run = new RunObserver(result.Value);
-        await Navigator.Navigate(() => new RunDetailPageModel(run));
+        if (RunnerPage is null) return;
+        await RunnerPage.Run(CriteriaPage?.Spec?.Model);
+        ShowRunner = true;
     }
 
     /// <inheritdoc />
     protected override async Task NavigateContent()
     {
-        if (Node.Type == NodeType.Spec)
-        {
-            await Navigator.Navigate(() => new CriteriaPageModel(Node));
-            return;
-        }
+        CriteriaPage = await Navigator.Navigate(() => new CriteriaPageModel(Node));
+        Track(CriteriaPage);
 
-        await Navigator.Navigate(() => new SpecsPageModel(Node));
-    }
-
-    /// <summary>
-    /// Loads the local runner page to allow the user to run and test a spec before saving/creating a run.
-    /// </summary>
-    private async Task LoadRunner()
-    {
-        if (Node.Type != NodeType.Spec) return;
         RunnerPage = await Navigator.Navigate(() => new SpecRunnerPageModel(Node));
     }
 

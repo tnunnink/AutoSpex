@@ -2,11 +2,12 @@
 using AutoSpex.Client.Observers;
 using AutoSpex.Client.Shared;
 using AutoSpex.Persistence;
+using CommunityToolkit.Mvvm.ComponentModel;
 using FluentResults;
 
 namespace AutoSpex.Client.Pages;
 
-public class SourceDetailPageModel : DetailPageModel
+public partial class SourceDetailPageModel : DetailPageModel
 {
     /// <inheritdoc/>
     public SourceDetailPageModel(SourceObserver source) : base(source.Name)
@@ -19,25 +20,16 @@ public class SourceDetailPageModel : DetailPageModel
     public override string Icon => nameof(Source);
     public SourceObserver Source { get; private init; }
 
-    public override async Task<Result> Save()
+    [ObservableProperty] private bool _showDrawer;
+
+    public override async Task<Result> Save(Result? result = default)
     {
-        var result = await Mediator.Send(new SaveSource(Source));
-
-        if (result.IsFailed)
-        {
-            NotifySaveFailed(result);
-        }
-        else
-        {
-            NotifySaveSuccess();
-            AcceptChanges();
-        }
-
-        return result;
+        result = await Mediator.Send(new SaveSource(Source));
+        return await base.Save(result);
     }
 
     /// <inheritdoc />
-    protected override async Task NavigateTabs()
+    protected override async Task NavigateContent()
     {
         await Navigator.Navigate(() => new ContentPageModel(Source));
         await Navigator.Navigate(() => new SuppressionsPageModel(Source));

@@ -21,12 +21,12 @@
         <Button Theme="{a:ControlTheme ButtonSubtle}">
 
             <TextBlock
-                Text="{Binding Text}"
+                Text="{Binding ValueText}"
                 Foreground="{DynamicResource TypeGroupForegroundBrushCollection}"
                 FontFamily="{a:ThemeResource CodeFontFamily}" />
 
             <Button.Flyout>
-                <Flyout Placement="Bottom">
+                <Flyout Placement="BottomEdgeAlignedLeft">
 
                     <StackPanel Margin="5" Spacing="3">
 

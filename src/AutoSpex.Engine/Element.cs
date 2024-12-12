@@ -119,12 +119,6 @@ public abstract class Element : SmartEnum<Element, string>
     {
         public ControllerElement() : base(typeof(Controller))
         {
-            Register<List<DataType>>("DataTypes", x => ((Controller)x!).L5X?.DataTypes.ToList());
-            Register<List<AddOnInstruction>>("AddOnInstructions", x => ((Controller)x!).L5X?.Instructions.ToList());
-            Register<List<Module>>("Modules", x => ((Controller)x!).L5X?.Modules.ToList());
-            Register<List<Tag>>("Tags", x => ((Controller)x!).L5X?.Tags.ToList());
-            Register<List<Program>>("Programs", x => ((Controller)x!).L5X?.Programs.ToList());
-            Register<List<Task>>("Tasks", x => ((Controller)x!).L5X?.Tasks.ToList());
         }
     }
 

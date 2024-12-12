@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
+using AutoSpex.Persistence;
 using AutoSpex.Persistence.References;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -16,7 +17,7 @@ using Range = AutoSpex.Engine.Range;
 
 namespace AutoSpex.Client.Observers;
 
-public partial class ArgumentInput : Observer, IRecipient<ArgumentInput.SuggestionRequest>
+public partial class ArgumentInput : Observer
 {
     /// <summary>
     /// The function that retrieves the underlying value this observer wraps.
@@ -51,8 +52,15 @@ public partial class ArgumentInput : Observer, IRecipient<ArgumentInput.Suggesti
         _input = input ?? (() => Property.Default);
 
         Value = GetObservable();
-        Track(Value);
-        Track(nameof(Value));
+
+        if (Value is ValueObserver)
+        {
+            Track(nameof(Value));
+        }
+        else
+        {
+            Track(Value);
+        }
     }
 
     /// <summary>
@@ -60,15 +68,20 @@ public partial class ArgumentInput : Observer, IRecipient<ArgumentInput.Suggesti
     /// so we can respond to changes to notifiy for saving.
     /// </summary>
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(Text))]
+    [NotifyPropertyChangedFor(nameof(ValueText))]
     [NotifyPropertyChangedFor(nameof(IsEmpty))]
     [NotifyPropertyChangedFor(nameof(Suggestions))]
     private ITrackable _value;
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    [ObservableProperty] private string? _inputText;
 
     /// <summary>
     /// The text representation of the current argument value.
     /// </summary>
-    public string Text => Value.ToText();
+    public string ValueText => Value.ToText();
 
     /// <summary>
     /// Indicates that the value is "empty" or has no value (null or empty text/collection).
@@ -79,17 +92,6 @@ public partial class ArgumentInput : Observer, IRecipient<ArgumentInput.Suggesti
     /// The function that can retrieve potential values that fit the requirements of the object this observer wraps.
     /// </summary>
     public Func<string?, CancellationToken, Task<IEnumerable<object>>> Suggestions => GetSuggestions;
-
-    /// <inheritdoc />
-    /// <remarks>
-    /// We will allow external calls to refresh the value of this argument wrapper in case it's
-    /// underlying model is updated externally.
-    /// </remarks>
-    public override void Refresh()
-    {
-        RefreshValue();
-        base.Refresh();
-    }
 
     #region Commands
 
@@ -104,7 +106,7 @@ public partial class ArgumentInput : Observer, IRecipient<ArgumentInput.Suggesti
     {
         var parsed = ParseInput(value);
         _setter.Invoke(parsed);
-        RefreshValue();
+        Value = GetObservable();
     }
 
     /// <summary>
@@ -117,7 +119,7 @@ public partial class ArgumentInput : Observer, IRecipient<ArgumentInput.Suggesti
         if (Value is not ObserverCollection<object?, ValueObserver> collection) return;
         var parsed = ParseInput(value);
         collection.Add(new ValueObserver(parsed));
-        OnPropertyChanged(nameof(Text));
+        OnPropertyChanged(nameof(ValueText));
     }
 
     /// <summary>
@@ -129,34 +131,12 @@ public partial class ArgumentInput : Observer, IRecipient<ArgumentInput.Suggesti
     {
         if (Value is not ObserverCollection<object?, ValueObserver> collection || value is null) return;
         collection.Remove(value);
-        OnPropertyChanged(nameof(Text));
+        OnPropertyChanged(nameof(ValueText));
     }
 
     #endregion
 
     #region Messages
-
-    /// <summary>
-    /// Respond to suggestion requests from this observer by returning any static option value based on the expected
-    /// argument input type (<see cref="_input"/>).
-    /// </summary>
-    public void Receive(SuggestionRequest message)
-    {
-        if (!message.Argument.Is(this)) return;
-
-        var type = message.Argument._input.Invoke().Type;
-        var group = TypeGroup.FromType(type);
-
-        if (group == TypeGroup.Enum && typeof(LogixEnum).IsAssignableFrom(type))
-        {
-            var options = LogixEnum.Options(type).Select(o => new ValueObserver(o)).ToList();
-            options.ForEach(message.Reply);
-        }
-
-        if (group != TypeGroup.Boolean) return;
-        message.Reply(new ValueObserver(false));
-        message.Reply(new ValueObserver(true));
-    }
 
     /// <summary>
     /// A request message that should return suggestable values to present to the user for this argument input type.
@@ -195,19 +175,6 @@ public partial class ArgumentInput : Observer, IRecipient<ArgumentInput.Suggesti
     }
 
     /// <summary>
-    /// Whenever we reset the current <see cref="Value"/> instance we want to first forget and dispose of the old
-    /// observer instance. Then start tracking the new instance. If it is an inner complex observer then changes
-    /// can be made to child properties, and we need to respond to that.
-    /// </summary>
-    private void RefreshValue()
-    {
-        Forget(Value);
-        Value.Dispose();
-        Value = GetObservable();
-        Track(Value);
-    }
-
-    /// <summary>
     /// Gets the underlying argument value and wraps it in a corresponding observer instance based on the set type.
     /// Argument can contain simple primitive values or inner complex objects like Range, Criterion, and Lists.
     /// </summary>
@@ -232,7 +199,8 @@ public partial class ArgumentInput : Observer, IRecipient<ArgumentInput.Suggesti
     {
         var suggestions = new List<object>();
 
-        suggestions.AddRange(await GetValueSuggestions(filter, token));
+        suggestions.AddRange(GetStaticSuggestions(filter, token));
+        suggestions.AddRange(await GetSourceSuggestions(filter, token));
         suggestions.AddRange(GetSpecialReferences(filter, token));
         suggestions.AddRange(await GetSourceReferences(filter, token));
 
@@ -240,11 +208,42 @@ public partial class ArgumentInput : Observer, IRecipient<ArgumentInput.Suggesti
     }
 
     /// <summary>
-    /// Sends request to get in memory or static values to suggest based on the input filter and this argument observer input.
+    /// Returns a collection of static values that we can suggest based on the input property/type to this argument
+    /// observer wrapper. This will be either static boolean or enumeration values which are enumerable (a known set of).
     /// </summary>
-    private async Task<IEnumerable<object>> GetValueSuggestions(string? filter, CancellationToken token)
+    private IEnumerable<object> GetStaticSuggestions(string? filter, CancellationToken token)
+    {
+        if (token.IsCancellationRequested) return [];
+        if (filter is not null && filter.StartsWith(Reference.KeyStart)) return [];
+
+        var suggestions = new List<ValueObserver>();
+        var input = _input.Invoke();
+
+        if (input.Group == TypeGroup.Boolean)
+            suggestions.AddRange([new ValueObserver(false), new ValueObserver(true)]);
+
+        if (input.Group == TypeGroup.Enum && typeof(LogixEnum).IsAssignableFrom(input.Type))
+            suggestions.AddRange(LogixEnum.Options(input.Type).Select(o => new ValueObserver(o)));
+
+        if (string.IsNullOrEmpty(filter)) return suggestions;
+
+        return suggestions
+            .Where(x => x.Filter(filter))
+            .OrderByDescending(x => x.Text.StartsWith(filter))
+            .ThenBy(x => x.Text);
+    }
+
+    /// <summary>
+    /// Sends request to get in memory source values to suggest based on the input filter and this argument observer input.
+    /// </summary>
+    private async Task<IEnumerable<object>> GetSourceSuggestions(string? filter, CancellationToken token)
     {
         if (filter is not null && filter.StartsWith(Reference.KeyStart)) return [];
+
+        //Avoid duplicating any static value we have already suggested.
+        //This method should only return values for numbers, strings, dates, or other complex objects.
+        var group = _input().Group;
+        if (group == TypeGroup.Boolean || group == TypeGroup.Enum) return [];
 
         var message = Messenger.Send(new SuggestionRequest(this));
         var suggestions = await message.GetResponsesAsync(token);
@@ -307,7 +306,7 @@ public partial class ArgumentInput : Observer, IRecipient<ArgumentInput.Suggesti
     }
 
     /// <summary>
-    /// Handles getting suggestable propertys for a reference input argument based on the current text input.
+    /// Handles getting suggestable properties for a reference input argument based on the current text input.
     /// This will parse the input, determine the origin type from the reference, and then use that type to return
     /// a list of possible properties that we know statically and filter them to that of the current text.
     /// This will not handle nested tagnames like property input. We will get nested tag names from the reference scope/key.
@@ -325,7 +324,7 @@ public partial class ArgumentInput : Observer, IRecipient<ArgumentInput.Suggesti
         try
         {
             //Determine the origin type.
-            //If not detecable we should return the default property.
+            //If not detectable we should return the default property.
             //$this is special case and points to the current argument input origin type.
             var origin = reference.IsSource
                 ? Element.FromScope(reference.Scope).This

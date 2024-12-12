@@ -6,7 +6,6 @@
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:core="clr-namespace:L5Sharp.Core;assembly=L5Sharp.Core">
 
-
     <DataTemplate x:Key="PropertyEntry" x:DataType="observers:PropertyInput">
 
         <controls:Entry
@@ -14,7 +13,11 @@
             Value="{Binding Value}"
             Populate="{Binding Suggestions}"
             CommitCommand="{Binding UpdateCommand}"
-            IsEmpty="{Binding IsEmpty}">
+            IsEmpty="{Binding IsEmpty}"
+            ButtonTheme="{a:ControlTheme ButtonSoft}"
+            Background="{a:ThemeResource Container2BackgroundBrush}"
+            CornerRadius="4 0 0 4"
+            Padding="7">
 
             <controls:Entry.ValueTemplate>
                 <DataTemplate x:DataType="engine:Property">

@@ -75,9 +75,9 @@ public class CreateNodeTests
         var result = await mediator.Send(new CreateNode(node));
         result.IsSuccess.Should().BeTrue();
 
-        var created = await mediator.Send(new LoadNode(node.NodeId));
+        var created = await mediator.Send(new LoadSpec(node.NodeId));
         created.IsSuccess.Should().BeTrue();
-        created.Value.Spec.Should().BeEquivalentTo(node.Spec);
+        created.Value.Should().BeEquivalentTo(node.Spec);
     }
 
     [Test]

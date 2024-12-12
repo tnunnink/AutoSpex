@@ -8,7 +8,7 @@
     <Design.PreviewWith>
         <Border Width="600" Height="400">
             <ContentControl
-                Content="{x:Static components:TestData.SpecObserverManyCriterion}"
+                Content="{x:Static components:TestData.VerifyObserver}"
                 ContentTemplate="{DynamicResource VerificationFlyout}"
                 VerticalAlignment="Top" HorizontalAlignment="Right" Margin="20" />
         </Border>
@@ -60,11 +60,11 @@
                         <ListBox
                             ItemsSource="{Binding Criteria}"
                             SelectedItems="{Binding Selected}"
-                            ItemTemplate="{StaticResource CriterionListItem}"
-                            ItemContainerTheme="{StaticResource ListBoxItemEntry}"
+                            ItemTemplate="{StaticResource CriterionText}"
+                            ItemContainerTheme="{StaticResource ListBoxItemSimple}"
                             SelectionMode="Multiple"
                             BorderBrush="{a:ThemeResource Container1BorderBrush}"
-                            CornerRadius="0 0 5 5" />
+                            Padding="5" />
 
                     </StackPanel>
 

@@ -7,12 +7,14 @@
     ParentId: Guid_Empty,
     Type: Collection,
     Name: New Collection,
+    Description: null,
     Nodes: [
       {
         NodeId: Guid_3,
         ParentId: Guid_2,
         Type: Spec,
         Name: First,
+        Description: null,
         Spec: {
           SchemaVersion: 2,
           SpecId: Guid_4,
@@ -55,6 +57,7 @@
         ParentId: Guid_2,
         Type: Spec,
         Name: Second,
+        Description: null,
         Spec: {
           SchemaVersion: 2,
           SpecId: Guid_6,
@@ -97,6 +100,7 @@
         ParentId: Guid_2,
         Type: Spec,
         Name: Third,
+        Description: null,
         Spec: {
           SchemaVersion: 2,
           SpecId: Guid_8,

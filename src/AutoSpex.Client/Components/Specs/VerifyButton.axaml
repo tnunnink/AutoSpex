@@ -1,0 +1,53 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+
+    <Design.PreviewWith>
+        <Border Padding="200">
+            <ContentControl
+                Content="{x:Static components:TestData.VerifyObserver}"
+                ContentTemplate="{DynamicResource VerifyButton}" />
+        </Border>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="VerifyButton" x:DataType="observers:VerifyObserver">
+
+        <Button
+            Command="{Binding AddCriteriaCommand}"
+            Classes="invisible-link"
+            ToolTip.Placement="BottomEdgeAlignedLeft">
+
+            <StackPanel Orientation="Horizontal" Spacing="7">
+                <PathIcon Theme="{StaticResource IconFilledPatch}" Classes="size-sm" />
+                <TextBlock Text="Verify" FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
+            </StackPanel>
+
+            <ToolTip.Tip>
+                <StackPanel Spacing="10" Margin="10">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <PathIcon
+                            Theme="{StaticResource IconFilledPatch}"
+                            Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
+                            Classes="centered"/>
+                        <TextBlock
+                            Text="Add Verification"
+                            FontSize="{a:ThemeResource DefaultFontSizeMedium}"
+                            FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
+                    </StackPanel>
+
+                    <TextBlock
+                        Text="Add verifications to this specification in order to validate the data of the resulting objects. Each specification can contain multiple vierification criteria."
+                        MaxWidth="300"
+                        Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                        TextWrapping="Wrap" />
+
+                </StackPanel>
+            </ToolTip.Tip>
+
+        </Button>
+
+    </DataTemplate>
+
+</ResourceDictionary>

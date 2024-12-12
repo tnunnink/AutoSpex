@@ -2,9 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
-                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
-                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
-                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
 
     <Design.PreviewWith>
         <Border Width="800" Height="300">
@@ -17,76 +15,27 @@
 
     <DataTemplate x:Key="FilterSection" x:DataType="observers:FilterObserver">
 
+        <Grid ColumnDefinitions="80,*">
 
-        <controls:Section
-            Header="Filter"
-            Description="Add filters to target specific elements for verification."
-            ShowContent="{Binding Criteria.HasItems}">
+            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Top" Margin="0 4 0 0">
 
-            <controls:Section.Icon>
-                <PathIcon Theme="{StaticResource IconFilledFunnel}" />
-            </controls:Section.Icon>
+                <TextBlock Text="where" Classes="faint" />
 
-            <controls:Section.Action>
+                <Button
+                    IsVisible="{Binding ShowMatch}"
+                    Command="{Binding ToggleMatchCommand}"
+                    Content="{Binding Match, Converter={x:Static a:StringConverters.ToLowerInvariant}}"
+                    Classes="link-text" />
 
-                <StackPanel Orientation="Horizontal" Spacing="20">
-
-                    <StackPanel Orientation="Horizontal" Spacing="2">
-                        <TextBlock Text="Match" Classes="faint" />
-                        <Button
-                            Command="{Binding ToggleMatchCommand}"
-                            VerticalAlignment="Center"
-                            Content="{Binding Match}"
-                            Theme="{a:ControlTheme ButtonSubtle}"
-                            FontSize="{a:ThemeResource DefaultFontSizeSmall}"
-                            FontWeight="{a:ThemeResource HeadingFontWeightSmall}"
-                            Classes="accent" 
-                            Padding="4"/>
-                        <TextBlock Text="Criteria" Classes="faint" />
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal">
-
-                        <Button
-                            Command="{Binding AddCriteriaCommand}"
-                            Theme="{StaticResource IconButtonPillLeft}"
-                            properties:Icon.Theme="{StaticResource IconAdd}"
-                            Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
-                            FontSize="12"
-                            ToolTip.Tip="Add Criteria"
-                            ToolTip.Placement="BottomEdgeAlignedRight" />
-
-                        <Button
-                            Command="{Binding PasteCriteriaCommand}"
-                            Theme="{StaticResource IconButtonPillCenter}"
-                            properties:Icon.Theme="{StaticResource IconFilledPaste}"
-                            FontSize="12"
-                            ToolTip.Tip="Paste Criteria"
-                            ToolTip.Placement="BottomEdgeAlignedRight" />
-
-                        <Button
-                            Command="{Binding DeleteCommand}"
-                            Theme="{StaticResource IconButtonPillRight}"
-                            properties:Icon.Theme="{StaticResource IconFilledTrash}"
-                            FontSize="12"
-                            ToolTip.Tip="Remove Step"
-                            ToolTip.Placement="BottomEdgeAlignedRight" />
-
-                    </StackPanel>
-
-                </StackPanel>
-
-            </controls:Section.Action>
+            </StackPanel>
 
             <ListBox
+                Grid.Column="1"
                 IsVisible="{Binding Criteria.HasItems}"
                 ItemsSource="{Binding Criteria}"
-                SelectedItems="{Binding Selected}"
-                ItemTemplate="{StaticResource CriterionListItem}"
-                ItemContainerTheme="{StaticResource CriterionItemTheme}"
-                SelectionMode="Multiple"
-                BorderBrush="{a:ThemeResource Container1BorderBrush}"
-                BorderThickness="1" CornerRadius="5"
+                ItemTemplate="{StaticResource CriterionPill}"
+                ItemContainerTheme="{StaticResource ListBoxItemInvisible}"
+                ClipToBounds="True"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                 KeyboardNavigation.TabNavigation="Continue">
                 <Interaction.Behaviors>
@@ -97,7 +46,7 @@
                 </Interaction.Behaviors>
             </ListBox>
 
-        </controls:Section>
+        </Grid>
 
     </DataTemplate>
 </ResourceDictionary>

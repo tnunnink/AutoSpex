@@ -25,9 +25,10 @@
     <!-- Entry -->
     <ControlTheme x:Key="{x:Type controls:Entry}" TargetType="controls:Entry">
         <Setter Property="ButtonTheme" Value="{a:ControlTheme ButtonSubtle}" />
+        <Setter Property="CornerRadius" Value="{a:ThemeResource ButtonCornerRadius}" />
         <Setter Property="FontFamily" Value="{a:ThemeResource CodeFontFamily}" />
         <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeSmall}" />
-        <Setter Property="Padding" Value="{a:ThemeResource ButtonPadding}"></Setter>
+        <Setter Property="Padding" Value="{a:ThemeResource ButtonPadding}" />
         <Setter Property="MaxDropDownHeight" Value="300" />
         <Setter Property="MinDropDownWidth" Value="300" />
         <Setter Property="MaxDropDownWidth" Value="400" />
@@ -39,11 +40,13 @@
                     <Button
                         x:Name="PART_Button"
                         Theme="{TemplateBinding ButtonTheme}"
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
                         Padding="{TemplateBinding Padding}"
-                        Classes.danger="{TemplateBinding (DataValidationErrors.HasErrors)}"
                         HorizontalContentAlignment="Left"
                         IsTabStop="True"
                         Focusable="True"
+                        Classes.danger="{TemplateBinding (DataValidationErrors.HasErrors)}"
                         TemplatedControl.IsTemplateFocusTarget="True">
                         <Panel>
                             <TextBlock

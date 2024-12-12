@@ -62,10 +62,10 @@ public class Node : IEquatable<Node>
     public string Name { get; set; } = string.Empty;
 
     /// <summary>
-    /// Additional comment describing the purpose of this node.
+    /// Additional information describing the purpose of this node.
     /// </summary>
-    [JsonIgnore]
-    public string? Comment { get; set; }
+    [JsonInclude]
+    public string? Description { get; set; }
 
     /// <summary>
     /// The collection of child nodes that this node contains.
@@ -271,9 +271,7 @@ public class Node : IEquatable<Node>
     public Spec Configure(Action<Spec> config)
     {
         ArgumentNullException.ThrowIfNull(config);
-        var spec = new Spec();
-        config.Invoke(spec);
-        Spec = spec;
+        config.Invoke(Spec);
         return Spec;
     }
 

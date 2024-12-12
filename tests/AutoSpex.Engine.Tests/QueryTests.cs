@@ -55,7 +55,7 @@ public class QueryTests
 
         var returns = query.Returns;
 
-        returns.Should().Be(Element.Tag.This.GetProperty("TagName"));
+        returns.Should().Be(Property.This(typeof(TagName)));
     }
 
     [Test]

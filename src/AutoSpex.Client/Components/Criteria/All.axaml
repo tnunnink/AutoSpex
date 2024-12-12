@@ -8,7 +8,9 @@
         <ResourceInclude Source="ArgumentCollection.axaml" />
         <ResourceInclude Source="ArgumentRange.axaml" />
         <ResourceInclude Source="CriterionEntry.axaml" />
-        <ResourceInclude Source="CriterionListItem.axaml" />
+        <ResourceInclude Source="CriterionText.axaml" />
+        <ResourceInclude Source="CriterionPill.axaml" />
+        <ResourceInclude Source="CriterionText.axaml" />
         <ResourceInclude Source="ReplaceListItem.axaml" />
     </ResourceDictionary.MergedDictionaries>
 

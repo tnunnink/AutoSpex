@@ -16,8 +16,7 @@ using Range = AutoSpex.Engine.Range;
 
 namespace AutoSpex.Client.Observers;
 
-public partial class CriterionObserver : Observer<Criterion>,
-    IRecipient<PropertyInput.GetInputTo>
+public partial class CriterionObserver : Observer<Criterion>, IRecipient<PropertyInput.GetInputTo>
 {
     public CriterionObserver(Criterion model) : base(model)
     {
@@ -60,7 +59,7 @@ public partial class CriterionObserver : Observer<Criterion>,
     /// The argument value for the criterion. This is using a specialized observer wrappers to assist with getting,
     /// setting, parsing, and suggesting values for the argument input.
     /// </summary>
-    public ArgumentInput Argument { get; }
+    public ArgumentInput Argument { get; private set; }
 
     /// <summary>
     /// Gets the collection of supported operations based on the current selected <see cref="Property"/>.
@@ -88,6 +87,37 @@ public partial class CriterionObserver : Observer<Criterion>,
         return false;
     }
 
+    /// <summary>
+    /// Gets suggestibale data values for a given argument (that is expected to be contained by this criterion instance),
+    /// along with a collection of input data. This will traverser the criterion structure (in the case of nested collection
+    /// criterion) to return the appropriate set of data that should bein context of the argument input.
+    /// </summary>
+    public IEnumerable<object?> ValuesFor(ArgumentInput argument, IEnumerable<object?> data)
+    {
+        //If the provided argument is the instance for this criterion, return early.
+        if (Argument.Is(argument))
+        {
+            return data.Select(x => Property.Value.GetValue(x)).Where(x => x is not null).Distinct();
+        }
+
+        //If we have an inner criterion and a collection of enumerable objects, then repeat recursively until we reach the final argument.
+        if (Argument.Value is CriterionObserver inner)
+        {
+            var elements = new List<object>();
+            var result = data.Select(x => Property.Value.GetValue(x)).Where(x => x is not null).ToList();
+
+            foreach (var item in result)
+            {
+                if (item is not IEnumerable<object> enumerable) continue;
+                elements.AddRange(enumerable);
+            }
+
+            return inner.ValuesFor(argument, elements);
+        }
+
+        return [];
+    }
+
     /// <inheritdoc />
     /// <remarks>
     /// When the property changes we want to reset the operation which in turn resets the argument.
@@ -104,8 +134,8 @@ public partial class CriterionObserver : Observer<Criterion>,
                 Operation = Operation.Supports(Property.Value) ? Operation : Operation.None;
                 break;
             case nameof(Operation):
-                OnPropertyChanged(nameof(AcceptsArgs));
                 ResetArgument();
+                OnPropertyChanged(nameof(AcceptsArgs));
                 break;
         }
     }
@@ -149,6 +179,21 @@ public partial class CriterionObserver : Observer<Criterion>,
                 Operation = found ? parsed : Operation.None;
                 return;
         }
+    }
+
+    /// <summary>
+    /// A command to add a new <see cref="Criterion"/> instance after this instance in the same collection
+    /// as this criterion belongs.
+    /// </summary>
+    [RelayCommand]
+    private void AddAfter()
+    {
+        if (!TryGetCollection(out var criteria)) return;
+
+        var index = criteria.IndexOf(this) + 1;
+        if (index < 0 || index > criteria.Count) return;
+        
+        criteria.Insert(index, new Criterion());
     }
 
     /// <inheritdoc />
@@ -258,7 +303,8 @@ public partial class CriterionObserver : Observer<Criterion>,
             _ => null
         };
 
-        Argument.Refresh();
+        Argument = new ArgumentInput(() => Model.Argument, x => Model.Argument = x, () => Property.Value);
+        OnPropertyChanged(nameof(Argument));
     }
 
     /// <summary>

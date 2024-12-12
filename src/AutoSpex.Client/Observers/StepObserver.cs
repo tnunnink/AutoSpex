@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;

@@ -1,0 +1,126 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+
+    <Design.PreviewWith>
+        <StackPanel Spacing="5" Margin="20">
+            <StackPanel.Styles>
+                <Style Selector="ContentControl.criterion">
+                    <Setter Property="ContentTemplate" Value="{DynamicResource CriterionPill}" />
+                </Style>
+            </StackPanel.Styles>
+            <ContentControl Content="{x:Static components:TestData.BoolCriterion}" Classes="criterion" />
+            <ContentControl Content="{x:Static components:TestData.NumberCriterion}" Classes="criterion" />
+            <ContentControl Content="{x:Static components:TestData.TextCriterion}" Classes="criterion" />
+            <ContentControl Content="{x:Static components:TestData.EnumCriterion}" Classes="criterion" />
+            <ContentControl Content="{x:Static components:TestData.InnerCriterion}" Classes="criterion" />
+        </StackPanel>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="CriterionPill" x:DataType="observers:CriterionObserver">
+
+        <StackPanel Orientation="Horizontal" Spacing="5">
+
+            <Border x:Name="Border"
+                    Background="Transparent"
+                    CornerRadius="{a:ThemeResource ButtonCornerRadius}"
+                    BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                    BorderThickness="2"
+                    Focusable="True"
+                    IsTabStop="False">
+
+                <Grid ColumnDefinitions="*,Auto,Auto">
+
+                    <ContentControl
+                        Grid.Column="0"
+                        Content="{Binding}"
+                        ContentTemplate="{StaticResource CriterionEntry}" />
+
+                    <Button
+                        Grid.Column="1"
+                        Command="{Binding DeleteCommand}"
+                        Theme="{a:ControlTheme ButtonSoft}"
+                        Background="{a:ThemeResource Container2BackgroundBrush}"
+                        BorderThickness="0 0 1 0"
+                        CornerRadius="0"
+                        ToolTip.Tip="Remove"
+                        ToolTip.Placement="BottomEdgeAlignedRight">
+                        <PathIcon Theme="{StaticResource IconFilledTrash}" Classes="size-sm" />
+                    </Button>
+
+                    <Border
+                        x:Name="MoveBorder"
+                        Grid.Column="2"
+                        BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                        CornerRadius="0 4 4 0"
+                        Padding="{a:ThemeResource ButtonPadding}"
+                        ToolTip.Tip="Move"
+                        ToolTip.Placement="BottomEdgeAlignedRight">
+
+                        <PathIcon Theme="{StaticResource IconFilledGrip}" FontSize="10" />
+
+                        <Border.Styles>
+                            <Style Selector="Border">
+                                <Setter Property="Background" Value="{a:ThemeResource Container2BackgroundBrush}" />
+                                <Style Selector="^ > PathIcon">
+                                    <Setter Property="Foreground"
+                                            Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                                </Style>
+                                <Style Selector="^.dragover">
+                                    <Setter
+                                        Property="Background"
+                                        Value="{a:ThemeResource ControlBackgroundBrushSoftAccent}" />
+                                    <Style Selector="^ > PathIcon">
+                                        <Setter
+                                            Property="Foreground"
+                                            Value="{a:ThemeResource ControlForegroundBrushSoftAccent}" />
+                                    </Style>
+                                </Style>
+                            </Style>
+                        </Border.Styles>
+
+                        <Interaction.Behaviors>
+                            <behaviors:DraggableBehavior Context="{Binding }" />
+                        </Interaction.Behaviors>
+                    </Border>
+
+                </Grid>
+
+                <Interaction.Behaviors>
+                    <ExecuteCommandOnKeyDownBehavior
+                        Key="Delete"
+                        Command="{Binding DeleteSelectedCommand}"
+                        MarkAsHandled="True"
+                        FocusControl="Border" />
+                    <ExecuteCommandOnKeyDownBehavior
+                        Gesture="Ctrl+D"
+                        Command="{Binding DuplicateCommand}"
+                        MarkAsHandled="True" />
+                    <ExecuteCommandOnKeyDownBehavior
+                        Gesture="Ctrl+C"
+                        Command="{Binding CopyCommand}"
+                        MarkAsHandled="True" />
+                    <behaviors:ExecuteCommandOnDropBehavior
+                        Command="{Binding MoveCommand}"
+                        StyleElement="{Binding #MoveBorder}" />
+                </Interaction.Behaviors>
+            </Border>
+
+            <Button
+                Command="{Binding AddAfterCommand}"
+                Theme="{StaticResource IconButton}"
+                properties:Icon.Theme="{StaticResource IconAdd}"
+                IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}"
+                FontSize="12"
+                ToolTip.Tip="Add Criteria"
+                ToolTip.Placement="BottomEdgeAlignedRight" />
+
+        </StackPanel>
+
+    </DataTemplate>
+
+</ResourceDictionary>

@@ -4,12 +4,15 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceInclude Source="ElementDisplay.axaml" />
         <ResourceInclude Source="ElementEntry.axaml" />
+        <ResourceInclude Source="FilterButton.axaml" />
         <ResourceInclude Source="FilterFlyout.axaml" />
         <ResourceInclude Source="FilterSection.axaml" />
         <ResourceInclude Source="QuerySection.axaml" />
+        <ResourceInclude Source="SelectButton.axaml" />
         <ResourceInclude Source="SelectSection.axaml" />
         <ResourceInclude Source="SpecConfig.axaml" />
         <ResourceInclude Source="VerificationFlyout.axaml" />
+        <ResourceInclude Source="VerifyButton.axaml" />
         <ResourceInclude Source="VerifySection.axaml" />
     </ResourceDictionary.MergedDictionaries>
 

@@ -166,11 +166,9 @@ public class Reference
             return;
         }
         
-        //strip off the source and use the local path. 
-        var path = Scope.IsRelative ? Scope.Path : Scope.Path[Scope.Path.IndexOf('/')..];
-        if (!content.TryGet(path, out var element))
+        if (!content.TryGet(Scope.LocalPath, out var element))
         {
-            _resolver = _ => throw new InvalidOperationException($"No element with scope '{Scope}' was found.");
+            _resolver = _ => throw new InvalidOperationException($"No element with scope '{Scope.LocalPath}' was found.");
             return;
         }
 

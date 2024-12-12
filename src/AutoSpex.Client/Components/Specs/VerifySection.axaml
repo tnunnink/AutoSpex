@@ -1,13 +1,10 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
-                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
-                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
                     xmlns:components="clr-namespace:AutoSpex.Client.Components">
 
     <Design.PreviewWith>
-        <Border Width="800">
+        <Border Width="800" Height="200">
             <ContentControl
                 Content="{x:Static components:TestData.VerifyObserver}"
                 ContentTemplate="{DynamicResource VerifySection}"
@@ -18,55 +15,20 @@
 
     <DataTemplate x:Key="VerifySection" x:DataType="observers:VerifyObserver">
 
-        <controls:Section
-            Header="Verify"
-            Description="Add verifications to define the criteria of the specification."
-            ShowContent="{Binding Criteria.HasItems}">
+        <Grid ColumnDefinitions="80,*" IsVisible="{Binding Criteria.HasItems}">
 
-            <controls:Section.Icon>
-                <PathIcon Theme="{StaticResource IconFilledPatch}" />
-            </controls:Section.Icon>
+            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Top" Margin="0 5 0 0">
 
-            <controls:Section.Action>
+                <TextBlock Text="verify" Classes="faint" />
 
-                <StackPanel Orientation="Horizontal">
-
-                    <Button
-                        Command="{Binding AddCriteriaCommand}"
-                        Theme="{StaticResource IconButtonPillLeft}"
-                        properties:Icon.Theme="{StaticResource IconAdd}"
-                        Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
-                        ToolTip.Tip="Add Criteria"
-                        ToolTip.Placement="BottomEdgeAlignedRight" />
-
-                    <Button
-                        Command="{Binding PasteCriteriaCommand}"
-                        Theme="{StaticResource IconButtonPillCenter}"
-                        properties:Icon.Theme="{StaticResource IconFilledPaste}"
-                        ToolTip.Tip="Paste Criteria"
-                        ToolTip.Placement="BottomEdgeAlignedRight" />
-
-                    <Button
-                        Command="{Binding PasteCriteriaCommand}"
-                        Theme="{StaticResource IconButtonPillRight}"
-                        properties:Icon.Theme="{StaticResource IconEllipsis}"
-                        ToolTip.Tip="Paste Criteria"
-                        ToolTip.Placement="BottomEdgeAlignedRight">
-                    </Button>
-
-                </StackPanel>
-
-            </controls:Section.Action>
+            </StackPanel>
 
             <ListBox
-                IsVisible="{Binding Criteria.HasItems}"
+                Grid.Column="1"
                 ItemsSource="{Binding Criteria}"
-                SelectedItems="{Binding Selected}"
-                ItemTemplate="{StaticResource CriterionListItem}"
-                ItemContainerTheme="{StaticResource CriterionItemTheme}"
-                SelectionMode="Multiple"
-                BorderBrush="{a:ThemeResource Container1BorderBrush}"
-                BorderThickness="1" CornerRadius="5"
+                ItemTemplate="{StaticResource CriterionPill}"
+                ItemContainerTheme="{StaticResource ListBoxItemInvisible}"
+                ClipToBounds="True"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                 KeyboardNavigation.TabNavigation="Continue">
                 <Interaction.Behaviors>
@@ -77,7 +39,7 @@
                 </Interaction.Behaviors>
             </ListBox>
 
-        </controls:Section>
+        </Grid>
 
     </DataTemplate>
 </ResourceDictionary>

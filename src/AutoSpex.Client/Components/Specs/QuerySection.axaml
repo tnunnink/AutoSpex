@@ -1,45 +1,41 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
-                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
                     xmlns:components="clr-namespace:AutoSpex.Client.Components"
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui">
 
     <Design.PreviewWith>
-        <Border Width="800" Height="600">
-            <ContentControl
-                Content="{x:Static components:TestData.QueryObserver}"
-                ContentTemplate="{DynamicResource QuerySection}"
-                Margin="20" VerticalAlignment="Top" />
+        <Border Width="800" Height="600" Padding="20">
+            <StackPanel Spacing="30">
+                <ContentControl
+                    Content="{x:Static components:TestData.DefaultQueryObserver}"
+                    ContentTemplate="{DynamicResource QuerySection}" />
+                <ContentControl
+                    Content="{x:Static components:TestData.QueryObserver}"
+                    ContentTemplate="{DynamicResource QuerySection}" />
+            </StackPanel>
         </Border>
     </Design.PreviewWith>
 
     <DataTemplate x:Key="QuerySection" x:DataType="observers:QueryObserver">
 
-        <StackPanel Spacing="20">
+        <StackPanel Spacing="10">
 
-            <controls:Section
-                Header="Query"
-                Description="Select the element type to query when this specification is run."
-                ShowContent="False">
+            <ContentControl
+                Content="{Binding }"
+                ContentTemplate="{StaticResource ElementEntry}"
+                HorizontalAlignment="Left" />
 
-                <controls:Section.Icon>
-                    <PathIcon Theme="{StaticResource IconFilledBinoculars}" />
-                </controls:Section.Icon>
-
-                <controls:Section.Action>
-                    <ContentControl
-                        Content="{Binding }"
-                        ContentTemplate="{StaticResource ElementEntry}" />
-                </controls:Section.Action>
-
-            </controls:Section>
-
-            <ItemsControl ItemsSource="{Binding Steps}" IsVisible="{Binding Steps.Count}">
+            <ItemsControl
+                ItemsSource="{Binding Steps}"
+                IsVisible="{Binding Steps.HasItems}"
+                ItemContainerTheme="{StaticResource ListBoxItemInvisible}"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                KeyboardNavigation.TabNavigation="Continue">
 
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <StackPanel Spacing="20" />
+                        <StackPanel Spacing="10" />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
 
@@ -57,35 +53,8 @@
                         </DataTemplate>
                     </a:TypedDataTemplateSelector>
                 </ItemsControl.ItemTemplate>
+
             </ItemsControl>
-
-            <StackPanel Orientation="Horizontal" Spacing="10">
-
-                <Button
-                    Command="{Binding AddFitlerStepCommand}"
-                    HorizontalAlignment="Left" MinWidth="100"
-                    Theme="{a:ControlTheme ButtonSoft}"
-                    Background="{a:ThemeResource Container2BackgroundBrush}"
-                    Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}">
-                    <StackPanel Orientation="Horizontal" Spacing="7">
-                        <PathIcon Theme="{StaticResource IconFilledFunnel}" Classes="size-sm" />
-                        <TextBlock Text="Add Filter" FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
-                    </StackPanel>
-                </Button>
-
-                <Button
-                    Command="{Binding AddSelectStepCommand}"
-                    HorizontalAlignment="Left" MinWidth="100"
-                    Theme="{a:ControlTheme ButtonSoft}"
-                    Background="{a:ThemeResource Container2BackgroundBrush}"
-                    Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}">
-                    <StackPanel Orientation="Horizontal" Spacing="7">
-                        <PathIcon Theme="{StaticResource IconFilledHand}" Classes="size-sm" />
-                        <TextBlock Text="Add Select" FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
-                    </StackPanel>
-                </Button>
-
-            </StackPanel>
 
         </StackPanel>
 

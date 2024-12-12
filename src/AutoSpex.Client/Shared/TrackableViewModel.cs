@@ -60,7 +60,7 @@ public abstract class TrackableViewModel : ViewModelBase, ITrackable
     /// internally without the observer knowing (data refresh or domain level logic/events) It should signify a reset
     /// between the model and observer and therefore UI. 
     /// </summary>
-    public virtual void Refresh()
+    public void Refresh()
     {
         _changed.Clear();
         OnPropertyChanged(string.Empty);
