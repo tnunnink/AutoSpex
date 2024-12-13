@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.Dynamic;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace AutoSpex.Engine;
@@ -16,11 +17,12 @@ public class Property : IEquatable<Property>
     private const char IndexCloseSeparator = ']';
     public static readonly char[] Separators = [MemberSeparator, IndexOpenSeparator];
 
-    //These are properties that I don't want to show up for the user because they are not really useful and are confusing.
-    private static readonly List<string> PropertyExclusions = ["L5X", "L5XType", "Length", "Capacity"];
+    //These are properties that I don't want to show up for the user because they are not really useful.
+    private static readonly List<string> PropertyExclusions = ["Length", "Capacity"];
 
     /// <summary>
-    /// 
+    /// A dictionary of cached known or static properties for a given type.
+    /// This is used to avoid always using reflection each time we want to get the list of properties for a type.
     /// </summary>
     private static readonly Lazy<Dictionary<Type, List<Property>>> PropertyCache = new();
 
@@ -41,20 +43,29 @@ public class Property : IEquatable<Property>
     private readonly Func<object?, object?>? _getter;
 
     /// <summary>
+    /// A custom function that will return a list of child properties for this property instance.
+    /// This allows for pseudo creation of nested properties which we need for custom elements or dynamic objects.
+    /// </summary>
+    private readonly Func<IEnumerable<Property>>? _properties;
+
+    /// <summary>
     /// Creates a new <see cref="Property"/> given the name, type, and optional parent and custom getter.
     /// </summary>
     /// <param name="name">The name to the property.</param>
     /// <param name="type">The type of the property.</param>
     /// <param name="parent">The parent property of this property. If null this property should represent the root property.</param>
     /// <param name="getter">An optional custom getter that tells us how to get the value for this property given an instance of the parent object.</param>
+    /// <param name="properties">an optional function that returns the collection of child properties for type.</param>
     /// <exception cref="ArgumentException"><paramref name="name"/> is null or empty.</exception>
     /// <exception cref="ArgumentNullException"><paramref name="type"/> is null.</exception>
-    public Property(string name, Type type, Property? parent = default, Func<object?, object?>? getter = default)
+    public Property(string name, Type type, Property? parent = default,
+        Func<object?, object?>? getter = default, Func<IEnumerable<Property>>? properties = default)
     {
         Name = name ?? throw new ArgumentNullException(nameof(name));
         Type = type ?? throw new ArgumentNullException(nameof(type));
         Parent = parent;
         _getter = getter;
+        _properties = properties;
     }
 
     /// <summary>
@@ -144,6 +155,22 @@ public class Property : IEquatable<Property>
     /// <param name="type">The <see cref="System.Type"/> of the property.</param>
     /// <returns>A <see cref="Property"/> with the provided type named "This" and a null parent.</returns>
     public static Property This(Type type) => new(nameof(This), type, null, x => x);
+
+    /// <summary>
+    /// Creates a default self-referential property called "This" with a null parent, which can be used as a root
+    /// property for all sub properties of the provided instance object.
+    /// </summary>
+    /// <param name="instance">The object instance to get a self referencing property object for.</param>
+    /// <returns>A <see cref="Property"/> with the provided type named "This" and a null parent.</returns>
+    public static Property This(object? instance)
+    {
+        if (instance is ExpandoObject expando)
+        {
+            return Element.Dynamic(expando).This;
+        }
+
+        return instance is not null ? new Property(nameof(This), instance.GetType(), null, x => x) : Default;
+    }
 
     /// <summary>
     /// Parses the provided key string to create a new <see cref="Property"/> instance based on the key parts.
@@ -289,47 +316,33 @@ public class Property : IEquatable<Property>
     /// </remarks>
     private IEnumerable<Property> GetProperties()
     {
-        var children = new List<Property>();
-
-        //Always first check if this type's properties we already cached to exit early and avoid reflection usage.
-        if (PropertyCache.Value.TryGetValue(Type, out var cached))
-            return cached.Select(c => new Property(c, this));
-
-        //Get all non indexer properties first.
-        var properties = Type
-            .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-            .Where(p => p.GetIndexParameters().Length == 0 && !PropertyExclusions.Contains(p.Name));
-
-        foreach (var prop in properties)
+        //Use any custom provided getter function first.
+        if (_properties is not null)
         {
-            var property = new Property(prop.Name, prop.PropertyType, this);
-            children.Add(property);
+            return _properties.Invoke();
         }
 
-        /*//Only for element types (like Tag) support indexers.
-        if (Group == TypeGroup.Element)
+        //Elements are special case since they have their own code for getting properties.
+        if (Element.TryFromType(Type, out var element))
         {
-            //Handle indexer properties next. Only supporting single parameter indexers since that is all we really have anyway.
-            //These are treated separately to change the display name of the property.
-            var indexers = Type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                .Where(p => p.GetIndexParameters().Length == 1 && !PropertyExclusions.Contains(p.Name));
+            return element.Properties.Select(p => new Property(p, this));
+        }
 
-            foreach (var indexer in indexers)
-            {
-                var name = string.Join(',', indexer.GetIndexParameters().Select(x => x.ParameterType.CommonName()));
-                var property = new Property($"[{name}]", indexer.PropertyType, this);
-                children.Add(property);
-            }
-        }*/
+        //Check if this type's properties we already cached to exit early and avoid reflection usage.
+        if (PropertyCache.Value.TryGetValue(Type, out var cached))
+        {
+            return cached.Select(c => new Property(c, this));
+        }
 
-        //Add custom properties defined on elements.
-        if (!Element.TryFromName(Type.Name, out var element)) return children;
-        children.AddRange(element.CustomProperties);
+        //Get all static properties. Avoid indexer properties or properties we specifically are expluding.
+        var properties = Type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+            .Where(p => p.GetIndexParameters().Length == 0 && !PropertyExclusions.Contains(p.Name))
+            .Select(p => new Property(p.Name, p.PropertyType, this))
+            .ToList();
 
         //Cache all properties for this type, they should not change at runtime, and we can avoid reusing reflection. 
-        PropertyCache.Value.TryAdd(Type, children);
-
-        return children;
+        PropertyCache.Value.TryAdd(Type, properties);
+        return properties;
     }
 
     /// <summary>
@@ -362,6 +375,9 @@ public class Property : IEquatable<Property>
     /// </summary>
     private static Func<object?, object?> BuildGetterExpression(Type parent, string name)
     {
+        //If the object type is an ExpandoObject then the getter can be created statically
+        if (parent == typeof(ExpandoObject)) return x => ((IDictionary<string, object?>)x!)[name];
+
         var parameter = Expression.Parameter(typeof(object), "x");
         var converted = Expression.TypeAs(parameter, parent);
         var member = Expression.TypeAs(BuildPropertyExpression(converted, name), typeof(object));

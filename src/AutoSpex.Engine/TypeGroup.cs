@@ -412,8 +412,8 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
     {
         protected override bool AppliesTo(Type type)
         {
-            type = Nullable.GetUnderlyingType(type) ?? type;
-            return !type.IsEnumerable() && type.IsAssignableTo(typeof(LogixElement));
+            if (!type.IsEnumerable()) return false;
+            return Engine.Element.TryFromType(type, out _) || type.IsAssignableTo(typeof(LogixElement));
         }
 
         public override bool TryParse(string text, out object? value)

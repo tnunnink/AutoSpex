@@ -1,5 +1,6 @@
 ﻿// ReSharper disable UseObjectOrCollectionInitializer
 
+using System.Dynamic;
 using System.Text.Json;
 using Task = System.Threading.Tasks.Task;
 
@@ -13,32 +14,81 @@ public class SelectTests
     {
         var step = new Select();
 
-        step.Property.Should().BeEmpty();
+        step.Properties.Should().BeEmpty();
     }
 
     [Test]
-    public void Property_SetValue_ShouldBeExpected()
+    public void Property_SingleProperty_ShouldBeExpected()
     {
         var step = new Select();
 
-        step.Property = "Value";
+        step.Properties.Add("Value");
 
-        step.Property.Should().Be("Value");
+        step.Properties.Should().Contain("Value");
+    }
+
+    [Test]
+    public void Returns_NoProperties_ShouldBeExpected()
+    {
+        var step = new Select();
+
+        var result = step.Returns(Element.Tag.This);
+
+        result.Should().BeEquivalentTo(Property.This(typeof(Tag)));
+    }
+
+    [Test]
+    public void Returns_SingleSimpleProperty_ShouldBeExpected()
+    {
+        var step = new Select("TagName");
+
+        var result = step.Returns(Element.Tag.This);
+
+        result.Should().BeEquivalentTo(Property.This(typeof(TagName)));
+    }
+
+    [Test]
+    public void Returns_SingleComplexProperty_ShouldBeExpected()
+    {
+        var step = new Select("Security");
+
+        var result = step.Returns(Element.Controller.This);
+
+        result.Should().BeEquivalentTo(Property.This(typeof(Security)));
+    }
+
+    [Test]
+    public void Returns_SingleCollectionProperty_ShouldBeExpected()
+    {
+        var step = new Select("Tags");
+
+        var result = step.Returns(Element.Program.This);
+
+        result.Should().BeEquivalentTo(Property.This(typeof(Tag)));
+    }
+
+    [Test]
+    public void Returns_MultipleSimpleProperties_ShouldBeExpected()
+    {
+        var step = new Select("TagName", "Description", "Value");
+
+        var result = step.Returns(Element.Tag.This);
+
+        result.Name.Should().Be("This");
+        result.Type.Should().Be(typeof(ExpandoObject));
+        result.Properties.Should().HaveCount(3);
     }
 
     [Test]
     public void Process_SimpleProperty_ShouldBeExpected()
     {
-        var step = new Select();
-        step.Property = "Value";
-
+        var step = new Select("Value");
         var input = new List<Tag>
         {
             new("TestTag", 123),
             new("AnotherTag", new TIMER()),
             new("MyTestTag", new STRING("This is a value"))
         };
-
 
         var results = step.Process(input).ToList();
 
@@ -52,9 +102,7 @@ public class SelectTests
     [Test]
     public void Process_TagParentProperty_ShouldBeExpected()
     {
-        var step = new Select();
-        step.Property = "Parent";
-
+        var step = new Select("Parent");
         var input = new List<Tag>
         {
             new("TestTag", 123),
@@ -71,9 +119,7 @@ public class SelectTests
     [Test]
     public void Process_MembersProperty_ShouldBeExpected()
     {
-        var step = new Select();
-        step.Property = "Members";
-
+        var step = new Select("Members");
         var input = new List<Tag>
         {
             new("TestTag", 123),
@@ -90,9 +136,7 @@ public class SelectTests
     [Test]
     public void Process_NestedProperty_ShouldBeExpected()
     {
-        var step = new Select();
-        step.Property = "TagName.Operand";
-
+        var step = new Select("TagName.Operand");
         var input = new List<Tag>
         {
             new("TestTag", 123),
@@ -104,6 +148,55 @@ public class SelectTests
 
         results.Should().HaveCountGreaterThan(3);
         results.Should().AllBeOfType<string>();
+    }
+
+    [Test]
+    public void Process_MultipleTagSimpleProperties_ShouldReturnExpectedValues()
+    {
+        var step = new Select("TagName", "Description", "Value");
+        var input = new List<Tag>
+        {
+            new("TestTag", 123) { Description = "This is a simple test" },
+            new("AnotherTag", new TIMER()) { Description = "This is a complex test" },
+            new("MyTestTag", new STRING("This is a value")) { Description = "This is a string test" }
+        };
+
+        var result = step.Process(input).ToList();
+
+        result.Should().HaveCount(3);
+        result.Should().AllBeOfType<ExpandoObject>();
+
+        foreach (var item in result)
+        {
+            item.As<IDictionary<string, object>>().Keys.Should().ContainInOrder(["TagName", "Description", "Value"]);
+        }
+    }
+    
+    [Test]
+    public void Process_SuccessiveSelectSteps_ShouldReturnExpectedValues()
+    {
+        var first = new Select("Members");
+        var second = new Select("TagName");
+        var input = new List<Tag>
+        {
+            new("TestTag", 123) { Description = "This is a simple test" },
+            new("AnotherTag", new TIMER()) { Description = "This is a complex test" },
+            new("MyTestTag", new STRING("This is a value")) { Description = "This is a string test" }
+        };
+
+        var members = first.Process(input).ToList();
+
+        members.Should().AllBeOfType<Tag>();
+
+        var names = second.Process(members).ToList();
+        names.Should().AllBeOfType<TagName>();
+
+        names.Should().Contain("TestTag");
+        names.Should().Contain("AnotherTag");
+        names.Should().Contain("AnotherTag.DN");
+        names.Should().Contain("AnotherTag.PRE");
+        names.Should().Contain("AnotherTag.ACC");
+        names.Should().Contain("MyTestTag");
     }
 
     [Test]
@@ -119,8 +212,17 @@ public class SelectTests
     [Test]
     public Task Serialize_Configured_ShouldBeVerified()
     {
-        var step = new Select();
-        step.Property = "Radix.Value";
+        var step = new Select("Radix.Value");
+
+        var json = JsonSerializer.Serialize(step);
+
+        return VerifyJson(json);
+    }
+
+    [Test]
+    public Task Serialize_MultiplePropertis_ShouldBeVerified()
+    {
+        var step = new Select("TagName", "Radix", "Description", "Parent.Parent.Value", "Members");
 
         var json = JsonSerializer.Serialize(step);
 
@@ -142,7 +244,7 @@ public class SelectTests
     public void Deserialize_Configured_ShouldBeExpected()
     {
         var step = new Select();
-        step.Property = "MainRoutineName";
+        step.Properties.Add("MainRoutineName");
         var json = JsonSerializer.Serialize(step);
 
         var result = JsonSerializer.Deserialize<Select>(json);
@@ -154,7 +256,7 @@ public class SelectTests
     public void Deserialize_ConfiguredAsStep_ShouldBeExpected()
     {
         var expected = new Select();
-        expected.Property = "Rate";
+        expected.Properties.Add("Rate");
         var step = expected as Step;
         var json = JsonSerializer.Serialize(step);
 

@@ -50,7 +50,7 @@ public class Query()
     /// Gets the <see cref="Property"/> that identifies the type this query returns.
     /// </summary>
     [JsonIgnore]
-    public Property Returns => GetReturn();
+    public Property Returns => Steps.Aggregate(Element.This, (property, step) => step.Returns(property));
 
     /// <summary>
     /// Executes the Query and Processing steps on the provided L5X content.
@@ -83,18 +83,5 @@ public class Query()
 
         //Run the resulting element through all configured steps to filter and select data.
         return Steps[..index].Aggregate(elements, (input, step) => step.Process(input));
-    }
-
-    /// <summary>
-    /// Retrieves the specific Property to be returned based on the Steps defined in the Query.
-    /// </summary>
-    /// <returns>The Property to be returned after executing the Steps defined in the Query.</returns>
-    private Property GetReturn()
-    {
-        return Steps.Aggregate(Element.This, (property, step) => step switch
-        {
-            Select select => Property.This(property.GetProperty(select.Property).InnerType),
-            _ => property
-        });
     }
 }

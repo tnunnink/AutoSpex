@@ -185,7 +185,7 @@ public class Reference
         
         try
         {
-            var property = Engine.Property.This(element.GetType()).GetProperty(Property);
+            var property = Engine.Property.This(element).GetProperty(Property);
             var value = property.GetValue(element);
             value = value is LogixElement nested ? nested.Clone() : value;
             _resolver = _ => value;
@@ -209,7 +209,7 @@ public class Reference
         {
             var value = resolver.Invoke(candidate);
             if (value is null || string.IsNullOrEmpty(Property)) return value;
-            var property = Engine.Property.This(value.GetType()).GetProperty(Property);
+            var property = Engine.Property.This(value).GetProperty(Property);
             return property.GetValue(value);
         }
         

@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Dynamic;
 using System.IO.Compression;
 using System.Text;
 using System.Text.Json;
@@ -19,6 +20,7 @@ public static class Extensions
     public static string DisplayName(this Type? type)
     {
         if (type is null) return "unknown";
+        
         if (type == typeof(bool)) return "bool";
         if (type == typeof(byte)) return "byte";
         if (type == typeof(sbyte)) return "sbyte";
@@ -32,20 +34,20 @@ public static class Extensions
         if (type == typeof(double)) return "double";
         if (type == typeof(decimal)) return "decimal";
         if (type == typeof(string)) return "string";
-
-        if (type.IsArray)
-            return $"{type.GetElementType().DisplayName()}[]";
-
+        
+        if (type == typeof(ExpandoObject)) return "object";
+        
+        //Collections
+        if (type.IsArray) return $"{type.GetElementType().DisplayName()}[]";
+        
         if (type.IsEnumerable())
-            return $"{string.Join(", ", type.GetGenericArguments().Select(DisplayName).ToArray())}[]";
+        {
+            var args = type.GetGenericArguments().Select(DisplayName).ToArray();
+            return $"{string.Join(",", args)}[]";
+        }
 
-        if (type.IsNullable())
-            // ReSharper disable once TailRecursiveCall dont care
-            return Nullable.GetUnderlyingType(type)!.DisplayName();
-
-        if (type.IsGenericType)
-            return type.Name.Split('`')[0] + "<" +
-                   string.Join(", ", type.GetGenericArguments().Select(DisplayName).ToArray()) + ">";
+        // ReSharper disable once TailRecursiveCall
+        if (type.IsNullable()) return Nullable.GetUnderlyingType(type)!.DisplayName();
 
         return type.Name;
     }

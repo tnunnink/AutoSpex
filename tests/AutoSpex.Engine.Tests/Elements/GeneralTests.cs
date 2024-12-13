@@ -8,7 +8,7 @@ public class GeneralTests
     {
         var element = Element.Controller;
 
-        var property = element.Property("RedundancyInfo.KeepTestEditsOnSwitchOver");
+        var property = element.GetProperty("RedundancyInfo.KeepTestEditsOnSwitchOver");
 
         property.Should().NotBeNull();
         property.Origin.Should().Be(typeof(Controller));

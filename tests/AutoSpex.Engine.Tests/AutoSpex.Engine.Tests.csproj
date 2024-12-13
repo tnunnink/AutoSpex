@@ -141,6 +141,9 @@
       <None Update="Steps\VerifyTests.Serialize_ConfiguredTypeAndCriteria_ShouldBeVerified.verified.txt">
         <DependentUpon>VerifyTests.cs</DependentUpon>
       </None>
+      <None Update="SpecTests.Serialize_ConfiguredSpecWithSelect_ShouldBeVerified.verified.txt">
+        <DependentUpon>SpecTests.cs</DependentUpon>
+      </None>
     </ItemGroup>
 
     <ItemGroup>

@@ -99,12 +99,9 @@ public class Criterion
     /// <returns>An Evaluation object indicating the result of the evaluation.</returns>
     public Evaluation Evaluate(object? candidate)
     {
-        var origin = candidate is not null
-            ? Engine.Property.This(candidate.GetType())
-            : Engine.Property.Default;
-
         try
         {
+            var origin = Engine.Property.This(candidate);
             var property = origin.GetProperty(Property);
             var value = property.GetValue(candidate);
             var argument = ResolveArgument(Argument, candidate);

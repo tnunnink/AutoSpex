@@ -1,4 +1,6 @@
-﻿using Ardalis.SmartEnum;
+﻿using System.Dynamic;
+using System.Reflection;
+using Ardalis.SmartEnum;
 using L5Sharp.Core;
 using Module = L5Sharp.Core.Module;
 using Task = L5Sharp.Core.Task;
@@ -17,8 +19,15 @@ namespace AutoSpex.Engine;
 public abstract class Element : SmartEnum<Element, string>
 {
     /// <summary>
-    /// Holds "custom" properties, or properties we attach to the element and provide a custom function to retrieve
-    /// its value. This would allow derived classes to add properties or make method calls show up as a property as needed. 
+    /// A dictionary of cached known or static properties for a given type. This is used to avoid always using reflection
+    /// each time we want to get the list of properties for a type.
+    /// </summary>
+    private static readonly Lazy<Dictionary<Type, List<Property>>> PropertyCache = new();
+
+    /// <summary>
+    /// Holds "custom" properties, or properties we attach to the element and provide a custom function to retrieve its value.
+    /// This would allow derived classes to add properties or make method calls show up as a property as needed.
+    /// This also allows us to support dynamic ExpandoObject objects that can have different properties at runtime. 
     /// </summary>
     private readonly List<Property> _customProperties = [];
 
@@ -32,17 +41,37 @@ public abstract class Element : SmartEnum<Element, string>
         Type = type ?? throw new ArgumentNullException(nameof(type));
     }
 
+    /// <summary>
+    /// The corresponding type this <see cref="Element"/> represents.
+    /// </summary>
     public Type Type { get; }
-    public Property This => Engine.Property.This(Type);
-    public IEnumerable<Property> Properties => This.Properties;
-    public IEnumerable<Property> CustomProperties => _customProperties;
+
+    /// <summary>
+    /// The self-referencing property for this element.
+    /// </summary>
+    public Property This => new(nameof(This), Type, null, x => x, () => Properties);
+
+    /// <summary>
+    /// The collection of properties (both static and custom) that are defined for this element type.
+    /// </summary>
+    public IEnumerable<Property> Properties => GetProperties();
+
+    /// <summary>
+    /// Indicates that this is a component element (Tag, Program, etc.) that we want to make available for selection.
+    /// </summary>
     public bool IsComponent => Type.IsAssignableTo(typeof(LogixComponent));
+
+    /// <summary>
+    /// The set of selectable elements that a query or spec can start with.
+    /// </summary>
     public static IEnumerable<Element> Selectable => List.Where(e => e.IsComponent || e == Rung);
 
+    /// <summary>
+    /// A default element instance that just matches a generic object type and has no properties.
+    /// </summary>
     public static readonly Element Default = new DefaultElement();
 
-    #region ComponentTypes
-
+    //ComponentTypes
     public static readonly Element Controller = new ControllerElement();
     public static readonly Element DataType = new DataTypeElement();
     public static readonly Element AddOnInstruction = new AddOnInstructionElement();
@@ -52,12 +81,10 @@ public abstract class Element : SmartEnum<Element, string>
     public static readonly Element Routine = new RoutineElement();
     public static readonly Element Task = new TaskElement();
     public static readonly Element Trend = new TrendElement();
+
     public static readonly Element WatchList = new WatchListElement();
 
-    #endregion
-
-    #region ElementTypes
-
+    //ElementTypes
     public static readonly Element Block = new BlockElement();
     public static readonly Element Communications = new CommunicationsElement();
     public static readonly Element Connection = new ConnectionElement();
@@ -74,7 +101,38 @@ public abstract class Element : SmartEnum<Element, string>
     public static readonly Element Sheet = new SheetElement();
     public static readonly Element WatchTag = new WatchTagElement();
 
-    #endregion
+    /// <summary>
+    /// A <see cref="Element"/> that represents a dynamic object. This corresponds to the <see cref="ExpandoObject"/>
+    /// for .NET. This object can have any set of custom properties. 
+    /// </summary>
+    /// <param name="expando">The <see cref="ExpandoObject"/> instance to use for registering custom properties.</param>
+    /// <returns></returns>
+    public static Element Dynamic(ExpandoObject? expando = default) => new DynamicElement(expando);
+
+    /// <summary>
+    /// Creates an instance of <see cref="Element"/> that represents a dynamic object with the provided properties.
+    /// </summary>
+    /// <param name="properties">The collection or properties that make up this dynamic object.</param>
+    /// <returns>An instance of <see cref="Element"/> representing a dynamic object with the provided custom properties.</returns>
+    public static Element Dynamic(IEnumerable<string> properties) => new DynamicElement(properties);
+
+    /// <summary>
+    /// Tries to create an <see cref="Element"/> instance based on the provided <paramref name="type"/>.
+    /// Returns a boolean indicating whether the creation was successful.
+    /// </summary>
+    /// <param name="type">The <see cref="Type"/> to use for creating the Element instance.</param>
+    /// <param name="element">The resulting <see cref="Element"/> instance if creation was successful.</param>
+    /// <returns>A boolean value indicating whether the Element was successfully created.</returns>
+    public static bool TryFromType(Type type, out Element element)
+    {
+        if (type == typeof(ExpandoObject))
+        {
+            element = Dynamic();
+            return true;
+        }
+
+        return TryFromName(type.Name, out element);
+    }
 
     /// <summary>
     /// Retrieves an Element based on the provided Scope.
@@ -91,8 +149,44 @@ public abstract class Element : SmartEnum<Element, string>
     /// Retrieves a property from the current object based on the specified path.
     /// </summary>
     /// <param name="path">The path to the desired property, separated by dots.</param>
-    /// <returns>The <see cref="Property"/> object representing the specified property if found, otherwise, <c>null</c>.</returns>
-    public Property Property(string? path) => This.GetProperty(path);
+    /// <returns>The <see cref="GetProperty"/> object representing the specified property if found, otherwise, <c>null</c>.</returns>
+    public Property GetProperty(string? path) => This.GetProperty(path);
+
+    /// <summary>
+    /// Retrieves and returns a list of properties for the current Element instance. This method
+    /// first checks if the properties for the given Type are cached, and if not, it retrieves
+    /// static properties of the Type using reflection. It excludes certain properties and adds
+    /// any custom properties that have been defined for the Element instance.
+    /// </summary>
+    /// <returns>A list of properties associated with the Element instance.</returns>
+    private List<Property> GetProperties()
+    {
+        var properties = new List<Property>();
+
+        //Get or cache static properties for this type.
+        //Since they should not change at runtime we can avoid reusing reflection every time.
+        //Only perform this step for non-dynamic type elements.
+        if (!PropertyCache.Value.TryGetValue(Type, out var cached))
+        {
+            if (Name != nameof(Dynamic))
+            {
+                var known = Type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                    .Where(p => p.GetIndexParameters().Length == 0 && !p.Name.Contains("L5X"))
+                    .Select(x => new Property(x.Name, x.PropertyType, This))
+                    .ToList();
+
+                PropertyCache.Value.TryAdd(Type, known);
+                properties.AddRange(known);
+            }
+        }
+        else
+        {
+            properties.AddRange(cached);
+        }
+
+        properties.AddRange(_customProperties);
+        return properties;
+    }
 
     /// <summary>
     /// Registers a custom property for the element type using the provided property name and getter function.
@@ -112,6 +206,29 @@ public abstract class Element : SmartEnum<Element, string>
     {
         public DefaultElement() : base("None", typeof(object))
         {
+        }
+    }
+
+    private class DynamicElement : Element
+    {
+        public DynamicElement(ExpandoObject? obj = default) : base("Dynamic", typeof(ExpandoObject))
+        {
+            if (obj is null) return;
+
+            var dictionary = (IDictionary<string, object?>)obj;
+
+            foreach (var item in dictionary)
+            {
+                Register<object>(item.Key, x => ((IDictionary<string, object?>)x!)[item.Key]);
+            }
+        }
+
+        public DynamicElement(IEnumerable<string> properties) : base("Dynamic", typeof(ExpandoObject))
+        {
+            foreach (var property in properties)
+            {
+                Register<object>(property, x => ((IDictionary<string, object?>)x!)[property]);
+            }
         }
     }
 

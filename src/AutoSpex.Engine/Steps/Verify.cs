@@ -33,4 +33,14 @@ public class Verify : Step
 
         return evaluations;
     }
+    
+    /// <inheritdoc />
+    /// <remarks>
+    /// Technically this step always returns an <see cref="Evaluation"/> object. At this point we don't totally care
+    /// about the return type, but we implement anyway.
+    /// </remarks>
+    public override Property Returns(Property input)
+    {
+        return Property.This(typeof(Evaluation));
+    }
 }

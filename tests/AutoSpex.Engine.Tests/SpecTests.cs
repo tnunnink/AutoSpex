@@ -190,6 +190,22 @@ public class SpecTests
 
         return Verify(json, VerifySettings);
     }
+    
+    [Test]
+    public Task Serialize_ConfiguredSpecWithSelect_ShouldBeVerified()
+    {
+        var spec = Spec.Configure(s =>
+        {
+            s.Get(Element.Tag);
+            s.Where("Name", Operation.Containing, "Test");
+            s.Select("Members");
+            s.Validate("DataType", Negation.Not, Operation.Void);
+        });
+
+        var json = JsonSerializer.Serialize(spec, Options);
+
+        return Verify(json, VerifySettings);
+    }
 
     [Test]
     public Task Serialize_ConfiguredSpecWithRange_ShouldBeVerified()

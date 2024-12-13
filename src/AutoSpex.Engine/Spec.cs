@@ -119,7 +119,7 @@ public class Spec() : IEquatable<Spec>
             Query.Steps.Add(new Select());
 
         var select = (Select)Query.Steps.First(x => x is Select);
-        select.Property = property;
+        select.Properties.Add(property);
         return this;
     }
 

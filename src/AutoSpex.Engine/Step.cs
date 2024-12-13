@@ -28,6 +28,15 @@ public abstract class Step
     public abstract IEnumerable<object?> Process(IEnumerable<object?> input);
 
     /// <summary>
+    /// Determines what the return <see cref="Property"/> will be given an input property. Most steps will return the
+    /// same type that is input, but some may not. This step will force each step to define a method for determining
+    /// the return type (i.e. input to the next step).
+    /// </summary>
+    /// <param name="input">The input type of this step.</param>
+    /// <returns>The <see cref="Property"/> that represents a self-referential type of the output of this step.</returns>
+    public abstract Property Returns(Property input);
+
+    /// <summary>
     /// Adds a new <see cref="Criterion"/> instance to the <see cref="Criteria"/> for this step. 
     /// </summary>
     public Criterion Add()

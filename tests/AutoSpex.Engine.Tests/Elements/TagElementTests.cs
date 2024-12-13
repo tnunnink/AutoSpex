@@ -54,7 +54,7 @@ public class TagElementTests
     {
         var element = Element.Tag;
 
-        var property = element.Property("Name");
+        var property = element.GetProperty("Name");
 
         property.Origin.Should().Be(typeof(Tag));
         property.Type.Should().Be(typeof(string));
@@ -70,7 +70,7 @@ public class TagElementTests
     {
         var element = Element.Tag;
 
-        var property = element.Property("Radix.Name");
+        var property = element.GetProperty("Radix.Name");
 
         property.Origin.Should().Be(typeof(Tag));
         property.Type.Should().Be(typeof(string));
@@ -86,7 +86,7 @@ public class TagElementTests
     {
         var element = Element.Tag;
 
-        var property = element.Property("Root.Root.Parent");
+        var property = element.GetProperty("Root.Root.Parent");
 
         property.Origin.Should().Be(typeof(Tag));
         property.Type.Should().Be(typeof(Tag));
@@ -102,7 +102,7 @@ public class TagElementTests
     {
         var element = Element.Tag;
 
-        var property = element.Property("References");
+        var property = element.GetProperty("References");
 
         property.Origin.Should().Be(typeof(Tag));
         property.Type.Should().Be(typeof(List<CrossReference>));

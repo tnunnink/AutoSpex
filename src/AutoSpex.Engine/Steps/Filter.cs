@@ -4,7 +4,7 @@ using Ardalis.SmartEnum.SystemTextJson;
 namespace AutoSpex.Engine;
 
 /// <summary>
-/// A step of a specification that will filter input objects based on a configured <see cref="Criteria"/>. 
+/// A step of a specification that will filter input objects based on a configured criteria. 
 /// </summary>
 public class Filter : Step
 {
@@ -44,5 +44,14 @@ public class Filter : Step
         }
 
         return filtered;
+    }
+
+    /// <inheritdoc />
+    /// <remarks>
+    /// Filter step does not tranform the input, so it will always return whatever the input is.
+    /// </remarks>
+    public override Property Returns(Property input)
+    {
+        return input;
     }
 }
