@@ -10,20 +10,27 @@ namespace AutoSpex.Engine;
 public class Select() : Step
 {
     /// <summary>
-    /// Creates a new default <see cref="Select"/> step with default values.
+    /// Creates a new default <see cref="Select"/> step with the provided selection properties.
     /// </summary>
     public Select(params string[] properties) : this()
     {
-        Properties.AddRange(properties);
+        Selections.AddRange(properties.Select(p => new Selection(p)));
     }
 
     /// <summary>
-    /// The collection of properties paths to select from input objects in order to transform the output.
-    /// These are used in <see cref="Process"/> to transform the input collection to the output. 
+    /// Creates a new default <see cref="Select"/> step with the provided selection object.
+    /// </summary>
+    public Select(Selection selection) : this()
+    {
+        Selections.Add(selection);
+    }
+
+    /// <summary>
+    /// The collection of <see cref="Criterion"/> that define the step.
+    /// Each step may have a collection of criteria configured for which it needs to process data.
     /// </summary>
     [JsonInclude]
-    public List<string> Properties { get; private init; } = [];
-
+    public List<Selection> Selections { get; private init; } = [];
 
     /// <inheritdoc />
     public override IEnumerable<object?> Process(IEnumerable<object?> input)
@@ -32,7 +39,7 @@ public class Select() : Step
 
         foreach (var item in input)
         {
-            switch (Properties.Count)
+            switch (Selections.Count)
             {
                 case 0:
                     results.Add(item);
@@ -52,15 +59,15 @@ public class Select() : Step
     /// <inheritdoc />
     /// <remarks>
     /// Select step is the one step that will transform the input into a different output based on the configured
-    /// collection of <see cref="Properties"/>.
+    /// collection of criteria properties.
     /// </remarks>
     public override Property Returns(Property input)
     {
-        return Properties.Count switch
+        return Selections.Count switch
         {
             0 => input,
-            1 => Property.This(input.GetProperty(Properties[0]).InnerType),
-            _ => Element.Dynamic(Properties).This
+            1 => Property.This(input.GetProperty(Selections[0].Property).InnerType),
+            _ => Element.Dynamic(input, Selections).This
         };
     }
 
@@ -71,7 +78,7 @@ public class Select() : Step
     private IEnumerable<object?> SelectSingle(object? item)
     {
         var origin = Property.This(item);
-        var path = Properties[0];
+        var path = Selections[0].Property;
         var property = origin.GetProperty(path);
         var value = property.GetValue(item);
 
@@ -92,11 +99,11 @@ public class Select() : Step
 
         var bag = (IDictionary<string, object?>)new ExpandoObject();
 
-        foreach (var path in Properties)
+        foreach (var selection in Selections)
         {
-            var property = origin.GetProperty(path);
+            var property = origin.GetProperty(selection.Property);
             var value = property.GetValue(item);
-            bag.Add(path, value);
+            bag.Add(selection.Alias, value);
         }
 
         return (ExpandoObject)bag;

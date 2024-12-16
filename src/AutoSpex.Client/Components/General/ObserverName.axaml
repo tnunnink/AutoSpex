@@ -22,7 +22,7 @@
             FontWeight="{a:ThemeResource HeadingFontWeightSmall}"
             CommitCommand="{Binding RenameCommand}"
             MinDropDownWidth="{Binding #NameEntry.Bounds.Width}"
-            Padding="7 5"
+            Padding="{a:ThemeResource ButtonPadding}"
             HorizontalAlignment="Left">
             <controls:Entry.ValueTemplate>
                 <DataTemplate x:DataType="shared:Observer">

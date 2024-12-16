@@ -8,7 +8,7 @@ namespace AutoSpex.Client.Observers;
 
 public class SpecObserver : Observer<Spec>,
     IRecipient<Observer.Get<SpecObserver>>,
-    IRecipient<PropertyInput.GetInputTo>,
+    IRecipient<StepObserver.GetInputTo>,
     IRecipient<PropertyInput.GetDataTo>,
     IRecipient<ArgumentInput.SuggestionRequest>
 {
@@ -47,14 +47,13 @@ public class SpecObserver : Observer<Spec>,
     }
 
     /// <summary>
-    /// Handles the request message by replying if this spec contains the provided instance.
-    /// All verification criterion will take the return type of the configured query.
+    /// Responds to the request for determining the step input proeprty for this query observer.
+    /// If this spec verify step is the requesting step then reply with the current configured return property of the query.
     /// </summary>
-    public void Receive(PropertyInput.GetInputTo message)
+    public void Receive(StepObserver.GetInputTo message)
     {
         if (message.HasReceivedResponse) return;
-        if (message.Observer is not CriterionObserver observer) return;
-        if (!Verify.Criteria.Has(observer)) return;
+        if (!Verify.Is(message.Step)) return;
         message.Reply(Query.Model.Returns);
     }
 

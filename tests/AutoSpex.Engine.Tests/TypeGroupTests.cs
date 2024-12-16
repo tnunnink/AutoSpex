@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Dynamic;
+using System.Globalization;
 
 namespace AutoSpex.Engine.Tests;
 
@@ -134,6 +135,22 @@ public class TypeGroupTests
         var group = TypeGroup.FromType(typeof(string));
 
         group.Should().Be(TypeGroup.Text);
+    }
+
+    [Test]
+    public void FromType_TagElement_ShouldBeElement()
+    {
+        var group = TypeGroup.FromType(typeof(Tag));
+
+        group.Should().Be(TypeGroup.Element);
+    }
+    
+    [Test]
+    public void FromType_ExpandoObject_ShouldBeElement()
+    {
+        var group = TypeGroup.FromType(typeof(ExpandoObject));
+
+        group.Should().Be(TypeGroup.Element);
     }
 
     [Test]

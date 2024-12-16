@@ -144,6 +144,12 @@
       <None Update="SpecTests.Serialize_ConfiguredSpecWithSelect_ShouldBeVerified.verified.txt">
         <DependentUpon>SpecTests.cs</DependentUpon>
       </None>
+      <None Update="Steps\SelectTests.Serialize_MultiplePropertis_ShouldBeVerified.verified.txt">
+        <DependentUpon>SelectTests.cs</DependentUpon>
+      </None>
+      <None Update="Steps\SelectTests.Serialize_ProeprtiesWithAlias_ShouldBeVerified.verified.txt">
+        <DependentUpon>SelectTests.cs</DependentUpon>
+      </None>
     </ItemGroup>
 
     <ItemGroup>

@@ -49,7 +49,7 @@
                         <DataTemplate x:DataType="observers:SelectObserver">
                             <ContentControl
                                 Content="{Binding}"
-                                ContentTemplate="{StaticResource SelectSection}" />
+                                ContentTemplate="{StaticResource SelectStep}" />
                         </DataTemplate>
                     </a:TypedDataTemplateSelector>
                 </ItemsControl.ItemTemplate>

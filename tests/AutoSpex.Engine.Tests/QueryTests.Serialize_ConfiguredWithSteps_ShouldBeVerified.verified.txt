@@ -16,7 +16,12 @@
       ]
     },
     {
-      Property: Description
+      Selections: [
+        {
+          Alias: Description,
+          Property: Description
+        }
+      ]
     }
   ]
 }

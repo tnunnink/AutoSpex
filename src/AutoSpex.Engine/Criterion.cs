@@ -29,6 +29,15 @@ public class Criterion
     /// <summary>
     /// Creates a new <see cref="Criterion"/> with the provided parameters.
     /// </summary>
+    /// <param name="property">The name of the property for which to retrieve the value from the candidate.</param>
+    public Criterion(string property)
+    {
+        Property = property;
+    }
+
+    /// <summary>
+    /// Creates a new <see cref="Criterion"/> with the provided parameters.
+    /// </summary>
     /// <param name="operation">The operation to perform when evaluating.</param>
     /// <param name="argument">The argument value to use when evaluating.</param>
     public Criterion(Operation operation, object? argument = default)

@@ -3,13 +3,7 @@
   "SpecId": "b5019ba9-81a3-451a-ad2e-c612ffad97c6",
   "Query": {
     "Element": "None",
-    "Steps": [
-      {
-        "$type": "Filter",
-        "Match": "All",
-        "Criteria": []
-      }
-    ]
+    "Steps": []
   },
   "Verify": {
     "Criteria": []

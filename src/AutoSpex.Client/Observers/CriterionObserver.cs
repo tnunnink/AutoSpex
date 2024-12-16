@@ -11,16 +11,22 @@ using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using Avalonia.Input;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
 using Range = AutoSpex.Engine.Range;
 
 namespace AutoSpex.Client.Observers;
 
-public partial class CriterionObserver : Observer<Criterion>, IRecipient<PropertyInput.GetInputTo>
+public partial class CriterionObserver : Observer<Criterion>
 {
-    public CriterionObserver(Criterion model) : base(model)
+    /// <summary>
+    /// A function that returns the expected input type for this argument value.
+    /// </summary>
+    private readonly Func<Property> _input;
+
+    public CriterionObserver(Criterion model, Func<Property> input) : base(model)
     {
-        Property = new PropertyInput(this);
+        _input = input;
+
+        Property = new PropertyInput(() => Model.Property, x => Model.Property = x, _input);
         Argument = new ArgumentInput(() => Model.Argument, x => Model.Argument = x, () => Property.Value);
 
         Track(Property);
@@ -192,8 +198,9 @@ public partial class CriterionObserver : Observer<Criterion>, IRecipient<Propert
 
         var index = criteria.IndexOf(this) + 1;
         if (index < 0 || index > criteria.Count) return;
-        
-        criteria.Insert(index, new Criterion());
+
+        var next = new CriterionObserver(new Criterion(), _input);
+        criteria.Insert(index, next);
     }
 
     /// <inheritdoc />
@@ -223,15 +230,14 @@ public partial class CriterionObserver : Observer<Criterion>, IRecipient<Propert
     {
         if (source is not CriterionObserver other) return false;
         if (this == other) return false;
-        if (!TryGetCollection(out var criteria)) return false;
-        return criteria.Has(this) && criteria.Has(other);
+        return true;
     }
 
     /// <inheritdoc />
     protected override Task Duplicate()
     {
         if (!TryGetCollection(out var criteria) || !criteria.Has(this)) return Task.CompletedTask;
-        criteria.Add(new CriterionObserver(Model.Duplicate()));
+        criteria.Add(new CriterionObserver(Model.Duplicate(), _input));
         return Task.CompletedTask;
     }
 
@@ -245,27 +251,6 @@ public partial class CriterionObserver : Observer<Criterion>, IRecipient<Propert
         var data = JsonSerializer.Serialize(selected);
 
         await clipboard.SetTextAsync(data);
-    }
-
-    #endregion
-
-    #region Messages
-
-    /// <summary>
-    /// Handles requests for a property input origin value. Since a criterion may contain nested criterion instance,
-    /// and the nested instance will contain a <see cref="PropertyInput"/> object, we need to handle requests for the
-    /// parent property type to the nested object here.
-    /// </summary>
-    public void Receive(PropertyInput.GetInputTo message)
-    {
-        if (message.HasReceivedResponse) return;
-        if (Argument.Value is not CriterionObserver criterion) return;
-        if (message.Observer is not CriterionObserver observer) return;
-        if (!observer.Is(criterion)) return;
-
-        //For nested criterion the input type is the inner type of this collection property.
-        var input = Engine.Property.This(Property.Value.InnerType);
-        message.Reply(input);
     }
 
     #endregion
@@ -312,7 +297,17 @@ public partial class CriterionObserver : Observer<Criterion>, IRecipient<Propert
     /// </summary>
     private bool TryGetCollection(out ObserverCollection<Criterion, CriterionObserver> collection)
     {
-        var step = GetObserver<StepObserver>(s => s.Criteria.Has(this));
+        var step = GetObserver<StepObserver>(s =>
+        {
+            switch (s)
+            {
+                case FilterObserver filter when filter.Criteria.Has(this):
+                case VerifyObserver verify when verify.Criteria.Has(this):
+                    return true;
+                default:
+                    return false;
+            }
+        });
 
         if (step is null)
         {
@@ -320,13 +315,25 @@ public partial class CriterionObserver : Observer<Criterion>, IRecipient<Propert
             return false;
         }
 
-        collection = step.Criteria;
+        collection = step switch
+        {
+            FilterObserver filter => filter.Criteria,
+            VerifyObserver verify => verify.Criteria,
+            _ => []
+        };
         return true;
     }
 
     /// <inheritdoc />
     protected override IEnumerable<MenuActionItem> GenerateMenuItems()
     {
+        yield return new MenuActionItem
+        {
+            Header = "Add After",
+            Icon = Resource.Find("IconAdd"),
+            Command = AddAfterCommand
+        };
+
         yield return new MenuActionItem
         {
             Header = "Copy",
@@ -384,5 +391,4 @@ public partial class CriterionObserver : Observer<Criterion>, IRecipient<Propert
     }
 
     public static implicit operator Criterion(CriterionObserver observer) => observer.Model;
-    public static implicit operator CriterionObserver(Criterion model) => new(model);
 }

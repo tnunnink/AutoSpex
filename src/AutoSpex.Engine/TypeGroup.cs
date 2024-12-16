@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Dynamic;
 using System.Net;
 using System.Text;
 using System.Text.Json;
@@ -412,7 +413,8 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
     {
         protected override bool AppliesTo(Type type)
         {
-            if (!type.IsEnumerable()) return false;
+            if (type == typeof(ExpandoObject)) return true;
+            if (type.IsEnumerable()) return false;
             return Engine.Element.TryFromType(type, out _) || type.IsAssignableTo(typeof(LogixElement));
         }
 

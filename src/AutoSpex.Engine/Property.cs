@@ -18,7 +18,7 @@ public class Property : IEquatable<Property>
     public static readonly char[] Separators = [MemberSeparator, IndexOpenSeparator];
 
     //These are properties that I don't want to show up for the user because they are not really useful.
-    private static readonly List<string> PropertyExclusions = ["Length", "Capacity"];
+    private static readonly List<string> PropertyExclusions = ["L5X", "L5XType", "Length", "Capacity"];
 
     /// <summary>
     /// A dictionary of cached known or static properties for a given type.
@@ -361,7 +361,8 @@ public class Property : IEquatable<Property>
 
         //Build the property expression and compile it.
         var type = Parent is not null ? Parent.Type : Type;
-        var getter = BuildGetterExpression(type, Name);
+
+        var getter = type != typeof(ExpandoObject) ? BuildGetterExpression(type, Name) : BuildExpandoGetter(Path);
 
         //Cache this getter for future or static calls to this property for other instance objects to improve performance.
         GetterCache.Add(Key, getter);
@@ -375,9 +376,6 @@ public class Property : IEquatable<Property>
     /// </summary>
     private static Func<object?, object?> BuildGetterExpression(Type parent, string name)
     {
-        //If the object type is an ExpandoObject then the getter can be created statically
-        if (parent == typeof(ExpandoObject)) return x => ((IDictionary<string, object?>)x!)[name];
-
         var parameter = Expression.Parameter(typeof(object), "x");
         var converted = Expression.TypeAs(parameter, parent);
         var member = Expression.TypeAs(BuildPropertyExpression(converted, name), typeof(object));
@@ -385,6 +383,15 @@ public class Property : IEquatable<Property>
         var condition = Expression.Condition(notNull, member, Expression.Constant(null), typeof(object));
         var getter = Expression.Lambda<Func<object?, object?>>(condition, parameter).Compile();
         return getter;
+    }
+
+    /// <summary>
+    /// Builds a getter expression for an expando objec input which is castable to a IDictionary. In this case we want
+    /// to use the current property path to get the item from the dictionary.
+    /// </summary>
+    private static Func<object?, object?> BuildExpandoGetter(string path)
+    {
+        return x => ((IDictionary<string, object?>)x!)[path];
     }
 
     /// <summary>

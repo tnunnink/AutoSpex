@@ -71,46 +71,6 @@ public class SpecTests
     }
 
     [Test]
-    public void Contains_HasCriterion_ShouldBeTrue()
-    {
-        var spec = new Spec();
-        var criterion = new Criterion("Description", Negation.Not, Operation.Void);
-        spec.Verify.Criteria.Add(criterion);
-
-        var result = spec.Contains(criterion);
-
-        result.Should().BeTrue();
-    }
-
-    [Test]
-    public void Contains_HasFilterCriterion_ShouldBeTrue()
-    {
-        var spec = new Spec();
-        var filter = new Filter();
-        var criterion = filter.Add();
-        spec.Query.Steps.Add(filter);
-
-        var result = spec.Contains(criterion);
-
-        result.Should().BeTrue();
-    }
-
-    [Test]
-    public void Contains_HasFilterNestedCriterion_ShouldBeTrue()
-    {
-        var spec = new Spec();
-        var filter = new Filter();
-        var nested = new Criterion("Description", Negation.Not, Operation.Void);
-        var criterion = new Criterion("Members", Operation.Any, nested);
-        filter.Criteria.Add(criterion);
-        spec.Query.Steps.Add(filter);
-
-        var result = spec.Contains(nested);
-
-        result.Should().BeTrue();
-    }
-
-    [Test]
     public void GetCriteria_WhenCalled_ShouldBeExpected()
     {
         var spec = Spec.Configure(s =>
@@ -190,7 +150,7 @@ public class SpecTests
 
         return Verify(json, VerifySettings);
     }
-    
+
     [Test]
     public Task Serialize_ConfiguredSpecWithSelect_ShouldBeVerified()
     {

@@ -14,7 +14,15 @@ public class SelectTests
     {
         var step = new Select();
 
-        step.Properties.Should().BeEmpty();
+        step.Selections.Should().BeEmpty();
+    }
+
+    [Test]
+    public void New_WithInstance_ShouldBeExpected()
+    {
+        var step = new Select(new Selection());
+
+        step.Selections.Should().HaveCount(1);
     }
 
     [Test]
@@ -22,9 +30,9 @@ public class SelectTests
     {
         var step = new Select();
 
-        step.Properties.Add("Value");
+        step.Selections.Add(new Selection("Value"));
 
-        step.Properties.Should().Contain("Value");
+        step.Selections.Should().HaveCount(1);
     }
 
     [Test]
@@ -77,6 +85,80 @@ public class SelectTests
         result.Name.Should().Be("This");
         result.Type.Should().Be(typeof(ExpandoObject));
         result.Properties.Should().HaveCount(3);
+    }
+
+    [Test]
+    public void Returns_MultipleNestedProperties_ShouldBeExpected()
+    {
+        var step = new Select("TagName.Member", "[PRE].Value", "Parent.Parent.Name");
+
+        var result = step.Returns(Element.Tag.This);
+
+        result.Name.Should().Be("This");
+        result.Type.Should().Be(typeof(ExpandoObject));
+        result.Properties.Should().HaveCount(3);
+    }
+
+    [Test]
+    public void Returns_MultipleProperties_PropertiesShouldHaveExpectedInstances()
+    {
+        var step = new Select("TagName", "Description", "Value");
+
+        var result = step.Returns(Element.Tag.This);
+
+        var properties = result.Properties.ToList();
+
+        properties[0].Name.Should().Be("TagName");
+        properties[0].Type.Should().Be(typeof(TagName));
+        properties[0].Group.Should().Be(TypeGroup.Text);
+
+        properties[1].Name.Should().Be("Description");
+        properties[1].Type.Should().Be(typeof(string));
+        properties[1].Group.Should().Be(TypeGroup.Text);
+
+        properties[2].Name.Should().Be("Value");
+        properties[2].Type.Should().Be(typeof(LogixData));
+        properties[2].Group.Should().Be(TypeGroup.Number);
+    }
+
+    [Test]
+    public void Returns_MultipleNestedProperties_PropertiesShouldHaveExpectedInstances()
+    {
+        var step = new Select("TagName.Member", "Members[0].Description", "[PRE].Value");
+
+        var result = step.Returns(Element.Tag.This);
+
+        var properties = result.Properties.ToList();
+
+        properties[0].Name.Should().Be("Member");
+        properties[0].Type.Should().Be(typeof(string));
+        properties[0].Group.Should().Be(TypeGroup.Text);
+
+        properties[1].Name.Should().Be("Description");
+        properties[1].Type.Should().Be(typeof(string));
+        properties[1].Group.Should().Be(TypeGroup.Text);
+
+        properties[2].Name.Should().Be("Value");
+        properties[2].Type.Should().Be(typeof(LogixData));
+        properties[2].Group.Should().Be(TypeGroup.Number);
+    }
+
+    [Test]
+    public void Process_Default_ShouldBeExpected()
+    {
+        var step = new Select();
+        var input = new List<Tag>
+        {
+            new("TestTag", 123),
+            new("AnotherTag", new TIMER()),
+            new("MyTestTag", new STRING("This is a value"))
+        };
+
+        var results = step.Process(input).ToList();
+
+        results.Should().HaveCount(3);
+        results.Should().AllBeOfType<Tag>();
+        results.Should().BeEquivalentTo(input);
     }
 
     [Test]
@@ -171,7 +253,7 @@ public class SelectTests
             item.As<IDictionary<string, object>>().Keys.Should().ContainInOrder(["TagName", "Description", "Value"]);
         }
     }
-    
+
     [Test]
     public void Process_SuccessiveSelectSteps_ShouldReturnExpectedValues()
     {
@@ -197,6 +279,21 @@ public class SelectTests
         names.Should().Contain("AnotherTag.PRE");
         names.Should().Contain("AnotherTag.ACC");
         names.Should().Contain("MyTestTag");
+    }
+
+    [Test]
+    public void Process_MultipleTagComplexProperties_ShouldReturnExpectedValues()
+    {
+        var step = new Select("TagName.Member", "Members[0].Description", "[PRE].Value");
+        var input = new List<Tag>
+        {
+            new("MyTagName", new TIMER { PRE = 1234 }) { Description = "This is a complex test" },
+        };
+
+        var result = step.Process(input).ToList();
+
+        result.Should().HaveCount(1);
+        result.Should().AllBeOfType<ExpandoObject>();
     }
 
     [Test]
@@ -230,6 +327,19 @@ public class SelectTests
     }
 
     [Test]
+    public Task Serialize_ProeprtiesWithAlias_ShouldBeVerified()
+    {
+        var step = new Select();
+        step.Selections.Add(new Selection("TagName.Member", "MemberName"));
+        step.Selections.Add(new Selection("Parent.Parent.Value", "Testing"));
+        step.Selections.Add(new Selection("[PRE].Value", "Preset"));
+
+        var json = JsonSerializer.Serialize(step);
+
+        return VerifyJson(json);
+    }
+
+    [Test]
     public void Deserialize_Default_ShouldBeExpected()
     {
         var step = new Select();
@@ -243,8 +353,7 @@ public class SelectTests
     [Test]
     public void Deserialize_Configured_ShouldBeExpected()
     {
-        var step = new Select();
-        step.Properties.Add("MainRoutineName");
+        var step = new Select("MainRoutineName");
         var json = JsonSerializer.Serialize(step);
 
         var result = JsonSerializer.Deserialize<Select>(json);
@@ -255,8 +364,7 @@ public class SelectTests
     [Test]
     public void Deserialize_ConfiguredAsStep_ShouldBeExpected()
     {
-        var expected = new Select();
-        expected.Properties.Add("Rate");
+        var expected = new Select("Rate");
         var step = expected as Step;
         var json = JsonSerializer.Serialize(step);
 

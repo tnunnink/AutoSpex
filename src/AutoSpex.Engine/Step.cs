@@ -13,13 +13,6 @@ namespace AutoSpex.Engine;
 public abstract class Step
 {
     /// <summary>
-    /// The collection of <see cref="Criterion"/> that define the step.
-    /// Each step may have a collection of criteria configured for which it needs to process data.
-    /// </summary>
-    [JsonInclude]
-    public List<Criterion> Criteria { get; private init; } = [];
-
-    /// <summary>
     /// Processes the current step by taking an input collection of objects and returning an output collection of the same
     /// or different type, depending on the purpose or implementation of the step.
     /// </summary>
@@ -35,14 +28,4 @@ public abstract class Step
     /// <param name="input">The input type of this step.</param>
     /// <returns>The <see cref="Property"/> that represents a self-referential type of the output of this step.</returns>
     public abstract Property Returns(Property input);
-
-    /// <summary>
-    /// Adds a new <see cref="Criterion"/> instance to the <see cref="Criteria"/> for this step. 
-    /// </summary>
-    public Criterion Add()
-    {
-        var criterion = new Criterion();
-        Criteria.Add(criterion);
-        return criterion;
-    }
 }

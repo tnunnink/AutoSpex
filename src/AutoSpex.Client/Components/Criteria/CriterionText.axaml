@@ -34,7 +34,8 @@
 
                 <controls:HighlightableTextBlock
                     Text="{Binding Property.Path}"
-                    FontFamily="{a:ThemeResource CodeFontFamily}" />
+                    FontFamily="{a:ThemeResource CodeFontFamily}"
+                    HighlightedText="{Binding FilterText}" />
 
                 <controls:HighlightableTextBlock
                     Text="{Binding Negation}"

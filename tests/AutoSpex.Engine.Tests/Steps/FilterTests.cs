@@ -28,23 +28,11 @@ public class FilterTests
     }
 
     [Test]
-    public void Add_Default_ShouldBeExpectedCount()
+    public void New_WithCriterion_ShouldBeExpectedCount()
     {
-        var filter = new Filter();
-
-        filter.Add();
+        var filter = new Filter(new Criterion());
 
         filter.Criteria.Should().HaveCount(1);
-    }
-
-    [Test]
-    public void Add_Default_ShouldNotBeNull()
-    {
-        var filter = new Filter();
-
-        var criterion = filter.Add();
-
-        criterion.Should().NotBeNull();
     }
 
     [Test]

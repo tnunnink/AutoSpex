@@ -1,5 +1,6 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
                     xmlns:components="clr-namespace:AutoSpex.Client.Components"
                     xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
@@ -33,22 +34,31 @@
                 </Button>
             </controls:Section.Action>
 
-            <StackPanel Spacing="10" Margin="10">
+            <StackPanel Spacing="20">
 
-                <ContentControl
-                    Content="{Binding Query}"
-                    ContentTemplate="{StaticResource QuerySection}" />
+                <ScrollViewer
+                    VerticalScrollBarVisibility="Disabled"
+                    HorizontalScrollBarVisibility="Auto"
+                    Theme="{a:ControlTheme ScrollViewer}">
 
-                <ContentControl
-                    Content="{Binding Verify}"
-                    ContentTemplate="{StaticResource VerifySection}"
-                    IsVisible="{Binding Query.Element, Converter={x:Static ObjectConverters.NotEqual}, ConverterParameter={x:Static engine:Element.Default}}" />
+                    <StackPanel Spacing="10">
+
+                        <ContentControl
+                            Content="{Binding Query}"
+                            ContentTemplate="{StaticResource QuerySection}" />
+
+                        <ContentControl
+                            Content="{Binding Verify}"
+                            ContentTemplate="{StaticResource VerifySection}"
+                            IsVisible="{Binding Query.Element, Converter={x:Static ObjectConverters.NotEqual}, ConverterParameter={x:Static engine:Element.Default}}" />
+
+                    </StackPanel>
+                </ScrollViewer>
 
                 <StackPanel
                     IsVisible="{Binding Query.Element, Converter={x:Static ObjectConverters.NotEqual}, ConverterParameter={x:Static engine:Element.Default}}"
                     Orientation="Horizontal"
-                    Spacing="20"
-                    Margin="0 20 0 0">
+                    Spacing="20">
 
                     <ContentControl
                         Content="{Binding Query}"

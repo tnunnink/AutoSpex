@@ -20,7 +20,7 @@ public static class Extensions
     public static string DisplayName(this Type? type)
     {
         if (type is null) return "unknown";
-        
+
         if (type == typeof(bool)) return "bool";
         if (type == typeof(byte)) return "byte";
         if (type == typeof(sbyte)) return "sbyte";
@@ -34,12 +34,12 @@ public static class Extensions
         if (type == typeof(double)) return "double";
         if (type == typeof(decimal)) return "decimal";
         if (type == typeof(string)) return "string";
-        
+
         if (type == typeof(ExpandoObject)) return "object";
-        
+
         //Collections
         if (type.IsArray) return $"{type.GetElementType().DisplayName()}[]";
-        
+
         if (type.IsEnumerable())
         {
             var args = type.GetGenericArguments().Select(DisplayName).ToArray();
@@ -62,6 +62,7 @@ public static class Extensions
             bool b => b.ToString().ToLowerInvariant(),
             LogixEnum enumeration => enumeration.Name,
             LogixScoped scoped => scoped.Scope,
+            KeyValuePair<string, object> pair => pair.Key,
             string text => text,
             IEnumerable enumerable => $"[{string.Join(',', enumerable.Cast<object>().Select(x => x.ToText()))}]",
             _ => candidate?.ToString() ?? string.Empty

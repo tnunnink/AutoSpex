@@ -119,7 +119,7 @@ public class Spec() : IEquatable<Spec>
             Query.Steps.Add(new Select());
 
         var select = (Select)Query.Steps.First(x => x is Select);
-        select.Properties.Add(property);
+        select.Selections.Add(new Selection(property));
         return this;
     }
 
@@ -165,18 +165,6 @@ public class Spec() : IEquatable<Spec>
         var data = JsonSerializer.Serialize(this);
         var spec = JsonSerializer.Deserialize<Spec>(data)!;
         return new Spec(spec);
-    }
-
-    /// <summary>
-    /// Checks if this spec contains the given criterion in any filter step or verification.
-    /// </summary>
-    /// <param name="criterion">The criterion to check for within the spec.</param>
-    /// <returns>True if the spec contains the criterion, false otherwise.</returns>
-    public bool Contains(Criterion criterion)
-    {
-        if (Verify.Criteria.Any(c => c.Contains(criterion))) return true;
-        var filters = Query.Steps.Where(s => s is Filter).Cast<Filter>().SelectMany(f => f.Criteria);
-        return filters.Any(f => f.Contains(criterion));
     }
 
     /// <summary>

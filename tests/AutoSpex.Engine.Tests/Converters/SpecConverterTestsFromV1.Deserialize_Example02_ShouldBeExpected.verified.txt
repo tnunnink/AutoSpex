@@ -3,13 +3,7 @@
   "SpecId": "4379b169-be95-48c3-a1ee-40e90d74540b",
   "Query": {
     "Element": "Program",
-    "Steps": [
-      {
-        "$type": "Filter",
-        "Match": "All",
-        "Criteria": []
-      }
-    ]
+    "Steps": []
   },
   "Verify": {
     "Criteria": [

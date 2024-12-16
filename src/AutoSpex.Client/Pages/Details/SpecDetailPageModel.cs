@@ -87,6 +87,13 @@ public partial class SpecDetailPageModel(NodeObserver node) : DetailPageModel(no
         RunnerPage = await Navigator.Navigate(() => new SpecRunnerPageModel(Node));
     }
 
+    protected override void OnDeactivated()
+    {
+        if (CriteriaPage is not null) Navigator.Close(CriteriaPage);
+        if (RunnerPage is not null) Navigator.Close(RunnerPage);
+        base.OnDeactivated();
+    }
+
     /// <summary>
     /// Creates this node in the database by prompting the user to select a parent container, and then sending the
     /// CreateNode request with the update node parent id. This should only be used for virtual nodes that have not

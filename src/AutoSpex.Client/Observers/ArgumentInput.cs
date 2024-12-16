@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using AutoSpex.Persistence;
-using AutoSpex.Persistence.References;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -41,7 +40,7 @@ public partial class ArgumentInput : Observer
     /// </summary>
     /// <param name="getter">The funtion that retrieves the underlying argument value.</param>
     /// <param name="setter">The function that sets teh underlying argument value. If not provided we default to nothing (read-only).</param>
-    /// <param name="input">The function that returns the expected <see cref="TypeGroup"/> the argument should belong to.
+    /// <param name="input">The function that returns the expected <see cref="Engine.Property"/> the argument should belong to.
     /// This is used to help parse text inputs to the correct strongly typed value.
     /// If not provided, text inputs will be parsed as the first parsable non-text type.</param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="getter"/> is null.</exception>
@@ -186,7 +185,7 @@ public partial class ArgumentInput : Observer
         {
             Range range => new RangeObserver(range),
             List<object?> list => list.ToObserver(x => new ValueObserver(x)),
-            Criterion criterion => new CriterionObserver(criterion),
+            Criterion criterion => new CriterionObserver(criterion, () => Property.This(_input().InnerType)),
             _ => new ValueObserver(value)
         };
     }

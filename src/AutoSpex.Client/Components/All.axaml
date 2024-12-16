@@ -7,8 +7,10 @@
         <ResourceInclude Source="Nodes/All.axaml" />
         <ResourceInclude Source="Nodes/All.axaml" />
         <ResourceInclude Source="Prompts/All.axaml" />
+        <ResourceInclude Source="Properties/All.axaml" />
         <ResourceInclude Source="Runs/All.axaml" />
         <ResourceInclude Source="Sources/All.axaml" />
         <ResourceInclude Source="Specs/All.axaml" />
+        <ResourceInclude Source="Steps/All.axaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

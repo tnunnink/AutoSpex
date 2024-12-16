@@ -107,14 +107,21 @@ public abstract class Element : SmartEnum<Element, string>
     /// </summary>
     /// <param name="expando">The <see cref="ExpandoObject"/> instance to use for registering custom properties.</param>
     /// <returns></returns>
-    public static Element Dynamic(ExpandoObject? expando = default) => new DynamicElement(expando);
+    public static Element Dynamic(ExpandoObject? expando = default)
+    {
+        return new DynamicElement(expando);
+    }
 
     /// <summary>
-    /// Creates an instance of <see cref="Element"/> that represents a dynamic object with the provided properties.
+    /// Creates an instance of <see cref="Element"/> that represents a dynamic object with the provided origin and selections.
     /// </summary>
-    /// <param name="properties">The collection or properties that make up this dynamic object.</param>
-    /// <returns>An instance of <see cref="Element"/> representing a dynamic object with the provided custom properties.</returns>
-    public static Element Dynamic(IEnumerable<string> properties) => new DynamicElement(properties);
+    /// <param name="origin">The origin proeprty type from which the selections are made.</param>
+    /// <param name="selections">The collection or selections that make up the properties of the dynamic object.</param>
+    /// <returns>An instance of <see cref="Element"/> representing a dynamic object with custom selection properties.</returns>
+    public static Element Dynamic(Property origin, IEnumerable<Selection> selections)
+    {
+        return new DynamicElement(selections, origin);
+    }
 
     /// <summary>
     /// Tries to create an <see cref="Element"/> instance based on the provided <paramref name="type"/>.
@@ -214,21 +221,36 @@ public abstract class Element : SmartEnum<Element, string>
         public DynamicElement(ExpandoObject? obj = default) : base("Dynamic", typeof(ExpandoObject))
         {
             if (obj is null) return;
-
             var dictionary = (IDictionary<string, object?>)obj;
 
             foreach (var item in dictionary)
             {
-                Register<object>(item.Key, x => ((IDictionary<string, object?>)x!)[item.Key]);
+                var type = item.Value?.GetType() ?? typeof(object);
+                var custom = new Property(item.Key, type, This, x => GetValue(x, item.Key));
+                _customProperties.Add(custom);
             }
         }
 
-        public DynamicElement(IEnumerable<string> properties) : base("Dynamic", typeof(ExpandoObject))
+        public DynamicElement(IEnumerable<Selection> selections, Property origin) : base("Dynamic",
+            typeof(ExpandoObject))
         {
-            foreach (var property in properties)
+            foreach (var selection in selections)
             {
-                Register<object>(property, x => ((IDictionary<string, object?>)x!)[property]);
+                var type = origin.GetProperty(selection.Property).Type;
+                var custom = new Property(selection.Alias, type, This, x => GetValue(x, selection.Alias));
+                _customProperties.Add(custom);
             }
+        }
+
+        private static object? GetValue(object? input, string key)
+        {
+            if (input is not IDictionary<string, object?> dictionary)
+                throw new InvalidOperationException("Invalid object type. Expecting dynamic object.");
+
+            if (!dictionary.TryGetValue(key, out var value))
+                throw new InvalidOperationException($"Property {key} does not exist for the current object.");
+
+            return value;
         }
     }
 

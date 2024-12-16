@@ -21,10 +21,12 @@
       },
       {
         "$type": "Select",
-        "Properties": [
-          "Members"
-        ],
-        "Criteria": []
+        "Selections": [
+          {
+            "Alias": "Members",
+            "Property": "Members"
+          }
+        ]
       }
     ]
   },

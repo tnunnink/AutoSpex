@@ -1,0 +1,24 @@
+﻿{
+  Selections: [
+    {
+      Alias: TagName,
+      Property: TagName
+    },
+    {
+      Alias: Radix,
+      Property: Radix
+    },
+    {
+      Alias: Description,
+      Property: Description
+    },
+    {
+      Alias: Value,
+      Property: Parent.Parent.Value
+    },
+    {
+      Alias: Members,
+      Property: Members
+    }
+  ]
+}

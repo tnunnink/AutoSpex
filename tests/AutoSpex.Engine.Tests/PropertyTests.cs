@@ -343,6 +343,41 @@ public class PropertyTests
     }
 
     [Test]
+    public void GetValue_ExpandoNestedPropertyFromTag_ShouldBeExpectedValue()
+    {
+        var tag = new Tag("MyTag", 123);
+        var bag = (IDictionary<string, object?>)new ExpandoObject();
+        bag.Add("Member", tag.TagName.Member);
+
+        var element = Element.Dynamic(bag as ExpandoObject);
+        
+        var property = element.GetProperty("Member");
+        property.Should().NotBeNull();
+
+        var value = property.GetValue(bag);
+        value.Should().Be(tag.TagName.Member);
+        
+    }
+    
+    [Test]
+    public void GetValue_NestedPropertyFromExpandoProperty_ShouldBeExpectedValue()
+    {
+        var bag = (IDictionary<string, object?>)new ExpandoObject();
+        bag.Add("Radix", Radix.Decimal);
+        var element = Element.Dynamic(bag as ExpandoObject);
+
+        var property = element.This.GetProperty("Radix.Value");
+        property.Should().NotBeNull();
+        property.Name.Should().Be("Value");
+        property.Type.Should().Be(typeof(string));
+        property.Origin.Should().Be(typeof(ExpandoObject));
+        property.Parent.Should().NotBeNull();
+
+        var value = property.GetValue(bag);
+        value.Should().Be(Radix.Decimal.Value);
+    }
+
+    [Test]
     public void GetValue_ExpandoObjectWithoutProperty_ShouldThrowException()
     {
         dynamic bag = new ExpandoObject();

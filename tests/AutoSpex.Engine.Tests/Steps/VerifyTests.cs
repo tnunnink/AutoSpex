@@ -17,23 +17,11 @@ public class VerifyTests
     }
 
     [Test]
-    public void Add_Default_ShouldBeExpectedCount()
+    public void New_WithCriterion_ShouldBeExpectedCount()
     {
-        var step = new Verify();
+        var filter = new Filter(new Criterion());
 
-        step.Add();
-
-        step.Criteria.Should().HaveCount(1);
-    }
-
-    [Test]
-    public void Add_Default_ShouldNotBeNull()
-    {
-        var step = new Verify();
-
-        var criterion = step.Add();
-
-        criterion.Should().NotBeNull();
+        filter.Criteria.Should().HaveCount(1);
     }
 
     [Test]

@@ -30,23 +30,6 @@ public static class TestData
 
     #region Elements
 
-    public static ObservableCollection<ElementObserver> DataTypeElements = new(GetDataTypes());
-
-    private static IEnumerable<ElementObserver> GetDataTypes()
-    {
-        /*var content = L5X.New("Test", "1756-L83E", new Revision(33.1));
-
-        content.Add(new DataType("MyTestType") { Description = "this is a test element" });
-        content.Add(new DataType("AnotherType") { Description = "this is a test element" });
-        content.Add(new DataType("MyComplexType") { Description = "this is a test element" });
-
-        return content.DataTypes.Select(e => new ElementObserver(e));*/
-
-        yield return new DataType("MyTestType") { Description = "this is a test element" };
-        yield return new DataType("AnotherType") { Description = "this is a test element" };
-        yield return new DataType("MyComplexType") { Description = "this is a test element" };
-    }
-
     public static TagName TagNameValue = new("MyTag.Member[1].Value");
 
     #endregion
@@ -57,20 +40,9 @@ public static class TestData
     public static Property TagNameProperty = Element.Tag.This.GetProperty("TagName");
     public static Property MembersProperty = Element.Tag.This.GetProperty("Members");
 
-    public static PropertyObserver RadixPropertyObserver = new(
-        Element.Tag.This.GetProperty("Radix"),
-        new ElementObserver(new Tag { Name = "MyTag" })
-    );
-
-    public static PropertyObserver TagNamePropertyObserver => new(
-        Element.Tag.This.GetProperty("TagName"),
-        new ElementObserver(new Tag { Name = "MyTag" })
-    );
-
-    public static PropertyObserver MembersPropertyObserver => new(
-        Element.Tag.This.GetProperty("Members"),
-        new ElementObserver(new Tag { Name = "MyTag", Value = new TIMER() })
-    );
+    public static PropertyInput RadixPropertyInput = new(() => "Radix", input: () => Element.Tag.This);
+    public static PropertyInput TagNamePropertyInput = new(() => "TagName", input: () => Element.Tag.This);
+    public static PropertyInput MembersPropertyInput = new(() => "Members", input: () => Element.Tag.This);
 
     #endregion
 
@@ -159,28 +131,30 @@ public static class TestData
 
     #region Criterion
 
-    public static readonly CriterionObserver EmptyCriterion = new Criterion();
+    public static readonly CriterionObserver EmptyCriterion = new(new Criterion(), () => Property.Default);
 
     public static readonly CriterionObserver BoolCriterion =
-        new(new Criterion("Constant", Operation.EqualTo, true));
+        new(new Criterion("Constant", Operation.EqualTo, true), () => Element.Tag.This);
 
     public static readonly CriterionObserver NumberCriterion =
-        new(new Criterion("Dimensions", Operation.GreaterThanOrEqualTo, 10));
+        new(new Criterion("Dimensions", Operation.GreaterThanOrEqualTo, 10), () => Element.Tag.This);
 
     public static readonly CriterionObserver TextCriterion =
-        new(new Criterion("Name", Operation.EqualTo, "Test"));
+        new(new Criterion("Name", Operation.EqualTo, "Test"), () => Element.Tag.This);
 
     public static readonly CriterionObserver EnumCriterion =
-        new(new Criterion("Radix", Operation.EqualTo, Radix.Binary));
+        new(new Criterion("Radix", Operation.EqualTo, Radix.Binary), () => Element.Tag.This);
 
     public static readonly CriterionObserver InnerCriterion =
-        new(new Criterion("Members", Operation.Any, new Criterion("TagName", Operation.Like, "%MemberName")));
+        new(new Criterion("Members", Operation.Any, new Criterion("TagName", Operation.Like, "%MemberName")),
+            () => Element.Tag.This);
 
     public static readonly CriterionObserver RangeCriterion =
-        new(new Criterion("Value", Operation.Between, new Range(1, 12)));
+        new(new Criterion("Value", Operation.Between, new Range(1, 12)), () => Element.Tag.This);
 
     public static readonly CriterionObserver InCriterion = new(
-        new Criterion("TagName", Operation.In, new List<object> { "First", "Second", "Third Or Longer" })
+        new Criterion("TagName", Operation.In, new List<object> { "First", "Second", "Third Or Longer" }),
+        () => Element.Tag.This
     );
 
     public static readonly ObservableCollection<CriterionObserver> Criteria =
@@ -197,6 +171,8 @@ public static class TestData
 
     #endregion
 
+    #region ArgumentInput
+
     public static readonly ArgumentInput EmptyArgument = EmptyCriterion.Argument;
     public static readonly ArgumentInput BoolArgument = BoolCriterion.Argument;
     public static readonly ArgumentInput NumberArgument = NumberCriterion.Argument;
@@ -204,6 +180,20 @@ public static class TestData
     public static readonly ArgumentInput TextArgument = TextCriterion.Argument;
     public static readonly ArgumentInput CollectionArgument = InCriterion.Argument;
 
+    #endregion
+
+    #region Selection
+
+    public static SelectionObserver DefaultSelect =
+        new(new Selection(), () => Element.Tag.This);
+
+    public static SelectionObserver SimpleSelect =
+        new(new Selection("TagName"), () => Element.Tag.This);
+
+    public static SelectionObserver AliasSelect =
+        new(new Selection("TagName.Member", "TagName"), () => Element.Tag.This);
+
+    #endregion
 
     #region Values
 

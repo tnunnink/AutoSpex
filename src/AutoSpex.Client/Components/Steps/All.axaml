@@ -1,0 +1,16 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceInclude Source="FilterButton.axaml" />
+        <ResourceInclude Source="FilterFlyout.axaml" />
+        <ResourceInclude Source="FilterSection.axaml" />
+        <ResourceInclude Source="SelectButton.axaml" />
+        <ResourceInclude Source="SelectEntry.axaml" />
+        <ResourceInclude Source="SelectStep.axaml" />
+        <ResourceInclude Source="VerificationFlyout.axaml" />
+        <ResourceInclude Source="VerifyButton.axaml" />
+        <ResourceInclude Source="VerifySection.axaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+</ResourceDictionary>

@@ -3,13 +3,7 @@
   "SpecId": "1dbb81da-42dd-40b9-a77b-75db7042ce77",
   "Query": {
     "Element": "Module",
-    "Steps": [
-      {
-        "$type": "Filter",
-        "Match": "All",
-        "Criteria": []
-      }
-    ]
+    "Steps": []
   },
   "Verify": {
     "Criteria": [

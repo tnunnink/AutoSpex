@@ -3,13 +3,7 @@
   "SpecId": "90f4dbce-1033-42fd-8f45-3cdb0b03d5db",
   "Query": {
     "Element": "Controller",
-    "Steps": [
-      {
-        "$type": "Filter",
-        "Match": "All",
-        "Criteria": []
-      }
-    ]
+    "Steps": []
   },
   "Verify": {
     "Criteria": [

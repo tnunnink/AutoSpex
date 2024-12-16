@@ -12,21 +12,83 @@ using L5Sharp.Core;
 
 namespace AutoSpex.Client.Observers;
 
-public partial class PropertyInput : Observer
+public abstract partial class InputObserver<T>(
+    Func<T> getter,
+    Action<T>? setter = default,
+    Func<Type>? input = default) : Observer
 {
-    private readonly Observer _observer;
-
-    public PropertyInput(Observer observer)
-    {
-        _observer = observer;
-        Track(nameof(Value));
-    }
+    /// <summary>
+    /// The function that retrieves the underlying value this input observer wraps.
+    /// </summary>
+    protected readonly Func<T> Getter = getter ?? throw new ArgumentNullException(nameof(getter));
 
     /// <summary>
-    /// The origin <see cref="Engine.Property"/> type to this property input.
-    /// This is based what observer owns this object and where it exists withint a query or spec.
+    /// The action that updates the underlying value that this input observer wraps.
+    /// This is optional. If not provided, we default to an action that does nothing (read only).
     /// </summary>
-    private Property Origin => Messenger.Send(new GetInputTo(_observer)).Response;
+    protected readonly Action<T> Setter = setter ?? (_ => { });
+
+    /// <summary>
+    /// The function the gets the input type the underlying value expects.
+    /// </summary>
+    protected readonly Func<Type> Input = input ?? (() => typeof(object));
+
+
+    /// <summary>
+    /// A function that takes some input text and returns a set of suggesstable values that can match the
+    /// current context of this input observer.
+    /// </summary>
+    public abstract Func<string?, CancellationToken, Task<IEnumerable<object>>> Suggestions { get; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="value"></param>
+    [RelayCommand]
+    protected void Update(object? value)
+    {
+        if (value is T typed)
+        {
+            Setter.Invoke(typed);
+        }
+
+        Refresh();
+    }
+}
+
+public partial class PropertyInput : Observer
+{
+    /// <summary>
+    /// The function the gets the input or origin property to this property input.
+    /// </summary>
+    private readonly Func<Property> _input;
+
+    /// <summary>
+    /// The function that retrieves the underlying value this observer wraps.
+    /// </summary>
+    private readonly Func<string> _getter;
+
+    /// <summary>
+    /// The action that updates the underlying value that this observer wraps.
+    /// This is optional. If not provided, we default to an action that does nothing (read only).
+    /// </summary>
+    private readonly Action<string> _setter;
+
+    /// <summary>
+    /// Instantiates a new <see cref="ArgumentInput"/> observer with the provided functions for getting and setting the
+    /// object value this argument wraps.
+    /// </summary>
+    /// <param name="input"></param>
+    /// <param name="getter">The funtion that retrieves the underlying argument value.</param>
+    /// <param name="setter">The function that sets teh underlying argument value. If not provided we default to nothing (read-only).</param>
+    public PropertyInput(Func<string> getter, Action<string>? setter = default, Func<Property>? input = default)
+    {
+        _getter = getter ?? throw new ArgumentNullException(nameof(getter));
+        _setter = setter ?? (_ => { });
+        _input = input ?? (() => Property.Default);
+
+        Track(nameof(Value));
+    }
 
     /// <summary>
     /// The <see cref="Engine.Property"/> instance that this criterion is configured with. This will use the current
@@ -66,43 +128,20 @@ public partial class PropertyInput : Observer
             _ => string.Empty
         };
 
-        SetProperty(path);
-        Refresh();
+        _setter(path);
+        OnPropertyChanged(nameof(Value));
+        OnPropertyChanged(nameof(Path));
+        OnPropertyChanged(nameof(IsEmpty));
     }
 
     /// <summary>
-    /// Retrieve the property based on the observer type. If the observer is a CriterionObserver,
-    /// the property comes from the criterion model. If the observer is a SelectObserver,
-    /// the property comes from the select model. Otherwise, an empty string is returned.
+    /// Retrieve the property by invoking the provided getter and using the known input property.
     /// </summary>
     /// <returns>The property based on the observer type.</returns>
     private Property GetProperty()
     {
-        var path = _observer switch
-        {
-            CriterionObserver criterion => criterion.Model.Property,
-            SelectObserver select => select.Model.Property,
-            _ => string.Empty
-        };
-
-        return !string.IsNullOrEmpty(path) ? Origin.GetProperty(path) : Property.Default;
-    }
-
-    /// <summary>
-    /// Sets the specified property value for the associated observer based on the input result.
-    /// </summary>
-    /// <param name="result">The value to set as the property.</param>
-    private void SetProperty(string result)
-    {
-        switch (_observer)
-        {
-            case CriterionObserver criterion:
-                criterion.Model.Property = result;
-                break;
-            case SelectObserver select:
-                select.Model.Property = result;
-                break;
-        }
+        var path = _getter();
+        return !string.IsNullOrEmpty(path) ? _input().GetProperty(path) : Property.Default;
     }
 
     /// <summary>
@@ -115,14 +154,16 @@ public partial class PropertyInput : Observer
     {
         if (token.IsCancellationRequested) return [];
 
+        var input = _input.Invoke();
+
         //If no input text is entered, just return the properties of the origin property.
-        if (string.IsNullOrEmpty(filter)) return Origin.Properties;
+        if (string.IsNullOrEmpty(filter)) return input.Properties;
 
         //Based on the input text, parse the path and the current member. Use this to find the current property.
         var index = GetIndex(filter);
         var path = index > 0 ? filter[..index] : string.Empty;
         var member = index > 0 ? filter[(index + 1)..] : filter;
-        var current = Origin.GetProperty(path);
+        var current = input.GetProperty(path);
 
         //While we are inside an tag property indexer, we want to suggest possible tag names from a source.
         if (current.Type == typeof(Tag) && member.Count(x => x == '[') != member.Count(x => x == ']'))
@@ -172,7 +213,7 @@ public partial class PropertyInput : Observer
         var tagNames = new List<TagName>();
 
         //Sends request to essentially run the query or spec up to the point of this observer to get context data.
-        var data = await Messenger.Send(new GetDataTo(_observer)).GetResponsesAsync(token);
+        var data = await Messenger.Send(new GetDataTo(this)).GetResponsesAsync(token);
 
         foreach (var item in data)
         {
@@ -194,16 +235,6 @@ public partial class PropertyInput : Observer
             .OrderByDescending(t => t.StartsWith(member))
             .ThenBy(t => t)
             .Select(t => new TagName($"[{t}]"));
-    }
-
-    /// <summary>
-    /// A message that is sent from this wrapper observer to other observsers to determine what the input or origin
-    /// property is for this property input. This is handled b various observers, but should only ever return a single
-    /// response.
-    /// </summary>
-    public class GetInputTo(Observer observer) : RequestMessage<Property>
-    {
-        public Observer Observer { get; } = observer;
     }
 
     /// <summary>

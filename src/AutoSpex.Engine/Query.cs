@@ -17,15 +17,18 @@ public class Query()
     public Query(Element element) : this()
     {
         Element = element;
+        CleanSteps();
     }
 
     /// <summary>
     /// Creates a new <see cref="Query"/> initialized with the provided element type and steps.
     /// </summary>
-    public Query(Element element, IEnumerable<Step> steps) : this()
+    [JsonConstructor]
+    public Query(Element element, List<Step> steps) : this()
     {
         Element = element;
-        Steps = steps.ToList();
+        Steps = steps;
+        CleanSteps();
     }
 
     /// <summary>
@@ -83,5 +86,40 @@ public class Query()
 
         //Run the resulting element through all configured steps to filter and select data.
         return Steps[..index].Aggregate(elements, (input, step) => step.Process(input));
+    }
+
+    /// <summary>
+    /// Determines the property to which the input will flow based on the provided step.
+    /// </summary>
+    /// <param name="step">The step used to determine the property that the input will flow to.</param>
+    /// <returns>The property to which the input will flow based on the provided step.</returns>
+    public Property InputTo(Step step)
+    {
+        var index = Steps.IndexOf(step);
+        if (index == -1) return Property.Default;
+        return index > 0 ? Steps[..index].Aggregate(Element.This, (p, s) => s.Returns(p)) : Element.This;
+    }
+
+    /// <summary>
+    /// When we materialize an instance of this object, I want to remove an unconfigured steps.
+    /// These are steps with no criterion or no selections (or verify step which should not be a part of query).
+    /// This way loaded objects and persisted objects are automatically cleaned as they are interacted with.
+    /// This was ultimately to help with stranded step instances post migration.
+    /// </summary>
+    private void CleanSteps()
+    {
+        var steps = Steps.ToList();
+
+        foreach (var step in steps)
+        {
+            switch (step)
+            {
+                case Filter { Criteria.Count: 0 }:
+                case Select { Selections.Count: 0 }:
+                case Verify:
+                    Steps.Remove(step);
+                    break;
+            }
+        }
     }
 }

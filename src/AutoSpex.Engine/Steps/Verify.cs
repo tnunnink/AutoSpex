@@ -1,4 +1,6 @@
-﻿namespace AutoSpex.Engine;
+﻿using System.Text.Json.Serialization;
+
+namespace AutoSpex.Engine;
 
 /// <summary>
 /// Represents a step in the automated testing process which verifies the input objects based on a set of criteria.
@@ -19,6 +21,21 @@ public class Verify : Step
     {
         Criteria.Add(new Criterion(property, operation, argument));
     }
+    
+    /// <summary>
+    /// Creates a new default <see cref="Filter"/> step initialized the provided criterion.
+    /// </summary>
+    public Verify(Criterion criterion)
+    {
+        Criteria.Add(criterion);
+    }
+    
+    /// <summary>
+    /// The collection of <see cref="Criterion"/> that define the step.
+    /// Each step may have a collection of criteria configured for which it needs to process data.
+    /// </summary>
+    [JsonInclude]
+    public List<Criterion> Criteria { get; private init; } = [];
     
     /// <inheritdoc />
     public override IEnumerable<object> Process(IEnumerable<object?> input)

@@ -9,7 +9,7 @@ namespace AutoSpex.Client.Observers;
 
 public partial class QueryObserver : Observer<Query>,
     IRecipient<Observer.Deleted>,
-    IRecipient<PropertyInput.GetInputTo>,
+    IRecipient<StepObserver.GetInputTo>,
     IRecipient<PropertyInput.GetDataTo>,
     IRecipient<ArgumentInput.SuggestionRequest>
 {
@@ -24,6 +24,7 @@ public partial class QueryObserver : Observer<Query>,
         _source = source;
 
         Steps = new ObserverCollection<Step, StepObserver>(Model.Steps, InstantiateStep);
+        
         Track(nameof(Element));
         Track(Steps);
     }
@@ -61,9 +62,8 @@ public partial class QueryObserver : Observer<Query>,
     [RelayCommand]
     private void AddFitlerStep()
     {
-        var filter = new Filter();
-        filter.Add();
-        Steps.Add(new FilterObserver(filter));
+        var step = new Filter(new Criterion());
+        Steps.Add(new FilterObserver(step));
     }
 
     /// <summary>
@@ -72,7 +72,8 @@ public partial class QueryObserver : Observer<Query>,
     [RelayCommand]
     private void AddSelectStep()
     {
-        Steps.Add(new SelectObserver(new Select()));
+        var step = new Select(new Selection());
+        Steps.Add(new SelectObserver(step));
     }
 
     /// <summary>
@@ -92,23 +93,15 @@ public partial class QueryObserver : Observer<Query>,
     }
 
     /// <summary>
-    /// Handles the request message by replying if this query contains the provided instance.
-    /// The received type can be either a step or criterion. If we contain either instance, we will determine the
-    /// input to the observer using the current query configuration.
+    /// Responds to the request for determining the step input proeprty for this query observer.
+    /// If this query contains the requesting step then reply with the current configured input to the step.
     /// </summary>
-    public void Receive(PropertyInput.GetInputTo message)
+    public void Receive(StepObserver.GetInputTo message)
     {
         if (message.HasReceivedResponse) return;
-
-        if (message.Observer is StepObserver step && Steps.Has(step))
-        {
-            message.Reply(DetermineInput(step));
-        }
-
-        if (message.Observer is CriterionObserver criterion && Contains(criterion))
-        {
-            message.Reply(DetermineInput(criterion));
-        }
+        if (!Steps.Has(message.Step)) return;
+        var input = Model.InputTo(message.Step.Model);
+        message.Reply(input);
     }
 
     /// <summary>
@@ -143,14 +136,13 @@ public partial class QueryObserver : Observer<Query>,
     public void Receive(ArgumentInput.SuggestionRequest message)
     {
         if (_source?.Model.Content is null) return;
-        if (!Contains(message.Argument)) return;
         if (!TryGetStep(message.Argument, out var step)) return;
+        if (!step.TryFind(c => c.Contains(message.Argument), out var criterion)) return;
 
         try
         {
             var index = Steps.IndexOf(step);
             var data = Model.ExecuteTo(_source.Model.Content, index);
-            var criterion = step.Criteria.Single(c => c.Contains(message.Argument));
             var values = criterion.ValuesFor(message.Argument, data);
             var suggestions = values.Select(v => new ValueObserver(v)).Where(x => !x.IsEmpty).ToList();
             suggestions.ForEach(message.Reply);
@@ -164,27 +156,6 @@ public partial class QueryObserver : Observer<Query>,
     }
 
     /// <summary>
-    /// Gets the <see cref="Property"/> that is the input to the provided observer based on where the object is
-    /// in the spec configuration.
-    /// </summary>
-    private Property DetermineInput(Observer observer)
-    {
-        var property = Element.This;
-
-        foreach (var step in Steps)
-        {
-            if (step.Is(observer) || step.Criteria.Has(observer)) break;
-            if (step is not SelectObserver select) continue;
-            //When we get the child property, we want to handle a couple cases.
-            //1. We want the "inner" type property (so collections/arrays is actually the type of the collection).
-            //2. We want this new property to be standalone (not like a nested property).
-            property = Property.This(property.GetProperty(select.Model.Property).InnerType);
-        }
-
-        return property;
-    }
-
-    /// <summary>
     /// Gets the step that contains the provided observer instance. This instance should either be a select step itslef
     /// or a nested criterion observer that is contained by a filter step in the query.
     /// </summary>
@@ -193,8 +164,9 @@ public partial class QueryObserver : Observer<Query>,
         var target = observer switch
         {
             StepObserver self when Steps.Has(self) => self,
-            CriterionObserver criterion => Steps.SingleOrDefault(s => s.Criteria.Has(criterion)),
-            ArgumentInput argument => Steps.SingleOrDefault(s => s.Criteria.Any(c => c.Contains(argument))),
+            CriterionObserver criterion => Steps.SingleOrDefault(s => s.Contains(criterion)),
+            SelectionObserver selection => Steps.SingleOrDefault(s => s.Contains(selection)),
+            ArgumentInput argument => Steps.SingleOrDefault(s => s.Contains(argument)),
             _ => default
         };
 
@@ -207,20 +179,6 @@ public partial class QueryObserver : Observer<Query>,
         step = target;
         return true;
     }
-
-    /// <summary>
-    /// Determines whether any configured (filter) step criteria contains the provided criterion.
-    /// </summary>
-    /// <param name="criterion">The criterion to check for.</param>
-    /// <returns>True if the Steps collection contains the criterion, otherwise false.</returns>
-    private bool Contains(CriterionObserver criterion) => Steps.Any(s => s.Criteria.Has(criterion));
-
-    /// <summary>
-    /// Determines if the specified ArgumentInput is contained in any criteria of the Steps that are FilterObservers.
-    /// </summary>
-    /// <param name="argument">The ArgumentInput to check for containment.</param>
-    /// <returns>True if the ArgumentInput is contained in any criteria, false otherwise.</returns>
-    private bool Contains(ArgumentInput argument) => Steps.Any(s => s.Criteria.Any(c => c.Contains(argument)));
 
     /// <summary>
     /// Instantiates a StepObserver based on the type of Step provided.
