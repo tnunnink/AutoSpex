@@ -82,6 +82,7 @@
         <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Enum}" Resource="IconThemedEnum" />
         <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Element}" Resource="IconThemedElement" />
         <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Collection}" Resource="IconThemedArray" />
+        <converters:ValueResourceKey Value="{x:Static engine:TypeGroup.Reference}" Resource="IconThemedReference" />
     </converters:KeyResourceConverter>
 
 </ResourceDictionary>

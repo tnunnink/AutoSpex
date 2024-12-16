@@ -1,0 +1,78 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+
+    <Design.PreviewWith>
+        <StackPanel>
+            <StackPanel Spacing="10" Margin="50" MaxWidth="400">
+
+                <StackPanel.Styles>
+                    <Style Selector="Button">
+                        <Setter Property="Theme" Value="{a:ControlTheme ButtonSubtle}" />
+                        <Setter Property="ContentTemplate" Value="{DynamicResource ValueDisplay}" />
+                    </Style>
+                </StackPanel.Styles>
+
+                <Button Content="{x:Static components:TestData.NullValue}" />
+                <Button Content="{x:Static components:TestData.BooleanTrueValue}" />
+                <Button Content="{x:Static components:TestData.IntegerValue}" />
+                <Button Content="{x:Static components:TestData.DoubleValue}" />
+                <Button Content="{x:Static components:TestData.AtomicIntValue}" />
+                <Button Content="{x:Static components:TestData.TextValue}" />
+                <Button Content="{x:Static components:TestData.TextOverlowValue}" />
+                <Button Content="{x:Static components:TestData.DateValue}" />
+                <Button Content="{x:Static components:TestData.RadixValue}" />
+                <Button Content="{x:Static components:TestData.DataTypeValue}" />
+                <Button Content="{x:Static components:TestData.RungValue}" />
+                <Button Content="{x:Static components:TestData.NumberCollectionValue}" />
+                <Button Content="{x:Static components:TestData.ReferenceThisValue}" />
+
+            </StackPanel>
+        </StackPanel>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="ValueDisplay" x:DataType="observers:ValueObserver">
+
+        <TextBlock
+            Text="{Binding Text}"
+            properties:StyleClasses.Classes="{Binding Group}"
+            MaxLines="1"
+            TextTrimming="CharacterEllipsis">
+
+            <TextBlock.Styles>
+                <Style Selector="TextBlock.Default">
+                    <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushDefault}" />
+                </Style>
+                <Style Selector="TextBlock.Boolean">
+                    <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushBoolean}" />
+                </Style>
+                <Style Selector="TextBlock.Number">
+                    <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushNumber}" />
+                </Style>
+                <Style Selector="TextBlock.Text">
+                    <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushText}" />
+                </Style>
+                <Style Selector="TextBlock.Date">
+                    <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushDate}" />
+                </Style>
+                <Style Selector="TextBlock.Enum">
+                    <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushEnum}" />
+                </Style>
+                <Style Selector="TextBlock.Element">
+                    <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushElement}" />
+                </Style>
+                <Style Selector="TextBlock.Collection">
+                    <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushCollection}" />
+                </Style>
+                <Style Selector="TextBlock.Reference">
+                    <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushReference}" />
+                </Style>
+            </TextBlock.Styles>
+
+        </TextBlock>
+    </DataTemplate>
+
+</ResourceDictionary>

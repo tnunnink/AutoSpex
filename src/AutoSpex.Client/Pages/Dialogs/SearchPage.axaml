@@ -99,7 +99,7 @@
                     ItemsSource="{Binding Instances}"
                     SelectedItem="{Binding Selected}"
                     IsVisible="{Binding Instances.Count}"
-                    ItemTemplate="{StaticResource CriterionReplaceListItem}"
+                    ItemTemplate="{StaticResource ReplaceListItem}"
                     ItemContainerTheme="{StaticResource ListBoxItemSimple}"
                     SelectionMode="AlwaysSelected"
                     BorderBrush="{a:ThemeResource Container1BorderBrush}"

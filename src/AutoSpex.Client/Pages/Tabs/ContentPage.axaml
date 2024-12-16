@@ -23,8 +23,6 @@
             Grid.Row="1"
             Filter="{Binding Filter}"
             ItemsSource="{Binding Elements}"
-            SelectedItem="{Binding Selected}"
-            ItemTemplate="{StaticResource ElementListItem}"
             ItemContainerTheme="{StaticResource ListBoxItemSimple}"
             HasItems="{Binding Elements.Count}"
             DefaultIcon="{StaticResource IconLineXml}"

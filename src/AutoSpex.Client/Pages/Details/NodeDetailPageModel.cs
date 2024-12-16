@@ -23,7 +23,7 @@ public partial class NodeDetailPageModel : DetailPageModel
 
     public override string Route => $"{Node.Type}/{Node.Id}";
     public override string Icon => Node.Type.Name;
-    public NodeObserver Node { get; private set; }
+    public NodeObserver Node { get; }
 
     [ObservableProperty] private PageViewModel? _contentPage;
 
@@ -35,8 +35,7 @@ public partial class NodeDetailPageModel : DetailPageModel
     /// <inheritdoc />
     public override async Task Load()
     {
-        await LoadNode();
-        await LoadContent();
+        await NavigateContent();
         await LoadRunner();
 
         //New specs need to enable the save button by default.
@@ -51,17 +50,18 @@ public partial class NodeDetailPageModel : DetailPageModel
     /// Check if the node is "virtual" (has no parent) and therfore not saved to the database
     /// (this only applies to spec or container nodes). Create node if virtual. Otherwise, continue saving.
     /// </remarks>
-    public override Task<Result> Save()
+    public override async Task<Result> Save(Result? result = default)
     {
         var errors = Validate().ToList();
 
-        if (errors.Count == 0)
+        if (errors.Count > 0)
         {
-            return Node.IsVirtual ? CreateNode() : SaveNode();
+            Notifier.ShowError($"Failed to save {Title}", $"{errors.FirstOrDefault()?.ErrorMessage}");
+            return Result.Fail("Failed to save page due to validation errors.");
         }
 
-        Notifier.ShowError($"Failed to save {Title}", $"{errors.FirstOrDefault()}");
-        return Task.FromResult(Result.Fail("Failed to save page due to validation errors."));
+        result = Node.IsVirtual ? await CreateNode() : Result.Ok();
+        return await base.Save(result);
     }
 
     /// <inheritdoc />
@@ -79,15 +79,6 @@ public partial class NodeDetailPageModel : DetailPageModel
     [RelayCommand]
     private async Task Run()
     {
-        //Specs will run and dispay result locally.
-        if (Node.Type == NodeType.Spec && RunnerPage is not null)
-        {
-            await RunnerPage.Run();
-            ShowRunner = true;
-            return;
-        }
-
-        //Collections/containers will create a new run instance.
         var result = await Mediator.Send(new NewRun(Node.Id));
         if (Notifier.ShowIfFailed(result)) return;
 
@@ -95,32 +86,16 @@ public partial class NodeDetailPageModel : DetailPageModel
         await Navigator.Navigate(() => new RunDetailPageModel(run));
     }
 
-    /// <summary>
-    /// Loads the full node into the application, replacing the current node instance.
-    /// Nofitys changes and then starts tracking for changes.
-    /// </summary>
-    private async Task LoadNode()
-    {
-        var result = await Mediator.Send(new LoadNode(Node.Id));
-        if (result.IsFailed) return;
-
-        Node = new NodeObserver(result.Value);
-        OnPropertyChanged(nameof(Node));
-        Track(Node);
-    }
-
-    /// <summary>
-    /// Loads the local runner page to allow the user to run and test a spec before saving/creating a run.
-    /// </summary>
-    private async Task LoadContent()
+    /// <inheritdoc />
+    protected override async Task NavigateContent()
     {
         if (Node.Type == NodeType.Spec)
         {
-            ContentPage = await Navigator.Navigate(() => new CriteriaPageModel(Node));
+            await Navigator.Navigate(() => new CriteriaPageModel(Node));
             return;
         }
 
-        ContentPage = await Navigator.Navigate(() => new SpecsPageModel(Node));
+        await Navigator.Navigate(() => new SpecsPageModel(Node));
     }
 
     /// <summary>
@@ -151,31 +126,8 @@ public partial class NodeDetailPageModel : DetailPageModel
         if (result.IsSuccess)
         {
             Messenger.Send(new Observer.Created<NodeObserver>(Node));
-            NotifySaveSuccess();
-            AcceptChanges();
-            return Result.Ok();
         }
 
-        NotifySaveFailed(result);
-        return result;
-    }
-
-    /// <summary>
-    /// Saves the content of this node to the database. This method is called assuming the node is not virtual
-    /// (i.e. has a parent node) so that we can find and update it's content. 
-    /// </summary>
-    private async Task<Result> SaveNode()
-    {
-        var result = await Mediator.Send(new SaveNode(Node));
-
-        if (result.IsSuccess)
-        {
-            NotifySaveSuccess();
-            AcceptChanges();
-            return Result.Ok();
-        }
-
-        NotifySaveFailed(result);
         return result;
     }
 }

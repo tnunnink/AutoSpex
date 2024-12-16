@@ -35,14 +35,13 @@
                     Placement="Pointer" />
             </Border.ContextFlyout>
 
-            <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+            <Grid ColumnDefinitions="Auto,*,Auto">
 
                 <PathIcon
                     Grid.Column="0"
-                    Theme="{Binding Result, Converter={StaticResource ResultStateIconConverter}}"
-                    VerticalAlignment="Top" Margin="0 3 0 0" />
+                    Theme="{Binding Result, Converter={StaticResource ResultStateIconConverter}}" />
 
-                <StackPanel Grid.Column="1" Spacing="5" Margin="10 0">
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" Margin="10 0">
 
                     <Button
                         Command="{Binding NavigateCommand}"
@@ -71,42 +70,27 @@
 
                 </StackPanel>
 
-                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="20" Margin="20 0">
-
-                    <StackPanel Orientation="Horizontal" Spacing="7">
-                        <PathIcon
-                            Theme="{Binding Node.Type.Name, Converter={StaticResource KeyIconConverter}}"
-                            Classes="size-sm centered" />
-                        <controls:HighlightableTextBlock
-                            Text="{Binding Node.Name}"
-                            HighlightedText="{Binding FilterText}"
-                            Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                <Border Grid.Column="2" Height="20">
+                    
+                    <StackPanel Orientation="Horizontal" Spacing="5"
+                                IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}">
+                        
+                        <Button
+                            Theme="{StaticResource IconButtonSmall}"
+                            properties:Icon.Theme="{StaticResource IconEllipsis}" ToolTip.Tip="Options"
+                            HorizontalAlignment="Right">
+                            <Button.Flyout>
+                                <MenuFlyout
+                                    ItemsSource="{Binding MenuItems}"
+                                    ItemContainerTheme="{StaticResource MenuActionItem}"
+                                    Placement="BottomEdgeAlignedRight" HorizontalOffset="8" VerticalOffset="5" />
+                            </Button.Flyout>
+                        </Button>
+                        
                     </StackPanel>
+                    
+                </Border>
 
-                    <StackPanel Orientation="Horizontal" Spacing="7">
-                        <PathIcon
-                            Theme="{StaticResource IconThemedSource}"
-                            Classes="size-sm centered" />
-                        <controls:HighlightableTextBlock
-                            Text="{Binding Source.Name}"
-                            HighlightedText="{Binding FilterText}"
-                            Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
-                    </StackPanel>
-
-                </StackPanel>
-
-                <Button
-                    Grid.Column="3"
-                    Theme="{StaticResource IconButton}"
-                    properties:Icon.Theme="{StaticResource IconEllipsis}" ToolTip.Tip="Options"
-                    HorizontalAlignment="Right">
-                    <Button.Flyout>
-                        <MenuFlyout
-                            ItemsSource="{Binding MenuItems}"
-                            ItemContainerTheme="{StaticResource MenuActionItem}"
-                            Placement="BottomEdgeAlignedRight" HorizontalOffset="8" VerticalOffset="5" />
-                    </Button.Flyout>
-                </Button>
 
             </Grid>
 

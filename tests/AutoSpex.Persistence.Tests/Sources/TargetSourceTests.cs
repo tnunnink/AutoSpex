@@ -49,10 +49,10 @@ public class TargetSourceTests
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-        var target = new Source();
+        var target = new Source("Target");
         await mediator.Send(new CreateSource(target));
-        await mediator.Send(new CreateSource(new Source()));
-        await mediator.Send(new CreateSource(new Source()));
+        await mediator.Send(new CreateSource(new Source("Second")));
+        await mediator.Send(new CreateSource(new Source("Thrid")));
 
         var result = await mediator.Send(new TargetSource(target.SourceId));
         result.IsSuccess.Should().BeTrue();

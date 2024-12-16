@@ -10,32 +10,40 @@ using AutoSpex.Client.Resources;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using Avalonia.Input;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using L5Sharp.Core;
 using Range = AutoSpex.Engine.Range;
 
 namespace AutoSpex.Client.Observers;
 
 public partial class CriterionObserver : Observer<Criterion>
 {
-    public CriterionObserver(Criterion model) : base(model)
-    {
-        Argument = new ValueObserver(GetArgument, ParseArgument, SetArgument, GetSuggesstions);
+    /// <summary>
+    /// A function that returns the expected input type for this argument value.
+    /// </summary>
+    private readonly Func<Property> _input;
 
-        Track(nameof(Property));
+    public CriterionObserver(Criterion model, Func<Property> input) : base(model)
+    {
+        _input = input;
+
+        Property = new PropertyInput(() => Model.Property, x => Model.Property = x, _input);
+        Argument = new ArgumentInput(() => Model.Argument, x => Model.Argument = x, () => Property.Value);
+
+        Track(Property);
         Track(nameof(Negation));
         Track(nameof(Operation));
         Track(Argument);
     }
 
-    [Required]
-    public Property Property
-    {
-        get => Model.Property;
-        set => SetProperty(Model.Property, value, Model, (c, p) => c.Property = p);
-    }
+    /// <summary>
+    /// The <see cref="PropertyInput"/> that wraps this model and the underlying Property. This observer contains logic
+    /// for getting, setting, and finding suggestions for this criterion instance.
+    /// </summary>
+    public PropertyInput Property { get; }
 
+    /// <summary>
+    /// The negation option for the criterion.
+    /// </summary>
     [Required]
     public Negation Negation
     {
@@ -43,6 +51,9 @@ public partial class CriterionObserver : Observer<Criterion>
         set => SetProperty(Model.Negation, value, Model, (c, v) => c.Negation = v);
     }
 
+    /// <summary>
+    /// The selected operation type for the criterion.
+    /// </summary>
     [Required]
     public Operation Operation
     {
@@ -50,21 +61,68 @@ public partial class CriterionObserver : Observer<Criterion>
         set => SetProperty(Model.Operation, value, Model, (c, o) => c.Operation = o, true);
     }
 
-    [ObservableProperty] private ValueObserver _argument;
+    /// <summary>
+    /// The argument value for the criterion. This is using a specialized observer wrappers to assist with getting,
+    /// setting, parsing, and suggesting values for the argument input.
+    /// </summary>
+    public ArgumentInput Argument { get; private set; }
 
-    public Func<string?, CancellationToken, Task<IEnumerable<object>>> PopulateProperties => GetProperties;
-    public Func<string?, CancellationToken, Task<IEnumerable<object>>> PopulateOperations => GetOperations;
+    /// <summary>
+    /// Gets the collection of supported operations based on the current selected <see cref="Property"/>.
+    /// </summary>
+    public Func<string?, CancellationToken, Task<IEnumerable<object>>> Operations => GetOperations;
+
+    /// <summary>
+    /// Gets a value indicating whether the criterion accepts arguments based on its current <see cref="Operation"/>.
+    /// </summary>
+    public bool AcceptsArgs => Operation != Operation.None && Operation is not UnaryOperation;
 
     /// <inheritdoc />
     protected override bool PromptForDeletion => false;
 
     /// <summary>
-    /// Gets a value indicating whether this CriterionObserver accepts arguments based on its Operation.
+    /// Checks if the specified ArgumentInput is contained within the current object or any inner/nested criterion
+    /// argument value.
     /// </summary>
-    /// <remarks>
-    /// Returns true if the Operation is not None and not a UnaryOperation.
-    /// </remarks>
-    public bool AcceptsArgs => Operation != Operation.None && Operation is not UnaryOperation;
+    /// <param name="argument">The argument to check for containment.</param>
+    /// <returns>True if the argument is contained, otherwise false.</returns>
+    public bool Contains(ArgumentInput argument)
+    {
+        if (Argument.Is(argument)) return true;
+        if (Argument.Value is CriterionObserver inner) return inner.Contains(argument);
+        return false;
+    }
+
+    /// <summary>
+    /// Gets suggestibale data values for a given argument (that is expected to be contained by this criterion instance),
+    /// along with a collection of input data. This will traverser the criterion structure (in the case of nested collection
+    /// criterion) to return the appropriate set of data that should bein context of the argument input.
+    /// </summary>
+    public IEnumerable<object?> ValuesFor(ArgumentInput argument, IEnumerable<object?> data)
+    {
+        //If the provided argument is the instance for this criterion, return early.
+        if (Argument.Is(argument))
+        {
+            return data.Select(x => Property.Value.GetValue(x)).Where(x => x is not null).Distinct();
+        }
+
+        //If we have an inner criterion and a collection of enumerable objects, then repeat recursively until we reach the final argument.
+        if (Argument.Value is CriterionObserver inner)
+        {
+            var elements = new List<object>();
+            var result = data.Select(x => Property.Value.GetValue(x)).Where(x => x is not null).ToList();
+
+            foreach (var item in result)
+            {
+                if (item is not IEnumerable<object> enumerable) continue;
+                elements.AddRange(enumerable);
+            }
+
+            return inner.ValuesFor(argument, elements);
+        }
+
+        return [];
+    }
 
     /// <inheritdoc />
     /// <remarks>
@@ -79,11 +137,11 @@ public partial class CriterionObserver : Observer<Criterion>
         switch (e.PropertyName)
         {
             case nameof(Property):
-                Operation = Operation.Supports(Property) ? Operation : Operation.None;
+                Operation = Operation.Supports(Property.Value) ? Operation : Operation.None;
                 break;
             case nameof(Operation):
-                OnPropertyChanged(nameof(AcceptsArgs));
                 ResetArgument();
+                OnPropertyChanged(nameof(AcceptsArgs));
                 break;
         }
     }
@@ -100,27 +158,6 @@ public partial class CriterionObserver : Observer<Criterion>
     }
 
     #region Commands
-
-    /// <summary>
-    /// Command to update the configured <see cref="Property"/> for this Criterion given the input object.
-    /// This input can be text that the user types or a selected property from the suggestion popup.
-    /// </summary>
-    [RelayCommand]
-    private void UpdateProperty(object? value)
-    {
-        switch (value)
-        {
-            case Property property:
-                Property = property;
-                return;
-            case string path:
-                Property = Property.This(Model.Type).GetProperty(path);
-                return;
-            case TagName tagName:
-                Property = Property.This(Model.Type).GetProperty(tagName);
-                return;
-        }
-    }
 
     /// <summary>
     /// Toggles the state of the criterion <see cref="Negation"/> property to make the operation negate the output.
@@ -150,14 +187,29 @@ public partial class CriterionObserver : Observer<Criterion>
         }
     }
 
+    /// <summary>
+    /// A command to add a new <see cref="Criterion"/> instance after this instance in the same collection
+    /// as this criterion belongs.
+    /// </summary>
+    [RelayCommand]
+    private void AddAfter()
+    {
+        if (!TryGetCollection(out var criteria)) return;
+
+        var index = criteria.IndexOf(this) + 1;
+        if (index < 0 || index > criteria.Count) return;
+
+        var next = new CriterionObserver(new Criterion(), _input);
+        criteria.Insert(index, next);
+    }
+
     /// <inheritdoc />
     protected override Task Move(object? source)
     {
         if (source is not CriterionObserver criterion) return Task.CompletedTask;
-        if (!TryGetSpec(out var spec)) return Task.CompletedTask;
+        if (!TryGetCollection(out var criteria)) return Task.CompletedTask;
 
-        MoveItem(spec.Filters, criterion);
-        MoveItem(spec.Verifications, criterion);
+        MoveItem(criteria, criterion);
 
         return Task.CompletedTask;
 
@@ -178,22 +230,14 @@ public partial class CriterionObserver : Observer<Criterion>
     {
         if (source is not CriterionObserver other) return false;
         if (this == other) return false;
-        if (!TryGetSpec(out var spec)) return false;
-        return (spec.Filters.Contains(this) && spec.Filters.Contains(other)) ||
-               (spec.Verifications.Contains(this) && spec.Verifications.Contains(other));
+        return true;
     }
 
     /// <inheritdoc />
     protected override Task Duplicate()
     {
-        if (!TryGetSpec(out var spec)) return Task.CompletedTask;
-
-        if (spec.Filters.Has(this))
-            spec.Filters.Add(new CriterionObserver(Model.Duplicate()));
-
-        if (spec.Verifications.Has(this))
-            spec.Verifications.Add(new CriterionObserver(Model.Duplicate()));
-
+        if (!TryGetCollection(out var criteria) || !criteria.Has(this)) return Task.CompletedTask;
+        criteria.Add(new CriterionObserver(Model.Duplicate(), _input));
         return Task.CompletedTask;
     }
 
@@ -212,184 +256,84 @@ public partial class CriterionObserver : Observer<Criterion>
     #endregion
 
     /// <summary>
-    /// Retrieves a list of properties based on the specified filter.
-    /// </summary>
-    /// <param name="filter">The filter to apply to the properties. If null or empty, all properties are returned.</param>
-    /// <param name="token">The cancellation token used to cancel the operation.</param>
-    /// <returns>A task that represents the asynchronous operation. The task result contains the list of properties.</returns>
-    private async Task<IEnumerable<object>> GetProperties(string? filter, CancellationToken token)
-    {
-        var type = Model.Type;
-        var origin = Property.This(type);
-
-        if (string.IsNullOrEmpty(filter))
-        {
-            return origin.Properties;
-        }
-
-        //While we are inside an indexer, we want to suggest tag names from the source instead of properties.
-        if (filter.Count(x => x == '[') != filter.Count(x => x == ']'))
-        {
-            var tagName = filter[(filter.LastIndexOf('[') + 1)..];
-            return await GetTagNames(tagName, token);
-        }
-
-        var memeberIndex = filter.LastIndexOf('.');
-        var path = memeberIndex > -1 ? filter[..memeberIndex] : string.Empty;
-        var member = memeberIndex > -1 ? filter[(memeberIndex + 1)..] : filter;
-
-        var property = origin.GetProperty(path);
-        var properties = property.Properties;
-        return properties.Where(p => p.Name.Satisfies(member)).OrderBy(p => p.Name);
-    }
-
-    /// <summary>
     /// Gets all <see cref="Engine.Operation"/> types that are supported by the current configured property, and filters
     /// them based on the entry text.
     /// </summary>
     private Task<IEnumerable<object>> GetOperations(string? filter, CancellationToken token)
     {
-        var filtered = Operation.Supporting(Property).Where(o => o.Name.Satisfies(filter));
+        var operations = Operation.Supporting(Property.Value).ToList();
+
+        if (string.IsNullOrEmpty(filter))
+            return Task.FromResult(operations.Cast<object>());
+
+        var filtered = operations
+            .Where(o => o.Name.Satisfies(filter))
+            .OrderByDescending(p => p.Name.StartsWith(filter))
+            .ThenBy(p => p.Name);
+
         return Task.FromResult(filtered.Cast<object>());
     }
 
     /// <summary>
-    /// Updates the criterion arguments collection based on the selected operation.
-    /// Each operation type expects a certain number of arguments (except for In).
-    /// Collection operations expect an inner criterion that's type needs to be the inner type of the collection.
+    /// Updates the criterion argument based on the selected operation.
+    /// Some operations type expect a certain object type (Between, In, Collection types).
     /// </summary>
     private void ResetArgument()
     {
         Model.Argument = Operation switch
         {
-            TernaryOperation => new Range(),
+            BetweenOperation => new Range(),
             InOperation => new List<object?>(),
-            CollectionOperation => new Criterion(Property.InnerType),
+            CollectionOperation => new Criterion(),
             _ => null
         };
 
-        Forget(Argument);
-        Argument = new ValueObserver(GetArgument, ParseArgument, SetArgument, GetSuggesstions);
-        Track(Argument);
+        Argument = new ArgumentInput(() => Model.Argument, x => Model.Argument = x, () => Property.Value);
+        OnPropertyChanged(nameof(Argument));
     }
 
     /// <summary>
-    /// Updates the argument based on the received value type from the entry field.
-    /// If user enters simple text we would like to parse it as the strong type to let our data templates work.
-    /// If user enters a value observer object, then it was selected from the suggestions, and we can just use that.
-    /// Anything else just wrap in a value observer and set accordingly.
+    /// Tries to get the corresponding StepObserver for this criterion instance.
     /// </summary>
-    private object? GetArgument()
+    private bool TryGetCollection(out ObserverCollection<Criterion, CriterionObserver> collection)
     {
-        return Model.Argument switch
+        var step = GetObserver<StepObserver>(s =>
         {
-            Range range => new RangeObserver(range),
-            List<object?> list => list.ToObserver(x => new ValueObserver(x)),
-            Criterion criterion => new CriterionObserver(criterion),
-            _ => Model.Argument
-        };
-    }
+            switch (s)
+            {
+                case FilterObserver filter when filter.Criteria.Has(this):
+                case VerifyObserver verify when verify.Criteria.Has(this):
+                    return true;
+                default:
+                    return false;
+            }
+        });
 
-    /// <summary>
-    /// Updates the argument based on the received value type from the entry field. It is expected that this value is
-    /// the parsed value that we can directly set argument to.
-    /// </summary>
-    private void SetArgument(object? value)
-    {
-        Model.Argument = value;
-    }
-
-    /// <summary>
-    /// Parses the input value to the type expected by the criterion property.
-    /// If user enters simple text we would like to parse it as the strong type to let our data templates work.
-    /// If user enters a value observer object, then it was selected from the suggestions, and we can just use that.
-    /// Anything else just wrap in a value observer and set accordingly.
-    /// </summary>
-    private object? ParseArgument(object? value)
-    {
-        var group = Property.Group;
-
-        return value switch
+        if (step is null)
         {
-            string text when group.TryParse(text, out var parsed) && parsed is not null => parsed,
-            ValueObserver observer => observer.Value,
-            _ => value
-        };
-    }
-
-    /// <summary>
-    /// Attempts to get the loaded target source and find suggestable values based on the current propert and
-    /// input filter. This code is handled in the source object, and will basically query the file and use the
-    /// configured property to pull out strongly typed values so the user can easily configure the criterion as needed.
-    /// </summary>
-    private Task<IEnumerable<object>> GetSuggesstions(string? filter, CancellationToken token)
-    {
-        if (!TryGetSource(out var source) || token.IsCancellationRequested)
-            return Task.FromResult(Enumerable.Empty<object>());
-
-        var values = source.Model.FindValues(Property)
-            .Select(v => new ValueObserver(v))
-            .Where(x => x.Filter(filter))
-            .Cast<object>();
-
-        return Task.FromResult(values);
-    }
-
-    /// <summary>
-    /// Attempts to get the loaded target source and fine suggestable tag names based on the current spec and input
-    /// filter. This code is handled in the source object, and will basically query the file and use the
-    /// configured data to pull out known tag names so the user can easily configure the criterion as needed.
-    /// </summary>
-    /// <param name="filter"></param>
-    /// <param name="token"></param>
-    /// <returns></returns>
-    private Task<IEnumerable<object>> GetTagNames(string? filter, CancellationToken token)
-    {
-        if (!TryGetSource(out var source) || !TryGetSpec(out var spec) || token.IsCancellationRequested)
-            return Task.FromResult(Enumerable.Empty<object>());
-
-        var tagNames = source.Model.FindTagNames(spec, filter).Cast<object>();
-
-        return Task.FromResult(tagNames);
-    }
-
-    /// <summary>
-    /// Tries to get the corresponding SpecObserver for this criterion instance.
-    /// </summary>
-    private bool TryGetSpec(out SpecObserver spec)
-    {
-        var result = GetObserver<SpecObserver>(s => s.Model.Contains(Model));
-
-        if (result is null)
-        {
-            spec = default!;
+            collection = default!;
             return false;
         }
 
-        spec = result;
-        return true;
-    }
-
-    /// <summary>
-    /// Tries to get the loaded target soruce to use as the basis for finding suggestible data.
-    /// </summary>
-    private bool TryGetSource(out SourceObserver source)
-    {
-        var result = GetObserver<SourceObserver>(s => s.Model is { IsTarget: true, Content: not null });
-
-        if (result is null)
+        collection = step switch
         {
-            source = default!;
-            return false;
-        }
-
-        source = result;
+            FilterObserver filter => filter.Criteria,
+            VerifyObserver verify => verify.Criteria,
+            _ => []
+        };
         return true;
     }
 
     /// <inheritdoc />
     protected override IEnumerable<MenuActionItem> GenerateMenuItems()
     {
+        yield return new MenuActionItem
+        {
+            Header = "Add After",
+            Icon = Resource.Find("IconAdd"),
+            Command = AddAfterCommand
+        };
+
         yield return new MenuActionItem
         {
             Header = "Copy",
@@ -447,5 +391,4 @@ public partial class CriterionObserver : Observer<Criterion>
     }
 
     public static implicit operator Criterion(CriterionObserver observer) => observer.Model;
-    public static implicit operator CriterionObserver(Criterion model) => new(model);
 }

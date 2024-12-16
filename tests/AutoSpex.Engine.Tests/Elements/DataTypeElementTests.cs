@@ -35,7 +35,7 @@ public class DataTypeElementTests
     {
         var element = Element.DataType;
 
-        var property = element.Property("Name");
+        var property = element.GetProperty("Name");
 
         property.Should().NotBeNull();
         property.Path.Should().Be("Name");
@@ -47,7 +47,7 @@ public class DataTypeElementTests
     {
         var element = Element.DataType;
 
-        var property = element.Property("Description");
+        var property = element.GetProperty("Description");
 
         property.Should().NotBeNull();
         property.Path.Should().Be("Description");
@@ -59,7 +59,7 @@ public class DataTypeElementTests
     {
         var element = Element.DataType;
 
-        var property = element.Property("Family");
+        var property = element.GetProperty("Family");
 
         property.Should().NotBeNull();
     }
@@ -69,7 +69,7 @@ public class DataTypeElementTests
     {
         var element = Element.DataType;
 
-        var property = element.Property("Class");
+        var property = element.GetProperty("Class");
 
         property.Should().NotBeNull();
         property.Path.Should().Be("Class");
@@ -81,7 +81,7 @@ public class DataTypeElementTests
     {
         var element = Element.DataType;
 
-        var property = element.Property("Members");
+        var property = element.GetProperty("Members");
 
         property.Should().NotBeNull();
         property.Path.Should().Be("Members");
@@ -95,7 +95,7 @@ public class DataTypeElementTests
     {
         var element = Element.DataType;
 
-        var property = element.Property("Scope");
+        var property = element.GetProperty("Scope");
 
         property.Should().NotBeNull();
         property.Path.Should().Be("Scope");
@@ -107,7 +107,7 @@ public class DataTypeElementTests
     {
         var element = Element.DataType;
 
-        var property = element.Property("Family.Name");
+        var property = element.GetProperty("Family.Name");
 
         property.Should().NotBeNull();
     }

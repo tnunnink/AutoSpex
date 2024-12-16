@@ -8,8 +8,8 @@ namespace AutoSpex.Engine;
 public record Evaluation
 {
     [JsonConstructor]
-    private Evaluation(ResultState result, string candidate, string criteria, IEnumerable<string> expected,
-        string actual, string? error)
+    private Evaluation(ResultState result, string candidate, string criteria, string expected, string actual,
+        string? error)
     {
         Result = result;
         Candidate = candidate;
@@ -19,7 +19,7 @@ public record Evaluation
         Error = error;
     }
 
-    private Evaluation(ResultState result, Criterion criterion, object candidate, object? actual)
+    private Evaluation(ResultState result, Criterion criterion, object? candidate, object? actual)
     {
         ArgumentNullException.ThrowIfNull(result);
         ArgumentNullException.ThrowIfNull(criterion);
@@ -27,11 +27,11 @@ public record Evaluation
         Result = result;
         Candidate = candidate.ToText();
         Criteria = criterion.GetCriteria();
-        Expected = criterion.GetExpected().Select(x => x.ToText());
+        Expected = criterion.GetExpected().ToText();
         Actual = actual.ToText();
     }
 
-    private Evaluation(ResultState result, Criterion criterion, object candidate, Exception exception)
+    private Evaluation(ResultState result, Criterion criterion, object? candidate, Exception exception)
     {
         ArgumentNullException.ThrowIfNull(result);
         ArgumentNullException.ThrowIfNull(criterion);
@@ -39,7 +39,7 @@ public record Evaluation
         Result = result;
         Candidate = candidate.ToText();
         Criteria = criterion.GetCriteria();
-        Expected = criterion.GetExpected().Select(x => x.ToText());
+        Expected = criterion.GetExpected().ToText();
         Error = exception.Message;
     }
 
@@ -76,7 +76,7 @@ public record Evaluation
     /// The set of values that the evaluation was expecting to find.
     /// </summary>
     [JsonInclude]
-    public IEnumerable<string> Expected { get; private init; } = [];
+    public string Expected { get; private init; } = string.Empty;
 
     /// <summary>
     /// The actual value that the was obtained from the candidate object. 
@@ -91,23 +91,22 @@ public record Evaluation
     [JsonInclude]
     public string? Error { get; private init; }
 
-
     /// <summary>
     /// Cretes a new passing <see cref="Evaluation"/> with the provided criterion, candidate, and actual value. 
     /// </summary>
-    public static Evaluation Passed(Criterion criterion, object candidate, object? actual) =>
+    public static Evaluation Passed(Criterion criterion, object? candidate, object? actual) =>
         new(ResultState.Passed, criterion, candidate, actual);
 
     /// <summary>
     /// Cretes a new failed <see cref="Evaluation"/> with the provided criterion, candidate, and actual value. 
     /// </summary>
-    public static Evaluation Failed(Criterion criterion, object candidate, object? actual) =>
+    public static Evaluation Failed(Criterion criterion, object? candidate, object? actual) =>
         new(ResultState.Failed, criterion, candidate, actual);
 
     /// <summary>
     /// Cretes a new errored <see cref="Evaluation"/> with the provided criterion, candidate, and the produced exception. 
     /// </summary>
-    public static Evaluation Errored(Criterion criterion, object candidate, Exception exception) =>
+    public static Evaluation Errored(Criterion criterion, object? candidate, Exception exception) =>
         new(ResultState.Errored, criterion, candidate, exception);
 
     /// <summary>

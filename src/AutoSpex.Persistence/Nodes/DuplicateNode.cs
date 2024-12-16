@@ -32,8 +32,8 @@ internal class DuplicateNodeHandler(IConnectionManager manager) : IRequestHandle
 
     private const string InsertNode =
         """
-        INSERT INTO Node (NodeId, ParentId, Type, Name, Comment)
-        VALUES (@NodeId, @ParentId, @Type, @Name, @Comment)
+        INSERT INTO Node (NodeId, ParentId, Type, Name, Description)
+        VALUES (@NodeId, @ParentId, @Type, @Name, @Description)
         """;
 
     private const string InsertSpec =

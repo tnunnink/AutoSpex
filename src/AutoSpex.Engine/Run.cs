@@ -18,7 +18,7 @@ public class Run
         ArgumentNullException.ThrowIfNull(node);
         ArgumentNullException.ThrowIfNull(source);
 
-        Name = $"{node.Name} - Run Results";
+        Name = $"{node.Name} - {source.Name}";
 
         //Build the set of outcomes based on the spec or specs 
         GenerateOutcomes(node);

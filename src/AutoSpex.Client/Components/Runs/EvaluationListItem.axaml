@@ -5,8 +5,7 @@
                     xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
                     xmlns:components="clr-namespace:AutoSpex.Client.Components"
                     xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
-                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
-                    xmlns:system="clr-namespace:System;assembly=System.Runtime">
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
 
     <Design.PreviewWith>
         <Border Width="800" Height="200">
@@ -54,32 +53,9 @@
                     Text="{Binding Criteria}"
                     Foreground="{a:ThemeResource DefaultForegroundBrush}" />
 
-                <ItemsControl
-                    ItemsSource="{Binding Expected}"
-                    IsVisible="{Binding Expected.Count}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal" Spacing="5" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate x:DataType="system:String">
-                            <StackPanel Orientation="Horizontal" Spacing="5">
-                                <controls:HighlightableTextBlock
-                                    Text="{Binding}"
-                                    Foreground="{DynamicResource TypeGroupForegroundBrushText}" />
-                                <TextBlock
-                                    x:Name="SeparatorText"
-                                    Text="{Binding $parent[ItemsControl].((observers:EvaluationObserver)DataContext).ExpectedSeparator, FallbackValue={x:Null}}" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                    <ItemsControl.Styles>
-                        <Style Selector="ContentPresenter:nth-last-child(-n+1) TextBlock#SeparatorText">
-                            <Setter Property="IsVisible" Value="False" />
-                        </Style>
-                    </ItemsControl.Styles>
-                </ItemsControl>
+                <controls:HighlightableTextBlock
+                    Text="{Binding Expected}"
+                    Foreground="{DynamicResource TypeGroupForegroundBrushText}" />
 
                 <StackPanel
                     Orientation="Horizontal" Spacing="5"

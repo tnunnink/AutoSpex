@@ -129,6 +129,7 @@ public partial class NodeObserver : Observer<Node>,
         foreach (var moved in selected)
         {
             Messenger.Send(new Moved(moved, Id));
+            moved.Refresh();
         }
     }
 
@@ -162,9 +163,10 @@ public partial class NodeObserver : Observer<Node>,
         var result = await Mediator.Send(new MoveNodes(selected.Select(n => n.Model), parent.Id));
         if (Notifier.ShowIfFailed(result, $"Failed to move selected node to parent {parent.Name}")) return;
 
-        foreach (var node in selected)
+        foreach (var moved in selected)
         {
-            Messenger.Send(new Moved(node, parent.Id));
+            Messenger.Send(new Moved(moved, parent.Id));
+            moved.Refresh();
         }
     }
 

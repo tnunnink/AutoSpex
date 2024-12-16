@@ -20,9 +20,9 @@ public class DeleteSourcesTests
     {
         var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-        var first = new Source();
-        var second = new Source();
-        var third = new Source();
+        var first = new Source("First");
+        var second = new Source("Second");
+        var third = new Source("Thrid");
         await mediator.Send(new CreateSource(first));
         await mediator.Send(new CreateSource(second));
         await mediator.Send(new CreateSource(third));

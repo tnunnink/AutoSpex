@@ -1,0 +1,59 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             x:Class="AutoSpex.Client.Pages.SpecDetailPage"
+             x:DataType="pages:SpecDetailPageModel">
+
+    <Design.Width>1400</Design.Width>
+    <Design.Height>900</Design.Height>
+
+    <DockPanel>
+
+        <Border DockPanel.Dock="Top" Padding="20 15" Background="{a:ThemeResource Container2BackgroundBrush}">
+
+            <StackPanel Spacing="10">
+
+                <Grid ColumnDefinitions="*,Auto">
+
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5">
+                        <PathIcon Theme="{Binding Node.Icon, Converter={StaticResource KeyIconConverter}}" />
+                        <ContentControl Content="{Binding Node}" ContentTemplate="{StaticResource BreadcrumbLink}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
+                        <Button Command="{Binding RunCommand}" Classes="run accent" />
+                        <Button Command="{Binding SaveCommand}" Classes="save" />
+                        <Button Classes="more">
+                            <Button.Flyout>
+                                <MenuFlyout
+                                    ItemsSource="{Binding Node.MenuItems}"
+                                    ItemContainerTheme="{StaticResource MenuActionItem}"
+                                    Placement="BottomEdgeAlignedRight" />
+                            </Button.Flyout>
+                        </Button>
+                    </StackPanel>
+
+                </Grid>
+
+            </StackPanel>
+
+        </Border>
+
+        <controls:DrawerView
+            IsDrawerOpen="{Binding ShowRunner, Mode=TwoWay}"
+            DrawerMinLength="49"
+            DrawerPlacement="Bottom"
+            HideSplitter="False">
+
+            <controls:DrawerView.Drawer>
+                <ContentControl Content="{Binding RunnerPage}" />
+            </controls:DrawerView.Drawer>
+
+            <ContentControl Content="{Binding CriteriaPage}" />
+
+        </controls:DrawerView>
+
+    </DockPanel>
+</UserControl>

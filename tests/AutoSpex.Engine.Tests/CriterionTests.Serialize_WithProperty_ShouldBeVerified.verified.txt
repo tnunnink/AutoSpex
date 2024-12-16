@@ -1,0 +1,6 @@
+﻿{
+  "Property": "L5Sharp.Core.Tag:This",
+  "Negation": "Is",
+  "Operation": "None",
+  "Argument": null
+}

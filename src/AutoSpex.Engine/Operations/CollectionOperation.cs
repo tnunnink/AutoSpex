@@ -4,7 +4,7 @@ namespace AutoSpex.Engine;
 
 public abstract class CollectionOperation(string name) : Operation(name)
 {
-    public override bool Execute(object? input, object? value)
+    public override bool Execute(object? input, object? value = default)
     {
         if (input is not IEnumerable enumerable)
             throw new ArgumentException("Collection operations require an enumerable input", nameof(input));

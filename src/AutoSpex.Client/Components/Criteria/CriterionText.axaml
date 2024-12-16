@@ -1,0 +1,82 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:collections="clr-namespace:System.Collections;assembly=System.Runtime"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
+
+    <Design.PreviewWith>
+        <StackPanel Spacing="5" Margin="20">
+            <StackPanel.Styles>
+                <Style Selector="ContentControl.criterion">
+                    <Setter Property="ContentTemplate" Value="{DynamicResource CriterionText}" />
+                    <Setter Property="Padding" Value="5" />
+                </Style>
+            </StackPanel.Styles>
+            <ContentControl Content="{x:Static components:TestData.BoolCriterion}" Classes="criterion" />
+            <ContentControl Content="{x:Static components:TestData.NumberCriterion}" Classes="criterion" />
+            <ContentControl Content="{x:Static components:TestData.TextCriterion}" Classes="criterion" />
+            <ContentControl Content="{x:Static components:TestData.EnumCriterion}" Classes="criterion" />
+            <ContentControl Content="{x:Static components:TestData.InnerCriterion}" Classes="criterion" />
+        </StackPanel>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="CriterionText" x:DataType="observers:CriterionObserver">
+
+        <Border Padding="{a:ThemeResource ButtonPadding}">
+
+            <StackPanel Orientation="Horizontal" Spacing="7">
+
+                <PathIcon
+                    Theme="{Binding Property.Value.Group, Converter={StaticResource TypeGroupIconConverter}}"
+                    Classes="size-sm" />
+
+                <controls:HighlightableTextBlock
+                    Text="{Binding Property.Path}"
+                    FontFamily="{a:ThemeResource CodeFontFamily}"
+                    HighlightedText="{Binding FilterText}" />
+
+                <controls:HighlightableTextBlock
+                    Text="{Binding Negation}"
+                    FontFamily="{a:ThemeResource CodeFontFamily}"
+                    Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+
+                <controls:HighlightableTextBlock
+                    Text="{Binding Operation}"
+                    FontFamily="{a:ThemeResource CodeFontFamily}"
+                    Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+
+                <ContentControl
+                    Content="{Binding Argument.Value}"
+                    FontFamily="{a:ThemeResource CodeFontFamily}">
+
+                    <ContentControl.ContentTemplate>
+                        <a:TypedDataTemplateSelector DefaultTemplate="{StaticResource ValueDisplay}">
+
+                            <DataTemplate x:DataType="observers:RangeObserver">
+
+                            </DataTemplate>
+
+                            <DataTemplate x:DataType="collections:ICollection">
+                                <ContentControl
+                                    Content="{Binding }"
+                                    ContentTemplate="{StaticResource ValueDisplay}" />
+                            </DataTemplate>
+
+                            <DataTemplate x:DataType="observers:CriterionObserver">
+                                <ContentControl
+                                    Content="{Binding }"
+                                    ContentTemplate="{StaticResource CriterionText}" />
+                            </DataTemplate>
+
+                        </a:TypedDataTemplateSelector>
+                    </ContentControl.ContentTemplate>
+
+                </ContentControl>
+
+            </StackPanel>
+        </Border>
+
+    </DataTemplate>
+</ResourceDictionary>

@@ -30,8 +30,5 @@
       <None Update="Test.xml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="Transforms\CriterionTransformTests.Transformation_RemoveIdsMoveNegationFlattenArguemnt_ShouldBeVerified.verified.txt">
-        <DependentUpon>CriterionTransformTests.cs</DependentUpon>
-      </None>
     </ItemGroup>
 </Project>

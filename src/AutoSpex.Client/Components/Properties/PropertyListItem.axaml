@@ -1,0 +1,45 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine">
+
+    <Design.PreviewWith>
+        <StackPanel>
+            <StackPanel Margin="50" Width="300">
+                <ListBoxItem
+                    Content="{x:Static components:TestData.RadixProperty}"
+                    ContentTemplate="{DynamicResource PropertyListItem}" />
+                <ListBoxItem
+                    Content="{x:Static components:TestData.TagNameProperty}"
+                    ContentTemplate="{DynamicResource PropertyListItem}" />
+                <ListBoxItem
+                    Content="{x:Static components:TestData.MembersProperty}"
+                    ContentTemplate="{DynamicResource PropertyListItem}" />
+            </StackPanel>
+        </StackPanel>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="PropertyListItem" x:DataType="engine:Property">
+        <Border Padding="{a:ThemeResource ListItemPadding}">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <PathIcon
+                    Grid.Column="0"
+                    Theme="{Binding Group, Converter={StaticResource TypeGroupIconConverter}}"
+                    Margin="0 0 10 0" />
+                <TextBlock
+                    Grid.Column="1"
+                    Text="{Binding Name}"
+                    Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
+                    FontFamily="{a:ThemeResource CodeFontFamily}" />
+                <TextBlock
+                    Grid.Column="2"
+                    Text="{Binding DisplayName}"
+                    Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                    FontFamily="{a:ThemeResource CodeFontFamily}"
+                    Margin="20 0 10 0" FontSize="12" />
+            </Grid>
+        </Border>
+    </DataTemplate>
+
+</ResourceDictionary>

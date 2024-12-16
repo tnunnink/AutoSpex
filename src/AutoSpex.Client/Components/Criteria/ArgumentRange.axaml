@@ -15,16 +15,21 @@
 
     <DataTemplate x:Key="ArgumentRange" x:DataType="observers:RangeObserver">
 
-        <StackPanel Orientation="Horizontal" Spacing="2">
+        <StackPanel Orientation="Horizontal" Spacing="2" Background="{a:ThemeResource Container2BackgroundBrush}">
 
             <ContentControl
                 Content="{Binding Min}"
                 ContentTemplate="{StaticResource ArgumentEntry}" />
 
-            <TextBlock
-                x:Name="AndText"
-                Text="and"
-                Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+            <Border
+                BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                BorderThickness="0 0 1 0"
+                Padding="5 0">
+                <TextBlock
+                    x:Name="AndText"
+                    Text="and"
+                    Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+            </Border>
 
             <ContentControl
                 Content="{Binding Max}"

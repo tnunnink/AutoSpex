@@ -69,10 +69,6 @@ public class Entry : TemplatedControl
         AvaloniaProperty.Register<Entry, int>(
             nameof(MaxDropDownWidth));
 
-    public static readonly StyledProperty<bool> UseExpanderProperty =
-        AvaloniaProperty.Register<Entry, bool>(
-            nameof(UseExpander));
-
     public static readonly StyledProperty<int> PopulationDelayProperty =
         AvaloniaProperty.Register<Entry, int>(
             nameof(PopulationDelay), defaultValue: 5);
@@ -169,12 +165,6 @@ public class Entry : TemplatedControl
     {
         get => GetValue(MinDropDownWidthProperty);
         set => SetValue(MinDropDownWidthProperty, value);
-    }
-
-    public bool UseExpander
-    {
-        get => GetValue(UseExpanderProperty);
-        set => SetValue(UseExpanderProperty, value);
     }
 
     public int PopulationDelay
@@ -357,7 +347,7 @@ public class Entry : TemplatedControl
 
     /// <summary>
     /// Handles navigation of the suggested items list. When the user presses the tab key, we will commit the selected
-    /// value but not close the flyout. This allows effectively updates the text entry with the selected value and allows
+    /// value but not close the flyout. This effectively updates the text entry with the selected value and allows
     /// continuation of field entry, which we need to dot down path entry.
     /// </summary>
     private void HandleTabNavigation()

@@ -1,17 +1,19 @@
 ﻿using System.Text;
 using System.Text.Json;
+using JetBrains.Annotations;
 
 namespace AutoSpex.Engine.Migrations;
 
+[UsedImplicitly]
 public class SpecMigrationV1 : ISpecMigration
 {
     /// <inheritdoc />
     public int Version => 1;
 
     /// <inheritdoc />
-    public string Run(string old)
+    public string Run(string json)
     {
-        var document = JsonDocument.Parse(old);
+        var document = JsonDocument.Parse(json);
         var root = document.RootElement;
 
         using var stream = new MemoryStream();

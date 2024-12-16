@@ -1,0 +1,37 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:core="clr-namespace:L5Sharp.Core;assembly=L5Sharp.Core">
+
+    <Design.PreviewWith>
+        <StackPanel Margin="50" Width="300">
+            <ListBoxItem
+                Content="{x:Static components:TestData.TagNameValue}"
+                ContentTemplate="{DynamicResource TagNameListItem}" />
+        </StackPanel>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="TagNameListItem" x:DataType="core:TagName">
+        <Border Padding="{a:ThemeResource ListItemPadding}">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <PathIcon
+                    Grid.Column="0"
+                    Theme="{StaticResource IconThemedTag}"
+                    Margin="0 0 10 0" />
+                <TextBlock
+                    Grid.Column="1"
+                    Text="{Binding }"
+                    Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
+                    FontFamily="{a:ThemeResource CodeFontFamily}" />
+                <TextBlock
+                    Grid.Column="2"
+                    Text="Tag"
+                    Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                    FontFamily="{a:ThemeResource CodeFontFamily}"
+                    Margin="20 0 10 0" FontSize="12" />
+            </Grid>
+        </Border>
+    </DataTemplate>
+
+</ResourceDictionary>

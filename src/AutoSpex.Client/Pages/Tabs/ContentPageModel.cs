@@ -18,13 +18,12 @@ namespace AutoSpex.Client.Pages;
 public partial class ContentPageModel(SourceObserver source) : PageViewModel("Content")
 {
     private static readonly HashSet<string> ScopeTypes = ScopeType.All().Select(x => x.Name).ToHashSet();
-
     public override string Route => $"{nameof(Source)}/{source.Id}/{Title}";
-    public ObserverCollection<LogixElement, ElementObserver> Elements { get; } = [];
+
+    public QueryObserver Query { get; set; } = new(new Query(), source);
+    public ObserverCollection<object?, ValueObserver> Elements { get; } = [];
 
     [ObservableProperty] private Element _type = Element.Tag;
-
-    [ObservableProperty] private ElementObserver? _selected;
 
     [ObservableProperty] private int _pageSize = 50;
 
@@ -59,7 +58,7 @@ public partial class ContentPageModel(SourceObserver source) : PageViewModel("Co
 
     private bool CanSearch() => !string.IsNullOrEmpty(Filter) && source.Model.Content is not null;
 
-    private Task<IEnumerable<ElementObserver>> QueryElements(CancellationToken token)
+    private Task<IEnumerable<ValueObserver>> QueryElements(CancellationToken token)
     {
         return Task.Run(() =>
         {
@@ -78,7 +77,7 @@ public partial class ContentPageModel(SourceObserver source) : PageViewModel("Co
                 .Select(e => e.Deserialize<LogixElement>())
                 .Take(size);
 
-            return elements.Select(e => new ElementObserver(e) { FilterText = filter });
+            return elements.Select(e => new ValueObserver(e) { FilterText = filter });
         }, token);
     }
 }

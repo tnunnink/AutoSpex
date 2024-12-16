@@ -1,0 +1,22 @@
+﻿{
+  Criteria: [
+    {
+      Property: TagName,
+      Negation: Is,
+      Operation: Containing,
+      Argument: {
+        Group: Text,
+        Data: this is a test
+      }
+    },
+    {
+      Property: Value,
+      Negation: Is,
+      Operation: Equal To,
+      Argument: {
+        Group: Number,
+        Data: 123
+      }
+    }
+  ]
+}

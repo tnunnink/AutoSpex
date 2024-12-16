@@ -1,4 +1,6 @@
-﻿namespace AutoSpex.Engine.Tests;
+﻿// ReSharper disable UseObjectOrCollectionInitializer
+
+namespace AutoSpex.Engine.Tests;
 
 [TestFixture]
 public class RangeTests
@@ -23,7 +25,7 @@ public class RangeTests
         range.Min.Should().Be(1.23);
         range.Min.Should().BeOfType(typeof(double));
     }
-    
+
     [Test]
     public void Max_SetValue_ShouldBeExpected()
     {
@@ -34,7 +36,7 @@ public class RangeTests
         range.Max.Should().Be(1.23);
         range.Max.Should().BeOfType(typeof(double));
     }
-    
+
     [Test]
     public void InRange_SetValue_ShouldBeExpected()
     {

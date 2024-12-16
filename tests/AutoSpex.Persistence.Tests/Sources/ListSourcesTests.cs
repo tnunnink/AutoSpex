@@ -22,9 +22,9 @@ public class ListSourcesTests
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-        await mediator.Send(new CreateSource(new Source(L5X.Load(Known.Test))));
-        await mediator.Send(new CreateSource(new Source(L5X.Load(Known.Test))));
-        await mediator.Send(new CreateSource(new Source(L5X.Load(Known.Test))));
+        await mediator.Send(new CreateSource(new Source(L5X.Load(Known.Test), "Source 1")));
+        await mediator.Send(new CreateSource(new Source(L5X.Load(Known.Test), "Source 2")));
+        await mediator.Send(new CreateSource(new Source(L5X.Load(Known.Test), "Source 3")));
 
         var result = await mediator.Send(new ListSources());
         

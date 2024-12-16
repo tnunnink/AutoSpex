@@ -40,6 +40,7 @@
             <PathIcon Theme="{DynamicResource IconThemedElement}" />
             <PathIcon Theme="{DynamicResource IconThemedArray}" />
             <PathIcon Theme="{DynamicResource IconThemedTag}" />
+            <PathIcon Theme="{DynamicResource IconThemedReference}" />
         </StackPanel>
     </Design.PreviewWith>
 
@@ -121,6 +122,10 @@
     </ControlTheme>
     <ControlTheme x:Key="IconThemedTag" TargetType="PathIcon" BasedOn="{StaticResource IconFilledTag}">
         <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushTag}" />
+        <Setter Property="FontSize" Value="14" />
+    </ControlTheme>
+    <ControlTheme x:Key="IconThemedReference" TargetType="PathIcon" BasedOn="{StaticResource IconLineAsteriks}">
+        <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushReference}" />
         <Setter Property="FontSize" Value="14" />
     </ControlTheme>
 </ResourceDictionary>

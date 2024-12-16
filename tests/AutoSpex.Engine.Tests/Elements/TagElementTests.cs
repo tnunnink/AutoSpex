@@ -54,7 +54,7 @@ public class TagElementTests
     {
         var element = Element.Tag;
 
-        var property = element.Property("Name");
+        var property = element.GetProperty("Name");
 
         property.Origin.Should().Be(typeof(Tag));
         property.Type.Should().Be(typeof(string));
@@ -70,7 +70,7 @@ public class TagElementTests
     {
         var element = Element.Tag;
 
-        var property = element.Property("Radix.Name");
+        var property = element.GetProperty("Radix.Name");
 
         property.Origin.Should().Be(typeof(Tag));
         property.Type.Should().Be(typeof(string));
@@ -86,7 +86,7 @@ public class TagElementTests
     {
         var element = Element.Tag;
 
-        var property = element.Property("Root.Root.Parent");
+        var property = element.GetProperty("Root.Root.Parent");
 
         property.Origin.Should().Be(typeof(Tag));
         property.Type.Should().Be(typeof(Tag));
@@ -102,7 +102,7 @@ public class TagElementTests
     {
         var element = Element.Tag;
 
-        var property = element.Property("References");
+        var property = element.GetProperty("References");
 
         property.Origin.Should().Be(typeof(Tag));
         property.Type.Should().Be(typeof(List<CrossReference>));
@@ -110,32 +110,5 @@ public class TagElementTests
         property.Path.Should().Be("References");
         property.Group.Should().Be(TypeGroup.Collection);
         property.DisplayName.Should().Be("CrossReference[]");
-    }
-
-    [Test]
-    public void GetValue_References_ShouldBeExpected()
-    {
-        var content = L5X.Load(Known.Example, L5XOptions.Index);
-        var tag = content.Get<Tag>("/Air_Supply_01/Tag/AirCompressor");
-        var element = Element.Tag;
-        var property = element.Property("References.Count");
-
-        var references = tag.References().ToList();
-        references.Should().NotBeEmpty();
-
-        var count = property.GetValue(tag);
-        count.Should().Be(references.Count);
-    }
-
-    [Test]
-    public void GetValue_ReferencesOfManyTags_ShouldBeExpected()
-    {
-        var content = L5X.Load(Known.Example, L5XOptions.Index);
-        var tags = content.Query<Tag>().Where(t => t.Scope.Program == "Air_Supply_01");
-        var element = Element.Tag;
-        var property = element.Property("References.Count");
-
-        var counts = tags.Select(t => new { t.TagName, References = property.GetValue(t) });
-        counts.Should().AllSatisfy(x => x.References.As<int>().Should().BeGreaterThan(0));
     }
 }

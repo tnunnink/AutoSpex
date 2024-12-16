@@ -1,0 +1,16 @@
+﻿{
+  Selections: [
+    {
+      Alias: MemberName,
+      Property: TagName.Member
+    },
+    {
+      Alias: Testing,
+      Property: Parent.Parent.Value
+    },
+    {
+      Alias: Preset,
+      Property: [PRE].Value
+    }
+  ]
+}

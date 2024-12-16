@@ -23,6 +23,7 @@
             <SolidColorBrush x:Key="TypeGroupForegroundBrushElement" Color="#53758a" />
             <!--<SolidColorBrush x:Key="TypeGroupForegroundBrushElement" Color="#ce665e" />-->
             <SolidColorBrush x:Key="TypeGroupForegroundBrushCollection" Color="#00855f" />
+            <SolidColorBrush x:Key="TypeGroupForegroundBrushReference" Color="#396fbc" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Dark">
             <SolidColorBrush x:Key="IconForegroundBrushDefault" Color="#9fa4b7" />
@@ -41,6 +42,7 @@
             <SolidColorBrush x:Key="TypeGroupForegroundBrushElement" Color="#85a7bb" />
             <!--<SolidColorBrush x:Key="TypeGroupForegroundBrushElement" Color="#ff9073" />-->
             <SolidColorBrush x:Key="TypeGroupForegroundBrushCollection" Color="#39cc9b" />
+            <SolidColorBrush x:Key="TypeGroupForegroundBrushReference" Color="#77afff" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 </ResourceDictionary>

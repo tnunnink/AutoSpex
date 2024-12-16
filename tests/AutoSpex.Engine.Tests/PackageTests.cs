@@ -12,21 +12,21 @@ public class PackageTests
         var collection = Node.NewCollection();
         collection.AddSpec("First", s =>
         {
-            s.Query(Element.Tag);
-            s.Filter("Name", Operation.Like, "someName");
-            s.Verify("Value", Operation.EqualTo, 123);
+            s.Get(Element.Tag);
+            s.Where("Name", Operation.Like, "someName");
+            s.Validate("Value", Operation.EqualTo, 123);
         });
         collection.AddSpec("Second", s =>
         {
-            s.Query(Element.Tag);
-            s.Filter("Name", Operation.Containing, "anotherName");
-            s.Verify("Value", Operation.GreaterThan, 456);
+            s.Get(Element.Tag);
+            s.Where("Name", Operation.Containing, "anotherName");
+            s.Validate("Value", Operation.GreaterThan, 456);
         });
         collection.AddSpec("Third", s =>
         {
-            s.Query(Element.Tag);
-            s.Filter("Name", Operation.EqualTo, "yetAnotherName");
-            s.Verify("Value", Negation.Not, Operation.EqualTo, 678);
+            s.Get(Element.Tag);
+            s.Where("Name", Operation.EqualTo, "yetAnotherName");
+            s.Validate("Value", Negation.Not, Operation.EqualTo, 678);
         });
 
         var package = new Package(collection, 10000);
@@ -42,21 +42,21 @@ public class PackageTests
         var collection = Node.NewCollection();
         collection.AddSpec("First", s =>
         {
-            s.Query(Element.Tag);
-            s.Filter("Name", Operation.Like, "someName");
-            s.Verify("Value", Operation.EqualTo, 123);
+            s.Get(Element.Tag);
+            s.Where("Name", Operation.Like, "someName");
+            s.Validate("Value", Operation.EqualTo, 123);
         });
         collection.AddSpec("Second", s =>
         {
-            s.Query(Element.Tag);
-            s.Filter("Name", Operation.Containing, "anotherName");
-            s.Verify("Value", Operation.GreaterThan, 456);
+            s.Get(Element.Tag);
+            s.Where("Name", Operation.Containing, "anotherName");
+            s.Validate("Value", Operation.GreaterThan, 456);
         });
         collection.AddSpec("Third", s =>
         {
-            s.Query(Element.Tag);
-            s.Filter("Name", Operation.EqualTo, "yetAnotherName");
-            s.Verify("Value", Negation.Not, Operation.EqualTo, 678);
+            s.Get(Element.Tag);
+            s.Where("Name", Operation.EqualTo, "yetAnotherName");
+            s.Validate("Value", Negation.Not, Operation.EqualTo, 678);
         });
 
         var package = new Package(collection, 10000);

@@ -14,20 +14,20 @@ public abstract class Operation(string name, string value) : SmartEnum<Operation
     }
 
     /// <summary>
-    /// Performs the operation on the input and provided values and returns the result.
+    /// Performs the operation on the input and provided value and returns the result.
     /// The actual implementation of the operation (how it's evaluated) is defined
     /// in derived operation classes.
     /// </summary>
     /// <param name="input">The value that will be compared/evaluated by the operation.</param>
-    /// <param name="value">Additional parameters needed for some operations.</param>
-    /// <returns>The result of the predicate operation. This is typically a boolean
+    /// <param name="value">Additional argument needed for some operations.</param>
+    /// <returns>The result of the predicate operation. This is a boolean
     /// value indicating whether the input value meets the criteria defined by the operation.</returns>
     /// <remarks>
     /// As an abstract method, this must be implemented by each specific Operation subclass.
     /// Be aware that this function may throw exceptions if input data is not of the expected 
     /// type or proper format for the executing operation.
     /// </remarks>
-    public abstract bool Execute(object? input, object? value);
+    public abstract bool Execute(object? input, object? value = default);
 
     /// <summary>
     /// Returns a collection of operations that support the specified property group.
@@ -91,16 +91,6 @@ public abstract class Operation(string name, string value) : SmartEnum<Operation
     /// </summary>
     public static readonly Operation LessThanOrEqualTo = new LessThanOrEqualToOperation();
 
-    /*/// <summary>
-    /// Returns the <see cref="Operation"/> which evaluates whether an input value is <c>true</c>. 
-    /// </summary>
-    public static readonly Operation True = new TrueOperation();
-
-    /// <summary>
-    /// Returns the <see cref="Operation"/> which evaluates whether an input value is <c>false</c>. 
-    /// </summary>
-    public static readonly Operation False = new FalseOperation();*/
-
     /// <summary>
     /// Represents an operation that checks for null values. It returns true 
     /// if the input value is null and false otherwise.
@@ -108,20 +98,15 @@ public abstract class Operation(string name, string value) : SmartEnum<Operation
     public static readonly Operation Null = new NullOperation();
 
     /// <summary>
-    /// The IsEmpty operation represents a condition that checks if a value or a collection of values is empty.
+    /// The Empty operation represents a condition that checks if a value or a collection of values is empty.
     /// </summary>
     public static readonly Operation Empty = new EmptyOperation();
-
-    /// <summary>
-    /// Represents an operation that checks if a string is null or empty.
-    /// </summary>
-    public static readonly Operation NullOrEmpty = new NullOrEmptyOperation();
 
     /// <summary>
     /// Represents an operation that determines whether a string is null, empty, or consists only of white-space characters.
     /// This operation is typically used for input validation or cleansing.
     /// </summary>
-    public static readonly Operation NullOrWhiteSpace = new NullOrWhiteSpaceOperation();
+    public static readonly Operation Void = new VoidOperation();
 
     /// <summary>
     /// Represents an operation that checks whether the input string contains a specific substring.

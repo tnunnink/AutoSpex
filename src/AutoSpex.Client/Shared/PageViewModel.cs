@@ -66,7 +66,7 @@ public abstract partial class PageViewModel() : TrackableViewModel, IEquatable<P
     /// this as needed. Each derived class can await the base implementation to get the result before processing further.
     /// </remarks>
     [RelayCommand(CanExecute = nameof(CanSave))]
-    public virtual Task<Result> Save() => Task.FromResult(Result.Ok());
+    public virtual Task<Result> Save(Result? result = default) => Task.FromResult(Result.Ok());
 
     /// <summary>
     /// Indicates whether the page can be saved or not. By default, this returns true if <c>IsChanged</c> is true
