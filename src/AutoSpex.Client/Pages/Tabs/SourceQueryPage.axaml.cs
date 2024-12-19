@@ -4,9 +4,9 @@ using Avalonia.Markup.Xaml;
 
 namespace AutoSpex.Client.Pages;
 
-public partial class SpecDetailPage : UserControl
+public partial class SourceQueryPage : UserControl
 {
-    public SpecDetailPage()
+    public SourceQueryPage()
     {
         InitializeComponent();
     }

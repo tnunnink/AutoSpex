@@ -2,20 +2,19 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
-                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
-                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
 
     <Design.PreviewWith>
         <Border Width="800" Height="200">
             <ContentControl
                 Content="{x:Static components:TestData.VerifyObserver}"
-                ContentTemplate="{DynamicResource VerifySection}"
+                ContentTemplate="{DynamicResource VerifyStep}"
                 Margin="20" VerticalAlignment="Top" />
         </Border>
     </Design.PreviewWith>
 
 
-    <DataTemplate x:Key="VerifySection" x:DataType="observers:VerifyObserver">
+    <DataTemplate x:Key="VerifyStep" x:DataType="observers:VerifyObserver">
 
         <Border
             Classes="normal"

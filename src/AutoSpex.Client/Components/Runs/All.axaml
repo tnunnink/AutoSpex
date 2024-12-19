@@ -4,11 +4,13 @@
         <ResourceInclude Source="EvaluationList.axaml" />
         <ResourceInclude Source="EvaluationListItem.axaml" />
         <ResourceInclude Source="OutcomeListItem.axaml" />
-        <ResourceInclude Source="OutcomeResult.axaml" />
+        <ResourceInclude Source="OutcomeStatus.axaml" />
         <ResourceInclude Source="OutcomeSuppress.axaml" />
         <ResourceInclude Source="ResultPill.axaml" />
+        <ResourceInclude Source="ResultStateItem.axaml" />
+        <ResourceInclude Source="ResultStateText.axaml" />
         <ResourceInclude Source="RunListItem.axaml" />
-        <ResourceInclude Source="RunSummary.axaml" />
+        <ResourceInclude Source="RunMessage.axaml" />
         <ResourceInclude Source="RunResult.axaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

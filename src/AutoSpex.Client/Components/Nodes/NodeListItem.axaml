@@ -2,7 +2,9 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
-                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
 
     <Design.PreviewWith>
         <ListBox
@@ -33,12 +35,40 @@
 
             <Grid ColumnDefinitions="*,Auto">
 
-                <ContentControl
-                    Grid.Column="0"
-                    Content="{Binding }"
-                    ContentTemplate="{StaticResource NodeHeader}" />
+                <StackPanel Grid.Column="0" Spacing="5">
 
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="7">
+                    <ContentControl
+                        Content="{Binding }"
+                        ContentTemplate="{StaticResource NodeHeader}" />
+
+                    <StackPanel Orientation="Horizontal" Spacing="7">
+
+                        <controls:HighlightableTextBlock
+                            Text="{Binding Path}"
+                            HighlightedText="{Binding FilterText}"
+                            Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+
+                        <Ellipse Classes="separator" />
+
+                        <TextBlock
+                            Text="Created 4 months ago by tnunn"
+                            Classes="faint" />
+
+                    </StackPanel>
+
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="5">
+
+                    <Button
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconFilledClipboard}" />
+                    
+                    
+
+                    <Button
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconLineAt}" />
 
 
                 </StackPanel>

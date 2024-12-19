@@ -38,22 +38,15 @@
                 Focusable="True"
                 IsTabStop="False">
 
-                <Button
+                <Border
                     Grid.Column="0"
                     Theme="{a:ControlTheme ButtonSubtle}"
-                    HorizontalContentAlignment="Left"
-                    Margin="0 0 5 0"
-                    CornerRadius="0 4 4 0">
+                    Padding="{a:ThemeResource ButtonPadding}"
+                    Margin="0 0 5 0">
 
                     <TextBlock Text="query" Classes="faint" />
 
-                    <Button.Flyout>
-                        <MenuFlyout
-                            Placement="Pointer"
-                            ItemContainerTheme="{StaticResource MenuActionItem}"
-                            ItemsSource="{Binding MenuItems}" />
-                    </Button.Flyout>
-                </Button>
+                </Border>
 
                 <Button
                     Grid.Column="1"

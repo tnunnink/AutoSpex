@@ -3,8 +3,6 @@
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceInclude Source="ElementDisplay.axaml" />
-        <ResourceInclude Source="ElementEntry.axaml" />
-        <ResourceInclude Source="QuerySection.axaml" />
         <ResourceInclude Source="SpecConfig.axaml" />
     </ResourceDictionary.MergedDictionaries>
 

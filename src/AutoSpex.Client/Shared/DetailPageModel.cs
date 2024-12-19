@@ -17,11 +17,11 @@ public abstract partial class DetailPageModel(string? title) : PageViewModel(tit
     IRecipient<Observer.Deleted>,
     IRecipient<NavigationRequest>
 {
-    public override bool IsChanged => base.IsChanged || Tabs.Any(t => t.IsChanged);
-    public override bool IsErrored => base.IsErrored || Tabs.Any(t => t.IsErrored);
-    public ObservableCollection<PageViewModel> Tabs { get; } = [];
+    public override bool IsChanged => base.IsChanged || Pages.Any(t => t.IsChanged);
+    public override bool IsErrored => base.IsErrored || Pages.Any(t => t.IsErrored);
+    public ObservableCollection<PageViewModel> Pages { get; } = [];
 
-    [ObservableProperty] private PageViewModel? _tab;
+    [ObservableProperty] private PageViewModel? _currentPage;
 
     /// <summary>
     /// When this node page is closed and deactivated we also want to close any child tab pages.
@@ -30,7 +30,7 @@ public abstract partial class DetailPageModel(string? title) : PageViewModel(tit
     {
         base.OnDeactivated();
 
-        foreach (var tab in Tabs.ToList())
+        foreach (var tab in Pages.ToList())
             Navigator.Close(tab);
     }
 
@@ -40,7 +40,7 @@ public abstract partial class DetailPageModel(string? title) : PageViewModel(tit
     /// </remarks>
     public override async Task Load()
     {
-        await NavigateContent();
+        await NavigatePages();
         Dispatcher.UIThread.Invoke(() => SaveCommand.NotifyCanExecuteChanged());
     }
 
@@ -55,7 +55,7 @@ public abstract partial class DetailPageModel(string? title) : PageViewModel(tit
         if (Notifier.ShowIfFailed(result, $"Failed to save {Title}"))
             return result;
 
-        foreach (var tab in Tabs)
+        foreach (var tab in Pages)
         {
             var saved = await tab.Save();
             if (Notifier.ShowIfFailed(result, $"Failed to save {Title}"))
@@ -144,11 +144,11 @@ public abstract partial class DetailPageModel(string? title) : PageViewModel(tit
         switch (message.Action)
         {
             case NavigationAction.Open:
-                Tabs.Add(page);
+                Pages.Add(page);
                 Track(page);
                 break;
             case NavigationAction.Close:
-                Tabs.Remove(page);
+                Pages.Remove(page);
                 Forget(page);
                 break;
             case NavigationAction.Replace:
@@ -161,7 +161,7 @@ public abstract partial class DetailPageModel(string? title) : PageViewModel(tit
     /// <summary>
     /// Handles requesting navigation of any child tabs for this node page.
     /// </summary>
-    protected virtual Task NavigateContent() => Task.CompletedTask;
+    protected virtual Task NavigatePages() => Task.CompletedTask;
 
     //We need to notify the SaveCommand when the IsChange property changes since that is what it is controlled on.
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)

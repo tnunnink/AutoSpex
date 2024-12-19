@@ -45,11 +45,11 @@
 
                         <ContentControl
                             Content="{Binding Query}"
-                            ContentTemplate="{StaticResource QuerySection}" />
+                            ContentTemplate="{StaticResource QueryEntry}" />
 
                         <ContentControl
                             Content="{Binding Verify}"
-                            ContentTemplate="{StaticResource VerifySection}"
+                            ContentTemplate="{StaticResource VerifyStep}"
                             IsVisible="{Binding Query.Element, Converter={x:Static ObjectConverters.NotEqual}, ConverterParameter={x:Static engine:Element.Default}}" />
 
                     </StackPanel>

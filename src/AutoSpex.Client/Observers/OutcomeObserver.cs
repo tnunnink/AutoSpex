@@ -17,6 +17,9 @@ public partial class OutcomeObserver : Observer<Outcome>,
     IRecipient<OutcomeObserver.Running>,
     IRecipient<OutcomeObserver.Complete>
 {
+    private int Total => Model.Verification.Evaluations.Count();
+    private int Passed => Model.Verification.Evaluations.Count(e => e.Result == ResultState.Passed);
+
     /// <inheritdoc/>
     public OutcomeObserver(Outcome model) : base(model)
     {
@@ -38,14 +41,19 @@ public partial class OutcomeObserver : Observer<Outcome>,
     [ObservableProperty] private NodeObserver? _node;
 
     [ObservableProperty] private ResultState _result = ResultState.None;
-    public long Duration => Model.Verification.Duration;
-    public int Total => Model.Verification.Evaluations.Count();
-    public int Passed => Model.Verification.Evaluations.Count(e => e.Result == ResultState.Passed);
-    public int Failed => Model.Verification.Evaluations.Count(e => e.Result == ResultState.Failed);
-    public int Errored => Model.Verification.Evaluations.Count(e => e.Result == ResultState.Errored);
-    public ObserverCollection<Evaluation, EvaluationObserver> Evaluations { get; }
 
     [ObservableProperty] private ResultState _filterState = ResultState.None;
+    public ObserverCollection<Evaluation, EvaluationObserver> Evaluations { get; }
+
+    public IEnumerable<ResultState> States =>
+        [ResultState.None, ..Model.Verification.Evaluations.Select(e => e.Result).Distinct().OrderBy(r => r.Value)];
+
+    public string Time => $"{Model.Verification.Duration} ms";
+    public string Percent => Total > 0 ? $"{Passed / Total * 100} %" : "0 %";
+
+    public int Count => FilterState != ResultState.None
+        ? Model.Verification.Evaluations.Count(e => e.Result == FilterState)
+        : Total;
 
     /// <inheritdoc />
     public override bool Filter(string? filter)
@@ -57,17 +65,6 @@ public partial class OutcomeObserver : Observer<Outcome>,
         return string.IsNullOrEmpty(filter)
                || Name.Satisfies(filter)
                || Node?.Filter(filter) is true;
-    }
-
-    /// <summary>
-    /// Applies a filter to the evaluations in the OutcomeObserver based on the specified ResultState.
-    /// </summary>
-    /// <param name="state">The ResultState to filter by.</param>
-    [RelayCommand]
-    private void ApplyFilter(ResultState? state)
-    {
-        FilterState = state ?? ResultState.None;
-        Evaluations.Filter(x => FilterState == ResultState.None || x.Result == FilterState);
     }
 
     [RelayCommand(CanExecute = nameof(CanAddSuppression))]
@@ -92,10 +89,17 @@ public partial class OutcomeObserver : Observer<Outcome>,
     private bool CanAddSuppression() => Result.Value > ResultState.Passed.Value;
 
     /// <summary>
+    /// When the selected filter state changes refresh the visible evaluations.
+    /// </summary>
+    partial void OnFilterStateChanged(ResultState value)
+    {
+        Evaluations.Filter(x => value == ResultState.None || x.Result == value);
+    }
+
+    /// <summary>
     /// When we receive the running message for the outcome with the same local id, then we want to set the result
     /// state to pending to notify the UI which outcome is processing.
     /// </summary>
-    /// <param name="message"></param>
     public void Receive(Running message)
     {
         if (Model.OutcomeId != message.Outcome.OutcomeId) return;
@@ -107,7 +111,6 @@ public partial class OutcomeObserver : Observer<Outcome>,
     /// When we receive the complete message and the outcome is the same as the underlying model, then we want to
     /// update the local state to refresh/notify the Ui the outcome has been processed.
     /// </summary>
-    /// <param name="message">The message indicating an outcome run is complete.</param>
     public void Receive(Complete message)
     {
         if (Model.OutcomeId != message.Outcome.OutcomeId) return;

@@ -1,7 +1,10 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using AutoSpex.Client.Resources;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
+using Avalonia.Input;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
@@ -28,9 +31,6 @@ public partial class VerifyObserver : StepObserver<Verify>,
     /// The collection of criteria that are selected from the UI.
     /// </summary>
     public ObservableCollection<CriterionObserver> Selected { get; } = [];
-
-    /// <inheritdoc />
-    public override bool IsEmpty => !Criteria.HasItems;
 
     /// <summary>
     /// Adds a filter to the specification.
@@ -62,5 +62,30 @@ public partial class VerifyObserver : StepObserver<Verify>,
 
         foreach (var observer in Selected)
             message.Reply(observer);
+    }
+
+    /// <inheritdoc />
+    protected override IEnumerable<MenuActionItem> GenerateMenuItems()
+    {
+        yield return new MenuActionItem
+        {
+            Header = "Paste Criteria",
+            Icon = Resource.Find("IconFilledPaste"),
+            Command = PasteCommand
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Copy Criteria",
+            Icon = Resource.Find("IconFilledCopy"),
+            Command = CopyCommand
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Clear Criteria",
+            Icon = Resource.Find("IconFilledTrash"),
+            Command = DeleteCommand
+        };
     }
 }

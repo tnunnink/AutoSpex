@@ -11,46 +11,51 @@
 
     <DockPanel>
 
-        <Border DockPanel.Dock="Top" Padding="20 15">
+        <Border
+            DockPanel.Dock="Top"
+            Background="{a:ThemeResource Container2BackgroundBrush}"
+            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+            BorderThickness="0 0 0 1"
+            Padding="15 20 15 10">
 
-            <Grid ColumnDefinitions="*,Auto">
+            <StackPanel Spacing="10">
 
-                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5">
-                    <PathIcon Theme="{Binding Icon, Converter={StaticResource KeyIconConverter}}" />
-                    <ContentControl
-                        Content="{Binding Run}"
-                        ContentTemplate="{StaticResource ObserverName}" />
-                </StackPanel>
+                <Grid ColumnDefinitions="*,Auto">
 
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5" Margin="5 0">
+                        <ContentControl Content="{Binding Run.Result}" ContentTemplate="{StaticResource ResultPill}" />
+                        
+                    </StackPanel>
 
-                    <Panel>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
                         <Button
                             Command="{Binding RunAgainCommand}"
-                            Classes="run-again accent"
+                            Classes="run accent"
                             CornerRadius="{a:ThemeResource ButtonCornerRadius}"
-                            IsVisible="{Binding Run.Result, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:ResultState.Pending}}" />
+                            IsVisible="{Binding Run.Result, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:ResultState.Pending}}"/>
 
                         <Button
                             Command="{Binding Run.CancelCommand}"
                             Classes="cancel danger"
                             CornerRadius="{a:ThemeResource ButtonCornerRadius}"
-                            IsVisible="{Binding Run.Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Pending}}" />
-                    </Panel>
+                            IsVisible="{Binding Run.Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Pending}}"/>
+                    </StackPanel>
+
+                </Grid>
+
+                <StackPanel Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
+
+                    <ContentControl
+                        Content="{Binding Run}"
+                        ContentTemplate="{StaticResource RunMessage}" />
 
                 </StackPanel>
 
-            </Grid>
+            </StackPanel>
+
         </Border>
-
-        <ContentControl
-            DockPanel.Dock="Top"
-            Content="{Binding Run}"
-            ContentTemplate="{StaticResource RunSummary}"
-            Padding="20 0" />
-
-        <ContentControl
-            Content="{Binding OutcomePage}" />
+        
+        <ContentControl Content="{Binding CurrentPage}" />
 
     </DockPanel>
 </UserControl>

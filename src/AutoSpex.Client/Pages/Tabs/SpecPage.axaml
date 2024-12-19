@@ -1,0 +1,32 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             x:Class="AutoSpex.Client.Pages.SpecPage"
+             x:DataType="pages:SpecPageModel">
+
+    <controls:DrawerView
+        IsDrawerOpen="{Binding ShowDrawer, Mode=TwoWay}"
+        DrawerMinLength="49"
+        DrawerPlacement="Bottom"
+        DrawerOpenLength="500"
+        HideSplitter="False">
+
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+
+            <ContentControl
+                Content="{Binding Spec}"
+                ContentTemplate="{StaticResource SpecConfig}"
+                Margin="20" />
+
+        </ScrollViewer>
+
+        <controls:DrawerView.Drawer>
+
+            <ContentControl Content="{Binding ResultDrawer}" />
+
+        </controls:DrawerView.Drawer>
+
+    </controls:DrawerView>
+
+</UserControl>

@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using AutoSpex.Client.Resources;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 
@@ -10,7 +13,7 @@ namespace AutoSpex.Client.Observers;
 /// <summary>
 /// Base class for all step types. We need this to use with generic ObserverCollection in QueryObserver
 /// </summary>
-public abstract class StepObserver(Step model) : Observer<Step>(model),
+public abstract partial class StepObserver(Step model) : Observer<Step>(model),
     IRecipient<Observer.Get<StepObserver>>,
     IRecipient<Observer.Deleted>
 {
@@ -18,10 +21,94 @@ public abstract class StepObserver(Step model) : Observer<Step>(model),
     protected override bool PromptForDeletion => false;
 
     /// <summary>
-    /// Indicates that this step has not content and therefore should not be displayed to the user.
-    /// Deriving steps should implemement this as necessary.
+    /// Inserts a new filter step after this step in the parent query.
     /// </summary>
-    public virtual bool IsEmpty => false;
+    [RelayCommand]
+    private void InsertFilterBefore()
+    {
+        var query = GetObserver<QueryObserver>(x => x.Steps.Has(this));
+        if (query is null) return;
+        
+        var index = query.Steps.IndexOf(this);
+        var step = new FilterObserver(new Filter(new Criterion()));
+        query.Steps.Insert(index, step);
+    }
+    
+    /// <summary>
+    /// Inserts a new filter step after this step in the parent query.
+    /// </summary>
+    [RelayCommand]
+    private void InsertFilterAfter()
+    {
+        var query = GetObserver<QueryObserver>(x => x.Steps.Has(this));
+        if (query is null) return;
+        
+        var index = query.Steps.IndexOf(this) + 1;
+        if (index > query.Steps.Count) return;
+        
+        var step = new FilterObserver(new Filter(new Criterion()));
+        query.Steps.Insert(index, step);
+    }
+    
+    /// <summary>
+    /// Inserts a new selection step after this step in the parent query.
+    /// </summary>
+    [RelayCommand]
+    private void InsertSelectBefore()
+    {
+        var query = GetObserver<QueryObserver>(x => x.Steps.Has(this));
+        if (query is null) return;
+        
+        var index = query.Steps.IndexOf(this);
+        var step = new SelectObserver(new Select(new Selection()));
+        query.Steps.Insert(index, step);
+    }
+    
+    /// <summary>
+    /// Inserts a new selection step after this step in the parent query.
+    /// </summary>
+    [RelayCommand]
+    private void InsertSelectAfter()
+    {
+        var query = GetObserver<QueryObserver>(x => x.Steps.Has(this));
+        if (query is null) return;
+        
+        var index = query.Steps.IndexOf(this) + 1;
+        if (index > query.Steps.Count) return;
+        
+        var step = new SelectObserver(new Select(new Selection()));
+        query.Steps.Insert(index, step);
+    }
+
+    /// <summary>
+    /// Command to move this step up to the step before it.
+    /// </summary>
+    [RelayCommand]
+    private void MoveUp()
+    {
+        var query = GetObserver<QueryObserver>(x => x.Steps.Has(this));
+        if (query is null) return;
+
+        var index = query.Steps.IndexOf(this);
+        if (index <= 0) return;
+
+        query.Steps.Move(index, index - 1);
+    }
+
+    /// <summary>
+    /// Command to move this step down to the step after it.
+    /// </summary>
+    [RelayCommand]
+    private void MoveDown()
+    {
+        var query = GetObserver<QueryObserver>(x => x.Steps.Has(this));
+        if (query is null) return;
+
+        var index = query.Steps.IndexOf(this);
+        if (index == query.Steps.Count - 1) return;
+
+        query.Steps.Move(index, index + 1);
+    }
 
     /// <summary>
     /// A message that is sent by a <see cref="StepObserver"/> to retrieve the current input property for the step.
@@ -38,7 +125,6 @@ public abstract class StepObserver(Step model) : Observer<Step>(model),
 
     /// <summary>
     /// Handles the request to get the observer that passes the provied predicate.
-    /// This allows child criteria to have access to the step that contains them.
     /// </summary>
     public void Receive(Get<StepObserver> message)
     {
@@ -151,6 +237,87 @@ public abstract class StepObserver(Step model) : Observer<Step>(model),
     protected Property DetermineInput()
     {
         return Messenger.Send(new GetInputTo(this)).Response;
+    }
+
+    /// <inheritdoc />
+    protected override IEnumerable<MenuActionItem> GenerateMenuItems()
+    {
+        yield return new MenuActionItem
+        {
+            Header = "Insert Filter Before",
+            Icon = Resource.Find("IconFilledFunnel"),
+            Command = InsertFilterBeforeCommand
+        };
+        
+        yield return new MenuActionItem
+        {
+            Header = "Insert Filter After",
+            Icon = Resource.Find("IconFilledFunnel"),
+            Command = InsertFilterAfterCommand
+        };
+        
+        yield return MenuActionItem.Separator;
+        
+        yield return new MenuActionItem
+        {
+            Header = "Insert Select Before",
+            Icon = Resource.Find("IconFilledHand"),
+            Command = InsertSelectBeforeCommand
+        };
+        
+        yield return new MenuActionItem
+        {
+            Header = "Insert Select After",
+            Icon = Resource.Find("IconFilledHand"),
+            Command = InsertSelectAfterCommand
+        };
+        
+        yield return MenuActionItem.Separator;
+        
+        yield return new MenuActionItem
+        {
+            Header = "Move Step Up",
+            Icon = Resource.Find("IconFilledChevronUp"),
+            Command = MoveUpCommand
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Move Step Down",
+            Icon = Resource.Find("IconFilledChevronDown"),
+            Command = MoveDownCommand
+        };
+        
+        yield return MenuActionItem.Separator;
+
+        yield return new MenuActionItem
+        {
+            Header = "Paste",
+            Icon = Resource.Find("IconFilledPaste"),
+            Command = PasteCommand
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Copy All",
+            Icon = Resource.Find("IconFilledCopy"),
+            Command = CopyCommand
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Duplicate Step",
+            Icon = Resource.Find("IconFilledClone"),
+            Command = DuplicateCommand
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Delete Step",
+            Icon = Resource.Find("IconFilledTrash"),
+            Classes = "danger",
+            Command = DeleteCommand
+        };
     }
 }
 

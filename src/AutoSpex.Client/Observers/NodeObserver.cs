@@ -37,6 +37,7 @@ public partial class NodeObserver : Observer<Node>,
 
     public override Guid Id => Model.NodeId;
     public override string Icon => Type.Name;
+    public override string Entity => Model.Type.Name;
     public Guid ParentId => Model.ParentId;
     public NodeType Type => Model.Type;
     public string Route => Model.Route;

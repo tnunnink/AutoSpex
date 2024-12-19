@@ -308,6 +308,7 @@
         <UpToDateCheckInput Remove="Components\Variables\ReferenceDisplay.axaml" />
         <UpToDateCheckInput Remove="Components\Variables\VariableListItem.axaml" />
         <UpToDateCheckInput Remove="Components\Variables\VariableTip.axaml" />
+        <UpToDateCheckInput Remove="Components\Elements\All.axaml" />
     </ItemGroup>
 
     <ItemGroup>

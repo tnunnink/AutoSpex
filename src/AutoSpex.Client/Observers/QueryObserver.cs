@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.Messaging;
 namespace AutoSpex.Client.Observers;
 
 public partial class QueryObserver : Observer<Query>,
+    IRecipient<Observer.Get<QueryObserver>>,
     IRecipient<Observer.Deleted>,
     IRecipient<StepObserver.GetInputTo>,
     IRecipient<PropertyInput.GetDataTo>,
@@ -24,7 +25,7 @@ public partial class QueryObserver : Observer<Query>,
         _source = source;
 
         Steps = new ObserverCollection<Step, StepObserver>(Model.Steps, InstantiateStep);
-        
+
         Track(nameof(Element));
         Track(Steps);
     }
@@ -74,6 +75,19 @@ public partial class QueryObserver : Observer<Query>,
     {
         var step = new Select(new Selection());
         Steps.Add(new SelectObserver(step));
+    }
+
+    /// <summary>
+    /// Handles the request to get the observer that passes the provied predicate.
+    /// </summary>
+    public void Receive(Get<QueryObserver> message)
+    {
+        if (message.HasReceivedResponse) return;
+
+        if (message.Predicate.Invoke(this))
+        {
+            message.Reply(this);
+        }
     }
 
     /// <summary>

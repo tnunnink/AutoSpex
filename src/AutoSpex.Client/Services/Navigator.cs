@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using AutoSpex.Client.Observers;
 using AutoSpex.Client.Pages;
 using AutoSpex.Client.Shared;
-using AutoSpex.Engine;
 using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
 
@@ -63,7 +62,7 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
     /// Closes the provided <see cref="PageViewModel"/> by issuing the close cation navigation request message. 
     /// </summary>
     /// <param name="page">The page to close.</param>
-    public void Close(PageViewModel page) => ClosePage(page);
+    public void Close(PageViewModel? page) => ClosePage(page);
 
     /// <summary>
     /// Disposes/Deactivates all pages current open in this instance of the <see cref="Navigator"/> service.
@@ -117,8 +116,13 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
     }
 
 
-    private void ClosePage(PageViewModel page)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="page"></param>
+    private void ClosePage(PageViewModel? page)
     {
+        if (page is null) return;
         var request = new NavigationRequest(page, NavigationAction.Close);
         messenger.Send(request);
         _openPages.Remove(page.Route);
@@ -168,7 +172,7 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
     private void CleanUp()
     {
         var deactivated = _openPages.Where(p => !p.Value.IsActive).Select(p => p.Key).ToList();
-        
+
         foreach (var page in deactivated)
         {
             _openPages.Remove(page);
@@ -182,7 +186,6 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
     {
         return observer switch
         {
-            NodeObserver node when node.Type == NodeType.Spec => () => new SpecDetailPageModel(node),
             NodeObserver node => () => new NodeDetailPageModel(node),
             SourceObserver source => () => new SourceDetailPageModel(source),
             RunObserver run => () => new RunDetailPageModel(run),

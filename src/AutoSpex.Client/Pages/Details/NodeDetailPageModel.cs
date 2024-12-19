@@ -5,8 +5,6 @@ using AutoSpex.Client.Observers;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using AutoSpex.Persistence;
-using Avalonia.Threading;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FluentResults;
@@ -25,21 +23,10 @@ public partial class NodeDetailPageModel : DetailPageModel
     public override string Icon => Node.Type.Name;
     public NodeObserver Node { get; }
 
-    [ObservableProperty] private PageViewModel? _contentPage;
-
-    [ObservableProperty] private SpecRunnerPageModel? _runnerPage;
-
-    [ObservableProperty] private bool _showRunner;
-
-
     /// <inheritdoc />
     public override async Task Load()
     {
-        await NavigateContent();
-        await LoadRunner();
-
-        //New specs need to enable the save button by default.
-        Dispatcher.UIThread.Invoke(() => SaveCommand.NotifyCanExecuteChanged());
+        await base.Load();
 
         //Any time a node is open locate it in the navigation tree.
         Messenger.Send(new NodeObserver.ExpandTo(Node.Id));
@@ -61,6 +48,7 @@ public partial class NodeDetailPageModel : DetailPageModel
         }
 
         result = Node.IsVirtual ? await CreateNode() : Result.Ok();
+        
         return await base.Save(result);
     }
 
@@ -87,24 +75,21 @@ public partial class NodeDetailPageModel : DetailPageModel
     }
 
     /// <inheritdoc />
-    protected override async Task NavigateContent()
+    protected override async Task NavigatePages()
     {
-        if (Node.Type == NodeType.Spec)
+        if (Node.Type != NodeType.Spec)
         {
-            await Navigator.Navigate(() => new CriteriaPageModel(Node));
-            return;
+            await Navigator.Navigate(() => new SpecsPageModel(Node));
+        }
+        else
+        {
+            await Navigator.Navigate(() => new SpecPageModel(Node));
         }
 
-        await Navigator.Navigate(() => new SpecsPageModel(Node));
-    }
-
-    /// <summary>
-    /// Loads the local runner page to allow the user to run and test a spec before saving/creating a run.
-    /// </summary>
-    private async Task LoadRunner()
-    {
-        if (Node.Type != NodeType.Spec) return;
-        RunnerPage = await Navigator.Navigate(() => new SpecRunnerPageModel(Node));
+        await Navigator.Navigate(() => new VariablesPageModel(Node));
+        await Navigator.Navigate(() => new HistoryPageModel(Node));
+        await Navigator.Navigate(() => new CommentsPageModel(Node));
+        await Navigator.Navigate(() => new InfoPageModel(Node));
     }
 
     /// <summary>

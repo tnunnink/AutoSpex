@@ -17,7 +17,7 @@
         </Border>
     </Design.PreviewWith>
 
-    <DataTemplate x:Key="QuerySection" x:DataType="observers:QueryObserver">
+    <DataTemplate x:Key="QueryEntry" x:DataType="observers:QueryObserver">
 
         <StackPanel Spacing="10">
 
@@ -44,7 +44,7 @@
                         <DataTemplate x:DataType="observers:FilterObserver">
                             <ContentControl
                                 Content="{Binding}"
-                                ContentTemplate="{StaticResource FilterSection}" />
+                                ContentTemplate="{StaticResource FilterStep}" />
                         </DataTemplate>
                         <DataTemplate x:DataType="observers:SelectObserver">
                             <ContentControl

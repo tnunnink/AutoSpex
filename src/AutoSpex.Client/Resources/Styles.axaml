@@ -127,13 +127,13 @@
             <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
         </Style>
     </Style>
-    
+
     <Style Selector="Button.invisible-link">
         <Setter Property="Theme" Value="{a:ControlTheme ButtonInvisible}" />
-        <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+        <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushDefault}" />
 
         <Style Selector="^ PathIcon">
-            <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+            <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushDefault}" />
         </Style>
 
         <Style Selector="^:pointerover">
@@ -166,6 +166,13 @@
     </Style>
     <Style Selector="TextBlock.Errored">
         <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftWarning}" />
+    </Style>
+
+    <Style Selector="Ellipse.separator">
+        <Setter Property="Height" Value="5" />
+        <Setter Property="Width" Value="5" />
+        <Setter Property="Fill" Value="{a:ThemeResource Container5BackgroundBrush}" />
+        <Setter Property="Margin" Value="0 1 0 0" />
     </Style>
 
 </Styles>

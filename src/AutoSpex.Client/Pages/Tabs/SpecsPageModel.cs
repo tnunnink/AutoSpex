@@ -19,6 +19,7 @@ public partial class SpecsPageModel(NodeObserver node) : PageViewModel("Specs"),
     IRecipient<NodeObserver.Moved>
 {
     public override string Route => $"{node.Type}/{node.Id}/{Title}";
+    public override string Icon => "IconLineListCheck";
     public ObserverCollection<Node, NodeObserver> Specs { get; } = [];
     public ObservableCollection<NodeObserver> Selected { get; } = [];
 
@@ -38,7 +39,6 @@ public partial class SpecsPageModel(NodeObserver node) : PageViewModel("Specs"),
     [RelayCommand]
     private async Task AddSpec()
     {
-        //Adds to the current parent node.
         var spec = node.Model.AddSpec();
 
         var result = await Mediator.Send(new CreateNode(spec));

@@ -2,9 +2,9 @@
 
 namespace AutoSpex.Client.Pages;
 
-public partial class CriteriaPage : UserControl
+public partial class ResultDrawerPage : UserControl
 {
-    public CriteriaPage()
+    public ResultDrawerPage()
     {
         InitializeComponent();
     }

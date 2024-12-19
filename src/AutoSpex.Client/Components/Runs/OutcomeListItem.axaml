@@ -39,7 +39,7 @@
                     Placement="Pointer" />
             </Border.ContextFlyout>
 
-            <Grid ColumnDefinitions="*,Auto,Auto">
+            <Grid ColumnDefinitions="*,Auto">
 
                 <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10">
 
@@ -76,38 +76,52 @@
 
                 </StackPanel>
 
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" Margin="20 0" ClipToBounds="True">
+                <StackPanel Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            Orientation="Horizontal"
+                            Spacing="20"
+                            MinHeight="20"
+                            IsVisible="{Binding !$parent[ListBoxItem].IsPointerOver}">
 
-                    <StackPanel Orientation="Horizontal" Spacing="5" IsVisible="{Binding Passed}">
-                        <PathIcon Theme="{StaticResource IconThemedPassed}" Classes="size-sm" />
-                        <TextBlock Text="{Binding Passed}" />
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal" Spacing="5" IsVisible="{Binding Failed}">
-                        <PathIcon Theme="{StaticResource IconThemedFailed}" Classes="size-sm" />
-                        <TextBlock Text="{Binding Failed}" />
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal" Spacing="5" IsVisible="{Binding Errored}">
-                        <PathIcon Theme="{StaticResource IconThemedError}" Classes="size-sm" />
-                        <TextBlock Text="{Binding Errored}" />
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal" Spacing="2">
-                        <PathIcon Theme="{StaticResource IconLineStopwatch}" Classes="size-sm accent" Margin="4 0" />
-                        <TextBlock Text="{Binding Duration}" />
-                        <TextBlock Text="ms" Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
-                    </StackPanel>
+                    <TextBlock Text="{Binding Time}" Classes="faint" />
+                    <TextBlock Text="{Binding Percent}" Classes="faint" />
 
                 </StackPanel>
 
-                <Button
-                    Grid.Column="2"
-                    Command="{Binding Node.NavigateCommand, FallbackValue={x:Null}}"
-                    IsEnabled="{Binding Node, Converter={x:Static ObjectConverters.IsNotNull}}"
-                    Theme="{StaticResource IconButtonSmall}"
-                    properties:Icon.Theme="{StaticResource IconLineLaunch}"
-                    ToolTip.Tip="Open Spec" />
+                <StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal" Spacing="10"
+                            IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}">
+
+                    <Button
+                        IsEnabled="{Binding Result.IsSuppressible, FallbackValue={x:False}}"
+                        Theme="{StaticResource IconButtonSmall}"
+                        properties:Icon.Theme="{StaticResource IconLineBan}"
+                        ToolTip.Tip="Add Suppression"
+                        ToolTip.Placement="BottomEdgeAlignedRight">
+                        <Button.Flyout>
+                            <Flyout
+                                Placement="BottomEdgeAlignedRight"
+                                HorizontalOffset="8"
+                                VerticalOffset="2">
+                                <ContentControl
+                                    Content="{Binding }"
+                                    ContentTemplate="{StaticResource OutcomeSuppressor}" />
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+
+                    <Button
+                        Theme="{StaticResource IconButtonSmall}"
+                        properties:Icon.Theme="{StaticResource IconFilledCog}"
+                        ToolTip.Tip="Override" />
+
+                    <Button
+                        Command="{Binding Node.NavigateCommand, FallbackValue={x:Null}}"
+                        Theme="{StaticResource IconButtonSmall}"
+                        properties:Icon.Theme="{StaticResource IconLineLaunch}"
+                        ToolTip.Tip="Open" />
+
+                </StackPanel>
+
 
             </Grid>
         </Border>

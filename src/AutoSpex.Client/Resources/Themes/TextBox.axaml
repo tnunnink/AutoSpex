@@ -297,6 +297,7 @@
 
     <!-- TextBoxOutlineHighlight -->
     <ControlTheme x:Key="TextBoxOutlineHighlight" TargetType="TextBox" BasedOn="{a:ControlTheme TextBoxOutline}">
+        <Setter Property="BorderBrush" Value="{a:ThemeResource Container1BorderBrush}" />
         <Setter Property="Template">
             <ControlTemplate>
                 <DockPanel>
@@ -401,14 +402,14 @@
             </ControlTemplate>
         </Setter>
 
-        <!-- Focused State -->
+        <Style Selector="^:pointerover /template/ Border#border">
+            <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBorderBrushOutlinePointerOver}" />
+        </Style>
+
         <Style Selector="^:focus">
             <Style Selector="^ /template/ Border#focus">
                 <Setter Property="Opacity" Value="1" />
             </Style>
-            <!--<Style Selector="^ /template/ Border#border">
-                <Setter Property="BorderBrush" Value="Transparent" />
-            </Style>-->
         </Style>
     </ControlTheme>
 

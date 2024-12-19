@@ -22,9 +22,6 @@ public class SelectObserver : StepObserver<Select>
     public ObserverCollection<Selection, SelectionObserver> Selections { get; }
 
     /// <inheritdoc />
-    public override bool IsEmpty => !Selections.HasItems;
-
-    /// <inheritdoc />
     /// <remarks>Also unsubscribe from the change event.</remarks>
     protected override void OnDeactivated()
     {

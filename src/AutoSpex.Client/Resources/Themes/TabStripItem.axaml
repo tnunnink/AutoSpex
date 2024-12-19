@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
     <Design.PreviewWith>
         <Border Padding="20">
             <StackPanel Spacing="10">
@@ -32,7 +33,7 @@
                         <TabStripItem Content="Item 3" />
                     </TabStrip>
                 </Border>
-                
+
                 <Border Padding="20">
                     <TabStrip ItemContainerTheme="{DynamicResource TabStripItemSimple}"
                               BorderThickness="0">
@@ -68,11 +69,31 @@
                         </TabStripItem>
                         <TabStripItem>
                             <PathIcon
-                                Theme="{StaticResource IconLineHistory}"
+                                Theme="{StaticResource IconLineClock}"
                                 Foreground="{Binding $parent[TabStripItem].Foreground}" />
                         </TabStripItem>
                     </TabStrip>
                 </Border>
+
+                <TabStrip
+                    ItemContainerTheme="{DynamicResource TabStripItemExpandable}"
+                    BorderThickness="0" Padding="5"
+                    Background="{a:ThemeResource Container2BackgroundBrush}">
+                    <TabStrip.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" Spacing="5" />
+                        </ItemsPanelTemplate>
+                    </TabStrip.ItemsPanel>
+                    <TabStripItem
+                        properties:Icon.Theme="{StaticResource IconFilledClipboard}"
+                        Content="Item 1" />
+                    <TabStripItem
+                        properties:Icon.Theme="{StaticResource IconFilledCog}"
+                        Content="Item 2" />
+                    <TabStripItem
+                        properties:Icon.Theme="{StaticResource IconLineClock}"
+                        Content="Item 3" />
+                </TabStrip>
             </StackPanel>
 
         </Border>
@@ -142,7 +163,7 @@
         <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="Padding" Value="4 10" />
+        <Setter Property="Padding" Value="0 10" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Panel>
@@ -190,7 +211,7 @@
             <Setter Property="Foreground" Value="{a:ThemeResource TabItemForegroundBrushSubtleDisabled}" />
         </Style>
     </ControlTheme>
-    
+
     <ControlTheme x:Key="TabStripItemSimple" TargetType="TabStripItem">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderBrush" Value="{a:ThemeResource TabItemBorderBrushSubtle}" />
@@ -274,6 +295,66 @@
         </Style>
         <Style Selector="^:disabled">
             <Setter Property="Foreground" Value="{a:ThemeResource TabItemForegroundBrushSubtleDisabled}" />
+        </Style>
+    </ControlTheme>
+
+    <ControlTheme x:Key="TabStripItemExpandable" TargetType="TabStripItem">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="FontSize" Value="{a:ThemeResource TabItemFontSizeSubtle}" />
+        <Setter Property="FontWeight" Value="{a:ThemeResource HeadingFontWeightSmall}" />
+        <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushDefault}" />
+        <Setter Property="CornerRadius" Value="{a:ThemeResource ButtonCornerRadius}" />
+        <Setter Property="Padding" Value="{a:ThemeResource ButtonPadding}" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Margin" Value="0 0 5 0" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border
+                    x:Name="PART_LayoutRoot"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="{TemplateBinding CornerRadius}"
+                    Padding="{TemplateBinding Padding}">
+
+                    <StackPanel Orientation="Horizontal" Spacing="7">
+
+                        <PathIcon
+                            Theme="{TemplateBinding properties:Icon.Theme}"
+                            FontSize="{TemplateBinding FontSize}"
+                            Foreground="{TemplateBinding Foreground}"
+                            a:ThemeProperties.CopyClassesFrom="{TemplateBinding }" />
+
+                        <a:AnimatedExpanderDecorator
+                            x:Name="expanderDecorator"
+                            IsExpanded="{TemplateBinding IsSelected}"
+                            IsAnimationEnabled="{TemplateBinding a:ThemeProperties.IsAnimationEnabled}"
+                            ExpandDirection="Right">
+                            <ContentPresenter
+                                x:Name="PART_ContentPresenter"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </a:AnimatedExpanderDecorator>
+
+                    </StackPanel>
+
+                </Border>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^:pointerover">
+            <Setter Property="Background" Value="{a:ThemeResource ButtonBackgroundBrushSubtlePointerOver}" />
+            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+        </Style>
+        <Style Selector="^:selected">
+            <Setter Property="Background" Value="{a:ThemeResource ButtonBackgroundBrushSubtlePointerOver}" />
+            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+        </Style>
+        <Style Selector="^:disabled">
+            <Setter Property="Foreground" Value="{a:ThemeResource TabItemBorderBrushSubtleSelected}" />
         </Style>
     </ControlTheme>
 </ResourceDictionary>

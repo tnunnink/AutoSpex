@@ -59,7 +59,7 @@
     <ControlTheme x:Key="IconThemedRun" TargetType="PathIcon" BasedOn="{StaticResource IconFilledLightning}">
         <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
     </ControlTheme>
-    <ControlTheme x:Key="IconThemedHistory" TargetType="PathIcon" BasedOn="{StaticResource IconLineHistory}">
+    <ControlTheme x:Key="IconThemedHistory" TargetType="PathIcon" BasedOn="{StaticResource IconLineClockRotate}">
         <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushTag}" />
     </ControlTheme>
 

@@ -7,7 +7,7 @@
 
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Light">
-            <SolidColorBrush x:Key="IconForegroundBrushDefault" Color="#606780" />
+            <SolidColorBrush x:Key="IconForegroundBrushDefault" Color="#6a7599" />
             <SolidColorBrush x:Key='IconForegroundBrushCollection' Color="#7B6BA9" />
             <SolidColorBrush x:Key='IconForegroundBrushContainer' Color="#97a9b4" />
             <SolidColorBrush x:Key='IconForegroundBrushSpec' Color="#097995" />

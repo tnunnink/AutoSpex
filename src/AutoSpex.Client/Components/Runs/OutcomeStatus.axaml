@@ -1,0 +1,50 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers">
+
+    <Design.PreviewWith>
+        <StackPanel Spacing="20" Margin="20">
+            <a:ToggleThemeButton Theme="{a:ControlTheme ToggleThemeButtonSoft}" />
+            <ContentControl
+                Content="{x:Static components:TestData.DefaultOutcome}"
+                ContentTemplate="{DynamicResource OutcomeStatus}" />
+        </StackPanel>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="OutcomeStatus" x:DataType="observers:OutcomeObserver">
+
+        <StackPanel Orientation="Horizontal" Spacing="10">
+
+            <ContentControl
+                Content="{Binding Result}"
+                ContentTemplate="{StaticResource ResultStateText}"
+                Margin="0 0 0 1" />
+
+            <Ellipse Height="5" Width="5" Fill="{a:ThemeResource Container5BackgroundBrush}" />
+
+            <TextBlock
+                Text="{Binding Percent}"
+                Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
+                FontFamily="{a:ThemeResource CodeFontFamily}" />
+
+            <Ellipse Height="5" Width="5" Fill="{a:ThemeResource Container5BackgroundBrush}" />
+
+            <TextBlock
+                Text="{Binding Time}"
+                Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
+                FontFamily="{a:ThemeResource CodeFontFamily}" />
+            
+            <Ellipse Height="5" Width="5" Fill="{a:ThemeResource Container5BackgroundBrush}" />
+            
+            <TextBlock
+                Text="{Binding Count}"
+                Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
+                FontFamily="{a:ThemeResource CodeFontFamily}" />
+
+        </StackPanel>
+
+    </DataTemplate>
+
+</ResourceDictionary>

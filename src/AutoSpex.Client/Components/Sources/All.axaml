@@ -4,6 +4,8 @@
         <ResourceInclude Source="OverrideListItem.axaml" />
         <ResourceInclude Source="SourceInfo.axaml" />
         <ResourceInclude Source="SourceListItem.axaml" />
+        <ResourceInclude Source="SourceQuery.axaml" />
+        <ResourceInclude Source="SourceInfoButton.axaml" />
         <ResourceInclude Source="SourceTargetButton.axaml" />
         <ResourceInclude Source="SuppressionListItem.axaml" />
     </ResourceDictionary.MergedDictionaries>

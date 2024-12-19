@@ -1,0 +1,121 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors"
+             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             x:Class="AutoSpex.Client.Pages.SourceQueryPage"
+             x:DataType="pages:SourceQueryPageModel">
+
+    <controls:DrawerView
+        IsDrawerOpen="{Binding ShowDrawer, Mode=TwoWay}"
+        DrawerMinLength="49"
+        DrawerPlacement="Bottom"
+        DrawerOpenLength="400"
+        HideSplitter="False">
+
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+
+            <ContentControl
+                Content="{Binding Query}"
+                ContentTemplate="{StaticResource SourceQuery}"
+                Margin="20" />
+
+        </ScrollViewer>
+
+        <controls:DrawerView.Drawer>
+
+            <DockPanel>
+
+                <Border
+                    DockPanel.Dock="Top"
+                    Background="{a:ThemeResource Container2BackgroundBrush}"
+                    BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                    BorderThickness="0 0 0 1"
+                    Padding="15 7"
+                    MinHeight="50">
+
+                    <Grid ColumnDefinitions="1.5*,*,1.5*">
+
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10">
+
+                            <PathIcon
+                                Theme="{StaticResource IconFilledResults}"
+                                Margin="0 0 5 0" />
+
+                            <TextBlock
+                                Text="Results"
+                                FontWeight="{a:ThemeResource HeadingFontWeightMedium}">
+                                <TextBlock.IsVisible>
+                                    <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                        <Binding Path="Results" Converter="{x:Static ObjectConverters.IsNull}" />
+                                        <Binding Path="!$parent[controls:DrawerView].IsDrawerOpen" />
+                                    </MultiBinding>
+                                </TextBlock.IsVisible>
+                            </TextBlock>
+
+                        </StackPanel>
+
+                        <TextBox
+                            Grid.Column="1"
+                            Watermark="Search"
+                            Text="{Binding Filter}"
+                            IsVisible="{Binding ShowDrawer}"
+                            Theme="{StaticResource TextBoxOutlineHighlight}"
+                            FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                            Background="Transparent"
+                            VerticalContentAlignment="Center"
+                            VerticalAlignment="Center"
+                            BorderThickness="1">
+                            <TextBox.InnerLeftContent>
+                                <PathIcon
+                                    Theme="{StaticResource IconLineSearch}"
+                                    Margin="10 0 0 0"
+                                    Classes="size-sm"
+                                    Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                            </TextBox.InnerLeftContent>
+                            <Interaction.Behaviors>
+                                <SelectAllOnGotFocusBehavior />
+                            </Interaction.Behaviors>
+                        </TextBox>
+
+                        <StackPanel Grid.Column="2" HorizontalAlignment="Right" Orientation="Horizontal" Spacing="10">
+
+                            <Button
+                                Theme="{StaticResource IconButton}"
+                                properties:Icon.Theme="{StaticResource IconLineSidebar}"
+                                ToolTip.Tip="Show Results"
+                                ToolTip.Placement="BottomEdgeAlignedRight">
+                                <Button.RenderTransform>
+                                    <RotateTransform Angle="270" />
+                                </Button.RenderTransform>
+                                <Interaction.Behaviors>
+                                    <behaviors:ToggleDrawerOnClickBehavior />
+                                </Interaction.Behaviors>
+                            </Button>
+
+                        </StackPanel>
+
+                    </Grid>
+
+                </Border>
+
+                <controls:DataTableView
+                    Table="{Binding Results}"
+                    ColumnTheme="{StaticResource DataGridColumnHeaderSubtle}"
+                    DefaultIcon="{StaticResource IconLineListStaggered}"
+                    DefaultCaption="Click Run to view results for the configured query."
+                    Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
+                    BorderThickness="0"
+                    CornerRadius="0">
+
+                </controls:DataTableView>
+
+            </DockPanel>
+
+        </controls:DrawerView.Drawer>
+
+    </controls:DrawerView>
+
+</UserControl>

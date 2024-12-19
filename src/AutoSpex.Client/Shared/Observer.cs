@@ -47,6 +47,11 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     public virtual string Icon => string.Empty;
 
     /// <summary>
+    /// 
+    /// </summary>
+    public virtual string Entity => GetType().Name;
+
+    /// <summary>
     /// Indicates that this observer should be visible in the UI.
     /// </summary>
     [ObservableProperty] private bool _isVisible = true;
@@ -259,6 +264,9 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
         if (clipboard is null) return;
         await clipboard.SetTextAsync(Name);
     }
+    
+    [RelayCommand]
+    protected virtual Task Paste() => Task.CompletedTask;
 
     #endregion
 
@@ -473,4 +481,7 @@ public abstract class Observer<TModel> : Observer
     /// The underlying model object that is being wrapped by the observer.
     /// </summary>
     public TModel Model { get; }
+
+    /// <inheritdoc />
+    public override string Entity => Model?.GetType().Name ?? base.Entity;
 }

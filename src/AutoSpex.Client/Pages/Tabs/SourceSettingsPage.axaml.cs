@@ -2,9 +2,9 @@
 
 namespace AutoSpex.Client.Pages;
 
-public partial class SpecRunnerPage : UserControl
+public partial class SourceSettingsPage : UserControl
 {
-    public SpecRunnerPage()
+    public SourceSettingsPage()
     {
         InitializeComponent();
     }

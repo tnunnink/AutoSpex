@@ -8,12 +8,12 @@
         <Border Width="800" Height="300">
             <ContentControl
                 Content="{x:Static components:TestData.FilterObserver}"
-                ContentTemplate="{DynamicResource FilterSection}"
+                ContentTemplate="{DynamicResource FilterStep}"
                 Margin="20" VerticalAlignment="Top" />
         </Border>
     </Design.PreviewWith>
 
-    <DataTemplate x:Key="FilterSection" x:DataType="observers:FilterObserver">
+    <DataTemplate x:Key="FilterStep" x:DataType="observers:FilterObserver">
 
         <Border
             Classes="normal"
@@ -77,7 +77,7 @@
                     <Interaction.Behaviors>
                         <ExecuteCommandOnKeyDownBehavior
                             Gesture="Ctrl+V"
-                            Command="{Binding PasteCriteriaCommand}"
+                            Command="{Binding PasteCommand}"
                             MarkAsHandled="True" />
                     </Interaction.Behaviors>
                 </ListBox>

@@ -27,6 +27,7 @@
             <controls:HighlightableTextBlock
                 Text="{Binding Name}"
                 HighlightedText="{Binding FilterText}"
+                FontSize="{a:ThemeResource DefaultFontSizeMedium}"
                 FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
 
             <Button.Styles>

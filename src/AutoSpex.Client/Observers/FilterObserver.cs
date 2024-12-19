@@ -1,16 +1,12 @@
-﻿using System.Collections.ObjectModel;
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 using System.Linq;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
 
 namespace AutoSpex.Client.Observers;
 
-public partial class FilterObserver : StepObserver<Filter>,
-    IRecipient<Observer.Deleted>,
-    IRecipient<Observer.GetSelected>
+public partial class FilterObserver : StepObserver<Filter>
 {
     public FilterObserver(Filter model) : base(model)
     {
@@ -39,14 +35,6 @@ public partial class FilterObserver : StepObserver<Filter>,
     public ObserverCollection<Criterion, CriterionObserver> Criteria { get; }
 
     /// <summary>
-    /// The collection of criteria that are selected from the UI.
-    /// </summary>
-    public ObservableCollection<CriterionObserver> Selected { get; } = [];
-
-    /// <inheritdoc />
-    public override bool IsEmpty => !Criteria.HasItems;
-
-    /// <summary>
     /// Only show the match option when we have multiple criteria for this step.
     /// </summary>
     public bool ShowMatch => Criteria.Count > 1;
@@ -69,36 +57,12 @@ public partial class FilterObserver : StepObserver<Filter>,
         Criteria.Add(new CriterionObserver(new Criterion(), DetermineInput));
     }
 
-    /// <summary>
-    /// Command to add the criteria copied to the clipboard to the current step.
-    /// </summary>
-    [RelayCommand]
-    private async Task PasteCriteria()
+    /// <inheritdoc />
+    protected override async Task Paste()
     {
         var criteria = await GetClipboardObservers<Criterion>();
         var copies = criteria.Select(c => new CriterionObserver(c.Duplicate(), DetermineInput));
         Criteria.AddRange(copies);
-    }
-
-    /// <summary>
-    /// If a criterion delete message is received we will delete all selected criterion from the list.
-    /// </summary>
-    public void Receive(Deleted message)
-    {
-        if (message.Observer is not CriterionObserver observer) return;
-        Criteria.RemoveAny(x => x.Is(observer));
-    }
-
-    /// <summary>
-    /// Handle reception of the get selected message by replying with the selected criteria.
-    /// </summary>
-    public void Receive(GetSelected message)
-    {
-        if (message.Observer is not CriterionObserver criterion) return;
-        if (!Criteria.Any(x => x.Is(criterion))) return;
-
-        foreach (var observer in Selected)
-            message.Reply(observer);
     }
 
     /// <inheritdoc />

@@ -29,12 +29,6 @@
             DefaultCaption="Enter a keyword to find elements in this source."
             Padding="5">
 
-            <controls:ListView.Header>
-                <StackPanel Orientation="Horizontal">
-
-                </StackPanel>
-            </controls:ListView.Header>
-
             <Interaction.Behaviors>
                 <ExecuteCommandOnKeyDownBehavior
                     Key="Enter"

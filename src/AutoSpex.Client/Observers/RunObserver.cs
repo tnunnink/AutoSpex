@@ -23,10 +23,15 @@ public partial class RunObserver : Observer<Run>, IRecipient<Observer.Get<RunObs
     public RunObserver(Run model) : base(model)
     {
         Result = Model.Result;
+        
         Outcomes = new ObserverCollection<Outcome, OutcomeObserver>(
             refresh: () => Model.Outcomes.Select(x => new OutcomeObserver(x)).ToList(),
             count: () => Model.Outcomes.Count()
         );
+        
+        RegisterDisposable(Node);
+        RegisterDisposable(Source);
+        RegisterDisposable(Outcomes);
     }
 
     public override Guid Id => Model.RunId;
@@ -41,6 +46,7 @@ public partial class RunObserver : Observer<Run>, IRecipient<Observer.Get<RunObs
     public int Inconclusive => Model.Outcomes.Count(x => x.Verification.Result == ResultState.Inconclusive);
     public int Suppressed => Model.Outcomes.Count(x => x.Verification.Result == ResultState.Suppressed);
     public long Duration => Model.Outcomes.Sum(x => x.Verification.Duration);
+    public string Time => $"{Model.Outcomes.Sum(x => x.Verification.Duration)} ms";
     public bool HasResult => Model.Result > ResultState.Pending;
     public float Progress => Total > 0 ? (float)Ran / Total * 100 : 0;
     public NodeObserver Node => new(Model.Node);
@@ -54,6 +60,9 @@ public partial class RunObserver : Observer<Run>, IRecipient<Observer.Get<RunObs
 
     [ObservableProperty] private ResultState _filterState = ResultState.None;
 
+    public IEnumerable<ResultState> States =>
+        [ResultState.None, ..Model.Outcomes.Select(o => o.Verification.Result).Distinct().OrderBy(r => r.Value)];
+
     /// <inheritdoc />
     /// <remarks>
     /// Since the run detail page expects the fully loaded observer we will load that here.
@@ -64,6 +73,34 @@ public partial class RunObserver : Observer<Run>, IRecipient<Observer.Get<RunObs
         var result = await Mediator.Send(new LoadRun(Id));
         if (Notifier.ShowIfFailed(result)) return;
         await Navigator.Navigate(new RunObserver(result.Value));
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public async Task Execute(Node node, Source? source = default)
+    {
+        _cancellation = new CancellationTokenSource();
+        var token = _cancellation.Token;
+
+        try
+        {
+            source ??= await LoadSource(token);
+            List<Node> nodes = [node];
+            await ResolveReferences(nodes);
+            await Model.Execute(nodes, source, OnSpecRunning, OnSpecCompleted, token);
+        }
+        catch (OperationCanceledException)
+        {
+            Notifier.ShowWarning("Run canceled", $"{Name} was canceled prior to finishing execution.");
+        }
+        catch (InvalidOperationException e)
+        {
+            Notifier.ShowWarning("Run failed", $"{Name} failed because {e.Message}.");
+        }
+
+        Result = Model.Result;
+        OnPropertyChanged(string.Empty);
     }
 
     /// <summary>
