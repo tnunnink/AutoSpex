@@ -10,7 +10,7 @@ public class DeleteSourcesTests
         var mediator = context.Resolve<IMediator>();
         var source = new Source();
 
-        var result = await mediator.Send(new DeleteSources([source.SourceId]));
+        var result = await mediator.Send(new DeleteSources([source]));
 
         result.IsSuccess.Should().BeTrue();
     }
@@ -27,10 +27,7 @@ public class DeleteSourcesTests
         await mediator.Send(new CreateSource(second));
         await mediator.Send(new CreateSource(third));
 
-        var deleted = await mediator.Send(new DeleteSources(
-        [
-            first.SourceId, second.SourceId, third.SourceId
-        ]));
+        var deleted = await mediator.Send(new DeleteSources([first, second, third]));
 
         deleted.IsSuccess.Should().BeTrue();
     }

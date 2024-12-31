@@ -5,10 +5,10 @@ using JetBrains.Annotations;
 using L5Sharp.Core;
 using MediatR;
 
-namespace AutoSpex.Persistence.References;
+namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record ResolveReferences(IEnumerable<Spec> Specs) : IDbCommand<Result>;
+public record ResolveReferences(IEnumerable<Spec> Specs) : IRequest<Result>;
 
 [UsedImplicitly]
 internal class ResolveReferencesHandler(IConnectionManager manager) : IRequestHandler<ResolveReferences, Result>

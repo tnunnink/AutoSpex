@@ -7,7 +7,13 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record SaveSpec(Spec Spec) : IDbCommand<Result>;
+public record SaveSpec(Node Node) : ICommandRequest<Result>
+{
+    public IEnumerable<Change> GetChanges()
+    {
+        yield return Change.For<SaveSpec>(Node.NodeId, ChangeType.Updated, $"Updated Spec for {Node.Name}");
+    }
+}
 
 [UsedImplicitly]
 internal class SaveSpecHandler(IConnectionManager manager) : IRequestHandler<SaveSpec, Result>
@@ -18,13 +24,13 @@ internal class SaveSpecHandler(IConnectionManager manager) : IRequestHandler<Sav
     public async Task<Result> Handle(SaveSpec request, CancellationToken cancellationToken)
     {
         using var connection = await manager.Connect(cancellationToken);
-        using var transaction = connection.BeginTransaction();
 
-        var exists = await connection.QuerySingleAsync<int>(Exists, new { request.Spec.SpecId });
-        if (exists != 1) return Result.Fail($"Spec not found: {request.Spec.SpecId}");
+        var spec = request.Node.Spec;
 
-        await connection.ExecuteAsync(Update, new { request.Spec.SpecId, Config = request.Spec }, transaction);
-        transaction.Commit();
+        var exists = await connection.QuerySingleAsync<int>(Exists, new { spec.SpecId });
+        if (exists != 1) return Result.Fail($"Spec not found: {spec.SpecId}");
+
+        await connection.ExecuteAsync(Update, new { spec.SpecId, Config = spec });
         return Result.Ok();
     }
 }

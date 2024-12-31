@@ -45,9 +45,6 @@
       <None Update="EvaluationTests.Serialized_Evaluation_ShouldBeVerified.verified.txt">
         <DependentUpon>EvaluationTests.cs</DependentUpon>
       </None>
-      <None Update="VerificationTests.Serialized_Verification_ShouldBeVerified.verified.txt">
-        <DependentUpon>VerificationTests.cs</DependentUpon>
-      </None>
       <None Update="SpecTests.Serialize_ConfiguredSpecWithRange_ShouldBeVerified.verified.txt">
         <DependentUpon>SpecTests.cs</DependentUpon>
       </None>
@@ -150,6 +147,9 @@
       </None>
       <None Update="Steps\SelectTests.Serialize_ProeprtiesWithAlias_ShouldBeVerified.verified.txt">
         <DependentUpon>SelectTests.cs</DependentUpon>
+      </None>
+      <None Update="OutcomeTests.Serialized_Verification_ShouldBeVerified.verified.txt">
+        <DependentUpon>OutcomeTests.cs</DependentUpon>
       </None>
     </ItemGroup>
 

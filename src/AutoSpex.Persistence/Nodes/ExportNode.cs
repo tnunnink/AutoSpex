@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using AutoSpex.Engine;
+﻿using AutoSpex.Engine;
 using Dapper;
 using FluentResults;
 using JetBrains.Annotations;
@@ -8,7 +7,7 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record ExportNode(Guid NodeId) : IDbCommand<Result<Package>>;
+public record ExportNode(Guid NodeId) : IRequest<Result<Package>>;
 
 [UsedImplicitly]
 internal class ExportNodeHandler(IConnectionManager manager) : IRequestHandler<ExportNode, Result<Package>>

@@ -7,7 +7,13 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record CreateNodes(IEnumerable<Node> Nodes) : IDbCommand<Result>;
+public record CreateNodes(IEnumerable<Node> Nodes) : ICommandRequest<Result>
+{
+    public IEnumerable<Change> GetChanges()
+    {
+        return Nodes.Select(n => Change.For<CreateNodes>(n.NodeId, ChangeType.Created, $"Created {n.Type} {n.Name}"));
+    }
+}
 
 [UsedImplicitly]
 internal class CreateNodesHandler(IConnectionManager manager) : IRequestHandler<CreateNodes, Result>

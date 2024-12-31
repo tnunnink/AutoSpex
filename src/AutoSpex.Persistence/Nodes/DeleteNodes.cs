@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿using AutoSpex.Engine;
+using Dapper;
 using FluentResults;
 using JetBrains.Annotations;
 using MediatR;
@@ -6,18 +7,25 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record DeleteNodes(IEnumerable<Guid> NodeIds) : IDbCommand<Result>;
+public record DeleteNodes(IEnumerable<Node> Nodes) : ICommandRequest<Result>
+{
+    public IEnumerable<Change> GetChanges()
+    {
+        return Nodes.Select(n => Change.For<DeleteNodes>(n.NodeId, ChangeType.Deleted, $"Deleted {n.Type} {n.Name}"));
+    }
+}
 
 [UsedImplicitly]
 internal class DeleteNodesHandler(IConnectionManager manager) : IRequestHandler<DeleteNodes, Result>
 {
-    private const string DeleteNodes = "DELETE FROM Node WHERE NodeId IN @NodeIds";
-    
+    private const string DeleteNode = "DELETE FROM Node WHERE NodeId = @NodeId";
+    private const string VacuumFile = "VACUUM"; //this clears empty space or releases memory back to disc.
+
     public async Task<Result> Handle(DeleteNodes request, CancellationToken cancellationToken)
     {
         using var connection = await manager.Connect(cancellationToken);
-        var ids = request.NodeIds.Select(n => n.ToString()).ToList();
-        await connection.ExecuteAsync(DeleteNodes, new {NodeIds = ids});
+        await connection.ExecuteAsync(DeleteNode, request.Nodes);
+        await connection.ExecuteAsync(VacuumFile);
         return Result.Ok();
     }
 }

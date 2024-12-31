@@ -170,6 +170,7 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
         }
 
         var result = await DeleteItems([this]);
+
         if (Notifier.ShowIfFailed(result,
                 $"Failed to delete {Name} due to {result.Reasons.FirstOrDefault()?.Message}")) return;
 
@@ -196,7 +197,9 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
         }
 
         var result = await DeleteItems(selected);
-        if (result.IsFailed) return;
+
+        if (Notifier.ShowIfFailed(result,
+                $"Failed to delete selected items due to {result.Reasons.FirstOrDefault()?.Message}")) return;
 
         foreach (var deleted in selected)
             Messenger.Send(new Deleted(deleted));
@@ -264,7 +267,7 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
         if (clipboard is null) return;
         await clipboard.SetTextAsync(Name);
     }
-    
+
     [RelayCommand]
     protected virtual Task Paste() => Task.CompletedTask;
 

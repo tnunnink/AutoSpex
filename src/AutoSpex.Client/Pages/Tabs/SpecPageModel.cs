@@ -44,7 +44,9 @@ public partial class SpecPageModel(NodeObserver node) : PageViewModel("Spec")
         if (Spec is null)
             return Result.Fail($"Spec configuration was not correctly loaded for {node.Name}.");
 
-        return await Mediator.Send(new SaveSpec(Spec));
+        var payload = node.Model.Copy();
+        payload.Configure(Spec.Model);
+        return await Mediator.Send(new SaveSpec(payload));
     }
 
     /// <summary>

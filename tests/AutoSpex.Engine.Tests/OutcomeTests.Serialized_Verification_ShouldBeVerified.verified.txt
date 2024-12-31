@@ -1,0 +1,11 @@
+﻿{
+  OutcomeId: Guid_1,
+  RunId: Guid_2,
+  NodeId: Guid_3,
+  Name: Testing,
+  Path: This/Is/A/Test,
+  Result: Passed,
+  Duration: 0,
+  PassRate: 0,
+  Suppression: null
+}

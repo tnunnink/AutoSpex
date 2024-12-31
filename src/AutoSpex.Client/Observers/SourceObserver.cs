@@ -139,7 +139,7 @@ public partial class SourceObserver : Observer<Source>,
     /// <inheritdoc />
     protected override Task<Result> DeleteItems(IEnumerable<Observer> observers)
     {
-        return Mediator.Send(new DeleteSources(observers.Select(o => o.Id)));
+        return Mediator.Send(new DeleteSources(observers.Cast<SourceObserver>().Select(o => o.Model)));
     }
 
     /// <inheritdoc />

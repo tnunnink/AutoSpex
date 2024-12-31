@@ -8,7 +8,6 @@ using AutoSpex.Client.Resources;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using AutoSpex.Persistence;
-using AutoSpex.Persistence.References;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -198,8 +197,8 @@ public partial class RunObserver : Observer<Run>, IRecipient<Observer.Get<RunObs
     private async Task<List<Node>> LoadSpecs(CancellationToken token)
     {
         var ids = Model.Outcomes.Select(n => n.NodeId);
-        var result = await Mediator.Send(new LoadNodes(ids), token);
-        return result.IsSuccess ? result.Value.ToList() : [];
+        var nodes = await Mediator.Send(new LoadNodes(ids), token);
+        return nodes.ToList();
     }
 
     /// <summary>
@@ -326,7 +325,7 @@ public partial class RunObserver : Observer<Run>, IRecipient<Observer.Get<RunObs
     /// <inheritdoc />
     protected override async Task<Result> DeleteItems(IEnumerable<Observer> observers)
     {
-        var result = await Mediator.Send(new DeleteRuns(observers.Select(x => x.Id)));
+        var result = await Mediator.Send(new DeleteRuns(observers.Cast<RunObserver>().Select(x => x.Model)));
         Notifier.ShowIfFailed(result);
         return result;
     }

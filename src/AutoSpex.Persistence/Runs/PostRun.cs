@@ -8,7 +8,14 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record PostRun(Run Run) : IDbCommand<Result>;
+public record PostRun(Run Run) : ICommandRequest<Result>
+{
+    public IEnumerable<Change> GetChanges()
+    {
+        yield return Change.For<PostRun>(Run.Node.NodeId, ChangeType.Created, $"Run posted for {Run.Node.Name}");
+        yield return Change.For<PostRun>(Run.Source.SourceId, ChangeType.Created, $"Run posted for {Run.Source.Name}");
+    }
+}
 
 [UsedImplicitly]
 internal class PostRunHandler(IConnectionManager manager) : IRequestHandler<PostRun, Result>

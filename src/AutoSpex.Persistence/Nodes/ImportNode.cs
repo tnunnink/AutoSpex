@@ -7,7 +7,14 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record ImportNode(Package Package, ImportAction Action) : IDbCommand<Result<Node>>;
+public record ImportNode(Package Package, ImportAction Action) : ICommandRequest<Result<Node>>
+{
+    public IEnumerable<Change> GetChanges()
+    {
+        return Package.Collection.DescendantsAndSelf().Select(n =>
+            Change.For<ImportNode>(n.NodeId, ChangeType.Created, $"Imported {n.Type} {n.Name}"));
+    }
+}
 
 [UsedImplicitly]
 internal class ImportNodeHandler(IConnectionManager manager) : IRequestHandler<ImportNode, Result<Node>>

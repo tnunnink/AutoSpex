@@ -7,7 +7,7 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record NewRun(Guid NodeId, Guid SourceId = default) : IDbQuery<Result<Run>>;
+public record NewRun(Guid NodeId, Guid SourceId = default) : IRequest<Result<Run>>;
 
 [UsedImplicitly]
 internal class NewRunHandler(IConnectionManager manager) : IRequestHandler<NewRun, Result<Run>>

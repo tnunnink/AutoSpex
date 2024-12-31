@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿using AutoSpex.Engine;
+using Dapper;
 using FluentResults;
 using JetBrains.Annotations;
 using MediatR;
@@ -7,7 +8,13 @@ using Action = AutoSpex.Engine.Action;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record AddSuppression(Guid SourceId, Action Action) : IDbCommand<Result>;
+public record AddSuppression(Guid SourceId, Action Action) : ICommandRequest<Result>
+{
+    public IEnumerable<Change> GetChanges()
+    {
+        yield return Change.For<AddSuppression>(SourceId, ChangeType.Updated, $"Added Suppression {Action.Reason}");
+    }
+}
 
 [UsedImplicitly]
 internal class AddSuppressionHandler(IConnectionManager manager) : IRequestHandler<AddSuppression, Result>

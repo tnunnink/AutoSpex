@@ -8,7 +8,7 @@ using Action = AutoSpex.Engine.Action;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record LoadTargetSource : IDbQuery<Result<Source>>;
+public record LoadTargetSource : IRequest<Result<Source>>;
 
 [UsedImplicitly]
 internal class LoadTargetSourceHandler(IConnectionManager manager) : IRequestHandler<LoadTargetSource, Result<Source>>

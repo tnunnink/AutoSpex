@@ -7,7 +7,7 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record LoadSpec(Guid NodeId) : IDbQuery<Result<Spec>>;
+public record LoadSpec(Guid NodeId) : IRequest<Result<Spec>>;
 
 [UsedImplicitly]
 internal class LoadSpecHandler(IConnectionManager manager) : IRequestHandler<LoadSpec, Result<Spec>>

@@ -1,5 +1,0 @@
-﻿{
-  Result: Passed,
-  Duration: 0,
-  PassRate: 0
-}

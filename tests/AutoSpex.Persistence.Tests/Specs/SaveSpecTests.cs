@@ -10,7 +10,7 @@ public class SaveSpecTests
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-        var spec = new Spec();
+        var spec = Node.NewSpec();
 
         var result = await mediator.Send(new SaveSpec(spec));
 
@@ -25,7 +25,7 @@ public class SaveSpecTests
         var node = Node.NewSpec();
         await mediator.Send(new CreateNode(node));
 
-        var result = await mediator.Send(new SaveSpec(node.Spec));
+        var result = await mediator.Send(new SaveSpec(node));
 
         result.IsSuccess.Should().BeTrue();
     }
@@ -46,7 +46,7 @@ public class SaveSpecTests
         });
 
 
-        var result = await mediator.Send(new SaveSpec(node.Spec));
+        var result = await mediator.Send(new SaveSpec(node));
 
         result.IsSuccess.Should().BeTrue();
     }
@@ -66,7 +66,7 @@ public class SaveSpecTests
             c.Validate("Disabled", Operation.EqualTo, false);
         });
 
-        var result = await mediator.Send(new SaveSpec(node.Spec));
+        var result = await mediator.Send(new SaveSpec(node));
 
         result.IsSuccess.Should().BeTrue();
     }

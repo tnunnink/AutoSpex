@@ -7,7 +7,13 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record RenameNode(Node Node) : IDbCommand<Result>;
+public record RenameNode(Node Node) : ICommandRequest<Result>
+{
+    public IEnumerable<Change> GetChanges()
+    {
+        yield return Change.For<RenameNode>(Node.NodeId, ChangeType.Renamed, $"Renamed {Node.Type} to {Node.Name}");
+    }
+}
 
 [UsedImplicitly]
 internal class RenameNodeHandler(IConnectionManager manager) : IRequestHandler<RenameNode, Result>

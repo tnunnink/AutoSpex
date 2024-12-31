@@ -12,7 +12,13 @@ namespace AutoSpex.Persistence;
 /// </summary>
 /// <param name="Node">The node to create.</param>
 [PublicAPI]
-public record CreateNode(Node Node) : IDbCommand<Result>;
+public record CreateNode(Node Node) : ICommandRequest<Result>
+{
+    public IEnumerable<Change> GetChanges()
+    {
+        yield return Change.For<CreateNode>(Node.NodeId, ChangeType.Created, $"Created {Node.Type} {Node.Name}");
+    }
+}
 
 [UsedImplicitly]
 internal class CreateNodeHandler(IConnectionManager manager) : IRequestHandler<CreateNode, Result>
