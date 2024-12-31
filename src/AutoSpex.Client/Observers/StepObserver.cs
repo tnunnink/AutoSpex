@@ -28,12 +28,12 @@ public abstract partial class StepObserver(Step model) : Observer<Step>(model),
     {
         var query = GetObserver<QueryObserver>(x => x.Steps.Has(this));
         if (query is null) return;
-        
+
         var index = query.Steps.IndexOf(this);
         var step = new FilterObserver(new Filter(new Criterion()));
         query.Steps.Insert(index, step);
     }
-    
+
     /// <summary>
     /// Inserts a new filter step after this step in the parent query.
     /// </summary>
@@ -42,14 +42,14 @@ public abstract partial class StepObserver(Step model) : Observer<Step>(model),
     {
         var query = GetObserver<QueryObserver>(x => x.Steps.Has(this));
         if (query is null) return;
-        
+
         var index = query.Steps.IndexOf(this) + 1;
         if (index > query.Steps.Count) return;
-        
+
         var step = new FilterObserver(new Filter(new Criterion()));
         query.Steps.Insert(index, step);
     }
-    
+
     /// <summary>
     /// Inserts a new selection step after this step in the parent query.
     /// </summary>
@@ -58,12 +58,12 @@ public abstract partial class StepObserver(Step model) : Observer<Step>(model),
     {
         var query = GetObserver<QueryObserver>(x => x.Steps.Has(this));
         if (query is null) return;
-        
+
         var index = query.Steps.IndexOf(this);
         var step = new SelectObserver(new Select(new Selection()));
         query.Steps.Insert(index, step);
     }
-    
+
     /// <summary>
     /// Inserts a new selection step after this step in the parent query.
     /// </summary>
@@ -72,10 +72,10 @@ public abstract partial class StepObserver(Step model) : Observer<Step>(model),
     {
         var query = GetObserver<QueryObserver>(x => x.Steps.Has(this));
         if (query is null) return;
-        
+
         var index = query.Steps.IndexOf(this) + 1;
         if (index > query.Steps.Count) return;
-        
+
         var step = new SelectObserver(new Select(new Selection()));
         query.Steps.Insert(index, step);
     }
@@ -201,6 +201,22 @@ public abstract partial class StepObserver(Step model) : Observer<Step>(model),
     }
 
     /// <summary>
+    /// Checks if the step contains a specific PropertyInput by checking against different types of observers.
+    /// </summary>
+    /// <param name="property">The PropertyInput to check for</param>
+    /// <returns>True if the PropertyInput is found in the step, false otherwise</returns>
+    public bool Contains(PropertyInput property)
+    {
+        return this switch
+        {
+            FilterObserver filter => filter.Criteria.Any(c => c.Property == property),
+            VerifyObserver verify => verify.Criteria.Any(c => c.Property == property),
+            SelectObserver select => select.Selections.Any(c => c.Property == property),
+            _ => false
+        };
+    }
+
+    /// <summary>
     /// Checks if this step contains the provided argument input instance.
     /// </summary>
     /// <param name="argument">The ArgumentInput to check for.</param>
@@ -248,32 +264,32 @@ public abstract partial class StepObserver(Step model) : Observer<Step>(model),
             Icon = Resource.Find("IconFilledFunnel"),
             Command = InsertFilterBeforeCommand
         };
-        
+
         yield return new MenuActionItem
         {
             Header = "Insert Filter After",
             Icon = Resource.Find("IconFilledFunnel"),
             Command = InsertFilterAfterCommand
         };
-        
+
         yield return MenuActionItem.Separator;
-        
+
         yield return new MenuActionItem
         {
             Header = "Insert Select Before",
             Icon = Resource.Find("IconFilledHand"),
             Command = InsertSelectBeforeCommand
         };
-        
+
         yield return new MenuActionItem
         {
             Header = "Insert Select After",
             Icon = Resource.Find("IconFilledHand"),
             Command = InsertSelectAfterCommand
         };
-        
+
         yield return MenuActionItem.Separator;
-        
+
         yield return new MenuActionItem
         {
             Header = "Move Step Up",
@@ -287,7 +303,7 @@ public abstract partial class StepObserver(Step model) : Observer<Step>(model),
             Icon = Resource.Find("IconFilledChevronDown"),
             Command = MoveDownCommand
         };
-        
+
         yield return MenuActionItem.Separator;
 
         yield return new MenuActionItem

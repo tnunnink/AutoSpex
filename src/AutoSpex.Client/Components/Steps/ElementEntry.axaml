@@ -62,7 +62,8 @@
                                     Theme="{StaticResource IconThemedSource}"
                                     Classes="size-sm" />
                                 <TextBlock
-                                    Text="{Binding Name}" FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
+                                    Text="{Binding Name}"
+                                    FontFamily="{a:ThemeResource CodeFontFamily}" />
                                 <PathIcon
                                     Theme="{StaticResource IconLineExpand}"
                                     Classes="size-sm" />
@@ -85,7 +86,8 @@
                                             HorizontalContentAlignment="Stretch">
                                             <StackPanel Orientation="Horizontal" Spacing="10">
                                                 <PathIcon Theme="{StaticResource IconThemedSource}" />
-                                                <TextBlock Text="{Binding Name}" />
+                                                <TextBlock Text="{Binding Name}"
+                                                           FontFamily="{a:ThemeResource CodeFontFamily}" />
                                             </StackPanel>
                                             <Interaction.Behaviors>
                                                 <behaviors:HideFlyoutOnClickedBehavior />

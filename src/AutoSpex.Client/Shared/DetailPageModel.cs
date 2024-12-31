@@ -144,6 +144,7 @@ public abstract partial class DetailPageModel(string? title) : PageViewModel(tit
         switch (message.Action)
         {
             case NavigationAction.Open:
+                if (TryOpenExisting()) break;
                 Pages.Add(page);
                 Track(page);
                 break;
@@ -156,12 +157,28 @@ public abstract partial class DetailPageModel(string? title) : PageViewModel(tit
             default:
                 throw new ArgumentOutOfRangeException($"Navigation action {message.Action} not supported");
         }
+
+        return;
+
+        bool TryOpenExisting()
+        {
+            var existing = Pages.SingleOrDefault(p => p.Route == page.Route);
+            
+            if (existing is not null)
+            {
+                CurrentPage = existing;
+                return true;
+            }
+
+            return false;
+        }
     }
 
     /// <summary>
     /// Handles requesting navigation of any child tabs for this node page.
     /// </summary>
     protected virtual Task NavigatePages() => Task.CompletedTask;
+    
 
     //We need to notify the SaveCommand when the IsChange property changes since that is what it is controlled on.
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)

@@ -2,9 +2,9 @@
 
 namespace AutoSpex.Client.Pages;
 
-public partial class SourceSettingsPage : UserControl
+public partial class ActionsPage : UserControl
 {
-    public SourceSettingsPage()
+    public ActionsPage()
     {
         InitializeComponent();
     }

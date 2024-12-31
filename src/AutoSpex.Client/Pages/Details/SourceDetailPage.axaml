@@ -17,15 +17,14 @@
             Background="{a:ThemeResource Container2BackgroundBrush}"
             BorderBrush="{a:ThemeResource Container1BorderBrush}"
             BorderThickness="0 0 0 1"
-            Padding="15 20 15 10">
+            Padding="15 15 15 10">
 
             <StackPanel Spacing="10">
 
                 <Grid ColumnDefinitions="*,Auto">
 
                     <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5" Margin="5 0">
-                        <PathIcon Theme="{Binding Icon, Converter={StaticResource KeyIconConverter}}" />
-                        <ContentControl Content="{Binding Source}" ContentTemplate="{StaticResource ObserverName}" />
+                        <ContentControl Content="{Binding Source}" ContentTemplate="{StaticResource ObserverTitle}" />
                     </StackPanel>
 
                     <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">

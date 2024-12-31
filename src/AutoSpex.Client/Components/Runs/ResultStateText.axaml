@@ -44,22 +44,22 @@
                     <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
                 </Style>
                 <Style Selector="TextBlock.Pending">
-                    <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftAccent}" />
+                    <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
                 </Style>
                 <Style Selector="TextBlock.Suppressed">
                     <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
                 </Style>
                 <Style Selector="TextBlock.Passed">
-                    <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftSuccess}" />
+                    <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineSuccess}" />
                 </Style>
                 <Style Selector="TextBlock.Inconclusive">
-                    <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftWarning}" />
+                    <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineWarning}" />
                 </Style>
                 <Style Selector="TextBlock.Failed">
-                    <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftDanger}" />
+                    <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineDanger}" />
                 </Style>
                 <Style Selector="TextBlock.Errored">
-                    <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftWarning}" />
+                    <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineWarning}" />
                 </Style>
             </TextBlock.Styles>
 

@@ -52,7 +52,8 @@
                             IsVisible="{Binding ShowMatch}"
                             Command="{Binding ToggleMatchCommand}"
                             Content="{Binding Match, Converter={x:Static a:StringConverters.ToLowerInvariant}}"
-                            Classes="link-text" />
+                            Classes="link-text"
+                            Padding="5"/>
 
                     </StackPanel>
 

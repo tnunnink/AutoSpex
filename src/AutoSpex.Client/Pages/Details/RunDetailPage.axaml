@@ -16,45 +16,59 @@
             Background="{a:ThemeResource Container2BackgroundBrush}"
             BorderBrush="{a:ThemeResource Container1BorderBrush}"
             BorderThickness="0 0 0 1"
-            Padding="15 20 15 10">
+            Padding="15 15 15 10">
 
             <StackPanel Spacing="10">
 
                 <Grid ColumnDefinitions="*,Auto">
 
-                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5" Margin="5 0">
-                        <ContentControl Content="{Binding Run.Result}" ContentTemplate="{StaticResource ResultPill}" />
-                        
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
+
+                        <ContentControl
+                            Content="{Binding Run.Result}"
+                            ContentTemplate="{StaticResource ResultPill}" />
+
+                        <ContentControl
+                            Content="{Binding Run.Node}"
+                            ContentTemplate="{StaticResource NodeInfoButton}" />
+
+                        <ContentControl
+                            Content="{Binding Run.Source}"
+                            ContentTemplate="{StaticResource SourceInfoButton}" />
+
                     </StackPanel>
 
                     <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
-                        <Button
-                            Command="{Binding RunAgainCommand}"
-                            Classes="run accent"
-                            CornerRadius="{a:ThemeResource ButtonCornerRadius}"
-                            IsVisible="{Binding Run.Result, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:ResultState.Pending}}"/>
 
-                        <Button
-                            Command="{Binding Run.CancelCommand}"
-                            Classes="cancel danger"
-                            CornerRadius="{a:ThemeResource ButtonCornerRadius}"
-                            IsVisible="{Binding Run.Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Pending}}"/>
+                        <Panel>
+
+                            <Button
+                                Command="{Binding RunAgainCommand}"
+                                Classes="run accent"
+                                IsVisible="{Binding Run.Result, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:ResultState.Pending}}" />
+
+                            <Button
+                                Command="{Binding Run.CancelCommand}"
+                                Classes="cancel danger"
+                                IsVisible="{Binding Run.Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Pending}}" />
+
+                        </Panel>
+
+                        <Button Classes="save" Command="{Binding SaveCommand}" />
+                        <Button Classes="export" />
+
                     </StackPanel>
 
                 </Grid>
 
-                <StackPanel Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
-
-                    <ContentControl
-                        Content="{Binding Run}"
-                        ContentTemplate="{StaticResource RunMessage}" />
-
-                </StackPanel>
+                <TextBlock
+                    Text="{Binding Run.Message}"
+                    Classes="faint" />
 
             </StackPanel>
 
         </Border>
-        
+
         <ContentControl Content="{Binding CurrentPage}" />
 
     </DockPanel>

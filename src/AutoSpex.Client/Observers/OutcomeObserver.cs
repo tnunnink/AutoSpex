@@ -5,11 +5,11 @@ using AutoSpex.Client.Resources;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using AutoSpex.Persistence;
-using Avalonia.Input;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Action = AutoSpex.Engine.Action;
 
 namespace AutoSpex.Client.Observers;
 
@@ -17,17 +17,14 @@ public partial class OutcomeObserver : Observer<Outcome>,
     IRecipient<OutcomeObserver.Running>,
     IRecipient<OutcomeObserver.Complete>
 {
-    private int Total => Model.Verification.Evaluations.Count();
-    private int Passed => Model.Verification.Evaluations.Count(e => e.Result == ResultState.Passed);
-
     /// <inheritdoc/>
     public OutcomeObserver(Outcome model) : base(model)
     {
-        Result = model.Verification.Result;
+        Result = model.Result;
         Node = GetObserver<NodeObserver>(x => x.Id == Model.NodeId);
         Evaluations = new ObserverCollection<Evaluation, EvaluationObserver>(
-            refresh: () => Model.Verification.Evaluations.Select(e => new EvaluationObserver(e)).ToList(),
-            count: () => Model.Verification.Evaluations.Count()
+            refresh: () => Model.Evaluations.Select(e => new EvaluationObserver(e)).ToList(),
+            count: () => Model.Evaluations.Count
         );
 
         RegisterDisposable(Node);
@@ -44,16 +41,18 @@ public partial class OutcomeObserver : Observer<Outcome>,
 
     [ObservableProperty] private ResultState _filterState = ResultState.None;
     public ObserverCollection<Evaluation, EvaluationObserver> Evaluations { get; }
+    public string Duration => $"{Model.Duration} ms";
+    public string PassRate => $"{Model.PassRate:F1} %";
+    public int Count => GetFilterCount();
+    public IEnumerable<ResultState> States => GetDistinctStates();
 
-    public IEnumerable<ResultState> States =>
-        [ResultState.None, ..Model.Verification.Evaluations.Select(e => e.Result).Distinct().OrderBy(r => r.Value)];
-
-    public string Time => $"{Model.Verification.Duration} ms";
-    public string Percent => Total > 0 ? $"{Passed / Total * 100} %" : "0 %";
-
-    public int Count => FilterState != ResultState.None
-        ? Model.Verification.Evaluations.Count(e => e.Result == FilterState)
-        : Total;
+    /// <inheritdoc />
+    /// <remarks>Sends the message that is handled by the page containing this outcome instance.</remarks>
+    protected override Task Navigate()
+    {
+        Messenger.Send(new Show(this));
+        return Task.CompletedTask;
+    }
 
     /// <inheritdoc />
     public override bool Filter(string? filter)
@@ -81,8 +80,8 @@ public partial class OutcomeObserver : Observer<Outcome>,
         var run = GetObserver<RunObserver>(r => r.Model.Outcomes.Any(x => x.OutcomeId == Id));
         if (run is null) return;
 
-        var suppression = new Suppression(Model.NodeId, reason);
-        var result = await Mediator.Send(new AddSuppression(run.Source.Id, suppression));
+        var fule = Action.Suppress(Model.NodeId, reason);
+        var result = await Mediator.Send(new AddSuppression(run.Source.Id, fule));
         Notifier.ShowIfFailed(result);
     }
 
@@ -94,6 +93,7 @@ public partial class OutcomeObserver : Observer<Outcome>,
     partial void OnFilterStateChanged(ResultState value)
     {
         Evaluations.Filter(x => value == ResultState.None || x.Result == value);
+        OnPropertyChanged(nameof(Count));
     }
 
     /// <summary>
@@ -117,7 +117,7 @@ public partial class OutcomeObserver : Observer<Outcome>,
 
         Dispatcher.UIThread.Invoke(() =>
         {
-            Result = message.Outcome.Verification.Result;
+            Result = message.Outcome.Result;
             Evaluations.Refresh();
             Refresh();
         });
@@ -135,23 +135,86 @@ public partial class OutcomeObserver : Observer<Outcome>,
     /// <param name="Outcome">The outcome produced by the run.</param>
     public record Complete(Outcome Outcome);
 
+    /// <summary>
+    /// A message that will notify a page to show this observer instance and its results.
+    /// </summary>
+    /// <param name="Outcome">The outcome to show.</param>
+    public record Show(OutcomeObserver Outcome);
+
     /// <inheritdoc />
     protected override IEnumerable<MenuActionItem> GenerateContextItems()
     {
         yield return new MenuActionItem
         {
-            Header = "Add Suppression",
+            Header = "Suppress",
             Icon = Resource.Find("IconLineBan"),
-            Command = AddSuppressionCommand
+            Command = AddSuppressionCommand,
+            DetermineVisibility = () => Result.IsFaulted
         };
 
         yield return new MenuActionItem
         {
-            Header = "Open Spec",
-            Icon = Resource.Find("IconLineLaunch"),
-            Command = NavigateCommand,
-            Gesture = new KeyGesture(Key.Enter)
+            Header = "Override",
+            Icon = Resource.Find("IconFilledPencil"),
+            Command = AddSuppressionCommand,
+            DetermineVisibility = () => Result.IsFaulted
         };
+
+        yield return new MenuActionItem
+        {
+            Header = $"Open {Node?.Type}",
+            Icon = Resource.Find("IconLineLaunch"),
+            Command = Node?.NavigateCommand,
+            DetermineVisibility = () => Node is not null
+        };
+    }
+
+    /// <inheritdoc />
+    protected override IEnumerable<MenuActionItem> GenerateMenuItems()
+    {
+        yield return new MenuActionItem
+        {
+            Header = "Suppress",
+            Icon = Resource.Find("IconLineBan"),
+            Command = AddSuppressionCommand,
+            DetermineVisibility = () => Result.IsFaulted
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Override",
+            Icon = Resource.Find("IconFilledPencil"),
+            Command = AddSuppressionCommand,
+            DetermineVisibility = () => Result.IsFaulted
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = $"Open {Node?.Type}",
+            Icon = Resource.Find("IconLineLaunch"),
+            Command = Node?.NavigateCommand,
+            DetermineVisibility = () => Node is not null
+        };
+    }
+
+    /// <summary>
+    /// Gets the numer of evaluations based on the current filter state.
+    /// </summary>
+    private int GetFilterCount()
+    {
+        return FilterState != ResultState.None
+            ? Model.Evaluations.Count(e => e.Result == FilterState)
+            : Model.Evaluations.Count;
+    }
+
+    /// <summary>
+    /// Gets distinct result states of this outcome's evaluations for filter selection.
+    /// </summary>
+    private List<ResultState> GetDistinctStates()
+    {
+        var states = new List<ResultState> { ResultState.None };
+        states.AddRange(Model.Evaluations.Select(x => x.Result).Distinct());
+        return states.OrderBy(r => r.Value).ToList();
     }
 
     public static implicit operator Outcome(OutcomeObserver observer) => observer.Model;

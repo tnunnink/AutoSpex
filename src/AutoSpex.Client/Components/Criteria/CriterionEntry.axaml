@@ -30,10 +30,6 @@
             <StackPanel.Styles>
                 <Style Selector="controls|Entry">
                     <Setter Property="ButtonTheme" Value="{a:ControlTheme ButtonSoft}" />
-                    <Setter Property="Background" Value="{a:ThemeResource Container2BackgroundBrush}" />
-                    <Setter Property="BorderThickness" Value="0 0 1 0" />
-                    <Setter Property="CornerRadius" Value="0" />
-                    <Setter Property="Padding" Value="10 7" />
                 </Style>
                 <Style Selector="Button">
                     <Setter Property="Theme" Value="{a:ControlTheme ButtonSoft}" />
@@ -43,6 +39,7 @@
                     <Setter Property="FontFamily" Value="{a:ThemeResource CodeFontFamily}" />
                     <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeSmall}" />
                     <Setter Property="CornerRadius" Value="0" />
+                    <Setter Property="Padding" Value="10 7" />
                 </Style>
             </StackPanel.Styles>
 

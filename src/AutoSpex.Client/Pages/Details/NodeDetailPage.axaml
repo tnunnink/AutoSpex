@@ -21,19 +21,30 @@
 
             <StackPanel Spacing="10">
 
-                <Grid ColumnDefinitions="*,Auto">
+                <StackPanel Spacing="5">
 
-                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5" Margin="5 0">
-                        <PathIcon Theme="{Binding Node.Icon, Converter={StaticResource KeyIconConverter}}" />
-                        <ContentControl Content="{Binding Node}" ContentTemplate="{StaticResource BreadcrumbLink}" />
-                    </StackPanel>
+                    <ContentControl
+                        Content="{Binding Node}"
+                        ContentTemplate="{StaticResource BreadcrumbLink}"
+                        HorizontalAlignment="Left"
+                        IsVisible="{Binding Node.Model.Parent, Converter={x:Static ObjectConverters.IsNotNull}}" />
 
-                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
-                        <Button Command="{Binding RunCommand}" Classes="run accent" />
-                        <Button Command="{Binding SaveCommand}" Classes="save" />
-                    </StackPanel>
+                    <Grid ColumnDefinitions="*,Auto" Margin="5 0" >
 
-                </Grid>
+                        <ContentControl
+                            Grid.Column="0"
+                            Content="{Binding Node}"
+                            ContentTemplate="{StaticResource ObserverTitle}"
+                            HorizontalAlignment="Left"/>
+
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
+                            <Button Command="{Binding RunCommand}" Classes="run accent" />
+                            <Button Command="{Binding SaveCommand}" Classes="save" />
+                        </StackPanel>
+
+                    </Grid>
+
+                </StackPanel>
 
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
 

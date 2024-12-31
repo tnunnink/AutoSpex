@@ -118,6 +118,11 @@
         </Style>
     </ControlTheme>
 
+    <!-- ListBoxItemSelection -->
+    <ControlTheme x:Key="ListBoxItemSelection" TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemSimple}">
+        <Setter Property="Padding" Value="{a:ThemeResource ButtonPadding}" />
+    </ControlTheme>
+
     <!-- ListBoxItemSubtle -->
     <ControlTheme x:Key="ListBoxItemSubtle" TargetType="ListBoxItem" BasedOn="{a:ControlTheme ListBoxItem}">
         <Setter Property="BorderBrush" Value="Transparent" />

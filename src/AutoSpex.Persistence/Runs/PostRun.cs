@@ -18,8 +18,8 @@ internal class PostRunHandler(IConnectionManager manager) : IRequestHandler<Post
 
     private const string InsertRun =
         """
-        INSERT INTO RUN (RunId, Name, Node, Source, Result, RanOn, RanBy, Outcomes) 
-        VALUES (@RunId, @Name, @Node, @Source, @Result, @RanOn, @RanBy, @Outcomes)
+        INSERT INTO RUN (RunId, Name, Node, Source, Result, RanOn, RanBy, Duration, PassRate, Outcomes) 
+        VALUES (@RunId, @Name, @Node, @Source, @Result, @RanOn, @RanBy, @Duration, @PassRate, @Outcomes)
         """;
 
     public async Task<Result> Handle(PostRun request, CancellationToken cancellationToken)
@@ -32,17 +32,23 @@ internal class PostRunHandler(IConnectionManager manager) : IRequestHandler<Post
 
         using var transaction = connection.BeginTransaction();
 
+        var node = JsonSerializer.Serialize(request.Run.Node);
+        var source = JsonSerializer.Serialize(request.Run.Source);
+        var outcomes = JsonSerializer.Serialize(request.Run.Outcomes);
+
         await connection.ExecuteAsync(InsertRun,
             new
             {
                 request.Run.RunId,
                 request.Run.Name,
-                Node = JsonSerializer.Serialize(request.Run.Node),
-                Source = JsonSerializer.Serialize(request.Run.Source),
+                Node = node,
+                Source = source,
                 request.Run.Result,
                 request.Run.RanOn,
                 request.Run.RanBy,
-                Outcomes = JsonSerializer.Serialize(request.Run.Outcomes)
+                request.Run.Duration,
+                request.Run.PassRate,
+                Outcomes = outcomes
             },
             transaction);
 

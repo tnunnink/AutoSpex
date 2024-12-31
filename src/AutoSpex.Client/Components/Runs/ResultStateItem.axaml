@@ -34,7 +34,9 @@
 
         <StackPanel Orientation="Horizontal" Spacing="7">
 
-            <PathIcon Theme="{Binding Converter={StaticResource ResultStateIconConverter}}" Classes="size-sm" />
+            <PathIcon
+                Theme="{Binding Converter={StaticResource ResultStateIconConverter}}"
+                Classes="size-sm" />
 
             <TextBlock
                 Text="All"

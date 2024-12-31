@@ -1,7 +1,9 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
              xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
              x:Class="AutoSpex.Client.Pages.SpecPage"
              x:DataType="pages:SpecPageModel">
 
@@ -14,10 +16,28 @@
 
         <ScrollViewer HorizontalScrollBarVisibility="Disabled">
 
-            <ContentControl
-                Content="{Binding Spec}"
-                ContentTemplate="{StaticResource SpecConfig}"
-                Margin="20" />
+            <controls:Section
+                Header="Specification"
+                Description="Configure the specification criteria by defining the query and verification to perform."
+                VerticalAlignment="Top"
+                Margin="20">
+
+                <controls:Section.Icon>
+                    <PathIcon Theme="{StaticResource IconFilledClipboard}" />
+                </controls:Section.Icon>
+
+                <controls:Section.Action>
+                    <Button
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconEllipsis}">
+                    </Button>
+                </controls:Section.Action>
+
+                <ContentControl
+                    Content="{Binding Spec}"
+                    ContentTemplate="{StaticResource SpecConfig}" />
+
+            </controls:Section>
 
         </ScrollViewer>
 

@@ -1,0 +1,54 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:shared="clr-namespace:AutoSpex.Client.Shared">
+
+    <Design.PreviewWith>
+        <StackPanel Spacing="5" Margin="50">
+            <ContentControl
+                Content="{x:Static components:TestData.SpecNode}"
+                ContentTemplate="{DynamicResource ObserverTitle}"
+                Padding="10" />
+        </StackPanel>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="ObserverTitle" x:DataType="shared:Observer">
+
+        <StackPanel Orientation="Horizontal" Spacing="2">
+
+            <PathIcon Theme="{Binding Icon, Converter={StaticResource KeyIconConverter}}" />
+
+            <controls:Entry
+                x:Name="NameEntry"
+                Value="{Binding}"
+                FontFamily="{a:ThemeResource DefaultFontFamily}"
+                FontWeight="{a:ThemeResource HeadingFontWeightMedium}"
+                FontSize="{a:ThemeResource DefaultFontSizeMedium}"
+                CommitCommand="{Binding RenameCommand}"
+                MinDropDownWidth="{Binding #NameEntry.Bounds.Width}"
+                Padding="{a:ThemeResource ButtonPadding}"
+                HorizontalAlignment="Left">
+
+                <controls:Entry.ValueTemplate>
+                    <DataTemplate x:DataType="shared:Observer">
+                        <TextBlock
+                            Text="{Binding Name}"
+                            FontWeight="{a:ThemeResource HeadingFontWeightSmall}"
+                            FontSize="{a:ThemeResource DefaultFontSizeMedium}" />
+                    </DataTemplate>
+                </controls:Entry.ValueTemplate>
+
+                <Interaction.Behaviors>
+                    <DataTriggerBehavior Binding="{Binding IsNew}" ComparisonCondition="Equal" Value="True">
+                        <ChangePropertyAction TargetObject="NameEntry" PropertyName="IsDropDownOpen" Value="True" />
+                    </DataTriggerBehavior>
+                </Interaction.Behaviors>
+
+            </controls:Entry>
+
+        </StackPanel>
+
+    </DataTemplate>
+</ResourceDictionary>

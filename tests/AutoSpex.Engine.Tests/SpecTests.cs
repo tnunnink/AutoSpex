@@ -218,7 +218,7 @@ public class SpecTests
     [Test]
     public void CheckForMemeoryLeaksAgainstSpec()
     {
-        var isolator = new Action(() =>
+        var isolator = new System.Action(() =>
         {
             var content = L5X.Load(Known.Test);
             var spec = Spec.Configure(c =>

@@ -18,15 +18,15 @@ public class ResultState : SmartEnum<ResultState, int>
     public static readonly ResultState Errored = new(nameof(Errored), 7);
 
     /// <summary>
-    /// Indicates that the <see cref="ResultState"/> value is an outcome result (result of running a spec). This means
-    /// it is either passed, inconslusive, failed, or errored.
+    /// Indicates that the <see cref="ResultState"/> has been determined (result of running a spec). This means
+    /// it is either passed, failed, or errored.
     /// </summary>
-    public bool IsOutcome => Value >= 3;
+    public bool IsDetermined => Value is 4 or 6 or 7;
 
     /// <summary>
-    /// Indicates that the <see cref="ResultState"/> value is a result that can be suppressed (any non-passing result).
+    /// Indicates that the <see cref="ResultState"/> is a determined non-passing state (inconclusive, failed, errored).
     /// </summary>
-    public bool IsSuppressible => Value > 4;
+    public bool IsFaulted => Value > 4;
 
     /// <summary>
     /// Gets the maximum value of a collection of ResultState values or returns a default value if the collection is empty.

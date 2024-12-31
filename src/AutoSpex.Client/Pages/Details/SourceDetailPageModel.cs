@@ -1,15 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Dynamic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoSpex.Client.Observers;
 using AutoSpex.Client.Shared;
-using AutoSpex.Engine;
 using AutoSpex.Persistence;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FluentResults;
 
@@ -35,9 +27,10 @@ public partial class SourceDetailPageModel : DetailPageModel
     }
 
     [RelayCommand(CanExecute = nameof(CanRun))]
-    private Task Run()
+    private async Task Run()
     {
-        throw new NotImplementedException();
+        var page = Navigator.Open<QueryPageModel>($"Source/{Source.Id}/Query");
+        await page.ExecuteCommand.ExecuteAsync(null);
     }
 
     private bool CanRun() => Source.Model.Content is not null;
@@ -45,11 +38,10 @@ public partial class SourceDetailPageModel : DetailPageModel
     /// <inheritdoc />
     protected override async Task NavigatePages()
     {
-        await Navigator.Navigate(() => new SourceQueryPageModel(Source));
-        await Navigator.Navigate(() => new SourceSettingsPageModel(Source));
-        await Navigator.Navigate(() => new VariablesPageModel(Source));
+        await Navigator.Navigate(() => new QueryPageModel(Source));
+        await Navigator.Navigate(() => new ActionsPageModel(Source));
         await Navigator.Navigate(() => new HistoryPageModel(Source));
-        await Navigator.Navigate(() => new CommentsPageModel(Source));
+        /*await Navigator.Navigate(() => new CommentsPageModel(Source));*/
         await Navigator.Navigate(() => new InfoPageModel(Source));
     }
 }

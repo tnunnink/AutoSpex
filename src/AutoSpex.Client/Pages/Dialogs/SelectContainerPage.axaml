@@ -38,7 +38,7 @@
                 SelectedItem="{Binding Selected}"
                 IsVisible="{Binding Containers.Count}"
                 ItemContainerTheme="{StaticResource ListBoxItemSimple}"
-                ItemTemplate="{StaticResource NodeListItemSimple}"
+                ItemTemplate="{StaticResource NodeSimpleItem}"
                 Padding="10" />
 
             <Panel>

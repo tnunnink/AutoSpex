@@ -181,6 +181,7 @@ public partial class QueryObserver : Observer<Query>,
             CriterionObserver criterion => Steps.SingleOrDefault(s => s.Contains(criterion)),
             SelectionObserver selection => Steps.SingleOrDefault(s => s.Contains(selection)),
             ArgumentInput argument => Steps.SingleOrDefault(s => s.Contains(argument)),
+            PropertyInput property => Steps.SingleOrDefault(s => s.Contains(property)),
             _ => default
         };
 

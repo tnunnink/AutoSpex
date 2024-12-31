@@ -1,0 +1,102 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+
+    <Design.PreviewWith>
+        <ListBox
+            ItemsSource="{x:Static components:TestData.Actions}"
+            ItemContainerTheme="{StaticResource ListBoxItemEntry}"
+            ItemTemplate="{DynamicResource ActionListItem}"
+            Width="700" Height="250" Margin="10"
+            SelectionMode="Multiple"
+            Background="{a:ThemeResource Container1BackgroundBrush}" />
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="ActionListItem" x:DataType="observers:ActionObserver">
+
+        <Border
+            x:Name="Border"
+            Focusable="True"
+            IsTabStop="False"
+            Background="Transparent"
+            Padding="{a:ThemeResource ListItemPadding}">
+
+            <Border.ContextFlyout>
+                <MenuFlyout
+                    ItemsSource="{Binding ContextItems}"
+                    ItemContainerTheme="{StaticResource MenuActionItem}"
+                    Placement="Pointer" />
+            </Border.ContextFlyout>
+
+            <DockPanel>
+
+                <PathIcon
+                    DockPanel.Dock="Left"
+                    Theme="{Binding Type.Name, Converter={StaticResource KeyIconConverter}}"
+                    HorizontalAlignment="Left"
+                    Margin="5 0 10 0"/>
+
+                <StackPanel DockPanel.Dock="Left" Spacing="5" ClipToBounds="True" Margin="10 0"
+                            MaxWidth="{Binding $parent[ListBoxItem].Bounds.Width, Converter={StaticResource MathConverter}, ConverterParameter='x/2'}">
+
+                    <ContentControl
+                        Content="{Binding}"
+                        ContentTemplate="{StaticResource ObserverLink}"
+                        HorizontalAlignment="Left">
+                        <ContentControl.Styles>
+                            <Style Selector="controls|HighlightableTextBlock">
+                                <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeMedium}" />
+                            </Style>
+                        </ContentControl.Styles>
+                    </ContentControl>
+
+                    <controls:HighlightableTextBlock
+                        Text="{Binding Reason}"
+                        HighlightedText="{Binding FilterText}"
+                        Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                        TextTrimming="CharacterEllipsis"
+                        ToolTip.Tip="{Binding Reason}" />
+
+                </StackPanel>
+
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="5">
+
+                    <controls:HighlightableTextBlock
+                        Text="{Binding Node.Path, FallbackValue='Path/To/Node'}"
+                        HighlightedText="{Binding FilterText}"
+                        Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                        Margin="10 0" />
+
+                    <Button
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconEllipsis}"
+                        ToolTip.Tip="Options">
+                        <Button.Flyout>
+                            <MenuFlyout
+                                ItemsSource="{Binding MenuItems}"
+                                ItemContainerTheme="{StaticResource MenuActionItem}"
+                                Placement="BottomEdgeAlignedRight" HorizontalOffset="8" VerticalOffset="5" />
+                        </Button.Flyout>
+                    </Button>
+
+                </StackPanel>
+
+                <!--Placeholder to spacing between left and right sides-->
+                <Panel Width="20" />
+
+            </DockPanel>
+
+            <Interaction.Behaviors>
+                <ExecuteCommandOnKeyDownBehavior
+                    Key="Delete"
+                    Command="{Binding DeleteSelectedCommand}"
+                    MarkAsHandled="True"
+                    FocusControl="Border" />
+            </Interaction.Behaviors>
+        </Border>
+    </DataTemplate>
+</ResourceDictionary>

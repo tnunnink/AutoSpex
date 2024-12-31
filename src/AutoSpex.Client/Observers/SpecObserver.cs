@@ -65,8 +65,8 @@ public class SpecObserver : Observer<Spec>,
     public void Receive(PropertyInput.GetDataTo message)
     {
         if (Source?.Model.Content is null) return;
-        if (message.Observer is not CriterionObserver criterion) return;
-        if (!Verify.Criteria.Has(criterion)) return;
+        if (message.Observer is not PropertyInput input) return;
+        if (Verify.Criteria.All(c => c.Property != input)) return;
 
         try
         {
@@ -109,6 +109,5 @@ public class SpecObserver : Observer<Spec>,
     }
 
     public static implicit operator SpecObserver(Spec model) => new(model);
-
     public static implicit operator Spec(SpecObserver observer) => observer.Model;
 }

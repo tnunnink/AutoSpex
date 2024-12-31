@@ -63,9 +63,7 @@
         <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushTag}" />
     </ControlTheme>
 
-    <ControlTheme x:Key="IconThemedNone" TargetType="PathIcon" BasedOn="{StaticResource IconLineCircleHalfFill}">
-        <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
-    </ControlTheme>
+    <ControlTheme x:Key="IconThemedNone" TargetType="PathIcon" BasedOn="{StaticResource IconLineCircleDot}" />
     <ControlTheme x:Key="IconThemedPending" TargetType="PathIcon" BasedOn="{StaticResource IconLineCircleNotch}">
         <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
     </ControlTheme>

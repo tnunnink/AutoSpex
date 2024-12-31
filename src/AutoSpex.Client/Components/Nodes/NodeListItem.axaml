@@ -35,41 +35,25 @@
 
             <Grid ColumnDefinitions="*,Auto">
 
-                <StackPanel Grid.Column="0" Spacing="5">
+                <ContentControl
+                    Grid.Column="0"
+                    Content="{Binding }"
+                    ContentTemplate="{StaticResource NodeHeader}" />
 
-                    <ContentControl
-                        Content="{Binding }"
-                        ContentTemplate="{StaticResource NodeHeader}" />
-
-                    <StackPanel Orientation="Horizontal" Spacing="7">
-
-                        <controls:HighlightableTextBlock
-                            Text="{Binding Path}"
-                            HighlightedText="{Binding FilterText}"
-                            Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
-
-                        <Ellipse Classes="separator" />
-
-                        <TextBlock
-                            Text="Created 4 months ago by tnunn"
-                            Classes="faint" />
-
-                    </StackPanel>
-
-                </StackPanel>
-
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="5">
+                <StackPanel
+                    Grid.Column="1"
+                    Orientation="Horizontal"
+                    Spacing="10">
 
                     <Button
-                        Theme="{StaticResource IconButton}"
-                        properties:Icon.Theme="{StaticResource IconFilledClipboard}" />
-                    
-                    
+                        Theme="{StaticResource IconButtonSmall}"
+                        properties:Icon.Theme="{StaticResource IconFilledLightning}" />
 
                     <Button
-                        Theme="{StaticResource IconButton}"
-                        properties:Icon.Theme="{StaticResource IconLineAt}" />
+                        Theme="{StaticResource IconButtonSmall}"
+                        properties:Icon.Theme="{StaticResource IconEllipsis}">
 
+                    </Button>
 
                 </StackPanel>
 

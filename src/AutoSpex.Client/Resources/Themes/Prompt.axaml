@@ -70,8 +70,7 @@
                                         Grid.Column="0"
                                         x:Name="HeaderIcon"
                                         Theme="{TemplateBinding HeaderIcon}"
-                                        IsVisible="{Binding HeaderIcon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ObjectConverters.IsNotNull}}"
-                                        Margin="0 1 0 0" />
+                                        IsVisible="{Binding HeaderIcon, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ObjectConverters.IsNotNull}}" />
 
                                     <ContentPresenter
                                         x:Name="PART_HeaderPresenter"

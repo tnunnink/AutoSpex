@@ -16,7 +16,8 @@ internal class DeleteRunsHandler(IConnectionManager manager) : IRequestHandler<D
     public async Task<Result> Handle(DeleteRuns request, CancellationToken cancellationToken)
     {
         using var connection = await manager.Connect(cancellationToken);
-        var result = await connection.ExecuteAsync(DeleteRuns, new { request.Ids });
+        var ids = request.Ids.Select(n => n.ToString()).ToList();
+        var result = await connection.ExecuteAsync(DeleteRuns, new { Ids = ids });
         return Result.Ok().WithSuccess($"Successfully deleted {result} runs");
     }
 }

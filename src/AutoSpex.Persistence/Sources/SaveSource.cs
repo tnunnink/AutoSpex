@@ -15,17 +15,14 @@ internal class SaveSourceHandler(IConnectionManager manager) : IRequestHandler<S
     private const string Exists =
         "SELECT COUNT() FROM Source WHERE SourceId = @SourceId";
 
-    private const string DeleteSuppressions =
-        "DELETE FROM Suppression WHERE SourceId = @SourceId";
+    private const string DeleteAction =
+        "DELETE FROM Action WHERE SourceId = @SourceId";
 
-    private const string DeleteOverrides =
-        "DELETE FROM Override WHERE SourceId = @SourceId";
-
-    private const string InsertSuppressions =
-        "INSERT INTO Suppression (SourceId, NodeId, Reason) VALUES (@SourceId, @NodeId, @Reason)";
-
-    private const string InsertOverride =
-        "INSERT INTO Override (SourceId, NodeId, Config) VALUES (@SourceId, @NodeId, @Config)";
+    private const string InsertAction =
+        """
+        INSERT INTO Action (SourceId, NodeId, Type, Reason, Config) 
+        VALUES (@SourceId, @NodeId, @Type, @Reason, @Config)
+        """;
 
     public async Task<Result> Handle(SaveSource request, CancellationToken cancellationToken)
     {
@@ -37,26 +34,17 @@ internal class SaveSourceHandler(IConnectionManager manager) : IRequestHandler<S
 
         using var transaction = connection.BeginTransaction();
 
-        await connection.ExecuteAsync(DeleteSuppressions, new { request.Source.SourceId }, transaction);
-        await connection.ExecuteAsync(DeleteOverrides, new { request.Source.SourceId }, transaction);
+        await connection.ExecuteAsync(DeleteAction, new { request.Source.SourceId }, transaction);
 
-        await connection.ExecuteAsync(InsertSuppressions,
-            request.Source.Suppressions.Select(x => new
+        await connection.ExecuteAsync(InsertAction,
+            request.Source.Rules.Select(x => new
             {
                 request.Source.SourceId,
                 x.NodeId,
-                x.Reason
+                Type = x.Type,
+                x.Reason,
+                x.Config
             }),
-            transaction);
-
-        await connection.ExecuteAsync(InsertOverride,
-            request.Source.Overrides.Select(x => new
-                {
-                    request.Source.SourceId,
-                    x.NodeId,
-                    Config = x.Spec
-                }
-            ),
             transaction);
 
         transaction.Commit();

@@ -81,6 +81,7 @@ public partial class NodeTreePageModel : PageViewModel,
     {
         if (message.Observer is not NodeObserver node) return;
         if (node.ParentId != Guid.Empty) return;
+        Selected.Clear();
         Nodes.Remove(node);
     }
 

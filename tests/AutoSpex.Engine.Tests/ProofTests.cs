@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using Task = System.Threading.Tasks.Task;
+using System.DirectoryServices.AccountManagement;
 
 namespace AutoSpex.Engine.Tests;
 
@@ -36,18 +37,18 @@ public class ProofTests
         });
 
         var stopwatch = Stopwatch.StartNew();
-        var verification = Verification.None;
+        var verifications = new List<Verification>();
 
         for (var i = 0; i < 100; i++)
         {
             var result = await spec.RunAsync(source);
-            verification = Verification.Merge([verification, result]);
+            verifications.Add(result);
         }
 
         stopwatch.Stop();
 
         Console.WriteLine(stopwatch.ElapsedMilliseconds);
-        verification.Evaluations.Should().NotBeEmpty();
+        verifications.Should().NotBeEmpty();
     }
 
     [Test]

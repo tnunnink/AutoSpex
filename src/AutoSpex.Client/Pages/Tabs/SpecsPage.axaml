@@ -35,9 +35,9 @@
             <Button
                 HorizontalAlignment="Right"
                 Command="{Binding AddSpecCommand}"
-                Theme="{a:ControlTheme ButtonSolid}"
+                Theme="{a:ControlTheme ButtonOutline}"
                 Content="New Spec"
-                Classes="success"
+                Classes="accent"
                 VerticalAlignment="Center" />
 
         </Panel>
@@ -51,7 +51,8 @@
             HasItems="{Binding Specs.HasItems}"
             DefaultIcon="{StaticResource IconFilledClipboard}"
             DefaultMessage="No specs defined"
-            DefaultCaption="Add a spec to this collection to get started" />
+            DefaultCaption="Add a spec to this collection to get started"
+            SelectionMode="Multiple" />
 
     </Grid>
 

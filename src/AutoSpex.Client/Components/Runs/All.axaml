@@ -9,8 +9,7 @@
         <ResourceInclude Source="ResultPill.axaml" />
         <ResourceInclude Source="ResultStateItem.axaml" />
         <ResourceInclude Source="ResultStateText.axaml" />
+        <ResourceInclude Source="RunFilters.axaml" />
         <ResourceInclude Source="RunListItem.axaml" />
-        <ResourceInclude Source="RunMessage.axaml" />
-        <ResourceInclude Source="RunResult.axaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

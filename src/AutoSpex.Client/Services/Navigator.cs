@@ -59,6 +59,27 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
     }
 
     /// <summary>
+    /// Opens a page specified by the route and returns the page of type TPage if found or resolved.
+    /// If the page is not found or resolved, an InvalidOperationException is thrown.
+    /// </summary>
+    /// <param name="route">The route to identify the page to open.</param>
+    /// <typeparam name="TPage">The type of the page view model to open.</typeparam>
+    /// <returns>The page of type TPage that was opened.</returns>
+    public TPage Open<TPage>(string route) where TPage : PageViewModel
+    {
+        if (!_openPages.TryGetValue(route, out var match))
+            throw new InvalidOperationException($"Could not find page '{route}'");
+
+        if (match is not TPage page)
+            throw new InvalidOperationException($"Page '{route}' is not of type {typeof(TPage)}");
+
+        var request = new NavigationRequest(page);
+        messenger.Send(request);
+
+        return page;
+    }
+
+    /// <summary>
     /// Closes the provided <see cref="PageViewModel"/> by issuing the close cation navigation request message. 
     /// </summary>
     /// <param name="page">The page to close.</param>
@@ -126,7 +147,7 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
         var request = new NavigationRequest(page, NavigationAction.Close);
         messenger.Send(request);
         _openPages.Remove(page.Route);
-        page.IsActive = false;
+        page.Dispose();
     }
 
     /// <summary>

@@ -65,7 +65,7 @@ public static class Extensions
             KeyValuePair<string, object> pair => pair.Key,
             string text => text,
             IEnumerable enumerable => $"[{string.Join(',', enumerable.Cast<object>().Select(x => x.ToText()))}]",
-            _ => candidate?.ToString() ?? string.Empty
+            _ => candidate?.ToString() ?? "null"
         };
     }
 
@@ -147,6 +147,30 @@ public static class Extensions
     {
         if (input is null) return false;
         return string.IsNullOrEmpty(text) || input.Contains(text, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Calculates the percentage of elements in the source that satisfy the given predicate.
+    /// </summary>
+    /// <param name="source">The IEnumerable of elements to calculate the percentage from.</param>
+    /// <param name="predicate">The predicate to apply to each element.</param>
+    /// <typeparam name="T">The type of elements in the source.</typeparam>
+    /// <returns>The percentage of elements that satisfy the predicate as a double value.</returns>
+    public static double Percent<T>(this IEnumerable<T> source, Func<T, bool> predicate)
+    {
+        var total = 0;
+        var count = 0;
+
+        foreach (var item in source)
+        {
+            ++count;
+            if (predicate(item))
+            {
+                total += 1;
+            }
+        }
+
+        return count > 0 ? 100.0 * total / count : 0;
     }
 
     /// <summary>

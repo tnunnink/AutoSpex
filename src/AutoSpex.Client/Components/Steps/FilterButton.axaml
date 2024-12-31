@@ -16,12 +16,15 @@
 
         <Button
             Command="{Binding AddFitlerStepCommand}"
-            Classes="invisible-link"
+            Classes="link-invisible"
             ToolTip.Placement="BottomEdgeAlignedLeft">
 
             <StackPanel Orientation="Horizontal" Spacing="7">
-                <PathIcon Theme="{StaticResource IconFilledFunnel}" Classes="size-sm" />
-                <TextBlock Text="Filter" FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
+                <PathIcon
+                    Theme="{StaticResource IconFilledFunnel}"
+                    Classes="size-sm"
+                    Foreground="{Binding $parent[Button].Foreground}" />
+                <TextBlock Text="Filter" />
             </StackPanel>
 
             <ToolTip.Tip>
@@ -37,7 +40,7 @@
                     </StackPanel>
 
                     <TextBlock
-                        Text="Add a filter step to this specification in order to target specific candidates for verification. Each filter can contain multiple filter criteria."
+                        Text="Add a filter step in order find specific objects from the previous step. Each filter step can contain multiple filter criteria."
                         MaxWidth="300"
                         Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
                         TextWrapping="Wrap" />

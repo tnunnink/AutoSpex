@@ -1,4 +1,5 @@
 ﻿using L5Sharp.Core;
+using Action = AutoSpex.Engine.Action;
 using Task = System.Threading.Tasks.Task;
 
 namespace AutoSpex.Persistence.Tests.Sources;
@@ -48,7 +49,7 @@ public class SaveSourceTests
     }
     
     [Test]
-    public async Task SaveSource_SeededSourceWithSuppressions_ShouldBeSuccess()
+    public async Task SaveSource_SeededSourceWithSuppressRules_ShouldBeSuccess()
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
@@ -65,9 +66,9 @@ public class SaveSourceTests
         await mediator.Send(new CreateSource(source));
 
         //Add overrides to source.
-        source.AddSuppression(spec01.NodeId, "Just to test that this works");
-        source.AddSuppression(spec02.NodeId, "Just to test that this works");
-        source.AddSuppression(spec03.NodeId, "Just to test that this works");
+        source.AddRule(Action.Suppress(spec01.NodeId, "Just to test that this works"));
+        source.AddRule(Action.Suppress(spec02.NodeId, "Just to test that this works"));
+        source.AddRule(Action.Suppress(spec03.NodeId, "Just to test that this works"));
 
         var result = await mediator.Send(new SaveSource(source));
         result.IsSuccess.Should().BeTrue();
@@ -106,9 +107,9 @@ public class SaveSourceTests
         await mediator.Send(new CreateSource(source));
 
         //Add overrides to source.
-        source.AddOverride(spec01);
-        source.AddOverride(spec01);
-        source.AddOverride(spec01);
+        source.AddRule(Action.Override(spec01, "For no reasone other than testing"));
+        source.AddRule(Action.Override(spec01, "For no reasone other than testing"));
+        source.AddRule(Action.Override(spec01, "For no reasone other than testing"));
 
         var result = await mediator.Send(new SaveSource(source));
         result.IsSuccess.Should().BeTrue();

@@ -60,8 +60,8 @@
         <converters:ValueResourceKey Value="Run" Resource="IconThemedRun" />
         <converters:ValueResourceKey Value="History" Resource="IconThemedHistory" />
         <converters:ValueResourceKey Value="Settings" Resource="IconFilledCog" />
-        <converters:ValueResourceKey Value="Search" Resource="IconLineSearch" />
-        <converters:ValueResourceKey Value="Sliders" Resource="IconLineSliders" />
+        <converters:ValueResourceKey Value="Suppress" Resource="IconLineBan" />
+        <converters:ValueResourceKey Value="Override" Resource="IconFilledPencil" />
     </converters:KeyResourceConverter>
 
     <converters:KeyResourceConverter x:Key="NamedIconConverter">
@@ -76,8 +76,10 @@
         <converters:ValueResourceKey Value="IconLineArrowUp" Resource="IconLineArrowUp" />
         <converters:ValueResourceKey Value="IconLineChevronUp" Resource="IconLineChevronUp" />
         <converters:ValueResourceKey Value="IconLineChevronDown" Resource="IconLineChevronDown" />
+        <converters:ValueResourceKey Value="IconLineCircleCheck" Resource="IconLineCircleCheck" />
+        <converters:ValueResourceKey Value="IconLineDoubleCheck" Resource="IconLineDoubleCheck" />
         <converters:ValueResourceKey Value="IconLineAsteriks" Resource="IconLineAsteriks" />
-        <converters:ValueResourceKey Value="IconLineClipboard" Resource="IconLineClipboard" />
+        <converters:ValueResourceKey Value="IconLineNodes" Resource="IconLineNodes" />
         <converters:ValueResourceKey Value="IconLineSquarePlus" Resource="IconLineSquarePlus" />
         <converters:ValueResourceKey Value="IconLineSquareUp" Resource="IconLineSquareUp" />
         <converters:ValueResourceKey Value="IconLineSquareDown" Resource="IconLineSquareDown" />
@@ -99,20 +101,18 @@
         <converters:ValueResourceKey Value="IconLineListStaggered" Resource="IconLineListStaggered" />
         <converters:ValueResourceKey Value="IconLineListCheck" Resource="IconLineListCheck" />
         <converters:ValueResourceKey Value="IconLineSliders" Resource="IconLineSliders" />
-        <converters:ValueResourceKey Value="IconLineBinoculars" Resource="IconLineBinoculars" />
         <converters:ValueResourceKey Value="IconLineCalendar" Resource="IconLineCalendar" />
         <converters:ValueResourceKey Value="IconLineCircleNotch" Resource="IconLineCircleNotch" />
         <converters:ValueResourceKey Value="IconLineCircleDot" Resource="IconLineCircleDot" />
         <converters:ValueResourceKey Value="IconLineCircleHalfFill" Resource="IconLineCircleHalfFill" />
         <converters:ValueResourceKey Value="IconLineStopwatch" Resource="IconLineStopwatch" />
-        <converters:ValueResourceKey Value="IconLineParagraph" Resource="IconLineParagraph" />
         <converters:ValueResourceKey Value="IconLineMerge" Resource="IconLineMerge" />
         <converters:ValueResourceKey Value="IconFilledClipboard" Resource="IconFilledClipboard" />
         <converters:ValueResourceKey Value="IconFilledStack" Resource="IconFilledStack" />
         <converters:ValueResourceKey Value="IconFilledFolder" Resource="IconFilledFolder" />
         <converters:ValueResourceKey Value="IconFilledFolderOpen" Resource="IconFilledFolderOpen" />
         <converters:ValueResourceKey Value="IconFilledCog" Resource="IconFilledCog" />
-        <converters:ValueResourceKey Value="IconFilledCogPlay" Resource="IconFilledCogPlay" />
+        <converters:ValueResourceKey Value="IconFilledCogs" Resource="IconFilledCogs" />
         <converters:ValueResourceKey Value="IconFilledGear" Resource="IconFilledGear" />
         <converters:ValueResourceKey Value="IconFilledPlus" Resource="IconFilledPlus" />
         <converters:ValueResourceKey Value="IconFilledCheck" Resource="IconFilledCheck" />

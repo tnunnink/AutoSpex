@@ -499,6 +499,7 @@ public class Node : IEquatable<Node>
 
     /// <summary>
     /// Gets the path of the current node by concatenating the names of its ancestors.
+    /// The path does not include the current node name.
     /// </summary>
     private string GetPath()
     {

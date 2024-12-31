@@ -2,9 +2,9 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
-                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
                     xmlns:components="clr-namespace:AutoSpex.Client.Components"
-                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
 
     <Design.PreviewWith>
         <ListBox
@@ -35,67 +35,85 @@
                     Placement="Pointer" />
             </Border.ContextFlyout>
 
-            <Grid ColumnDefinitions="Auto,*,Auto">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="SourceGroup" />
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="DurationGroup" />
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="PassRateGroup" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
 
-                <PathIcon
-                    Grid.Column="0"
-                    Theme="{Binding Result, Converter={StaticResource ResultStateIconConverter}}" />
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10">
 
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" Margin="10 0">
+                    <PathIcon Theme="{Binding Result, Converter={StaticResource ResultStateIconConverter}}" />
 
-                    <Button
-                        Command="{Binding NavigateCommand}"
-                        Theme="{a:ControlTheme ButtonInvisible}"
-                        HorizontalAlignment="Left">
+                    <StackPanel Spacing="4" Margin="5 0">
+
+                        <ContentControl
+                            Content="{Binding}"
+                            ContentTemplate="{StaticResource ObserverLink}"
+                            HorizontalAlignment="Left" />
+
                         <controls:HighlightableTextBlock
-                            Text="{Binding Name}"
+                            Text="{Binding Message}"
                             HighlightedText="{Binding FilterText}"
-                            FontSize="{a:ThemeResource DefaultFontSizeMedium}"
-                            FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
-                        <Button.Styles>
-                            <Style Selector="Button:pointerover">
-                                <Setter
-                                    Property="Foreground"
-                                    Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
-                            </Style>
-                        </Button.Styles>
-                    </Button>
+                            Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
 
-                    <StackPanel Orientation="Horizontal" Spacing="5">
-                        <TextBlock Classes="faint" Text="Ran on" />
-                        <TextBlock Classes="faint" Text="{Binding RanOn}" />
-                        <TextBlock Classes="faint" Text="by" />
-                        <TextBlock Classes="faint" Text="{Binding RanBy}" />
                     </StackPanel>
 
                 </StackPanel>
 
-                <Border Grid.Column="2" Height="20">
-                    
-                    <StackPanel Orientation="Horizontal" Spacing="5"
-                                IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}">
-                        
-                        <Button
-                            Theme="{StaticResource IconButtonSmall}"
-                            properties:Icon.Theme="{StaticResource IconEllipsis}" ToolTip.Tip="Options"
-                            HorizontalAlignment="Right">
-                            <Button.Flyout>
-                                <MenuFlyout
-                                    ItemsSource="{Binding MenuItems}"
-                                    ItemContainerTheme="{StaticResource MenuActionItem}"
-                                    Placement="BottomEdgeAlignedRight" HorizontalOffset="8" VerticalOffset="5" />
-                            </Button.Flyout>
-                        </Button>
-                        
-                    </StackPanel>
-                    
-                </Border>
 
+                <ContentControl
+                    Grid.Column="1"
+                    Content="{Binding Source}"
+                    ContentTemplate="{StaticResource SourceInfoButtonFaint}"
+                    HorizontalAlignment="Right"
+                    Margin="10 0" />
+
+                <StackPanel
+                    Grid.Column="2"
+                    Orientation="Horizontal"
+                    Spacing="7"
+                    HorizontalAlignment="Right"
+                    Margin="10 0">
+
+                    <PathIcon Theme="{StaticResource IconLineStopwatch}" Classes="size-sm" />
+                    <TextBlock Text="{Binding Duration}" Classes="faint" />
+
+                </StackPanel>
+
+                <StackPanel
+                    Grid.Column="3"
+                    Orientation="Horizontal"
+                    Spacing="7"
+                    HorizontalAlignment="Right"
+                    Margin="10 0">
+
+                    <PathIcon Theme="{StaticResource IconLineCircleCheck}" Classes="size-sm" />
+                    <TextBlock Text="{Binding PassRate}" Classes="faint" />
+
+                </StackPanel>
+
+                <Button
+                    Grid.Column="4"
+                    Theme="{StaticResource IconButton}"
+                    properties:Icon.Theme="{StaticResource IconEllipsis}"
+                    Margin="15 0 5 0"
+                    ToolTip.Tip="Options">
+
+                    <Button.Flyout>
+                        <MenuFlyout
+                            ItemsSource="{Binding MenuItems}"
+                            ItemContainerTheme="{StaticResource MenuActionItem}"
+                            Placement="BottomEdgeAlignedRight" HorizontalOffset="8" VerticalOffset="5" />
+                    </Button.Flyout>
+
+                </Button>
 
             </Grid>
-
         </Border>
-
     </DataTemplate>
 
 </ResourceDictionary>

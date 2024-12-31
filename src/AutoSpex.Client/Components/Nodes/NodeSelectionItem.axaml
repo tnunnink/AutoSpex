@@ -1,0 +1,44 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+
+    <Design.PreviewWith>
+        <ListBox
+            ItemsSource="{x:Static components:TestData.SpecsNodes}"
+            ItemContainerTheme="{StaticResource ListBoxItemSimple}"
+            ItemTemplate="{DynamicResource NodeSelectionItem}"
+            Width="500" Height="250" Margin="10"
+            SelectionMode="Multiple"
+            Background="{a:ThemeResource Container1BackgroundBrush}"
+            ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="NodeSelectionItem" x:DataType="observers:NodeObserver">
+
+        <Border Padding="{a:ThemeResource ListItemPadding}">
+
+            <StackPanel Orientation="Horizontal" Spacing="7" ClipToBounds="True">
+
+                <PathIcon
+                    Theme="{Binding Type.Name, Converter={StaticResource KeyIconConverter}}" />
+
+                <TextBlock
+                    Text="{Binding Name}"
+                    FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
+
+                <TextBlock
+                    Text="{Binding Path}"
+                    Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                    TextTrimming="CharacterEllipsis"
+                    TextWrapping="NoWrap"
+                    ToolTip.Tip="{Binding Path}" />
+
+            </StackPanel>
+
+        </Border>
+
+    </DataTemplate>
+    
+</ResourceDictionary>

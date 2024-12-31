@@ -10,27 +10,28 @@
     <Design.Height>700</Design.Height>
 
     <controls:DrawerView
+        IsDrawerOpen="{Binding ShowDrawer, Mode=TwoWay}"
         DrawerMinLength="49"
         DrawerPlacement="Bottom"
         HideSplitter="False"
         DrawerOpenLength="{Binding $parent[controls:DrawerView].Bounds.Height, Converter={StaticResource MathConverter}, ConverterParameter='x / 2'}">
 
-        <Grid RowDefinitions="3,Auto,*" Margin="20">
+        <Grid RowDefinitions="3,Auto,*" Margin="20" Grid.IsSharedSizeScope="True">
 
             <ProgressBar
                 Grid.Row="0"
                 Value="{Binding Run.Progress}"
-                IsVisible="{Binding !Run.Result.IsOutcome}"
+                IsVisible="{Binding !Run.Result.IsDetermined}"
                 Background="Transparent"
                 Classes="accent"
                 CornerRadius="0"
                 MinHeight="3" />
 
-            <Grid Grid.Row="1">
+            <DockPanel Grid.Row="1" LastChildFill="False">
 
                 <TextBox
-                    HorizontalAlignment="Left"
-                    Text="{Binding Filter}"
+                    DockPanel.Dock="Left"
+                    Text="{Binding Run.FilterText}"
                     Theme="{StaticResource TextBoxOutlineHighlight}"
                     Watermark="Search results"
                     VerticalAlignment="Center"
@@ -47,11 +48,12 @@
                     </Interaction.Behaviors>
                 </TextBox>
 
-                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Spacing="10">
+                <ContentControl
+                    DockPanel.Dock="Right"
+                    Content="{Binding Run}"
+                    ContentTemplate="{StaticResource RunFilters}" />
 
-                </StackPanel>
-
-            </Grid>
+            </DockPanel>
 
             <controls:ListView
                 Grid.Row="2"
@@ -59,8 +61,7 @@
                 ItemsSource="{Binding Run.Outcomes}"
                 SelectedItem="{Binding ResultDrawer.Outcome, FallbackValue={x:Null}}"
                 ItemTemplate="{StaticResource OutcomeListItem}"
-                ItemContainerTheme="{StaticResource ListBoxItemSimple}"
-                Padding="5"
+                ItemContainerTheme="{StaticResource ListBoxItemEntry}"
                 Margin="0 20 0 0" />
 
         </Grid>

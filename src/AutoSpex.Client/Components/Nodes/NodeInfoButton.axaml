@@ -1,0 +1,45 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+
+    <Design.PreviewWith>
+        <StackPanel Spacing="20" Margin="300">
+            <ContentControl
+                Content="{x:Static components:TestData.SpecNode}"
+                ContentTemplate="{DynamicResource NodeInfoButton}" />
+            <ContentControl
+                Content="{x:Static components:TestData.SpecNode}"
+                ContentTemplate="{DynamicResource NodeInfoButton}" />
+        </StackPanel>
+    </Design.PreviewWith>
+
+
+    <DataTemplate x:Key="NodeInfoButton" x:DataType="observers:NodeObserver">
+
+        <Button
+            Command="{Binding NavigateCommand}"
+            Theme="{a:ControlTheme ButtonSubtle}"
+            ToolTip.Placement="Bottom">
+
+            <StackPanel Orientation="Horizontal" Spacing="7">
+                <PathIcon Theme="{Binding Entity, Converter={StaticResource KeyIconConverter}}" />
+                <TextBlock Text="{Binding Name}" FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
+            </StackPanel>
+
+            <ToolTip.Tip>
+                <StackPanel Orientation="Horizontal" Spacing="5" Margin="5">
+                    <PathIcon
+                        Theme="{Binding Entity, Converter={StaticResource KeyIconConverter}}" />
+                    <ContentControl
+                        Content="{Binding }"
+                        ContentTemplate="{StaticResource BreadcrumbRoute}" />
+                </StackPanel>
+            </ToolTip.Tip>
+
+        </Button>
+
+    </DataTemplate>
+
+</ResourceDictionary>

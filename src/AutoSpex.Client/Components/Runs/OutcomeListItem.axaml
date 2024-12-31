@@ -39,13 +39,20 @@
                     Placement="Pointer" />
             </Border.ContextFlyout>
 
-            <Grid ColumnDefinitions="*,Auto">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="DurationGroup" />
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="PassRateGroup" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10">
 
                     <PathIcon
                         Theme="{Binding Result, Converter={StaticResource ResultStateIconConverter}}"
-                        Classes.spinning="{Binding Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Pending}}">
+                        Classes.spinning="{Binding Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Pending}}"
+                        FontSize="14">
 
                         <PathIcon.Styles>
                             <Style Selector="PathIcon.spinning">
@@ -61,12 +68,12 @@
                                 </Style.Animations>
                             </Style>
                         </PathIcon.Styles>
+
                     </PathIcon>
 
-                    <controls:HighlightableTextBlock
-                        Text="{Binding Name}"
-                        HighlightedText="{Binding FilterText}"
-                        FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
+                    <ContentControl
+                        Content="{Binding}"
+                        ContentTemplate="{StaticResource ObserverLink}" />
 
                     <controls:HighlightableTextBlock
                         Text="{Binding Node.Model.Route, FallbackValue='Spec not found'}"
@@ -76,52 +83,44 @@
 
                 </StackPanel>
 
-                <StackPanel Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            Orientation="Horizontal"
-                            Spacing="20"
-                            MinHeight="20"
-                            IsVisible="{Binding !$parent[ListBoxItem].IsPointerOver}">
+                <StackPanel
+                    Grid.Column="1"
+                    Orientation="Horizontal"
+                    Spacing="7"
+                    HorizontalAlignment="Right"
+                    Margin="10 0">
 
-                    <TextBlock Text="{Binding Time}" Classes="faint" />
-                    <TextBlock Text="{Binding Percent}" Classes="faint" />
-
-                </StackPanel>
-
-                <StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal" Spacing="10"
-                            IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}">
-
-                    <Button
-                        IsEnabled="{Binding Result.IsSuppressible, FallbackValue={x:False}}"
-                        Theme="{StaticResource IconButtonSmall}"
-                        properties:Icon.Theme="{StaticResource IconLineBan}"
-                        ToolTip.Tip="Add Suppression"
-                        ToolTip.Placement="BottomEdgeAlignedRight">
-                        <Button.Flyout>
-                            <Flyout
-                                Placement="BottomEdgeAlignedRight"
-                                HorizontalOffset="8"
-                                VerticalOffset="2">
-                                <ContentControl
-                                    Content="{Binding }"
-                                    ContentTemplate="{StaticResource OutcomeSuppressor}" />
-                            </Flyout>
-                        </Button.Flyout>
-                    </Button>
-
-                    <Button
-                        Theme="{StaticResource IconButtonSmall}"
-                        properties:Icon.Theme="{StaticResource IconFilledCog}"
-                        ToolTip.Tip="Override" />
-
-                    <Button
-                        Command="{Binding Node.NavigateCommand, FallbackValue={x:Null}}"
-                        Theme="{StaticResource IconButtonSmall}"
-                        properties:Icon.Theme="{StaticResource IconLineLaunch}"
-                        ToolTip.Tip="Open" />
+                    <PathIcon Theme="{StaticResource IconLineStopwatch}" Classes="size-sm" />
+                    <TextBlock Text="{Binding Duration}" Classes="faint" />
 
                 </StackPanel>
 
+                <StackPanel
+                    Grid.Column="2"
+                    Orientation="Horizontal"
+                    Spacing="7"
+                    HorizontalAlignment="Right"
+                    Margin="10 0">
+
+                    <PathIcon Theme="{StaticResource IconLineCircleCheck}" Classes="size-sm" />
+                    <TextBlock Text="{Binding PassRate}" Classes="faint" />
+
+                </StackPanel>
+
+                <Button
+                    Grid.Column="3"
+                    Theme="{StaticResource IconButtonSmall}"
+                    properties:Icon.Theme="{StaticResource IconEllipsis}"
+                    Margin="15 0 5 0"
+                    ToolTip.Tip="Open">
+
+                    <Button.Flyout>
+                        <MenuFlyout
+                            ItemsSource="{Binding MenuItems}"
+                            ItemContainerTheme="{StaticResource MenuActionItem}"
+                            Placement="BottomEdgeAlignedRight" HorizontalOffset="8" VerticalOffset="5" />
+                    </Button.Flyout>
+                </Button>
 
             </Grid>
         </Border>

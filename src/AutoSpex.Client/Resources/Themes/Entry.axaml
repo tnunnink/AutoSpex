@@ -25,12 +25,8 @@
     <!-- Entry -->
     <ControlTheme x:Key="{x:Type controls:Entry}" TargetType="controls:Entry">
         <Setter Property="ButtonTheme" Value="{a:ControlTheme ButtonSubtle}" />
-        <Setter Property="CornerRadius" Value="{a:ThemeResource ButtonCornerRadius}" />
-        <Setter Property="BorderThickness" Value="{a:ThemeResource ButtonBorderThickness}" />
-        <Setter Property="Padding" Value="{a:ThemeResource ButtonPadding}" />
         <Setter Property="FontFamily" Value="{a:ThemeResource CodeFontFamily}" />
         <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeSmall}" />
-
         <Setter Property="MaxDropDownHeight" Value="300" />
         <Setter Property="MinDropDownWidth" Value="300" />
         <Setter Property="MaxDropDownWidth" Value="400" />
@@ -42,10 +38,6 @@
                     <Button
                         x:Name="PART_Button"
                         Theme="{TemplateBinding ButtonTheme}"
-                        Background="{TemplateBinding Background}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding CornerRadius}"
-                        Padding="{TemplateBinding Padding}"
                         HorizontalContentAlignment="Left"
                         IsTabStop="True"
                         Focusable="True"

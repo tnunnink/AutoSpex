@@ -18,23 +18,43 @@
 
             <controls:DefaultMessage
                 HorizontalAlignment="Center"
+                HeaderIcon="{StaticResource IconLineListCheck}"
+                Header="Results not available"
+                Message="Results will appear here when the specification is run."
+                IsVisible="{Binding Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.None}}" />
+
+            <controls:DefaultMessage
+                HorizontalAlignment="Center"
                 HeaderIcon="{StaticResource IconThemedSuppressed}"
                 Header="Result is suppressed"
-                Message="This spec was suppressed by the source configuration."
+                Message="{Binding Model.Suppression}"
                 IsVisible="{Binding Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Suppressed}}" />
 
             <controls:DefaultMessage
                 HorizontalAlignment="Center"
                 HeaderIcon="{StaticResource IconThemedInconclusive}"
                 Header="No results produced"
-                Message="No source element passed the configured filters for this spec."
+                Message="No source object passed the configured filters for this spec."
                 IsVisible="{Binding Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Inconclusive}}" />
 
             <controls:DefaultMessage
                 HorizontalAlignment="Center"
+                HeaderIcon="{StaticResource IconLineListCheck}"
+                Header="Results not persisted"
+                Message="The results for this spec were not saved when run.">
+                <controls:DefaultMessage.IsVisible>
+                    <MultiBinding Converter="{x:Static BoolConverters.And}">
+                        <Binding Path="Result.IsDetermined" FallbackValue="{x:False}" />
+                        <Binding Path="!Evaluations.HasItems" FallbackValue="{x:False}" />
+                    </MultiBinding>
+                </controls:DefaultMessage.IsVisible>
+            </controls:DefaultMessage>
+
+            <controls:DefaultMessage
+                HorizontalAlignment="Center"
                 HeaderIcon="{StaticResource IconLineSearch}"
-                Header="No results found"
-                Message="No result contains the search text that was entered.">
+                Header="No itms found"
+                Message="Could not find any items matching the current filter text.">
                 <controls:DefaultMessage.IsVisible>
                     <MultiBinding Converter="{x:Static BoolConverters.And}">
                         <Binding Path="Evaluations.HasItems" FallbackValue="{x:False}" />

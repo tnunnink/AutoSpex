@@ -13,7 +13,7 @@ internal class ListRunsHandler(IConnectionManager manager) : IRequestHandler<Lis
 {
     private const string ListRuns =
         """
-        SELECT RunId, Name, Node, Source, Result, RanOn, RanBy 
+        SELECT RunId, Name, Node, Source, Result, RanOn, RanBy, Duration, PassRate 
         FROM RUN
         ORDER BY RanOn DESC
         """;

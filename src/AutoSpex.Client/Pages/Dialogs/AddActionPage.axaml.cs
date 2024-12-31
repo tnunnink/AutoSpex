@@ -2,9 +2,9 @@
 
 namespace AutoSpex.Client.Pages;
 
-public partial class OverridesPage : UserControl
+public partial class AddActionPage : UserControl
 {
-    public OverridesPage()
+    public AddActionPage()
     {
         InitializeComponent();
     }

@@ -28,6 +28,8 @@
             <StackPanel.Styles>
                 <Style Selector="controls|Entry">
                     <Setter Property="ButtonTheme" Value="{a:ControlTheme ButtonSoft}" />
+                </Style>
+                <Style Selector="controls|Entry Button#PART_Button">
                     <Setter Property="Background" Value="{a:ThemeResource Container2BackgroundBrush}" />
                     <Setter Property="BorderThickness" Value="0 0 1 0" />
                     <Setter Property="CornerRadius" Value="0" />

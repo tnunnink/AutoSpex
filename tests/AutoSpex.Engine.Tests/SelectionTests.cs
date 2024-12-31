@@ -50,7 +50,7 @@ public class SelectionTests
     {
         var selection = new Selection("Members[0]");
 
-        selection.Alias.Should().Be("Members[0]");
+        selection.Alias.Should().Be("0");
         selection.Property.Should().Be("Members[0]");
     }
 

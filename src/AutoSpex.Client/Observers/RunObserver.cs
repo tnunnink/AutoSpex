@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoSpex.Client.Resources;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using AutoSpex.Persistence;
@@ -18,17 +19,20 @@ namespace AutoSpex.Client.Observers;
 public partial class RunObserver : Observer<Run>, IRecipient<Observer.Get<RunObserver>>
 {
     private CancellationTokenSource? _cancellation;
+    private int Total => Model.Outcomes.Count();
 
     /// <inheritdoc/>
     public RunObserver(Run model) : base(model)
     {
         Result = Model.Result;
-        
+        Node = new NodeObserver(Model.Node);
+        Source = new SourceObserver(Model.Source);
+
         Outcomes = new ObserverCollection<Outcome, OutcomeObserver>(
             refresh: () => Model.Outcomes.Select(x => new OutcomeObserver(x)).ToList(),
             count: () => Model.Outcomes.Count()
         );
-        
+
         RegisterDisposable(Node);
         RegisterDisposable(Source);
         RegisterDisposable(Outcomes);
@@ -37,20 +41,8 @@ public partial class RunObserver : Observer<Run>, IRecipient<Observer.Get<RunObs
     public override Guid Id => Model.RunId;
     public override string Name => Model.Name;
     public override string Icon => nameof(Run);
-    public DateTime RanOn => Model.RanOn;
-    public string RanBy => Model.RanBy;
-    public int Total => Model.Outcomes.Count();
-    public int Passed => Model.Outcomes.Count(x => x.Verification.Result == ResultState.Passed);
-    public int Failed => Model.Outcomes.Count(x => x.Verification.Result == ResultState.Failed);
-    public int Errored => Model.Outcomes.Count(x => x.Verification.Result == ResultState.Errored);
-    public int Inconclusive => Model.Outcomes.Count(x => x.Verification.Result == ResultState.Inconclusive);
-    public int Suppressed => Model.Outcomes.Count(x => x.Verification.Result == ResultState.Suppressed);
-    public long Duration => Model.Outcomes.Sum(x => x.Verification.Duration);
-    public string Time => $"{Model.Outcomes.Sum(x => x.Verification.Duration)} ms";
-    public bool HasResult => Model.Result > ResultState.Pending;
-    public float Progress => Total > 0 ? (float)Ran / Total * 100 : 0;
-    public NodeObserver Node => new(Model.Node);
-    public SourceObserver Source => new(Model.Source);
+    public NodeObserver Node { get; }
+    public SourceObserver Source { get; }
     public ObserverCollection<Outcome, OutcomeObserver> Outcomes { get; }
 
     [ObservableProperty] [NotifyCanExecuteChangedFor(nameof(CancelCommand))]
@@ -60,8 +52,13 @@ public partial class RunObserver : Observer<Run>, IRecipient<Observer.Get<RunObs
 
     [ObservableProperty] private ResultState _filterState = ResultState.None;
 
-    public IEnumerable<ResultState> States =>
-        [ResultState.None, ..Model.Outcomes.Select(o => o.Verification.Result).Distinct().OrderBy(r => r.Value)];
+    public string Message => $"Ran on {Model.RanOn:MMM dd, yyyy hh:mm tt} by {Model.RanBy}";
+    public string Duration => $"{Model.Duration} ms";
+    public string PassRate => $"{Model.PassRate:F1} %";
+    public float Progress => Total > 0 ? (float)Ran / Total * 100 : 0;
+    public int Count => GetFilterCount();
+    public IEnumerable<ResultState> States => GetDistinctStates();
+
 
     /// <inheritdoc />
     /// <remarks>
@@ -75,18 +72,24 @@ public partial class RunObserver : Observer<Run>, IRecipient<Observer.Get<RunObs
         await Navigator.Navigate(new RunObserver(result.Value));
     }
 
+    /// <inheritdoc />
+    public override bool Filter(string? filter)
+    {
+        return base.Filter(filter) || Message.Satisfies(filter);
+    }
+
     /// <summary>
     /// 
     /// </summary>
-    public async Task Execute(Node node, Source? source = default)
+    public async Task ExecuteLocal()
     {
         _cancellation = new CancellationTokenSource();
         var token = _cancellation.Token;
 
         try
         {
-            source ??= await LoadSource(token);
-            List<Node> nodes = [node];
+            var source = await LoadSource(token);
+            List<Node> nodes = [Node.Model];
             await ResolveReferences(nodes);
             await Model.Execute(nodes, source, OnSpecRunning, OnSpecCompleted, token);
         }
@@ -101,6 +104,7 @@ public partial class RunObserver : Observer<Run>, IRecipient<Observer.Get<RunObs
 
         Result = Model.Result;
         OnPropertyChanged(string.Empty);
+        Messenger.Send(new Finished(this));
     }
 
     /// <summary>
@@ -115,7 +119,7 @@ public partial class RunObserver : Observer<Run>, IRecipient<Observer.Get<RunObs
         MarkPending();
 
         //For visual effect only.
-        await Task.Delay(750, token);
+        await Task.Delay(500, token);
 
         try
         {
@@ -135,6 +139,7 @@ public partial class RunObserver : Observer<Run>, IRecipient<Observer.Get<RunObs
 
         Result = Model.Result;
         OnPropertyChanged(string.Empty);
+        Messenger.Send(new Finished(this));
     }
 
     /// <summary>
@@ -147,16 +152,6 @@ public partial class RunObserver : Observer<Run>, IRecipient<Observer.Get<RunObs
     /// Indicates that the run can be cancelled.
     /// </summary>
     private bool CanCancel() => Result == ResultState.Pending;
-
-    /// <summary>
-    /// Applies a filter to the outcomes of this run based on the provided result state value.
-    /// </summary>
-    /// <param name="state">The <see cref="ResultState"/> to filter by.</param>
-    [RelayCommand]
-    private void ApplyFilter(ResultState? state)
-    {
-        FilterState = state ?? ResultState.None;
-    }
 
     /// <summary>
     /// When the filter text for a run observer changes
@@ -266,7 +261,80 @@ public partial class RunObserver : Observer<Run>, IRecipient<Observer.Get<RunObs
             var hasText = x.Filter(text);
             return hasState && hasText;
         });
+
+        OnPropertyChanged(nameof(Count));
     }
+
+    /// <summary>
+    /// Gets the count of outcomes based on the filter state.
+    /// </summary>
+    private int GetFilterCount()
+    {
+        if (FilterState == ResultState.None) return Model.Outcomes.Count();
+        return Model.Outcomes.Count(x => x.Result == FilterState);
+    }
+
+    /// <summary>
+    /// Gets distinct result states of the run's outcomes for filter selection.
+    /// </summary>
+    private List<ResultState> GetDistinctStates()
+    {
+        var states = new List<ResultState> { ResultState.None };
+        states.AddRange(Model.Outcomes.Select(x => x.Result).Distinct());
+        return states.OrderBy(r => r.Value).ToList();
+    }
+
+    /// <inheritdoc />
+    protected override IEnumerable<MenuActionItem> GenerateContextItems()
+    {
+        yield return new MenuActionItem
+        {
+            Header = "View Results",
+            Icon = Resource.Find("IconLineLaunch"),
+            Command = NavigateCommand,
+            DetermineVisibility = () => HasSingleSelection
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Delete Run",
+            Icon = Resource.Find("IconFilledTrash"),
+            Classes = "danger",
+            Command = DeleteSelectedCommand
+        };
+    }
+
+    /// <inheritdoc />
+    protected override IEnumerable<MenuActionItem> GenerateMenuItems()
+    {
+        yield return new MenuActionItem
+        {
+            Header = "View Results",
+            Icon = Resource.Find("IconLineLaunch"),
+            Command = NavigateCommand
+        };
+
+        yield return new MenuActionItem
+        {
+            Header = "Delete Run",
+            Icon = Resource.Find("IconFilledTrash"),
+            Classes = "danger",
+            Command = DeleteSelectedCommand
+        };
+    }
+
+    /// <inheritdoc />
+    protected override async Task<Result> DeleteItems(IEnumerable<Observer> observers)
+    {
+        var result = await Mediator.Send(new DeleteRuns(observers.Select(x => x.Id)));
+        Notifier.ShowIfFailed(result);
+        return result;
+    }
+
+    /// <summary>
+    /// A message that indicates this run has finished executing.
+    /// </summary>
+    public record Finished(RunObserver Run);
 
     public static implicit operator Run(RunObserver observer) => observer.Model;
     public static implicit operator RunObserver(Run model) => new(model);

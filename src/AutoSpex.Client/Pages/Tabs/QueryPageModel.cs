@@ -12,11 +12,11 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace AutoSpex.Client.Pages;
 
-public partial class SourceQueryPageModel : PageViewModel
+public partial class QueryPageModel : PageViewModel
 {
     private readonly SourceObserver _source;
     
-    public SourceQueryPageModel(SourceObserver source) : base("Query")
+    public QueryPageModel(SourceObserver source) : base("Query")
     {
         _source = source;
         Query = new QueryObserver(new Query(), source);

@@ -1,7 +1,9 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
-                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
 
     <Design.PreviewWith>
         <StackPanel Spacing="50" Margin="20">
@@ -13,7 +15,7 @@
 
     <DataTemplate x:Key="NodeHeader" x:DataType="observers:NodeObserver">
 
-        <StackPanel Orientation="Horizontal" Spacing="10">
+        <StackPanel Orientation="Horizontal" Spacing="10" ClipToBounds="True">
 
             <PathIcon
                 Theme="{Binding Type.Name, Converter={StaticResource KeyIconConverter}}" />
@@ -21,6 +23,11 @@
             <ContentControl
                 Content="{Binding }"
                 ContentTemplate="{StaticResource ObserverLink}" />
+
+            <controls:HighlightableTextBlock
+                Text="{Binding Path}"
+                HighlightedText="{Binding FilterText}"
+                Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
 
         </StackPanel>
 

@@ -5,10 +5,14 @@
                     xmlns:components="clr-namespace:AutoSpex.Client.Components">
 
     <Design.PreviewWith>
-        <ContentControl
-            Content="{x:Static components:TestData.SourceTest}"
-            ContentTemplate="{DynamicResource SourceInfoButton}"
-            Margin="300" />
+        <StackPanel Spacing="20" Margin="300">
+            <ContentControl
+                Content="{x:Static components:TestData.SourceTest}"
+                ContentTemplate="{DynamicResource SourceInfoButton}" />
+            <ContentControl
+                Content="{x:Static components:TestData.SourceTest}"
+                ContentTemplate="{DynamicResource SourceInfoButtonFaint}" />
+        </StackPanel>
     </Design.PreviewWith>
 
 
@@ -17,61 +21,42 @@
         <Button
             Command="{Binding NavigateCommand}"
             Theme="{a:ControlTheme ButtonSubtle}"
-            Padding="5">
+            ToolTip.Placement="Bottom">
 
-            <PathIcon
-                Theme="{StaticResource IconFilledFileCode}"
-                Foreground="{DynamicResource IconForegroundBrushSource}" />
+            <StackPanel Orientation="Horizontal" Spacing="7">
+                <PathIcon Theme="{StaticResource IconThemedSource}" />
+                <TextBlock Text="{Binding Name}" FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
+            </StackPanel>
 
             <ToolTip.Tip>
+                <ContentControl
+                    Content="{Binding}"
+                    ContentTemplate="{StaticResource SourceInfo}"
+                    Margin="5" />
+            </ToolTip.Tip>
 
-                <StackPanel Spacing="5" Margin="10">
+        </Button>
 
-                    <TextBlock
-                        Text="{Binding Name}"
-                        FontSize="{a:ThemeResource DefaultFontSizeMedium}"
-                        FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
+    </DataTemplate>
 
-                    <DockPanel>
-                        <TextBlock
-                            DockPanel.Dock="Left"
-                            Text="Name"
-                            Classes="faint" />
-                        <TextBlock
-                            DockPanel.Dock="Right"
-                            Text="{Binding Model.TargetName}"
-                            Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
-                            HorizontalAlignment="Right"
-                            Margin="30 0 0 0" />
-                    </DockPanel>
+    <DataTemplate x:Key="SourceInfoButtonFaint" x:DataType="observers:SourceObserver">
 
-                    <DockPanel>
-                        <TextBlock
-                            DockPanel.Dock="Left"
-                            Text="Type"
-                            Classes="faint" />
-                        <TextBlock
-                            DockPanel.Dock="Right"
-                            Text="{Binding Model.TargetType}"
-                            Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
-                            HorizontalAlignment="Right"
-                            Margin="30 0 0 0" />
-                    </DockPanel>
+        <Button
+            Command="{Binding NavigateCommand}"
+            Theme="{a:ControlTheme ButtonSubtle}"
+            VerticalAlignment="Center"
+            ToolTip.Placement="Bottom">
 
-                    <DockPanel>
-                        <TextBlock
-                            DockPanel.Dock="Left"
-                            Text="Exported"
-                            Classes="faint" />
-                        <TextBlock
-                            DockPanel.Dock="Right"
-                            Text="{Binding Model.ExportedOn}"
-                            Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
-                            HorizontalAlignment="Right"
-                            Margin="30 0 0 0" />
-                    </DockPanel>
+            <StackPanel Orientation="Horizontal" Spacing="7">
+                <PathIcon Theme="{StaticResource IconThemedSource}" Classes="size-sm" />
+                <TextBlock Text="{Binding Name}" Classes="faint" />
+            </StackPanel>
 
-                </StackPanel>
+            <ToolTip.Tip>
+                <ContentControl
+                    Content="{Binding}"
+                    ContentTemplate="{StaticResource SourceInfo}"
+                    Margin="5" />
             </ToolTip.Tip>
 
         </Button>

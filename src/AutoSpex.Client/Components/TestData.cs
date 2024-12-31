@@ -8,6 +8,7 @@ using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using JetBrains.Annotations;
 using L5Sharp.Core;
+using Action = AutoSpex.Engine.Action;
 using Range = AutoSpex.Engine.Range;
 
 namespace AutoSpex.Client.Components;
@@ -279,19 +280,15 @@ public static class TestData
 
     #endregion
 
-    #region Suppressions
+    #region Rules
 
-    public static SuppressionObserver Suppression =
-        new(new Suppression(Guid.NewGuid(), "This is the reason why this spec is being suppressed."));
+    public static ActionObserver ActionSuppress =
+        new(Action.Suppress(Guid.NewGuid(), "This is the reason why this spec is being suppressed. This has to have a really long reason so that I can test the overlow text layout for the list items and other controls."));
 
-    public static ObservableCollection<SuppressionObserver> Suppresions = [Suppression, Suppression, Suppression];
+    public static ActionObserver ActionOverride =
+        new(Action.Override(Node.NewSpec(), "This is the reason why this spec is being suppressed."));
 
-    #endregion
-
-    #region Overrides
-
-    public static ObservableCollection<OverrideObserver> Overrides =
-        new(GenerateSpecs().Select(n => new OverrideObserver(n)));
+    public static ObservableCollection<ActionObserver> Actions = [ActionSuppress, ActionOverride, ActionOverride];
 
     #endregion
 }

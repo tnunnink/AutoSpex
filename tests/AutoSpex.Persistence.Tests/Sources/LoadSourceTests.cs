@@ -1,4 +1,5 @@
 ﻿using L5Sharp.Core;
+using Action = AutoSpex.Engine.Action;
 using Source = AutoSpex.Engine.Source;
 using Task = System.Threading.Tasks.Task;
 
@@ -62,9 +63,9 @@ public class LoadSourceTests
         //Create source.
         var source = new Source();
         await mediator.Send(new CreateSource(source));
-        source.AddSuppression(spec01.NodeId, "Just to test that this works");
-        source.AddSuppression(spec02.NodeId, "Just to test that this works");
-        source.AddSuppression(spec03.NodeId, "Just to test that this works");
+        source.AddRule(Action.Suppress(spec01.NodeId, "Just to test that this works"));
+        source.AddRule(Action.Suppress(spec02.NodeId, "Just to test that this works"));
+        source.AddRule(Action.Suppress(spec03.NodeId, "Just to test that this works"));
         await mediator.Send(new SaveSource(source));
 
         var result = await mediator.Send(new LoadSource(source.SourceId));
@@ -104,9 +105,9 @@ public class LoadSourceTests
         //Create source.
         var source = new Source();
         await mediator.Send(new CreateSource(source));
-        source.AddOverride(spec01);
-        source.AddOverride(spec01);
-        source.AddOverride(spec01);
+        source.AddRule(Action.Override(spec01, "For no reasone other than testing"));
+        source.AddRule(Action.Override(spec01, "For no reasone other than testing"));
+        source.AddRule(Action.Override(spec01, "For no reasone other than testing"));
         await mediator.Send(new SaveSource(source));
 
         var result = await mediator.Send(new LoadSource(source.SourceId));

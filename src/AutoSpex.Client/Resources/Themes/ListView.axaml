@@ -92,10 +92,11 @@
                                 ItemContainerTheme="{TemplateBinding ItemContainerTheme}"
                                 IsVisible="{Binding ItemCount, RelativeSource={RelativeSource TemplatedParent}}"
                                 AutoScrollToSelectedItem="{TemplateBinding AutoScrollToSelectedItem}"
-                                SelectionMode="{TemplateBinding SelectionMode}"
+                                SelectionMode="{Binding SelectionMode, RelativeSource={RelativeSource TemplatedParent}}"
                                 BorderBrush="{a:ThemeResource Container1BorderBrush}"
                                 CornerRadius="5"
-                                Padding="{TemplateBinding Padding}" />
+                                Padding="{TemplateBinding Padding}"
+                                ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
 
                         </Panel>
 

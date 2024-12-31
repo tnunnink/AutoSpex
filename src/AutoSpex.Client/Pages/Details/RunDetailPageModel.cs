@@ -18,7 +18,6 @@ public partial class RunDetailPageModel(RunObserver run) : DetailPageModel(run.N
     /// <remarks>
     /// This page expects the provided run object to be fully loaded. 
     /// Only execute runs that have not been run (i.e. new run instances).
-    /// Once the run finishes execution, persist the result, and notify the user.
     /// </remarks>
     public override async Task Load()
     {
@@ -26,12 +25,12 @@ public partial class RunDetailPageModel(RunObserver run) : DetailPageModel(run.N
 
         if (Run.Result != ResultState.None) return;
         await Run.Execute();
-
+        
         var result = await Mediator.Send(new PostRun(Run));
         if (Notifier.ShowIfFailed(result)) return;
 
         Notifier.ShowSuccess("Run completed successfully",
-            $"{Run.Node.Name} {Run.Result} for {Run.Source.Name} in {Run.Time}.");
+            $"{Run.Node.Name} {Run.Result} for {Run.Source.Name} in {Run.Duration}.");
     }
 
     [RelayCommand]

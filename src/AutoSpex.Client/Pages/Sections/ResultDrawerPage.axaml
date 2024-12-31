@@ -42,7 +42,8 @@
 
                     <ContentControl
                         Content="{Binding Outcome}"
-                        ContentTemplate="{StaticResource OutcomeStatus}">
+                        ContentTemplate="{StaticResource OutcomeStatus}"
+                        Margin="0 1 0 0">
                         <TextBlock.IsVisible>
                             <MultiBinding Converter="{x:Static BoolConverters.And}">
                                 <Binding Path="Outcome" Converter="{x:Static ObjectConverters.IsNotNull}" />
@@ -82,6 +83,31 @@
                 </TextBox>
 
                 <StackPanel Grid.Column="2" HorizontalAlignment="Right" Orientation="Horizontal" Spacing="10">
+
+                    <Button
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconFilledArrowDown}"
+                        ToolTip.Tip="Export"
+                        ToolTip.Placement="BottomEdgeAlignedRight">
+                    </Button>
+
+                    <Button
+                        IsEnabled="{Binding Outcome.Result.IsFaulted, FallbackValue={x:False}}"
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconLineSliders}"
+                        ToolTip.Tip="Add Suppression"
+                        ToolTip.Placement="BottomEdgeAlignedRight">
+                        <Button.Flyout>
+                            <Flyout
+                                Placement="BottomEdgeAlignedRight"
+                                HorizontalOffset="8"
+                                VerticalOffset="2">
+                                <ContentControl
+                                    Content="{Binding }"
+                                    ContentTemplate="{StaticResource OutcomeSuppressor}" />
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
 
                     <Button
                         Theme="{StaticResource IconButton}"

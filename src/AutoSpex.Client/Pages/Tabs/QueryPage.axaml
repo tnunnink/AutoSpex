@@ -5,8 +5,8 @@
              xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors"
              xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
-             x:Class="AutoSpex.Client.Pages.SourceQueryPage"
-             x:DataType="pages:SourceQueryPageModel">
+             x:Class="AutoSpex.Client.Pages.QueryPage"
+             x:DataType="pages:QueryPageModel">
 
     <controls:DrawerView
         IsDrawerOpen="{Binding ShowDrawer, Mode=TwoWay}"

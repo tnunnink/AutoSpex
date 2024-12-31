@@ -9,14 +9,14 @@
         <ListBox
             ItemsSource="{x:Static components:TestData.SpecsNodes}"
             ItemContainerTheme="{StaticResource ListBoxItemSimple}"
-            ItemTemplate="{DynamicResource NodeListItemSimple}"
+            ItemTemplate="{DynamicResource NodeSimpleItem}"
             Width="500" Height="250" Margin="10"
             SelectionMode="Multiple"
             Background="{a:ThemeResource Container1BackgroundBrush}"
             ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
     </Design.PreviewWith>
 
-    <DataTemplate x:Key="NodeListItemSimple" x:DataType="observers:NodeObserver">
+    <DataTemplate x:Key="NodeSimpleItem" x:DataType="observers:NodeObserver">
 
         <Border Padding="{a:ThemeResource ListItemPadding}">
 

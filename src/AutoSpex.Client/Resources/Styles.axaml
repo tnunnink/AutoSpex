@@ -83,7 +83,7 @@
 
     <Style Selector="TextBlock.heading">
         <Setter Property="FontWeight" Value="{a:ThemeResource HeadingFontWeightMedium}" />
-        <Setter Property="FontSize" Value="15" />
+        <Setter Property="FontSize" Value="{a:ThemeResource HeadingFontSizeMedium}" />
     </Style>
 
     <Style Selector="TextBlock.faint">
@@ -117,35 +117,76 @@
     </Style>
 
     <Style Selector="Button.link-text">
-        <Setter Property="Theme" Value="{a:ControlTheme ButtonSubtle}" />
-        <Setter Property="Padding" Value="2" />
-        <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+        <Setter Property="Theme" Value="{a:ControlTheme ButtonInvisible}" />
 
-        <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="BorderBrush" Value="Transparent" />
-            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+        <Style Selector="^:pointerover">
+            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccentPointerOver}" />
         </Style>
     </Style>
 
-    <Style Selector="Button.invisible-link">
+    <Style Selector="Button.link-invisible">
         <Setter Property="Theme" Value="{a:ControlTheme ButtonInvisible}" />
         <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushDefault}" />
 
-        <Style Selector="^ PathIcon">
-            <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushDefault}" />
+        <Style Selector="^:pointerover">
+            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccentPointerOver}" />
         </Style>
+    </Style>
+
+    <Style Selector="Button.stack-single">
+        <Setter Property="Theme" Value="{a:ControlTheme ButtonOutline}" />
+        <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushSecondary}" />
+        <Setter Property="BorderBrush" Value="{a:ThemeResource Container1BorderBrush}" />
+        <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeSmall}" />
+        <Setter Property="FontWeight" Value="{a:ThemeResource HeadingFontWeightSmall}" />
+    </Style>
+
+    <Style Selector="Button.stack-left">
+        <Setter Property="Theme" Value="{a:ControlTheme ButtonOutline}" />
+        <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushSecondary}" />
+        <Setter Property="BorderBrush" Value="{a:ThemeResource Container1BorderBrush}" />
+        <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeSmall}" />
+        <Setter Property="FontWeight" Value="{a:ThemeResource HeadingFontWeightSmall}" />
+        <Setter Property="CornerRadius" Value="4 0 0 4" />
 
         <Style Selector="^:pointerover">
-            <Setter
-                Property="Foreground"
-                Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+            <Setter Property="ZIndex" Value="10" />
+        </Style>
+        <Style Selector="^:focus">
+            <Setter Property="ZIndex" Value="10" />
+        </Style>
+    </Style>
 
-            <Style Selector="^ PathIcon">
-                <Setter
-                    Property="Foreground"
-                    Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
-            </Style>
+    <Style Selector="Button.stack-center">
+        <Setter Property="Theme" Value="{a:ControlTheme ButtonOutline}" />
+        <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushSecondary}" />
+        <Setter Property="BorderBrush" Value="{a:ThemeResource Container1BorderBrush}" />
+        <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeSmall}" />
+        <Setter Property="FontWeight" Value="{a:ThemeResource HeadingFontWeightSmall}" />
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="Margin" Value="-1 0 -1 0" />
+
+        <Style Selector="^:pointerover">
+            <Setter Property="ZIndex" Value="10" />
+        </Style>
+        <Style Selector="^:focus">
+            <Setter Property="ZIndex" Value="10" />
+        </Style>
+    </Style>
+
+    <Style Selector="Button.stack-right">
+        <Setter Property="Theme" Value="{a:ControlTheme ButtonOutline}" />
+        <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushSecondary}" />
+        <Setter Property="BorderBrush" Value="{a:ThemeResource Container1BorderBrush}" />
+        <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeSmall}" />
+        <Setter Property="FontWeight" Value="{a:ThemeResource HeadingFontWeightSmall}" />
+        <Setter Property="CornerRadius" Value="0 4 4 0" />
+
+        <Style Selector="^:pointerover">
+            <Setter Property="ZIndex" Value="10" />
+        </Style>
+        <Style Selector="^:focus">
+            <Setter Property="ZIndex" Value="10" />
         </Style>
     </Style>
 

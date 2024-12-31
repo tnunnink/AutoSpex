@@ -187,6 +187,8 @@ public class Criterion
     /// </remarks>
     public string GetExpected()
     {
+        if (Argument is null) return string.Empty;
+        
         return Argument switch
         {
             Criterion criterion => criterion.GetExpected(),

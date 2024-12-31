@@ -48,7 +48,7 @@ public partial class NodeDetailPageModel : DetailPageModel
         }
 
         result = Node.IsVirtual ? await CreateNode() : Result.Ok();
-        
+
         return await base.Save(result);
     }
 
@@ -67,11 +67,14 @@ public partial class NodeDetailPageModel : DetailPageModel
     [RelayCommand]
     private async Task Run()
     {
-        var result = await Mediator.Send(new NewRun(Node.Id));
-        if (Notifier.ShowIfFailed(result)) return;
+        if (Node.Type == NodeType.Spec)
+        {
+            var page = Navigator.Open<SpecPageModel>($"Spec/{Node.Id}/Spec");
+            await page.RunSpec();
+            return;
+        }
 
-        var run = new RunObserver(result.Value);
-        await Navigator.Navigate(() => new RunDetailPageModel(run));
+        await Node.RunCommand.ExecuteAsync(null);
     }
 
     /// <inheritdoc />
@@ -88,7 +91,7 @@ public partial class NodeDetailPageModel : DetailPageModel
 
         await Navigator.Navigate(() => new VariablesPageModel(Node));
         await Navigator.Navigate(() => new HistoryPageModel(Node));
-        await Navigator.Navigate(() => new CommentsPageModel(Node));
+        /*await Navigator.Navigate(() => new CommentsPageModel(Node));*/
         await Navigator.Navigate(() => new InfoPageModel(Node));
     }
 

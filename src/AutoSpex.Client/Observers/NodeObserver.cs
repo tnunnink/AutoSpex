@@ -172,12 +172,10 @@ public partial class NodeObserver : Observer<Node>,
     }
 
     /// <summary>
-    /// Command to run only selected specs from the parent container.
+    /// Command to run this node agains the target source and navigate a new run detail page.
+    /// Runs are created and configured as a request to the database. This will populate the run with all descendant specs.
+    /// The created run is then passed to the run detail page which will execute the run and display the results.
     /// </summary>
-    /// <returns>A task representing the asynchronous operation.</returns>
-    /// <remarks>
-    /// This command will allow the user to select which specs or nodes to run instead of running all descendants.
-    /// </remarks>
     [RelayCommand]
     private async Task Run()
     {

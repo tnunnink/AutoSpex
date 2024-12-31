@@ -27,7 +27,7 @@
 
             <Border.Styles>
                 <Style Selector="controls|HighlightableTextBlock">
-                    <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushSecondary}" />
+                    <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrush}" />
                     <Setter Property="HighlightedText"
                             Value="{Binding #RootBorder.((observers:EvaluationObserver)DataContext).FilterText, FallbackValue={x:Null}}" />
                     <Setter Property="TextWrapping" Value="NoWrap" />
@@ -48,10 +48,7 @@
                 <TextBlock Text="Expected" />
                 <controls:HighlightableTextBlock Text="{Binding Candidate}" />
                 <TextBlock Text="to have" />
-
-                <controls:HighlightableTextBlock
-                    Text="{Binding Criteria}"
-                    Foreground="{a:ThemeResource DefaultForegroundBrush}" />
+                <controls:HighlightableTextBlock Text="{Binding Criteria}" />
 
                 <controls:HighlightableTextBlock
                     Text="{Binding Expected}"
@@ -70,8 +67,8 @@
 
                     <controls:HighlightableTextBlock
                         Text="{Binding Actual}"
-                        Classes.success="{Binding Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Passed}}"
-                        Classes.danger="{Binding Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Failed}}" />
+                        Foreground="{DynamicResource TypeGroupForegroundBrushText}" />
+
                 </StackPanel>
 
                 <StackPanel

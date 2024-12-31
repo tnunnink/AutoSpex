@@ -1,0 +1,42 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine">
+
+    <Design.PreviewWith>
+        <StackPanel Spacing="10" Margin="20" Orientation="Horizontal">
+            <a:ToggleThemeButton Theme="{a:ControlTheme ToggleThemeButtonSoft}" />
+            <ContentControl
+                Content="{x:Static engine:ActionType.Suppress}"
+                ContentTemplate="{DynamicResource ActionLabel}" />
+            <ContentControl
+                Content="{x:Static engine:ActionType.Override}"
+                ContentTemplate="{DynamicResource ActionLabel}" />
+        </StackPanel>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="ActionLabel" x:DataType="engine:ActionType">
+
+        <Border
+            Background="{a:ThemeResource ControlBackgroundBrushSoftWarningDisabled}"
+            BorderBrush="{a:ThemeResource ControlBackgroundBrushSoftWarningDisabled}"
+            BorderThickness="1"
+            Padding="8 4"
+            VerticalAlignment="Center"
+            CornerRadius="20">
+
+            <StackPanel Orientation="Horizontal" Spacing="7">
+                <PathIcon
+                    Theme="{Binding Name, Converter={StaticResource KeyIconConverter}}"
+                    Foreground="{a:ThemeResource ControlForegroundBrushSoftWarningReadOnly}"
+                    Classes="size-sm" />
+                <TextBlock
+                    Text="{Binding Name}"
+                    FontWeight="{a:ThemeResource HeadingFontWeightSmall}"
+                    Foreground="{a:ThemeResource ControlForegroundBrushSoftWarningReadOnly}" />
+            </StackPanel>
+
+        </Border>
+
+    </DataTemplate>
+</ResourceDictionary>

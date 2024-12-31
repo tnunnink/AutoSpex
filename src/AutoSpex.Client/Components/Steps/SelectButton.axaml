@@ -16,12 +16,15 @@
 
         <Button
             Command="{Binding AddSelectStepCommand}"
-            Classes="invisible-link"
+            Classes="link-invisible"
             ToolTip.Placement="BottomEdgeAlignedLeft">
 
             <StackPanel Orientation="Horizontal" Spacing="7">
-                <PathIcon Theme="{StaticResource IconFilledHand}" Classes="size-sm" />
-                <TextBlock Text="Select" FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
+                <PathIcon
+                    Theme="{StaticResource IconFilledHand}"
+                    Foreground="{Binding $parent[Button].Foreground}"
+                    Classes="size-sm" />
+                <TextBlock Text="Select" />
             </StackPanel>
 
             <ToolTip.Tip>
@@ -37,7 +40,7 @@
                     </StackPanel>
 
                     <TextBlock
-                        Text="Add a selection step to obtain specific values of the current object. This will change the input for subsequent steps of the specification."
+                        Text="Add a select step to obtain specific values from the current object(s). This will change the input for subsequent steps."
                         MaxWidth="300"
                         Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
                         TextWrapping="Wrap" />

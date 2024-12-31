@@ -10,8 +10,7 @@ namespace AutoSpex.Engine;
 /// </summary>
 public class Source()
 {
-    private readonly Dictionary<Guid, Suppression> _suppressions = [];
-    private readonly Dictionary<Guid, Node> _overrides = [];
+    private readonly Dictionary<Guid, Action> _rules = [];
 
     /// <summary>
     /// Creates a new <see cref="Source"/> with no content. 
@@ -103,24 +102,17 @@ public class Source()
     public L5X? Content { get; private set; }
 
     /// <summary>
-    /// Represents the collection of nodes that should be ignored when this source is run.
-    /// These nodes will be excluded from processing or consideration within the specified context.
-    /// The user can add, remove, or clear the ignored nodes as needed.
+    /// The set of rules to be applied to specifications when this source is run. A rule will define whether to suppress
+    /// or override the configuration of a specification. Each rule corresponds to a single node for this source and
+    /// will be ustilized to alter the outcomes of specs when this source is run.
     /// </summary>
     [JsonInclude]
-    public IEnumerable<Suppression> Suppressions => _suppressions.Values;
-
-    /// <summary>
-    /// Gets the collection of <see cref="Override"/> objects representing the overrides that allow the user to
-    /// change the configuration of a spec when this source is run.
-    /// </summary>
-    [JsonInclude]
-    public IEnumerable<Node> Overrides => _overrides.Values;
+    public IEnumerable<Action> Rules => _rules.Values;
 
     /// <summary>
     /// Represents an empty source object with default property values and an empty source id.
     /// </summary>
-    public static Source Empty => new() { SourceId = Guid.Empty };
+    public static Source Empty(string? name = default) => new() { SourceId = Guid.Empty, Name = name ?? "New Source" };
 
     /// <summary>
     /// Updates the internal <see cref="Content"/> of the source with the provided L5X. 
@@ -144,82 +136,40 @@ public class Source()
     }
 
     /// <summary>
-    /// Adds the specified node as an override to the source.
+    /// Adds a new rule to the Source based on the provided Rule.
     /// </summary>
-    /// <param name="node">The node to add as an override.</param>
-    public void AddOverride(Node node)
+    /// <param name="action">The Rule object to be added. Must not be null.</param>
+    public void AddRule(Action action)
     {
-        ArgumentNullException.ThrowIfNull(node);
-        _overrides[node.NodeId] = node;
+        ArgumentNullException.ThrowIfNull(action);
+        _rules[action.NodeId] = action;
     }
 
     /// <summary>
-    /// Removes the specified node override from the source.
+    /// Removes a specified rule from the Source based on the provided rule parameter.
     /// </summary>
-    /// <param name="node">The node to remove as an override.</param>
-    public void RemoveOverride(Node node)
+    /// <param name="action">The rule to be removed from the Source.</param>
+    public void RemoveRule(Action action)
     {
-        ArgumentNullException.ThrowIfNull(node);
-        _overrides.Remove(node.NodeId);
+        ArgumentNullException.ThrowIfNull(action);
+        _rules.Remove(action.NodeId);
     }
 
     /// <summary>
-    /// Clears all overrides stored in the source.
+    /// Clears all rules associated with this source.
     /// </summary>
-    public void ClearOverrides() => _overrides.Clear();
+    public void ClearRules() => _rules.Clear();
 
     /// <summary>
-    /// Adds a suppression to the source with the specified node ID and reason.
-    /// </summary>
-    /// <param name="nodeId">The ID of the node to be suppressed.</param>
-    /// <param name="reason">The reason for the suppression.</param>
-    /// <exception cref="ArgumentException">Thrown if the nodeId is empty or if the reason is null or empty.</exception>
-    public void AddSuppression(Guid nodeId, string reason)
-    {
-        if (nodeId == Guid.Empty)
-            throw new ArgumentException("Supupressions require a non-empty node id");
-
-        if (string.IsNullOrEmpty(reason))
-            throw new ArgumentException("Suppressions require a valid reason.");
-
-        _suppressions[nodeId] = new Suppression(nodeId, reason);
-    }
-
-    /// <summary>
-    /// Adds a suppression for a specific node identified by its unique nodeId in the source.
-    /// </summary>
-    /// <param name="suppression">The suppression object containing information about the node to suppress.</param>
-    public void AddSuppression(Suppression suppression)
-    {
-        ArgumentNullException.ThrowIfNull(suppression);
-        _suppressions[suppression.NodeId] = suppression;
-    }
-
-    /// <summary>
-    /// Removes the specified suppression entry corresponding to the given suppression from the Source object.
-    /// </summary>
-    /// <param name="suppression">The suppression entry to be removed.</param>
-    public void RemoveSuppression(Suppression suppression)
-    {
-        ArgumentNullException.ThrowIfNull(suppression);
-        _suppressions.Remove(suppression.NodeId);
-    }
-
-    /// <summary>
-    /// Clears the list of nodes to suppress for this source.
-    /// </summary>
-    public void ClearSuppressions() => _suppressions.Clear();
-
-    /// <summary>
-    /// Applies overrides for the specified nodes based on the stored specifications in the Source.
+    /// Applies overrides for the specified nodes based on the stored rules defined in the Source.
     /// </summary>
     /// <param name="nodes">The collection of nodes to apply the overrides to.</param>
     public void Override(IEnumerable<Node> nodes)
     {
         foreach (var node in nodes)
         {
-            if (!_overrides.TryGetValue(node.NodeId, out var match)) continue;
-            node.Configure(match.Spec);
+            if (!_rules.TryGetValue(node.NodeId, out var rule)) continue;
+            node.Configure(rule.Config);
         }
     }
 
@@ -231,8 +181,11 @@ public class Source()
     public bool Suppresses(Outcome outcome)
     {
         ArgumentNullException.ThrowIfNull(outcome);
-        if (!_suppressions.TryGetValue(outcome.NodeId, out var suppression)) return false;
-        outcome.Suppress(suppression.Reason);
+
+        if (!_rules.TryGetValue(outcome.NodeId, out var rule)) return false;
+        if (rule.Type != ActionType.Suppress) return false;
+
+        outcome.Suppress(rule.Reason);
         return true;
     }
 
@@ -253,11 +206,8 @@ public class Source()
             Content = Content
         };
 
-        foreach (var node in _overrides.Values)
-            duplicate.AddOverride(node);
-
-        foreach (var suppression in _suppressions.Values)
-            duplicate.AddSuppression(suppression);
+        foreach (var rule in _rules.Values)
+            duplicate.AddRule(rule);
 
         return duplicate;
     }

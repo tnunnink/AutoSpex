@@ -134,15 +134,16 @@
         <Setter Property="Theme" Value="{a:ControlTheme ButtonSubtle}" />
         <Setter Property="Width" Value="300" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="Padding" Value="10" />
         <Setter Property="Content">
             <Template>
-                <StackPanel Spacing="7">
-                    <StackPanel Orientation="Horizontal" Spacing="7">
+                <StackPanel Spacing="8">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
                         <PathIcon
                             Theme="{StaticResource IconThemedCollection}" />
                         <TextBlock
                             Text="Collection"
-                            FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                            FontSize="{a:ThemeResource DefaultFontSizeMedium}"
                             FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
                     </StackPanel>
 
@@ -160,10 +161,11 @@
         <Setter Property="Theme" Value="{a:ControlTheme ButtonSubtle}" />
         <Setter Property="Width" Value="300" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="Padding" Value="10" />
         <Setter Property="Content">
             <Template>
-                <StackPanel Spacing="7">
-                    <StackPanel Orientation="Horizontal" Spacing="7">
+                <StackPanel Spacing="8">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
                         <PathIcon
                             Theme="{StaticResource IconThemedSpec}" />
                         <TextBlock
@@ -186,10 +188,11 @@
         <Setter Property="Theme" Value="{a:ControlTheme ButtonSubtle}" />
         <Setter Property="Width" Value="300" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="Padding" Value="10" />
         <Setter Property="Content">
             <Template>
-                <StackPanel Spacing="7">
-                    <StackPanel Orientation="Horizontal" Spacing="7">
+                <StackPanel Spacing="8">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
                         <PathIcon
                             Theme="{StaticResource IconThemedSource}"
                             Classes="centered" />

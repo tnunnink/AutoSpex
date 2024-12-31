@@ -22,7 +22,6 @@
 
                 <StackPanel Spacing="4">
                     <StackPanel Orientation="Horizontal" Spacing="7">
-                        <PathIcon Theme="{StaticResource IconLineBan}" />
                         <TextBlock
                             Text="Add Suppression"
                             FontSize="{a:ThemeResource DefaultFontSizeMedium}"

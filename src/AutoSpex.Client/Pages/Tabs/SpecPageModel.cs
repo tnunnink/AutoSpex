@@ -3,7 +3,6 @@ using AutoSpex.Client.Observers;
 using AutoSpex.Client.Shared;
 using AutoSpex.Persistence;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using FluentResults;
 
 namespace AutoSpex.Client.Pages;
@@ -11,8 +10,8 @@ namespace AutoSpex.Client.Pages;
 public partial class SpecPageModel(NodeObserver node) : PageViewModel("Spec")
 {
     public override string Route => $"{node.Type}/{node.Id}/{Title}";
-    public override string Icon => "IconLineClipboard";
-    
+    public override string Icon => "IconFilledClipboard";
+
     [ObservableProperty] private SpecObserver? _spec;
 
     [ObservableProperty] private bool _showDrawer;
@@ -52,8 +51,7 @@ public partial class SpecPageModel(NodeObserver node) : PageViewModel("Spec")
     /// Uses the current test runner page to execeute this specification.
     /// Opens the runner drawer if not alread open.
     /// </summary>
-    [RelayCommand]
-    private async Task Test()
+    public async Task RunSpec()
     {
         if (Spec is null || ResultDrawer is null) return;
 
@@ -61,9 +59,8 @@ public partial class SpecPageModel(NodeObserver node) : PageViewModel("Spec")
         if (Notifier.ShowIfFailed(result)) return;
 
         var run = new RunObserver(result.Value);
-        var copy = node.Model.Copy();
-        copy.Configure(Spec);
-        await run.Execute(copy);
+        run.Node.Model.Configure(Spec);
+        await run.ExecuteLocal();
 
         ResultDrawer.Outcome = run.Outcomes.Count == 1 ? run.Outcomes[0] : null;
         ShowDrawer = true;

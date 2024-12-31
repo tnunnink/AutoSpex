@@ -3,6 +3,7 @@ using AutoSpex.Engine;
 using FluentAssertions;
 using JetBrains.dotMemoryUnit;
 using L5Sharp.Core;
+using Action = System.Action;
 
 namespace AutoSpex.Client.Tests.ObserverTests;
 

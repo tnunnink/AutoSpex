@@ -1,0 +1,144 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+             x:Class="AutoSpex.Client.Pages.AddActionPage"
+             x:DataType="pages:AddActionPageModel">
+
+    <controls:Prompt
+        Header="Add Action"
+        HeaderIcon="{StaticResource IconLineSliders}"
+        CancelButtonTheme="{a:ControlTheme ButtonSoft}"
+        CancelCommandParameter="{x:Null}"
+        ActionButtonText="Add"
+        ActionButtonTheme="{a:ControlTheme ButtonSolid}"
+        ActionCommand="{Binding AddCommand}"
+        ActionCommandParameter="{Binding $parent[Window]}"
+        Classes="accent">
+
+
+        <StackPanel Spacing="20">
+
+            <DockPanel>
+
+                <Label
+                    DockPanel.Dock="Left"
+                    Content="Action"
+                    Theme="{a:ControlTheme LabelFormControlLabel}"
+                    Width="60" />
+
+                <Border Background="{a:ThemeResource Container2BackgroundBrush}"
+                        HorizontalAlignment="Left"
+                        CornerRadius="{a:ThemeResource ButtonCornerRadius}">
+
+                    <TabStrip
+                        SelectedItem="{Binding Type}"
+                        ItemsSource="{Binding Actions}"
+                        ItemContainerTheme="{StaticResource TabStripItemSoft}"
+                        BorderThickness="0"
+                        Padding="5">
+                        <TabStrip.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" Spacing="5" />
+                            </ItemsPanelTemplate>
+                        </TabStrip.ItemsPanel>
+                        <TabStrip.Styles>
+                            <Style Selector="TabStrip > TabStripItem">
+                                <Setter Property="Padding" Value="5" />
+                            </Style>
+                            <Style Selector="TabStrip > TabStripItem:selected">
+                                <Setter Property="Background"
+                                        Value="{a:ThemeResource ControlBackgroundBrushSolidAccent}" />
+                                <Setter Property="BorderBrush"
+                                        Value="{a:ThemeResource ControlBackgroundBrushSolidAccent}" />
+                                <Setter Property="Foreground"
+                                        Value="{a:ThemeResource ControlForegroundBrushSolidAccent}" />
+                                <Style Selector="^:pointerover">
+                                    <Setter Property="Background"
+                                            Value="{a:ThemeResource ControlBackgroundBrushSolidAccent}" />
+                                    <Setter Property="BorderBrush"
+                                            Value="{a:ThemeResource ControlBackgroundBrushSolidAccent}" />
+                                    <Setter Property="Foreground"
+                                            Value="{a:ThemeResource ControlForegroundBrushSolidAccent}" />
+                                </Style>
+                            </Style>
+                        </TabStrip.Styles>
+                    </TabStrip>
+
+                </Border>
+
+            </DockPanel>
+
+            <DockPanel>
+
+                <Label
+                    DockPanel.Dock="Left"
+                    Content="Node"
+                    Theme="{a:ControlTheme LabelFormControlLabel}"
+                    Width="60" />
+
+                <controls:Entry
+                    Watermark="Select specification"
+                    Value="{Binding Node}"
+                    ItemTemplate="{StaticResource NodeSelectionItem}"
+                    CommitCommand="{Binding UpdateNodeCommand}"
+                    Populate="{Binding PopulateNodes}"
+                    MinDropDownWidth="{Binding $self.Bounds.Width}"
+                    IsEmpty="{Binding Node, Converter={x:Static ObjectConverters.IsNull}}"
+                    ButtonTheme="{a:ControlTheme ButtonOutline}"
+                    FontFamily="{a:ThemeResource DefaultFontFamily}">
+
+                    <controls:Entry.ValueTemplate>
+                        <DataTemplate x:DataType="observers:NodeObserver">
+                            <StackPanel Orientation="Horizontal" Spacing="7" ClipToBounds="True">
+                                <PathIcon
+                                    Theme="{Binding Type.Name, Converter={StaticResource KeyIconConverter}}" />
+                                <TextBlock
+                                    Text="{Binding Name}"
+                                    FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
+                                <TextBlock
+                                    Text="{Binding Path}"
+                                    Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="NoWrap"
+                                    ToolTip.Tip="{Binding Path}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </controls:Entry.ValueTemplate>
+
+                    <controls:Entry.Styles>
+                        <Style Selector="controls|Entry Button#PART_Button">
+                            <Setter Property="BorderBrush" Value="{a:ThemeResource Container1BorderBrush}" />
+                            <Setter Property="Padding" Value="10 7" />
+                        </Style>
+                    </controls:Entry.Styles>
+
+                </controls:Entry>
+
+            </DockPanel>
+
+            <DockPanel>
+
+                <Label
+                    Content="Reason"
+                    Theme="{a:ControlTheme LabelFormControlLabel}"
+                    Width="60"
+                    VerticalAlignment="Top"
+                    Margin="0 5" />
+
+                <TextBox
+                    Text="{Binding Reason}"
+                    Theme="{StaticResource TextBoxOutlineHighlight}"
+                    Watermark="Enter the reasoning for this rule. Why does this spec differ for this source?"
+                    VerticalContentAlignment="Top"
+                    Width="400" MinHeight="80"
+                    TextWrapping="Wrap" />
+
+            </DockPanel>
+
+        </StackPanel>
+
+    </controls:Prompt>
+</UserControl>
