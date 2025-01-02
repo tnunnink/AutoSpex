@@ -39,16 +39,18 @@ public class ReplaceObserver(Criterion model, Node node) : Observer<Criterion>(m
     {
         var updated = Criteria.Replace(search, replace, StringComparison.OrdinalIgnoreCase);
 
-        //todo maybe this needs to be reworked now. Should we include the step type for the criterion?
         try
         {
-            /*if (!TypeGroup.Criterion.TryParse(updated, out var criterion))
+            if (TypeGroup.Criterion.TryParse(updated, out var parsed) && parsed is Criterion criterion)
             {
-                return Result.Fail("");
+                Model.Property = criterion.Property;
+                Model.Negation = criterion.Negation;
+                Model.Operation = criterion.Operation;
+                Model.Argument = criterion.Argument;
+                return Result.Ok();
             }
 
-            Model.Update(updated);*/
-            return Result.Ok();
+            return Result.Fail($"Unable to parse replaced criterion text '{updated}'");
         }
         catch (FormatException e)
         {

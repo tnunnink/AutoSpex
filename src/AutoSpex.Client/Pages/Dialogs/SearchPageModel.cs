@@ -32,7 +32,6 @@ public partial class SearchPageModel : PageViewModel
 
     [ObservableProperty] private ReplaceObserver? _selected;
     public ObservableCollection<ReplaceObserver> Instances { get; } = [];
-
     public Task<NodeSelectorPageModel> NodeSelector => Navigator.Navigate(() => new NodeSelectorPageModel(UpdateScope));
 
     /// <inheritdoc />
@@ -70,6 +69,7 @@ public partial class SearchPageModel : PageViewModel
     private async Task ReplaceAll()
     {
         if (string.IsNullOrEmpty(SearchText)) return;
+        
 
         foreach (var instance in Instances)
         {
