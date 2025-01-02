@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoSpex.Client.Pages;
@@ -37,18 +36,22 @@ public partial class NodeObserver : Observer<Node>,
 
     public override Guid Id => Model.NodeId;
     public override string Icon => Type.Name;
-    public override string Entity => Model.Type.Name;
     public Guid ParentId => Model.ParentId;
     public NodeType Type => Model.Type;
     public string Route => Model.Route;
     public string Path => Model.Path;
     public bool IsVirtual => Type != NodeType.Collection && ParentId == Guid.Empty;
-
-    [Required]
+    
     public override string Name
     {
         get => Model.Name;
         set => SetProperty(Model.Name, value, Model, (s, v) => s.Name = v, true);
+    }
+    
+    public override string? Description
+    {
+        get => Model.Description;
+        set => SetProperty(Model.Description, value, Model, (s, v) => s.Description = v);
     }
 
     public ObserverCollection<Node, NodeObserver> Nodes { get; }
@@ -476,10 +479,10 @@ public partial class NodeObserver : Observer<Node>,
     {
         yield return new MenuActionItem
         {
-            Header = "Duplicate",
-            Icon = Resource.Find("IconFilledClone"),
-            Command = DuplicateCommand,
-            Gesture = new KeyGesture(Key.D, KeyModifiers.Control)
+            Header = "Export",
+            Icon = Resource.Find("IconLineDownload"),
+            Command = ExportCommand,
+            DetermineVisibility = () => Type == NodeType.Collection
         };
 
         yield return new MenuActionItem
@@ -488,6 +491,15 @@ public partial class NodeObserver : Observer<Node>,
             Icon = Resource.Find("IconLineSearch"),
             Gesture = new KeyGesture(Key.H, KeyModifiers.Control)
         };
+        
+        yield return new MenuActionItem
+        {
+            Header = "Duplicate",
+            Icon = Resource.Find("IconFilledClone"),
+            Command = DuplicateCommand,
+            Gesture = new KeyGesture(Key.D, KeyModifiers.Control),
+            DetermineVisibility = () => HasSingleSelection
+        };
 
         yield return new MenuActionItem
         {
@@ -495,14 +507,6 @@ public partial class NodeObserver : Observer<Node>,
             Icon = Resource.Find("IconLineMove"),
             Command = MoveToCommand,
             DetermineVisibility = () => Type != NodeType.Collection
-        };
-
-        yield return new MenuActionItem
-        {
-            Header = "Export",
-            Icon = Resource.Find("IconLineDownload"),
-            Command = ExportCommand,
-            DetermineVisibility = () => Type == NodeType.Collection
         };
 
         yield return new MenuActionItem

@@ -47,19 +47,13 @@ public sealed class Prompter(Shell shell)
 
         shell.DialogOpen = true;
         await dialog.ShowDialog(shell);
+        page.Dispose();
         shell.DialogOpen = false;
     }
 }
 
 public static class PromptExtensions
 {
-    public static Task<bool?> PromptError(this Prompter prompter, string title, string message,
-        Exception? exception = default)
-    {
-        var control = new ErrorPrompt { Title = title, ErrorContent = message, Exception = exception };
-        return prompter.Show<bool?>(control);
-    }
-
     public static Task<string?> PromptSave(this Prompter prompter, string name)
     {
         var control = new SaveChangesPrompt { ItemName = name };
@@ -79,10 +73,10 @@ public static class PromptExtensions
             Title = $"Rename {observer.Icon}",
             Observer = observer
         };
-        
+
         return prompter.Show<string?>(control);
     }
-    
+
     public static Task<string?> PromptNewName(this Prompter prompter, Observer observer)
     {
         var control = new NamePrompt
@@ -90,7 +84,7 @@ public static class PromptExtensions
             Title = $"Duplicate {observer.Icon}",
             Observer = observer
         };
-        
+
         return prompter.Show<string?>(control);
     }
 }

@@ -93,7 +93,7 @@ public class Source()
     /// The controller/project description of the L5X content.
     /// </summary>
     [JsonInclude]
-    public string Description { get; private set; } = string.Empty;
+    public string? Description { get; set; } = string.Empty;
 
     /// <summary>
     /// The <see cref="L5X"/> content this source contains.

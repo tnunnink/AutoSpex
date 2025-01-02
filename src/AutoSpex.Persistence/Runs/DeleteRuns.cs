@@ -19,13 +19,12 @@ public record DeleteRuns(IEnumerable<Run> Runs) : ICommandRequest<Result>
 internal class DeleteRunsHandler(IConnectionManager manager) : IRequestHandler<DeleteRuns, Result>
 {
     private const string DeleteRun = "DELETE FROM Run WHERE RunId = @RunId";
-    private const string VacuumFile = "VACUUM"; //this clears empty space or releases memory back to disc.
 
     public async Task<Result> Handle(DeleteRuns request, CancellationToken cancellationToken)
     {
         using var connection = await manager.Connect(cancellationToken);
         var result = await connection.ExecuteAsync(DeleteRun, request.Runs);
-        await connection.ExecuteAsync(VacuumFile);
+        await manager.Vacuum(connection);
         return Result.Ok().WithSuccess($"Successfully deleted {result} runs");
     }
 }

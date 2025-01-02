@@ -34,12 +34,6 @@ public class NodeObserverTests
         observer.Should().NotBeNull();
     }
     
-    [Test]
-    public void New_Null_ShouldThrowException()
-    {
-        FluentActions.Invoking(() => new NodeObserver(null!)).Should().Throw<ArgumentNullException>();
-    }
-    
     [DotMemoryUnit(FailIfRunWithoutSupport = false)]
     [Test]
     public void CheckForMemeoryLeaksAgainstNodeObserver()

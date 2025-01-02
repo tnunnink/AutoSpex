@@ -112,9 +112,11 @@
 
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="10">
 
-                <Button Classes="stack-single" ToolTip.Tip="Clear History">
-                    <PathIcon Theme="{StaticResource IconFilledTrash}" />
-                </Button>
+                <Button
+                    Command="{Binding ClearHistoryCommand}"
+                    Content="Clear History"
+                    Classes="danger"
+                    ToolTip.Tip="Clear History" />
 
             </StackPanel>
 

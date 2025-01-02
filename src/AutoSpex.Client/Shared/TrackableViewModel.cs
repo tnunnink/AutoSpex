@@ -120,6 +120,17 @@ public abstract class TrackableViewModel : ViewModelBase, ITrackable
         _disposables.Add(disposable);
     }
 
+    /// <summary>
+    /// Disposes/deactivates all tracked or registered view models for this page.
+    /// This action can be taken before a page needs to be reloaded so that all current instances can be released or
+    /// notify that they are ready to be disposed.
+    /// </summary>
+    public void Flush()
+    {
+        ReleaseTrackedModels();
+        DisposeModels();
+    }
+
     /// <inheritdoc />
     public IEnumerable<ValidationResult> Validate()
     {
@@ -194,7 +205,7 @@ public abstract class TrackableViewModel : ViewModelBase, ITrackable
     /// </summary>
     /// <remarks>
     /// This method is called when the view model is deactivated to ensure that all tracked models and child view models are released.
-    /// Tracked models are unsubscribed from property change and error change events, and child models are made inacitve.
+    /// Tracked models are unsubscribed from property change and error change events, and deactivate andy child models.
     /// </remarks>
     private void ReleaseTrackedModels()
     {

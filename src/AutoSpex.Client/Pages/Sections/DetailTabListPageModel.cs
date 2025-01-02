@@ -8,7 +8,7 @@ using CommunityToolkit.Mvvm.Messaging;
 
 namespace AutoSpex.Client.Pages;
 
-public partial class DetailTabListPageModel : PageViewModel, IRecipient<NavigationRequest>
+public class DetailTabListPageModel : PageViewModel, IRecipient<NavigationRequest>
 {
     private readonly List<DetailPageModel> _tabs;
 

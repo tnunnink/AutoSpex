@@ -103,7 +103,6 @@ public partial class RunObserver : Observer<Run>, IRecipient<Observer.Get<RunObs
 
         Result = Model.Result;
         OnPropertyChanged(string.Empty);
-        Messenger.Send(new Finished(this));
     }
 
     /// <summary>

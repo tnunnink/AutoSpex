@@ -19,7 +19,7 @@ internal class ListReferencesHandler(IConnectionManager manager)
 
     public async Task<IEnumerable<Reference>> Handle(ListReferences request, CancellationToken cancellationToken)
     {
-        var connection = await manager.Connect(cancellationToken);
+        using var connection = await manager.Connect(cancellationToken);
 
         //What we return will depend on if and where the first path separator is in the request text.
         var index = request.Key.IndexOf('/');

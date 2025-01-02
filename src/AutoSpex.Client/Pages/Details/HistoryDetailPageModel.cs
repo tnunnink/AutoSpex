@@ -3,10 +3,12 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using AutoSpex.Client.Observers;
+using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using AutoSpex.Persistence;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
 
@@ -36,13 +38,20 @@ public partial class HistoryDetailPageModel() : DetailPageModel("History"),
         RefreshFilterSelections();
     }
 
-    /*[RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanClearHistory))]
     private async Task ClearHistory()
     {
+        var delete = await Prompter.PromptDelete($"{Runs.Count} run(s)");
+        if (delete is not true) return;
+        
         var result = await Mediator.Send(new ClearRuns());
-        Notifier.ShowIfFailed(result);
-        return result;
-    }*/
+        if (Notifier.ShowIfFailed(result)) return;
+        
+        Runs.Dispose();
+        Runs.Clear();
+    }
+    
+    public bool CanClearHistory() => Runs.HasItems;
 
     public void Receive(Observer.GetSelected message)
     {

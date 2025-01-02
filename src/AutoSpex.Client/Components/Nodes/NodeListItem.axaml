@@ -3,7 +3,6 @@
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
                     xmlns:components="clr-namespace:AutoSpex.Client.Components"
-                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
                     xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
 
     <Design.PreviewWith>
@@ -45,14 +44,19 @@
                     Orientation="Horizontal"
                     Spacing="10">
 
-                    <Button
+                    <!--<Button
                         Theme="{StaticResource IconButtonSmall}"
-                        properties:Icon.Theme="{StaticResource IconFilledLightning}" />
+                        properties:Icon.Theme="{StaticResource IconFilledLightning}" />-->
 
                     <Button
                         Theme="{StaticResource IconButtonSmall}"
                         properties:Icon.Theme="{StaticResource IconEllipsis}">
-
+                        <Button.Flyout>
+                            <MenuFlyout
+                                Placement="BottomEdgeAlignedRight"
+                                ItemsSource="{Binding MenuItems}"
+                                ItemContainerTheme="{StaticResource MenuActionItem}" />
+                        </Button.Flyout>
                     </Button>
 
                 </StackPanel>

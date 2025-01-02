@@ -27,10 +27,23 @@
                 </controls:Section.Icon>
 
                 <controls:Section.Action>
-                    <Button
-                        Theme="{StaticResource IconButton}"
-                        properties:Icon.Theme="{StaticResource IconEllipsis}">
-                    </Button>
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+
+                        <Button
+                            Command="{Binding TestSpecCommand}"
+                            Theme="{StaticResource IconButton}"
+                            properties:Icon.Theme="{StaticResource IconFilledLightning}"
+                            Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
+                            ToolTip.Tip="Test Spec"/>
+
+                        <Button
+                            Theme="{StaticResource IconButton}"
+                            properties:Icon.Theme="{StaticResource IconEllipsis}"
+                            ToolTip.Tip="Options">
+
+                        </Button>
+
+                    </StackPanel>
                 </controls:Section.Action>
 
                 <ContentControl

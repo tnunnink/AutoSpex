@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace AutoSpex.Client.Shared;
 
-public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObserver>, ITrackable
+public sealed class ObserverCollection<TModel, TObserver> : ObservableCollection<TObserver>, ITrackable
     where TObserver : Observer<TModel>
 {
     private bool _changed;
@@ -258,8 +258,6 @@ public class ObserverCollection<TModel, TObserver> : ObservableCollection<TObser
         {
             observer.Dispose();
         }
-
-        GC.SuppressFinalize(this);
     }
 
     /// <inheritdoc />
@@ -463,7 +461,7 @@ public static class ObservableCollectionExtensions
         list.RemoveAt(oldIndex);
         list.Insert(newIndex, item);
     }
-    
+
     public static ObserverCollection<TModel, TObserver> ToObserver<TModel, TObserver>(this IList<TModel> list,
         Func<TModel, TObserver> wrapper) where TObserver : Observer<TModel>
     {

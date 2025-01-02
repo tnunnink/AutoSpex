@@ -3,10 +3,12 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using AutoSpex.Client.Observers;
+using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using AutoSpex.Persistence;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
 namespace AutoSpex.Client.Pages;
@@ -16,7 +18,7 @@ public partial class HistoryPageModel(Observer observer) : PageViewModel("Histor
     IRecipient<Observer.Deleted>,
     IRecipient<RunObserver.Finished>
 {
-    public override string Route => $"{observer.Entity}/{observer.Id}/{Title}";
+    public override string Route => $"{observer.Icon}/{observer.Id}/{Title}";
     public override string Icon => "IconLineClockRotate";
     public ObserverCollection<Run, RunObserver> Runs { get; } = [];
     public ObservableCollection<RunObserver> Selected { get; } = [];
@@ -35,6 +37,21 @@ public partial class HistoryPageModel(Observer observer) : PageViewModel("Histor
         RegisterDisposable(Runs);
         RefreshFilterSelections();
     }
+
+    [RelayCommand(CanExecute = nameof(CanClearHistory))]
+    private async Task ClearHistory()
+    {
+        var delete = await Prompter.PromptDelete($"all runs from {observer.Name}");
+        if (delete is not true) return;
+
+        var result = await Mediator.Send(new ClearRuns(observer.Id));
+        if (Notifier.ShowIfFailed(result)) return;
+
+        Runs.Dispose();
+        Runs.Clear();
+    }
+
+    public bool CanClearHistory() => Runs.HasItems;
 
     public void Receive(Observer.GetSelected message)
     {

@@ -13,7 +13,7 @@ namespace AutoSpex.Client.Pages;
 [UsedImplicitly]
 public partial class NodeSelectorPageModel(Action<NodeObserver?> onSelected) : PageViewModel
 {
-    public override bool KeepAlive => false;
+    public override bool Reload => true;
     public ObserverCollection<Node, NodeObserver> Nodes { get; } = [];
 
     /// <inheritdoc />

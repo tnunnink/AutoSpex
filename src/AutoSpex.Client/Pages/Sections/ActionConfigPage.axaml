@@ -39,7 +39,7 @@
                     <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" Spacing="10">
 
                         <PathIcon
-                            Theme="{Binding Action.Node.Entity, Converter={StaticResource KeyIconConverter}, FallbackValue={x:Null}}" />
+                            Theme="{Binding Action.Node.Icon, Converter={StaticResource KeyIconConverter}, FallbackValue={x:Null}}" />
 
                         <ContentControl
                             Content="{Binding Action.Node}"

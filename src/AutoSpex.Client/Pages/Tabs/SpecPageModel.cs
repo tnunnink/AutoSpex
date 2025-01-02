@@ -1,9 +1,13 @@
 ﻿using System.Threading.Tasks;
 using AutoSpex.Client.Observers;
 using AutoSpex.Client.Shared;
+using AutoSpex.Engine;
 using AutoSpex.Persistence;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using FluentResults;
+using L5Sharp.Core;
 
 namespace AutoSpex.Client.Pages;
 
@@ -53,18 +57,45 @@ public partial class SpecPageModel(NodeObserver node) : PageViewModel("Spec")
     /// Uses the current test runner page to execeute this specification.
     /// Opens the runner drawer if not alread open.
     /// </summary>
-    public async Task RunSpec()
+    [RelayCommand]
+    private async Task TestSpec()
     {
         if (Spec is null || ResultDrawer is null) return;
+        if (!TryGetContent(out var content)) return;
 
-        var result = await Mediator.Send(new NewRun(node.Id));
-        if (Notifier.ShowIfFailed(result)) return;
-
-        var run = new RunObserver(result.Value);
-        run.Node.Model.Configure(Spec);
-        await run.ExecuteLocal();
-
-        ResultDrawer.Outcome = run.Outcomes.Count == 1 ? run.Outcomes[0] : null;
         ShowDrawer = true;
+
+        //Resolve any configured references to external sources or data.
+        var resolved = await Mediator.Send(new ResolveReferences([Spec]));
+        if (Notifier.ShowIfFailed(resolved)) return;
+
+        var result = await Spec.Model.RunAsync(content);
+        var outcome = new Outcome();
+        outcome.Apply(result);
+
+        ResultDrawer.Outcome = new OutcomeObserver(outcome);
+    }
+
+    /// <summary>
+    /// Attempts to get the L5X content from the targeted source file. If not source is targeted/exists, or if the target
+    /// does not have loaded content, we show and error to the user informing them to load and/or target a valid source.
+    /// </summary>
+    private bool TryGetContent(out L5X content)
+    {
+        //This local run always uses the target source content.
+        //And since that content is already memory we don't want to reload it.
+        var message = new Observer.Get<SourceObserver>(s => s is { IsTarget: true, Model.Content: not null });
+        Messenger.Send(message);
+
+        //If no source is targetd show an error to the user.
+        if (!message.HasReceivedResponse)
+        {
+            Notifier.ShowError("No source is targeted", "Select a source before running this spec.");
+            content = null!;
+            return false;
+        }
+
+        content = message.Response.Model.Content!;
+        return true;
     }
 }

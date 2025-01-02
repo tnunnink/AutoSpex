@@ -8,7 +8,7 @@ namespace AutoSpex.Client.Pages;
 public partial class ResultDrawerPageModel : PageViewModel
 {
     [ObservableProperty] private OutcomeObserver? _outcome;
-    
+
     protected override void FilterChanged(string? filter)
     {
         if (Outcome is null) return;

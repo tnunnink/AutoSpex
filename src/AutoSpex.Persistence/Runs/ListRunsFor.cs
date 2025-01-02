@@ -21,7 +21,7 @@ internal class ListRunsForHandler(IConnectionManager manager) : IRequestHandler<
     
     public async Task<IEnumerable<Run>> Handle(ListRunsFor request, CancellationToken cancellationToken)
     {
-        var connection = await manager.Connect(cancellationToken);
+        using var connection = await manager.Connect(cancellationToken);
         var runs = await connection.QueryAsync<Run>(ListRuns, new { Id = request.Id.ToString() });
         return runs;
     }

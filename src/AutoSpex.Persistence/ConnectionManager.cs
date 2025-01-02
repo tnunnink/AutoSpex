@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Data.SQLite;
+using Dapper;
 
 namespace AutoSpex.Persistence;
 
@@ -15,6 +16,12 @@ public class ConnectionManager : IConnectionManager
         var connection = new SQLiteConnection(connectionString);
         await connection.OpenAsync(token);
         return connection;
+    }
+
+    /// <inheritdoc />
+    public Task Vacuum(IDbConnection connection)
+    {
+        return connection.ExecuteAsync("VACUUM");
     }
 
     /// <summary>

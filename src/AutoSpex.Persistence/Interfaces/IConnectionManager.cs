@@ -18,4 +18,11 @@ public interface IConnectionManager
     /// on disc. Ensure proper migration before calling if that is what is needed.
     /// </remarks>
     Task<IDbConnection> Connect(CancellationToken token);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="connection"></param>
+    /// <returns></returns>
+    Task Vacuum(IDbConnection connection);
 }

@@ -19,13 +19,12 @@ public record DeleteNodes(IEnumerable<Node> Nodes) : ICommandRequest<Result>
 internal class DeleteNodesHandler(IConnectionManager manager) : IRequestHandler<DeleteNodes, Result>
 {
     private const string DeleteNode = "DELETE FROM Node WHERE NodeId = @NodeId";
-    private const string VacuumFile = "VACUUM"; //this clears empty space or releases memory back to disc.
 
     public async Task<Result> Handle(DeleteNodes request, CancellationToken cancellationToken)
     {
         using var connection = await manager.Connect(cancellationToken);
         await connection.ExecuteAsync(DeleteNode, request.Nodes);
-        await connection.ExecuteAsync(VacuumFile);
+        await manager.Vacuum(connection);
         return Result.Ok();
     }
 }

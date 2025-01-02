@@ -138,9 +138,10 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
 
 
     /// <summary>
-    /// 
+    /// Closes the specified <see cref="PageViewModel"/> by sending a navigation request with <see cref="NavigationAction.Close"/>.
+    /// The method also removes the page from the open pages dictionary and disposes of the page.
     /// </summary>
-    /// <param name="page"></param>
+    /// <param name="page">The page to be closed.</param>
     private void ClosePage(PageViewModel? page)
     {
         if (page is null) return;
@@ -161,10 +162,7 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
     {
         var page = factory();
 
-        if (!page.KeepAlive)
-        {
-            return page;
-        }
+        if (!page.KeepAlive) return page;
 
         if (!_openPages.TryAdd(page.Route, page))
         {
@@ -182,7 +180,15 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
     /// </summary>
     private static async Task ActivatePage(PageViewModel page)
     {
-        if (page.IsActive) return;
+        switch (page)
+        {
+            case { IsActive: true, Reload: false }:
+                return;
+            case { IsActive: true, Reload: true }:
+                page.Flush();
+                break;
+        }
+
         page.IsActive = true;
         await page.Load();
     }

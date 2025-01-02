@@ -20,13 +20,12 @@ public record DeleteSources(IEnumerable<Source> Sources) : ICommandRequest<Resul
 internal class DeleteSourcesHandler(IConnectionManager manager) : IRequestHandler<DeleteSources, Result>
 {
     private const string DeleteSource = "DELETE FROM Source WHERE SourceId = @SourceId";
-    private const string VacuumFile = "VACUUM"; //this clears empty space or releases memory back to disc.
 
     public async Task<Result> Handle(DeleteSources request, CancellationToken cancellationToken)
     {
         using var connection = await manager.Connect(cancellationToken);
         await connection.ExecuteAsync(DeleteSource, request.Sources);
-        await connection.ExecuteAsync(VacuumFile);
+        await manager.Vacuum(connection);
         return Result.Ok();
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using AutoSpex.Client.Resources;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
@@ -108,6 +109,32 @@ public abstract partial class StepObserver(Step model) : Observer<Step>(model),
         if (index == query.Steps.Count - 1) return;
 
         query.Steps.Move(index, index + 1);
+    }
+
+    /// <inheritdoc />
+    protected override Task Duplicate()
+    {
+        var data = JsonSerializer.Serialize(Model);
+        var duplicate = JsonSerializer.Deserialize<Step>(data);
+        AddAfterThis(duplicate);
+        return Task.CompletedTask;
+    }
+
+    /// <inheritdoc />
+    protected override async Task Paste()
+    {
+        var step = await GetClipboardObserver<Step>();
+        AddAfterThis(step);
+    }
+
+    /// <inheritdoc />
+    protected override async Task Copy()
+    {
+        var clipboard = Shell.Clipboard;
+        if (clipboard is null) return;
+        
+        var data = JsonSerializer.Serialize(Model);
+        await clipboard.SetTextAsync(data);
     }
 
     /// <summary>
@@ -308,14 +335,14 @@ public abstract partial class StepObserver(Step model) : Observer<Step>(model),
 
         yield return new MenuActionItem
         {
-            Header = "Paste",
+            Header = "Paste Step After",
             Icon = Resource.Find("IconFilledPaste"),
             Command = PasteCommand
         };
 
         yield return new MenuActionItem
         {
-            Header = "Copy All",
+            Header = "Copy Step",
             Icon = Resource.Find("IconFilledCopy"),
             Command = CopyCommand
         };
@@ -334,6 +361,30 @@ public abstract partial class StepObserver(Step model) : Observer<Step>(model),
             Classes = "danger",
             Command = DeleteCommand
         };
+    }
+
+    /// <summary>
+    /// Adds the provided step after this step to the parent query observer.
+    /// This is used by various commands like duplicate and paste.
+    /// </summary>
+    private void AddAfterThis(Step? step)
+    {
+        StepObserver? observer = step switch
+        {
+            Filter filter => new FilterObserver(filter),
+            Select select => new SelectObserver(select),
+            _ => null
+        };
+
+        if (observer is null) return;
+
+        var query = GetObserver<QueryObserver>(x => x.Steps.Has(this));
+        if (query is null) return;
+
+        var index = query.Steps.IndexOf(this) + 1;
+        if (index > query.Steps.Count) return;
+
+        query.Steps.Insert(index, observer);
     }
 }
 

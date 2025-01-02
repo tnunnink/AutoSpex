@@ -47,9 +47,11 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     public virtual string Icon => string.Empty;
 
     /// <summary>
-    /// 
+    /// The description of the observer.
+    /// This can be implemented as needed. only some observers will contain a description, but we want it here to use
+    /// in a generic way with the info page.
     /// </summary>
-    public virtual string Entity => GetType().Name;
+    public virtual string? Description { get; set; }
 
     /// <summary>
     /// Indicates that this observer should be visible in the UI.
@@ -408,6 +410,31 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     }
 
     /// <summary>
+    /// A helper method that allows derived classes to get data from the clipboard. This method assumes a single object
+    /// of the specified type has been serialized to the clipboard as JSON. This is how we will handle copying
+    /// objects since the current Avalonia Clipboard does not support getting data objects in memory.
+    /// </summary>
+    /// <typeparam name="TData">The model type that was set on the clipboard.</typeparam>
+    protected async Task<TData?> GetClipboardObserver<TData>()
+    {
+        try
+        {
+            var clipboard = Shell.Clipboard;
+            if (clipboard is null) return default;
+
+            var json = await clipboard.GetTextAsync();
+            if (json is null) return default;
+
+            return JsonSerializer.Deserialize<TData>(json);
+        }
+        catch (Exception e)
+        {
+            Notifier.ShowError("Unable to parse data from clipboard.", e.Message);
+            return default;
+        }
+    }
+
+    /// <summary>
     /// A helper method that allows derived classes to get data from the clipboard. This assumes a collection of
     /// objects of the specified type have been serialized to the clipboard as JSON. This is how we will handle copying
     /// objects since the current Avalonia Clipboard does not support getting data objects in memory.
@@ -429,9 +456,8 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
         catch (Exception e)
         {
             Notifier.ShowError("Unable to parse data from clipboard.", e.Message);
+            return [];
         }
-
-        return [];
     }
 
     /// <summary>
@@ -484,7 +510,4 @@ public abstract class Observer<TModel> : Observer
     /// The underlying model object that is being wrapped by the observer.
     /// </summary>
     public TModel Model { get; }
-
-    /// <inheritdoc />
-    public override string Entity => Model?.GetType().Name ?? base.Entity;
 }

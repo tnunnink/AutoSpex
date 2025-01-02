@@ -30,8 +30,8 @@ public abstract partial class DetailPageModel(string? title) : PageViewModel(tit
     {
         base.OnDeactivated();
 
-        foreach (var tab in Pages.ToList())
-            Navigator.Close(tab);
+        foreach (var page in Pages.ToList())
+            Navigator.Close(page);
     }
 
     /// <inheritdoc />

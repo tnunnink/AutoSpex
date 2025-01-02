@@ -1,5 +1,4 @@
 ﻿using System.Collections.Specialized;
-using System.Linq;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using CommunityToolkit.Mvvm.Input;
@@ -46,23 +45,6 @@ public partial class FilterObserver : StepObserver<Filter>
     private void ToggleMatch()
     {
         Match = Match == Match.All ? Match.Any : Match.All;
-    }
-
-    /// <summary>
-    /// Adds a filter to the specification.
-    /// </summary>
-    [RelayCommand]
-    private void AddCriteria()
-    {
-        Criteria.Add(new CriterionObserver(new Criterion(), DetermineInput));
-    }
-
-    /// <inheritdoc />
-    protected override async Task Paste()
-    {
-        var criteria = await GetClipboardObservers<Criterion>();
-        var copies = criteria.Select(c => new CriterionObserver(c.Duplicate(), DetermineInput));
-        Criteria.AddRange(copies);
     }
 
     /// <inheritdoc />

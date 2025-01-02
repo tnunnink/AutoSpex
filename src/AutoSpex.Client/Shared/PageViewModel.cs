@@ -42,6 +42,13 @@ public abstract partial class PageViewModel() : TrackableViewModel, IEquatable<P
     /// <c>true</c> if the page should be kept alive; otherwise, <c>false</c>.
     /// </value>
     public virtual bool KeepAlive => true;
+    
+    /// <summary>
+    /// Indicates that this page should be reloaded each time it is navigated, regardless of whether it is currently
+    /// active or not. This will in essense call <see cref="TrackableViewModel.Flush"/> to clear out old objects, set
+    /// IsActive to true, and call <see cref="Load"/> again each time.
+    /// </summary>
+    public virtual bool Reload => false;
 
     /// <summary>
     /// A command to initiate the loading of data from external resources in order to populate this page with it's

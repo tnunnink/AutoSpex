@@ -67,13 +67,6 @@ public partial class NodeDetailPageModel : DetailPageModel
     [RelayCommand]
     private async Task Run()
     {
-        if (Node.Type == NodeType.Spec)
-        {
-            var page = Navigator.Open<SpecPageModel>($"Spec/{Node.Id}/Spec");
-            await page.RunSpec();
-            return;
-        }
-
         await Node.RunCommand.ExecuteAsync(null);
     }
 
@@ -89,7 +82,7 @@ public partial class NodeDetailPageModel : DetailPageModel
             await Navigator.Navigate(() => new SpecPageModel(Node));
         }
 
-        await Navigator.Navigate(() => new VariablesPageModel(Node));
+        /*await Navigator.Navigate(() => new VariablesPageModel(Node));*/
         await Navigator.Navigate(() => new HistoryPageModel(Node));
         /*await Navigator.Navigate(() => new CommentsPageModel(Node));*/
         await Navigator.Navigate(() => new InfoPageModel(Node));

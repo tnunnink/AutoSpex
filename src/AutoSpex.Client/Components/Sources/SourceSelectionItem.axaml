@@ -22,7 +22,7 @@
             <StackPanel Orientation="Horizontal" Spacing="7" ClipToBounds="True">
 
                 <PathIcon
-                    Theme="{Binding Entity, Converter={StaticResource KeyIconConverter}}"
+                    Theme="{Binding Icon, Converter={StaticResource KeyIconConverter}}"
                     Classes="size-sm"/>
 
                 <TextBlock

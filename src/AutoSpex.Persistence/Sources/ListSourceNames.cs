@@ -15,7 +15,7 @@ internal class ListSourceNamesHandler(IConnectionManager manager)
 
     public async Task<IEnumerable<string>> Handle(ListSourceNames request, CancellationToken cancellationToken)
     {
-        var connection = await manager.Connect(cancellationToken);
+        using var connection = await manager.Connect(cancellationToken);
         var names = await connection.QueryAsync<string>(ListSources);
         return names;
     }
