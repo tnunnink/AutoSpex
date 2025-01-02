@@ -3,8 +3,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
                     xmlns:primitives="clr-namespace:ActiproSoftware.UI.Avalonia.Controls.Primitives;assembly=ActiproSoftware.Avalonia.Shared"
-                    xmlns:system="clr-namespace:System;assembly=System.Runtime"
-                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+                    xmlns:system="clr-namespace:System;assembly=System.Runtime">
 
 
     <Design.PreviewWith>
@@ -12,8 +11,9 @@
                 Background="{a:ThemeResource Container1BackgroundBrush}">
             <StackPanel Spacing="10">
                 <a:ToggleThemeButton Theme="{a:ControlTheme ToggleThemeButtonSubtle}" />
-                <controls:Entry Watermark="Enter value" Height="40" />
-                <controls:Entry Watermark="Enter value" Value="This is a test" />
+                <controls:Entry Watermark="Enter value" />
+                <controls:Entry Watermark="Enter value"
+                                Value="This is a test l;asdjf;lak" />
                 <controls:Entry Watermark="Enter value" Value="Test"
                                 IsEmpty="{Binding $self.Value, Converter={StaticResource EqualToConverter}, ConverterParameter='Test'}" />
                 <controls:Entry Watermark="Enter value" Value="Testing"
@@ -27,7 +27,6 @@
         <Setter Property="ButtonTheme" Value="{a:ControlTheme ButtonSubtle}" />
         <Setter Property="FontFamily" Value="{a:ThemeResource CodeFontFamily}" />
         <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeSmall}" />
-        <Setter Property="Padding" Value="{a:ThemeResource ButtonPadding}"></Setter>
         <Setter Property="MaxDropDownHeight" Value="300" />
         <Setter Property="MinDropDownWidth" Value="300" />
         <Setter Property="MaxDropDownWidth" Value="400" />
@@ -39,11 +38,10 @@
                     <Button
                         x:Name="PART_Button"
                         Theme="{TemplateBinding ButtonTheme}"
-                        Padding="{TemplateBinding Padding}"
-                        Classes.danger="{TemplateBinding (DataValidationErrors.HasErrors)}"
                         HorizontalContentAlignment="Left"
                         IsTabStop="True"
                         Focusable="True"
+                        Classes.danger="{TemplateBinding (DataValidationErrors.HasErrors)}"
                         TemplatedControl.IsTemplateFocusTarget="True">
                         <Panel>
                             <TextBlock
@@ -68,7 +66,7 @@
                         MinChildWidth="{TemplateBinding MinDropDownWidth}"
                         PlacementTarget="{Binding #PART_Button}"
                         Placement="BottomEdgeAlignedLeft"
-                        VerticalOffset="{Binding #PART_Button.Bounds.Height, Converter={StaticResource MathConverter}, ConverterParameter='(x * -1) -6'}"
+                        VerticalOffset="{Binding #PART_Button.Bounds.Height, Converter={StaticResource MathConverter}, ConverterParameter='(x * -1) -5'}"
                         BorderThickness="2">
 
                         <Grid RowDefinitions="Auto,Auto,*">
@@ -86,16 +84,9 @@
                                 Margin="0 1 0 0"
                                 CornerRadius="0 0 4 4"
                                 MinHeight="30"
+                                TextWrapping="Wrap"
                                 VerticalContentAlignment="Center"
-                                a:ThemeProperties.CopyClassesFrom="{TemplateBinding}"
-                                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                ScrollViewer.VerticalScrollBarVisibility="Disabled">
-                                <TextBox.InnerRightContent>
-                                    <Button Theme="{a:ControlTheme ButtonSubtle}"
-                                            properties:Icon.Theme="{StaticResource IconLineExpand}"
-                                            IsVisible="{Binding $parent[controls:Entry].UseExpander}"
-                                            Margin="5 0" CornerRadius="10" />
-                                </TextBox.InnerRightContent>
+                                a:ThemeProperties.CopyClassesFrom="{TemplateBinding}">
                                 <Interaction.Behaviors>
                                     <FocusOnAttachedToVisualTreeBehavior />
                                     <SelectAllOnGotFocusBehavior />
@@ -107,7 +98,7 @@
                                 ItemsSource="{TemplateBinding (DataValidationErrors.Errors)}"
                                 IsVisible="{TemplateBinding (DataValidationErrors.HasErrors)}"
                                 Background="{a:ThemeResource ControlBackgroundBrushSoftDangerDisabled}"
-                                Padding="5" CornerRadius="0 0 4 4">
+                                Padding="7" CornerRadius="0 0 4 4">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate x:DataType="system:Object">
                                         <StackPanel Orientation="Horizontal" Spacing="5" ClipToBounds="True">
@@ -117,8 +108,7 @@
                                             <TextBlock
                                                 Text="{Binding }"
                                                 Foreground="{a:ThemeResource ControlForegroundBrushSoftDanger}"
-                                                TextWrapping="NoWrap"
-                                                TextTrimming="CharacterEllipsis"
+                                                TextWrapping="Wrap"
                                                 Margin="5 0" />
                                         </StackPanel>
                                     </DataTemplate>

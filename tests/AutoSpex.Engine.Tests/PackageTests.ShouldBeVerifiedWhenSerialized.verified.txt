@@ -7,40 +7,49 @@
     ParentId: Guid_Empty,
     Type: Collection,
     Name: New Collection,
+    Description: null,
     Nodes: [
       {
         NodeId: Guid_3,
         ParentId: Guid_2,
         Type: Spec,
         Name: First,
+        Description: null,
         Spec: {
-          SchemaVersion: 1,
+          SchemaVersion: 2,
           SpecId: Guid_4,
-          Element: Tag,
-          Filters: [
-            {
-              Type: L5Sharp.Core.Tag,
-              Property: L5Sharp.Core.Tag:Name,
-              Negation: Is,
-              Operation: Like,
-              Argument: {
-                Group: Text,
-                Data: someName
+          Query: {
+            Element: Tag,
+            Steps: [
+              {
+                Match: All,
+                Criteria: [
+                  {
+                    Property: Name,
+                    Negation: Is,
+                    Operation: Like,
+                    Argument: {
+                      Group: Text,
+                      Data: someName
+                    }
+                  }
+                ]
               }
-            }
-          ],
-          Verifications: [
-            {
-              Type: L5Sharp.Core.Tag,
-              Property: L5Sharp.Core.Tag:Value,
-              Negation: Is,
-              Operation: Equal To,
-              Argument: {
-                Group: Number,
-                Data: 123
+            ]
+          },
+          Verify: {
+            Criteria: [
+              {
+                Property: Value,
+                Negation: Is,
+                Operation: Equal To,
+                Argument: {
+                  Group: Number,
+                  Data: 123
+                }
               }
-            }
-          ]
+            ]
+          }
         }
       },
       {
@@ -48,34 +57,42 @@
         ParentId: Guid_2,
         Type: Spec,
         Name: Second,
+        Description: null,
         Spec: {
-          SchemaVersion: 1,
+          SchemaVersion: 2,
           SpecId: Guid_6,
-          Element: Tag,
-          Filters: [
-            {
-              Type: L5Sharp.Core.Tag,
-              Property: L5Sharp.Core.Tag:Name,
-              Negation: Is,
-              Operation: Containing,
-              Argument: {
-                Group: Text,
-                Data: anotherName
+          Query: {
+            Element: Tag,
+            Steps: [
+              {
+                Match: All,
+                Criteria: [
+                  {
+                    Property: Name,
+                    Negation: Is,
+                    Operation: Containing,
+                    Argument: {
+                      Group: Text,
+                      Data: anotherName
+                    }
+                  }
+                ]
               }
-            }
-          ],
-          Verifications: [
-            {
-              Type: L5Sharp.Core.Tag,
-              Property: L5Sharp.Core.Tag:Value,
-              Negation: Is,
-              Operation: Greater Than,
-              Argument: {
-                Group: Number,
-                Data: 456
+            ]
+          },
+          Verify: {
+            Criteria: [
+              {
+                Property: Value,
+                Negation: Is,
+                Operation: Greater Than,
+                Argument: {
+                  Group: Number,
+                  Data: 456
+                }
               }
-            }
-          ]
+            ]
+          }
         }
       },
       {
@@ -83,41 +100,52 @@
         ParentId: Guid_2,
         Type: Spec,
         Name: Third,
+        Description: null,
         Spec: {
-          SchemaVersion: 1,
+          SchemaVersion: 2,
           SpecId: Guid_8,
-          Element: Tag,
-          Filters: [
-            {
-              Type: L5Sharp.Core.Tag,
-              Property: L5Sharp.Core.Tag:Name,
-              Negation: Is,
-              Operation: Equal To,
-              Argument: {
-                Group: Text,
-                Data: yetAnotherName
+          Query: {
+            Element: Tag,
+            Steps: [
+              {
+                Match: All,
+                Criteria: [
+                  {
+                    Property: Name,
+                    Negation: Is,
+                    Operation: Equal To,
+                    Argument: {
+                      Group: Text,
+                      Data: yetAnotherName
+                    }
+                  }
+                ]
               }
-            }
-          ],
-          Verifications: [
-            {
-              Type: L5Sharp.Core.Tag,
-              Property: L5Sharp.Core.Tag:Value,
-              Negation: Not,
-              Operation: Equal To,
-              Argument: {
-                Group: Number,
-                Data: 678
+            ]
+          },
+          Verify: {
+            Criteria: [
+              {
+                Property: Value,
+                Negation: Not,
+                Operation: Equal To,
+                Argument: {
+                  Group: Number,
+                  Data: 678
+                }
               }
-            }
-          ]
+            ]
+          }
         }
       }
     ],
     Spec: {
-      SchemaVersion: 1,
+      SchemaVersion: 2,
       SpecId: Guid_9,
-      Element: None
+      Query: {
+        Element: None
+      },
+      Verify: {}
     }
   }
 }

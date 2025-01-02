@@ -18,7 +18,7 @@ public class Run
         ArgumentNullException.ThrowIfNull(node);
         ArgumentNullException.ThrowIfNull(source);
 
-        Name = $"{node.Name} - Run Results";
+        Name = $"{node.Name}";
 
         //Build the set of outcomes based on the spec or specs 
         GenerateOutcomes(node);
@@ -33,15 +33,17 @@ public class Run
     /// </summary>
     [UsedImplicitly]
     private Run(string runId, string name, string node, string source, string result,
-        string ranOn, string ranBy)
+        string ranOn, string ranBy, long duration, double passRate)
     {
         RunId = Guid.Parse(runId);
         Name = name;
         Node = JsonSerializer.Deserialize<Node>(node) ?? Node.Empty;
-        Source = JsonSerializer.Deserialize<Source>(source) ?? Source.Empty;
+        Source = JsonSerializer.Deserialize<Source>(source) ?? Source.Empty();
         Result = ResultState.FromName(result);
         RanOn = DateTime.Parse(ranOn);
         RanBy = ranBy;
+        Duration = duration;
+        PassRate = passRate;
     }
 
     /// <summary>
@@ -49,25 +51,29 @@ public class Run
     /// </summary>
     [UsedImplicitly]
     private Run(string runId, string name, string node, string source, string result,
-        string ranOn, string ranBy, string outcomes)
+        string ranOn, string ranBy, long duration, double passRate, string outcomes)
     {
         RunId = Guid.Parse(runId);
         Name = name;
         Node = JsonSerializer.Deserialize<Node>(node) ?? Node.Empty;
-        Source = JsonSerializer.Deserialize<Source>(source) ?? Source.Empty;
+        Source = JsonSerializer.Deserialize<Source>(source) ?? Source.Empty();
         Result = ResultState.FromName(result);
         RanOn = DateTime.Parse(ranOn);
         RanBy = ranBy;
+        Duration = duration;
+        PassRate = passRate;
         _outcomes = JsonSerializer.Deserialize<List<Outcome>>(outcomes)?.ToDictionary(x => x.NodeId) ?? [];
     }
 
     public Guid RunId { get; } = Guid.NewGuid();
-    public string Name { get; set; }
+    public string Name { get; private set; }
     public Node Node { get; private set; }
     public Source Source { get; private set; }
     public ResultState Result { get; private set; } = ResultState.None;
     public DateTime RanOn { get; private set; }
     public string RanBy { get; private set; } = string.Empty;
+    public long Duration { get; private set; }
+    public double PassRate { get; private set; }
     public IEnumerable<Outcome> Outcomes => _outcomes.Values;
 
     /// <summary>
@@ -76,7 +82,7 @@ public class Run
     /// <remarks>
     /// This property returns a new instance of Run with default empty values for properties.
     /// </remarks>
-    public static Run Empty => new(Node.Empty, Source.Empty);
+    public static Run Empty => new(Node.Empty, Source.Empty());
 
     /// <summary>
     /// Executes the provided nodes against the provided source for this run.
@@ -100,9 +106,11 @@ public class Run
 
         await RunAllNodes(nodes, source, running, complete, token);
 
-        Result = ResultState.MaxOrDefault(_outcomes.Select(o => o.Value.Verification.Result).ToList());
+        Result = ResultState.MaxOrDefault(_outcomes.Select(o => o.Value.Result).ToList());
         RanOn = DateTime.Now;
         RanBy = Environment.UserName;
+        Duration = _outcomes.Sum(x => x.Value.Duration);
+        PassRate = _outcomes.Average(x => x.Value.PassRate);
     }
 
     /// <summary>
@@ -131,7 +139,8 @@ public class Run
                 continue;
             }
 
-            outcome.Verification = await node.Run(content, token);
+            var verification = await node.Run(content, token);
+            outcome.Apply(verification);
             complete?.Invoke(outcome);
         }
     }
@@ -146,7 +155,7 @@ public class Run
 
         foreach (var spec in specs)
         {
-            var outcome = new Outcome { RunId = RunId, NodeId = spec.NodeId, Name = spec.Name };
+            var outcome = new Outcome { RunId = RunId, NodeId = spec.NodeId, Name = spec.Name, Path = spec.Path };
             _outcomes.TryAdd(spec.NodeId, outcome);
         }
     }

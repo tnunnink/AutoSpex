@@ -1,84 +1,34 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui">
-    
+
     <Design.PreviewWith>
         <Border>
             <StackPanel Orientation="Horizontal">
-                <DataGridColumnHeader Theme="{DynamicResource DataGridColumnHeaderSoft}" Height="30" Width="200"
+                <DataGridColumnHeader Theme="{DynamicResource DataGridColumnHeaderSubtle}" Height="30" Width="200"
                                       Content="Label" />
-                <DataGridColumnHeader Theme="{DynamicResource DataGridColumnHeaderSoft}" Height="30" Width="200"
+                <DataGridColumnHeader Theme="{DynamicResource DataGridColumnHeaderSubtle}" Height="30" Width="200"
                                       Content="Label" />
             </StackPanel>
 
         </Border>
     </Design.PreviewWith>
 
-    <!-- DataGridColumnHeader -->
-    <ControlTheme x:Key="DataGridColumnHeaderSoft" TargetType="DataGridColumnHeader">
-        <Setter Property="Background" Value="Transparent" />
+    <ControlTheme x:Key="DataGridColumnHeaderSubtle"
+                  TargetType="DataGridColumnHeader"
+                  BasedOn="{actipro:ControlTheme DataGridColumnHeader}">
+
+        <Setter Property="Background" Value="{actipro:ThemeResource Container2BackgroundBrush}" />
         <Setter Property="FontSize" Value="{actipro:ThemeResource DefaultFontSizeSmall}" />
-        <Setter Property="Foreground" Value="{actipro:ThemeResource DefaultForegroundBrush}" />
-        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="SeparatorBrush" Value="{actipro:ThemeResource Container1BorderBrush}" />
-        <Setter Property="VerticalContentAlignment" Value="Center" />
-
-        <Setter Property="Template">
-            <ControlTemplate>
-
-                <Border
-                    x:Name="border"
-                    Background="{TemplateBinding Background}"
-                    BorderBrush="{TemplateBinding BorderBrush}"
-                    BorderThickness="{TemplateBinding BorderThickness}"
-                    CornerRadius="{TemplateBinding CornerRadius}">
-                    <Grid x:Name="PART_ColumnHeaderRoot" ColumnDefinitions="*,Auto"
-                          ClipToBounds="True">
-                        <Grid
-                            Margin="{TemplateBinding Padding}"
-                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" MinWidth="20" />
-                            </Grid.ColumnDefinitions>
-
-                            <ContentPresenter Margin="{actipro:ThemeResource ListItemPadding}"
-                                              Content="{TemplateBinding Content}"
-                                              ContentTemplate="{TemplateBinding ContentTemplate}" />
-
-                            <ContentPresenter x:Name="sortGlyph" Grid.Column="1" IsVisible="False"
-                                              HorizontalAlignment="Left" VerticalAlignment="Center" />
-                        </Grid>
-
-                        <Rectangle x:Name="verticalSeparator" Grid.Column="1" Width="1"
-                                   Fill="{TemplateBinding SeparatorBrush}"
-                                   IsVisible="{TemplateBinding AreSeparatorsVisible}" />
-                    </Grid>
-                </Border>
-
-            </ControlTemplate>
-        </Setter>
 
         <Style Selector="^:pointerover /template/ Grid#PART_ColumnHeaderRoot">
-            <Setter Property="Background" Value="{actipro:ThemeResource ControlBackgroundBrushSoftPointerOver}" />
+            <Setter Property="Background" Value="{actipro:ThemeResource ButtonBackgroundBrushSubtlePointerOver}" />
         </Style>
 
         <Style Selector="^:pressed /template/ Grid#PART_ColumnHeaderRoot">
-            <Setter Property="Background" Value="{actipro:ThemeResource ControlBackgroundBrushSoftPressed}" />
+            <Setter Property="Background" Value="{actipro:ThemeResource ButtonBackgroundBrushSubtlePressed}" />
         </Style>
 
-        <Style Selector="^:dragIndicator">
-            <Setter Property="Opacity" Value="0.5" />
-        </Style>
-
-        <Style Selector="^:sortascending /template/ ContentPresenter#sortGlyph">
-            <Setter Property="IsVisible" Value="True" />
-            <Setter Property="ContentTemplate" Value="{actipro:GlyphTemplate SortDirectionAscending8}" />
-        </Style>
-        <Style Selector="^:sortdescending /template/ ContentPresenter#sortGlyph">
-            <Setter Property="IsVisible" Value="True" />
-            <Setter Property="ContentTemplate" Value="{actipro:GlyphTemplate SortDirectionDescending8}" />
-        </Style>
     </ControlTheme>
 </ResourceDictionary>

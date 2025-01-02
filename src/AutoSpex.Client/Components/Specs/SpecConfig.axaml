@@ -5,7 +5,7 @@
                     xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine">
 
     <Design.PreviewWith>
-        <Border Width="600" Height="800">
+        <Border Width="800" Height="800">
             <ContentControl
                 Content="{x:Static components:TestData.SpecObserverManyCriterion}"
                 ContentTemplate="{DynamicResource SpecConfig}"
@@ -15,21 +15,39 @@
 
     <DataTemplate x:Key="SpecConfig" DataType="observers:SpecObserver">
 
-        <StackPanel Spacing="20">
+        <StackPanel Spacing="30">
 
-            <ContentControl
-                Content="{Binding}"
-                ContentTemplate="{StaticResource QueryStep}" />
+            <StackPanel Spacing="10" ClipToBounds="True">
 
-            <ContentControl
-                Content="{Binding}"
-                ContentTemplate="{StaticResource FilterStep}"
-                IsVisible="{Binding Element, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Element.Default}}" />
+                <ContentControl
+                    Content="{Binding Query}"
+                    ContentTemplate="{StaticResource QueryEntry}" />
 
-            <ContentControl
-                Content="{Binding}"
-                ContentTemplate="{StaticResource VerificationStep}"
-                IsVisible="{Binding Element, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:Element.Default}}" />
+                <ContentControl
+                    Content="{Binding Verify}"
+                    ContentTemplate="{StaticResource VerifyStep}"
+                    IsVisible="{Binding Query.Element, Converter={x:Static ObjectConverters.NotEqual}, ConverterParameter={x:Static engine:Element.Default}}" />
+
+            </StackPanel>
+
+            <StackPanel
+                IsVisible="{Binding Query.Element, Converter={x:Static ObjectConverters.NotEqual}, ConverterParameter={x:Static engine:Element.Default}}"
+                Orientation="Horizontal"
+                Spacing="20">
+
+                <ContentControl
+                    Content="{Binding Query}"
+                    ContentTemplate="{StaticResource FilterButton}" />
+
+                <ContentControl
+                    Content="{Binding Query}"
+                    ContentTemplate="{StaticResource SelectButton}" />
+
+                <ContentControl
+                    Content="{Binding Verify}"
+                    ContentTemplate="{StaticResource VerifyButton}" />
+
+            </StackPanel>
 
         </StackPanel>
 

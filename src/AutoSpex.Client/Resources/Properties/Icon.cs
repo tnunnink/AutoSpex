@@ -1,5 +1,4 @@
-﻿using System;
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Styling;
 
@@ -15,7 +14,7 @@ public static class Icon
 
     static Icon()
     {
-        ThemeProperty.Changed.Subscribe(HandleChange);
+        /*ThemeProperty.Changed.Subscribe(HandleChange);*/
     }
 
     /// <summary>
@@ -34,7 +33,7 @@ public static class Icon
         target.SetValue(ThemeProperty, value);
     }
 
-    private static void HandleChange(AvaloniaPropertyChangedEventArgs<ControlTheme> args)
+    /*private static void HandleChange(AvaloniaPropertyChangedEventArgs<ControlTheme> args)
     {
         if (args.Sender is not ContentControl target)
         {
@@ -45,5 +44,5 @@ public static class Icon
         {
             Theme = args.GetNewValue<ControlTheme>()
         };
-    }
+    }*/
 }

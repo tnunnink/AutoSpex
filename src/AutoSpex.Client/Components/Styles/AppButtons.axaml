@@ -14,10 +14,6 @@
                     <Button Classes="cancel danger" IsEnabled="False" />
                     <Button Classes="save" />
                     <Button Classes="save" IsEnabled="False" />
-                    <Button Classes="export" />
-                    <Button Classes="export" IsEnabled="False" />
-                    <Button Classes="add-spec" />
-                    <Button Classes="add-spec" IsEnabled="False" />
                     <Button Classes="more" HorizontalAlignment="Left" />
                     <Button Classes="more" IsEnabled="False" HorizontalAlignment="Left" />
                 </StackPanel>
@@ -72,17 +68,17 @@
             <Template>
                 <Panel>
                     <StackPanel Orientation="Horizontal" Spacing="7">
-                        <PathIcon Theme="{StaticResource IconFilledStop}" FontSize="14" Classes="centered" />
-                        <TextBlock Text="Cancel" FontSize="{a:ThemeResource DefaultFontSizeMedium}" />
+                        <PathIcon Theme="{StaticResource IconLineBan}" FontSize="14" Classes="centered" />
+                        <TextBlock Text="Stop" FontSize="{a:ThemeResource DefaultFontSizeMedium}" />
                     </StackPanel>
                 </Panel>
             </Template>
         </Setter>
         <Style Selector="^:disabled PathIcon">
-            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftDangerDisabled}" />
+            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSolidDangerDisabled}" />
         </Style>
         <Style Selector="^:not(:disabled) PathIcon">
-            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSoftDanger}" />
+            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushSolidDanger}" />
         </Style>
     </Style>
 
@@ -116,38 +112,33 @@
         </Style>
     </Style>
 
-    <Style Selector="Button.add-spec">
-        <Setter Property="Theme" Value="{a:ControlTheme ButtonSoft}" />
-        <Setter Property="Content">
-            <Template>
-                <StackPanel Orientation="Horizontal" Spacing="7">
-                    <PathIcon Theme="{StaticResource IconAdd}" Classes="size-sm" />
-                    <TextBlock Text="Add Spec" FontSize="{a:ThemeResource DefaultFontSizeMedium}" />
-                </StackPanel>
-            </Template>
-        </Setter>
-        <Style Selector="^:disabled PathIcon">
-            <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushDisabled}" />
-        </Style>
-    </Style>
-
     <Style Selector="Button.more">
-        <Setter Property="Theme" Value="{a:ControlTheme ButtonSoft}" />
+        <Setter Property="Theme" Value="{a:ControlTheme ButtonSubtle}" />
+        <Setter Property="Padding" Value="{a:ThemeResource ButtonPadding}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="Content">
             <Template>
-                <PathIcon Theme="{StaticResource IconEllipsis}" />
+                <PathIcon Theme="{StaticResource IconEllipsis}" FontSize="{a:ThemeResource TabItemFontSizeSubtle}" />
             </Template>
         </Setter>
+
+        <Style Selector="^:pointerover">
+            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+            <Style Selector="^ > PathIcon">
+                <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+            </Style>
+        </Style>
     </Style>
 
     <Style Selector="Button.new-collection">
         <Setter Property="Theme" Value="{a:ControlTheme ButtonSubtle}" />
         <Setter Property="Width" Value="300" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="Padding" Value="10" />
         <Setter Property="Content">
             <Template>
-                <StackPanel Spacing="7">
-                    <StackPanel Orientation="Horizontal" Spacing="7">
+                <StackPanel Spacing="8">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
                         <PathIcon
                             Theme="{StaticResource IconThemedCollection}" />
                         <TextBlock
@@ -170,10 +161,11 @@
         <Setter Property="Theme" Value="{a:ControlTheme ButtonSubtle}" />
         <Setter Property="Width" Value="300" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="Padding" Value="10" />
         <Setter Property="Content">
             <Template>
-                <StackPanel Spacing="7">
-                    <StackPanel Orientation="Horizontal" Spacing="7">
+                <StackPanel Spacing="8">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
                         <PathIcon
                             Theme="{StaticResource IconThemedSpec}" />
                         <TextBlock
@@ -196,10 +188,11 @@
         <Setter Property="Theme" Value="{a:ControlTheme ButtonSubtle}" />
         <Setter Property="Width" Value="300" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="Padding" Value="10" />
         <Setter Property="Content">
             <Template>
-                <StackPanel Spacing="7">
-                    <StackPanel Orientation="Horizontal" Spacing="7">
+                <StackPanel Spacing="8">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
                         <PathIcon
                             Theme="{StaticResource IconThemedSource}"
                             Classes="centered" />

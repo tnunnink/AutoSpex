@@ -1,0 +1,109 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
+                    xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+
+    <Design.PreviewWith>
+        <Border Padding="30">
+            <ContentControl
+                Content="{x:Static components:TestData.QueryObserver}"
+                ContentTemplate="{DynamicResource ElementEntry}" />
+        </Border>
+    </Design.PreviewWith>
+
+
+    <DataTemplate x:Key="ElementEntry" x:DataType="observers:QueryObserver">
+
+        <Border
+            Classes="normal"
+            Classes.highlight="{Binding $parent[ContentControl].IsPointerOver}">
+            <Border.Styles>
+                <Style Selector="Border.normal">
+                    <Setter Property="BorderThickness" Value="2 0 0 0" />
+                    <Setter Property="BorderBrush" Value="{a:ThemeResource Container1BorderBrush}" />
+                </Style>
+                <Style Selector="Border.highlight">
+                    <Setter
+                        Property="BorderBrush"
+                        Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+                </Style>
+            </Border.Styles>
+
+            <Grid
+                ColumnDefinitions="100,*"
+                Background="Transparent"
+                Focusable="True"
+                IsTabStop="False">
+
+                <Border
+                    Grid.Column="0"
+                    Theme="{a:ControlTheme ButtonSubtle}"
+                    Padding="{a:ThemeResource ButtonPadding}"
+                    Margin="0 0 5 0">
+
+                    <TextBlock Text="query" Classes="faint" />
+
+                </Border>
+
+                <Button
+                    Grid.Column="1"
+                    x:Name="ElementSelector"
+                    Content="{Binding Element}"
+                    Theme="{a:ControlTheme ButtonSoft}"
+                    Background="{a:ThemeResource Container2BackgroundBrush}">
+
+                    <Button.ContentTemplate>
+                        <DataTemplate x:DataType="engine:Element">
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <PathIcon
+                                    Theme="{StaticResource IconThemedSource}"
+                                    Classes="size-sm" />
+                                <TextBlock
+                                    Text="{Binding Name}"
+                                    FontFamily="{a:ThemeResource CodeFontFamily}" />
+                                <PathIcon
+                                    Theme="{StaticResource IconLineExpand}"
+                                    Classes="size-sm" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </Button.ContentTemplate>
+
+                    <Button.Flyout>
+                        <Flyout Placement="BottomEdgeAlignedLeft" HorizontalOffset="-8" VerticalOffset="5">
+                            <ItemsControl
+                                Theme="{a:ControlTheme ItemsControlScrollable}"
+                                ItemsSource="{x:Static engine:Element.Selectable}"
+                                Margin="5">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="engine:Element">
+                                        <Button
+                                            Command="{Binding $parent[ItemsControl].((observers:QueryObserver)DataContext).UpdateElementCommand, FallbackValue={x:Null}}"
+                                            CommandParameter="{Binding}"
+                                            Theme="{a:ControlTheme ButtonSubtle}"
+                                            HorizontalContentAlignment="Stretch">
+                                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                                <PathIcon Theme="{StaticResource IconThemedSource}" />
+                                                <TextBlock Text="{Binding Name}"
+                                                           FontFamily="{a:ThemeResource CodeFontFamily}" />
+                                            </StackPanel>
+                                            <Interaction.Behaviors>
+                                                <behaviors:HideFlyoutOnClickedBehavior />
+                                            </Interaction.Behaviors>
+                                        </Button>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+
+            </Grid>
+
+        </Border>
+
+    </DataTemplate>
+
+</ResourceDictionary>

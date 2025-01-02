@@ -23,19 +23,11 @@
             Grid.Row="1"
             Filter="{Binding Filter}"
             ItemsSource="{Binding Elements}"
-            SelectedItem="{Binding Selected}"
-            ItemTemplate="{StaticResource ElementListItem}"
             ItemContainerTheme="{StaticResource ListBoxItemSimple}"
             HasItems="{Binding Elements.Count}"
             DefaultIcon="{StaticResource IconLineXml}"
             DefaultCaption="Enter a keyword to find elements in this source."
             Padding="5">
-
-            <controls:ListView.Header>
-                <StackPanel Orientation="Horizontal">
-
-                </StackPanel>
-            </controls:ListView.Header>
 
             <Interaction.Behaviors>
                 <ExecuteCommandOnKeyDownBehavior

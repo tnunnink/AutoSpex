@@ -1,0 +1,112 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             xmlns:system="clr-namespace:System;assembly=System.Runtime"
+             x:Class="AutoSpex.Client.Pages.InfoPage"
+             x:DataType="pages:InfoPageModel">
+
+    <Design.Height>500</Design.Height>
+    <Design.Width>700</Design.Width>
+
+    <DockPanel Margin="20">
+
+        <Border DockPanel.Dock="Top"
+                BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="5"
+                Padding="10">
+
+            <Grid ColumnDefinitions="*,30,Auto">
+
+                <Grid Grid.Column="0" RowDefinitions="Auto,5,*">
+
+                    <controls:Entry
+                        x:Name="NameEntry"
+                        Grid.Row="0"
+                        Value="{Binding Observer.Name}"
+                        FontFamily="{a:ThemeResource DefaultFontFamily}"
+                        FontWeight="{a:ThemeResource HeadingFontWeightSmall}"
+                        FontSize="{a:ThemeResource HeadingFontSizeSmall}"
+                        CommitCommand="{Binding Observer.RenameCommand}"
+                        MinDropDownWidth="{Binding #NameEntry.Bounds.Width}"
+                        Padding="{a:ThemeResource EditPadding}">
+                        <controls:Entry.ValueTemplate>
+                            <DataTemplate x:DataType="system:String">
+                                <TextBlock
+                                    Text="{Binding}"
+                                    FontWeight="{a:ThemeResource HeadingFontWeightSmall}"
+                                    FontSize="{a:ThemeResource HeadingFontSizeSmall}" />
+                            </DataTemplate>
+                        </controls:Entry.ValueTemplate>
+                    </controls:Entry>
+
+                    <TextBox
+                        Grid.Row="2"
+                        Text="{Binding Observer.Description}"
+                        Watermark="Optionally add a description here to help others"
+                        VerticalContentAlignment="Top"
+                        Theme="{StaticResource TextBoxOutlineHighlight}"
+                        Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
+                        BorderThickness="0"
+                        TextWrapping="Wrap" />
+
+                </Grid>
+
+                <StackPanel Grid.Column="2">
+
+                    <StackPanel Orientation="Horizontal" Spacing="10" Margin="{a:ThemeResource EditPadding}">
+                        <PathIcon Theme="{StaticResource IconLineFingerprint}" Classes="size-sm" />
+                        <Button
+                            Command="{Binding CopyIdCommand}"
+                            Content="{Binding Observer.Id}"
+                            Classes="link-text"
+                            FontSize="{a:ThemeResource DefaultFontSizeSmall}" />
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Spacing="10" Margin="{a:ThemeResource EditPadding}">
+
+                        <PathIcon Theme="{StaticResource IconLineClock}" Classes="size-sm" />
+
+                        <TextBlock Classes="faint">
+                            <TextBlock.Inlines>
+                                <Run Text="Created" />
+                                <Run Text="{Binding CreatedOn}"
+                                     Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}" />
+                                <Run Text="by" />
+                                <Run Text="{Binding CreatedBy}"
+                                     Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}" />
+                            </TextBlock.Inlines>
+                        </TextBlock>
+
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Spacing="10" Margin="{a:ThemeResource EditPadding}">
+
+                        <PathIcon Theme="{StaticResource IconLineClock}" Classes="size-sm" />
+
+                        <TextBlock Classes="faint">
+                            <TextBlock.Inlines>
+                                <Run Text="Updated" />
+                                <Run Text="{Binding UpdatedOn}"
+                                     Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}" />
+                                <Run Text="by" />
+                                <Run Text="{Binding UpdatedBy}"
+                                     Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}" />
+                            </TextBlock.Inlines>
+                        </TextBlock>
+
+                    </StackPanel>
+
+                </StackPanel>
+
+            </Grid>
+
+        </Border>
+
+        <Panel />
+
+    </DockPanel>
+
+</UserControl>

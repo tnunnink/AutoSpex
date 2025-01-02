@@ -40,6 +40,7 @@
             <PathIcon Theme="{DynamicResource IconThemedElement}" />
             <PathIcon Theme="{DynamicResource IconThemedArray}" />
             <PathIcon Theme="{DynamicResource IconThemedTag}" />
+            <PathIcon Theme="{DynamicResource IconThemedReference}" />
         </StackPanel>
     </Design.PreviewWith>
 
@@ -58,13 +59,11 @@
     <ControlTheme x:Key="IconThemedRun" TargetType="PathIcon" BasedOn="{StaticResource IconFilledLightning}">
         <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
     </ControlTheme>
-    <ControlTheme x:Key="IconThemedHistory" TargetType="PathIcon" BasedOn="{StaticResource IconLineHistory}">
+    <ControlTheme x:Key="IconThemedHistory" TargetType="PathIcon" BasedOn="{StaticResource IconLineClockRotate}">
         <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushTag}" />
     </ControlTheme>
 
-    <ControlTheme x:Key="IconThemedNone" TargetType="PathIcon" BasedOn="{StaticResource IconLineCircleHalfFill}">
-        <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
-    </ControlTheme>
+    <ControlTheme x:Key="IconThemedNone" TargetType="PathIcon" BasedOn="{StaticResource IconLineCircleDot}" />
     <ControlTheme x:Key="IconThemedPending" TargetType="PathIcon" BasedOn="{StaticResource IconLineCircleNotch}">
         <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
     </ControlTheme>
@@ -121,6 +120,10 @@
     </ControlTheme>
     <ControlTheme x:Key="IconThemedTag" TargetType="PathIcon" BasedOn="{StaticResource IconFilledTag}">
         <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushTag}" />
+        <Setter Property="FontSize" Value="14" />
+    </ControlTheme>
+    <ControlTheme x:Key="IconThemedReference" TargetType="PathIcon" BasedOn="{StaticResource IconLineAsteriks}">
+        <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushReference}" />
         <Setter Property="FontSize" Value="14" />
     </ControlTheme>
 </ResourceDictionary>

@@ -44,7 +44,11 @@ public class Range
     /// <returns>True if the value is within the range, false otherwise.</returns>
     public bool InRange(object? value)
     {
-        if (value is not IComparable comparable) return false;
+        if (value is null) return false;
+
+        if (value is not IComparable comparable)
+            throw new InvalidOperationException($"Input type {value.GetType()} is not a comparable type.");
+
         return comparable.CompareTo(Min) >= 0 && comparable.CompareTo(Max) <= 0;
     }
 

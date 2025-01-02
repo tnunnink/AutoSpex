@@ -82,7 +82,27 @@ public class JsonObjectConverterTests
     [Test]
     public Task Serialize_CriterionValue_ShouldBeVerified()
     {
-        var value = new Criterion(Element.Tag.Property("TagName"), Operation.Containing, "this is a test value");
+        var value = new Criterion("TagName", Operation.Containing, "this is a test value");
+
+        var json = WriteJson(value);
+
+        return VerifyJson(json);
+    }
+    
+    [Test]
+    public Task Serialize_RangeValue_ShouldBeVerified()
+    {
+        var value = new Range(1, 20);
+
+        var json = WriteJson(value);
+
+        return VerifyJson(json);
+    }
+    
+    [Test]
+    public Task Serialize_ReferenceValue_ShouldBeVerified()
+    {
+        var value = new Reference("$this", "Value");
 
         var json = WriteJson(value);
 
@@ -169,7 +189,7 @@ public class JsonObjectConverterTests
     [Test]
     public void Deserialize_CriterionValue_ShouldBeVerified()
     {
-        var value = new Criterion(Element.Tag.Property("TagName"), Operation.Containing, "this is a test value");
+        var value = new Criterion("TagName", Operation.Containing, "this is a test value");
         var json = WriteJson(value);
 
         var result = JsonSerializer.Deserialize<object>(json, _options);

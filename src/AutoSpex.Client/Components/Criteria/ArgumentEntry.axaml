@@ -2,43 +2,58 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
                     xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
-                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine">
 
     <Design.PreviewWith>
         <Border Padding="20" Height="300" Width="600">
             <StackPanel Spacing="10" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <ContentControl
-                    Content="{x:Static components:TestData.NullValue}"
+                    Content="{x:Static components:TestData.EmptyArgument}"
                     ContentTemplate="{DynamicResource ArgumentEntry}" />
                 <ContentControl
-                    Content="{x:Static components:TestData.BooleanTrueValue}"
+                    Content="{x:Static components:TestData.BoolArgument}"
                     ContentTemplate="{DynamicResource ArgumentEntry}" />
                 <ContentControl
-                    Content="{x:Static components:TestData.RadixValue}"
+                    Content="{x:Static components:TestData.EnumArgument}"
                     ContentTemplate="{DynamicResource ArgumentEntry}" />
                 <ContentControl
-                    Content="{x:Static components:TestData.IntegerValue}"
+                    Content="{x:Static components:TestData.NumberArgument}"
                     ContentTemplate="{DynamicResource ArgumentEntry}" />
                 <ContentControl
-                    Content="{x:Static components:TestData.DoubleValue}"
-                    ContentTemplate="{DynamicResource ArgumentEntry}" />
-                <ContentControl
-                    Content="{x:Static components:TestData.TextValue}"
+                    Content="{x:Static components:TestData.TextArgument}"
                     ContentTemplate="{DynamicResource ArgumentEntry}" />
             </StackPanel>
         </Border>
     </Design.PreviewWith>
 
-    <DataTemplate x:Key="ArgumentEntry" x:DataType="observers:ValueObserver">
+    <DataTemplate x:Key="ArgumentEntry" x:DataType="observers:ArgumentInput">
 
         <controls:Entry
             Watermark="Enter value"
-            Value="{Binding }"
-            ValueTemplate="{StaticResource ValueDisplay}"
-            ItemTemplate="{StaticResource ValueItemTemplate}"
+            Value="{Binding Value}"
             IsEmpty="{Binding IsEmpty}"
             Populate="{Binding Suggestions}"
-            CommitCommand="{Binding UpdateValueCommand}" />
+            CommitCommand="{Binding UpdateValueCommand}">
+            
+            <controls:Entry.ValueTemplate>
+                <actipro:TypedDataTemplateSelector DefaultTemplate="{StaticResource ValueDisplay}">
+                    
+                </actipro:TypedDataTemplateSelector>
+            </controls:Entry.ValueTemplate>
+
+            <controls:Entry.ItemTemplate>
+                <actipro:TypedDataTemplateSelector DefaultTemplate="{StaticResource ValueItemTemplate}">
+                    <DataTemplate x:DataType="engine:Property">
+                        <ContentControl
+                            Content="{Binding }"
+                            ContentTemplate="{StaticResource PropertyListItem}" />
+                    </DataTemplate>
+                </actipro:TypedDataTemplateSelector>
+            </controls:Entry.ItemTemplate>
+            
+        </controls:Entry>
 
     </DataTemplate>
 

@@ -8,14 +8,16 @@
         <ResourceInclude Source="ArgumentCollection.axaml" />
         <ResourceInclude Source="ArgumentRange.axaml" />
         <ResourceInclude Source="CriterionEntry.axaml" />
-        <ResourceInclude Source="CriterionListItem.axaml" />
-        <ResourceInclude Source="CriterionReplaceListItem.axaml" />
+        <ResourceInclude Source="CriterionText.axaml" />
+        <ResourceInclude Source="CriterionPill.axaml" />
+        <ResourceInclude Source="CriterionText.axaml" />
+        <ResourceInclude Source="ReplaceListItem.axaml" />
     </ResourceDictionary.MergedDictionaries>
 
     <components:ArgumentSelector x:Key="ArgumentSelector" DefaultTemplate="{StaticResource ArgumentEntry}">
 
         <components:ArgumentSelector.RangeTemplate>
-            <DataTemplate x:DataType="observers:ValueObserver">
+            <DataTemplate x:DataType="observers:ArgumentInput">
                 <ContentControl
                     Content="{Binding Value}"
                     ContentTemplate="{StaticResource ArgumentRange}" />
@@ -23,7 +25,7 @@
         </components:ArgumentSelector.RangeTemplate>
 
         <components:ArgumentSelector.CollectionTemplate>
-            <DataTemplate x:DataType="observers:ValueObserver">
+            <DataTemplate x:DataType="observers:ArgumentInput">
                 <ContentControl
                     Content="{Binding }"
                     ContentTemplate="{StaticResource ArgumentCollection}" />
@@ -31,7 +33,7 @@
         </components:ArgumentSelector.CollectionTemplate>
 
         <components:ArgumentSelector.CriterionTemplate>
-            <DataTemplate x:DataType="observers:ValueObserver">
+            <DataTemplate x:DataType="observers:ArgumentInput">
                 <ContentControl
                     Content="{Binding Value}"
                     ContentTemplate="{StaticResource CriterionEntry}" />

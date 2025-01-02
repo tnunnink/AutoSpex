@@ -1,6 +1,9 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using AutoSpex.Client.Observers;
+using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using AutoSpex.Persistence;
@@ -12,53 +15,97 @@ using JetBrains.Annotations;
 namespace AutoSpex.Client.Pages;
 
 [UsedImplicitly]
-public partial class HistoryDetailPageModel() : DetailPageModel("History"), IRecipient<Observer.GetSelected>
+public partial class HistoryDetailPageModel() : DetailPageModel("History"),
+    IRecipient<Observer.GetSelected>,
+    IRecipient<RunObserver.Finished>
 {
     public override string Route => Title;
     public override string Icon => Title;
     public ObserverCollection<Run, RunObserver> Runs { get; } = [];
     public ObservableCollection<RunObserver> Selected { get; } = [];
+    public ObservableCollection<ResultState> States { get; } = [];
+    public ObservableCollection<SourceObserver> Sources { get; } = [];
 
     [ObservableProperty] private ResultState _filterState = ResultState.None;
 
-    public int Total => Runs.Count;
-    public int Passed => Runs.Count(x => x.Result == ResultState.Passed);
-    public int Failed => Runs.Count(x => x.Result == ResultState.Failed);
-    public int Errored => Runs.Count(x => x.Result == ResultState.Errored);
-    public int Inconclusive => Runs.Count(x => x.Result == ResultState.Inconclusive);
+    [ObservableProperty] private SourceObserver _filterSource = Source.Empty("All Sources");
 
     public override async Task Load()
     {
         var runs = await Mediator.Send(new ListRuns());
         Runs.Bind(runs.ToList(), r => new RunObserver(r));
         RegisterDisposable(Runs);
+        RefreshFilterSelections();
     }
 
-    [RelayCommand]
-    private void ApplyFilter(ResultState? state)
+    [RelayCommand(CanExecute = nameof(CanClearHistory))]
+    private async Task ClearHistory()
     {
-        FilterState = state ?? ResultState.None;
+        var delete = await Prompter.PromptDelete($"{Runs.Count} run(s)");
+        if (delete is not true) return;
+        
+        var result = await Mediator.Send(new ClearRuns());
+        if (Notifier.ShowIfFailed(result)) return;
+        
+        Runs.Dispose();
+        Runs.Clear();
     }
     
+    public bool CanClearHistory() => Runs.HasItems;
+
     public void Receive(Observer.GetSelected message)
     {
         if (message.Observer is not RunObserver observer) return;
         if (!Runs.Any(s => s.Is(observer))) return;
 
         foreach (var item in Selected)
-        {
             message.Reply(item);
-        }
     }
 
     public override void Receive(Observer.Deleted message)
     {
         if (message.Observer is not RunObserver observer) return;
+        Selected.Clear();
         Runs.Remove(observer);
+        RefreshFilterSelections();
     }
 
-    protected override void FilterChanged(string? filter)
+    public void Receive(RunObserver.Finished message)
     {
-        Runs.Filter(filter);
+        Selected.Clear();
+        Runs.Insert(0, message.Run);
+        RefreshFilterSelections();
+    }
+
+    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+    {
+        base.OnPropertyChanged(e);
+
+        if (e.PropertyName is nameof(Filter) or nameof(FilterState) or nameof(FilterSource))
+        {
+            ApplyFilters(Filter, FilterState, FilterSource);
+        }
+    }
+
+    private void ApplyFilters(string? text, ResultState state, SourceObserver source)
+    {
+        Runs.Filter(r =>
+        {
+            var hasText = r.Filter(text);
+            var hasState = state == ResultState.None || r.Result == state;
+            var hasSource = source.Id == Guid.Empty || r.Source.Id == source.Id;
+            return hasText && hasState && hasSource;
+        });
+    }
+
+    private void RefreshFilterSelections()
+    {
+        States.Refresh(
+            [ResultState.None, ..Runs.Select(r => r.Result).Distinct().OrderBy(r => r.Value)]
+        );
+
+        Sources.Refresh(
+            [Source.Empty("All Sources"), ..Runs.Select(r => r.Source).DistinctBy(n => n.Id).OrderBy(s => s.Name)]
+        );
     }
 }

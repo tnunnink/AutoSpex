@@ -1,8 +1,9 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
-             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
-             xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
+             xmlns:shared="clr-namespace:AutoSpex.Client.Shared"
+             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
              x:Class="AutoSpex.Client.Pages.NodeDetailPage"
              x:DataType="pages:NodeDetailPageModel">
 
@@ -11,63 +12,82 @@
 
     <DockPanel>
 
-        <Border DockPanel.Dock="Top" Padding="20 15">
+        <Border
+            DockPanel.Dock="Top"
+            Background="{a:ThemeResource Container2BackgroundBrush}"
+            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+            BorderThickness="0 0 0 1"
+            Padding="15 15 15 10">
 
-            <Grid ColumnDefinitions="*,Auto">
+            <StackPanel Spacing="10">
 
-                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5">
-
-                    <PathIcon
-                        Theme="{Binding Node.Icon, Converter={StaticResource KeyIconConverter}}" />
+                <StackPanel Spacing="5">
 
                     <ContentControl
                         Content="{Binding Node}"
-                        ContentTemplate="{StaticResource BreadcrumbLink}" />
+                        ContentTemplate="{StaticResource BreadcrumbLink}"
+                        HorizontalAlignment="Left"
+                        IsVisible="{Binding Node.Model.Parent, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
+                    <Grid ColumnDefinitions="*,Auto" Margin="5 0" >
+
+                        <ContentControl
+                            Grid.Column="0"
+                            Content="{Binding Node}"
+                            ContentTemplate="{StaticResource ObserverTitle}"
+                            HorizontalAlignment="Left"/>
+
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
+                            <Button Command="{Binding RunCommand}" Classes="run accent" />
+                            <Button Command="{Binding SaveCommand}" Classes="save" />
+                        </StackPanel>
+
+                    </Grid>
 
                 </StackPanel>
 
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
 
-                    <Button Command="{Binding RunCommand}" Classes="run accent" />
+                    <TabStrip
+                        ItemsSource="{Binding Pages}"
+                        SelectedItem="{Binding CurrentPage}"
+                        BorderThickness="0"
+                        Padding="0 5">
 
-                    <Button
-                        IsVisible="{Binding Node.Type, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:NodeType.Spec}}"
-                        Command="{Binding SaveCommand}"
-                        Classes="save" />
+                        <TabStrip.ItemTemplate>
+                            <DataTemplate x:DataType="shared:PageViewModel">
+                                <TextBlock Text="{Binding Title}" />
+                            </DataTemplate>
+                        </TabStrip.ItemTemplate>
 
-                    <Button Classes="more">
+                        <TabStrip.ItemContainerTheme>
+                            <ControlTheme TargetType="TabStripItem" BasedOn="{StaticResource TabStripItemExpandable}"
+                                          x:DataType="shared:PageViewModel">
+                                <Setter
+                                    Property="properties:Icon.Theme"
+                                    Value="{Binding Icon, Converter={StaticResource NamedIconConverter}}" />
+                            </ControlTheme>
+                        </TabStrip.ItemContainerTheme>
+
+                    </TabStrip>
+
+                    <Button Classes="more" ToolTip.Tip="Options">
                         <Button.Flyout>
                             <MenuFlyout
                                 ItemsSource="{Binding Node.MenuItems}"
                                 ItemContainerTheme="{StaticResource MenuActionItem}"
-                                Placement="BottomEdgeAlignedRight" HorizontalOffset="8" VerticalOffset="5" />
+                                Placement="BottomEdgeAlignedLeft" VerticalOffset="5" />
                         </Button.Flyout>
                     </Button>
 
                 </StackPanel>
 
-            </Grid>
+            </StackPanel>
+
         </Border>
 
-        <controls:DrawerView
-            IsDrawerOpen="{Binding ShowRunner, Mode=TwoWay}"
-            DrawerPlacement="Bottom"
-            Classes.show="{Binding Node.Type, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:NodeType.Spec}}">
-
-            <ContentControl Content="{Binding ContentPage}" />
-
-            <controls:DrawerView.Drawer>
-                <ContentControl Content="{Binding RunnerPage}" />
-            </controls:DrawerView.Drawer>
-
-            <controls:DrawerView.Styles>
-                <Style Selector="controls|DrawerView.show">
-                    <Setter Property="DrawerMinLength" Value="50" />
-                    <Setter Property="HideSplitter" Value="False" />
-                </Style>
-            </controls:DrawerView.Styles>
-
-        </controls:DrawerView>
+        <ContentControl Content="{Binding CurrentPage}" />
 
     </DockPanel>
+
 </UserControl>

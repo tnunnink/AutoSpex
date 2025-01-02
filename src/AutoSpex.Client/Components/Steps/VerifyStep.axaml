@@ -1,0 +1,79 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+
+    <Design.PreviewWith>
+        <Border Width="800" Height="200">
+            <ContentControl
+                Content="{x:Static components:TestData.VerifyObserver}"
+                ContentTemplate="{DynamicResource VerifyStep}"
+                Margin="20" VerticalAlignment="Top" />
+        </Border>
+    </Design.PreviewWith>
+
+
+    <DataTemplate x:Key="VerifyStep" x:DataType="observers:VerifyObserver">
+
+        <Border
+            Classes="normal"
+            Classes.highlight="{Binding $parent[ContentControl].IsPointerOver}">
+            <Border.Styles>
+                <Style Selector="Border.normal">
+                    <Setter Property="BorderThickness" Value="2 0 0 0" />
+                    <Setter Property="BorderBrush" Value="{a:ThemeResource Container1BorderBrush}" />
+                </Style>
+                <Style Selector="Border.highlight">
+                    <Setter
+                        Property="BorderBrush"
+                        Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+                </Style>
+            </Border.Styles>
+
+            <Grid
+                ColumnDefinitions="100,*,Auto"
+                IsVisible="{Binding Criteria.HasItems}"
+                Background="Transparent"
+                Focusable="True"
+                IsTabStop="False">
+
+                <Button
+                    Grid.Column="0"
+                    Theme="{a:ControlTheme ButtonSubtle}"
+                    HorizontalContentAlignment="Left"
+                    Margin="0 0 5 0"
+                    CornerRadius="0 4 4 0">
+
+                    <TextBlock Text="verify" Classes="faint" />
+
+                    <Button.Flyout>
+                        <MenuFlyout
+                            Placement="Pointer"
+                            ItemContainerTheme="{StaticResource MenuActionItem}"
+                            ItemsSource="{Binding MenuItems}" />
+                    </Button.Flyout>
+                </Button>
+
+                <ListBox
+                    Grid.Column="1"
+                    ItemsSource="{Binding Criteria}"
+                    ItemTemplate="{StaticResource CriterionPill}"
+                    ItemContainerTheme="{StaticResource ListBoxItemInvisible}"
+                    ClipToBounds="True"
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                    KeyboardNavigation.TabNavigation="Continue">
+                    <Interaction.Behaviors>
+                        <ExecuteCommandOnKeyDownBehavior
+                            Gesture="Ctrl+V"
+                            Command="{Binding PasteCriteriaCommand}"
+                            MarkAsHandled="True" />
+                    </Interaction.Behaviors>
+                </ListBox>
+
+            </Grid>
+
+        </Border>
+
+    </DataTemplate>
+</ResourceDictionary>

@@ -9,24 +9,24 @@
     <Design.PreviewWith>
         <Border Padding="20" Height="300" Width="300">
             <ContentControl
-                Content="{x:Static components:TestData.NumberCollectionValue}"
+                Content="{x:Static components:TestData.CollectionArgument}"
                 ContentTemplate="{DynamicResource ArgumentCollection}"
                 VerticalAlignment="Top" HorizontalAlignment="Center" />
         </Border>
     </Design.PreviewWith>
 
 
-    <DataTemplate x:Key="ArgumentCollection" x:DataType="observers:ValueObserver">
+    <DataTemplate x:Key="ArgumentCollection" x:DataType="observers:ArgumentInput">
 
         <Button Theme="{a:ControlTheme ButtonSubtle}">
 
-            <ContentControl
-                Content="{Binding }"
-                ContentTemplate="{StaticResource ValueDisplay}"
+            <TextBlock
+                Text="{Binding ValueText}"
+                Foreground="{DynamicResource TypeGroupForegroundBrushCollection}"
                 FontFamily="{a:ThemeResource CodeFontFamily}" />
 
             <Button.Flyout>
-                <Flyout Placement="Bottom">
+                <Flyout Placement="BottomEdgeAlignedLeft">
 
                     <StackPanel Margin="5" Spacing="3">
 
@@ -45,7 +45,7 @@
                                             <Border Grid.Column="1" Height="18" Width="18" Margin="5 0 -5 0">
                                                 <Button
                                                     IsVisible="{Binding $parent[ListBoxItem].IsPointerOver}"
-                                                    Command="{Binding $parent[ListBox].((observers:ValueObserver)DataContext).RemoveValueCommand, FallbackValue={x:Null}}"
+                                                    Command="{Binding $parent[ListBox].((observers:ArgumentInput)DataContext).RemoveValueCommand, FallbackValue={x:Null}}"
                                                     CommandParameter="{Binding}"
                                                     Theme="{StaticResource IconButtonSmall}"
                                                     properties:Icon.Theme="{StaticResource IconClose}"

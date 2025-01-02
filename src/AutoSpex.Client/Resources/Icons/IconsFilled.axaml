@@ -21,27 +21,30 @@
             <PathIcon Theme="{DynamicResource IconFilledFolder}" />
             <PathIcon Theme="{DynamicResource IconFilledFolderOpen}" />
             <PathIcon Theme="{DynamicResource IconFilledCog}" />
-            <PathIcon Theme="{DynamicResource IconFilledCogPlay}" />
             <PathIcon Theme="{DynamicResource IconFilledGear}" />
-            <PathIcon Theme="{DynamicResource IconFilledAdd}" />
+            <PathIcon Theme="{DynamicResource IconFilledPlus}" />
             <PathIcon Theme="{DynamicResource IconFilledCheck}" />
             <PathIcon Theme="{DynamicResource IconFilledCross}" />
             <PathIcon Theme="{DynamicResource IconFilledExclamation}" />
             <PathIcon Theme="{DynamicResource IconFilledQuestion}" />
+            <PathIcon Theme="{DynamicResource IconFilledInfo}" />
             <PathIcon Theme="{DynamicResource IconFilledWarning}" />
             <PathIcon Theme="{DynamicResource IconFilledDash}" />
             <PathIcon Theme="{DynamicResource IconFilledCircleStop}" />
             <PathIcon Theme="{DynamicResource IconFilledPause}" />
             <PathIcon Theme="{DynamicResource IconFilledArrowUp}" />
             <PathIcon Theme="{DynamicResource IconFilledArrowDown}" />
-            <PathIcon Theme="{DynamicResource IconFilledArrowUpRight}" />
+            <PathIcon Theme="{DynamicResource IconFilledChevronUp}" />
+            <PathIcon Theme="{DynamicResource IconFilledChevronDown}" />
             <PathIcon Theme="{DynamicResource IconFilledCube}" />
             <PathIcon Theme="{DynamicResource IconFilledCubes}" />
             <PathIcon Theme="{DynamicResource IconFilledTrash}" />
             <PathIcon Theme="{DynamicResource IconFilledBinoculars}" />
             <PathIcon Theme="{DynamicResource IconFilledLightning}" />
             <PathIcon Theme="{DynamicResource IconFilledFunnel}" />
+            <PathIcon Theme="{DynamicResource IconFilledHand}" />
             <PathIcon Theme="{DynamicResource IconFilledPatch}" />
+            <PathIcon Theme="{DynamicResource IconFilledResults}" />
             <PathIcon Theme="{DynamicResource IconFilledClone}" />
             <PathIcon Theme="{DynamicResource IconFilledCopy}" />
             <PathIcon Theme="{DynamicResource IconFilledPaste}" />
@@ -51,8 +54,10 @@
             <PathIcon Theme="{DynamicResource IconFilledToggle}" />
             <PathIcon Theme="{DynamicResource IconFilledQuote}" />
             <PathIcon Theme="{DynamicResource IconFilledFile}" />
+            <PathIcon Theme="{DynamicResource IconFilledFileCode}" />
             <PathIcon Theme="{DynamicResource IconFilledTag}" />
             <PathIcon Theme="{DynamicResource IconFilledGrip}" />
+            <PathIcon Theme="{DynamicResource IconFilledScroll}" />
         </WrapPanel>
     </Design.PreviewWith>
 
@@ -74,7 +79,7 @@
         </Setter>
     </ControlTheme>
 
-    <ControlTheme x:Key="IconFilledAdd" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
+    <ControlTheme x:Key="IconFilledPlus" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
         <Setter Property="Data">
             <StreamGeometry>
                 M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM232 344l0-64-64 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l64 0 0-64c0-13.3 10.7-24 24-24s24 10.7 24 24l0 64 64 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-64 0 0 64c0 13.3-10.7 24-24 24s-24-10.7-24-24z
@@ -113,17 +118,6 @@
             <GeometryGroup>
                 <StreamGeometry>
                     M495.9 166.6c3.2 8.7 .5 18.4-6.4 24.6l-43.3 39.4c1.1 8.3 1.7 16.8 1.7 25.4s-.6 17.1-1.7 25.4l43.3 39.4c6.9 6.2 9.6 15.9 6.4 24.6c-4.4 11.9-9.7 23.3-15.8 34.3l-4.7 8.1c-6.6 11-14 21.4-22.1 31.2c-5.9 7.2-15.7 9.6-24.5 6.8l-55.7-17.7c-13.4 10.3-28.2 18.9-44 25.4l-12.5 57.1c-2 9.1-9 16.3-18.2 17.8c-13.8 2.3-28 3.5-42.5 3.5s-28.7-1.2-42.5-3.5c-9.2-1.5-16.2-8.7-18.2-17.8l-12.5-57.1c-15.8-6.5-30.6-15.1-44-25.4L83.1 425.9c-8.8 2.8-18.6 .3-24.5-6.8c-8.1-9.8-15.5-20.2-22.1-31.2l-4.7-8.1c-6.1-11-11.4-22.4-15.8-34.3c-3.2-8.7-.5-18.4 6.4-24.6l43.3-39.4C64.6 273.1 64 264.6 64 256s.6-17.1 1.7-25.4L22.4 191.2c-6.9-6.2-9.6-15.9-6.4-24.6c4.4-11.9 9.7-23.3 15.8-34.3l4.7-8.1c6.6-11 14-21.4 22.1-31.2c5.9-7.2 15.7-9.6 24.5-6.8l55.7 17.7c13.4-10.3 28.2-18.9 44-25.4l12.5-57.1c2-9.1 9-16.3 18.2-17.8C227.3 1.2 241.5 0 256 0s28.7 1.2 42.5 3.5c9.2 1.5 16.2 8.7 18.2 17.8l12.5 57.1c15.8 6.5 30.6 15.1 44 25.4l55.7-17.7c8.8-2.8 18.6-.3 24.5 6.8c8.1 9.8 15.5 20.2 22.1 31.2l4.7 8.1c6.1 11 11.4 22.4 15.8 34.3zM256 336a80 80 0 1 0 0-160 80 80 0 1 0 0 160z
-                    M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z
-                </StreamGeometry>
-            </GeometryGroup>
-        </Setter>
-    </ControlTheme>
-
-    <ControlTheme x:Key="IconFilledCogPlay" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
-        <Setter Property="Data">
-            <GeometryGroup>
-                <StreamGeometry>
-                    M13.53 22H10C9.75 22 9.54 21.82 9.5 21.58L9.13 18.93C8.5 18.68 7.96 18.34 7.44 17.94L4.95 18.95C4.73 19.03 4.46 18.95 4.34 18.73L2.34 15.27C2.21 15.05 2.27 14.78 2.46 14.63L4.57 12.97C4.53 12.65 4.5 12.33 4.5 12S4.53 11.34 4.57 11L2.46 9.37C2.27 9.22 2.21 8.95 2.34 8.73L4.34 5.27C4.46 5.05 4.73 4.96 4.95 5.05L7.44 6.05C7.96 5.66 8.5 5.32 9.13 5.07L9.5 2.42C9.54 2.18 9.75 2 10 2H14C14.25 2 14.46 2.18 14.5 2.42L14.87 5.07C15.5 5.32 16.04 5.66 16.56 6.05L19.05 5.05C19.27 4.96 19.54 5.05 19.66 5.27L21.66 8.73C21.78 8.95 21.73 9.22 21.54 9.37L19.43 11C19.47 11.34 19.5 11.67 19.5 12V12.19C19 12.07 18.5 12 18 12C17.08 12 16.22 12.21 15.44 12.58C15.47 12.39 15.5 12.2 15.5 12C15.5 10.07 13.93 8.5 12 8.5S8.5 10.07 8.5 12 10.07 15.5 12 15.5C12.2 15.5 12.39 15.47 12.58 15.44C12.21 16.22 12 17.08 12 18C12 19.54 12.58 20.94 13.53 22M16 15V21L21 18L16 15Z
                 </StreamGeometry>
             </GeometryGroup>
         </Setter>
@@ -197,7 +191,7 @@
         <Setter Property="Data">
             <GeometryGroup>
                 <StreamGeometry>
-                    M16 8A8 8 0 1 0 0 8a8 8 0 0 0 16 0m-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707z
+                    M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zm11.3-395.3l112 112c4.6 4.6 5.9 11.5 3.5 17.4s-8.3 9.9-14.8 9.9l-64 0 0 96c0 17.7-14.3 32-32 32l-32 0c-17.7 0-32-14.3-32-32l0-96-64 0c-6.5 0-12.3-3.9-14.8-9.9s-1.1-12.9 3.5-17.4l112-112c6.2-6.2 16.4-6.2 22.6 0z
                 </StreamGeometry>
             </GeometryGroup>
         </Setter>
@@ -207,17 +201,27 @@
         <Setter Property="Data">
             <GeometryGroup>
                 <StreamGeometry>
-                    M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293z
+                    M256 0a256 256 0 1 0 0 512A256 256 0 1 0 256 0zM244.7 395.3l-112-112c-4.6-4.6-5.9-11.5-3.5-17.4s8.3-9.9 14.8-9.9l64 0 0-96c0-17.7 14.3-32 32-32l32 0c17.7 0 32 14.3 32 32l0 96 64 0c6.5 0 12.3 3.9 14.8 9.9s1.1 12.9-3.5 17.4l-112 112c-6.2 6.2-16.4 6.2-22.6 0z
                 </StreamGeometry>
             </GeometryGroup>
         </Setter>
     </ControlTheme>
 
-    <ControlTheme x:Key="IconFilledArrowUpRight" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
+    <ControlTheme x:Key="IconFilledChevronUp" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
         <Setter Property="Data">
             <GeometryGroup>
                 <StreamGeometry>
-                    M0 8a8 8 0 1 0 16 0A8 8 0 0 0 0 8m5.904 2.803a.5.5 0 1 1-.707-.707L9.293 6H6.525a.5.5 0 1 1 0-1H10.5a.5.5 0 0 1 .5.5v3.975a.5.5 0 0 1-1 0V6.707z
+                    M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM377 271c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-87-87-87 87c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9L239 167c9.4-9.4 24.6-9.4 33.9 0L377 271z
+                </StreamGeometry>
+            </GeometryGroup>
+        </Setter>
+    </ControlTheme>
+
+    <ControlTheme x:Key="IconFilledChevronDown" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
+        <Setter Property="Data">
+            <GeometryGroup>
+                <StreamGeometry>
+                    M256 0a256 256 0 1 0 0 512A256 256 0 1 0 256 0zM135 241c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l87 87 87-87c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9L273 345c-9.4 9.4-24.6 9.4-33.9 0L135 241z
                 </StreamGeometry>
             </GeometryGroup>
         </Setter>
@@ -259,7 +263,8 @@
     <ControlTheme x:Key="IconFilledBinoculars" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
         <Setter Property="Data">
             <StreamGeometry>
-                M4.5 1A1.5 1.5 0 0 0 3 2.5V3h4v-.5A1.5 1.5 0 0 0 5.5 1zM7 4v1h2V4h4v.882a.5.5 0 0 0 .276.447l.895.447A1.5 1.5 0 0 1 15 7.118V13H9v-1.5a.5.5 0 0 1 .146-.354l.854-.853V9.5a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v.793l.854.853A.5.5 0 0 1 7 11.5V13H1V7.118a1.5 1.5 0 0 1 .83-1.342l.894-.447A.5.5 0 0 0 3 4.882V4zM1 14v.5A1.5 1.5 0 0 0 2.5 16h3A1.5 1.5 0 0 0 7 14.5V14zm8 0v.5a1.5 1.5 0 0 0 1.5 1.5h3a1.5 1.5 0 0 0 1.5-1.5V14zm4-11H9v-.5A1.5 1.5 0 0 1 10.5 1h1A1.5 1.5 0 0 1 13 2.5z
+                <!--M4.5 1A1.5 1.5 0 0 0 3 2.5V3h4v-.5A1.5 1.5 0 0 0 5.5 1zM7 4v1h2V4h4v.882a.5.5 0 0 0 .276.447l.895.447A1.5 1.5 0 0 1 15 7.118V13H9v-1.5a.5.5 0 0 1 .146-.354l.854-.853V9.5a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v.793l.854.853A.5.5 0 0 1 7 11.5V13H1V7.118a1.5 1.5 0 0 1 .83-1.342l.894-.447A.5.5 0 0 0 3 4.882V4zM1 14v.5A1.5 1.5 0 0 0 2.5 16h3A1.5 1.5 0 0 0 7 14.5V14zm8 0v.5a1.5 1.5 0 0 0 1.5 1.5h3a1.5 1.5 0 0 0 1.5-1.5V14zm4-11H9v-.5A1.5 1.5 0 0 1 10.5 1h1A1.5 1.5 0 0 1 13 2.5z-->
+                M128 32l32 0c17.7 0 32 14.3 32 32l0 32L96 96l0-32c0-17.7 14.3-32 32-32zm64 96l0 320c0 17.7-14.3 32-32 32L32 480c-17.7 0-32-14.3-32-32l0-59.1c0-34.6 9.4-68.6 27.2-98.3C40.9 267.8 49.7 242.4 53 216L60.5 156c2-16 15.6-28 31.8-28l99.8 0zm227.8 0c16.1 0 29.8 12 31.8 28L459 216c3.3 26.4 12.1 51.8 25.8 74.6c17.8 29.7 27.2 63.7 27.2 98.3l0 59.1c0 17.7-14.3 32-32 32l-128 0c-17.7 0-32-14.3-32-32l0-320 99.8 0zM320 64c0-17.7 14.3-32 32-32l32 0c17.7 0 32 14.3 32 32l0 32-96 0 0-32zm-32 64l0 160-64 0 0-160 64 0z
             </StreamGeometry>
         </Setter>
     </ControlTheme>
@@ -280,10 +285,26 @@
         </Setter>
     </ControlTheme>
 
+    <ControlTheme x:Key="IconFilledHand" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
+        <Setter Property="Data">
+            <StreamGeometry>
+                M128 40c0-22.1 17.9-40 40-40s40 17.9 40 40l0 148.2c8.5-7.6 19.7-12.2 32-12.2c20.6 0 38.2 13 45 31.2c8.8-9.3 21.2-15.2 35-15.2c25.3 0 46 19.5 47.9 44.3c8.5-7.7 19.8-12.3 32.1-12.3c26.5 0 48 21.5 48 48l0 48 0 16 0 48c0 70.7-57.3 128-128 128l-16 0-64 0-.1 0-5.2 0c-5 0-9.9-.3-14.7-1c-55.3-5.6-106.2-34-140-79L8 336c-13.3-17.7-9.7-42.7 8-56s42.7-9.7 56 8l56 74.7L128 40zM240 304c0-8.8-7.2-16-16-16s-16 7.2-16 16l0 96c0 8.8 7.2 16 16 16s16-7.2 16-16l0-96zm48-16c-8.8 0-16 7.2-16 16l0 96c0 8.8 7.2 16 16 16s16-7.2 16-16l0-96c0-8.8-7.2-16-16-16zm80 16c0-8.8-7.2-16-16-16s-16 7.2-16 16l0 96c0 8.8 7.2 16 16 16s16-7.2 16-16l0-96z
+            </StreamGeometry>
+        </Setter>
+    </ControlTheme>
+
     <ControlTheme x:Key="IconFilledPatch" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
         <Setter Property="Data">
             <StreamGeometry>
                 M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708
+            </StreamGeometry>
+        </Setter>
+    </ControlTheme>
+
+    <ControlTheme x:Key="IconFilledResults" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
+        <Setter Property="Data">
+            <StreamGeometry>
+                M448 96c0-35.3-28.7-64-64-64L64 32C28.7 32 0 60.7 0 96L0 416c0 35.3 28.7 64 64 64l320 0c35.3 0 64-28.7 64-64l0-320zM256 160c0 17.7-14.3 32-32 32l-96 0c-17.7 0-32-14.3-32-32s14.3-32 32-32l96 0c17.7 0 32 14.3 32 32zm64 64c17.7 0 32 14.3 32 32s-14.3 32-32 32l-192 0c-17.7 0-32-14.3-32-32s14.3-32 32-32l192 0zM192 352c0 17.7-14.3 32-32 32l-32 0c-17.7 0-32-14.3-32-32s14.3-32 32-32l32 0c17.7 0 32 14.3 32 32z
             </StreamGeometry>
         </Setter>
     </ControlTheme>
@@ -318,7 +339,6 @@
                 M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160V416c0 53 43 96 96 96H352c53 0 96-43 96-96V320c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H96z
             </StreamGeometry>
         </Setter>
-        <Setter Property="FontSize" Value="14" />
     </ControlTheme>
 
     <ControlTheme x:Key="IconFilledStop" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
@@ -353,6 +373,22 @@
         </Setter>
     </ControlTheme>
 
+    <ControlTheme x:Key="IconFilledFileCode" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
+        <Setter Property="Data">
+            <StreamGeometry>
+                M64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-288-128 0c-17.7 0-32-14.3-32-32L224 0 64 0zM256 0l0 128 128 0L256 0zM153 289l-31 31 31 31c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0L71 337c-9.4-9.4-9.4-24.6 0-33.9l48-48c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9zM265 255l48 48c9.4 9.4 9.4 24.6 0 33.9l-48 48c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l31-31-31-31c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0z
+            </StreamGeometry>
+        </Setter>
+    </ControlTheme>
+
+    <ControlTheme x:Key="IconFilledInfo" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
+        <Setter Property="Data">
+            <StreamGeometry>
+                M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336l24 0 0-64-24 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l48 0c13.3 0 24 10.7 24 24l0 88 8 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-80 0c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z
+            </StreamGeometry>
+        </Setter>
+    </ControlTheme>
+
     <ControlTheme x:Key="IconFilledTag" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
         <Setter Property="Data">
             <StreamGeometry>
@@ -365,6 +401,14 @@
         <Setter Property="Data">
             <StreamGeometry>
                 M40 352l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40zm192 0l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40zM40 320c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0zM232 192l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40zM40 160c-22.1 0-40-17.9-40-40L0 72C0 49.9 17.9 32 40 32l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0zM232 32l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40z
+            </StreamGeometry>
+        </Setter>
+    </ControlTheme>
+
+    <ControlTheme x:Key="IconFilledScroll" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
+        <Setter Property="Data">
+            <StreamGeometry>
+                M0 80l0 48c0 17.7 14.3 32 32 32l16 0 48 0 0-80c0-26.5-21.5-48-48-48S0 53.5 0 80zM112 32c10 13.4 16 30 16 48l0 304c0 35.3 28.7 64 64 64s64-28.7 64-64l0-5.3c0-32.4 26.3-58.7 58.7-58.7L480 320l0-192c0-53-43-96-96-96L112 32zM464 480c61.9 0 112-50.1 112-112c0-8.8-7.2-16-16-16l-245.3 0c-14.7 0-26.7 11.9-26.7 26.7l0 5.3c0 53-43 96-96 96l176 0 96 0z
             </StreamGeometry>
         </Setter>
     </ControlTheme>

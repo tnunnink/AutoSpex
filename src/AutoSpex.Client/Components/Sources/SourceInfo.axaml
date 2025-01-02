@@ -8,29 +8,56 @@
         <ContentControl
             Content="{x:Static components:TestData.SourceTest}"
             ContentTemplate="{DynamicResource SourceInfo}"
-            Padding="20" />
+            Padding="10" />
     </Design.PreviewWith>
 
     <DataTemplate x:Key="SourceInfo" x:DataType="observers:SourceObserver">
 
-        <StackPanel Orientation="Horizontal" Spacing="10">
-            <StackPanel.Styles>
-                <Style Selector="TextBlock">
-                    <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
-                </Style>
-            </StackPanel.Styles>
+        <StackPanel Spacing="5">
 
-            <TextBlock Text="{Binding TargetType}" ToolTip.Tip="Target" />
+            <StackPanel Orientation="Horizontal" Spacing="10" Margin="0 0 0 3">
+                <PathIcon Theme="{StaticResource IconThemedSource}" Classes="centered" />
+                <TextBlock
+                    Text="{Binding Name}"
+                    FontSize="{a:ThemeResource DefaultFontSizeMedium}"
+                    FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
+            </StackPanel>
 
-            <Border Width="1" Height="10" Background="{a:ThemeResource Container4BorderBrush}" Margin="0 3 0 1" />
+            <Grid ColumnDefinitions="*,30,Auto">
+                <TextBlock
+                    Grid.Column="0"
+                    Text="Project:"
+                    Classes="faint" />
+                <TextBlock
+                    Grid.Column="2"
+                    Text="{Binding Model.TargetName}"
+                    Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+            </Grid>
 
-            <TextBlock Text="{Binding ExportedOn}" ToolTip.Tip="ExportedOn" />
+            <Grid ColumnDefinitions="*,30,Auto">
+                <TextBlock
+                    Grid.Column="0"
+                    Text="Type:"
+                    Classes="faint" />
+                <TextBlock
+                    Grid.Column="2"
+                    Text="{Binding Model.TargetType}"
+                    Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+            </Grid>
 
-            <Border Width="1" Height="10" Background="{a:ThemeResource Container4BorderBrush}" Margin="0 3 0 1" />
-
-            <TextBlock Text="{Binding Description}" ToolTip.Tip="Description" />
+            <Grid ColumnDefinitions="*,30,Auto">
+                <TextBlock
+                    Grid.Column="0"
+                    Text="Exported:"
+                    Classes="faint" />
+                <TextBlock
+                    Grid.Column="2"
+                    Text="{Binding Model.ExportedOn}"
+                    Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+            </Grid>
 
         </StackPanel>
+
     </DataTemplate>
 
 </ResourceDictionary>

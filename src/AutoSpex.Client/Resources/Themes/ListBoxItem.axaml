@@ -4,6 +4,15 @@
     <Design.PreviewWith>
         <Border Padding="20">
             <StackPanel Spacing="30" Height="600">
+
+                <ListBox Height="100" Width="300"
+                         ItemContainerTheme="{DynamicResource ListBoxItemInvisible}"
+                         BorderThickness="1">
+                    <ListBoxItem Content="Item 1" />
+                    <ListBoxItem Content="Item 2" />
+                    <ListBoxItem Content="Item 3" />
+                </ListBox>
+
                 <ListBox Height="100" Width="300"
                          ItemContainerTheme="{DynamicResource ListBoxItemSimple}"
                          BorderThickness="1" Padding="5">
@@ -33,6 +42,35 @@
         </Border>
 
     </Design.PreviewWith>
+
+    <!-- ListBoxItemInvisible -->
+    <ControlTheme x:Key="ListBoxItemInvisible" TargetType="ListBoxItem">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{a:ThemeResource ListItemForegroundBrush}" />
+        <Setter Property="Margin" Value="0 5 0 0" />
+        <Setter Property="FocusAdorner" Value="{x:Null}" />
+
+        <Setter Property="Template">
+            <ControlTemplate>
+                <ContentPresenter
+                    x:Name="PART_ContentPresenter"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    Content="{TemplateBinding Content}"
+                    ContentTemplate="{TemplateBinding ContentTemplate}"
+                    CornerRadius="{TemplateBinding CornerRadius}"
+                    Foreground="{TemplateBinding Foreground}"
+                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                    Padding="{TemplateBinding Padding}"
+                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^:nth-child(1)">
+            <Setter Property="Margin" Value="0" />
+        </Style>
+    </ControlTheme>
 
     <!-- ListBoxItemSimple -->
     <ControlTheme x:Key="ListBoxItemSimple" TargetType="ListBoxItem" BasedOn="{a:ControlTheme ListBoxItem}">
@@ -80,28 +118,19 @@
         </Style>
     </ControlTheme>
 
+    <!-- ListBoxItemSelection -->
+    <ControlTheme x:Key="ListBoxItemSelection" TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItemSimple}">
+        <Setter Property="Padding" Value="{a:ThemeResource ButtonPadding}" />
+    </ControlTheme>
+
     <!-- ListBoxItemSubtle -->
     <ControlTheme x:Key="ListBoxItemSubtle" TargetType="ListBoxItem" BasedOn="{a:ControlTheme ListBoxItem}">
-        <Setter Property="BorderThickness" Value="3 0 0 0" />
         <Setter Property="BorderBrush" Value="Transparent" />
         <Setter Property="Padding" Value="5" />
 
         <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Background" Value="{a:ThemeResource ListItemBackgroundBrushPointerOver}" />
-            <Setter Property="BorderBrush" Value="{a:ThemeResource Container4BorderBrush}" />
-        </Style>
-        <Style Selector="^:disabled /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="TextElement.Foreground" Value="{a:ThemeResource ListItemForegroundBrushDisabled}" />
-            <Setter Property="Opacity" Value="{a:ThemeResource EditWatermarkOpacity}" />
-        </Style>
-        <Style Selector="^:selected /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Background" Value="{a:ThemeResource ListItemBackgroundBrushPointerOver}" />
-            <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBackgroundBrushSolidAccent}" />
-            <Setter Property="TextElement.Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
-
-            <Style Selector="^:focus-within">
-                <Setter Property="Background" Value="{a:ThemeResource ListItemBackgroundBrushPointerOver}" />
-            </Style>
+            <Setter Property="Background" Value="{a:ThemeResource Container2BackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{a:ThemeResource Container2BackgroundBrush}" />
         </Style>
     </ControlTheme>
 

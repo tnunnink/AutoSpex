@@ -1,7 +1,7 @@
-﻿using System.Data;
-using AutoSpex.Engine;
+﻿using AutoSpex.Engine;
 using FluentMigrator;
 using JetBrains.Annotations;
+using Rule = System.Data.Rule;
 
 namespace AutoSpex.Persistence;
 

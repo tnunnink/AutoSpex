@@ -1,0 +1,4 @@
+﻿{
+  Group: Reference,
+  Data: {$this}.Value
+}

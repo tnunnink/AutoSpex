@@ -11,46 +11,65 @@
 
     <DockPanel>
 
-        <Border DockPanel.Dock="Top" Padding="20 15">
+        <Border
+            DockPanel.Dock="Top"
+            Background="{a:ThemeResource Container2BackgroundBrush}"
+            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+            BorderThickness="0 0 0 1"
+            Padding="15 15 15 10">
 
-            <Grid ColumnDefinitions="*,Auto">
+            <StackPanel Spacing="10">
 
-                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5">
-                    <PathIcon Theme="{Binding Icon, Converter={StaticResource KeyIconConverter}}" />
-                    <ContentControl
-                        Content="{Binding Run}"
-                        ContentTemplate="{StaticResource NameEntry}" />
-                </StackPanel>
+                <Grid ColumnDefinitions="*,Auto">
 
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
 
-                    <Panel>
-                        <Button
-                            Command="{Binding RunAgainCommand}"
-                            Classes="run-again accent"
-                            CornerRadius="{a:ThemeResource ButtonCornerRadius}"
-                            IsVisible="{Binding Run.Result, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:ResultState.Pending}}" />
+                        <ContentControl
+                            Content="{Binding Run.Result}"
+                            ContentTemplate="{StaticResource ResultPill}" />
 
-                        <Button
-                            Command="{Binding Run.CancelCommand}"
-                            Classes="cancel danger"
-                            CornerRadius="{a:ThemeResource ButtonCornerRadius}"
-                            IsVisible="{Binding Run.Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Pending}}" />
-                    </Panel>
+                        <ContentControl
+                            Content="{Binding Run.Node}"
+                            ContentTemplate="{StaticResource NodeInfoButton}" />
 
-                </StackPanel>
+                        <ContentControl
+                            Content="{Binding Run.Source}"
+                            ContentTemplate="{StaticResource SourceInfoButton}" />
 
-            </Grid>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
+
+                        <Panel>
+
+                            <Button
+                                Command="{Binding RunAgainCommand}"
+                                Classes="run accent"
+                                IsVisible="{Binding Run.Result, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:ResultState.Pending}}" />
+
+                            <Button
+                                Command="{Binding Run.CancelCommand}"
+                                Classes="cancel danger"
+                                IsVisible="{Binding Run.Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Pending}}" />
+
+                        </Panel>
+
+                        <Button Classes="save" Command="{Binding SaveCommand}" />
+                        <Button Classes="export" />
+
+                    </StackPanel>
+
+                </Grid>
+
+                <TextBlock
+                    Text="{Binding Run.Message}"
+                    Classes="faint" />
+
+            </StackPanel>
+
         </Border>
 
-        <ContentControl
-            DockPanel.Dock="Top"
-            Content="{Binding Run}"
-            ContentTemplate="{StaticResource RunSummary}"
-            Padding="20 0" />
-
-        <ContentControl
-            Content="{Binding OutcomePage}" />
+        <ContentControl Content="{Binding CurrentPage}" />
 
     </DockPanel>
 </UserControl>

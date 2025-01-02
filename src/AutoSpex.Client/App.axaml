@@ -26,6 +26,7 @@
         </a:ModernTheme>
         <StyleInclude Source="Resources/Styles.axaml" />
         <StyleInclude Source="Components/Styles/AppButtons.axaml" />
+        <StyleInclude Source="avares://Avalonia.Controls.TreeDataGrid/Themes/Fluent.axaml" />
 
     </Application.Styles>
 

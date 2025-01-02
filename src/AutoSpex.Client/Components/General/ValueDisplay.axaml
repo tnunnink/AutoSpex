@@ -3,12 +3,11 @@
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:components="clr-namespace:AutoSpex.Client.Components"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
-                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
-                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
 
     <Design.PreviewWith>
         <StackPanel>
-            <StackPanel Spacing="10" Margin="50">
+            <StackPanel Spacing="10" Margin="50" MaxWidth="400">
 
                 <StackPanel.Styles>
                     <Style Selector="Button">
@@ -21,16 +20,15 @@
                 <Button Content="{x:Static components:TestData.BooleanTrueValue}" />
                 <Button Content="{x:Static components:TestData.IntegerValue}" />
                 <Button Content="{x:Static components:TestData.DoubleValue}" />
-                <Button Content="{x:Static components:TestData.AtomicBoolValue}" />
-                <Button Content="{x:Static components:TestData.AtomicSintValue}" />
                 <Button Content="{x:Static components:TestData.AtomicIntValue}" />
-                <Button Content="{x:Static components:TestData.AtomicDintValue}" />
-                <Button Content="{x:Static components:TestData.AtomicLintValue}" />
                 <Button Content="{x:Static components:TestData.TextValue}" />
+                <Button Content="{x:Static components:TestData.TextOverlowValue}" />
+                <Button Content="{x:Static components:TestData.DateValue}" />
                 <Button Content="{x:Static components:TestData.RadixValue}" />
                 <Button Content="{x:Static components:TestData.DataTypeValue}" />
                 <Button Content="{x:Static components:TestData.RungValue}" />
                 <Button Content="{x:Static components:TestData.NumberCollectionValue}" />
+                <Button Content="{x:Static components:TestData.ReferenceThisValue}" />
 
             </StackPanel>
         </StackPanel>
@@ -40,9 +38,9 @@
 
         <TextBlock
             Text="{Binding Text}"
-            TextTrimming="CharacterEllipsis"
+            properties:StyleClasses.Classes="{Binding Group}"
             MaxLines="1"
-            properties:StyleClasses.Classes="{Binding Group}">
+            TextTrimming="CharacterEllipsis">
 
             <TextBlock.Styles>
                 <Style Selector="TextBlock.Default">
@@ -68,6 +66,9 @@
                 </Style>
                 <Style Selector="TextBlock.Collection">
                     <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushCollection}" />
+                </Style>
+                <Style Selector="TextBlock.Reference">
+                    <Setter Property="Foreground" Value="{DynamicResource TypeGroupForegroundBrushReference}" />
                 </Style>
             </TextBlock.Styles>
 

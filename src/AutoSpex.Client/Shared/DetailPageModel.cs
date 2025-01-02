@@ -17,11 +17,11 @@ public abstract partial class DetailPageModel(string? title) : PageViewModel(tit
     IRecipient<Observer.Deleted>,
     IRecipient<NavigationRequest>
 {
-    public override bool IsChanged => base.IsChanged || Tabs.Any(t => t.IsChanged);
-    public override bool IsErrored => base.IsErrored || Tabs.Any(t => t.IsErrored);
-    public ObservableCollection<PageViewModel> Tabs { get; } = [];
+    public override bool IsChanged => base.IsChanged || Pages.Any(t => t.IsChanged);
+    public override bool IsErrored => base.IsErrored || Pages.Any(t => t.IsErrored);
+    public ObservableCollection<PageViewModel> Pages { get; } = [];
 
-    [ObservableProperty] private PageViewModel? _tab;
+    [ObservableProperty] private PageViewModel? _currentPage;
 
     /// <summary>
     /// When this node page is closed and deactivated we also want to close any child tab pages.
@@ -30,8 +30,8 @@ public abstract partial class DetailPageModel(string? title) : PageViewModel(tit
     {
         base.OnDeactivated();
 
-        foreach (var tab in Tabs.ToList())
-            Navigator.Close(tab);
+        foreach (var page in Pages.ToList())
+            Navigator.Close(page);
     }
 
     /// <inheritdoc />
@@ -40,7 +40,7 @@ public abstract partial class DetailPageModel(string? title) : PageViewModel(tit
     /// </remarks>
     public override async Task Load()
     {
-        await NavigateTabs();
+        await NavigatePages();
         Dispatcher.UIThread.Invoke(() => SaveCommand.NotifyCanExecuteChanged());
     }
 
@@ -48,26 +48,22 @@ public abstract partial class DetailPageModel(string? title) : PageViewModel(tit
     /// <remarks>
     /// When a node page is saved, it will forward the call to its child tabs to be saved.
     /// </remarks>
-    public override async Task<Result> Save()
+    public override async Task<Result> Save(Result? result = default)
     {
-        var result = Result.Ok();
+        result ??= Result.Ok();
 
-        foreach (var tab in Tabs)
+        if (Notifier.ShowIfFailed(result, $"Failed to save {Title}"))
+            return result;
+
+        foreach (var tab in Pages)
         {
             var saved = await tab.Save();
-            result = Result.Merge(result, saved);
+            if (Notifier.ShowIfFailed(result, $"Failed to save {Title}"))
+                return saved;
         }
 
-        if (result.IsFailed)
-        {
-            NotifySaveFailed(result);
-        }
-        else
-        {
-            NotifySaveSuccess();
-            AcceptChanges();
-        }
-
+        Notifier.ShowSuccess($"{Title} Saved", $"{Icon} was saved successfully @ {DateTime.Now.ToShortTimeString()}");
+        AcceptChanges();
         return result;
     }
 
@@ -148,11 +144,12 @@ public abstract partial class DetailPageModel(string? title) : PageViewModel(tit
         switch (message.Action)
         {
             case NavigationAction.Open:
-                Tabs.Add(page);
+                if (TryOpenExisting()) break;
+                Pages.Add(page);
                 Track(page);
                 break;
             case NavigationAction.Close:
-                Tabs.Remove(page);
+                Pages.Remove(page);
                 Forget(page);
                 break;
             case NavigationAction.Replace:
@@ -160,32 +157,28 @@ public abstract partial class DetailPageModel(string? title) : PageViewModel(tit
             default:
                 throw new ArgumentOutOfRangeException($"Navigation action {message.Action} not supported");
         }
+
+        return;
+
+        bool TryOpenExisting()
+        {
+            var existing = Pages.SingleOrDefault(p => p.Route == page.Route);
+            
+            if (existing is not null)
+            {
+                CurrentPage = existing;
+                return true;
+            }
+
+            return false;
+        }
     }
 
     /// <summary>
     /// Handles requesting navigation of any child tabs for this node page.
     /// </summary>
-    protected virtual Task NavigateTabs() => Task.CompletedTask;
-
-    /// <summary>
-    /// Sends a notification to the UI that the node was saved successfully.
-    /// </summary>
-    protected void NotifySaveSuccess()
-    {
-        var title = $"{Icon} Saved";
-        var message = $"{Title} was saved successfully @ {DateTime.Now.ToShortTimeString()}";
-        Notifier.ShowSuccess(title, message);
-    }
-
-    /// <summary>
-    /// Sends a notification to the UI that the node failed to save.
-    /// </summary>
-    protected void NotifySaveFailed(IResultBase result)
-    {
-        const string title = "Saved Failed";
-        var message = $"{Title} failed to save @ {DateTime.Now.ToShortTimeString()} {result.Reasons}";
-        Notifier.ShowError(title, message);
-    }
+    protected virtual Task NavigatePages() => Task.CompletedTask;
+    
 
     //We need to notify the SaveCommand when the IsChange property changes since that is what it is controlled on.
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)

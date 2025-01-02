@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using Task = System.Threading.Tasks.Task;
+using System.DirectoryServices.AccountManagement;
 
 namespace AutoSpex.Engine.Tests;
 
@@ -12,9 +13,9 @@ public class ProofTests
         var source = L5X.Load(Known.Test);
         var spec = Spec.Configure(c =>
         {
-            c.Query(Element.Tag);
-            c.Filter("TagName", Operation.EqualTo, "TestSimpleTag");
-            c.Verify("DataType", Operation.EqualTo, "SimpleType");
+            c.Get(Element.Tag);
+            c.Where("TagName", Operation.EqualTo, "TestSimpleTag");
+            c.Validate("DataType", Operation.EqualTo, "SimpleType");
         });
 
 
@@ -30,24 +31,24 @@ public class ProofTests
         var source = L5X.Load(Known.Test);
         var spec = Spec.Configure(c =>
         {
-            c.Query(Element.Tag);
-            c.Filter("TagName", Operation.EqualTo, "TestSimpleTag");
-            c.Verify("DataType", Operation.EqualTo, "SimpleType");
+            c.Get(Element.Tag);
+            c.Where("TagName", Operation.EqualTo, "TestSimpleTag");
+            c.Validate("DataType", Operation.EqualTo, "SimpleType");
         });
 
         var stopwatch = Stopwatch.StartNew();
-        var verification = Verification.None;
+        var verifications = new List<Verification>();
 
         for (var i = 0; i < 100; i++)
         {
             var result = await spec.RunAsync(source);
-            verification = Verification.Merge([verification, result]);
+            verifications.Add(result);
         }
 
         stopwatch.Stop();
 
         Console.WriteLine(stopwatch.ElapsedMilliseconds);
-        verification.Evaluations.Should().NotBeEmpty();
+        verifications.Should().NotBeEmpty();
     }
 
     [Test]
@@ -57,9 +58,9 @@ public class ProofTests
 
         var spec = Spec.Configure(c =>
         {
-            c.Query(Element.Module);
-            c.Filter("CatalogNumber", Operation.EqualTo, "5094-IB16/A");
-            c.Verify("Revision", Operation.EqualTo, "2.1");
+            c.Get(Element.Module);
+            c.Where("CatalogNumber", Operation.EqualTo, "5094-IB16/A");
+            c.Validate("Revision", Operation.EqualTo, "2.1");
         });
 
         var verification = await spec.RunAsync(source);

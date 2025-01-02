@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoSpex.Client.Pages;
@@ -42,12 +41,17 @@ public partial class NodeObserver : Observer<Node>,
     public string Route => Model.Route;
     public string Path => Model.Path;
     public bool IsVirtual => Type != NodeType.Collection && ParentId == Guid.Empty;
-
-    [Required]
+    
     public override string Name
     {
         get => Model.Name;
         set => SetProperty(Model.Name, value, Model, (s, v) => s.Name = v, true);
+    }
+    
+    public override string? Description
+    {
+        get => Model.Description;
+        set => SetProperty(Model.Description, value, Model, (s, v) => s.Description = v);
     }
 
     public ObserverCollection<Node, NodeObserver> Nodes { get; }
@@ -129,6 +133,7 @@ public partial class NodeObserver : Observer<Node>,
         foreach (var moved in selected)
         {
             Messenger.Send(new Moved(moved, Id));
+            moved.Refresh();
         }
     }
 
@@ -162,19 +167,18 @@ public partial class NodeObserver : Observer<Node>,
         var result = await Mediator.Send(new MoveNodes(selected.Select(n => n.Model), parent.Id));
         if (Notifier.ShowIfFailed(result, $"Failed to move selected node to parent {parent.Name}")) return;
 
-        foreach (var node in selected)
+        foreach (var moved in selected)
         {
-            Messenger.Send(new Moved(node, parent.Id));
+            Messenger.Send(new Moved(moved, parent.Id));
+            moved.Refresh();
         }
     }
 
     /// <summary>
-    /// Command to run only selected specs from the parent container.
+    /// Command to run this node agains the target source and navigate a new run detail page.
+    /// Runs are created and configured as a request to the database. This will populate the run with all descendant specs.
+    /// The created run is then passed to the run detail page which will execute the run and display the results.
     /// </summary>
-    /// <returns>A task representing the asynchronous operation.</returns>
-    /// <remarks>
-    /// This command will allow the user to select which specs or nodes to run instead of running all descendants.
-    /// </remarks>
     [RelayCommand]
     private async Task Run()
     {
@@ -364,8 +368,10 @@ public partial class NodeObserver : Observer<Node>,
     protected override Task<Result> DeleteItems(IEnumerable<Observer> observers)
     {
         //If this node has not been saved to the database, just return ok to allow the node to be deleted virtually.
+        if (IsVirtual) return Task.FromResult(Result.Ok());
+
         //Otherwise, send the request to update the database.
-        return IsVirtual ? Task.FromResult(Result.Ok()) : Mediator.Send(new DeleteNodes(observers.Select(n => n.Id)));
+        return Mediator.Send(new DeleteNodes(observers.Cast<NodeObserver>().Select(n => n.Model)));
     }
 
     /// <summary>
@@ -473,10 +479,10 @@ public partial class NodeObserver : Observer<Node>,
     {
         yield return new MenuActionItem
         {
-            Header = "Duplicate",
-            Icon = Resource.Find("IconFilledClone"),
-            Command = DuplicateCommand,
-            Gesture = new KeyGesture(Key.D, KeyModifiers.Control)
+            Header = "Export",
+            Icon = Resource.Find("IconLineDownload"),
+            Command = ExportCommand,
+            DetermineVisibility = () => Type == NodeType.Collection
         };
 
         yield return new MenuActionItem
@@ -485,6 +491,15 @@ public partial class NodeObserver : Observer<Node>,
             Icon = Resource.Find("IconLineSearch"),
             Gesture = new KeyGesture(Key.H, KeyModifiers.Control)
         };
+        
+        yield return new MenuActionItem
+        {
+            Header = "Duplicate",
+            Icon = Resource.Find("IconFilledClone"),
+            Command = DuplicateCommand,
+            Gesture = new KeyGesture(Key.D, KeyModifiers.Control),
+            DetermineVisibility = () => HasSingleSelection
+        };
 
         yield return new MenuActionItem
         {
@@ -492,14 +507,6 @@ public partial class NodeObserver : Observer<Node>,
             Icon = Resource.Find("IconLineMove"),
             Command = MoveToCommand,
             DetermineVisibility = () => Type != NodeType.Collection
-        };
-
-        yield return new MenuActionItem
-        {
-            Header = "Export",
-            Icon = Resource.Find("IconLineDownload"),
-            Command = ExportCommand,
-            DetermineVisibility = () => Type == NodeType.Collection
         };
 
         yield return new MenuActionItem

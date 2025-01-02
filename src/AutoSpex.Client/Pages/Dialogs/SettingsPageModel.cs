@@ -10,7 +10,7 @@ public class SettingsPageModel() : DetailPageModel("Settings")
     public override string Icon => Title;
 
     /// <inheritdoc />
-    protected override async Task NavigateTabs()
+    protected override async Task NavigatePages()
     {
         await Navigator.Navigate(() => new SettingsGeneralPageModel());
         await Navigator.Navigate(() => new SettingsAboutPageModel());

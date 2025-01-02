@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Ardalis.SmartEnum.SystemTextJson;
 using L5Sharp.Core;
 using Task = System.Threading.Tasks.Task;
 
@@ -17,19 +16,28 @@ namespace AutoSpex.Engine;
 public class Spec() : IEquatable<Spec>
 {
     /// <summary>
+    /// Creates a new spec with the data from another spec.
+    /// </summary>
+    private Spec(Spec spec) : this()
+    {
+        Query = spec.Query;
+        Verify = spec.Verify;
+    }
+
+    /// <summary>
     /// Creates a new spec with the provided element type.
     /// </summary>
     /// <param name="element">The <see cref="Element"/> type the spec represents.</param>
     public Spec(Element element) : this()
     {
-        Element = element ?? throw new ArgumentNullException(nameof(element));
+        Query = new Query(element);
     }
 
     /// <summary>
     /// The version that identifies the JSON schema of the current object.
     /// </summary>
     [JsonInclude]
-    private int SchemaVersion { get; } = 1;
+    private int SchemaVersion { get; } = 2;
 
     /// <summary>
     /// The unique id that indietifies this spec aprart from others.
@@ -38,23 +46,22 @@ public class Spec() : IEquatable<Spec>
     public Guid SpecId { get; private init; } = Guid.NewGuid();
 
     /// <summary>
-    /// The target <see cref="Engine.Element"/> this query will search for.
+    /// The id of the <see cref="Node"/> this spec belongs to.
     /// </summary>
-    [JsonConverter(typeof(SmartEnumNameConverter<Element, string>))]
-    [JsonInclude]
-    public Element Element { get; set; } = Element.Default;
+    [JsonIgnore]
+    public Guid NodeId { get; private init; } = Guid.Empty;
 
     /// <summary>
-    /// The collection of <see cref="Criterion"/> that define how to filter elements to return candidates for verification.
+    /// The <see cref="Engine.Query"/> that defines what data to retrieve from the source.
     /// </summary>
     [JsonInclude]
-    public List<Criterion> Filters { get; private init; } = [];
+    public Query Query { get; private init; } = new(Element.Default);
 
     /// <summary>
-    /// The collection of <see cref="Criterion"/> that define the checks to perform for each candidate element.
+    /// The collection of <see cref="Criterion"/> that define what this specification is verifying.
     /// </summary>
     [JsonInclude]
-    public List<Criterion> Verifications { get; private init; } = [];
+    public Verify Verify { get; private init; } = new();
 
     /// <summary>
     /// Creates a new <see cref="Spec"/> with the provided configuration.
@@ -70,113 +77,121 @@ public class Spec() : IEquatable<Spec>
 
     /// <summary>
     /// Configures the <see cref="Element"/> type to query when this specification is run.
+    /// This is exlusivley a method to help easily configure a simple spec object for testing purposes.
+    /// The application will primarily add and configure steps manually.
     /// </summary>
     /// <param name="element">The <see cref="Engine.Element"/> option to query.</param>
     /// <returns>The configured spec instance.</returns>
-    public Spec Query(Element element)
+    public Spec Get(Element element)
     {
-        Element = element ?? throw new ArgumentNullException(nameof(element));
+        Query.Element = element;
         return this;
     }
 
     /// <summary>
-    /// Simply adds a new <see cref="Criterion"/> to the <see cref="Filters"/> collection with the specified arguments.
+    /// Adds a <see cref="Criterion"/> as a filter to this spec. If no filter step exists, it will be created. Otherwise,
+    /// this criterion is added to the first found filter step.
+    /// This is exlusivley a method to help easily configure a simple spec object for testing purposes.
+    /// The application will primarily add and configure steps manually.
     /// </summary>
-    /// <param name="property">The property name to select for the filter criterion.</param>
+    /// <param name="property">The property name to select for the criterion.</param>
     /// <param name="operation">The <see cref="Operation"/> the criterion will perform.</param>
-    /// <param name="args">The argument to supply to the criterion operation.</param>
-    /// <returns>The configured spec instance.</returns>
-    public Spec Filter(string? property, Operation operation, object? args = default)
+    /// <param name="argument">The argument to supply to the criterion operation.</param>
+    /// <returns>The current configured <see cref="Spec"/> instance.</returns>
+    public Spec Where(string property, Operation operation, object? argument = default)
     {
-        Filters.Add(new Criterion(Element.Property(property), operation, args));
+        if (Query.Steps.All(s => s is not Filter))
+            Query.Steps.Add(new Filter());
+
+        var filter = (Filter)Query.Steps.First(x => x is Filter);
+        filter.Criteria.Add(new Criterion(property, operation, argument));
         return this;
     }
 
     /// <summary>
-    /// Simply adds a new <see cref="Criterion"/> to the <see cref="Verifications"/> collection with the specified arguments.
+    /// 
     /// </summary>
-    /// <param name="property">The property name to select for the filter criterion.</param>
-    /// <param name="operation">The <see cref="Operation"/> the criterion will perform.</param>
-    /// <param name="args">The argument to supply to the criterion operation.</param>
-    /// <returns>The configured spec instance.</returns>
-    public Spec Verify(string? property, Operation operation, object? args = default)
+    /// <param name="property"></param>
+    /// <returns></returns>
+    public Spec Select(string property)
     {
-        Verifications.Add(new Criterion(Element.Property(property), operation, args));
+        if (Query.Steps.All(s => s is not Engine.Select))
+            Query.Steps.Add(new Select());
+
+        var select = (Select)Query.Steps.First(x => x is Select);
+        select.Selections.Add(new Selection(property));
         return this;
     }
 
     /// <summary>
-    /// Simply adds a new <see cref="Criterion"/> to the <see cref="Verifications"/> collection with the specified arguments.
+    /// Adds a <see cref="Criterion"/> as a verification to this spec. All specs are initialized with a single verify step,
+    /// so this criterion will just be added to that step.
+    /// This is exlusivley a method to help easily configure a simple spec object for testing purposes.
+    /// The application will primarily add and configure steps manually.
     /// </summary>
-    /// <param name="property">The property name to select for the filter criterion.</param>
-    /// <param name="negation">The negation option to use for the vierifcation.</param>
+    /// <param name="property">The property name to select for the criterion.</param>
     /// <param name="operation">The <see cref="Operation"/> the criterion will perform.</param>
-    /// <param name="args">The argument to supply to the criterion operation.</param>
-    /// <returns>The configured spec instance.</returns>
-    public Spec Verify(string? property, Negation negation, Operation operation, object? args = default)
+    /// <param name="argument">The argument to supply to the criterion operation.</param>
+    /// <returns>The current configured <see cref="Spec"/> instance.</returns>
+    public Spec Validate(string property, Operation operation, object? argument = default)
     {
-        Verifications.Add(new Criterion(Element.Property(property), operation, args) { Negation = negation });
+        Verify.Criteria.Add(new Criterion(property, operation, argument));
         return this;
     }
 
     /// <summary>
-    /// Creates a new <see cref="Spec"/> with the same configuration but default id and node properties.
+    /// Adds a <see cref="Criterion"/> as a verification to this spec. All specs are initialized with a single verify step,
+    /// so this criterion will just be added to that step.
+    /// This is exlusivley a method to help easily configure a simple spec object for testing purposes.
+    /// The application will primarily add and configure steps manually.
+    /// </summary>
+    /// <param name="property">The property name to select for the criterion.</param>
+    /// <param name="negation">The negation option to use for the criterion.</param>
+    /// <param name="operation">The <see cref="Operation"/> the criterion will perform.</param>
+    /// <param name="argument">The argument to supply to the criterion operation.</param>
+    /// <returns>The current configured <see cref="Spec"/> instance.</returns>
+    public Spec Validate(string property, Negation negation, Operation operation, object? argument = default)
+    {
+        Verify.Criteria.Add(new Criterion(property, negation, operation, argument));
+        return this;
+    }
+
+    /// <summary>
+    /// Creates a new <see cref="Spec"/> with the same configuration but different <see cref="SpecId"/>.
     /// </summary>
     /// <returns>A new <see cref="Spec"/> object.</returns>
     public Spec Duplicate()
     {
-        return new Spec
-        {
-            Element = Element,
-            Filters = Filters.Select(x => x.Duplicate()).ToList(),
-            Verifications = Verifications.Select(x => x.Duplicate()).ToList()
-        };
-    }
-
-    /// <summary>
-    /// Creates a deep copy of this spec instance, returning the same configuration and same <see cref="SpecId"/>.
-    /// </summary>
-    /// <returns>The new copied spec instance.</returns>
-    public Spec Copy()
-    {
         var data = JsonSerializer.Serialize(this);
-        var spec = JsonSerializer.Deserialize<Spec>(data);
-        return spec ?? throw new ArgumentException("Could not materialize new spec instance.");
+        var spec = JsonSerializer.Deserialize<Spec>(data)!;
+        return new Spec(spec);
     }
 
     /// <summary>
-    /// Checks if the Spec contains the given Criterion in its Filters or Verifications.
+    /// Retrieves all <see cref="Criterion"/> found in the spec in both verifications and filters.
     /// </summary>
-    /// <param name="criterion">The Criterion to check for within the Spec.</param>
-    /// <returns>True if the Spec contains the Criterion, false otherwise.</returns>
-    public bool Contains(Criterion criterion)
+    /// <returns>A flat collection of Criterion objects found in the spec.</returns>
+    public IEnumerable<Criterion> GetAllCriteria()
     {
-        return Filters.Any(c => c.Contains(criterion)) || Verifications.Any(c => c.Contains(criterion));
+        var filters = Query.Steps.Where(s => s is Filter).Cast<Filter>().SelectMany(f => f.Criteria).ToList();
+        return filters.Concat(Verify.Criteria);
     }
 
     /// <summary>
-    /// Determines whether the Spec contains the given text in any of its Filters or Verifications.
+    /// Retrieves all <see cref="Reference"/> arguments from the criteria associated with the spec.
     /// </summary>
-    /// <param name="text">The text to search for within the Spec's Filters or Verifications.</param>
-    /// <returns>True if the text is found in any of the Filters or Verifications of the Spec; otherwise, false.</returns>
-    public bool Contains(string? text)
+    /// <returns>A collection of Reference objects found in the criteria.</returns>
+    public IEnumerable<Reference> GetAllReferences()
     {
-        if (string.IsNullOrEmpty(text)) return false;
-        return Filters.Any(c => c.ToString().Satisfies(text)) || Verifications.Any(c => c.ToString().Satisfies(text));
+        return GetAllCriteria().Select(c => c.Argument).Where(a => a is Reference).Cast<Reference>();
     }
-
-    /// <summary>
-    /// Represents the criteria that define a Spec, including filters and verifications.
-    /// </summary>
-    /// <returns>An IEnumerable of Criterion objects representing the criteria.</returns>
-    public IEnumerable<Criterion> Criteria() => Filters.Concat(Verifications);
 
     /// <summary>
     /// Runs the configured specification against the provided L5X content and returns a verification result.
     /// </summary>
     /// <param name="content">The L5X content to run this specification against.</param>
     /// <returns>The <see cref="Verification"/> containing the specification results.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when the content parameter is null.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="content"/> is null.</exception>
     public Verification Run(L5X content)
     {
         return RunSpec(content);
@@ -194,16 +209,6 @@ public class Spec() : IEquatable<Spec>
         return Task.Run(() => RunSpec(content), token);
     }
 
-    public bool Equals(Spec? other)
-    {
-        if (ReferenceEquals(null, other)) return false;
-        return ReferenceEquals(this, other) || SpecId.Equals(other.SpecId);
-    }
-
-    public override bool Equals(object? obj) => obj is Spec other && Equals(other);
-
-    public override int GetHashCode() => SpecId.GetHashCode();
-
     /// <summary>
     /// Executes the configured specification against the provided source content.
     /// </summary>
@@ -216,19 +221,10 @@ public class Spec() : IEquatable<Spec>
         try
         {
             var stopwatch = Stopwatch.StartNew();
-
-            //1. Execute the configured query.
-            var elements = content.Query(Element.Type);
-
-            //2. Filter the resulting elements.
-            var candidates = elements.Where(e => Filters.All(f => f.Evaluate(e))).ToList();
-
-            //3. Verify the candidates elements.
-            var evaluations = candidates.SelectMany(c => Verifications.Select(v => v.Evaluate(c))).ToList();
-
+            var candidates = Query.Execute(content).ToList();
+            var evaluations = Verify.Process(candidates).Cast<Evaluation>().ToList();
             stopwatch.Stop();
 
-            //Create the verification object that contains the total result and all evaluation information.
             return Verification.For(evaluations, stopwatch.ElapsedMilliseconds);
         }
         catch (Exception e)
@@ -237,4 +233,14 @@ public class Spec() : IEquatable<Spec>
             return Verification.For(Evaluation.Errored(e));
         }
     }
+
+    public bool Equals(Spec? other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        return ReferenceEquals(this, other) || SpecId.Equals(other.SpecId);
+    }
+
+    public override bool Equals(object? obj) => obj is Spec other && Equals(other);
+
+    public override int GetHashCode() => SpecId.GetHashCode();
 }

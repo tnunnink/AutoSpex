@@ -35,12 +35,16 @@
 
         <Border
             BorderThickness="1"
-            Padding="7 3"
-            MinWidth="60"
+            Padding="{a:ThemeResource ButtonPadding}"
+            VerticalAlignment="Center"
             CornerRadius="20"
             properties:StyleClasses.Classes="{Binding}">
 
-            <TextBlock Text="{Binding}" HorizontalAlignment="Center" />
+            <TextBlock
+                Text="{Binding}"
+                HorizontalAlignment="Center"
+                FontWeight="{a:ThemeResource HeadingFontWeightSmall}"
+                Padding="0" />
 
             <Border.Styles>
                 <Style Selector="Border.None">
@@ -58,7 +62,7 @@
                 <Style Selector="Border.Suppressed">
                     <Setter Property="Background" Value="{a:ThemeResource Container4BackgroundBrush}" />
                     <Style Selector="^ TextBlock">
-                        <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushSecondary}" />
+                        <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
                     </Style>
                 </Style>
                 <Style Selector="Border.Passed">

@@ -9,16 +9,18 @@
             DefaultMessage="No items configured"
             DefaultCaption="Add items to the collection to view content in the list"
             MinWidth="600" Height="200" Margin="20">
-            <controls:ListView.Header>
-                <StackPanel Orientation="Horizontal" Spacing="10">
+            <!--<controls:ListView.Header>
+                <StackPanel Orientation="Horizontal" Spacing="10" Margin="10">
                     <PathIcon Theme="{StaticResource IconAdd}" Classes="size-sm" />
                     <PathIcon Theme="{StaticResource IconEllipsis}" Classes="size-sm" />
                 </StackPanel>
-            </controls:ListView.Header>
+            </controls:ListView.Header>-->
         </controls:ListView>
     </Design.PreviewWith>
 
     <ControlTheme x:Key="{x:Type controls:ListView}" TargetType="controls:ListView">
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderBrush" Value="{a:ThemeResource Container1BorderBrush}" />
         <Setter Property="ItemContainerTheme" Value="{StaticResource ListBoxItemEntry}" />
         <Setter Property="SelectionMode" Value="Multiple" />
         <Setter Property="AutoScrollToSelectedItem" Value="True" />
@@ -28,54 +30,37 @@
             <ControlTemplate>
 
                 <DockPanel>
+                    <DockPanel.Styles>
+                        <Style Selector="Border.flat-top">
+                            <Setter Property="CornerRadius" Value="0 0 4 4" />
+                        </Style>
+                        <Style Selector="Border.round-top">
+                            <Setter Property="CornerRadius" Value="4" />
+                        </Style>
+                    </DockPanel.Styles>
 
                     <Border
                         DockPanel.Dock="Top"
+                        IsVisible="{TemplateBinding Header, Converter={x:Static ObjectConverters.IsNotNull}}"
                         Background="{a:ThemeResource Container2BackgroundBrush}"
                         BorderBrush="{a:ThemeResource Container1BorderBrush}"
-                        BorderThickness="1"
-                        CornerRadius="4 4 0 0"
-                        MinHeight="40">
+                        BorderThickness="1 1 1 0"
+                        CornerRadius="4 4 0 0">
 
-                        <Grid ColumnDefinitions="*,Auto">
-
-                            <TextBox
-                                Grid.Column="0"
-                                Text="{TemplateBinding Filter, Mode=TwoWay}"
-                                Watermark="Search specs"
-                                Theme="{StaticResource TextBoxSimple}"
-                                FontSize="{a:ThemeResource DefaultFontSizeSmall}"
-                                VerticalContentAlignment="Center"
-                                BorderBrush="{a:ThemeResource Container1BorderBrush}"
-                                CornerRadius="0" BorderThickness="0" Padding="0 10">
-                                <TextBox.InnerLeftContent>
-                                    <PathIcon
-                                        Theme="{StaticResource IconLineSearch}"
-                                        VerticalAlignment="Center" Margin="10 0"
-                                        Classes="size-sm"
-                                        Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
-                                </TextBox.InnerLeftContent>
-                                <Interaction.Behaviors>
-                                    <SelectAllOnGotFocusBehavior />
-                                </Interaction.Behaviors>
-                            </TextBox>
-
-                            <ContentPresenter
-                                x:Name="PART_ActionPresenter"
-                                Grid.Column="1"
-                                VerticalAlignment="Center"
-                                Content="{TemplateBinding Header}"
-                                ContentTemplate="{TemplateBinding HeaderTemplate}"
-                                Margin="10 0" />
-
-                        </Grid>
+                        <ContentPresenter
+                            x:Name="PART_HeaderPresenter"
+                            Content="{TemplateBinding Header}"
+                            ContentTemplate="{TemplateBinding HeaderTemplate}" />
 
                     </Border>
 
                     <Border
-                        BorderThickness="1 0 1 1"
-                        BorderBrush="{a:ThemeResource Container1BorderBrush}"
-                        CornerRadius="0 0 4 4"
+                        x:Name="ListBorder"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        Padding="{TemplateBinding Padding}"
+                        Classes.round-top="{TemplateBinding Header, Converter={x:Static ObjectConverters.IsNull}}"
+                        Classes.flat-top="{TemplateBinding Header, Converter={x:Static ObjectConverters.IsNotNull}}"
                         VerticalAlignment="Top">
 
                         <Panel>
@@ -107,10 +92,11 @@
                                 ItemContainerTheme="{TemplateBinding ItemContainerTheme}"
                                 IsVisible="{Binding ItemCount, RelativeSource={RelativeSource TemplatedParent}}"
                                 AutoScrollToSelectedItem="{TemplateBinding AutoScrollToSelectedItem}"
-                                SelectionMode="{TemplateBinding SelectionMode}"
+                                SelectionMode="{Binding SelectionMode, RelativeSource={RelativeSource TemplatedParent}}"
                                 BorderBrush="{a:ThemeResource Container1BorderBrush}"
                                 CornerRadius="5"
-                                Padding="{TemplateBinding Padding}"/>
+                                Padding="{TemplateBinding Padding}"
+                                ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
 
                         </Panel>
 

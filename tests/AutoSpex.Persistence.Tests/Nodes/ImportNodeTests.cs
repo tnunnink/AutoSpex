@@ -41,9 +41,9 @@ public class ImportNodeTests
         var collection = Node.NewCollection();
         collection.AddSpec("Test", s =>
         {
-            s.Query(Element.Tag);
-            s.Filter("TagName", Operation.EqualTo, "TestTag");
-            s.Verify("Value", Operation.GreaterThan, "TestTag");
+            s.Get(Element.Tag);
+            s.Where("TagName", Operation.EqualTo, "TestTag");
+            s.Validate("Value", Operation.GreaterThan, "TestTag");
         });
         var package = new Package(collection, 10000);
 

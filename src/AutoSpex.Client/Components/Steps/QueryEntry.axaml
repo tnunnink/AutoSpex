@@ -1,0 +1,62 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui">
+
+    <Design.PreviewWith>
+        <Border Width="800" Height="600" Padding="20">
+            <StackPanel Spacing="30">
+                <ContentControl
+                    Content="{x:Static components:TestData.DefaultQueryObserver}"
+                    ContentTemplate="{DynamicResource QuerySection}" />
+                <ContentControl
+                    Content="{x:Static components:TestData.QueryObserver}"
+                    ContentTemplate="{DynamicResource QuerySection}" />
+            </StackPanel>
+        </Border>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="QueryEntry" x:DataType="observers:QueryObserver">
+
+        <StackPanel Spacing="10">
+
+            <ContentControl
+                Content="{Binding }"
+                ContentTemplate="{StaticResource ElementEntry}"
+                HorizontalAlignment="Left" />
+
+            <ItemsControl
+                ItemsSource="{Binding Steps}"
+                IsVisible="{Binding Steps.HasItems}"
+                ItemContainerTheme="{StaticResource ListBoxItemInvisible}"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                KeyboardNavigation.TabNavigation="Continue">
+
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Spacing="10" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <ItemsControl.ItemTemplate>
+                    <a:TypedDataTemplateSelector>
+                        <DataTemplate x:DataType="observers:FilterObserver">
+                            <ContentControl
+                                Content="{Binding}"
+                                ContentTemplate="{StaticResource FilterStep}" />
+                        </DataTemplate>
+                        <DataTemplate x:DataType="observers:SelectObserver">
+                            <ContentControl
+                                Content="{Binding}"
+                                ContentTemplate="{StaticResource SelectStep}" />
+                        </DataTemplate>
+                    </a:TypedDataTemplateSelector>
+                </ItemsControl.ItemTemplate>
+
+            </ItemsControl>
+
+        </StackPanel>
+
+    </DataTemplate>
+</ResourceDictionary>

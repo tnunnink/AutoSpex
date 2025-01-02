@@ -1,0 +1,22 @@
+﻿{
+  "Property": "Radix",
+  "Negation": "Is",
+  "Operation": "In",
+  "Argument": {
+    "Group": "Collection",
+    "Data": [
+      {
+        "Group": "Enum",
+        "Data": "L5Sharp.Core.Radix\u002BDecimalRadix:Decimal"
+      },
+      {
+        "Group": "Enum",
+        "Data": "L5Sharp.Core.Radix\u002BFloatRadix:Float"
+      },
+      {
+        "Group": "Enum",
+        "Data": "L5Sharp.Core.Radix\u002BBinaryRadix:Binary"
+      }
+    ]
+  }
+}

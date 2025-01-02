@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Dynamic;
 using System.IO.Compression;
 using System.Text;
 using System.Text.Json;
@@ -19,6 +20,7 @@ public static class Extensions
     public static string DisplayName(this Type? type)
     {
         if (type is null) return "unknown";
+
         if (type == typeof(bool)) return "bool";
         if (type == typeof(byte)) return "byte";
         if (type == typeof(sbyte)) return "sbyte";
@@ -33,19 +35,19 @@ public static class Extensions
         if (type == typeof(decimal)) return "decimal";
         if (type == typeof(string)) return "string";
 
-        if (type.IsArray)
-            return $"{type.GetElementType().DisplayName()}[]";
+        if (type == typeof(ExpandoObject)) return "object";
+
+        //Collections
+        if (type.IsArray) return $"{type.GetElementType().DisplayName()}[]";
 
         if (type.IsEnumerable())
-            return $"{string.Join(", ", type.GetGenericArguments().Select(DisplayName).ToArray())}[]";
+        {
+            var args = type.GetGenericArguments().Select(DisplayName).ToArray();
+            return $"{string.Join(",", args)}[]";
+        }
 
-        if (type.IsNullable())
-            // ReSharper disable once TailRecursiveCall dont care
-            return Nullable.GetUnderlyingType(type)!.DisplayName();
-
-        if (type.IsGenericType)
-            return type.Name.Split('`')[0] + "<" +
-                   string.Join(", ", type.GetGenericArguments().Select(DisplayName).ToArray()) + ">";
+        // ReSharper disable once TailRecursiveCall
+        if (type.IsNullable()) return Nullable.GetUnderlyingType(type)!.DisplayName();
 
         return type.Name;
     }
@@ -60,10 +62,9 @@ public static class Extensions
             bool b => b.ToString().ToLowerInvariant(),
             LogixEnum enumeration => enumeration.Name,
             LogixScoped scoped => scoped.Scope,
-            string text => text, // this needs to be before IEnumerable since string is enumerable
-            ICollection collection => $"[{collection.Count}]",
-            IEnumerable enumerable =>
-                $"{string.Join(", ", enumerable.GetType().GetGenericArguments().Select(DisplayName).ToArray())}s",
+            KeyValuePair<string, object> pair => pair.Key,
+            string text => text,
+            IEnumerable enumerable => $"[{string.Join(',', enumerable.Cast<object>().Select(x => x.ToText()))}]",
             _ => candidate?.ToString() ?? "null"
         };
     }
@@ -146,6 +147,30 @@ public static class Extensions
     {
         if (input is null) return false;
         return string.IsNullOrEmpty(text) || input.Contains(text, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Calculates the percentage of elements in the source that satisfy the given predicate.
+    /// </summary>
+    /// <param name="source">The IEnumerable of elements to calculate the percentage from.</param>
+    /// <param name="predicate">The predicate to apply to each element.</param>
+    /// <typeparam name="T">The type of elements in the source.</typeparam>
+    /// <returns>The percentage of elements that satisfy the predicate as a double value.</returns>
+    public static double Percent<T>(this IEnumerable<T> source, Func<T, bool> predicate)
+    {
+        var total = 0;
+        var count = 0;
+
+        foreach (var item in source)
+        {
+            ++count;
+            if (predicate(item))
+            {
+                total += 1;
+            }
+        }
+
+        return count > 0 ? 100.0 * total / count : 0;
     }
 
     /// <summary>

@@ -1,0 +1,8 @@
+﻿{
+  Selections: [
+    {
+      Alias: Value,
+      Property: Radix.Value
+    }
+  ]
+}

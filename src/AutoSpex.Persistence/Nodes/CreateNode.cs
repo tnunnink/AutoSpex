@@ -12,7 +12,13 @@ namespace AutoSpex.Persistence;
 /// </summary>
 /// <param name="Node">The node to create.</param>
 [PublicAPI]
-public record CreateNode(Node Node) : IDbCommand<Result>;
+public record CreateNode(Node Node) : ICommandRequest<Result>
+{
+    public IEnumerable<Change> GetChanges()
+    {
+        yield return Change.For<CreateNode>(Node.NodeId, ChangeType.Created, $"Created {Node.Type} {Node.Name}");
+    }
+}
 
 [UsedImplicitly]
 internal class CreateNodeHandler(IConnectionManager manager) : IRequestHandler<CreateNode, Result>
@@ -22,8 +28,8 @@ internal class CreateNodeHandler(IConnectionManager manager) : IRequestHandler<C
 
     private const string InsertNode =
         """
-        INSERT INTO Node (NodeId, ParentId, Type, Name, Comment)
-        VALUES (@NodeId, @ParentId, @Type, @Name, @Comment)
+        INSERT INTO Node (NodeId, ParentId, Type, Name, Description)
+        VALUES (@NodeId, @ParentId, @Type, @Name, @Description)
         """;
 
     private const string InsertSpec =
@@ -37,10 +43,8 @@ internal class CreateNodeHandler(IConnectionManager manager) : IRequestHandler<C
         using var connection = await manager.Connect(cancellationToken);
         using var transaction = connection.BeginTransaction();
 
-        if (request.Node.Type != NodeType.Collection && request.Node.ParentId == Guid.Empty)
-        {
-            //todo should this not be allowed here
-        }
+        /*if (request.Node.Type != NodeType.Collection && request.Node.ParentId == Guid.Empty)
+            return Result.Fail("Can not save virutal node. Select a collection to which this node belongs");*/
 
         var exists = await connection.QuerySingleAsync<int>(NodeExists, new { request.Node.NodeId }, transaction);
         if (exists != 0)

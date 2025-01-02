@@ -11,9 +11,9 @@ public interface ISpecMigration
     int Version { get; }
 
     /// <summary>
-    /// Migrates the specified old data based on the implemented migration logic.
+    /// Migrates the specified json data based on the implemented migration logic.
     /// </summary>
-    /// <param name="old">The old data that needs to be migrated.</param>
-    /// <returns>The migrated data.</returns>
-    string Run(string old);
+    /// <param name="json">The json data that needs to be migrated.</param>
+    /// <returns>The new raw json string with the correct schema for the specified version.</returns>
+    string Run(string json);
 }

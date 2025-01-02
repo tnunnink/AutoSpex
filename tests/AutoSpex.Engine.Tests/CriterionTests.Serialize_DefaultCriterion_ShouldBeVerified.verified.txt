@@ -1,0 +1,6 @@
+﻿{
+  "Property": "",
+  "Negation": "Is",
+  "Operation": "None",
+  "Argument": null
+}

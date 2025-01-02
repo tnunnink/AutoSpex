@@ -1,0 +1,17 @@
+﻿{
+  "Property": "Members",
+  "Negation": "Is",
+  "Operation": "Any",
+  "Argument": {
+    "Group": "Criterion",
+    "Data": {
+  "Property": "TagName",
+  "Negation": "Is",
+  "Operation": "Containing",
+  "Argument": {
+    "Group": "Text",
+    "Data": "Testing"
+  }
+}
+  }
+}

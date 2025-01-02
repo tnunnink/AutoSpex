@@ -11,7 +11,11 @@ namespace AutoSpex.Client.Services;
 [PublicAPI]
 public sealed class Notifier(Shell shell)
 {
+    private const string DefaultError =
+        "An error ocurred while processing the previous request. See notifications for details.";
+
     private WindowNotificationManager _manager = new(shell);
+
     public List<INotification> Notifications { get; } = [];
 
     public void Notify(string title, string message, Action? onClick = null)
@@ -55,18 +59,14 @@ public sealed class Notifier(Shell shell)
     /// </remarks>
     public bool ShowIfFailed(IResultBase result, string? message = null, string? title = null)
     {
-        if (!result.IsFailed) return false;
+        if (result.IsSuccess) return false;
 
         title ??= "Request failed";
-        message ??=
-            result.Errors.FirstOrDefault()?.Message ??
-            "An error was encountered while processing the previous request. See notifications for details.";
+        message ??= result.Errors.FirstOrDefault()?.Message ?? DefaultError;
         ShowError(title, message);
 
         return true;
     }
-
-    public record NotificationMessage(INotification Notification);
 
     #region CustomMessages
 

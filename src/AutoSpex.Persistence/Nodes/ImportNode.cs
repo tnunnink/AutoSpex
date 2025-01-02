@@ -7,7 +7,14 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record ImportNode(Package Package, ImportAction Action) : IDbCommand<Result<Node>>;
+public record ImportNode(Package Package, ImportAction Action) : ICommandRequest<Result<Node>>
+{
+    public IEnumerable<Change> GetChanges()
+    {
+        return Package.Collection.DescendantsAndSelf().Select(n =>
+            Change.For<ImportNode>(n.NodeId, ChangeType.Created, $"Imported {n.Type} {n.Name}"));
+    }
+}
 
 [UsedImplicitly]
 internal class ImportNodeHandler(IConnectionManager manager) : IRequestHandler<ImportNode, Result<Node>>
@@ -17,8 +24,8 @@ internal class ImportNodeHandler(IConnectionManager manager) : IRequestHandler<I
 
     private const string InsertNode =
         """
-        INSERT INTO Node (NodeId, ParentId, Type, Name, Comment)
-        VALUES (@NodeId, @ParentId, @Type, @Name, @Comment)
+        INSERT INTO Node (NodeId, ParentId, Type, Name, Description)
+        VALUES (@NodeId, @ParentId, @Type, @Name, @Description)
         """;
 
     private const string InsertSpec =

@@ -15,63 +15,50 @@
                 Content="{x:Static components:TestData.SpecNode}"
                 ContentTemplate="{DynamicResource BreadcrumbPath}"
                 Padding="10" />
+            <ContentControl
+                Content="{x:Static components:TestData.SpecNode}"
+                ContentTemplate="{DynamicResource BreadcrumbRoute}"
+                Padding="10" />
         </StackPanel>
     </Design.PreviewWith>
 
     <DataTemplate x:Key="BreadcrumbLink" x:DataType="observers:NodeObserver">
-        <Border>
-            <StackPanel Orientation="Horizontal">
 
-                <ItemsControl ItemsSource="{Binding Crumbs}">
+        <ItemsControl ItemsSource="{Binding Crumbs}">
 
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
 
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate x:DataType="observers:NodeObserver">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="observers:NodeObserver">
 
-                            <StackPanel Orientation="Horizontal" Spacing="2">
+                    <StackPanel Orientation="Horizontal">
 
-                                <Button
-                                    Content="{Binding Name}"
-                                    Command="{Binding NavigateCommand}"
-                                    Theme="{a:ControlTheme ButtonSubtle}"
-                                    Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
-                                    FontSize="{a:ThemeResource DefaultFontSizeSmall}"
-                                    IsTabStop="False"
-                                    Padding="5 2" />
+                        <TextBlock
+                            x:Name="Separator"
+                            Text="/"
+                            Margin="2 0 0 0"
+                            IsVisible="{Binding Model.Parent, Converter={x:Static ObjectConverters.IsNotNull}}"
+                            Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
 
-                                <TextBlock
-                                    Text="/"
-                                    Padding="2 0 0 1"
-                                    Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                        <Button
+                            Content="{Binding Name}"
+                            Command="{Binding NavigateCommand}"
+                            Theme="{a:ControlTheme ButtonSubtle}"
+                            Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                            FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                            IsTabStop="False"
+                            Padding="3" />
 
-                            </StackPanel>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
 
-                </ItemsControl>
+        </ItemsControl>
 
-                <controls:Entry
-                    x:Name="NameEntry"
-                    Value="{Binding Name}"
-                    FontFamily="{a:ThemeResource DefaultFontFamily}"
-                    FontWeight="{a:ThemeResource HeadingFontWeightMedium}"
-                    CommitCommand="{Binding RenameCommand}"
-                    MinDropDownWidth="{Binding #NameEntry.Bounds.Width}"
-                    Padding="5 2">
-                    <Interaction.Behaviors>
-                        <DataTriggerBehavior Binding="{Binding IsNew}" ComparisonCondition="Equal" Value="True">
-                            <ChangePropertyAction TargetObject="NameEntry" PropertyName="IsDropDownOpen" Value="True" />
-                        </DataTriggerBehavior>
-                    </Interaction.Behaviors>
-                </controls:Entry>
-
-            </StackPanel>
-        </Border>
     </DataTemplate>
 
     <DataTemplate x:Key="BreadcrumbPath" x:DataType="observers:NodeObserver">
@@ -101,6 +88,46 @@
             </ItemsControl.ItemTemplate>
 
         </ItemsControl>
+    </DataTemplate>
+
+    <DataTemplate x:Key="BreadcrumbRoute" x:DataType="observers:NodeObserver">
+
+        <StackPanel Orientation="Horizontal">
+
+            <ItemsControl ItemsSource="{Binding Crumbs}">
+
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="observers:NodeObserver">
+                        <StackPanel Orientation="Horizontal" Spacing="2">
+                            <controls:HighlightableTextBlock
+                                Text="{Binding Name}"
+                                HighlightedText="{Binding $parent[ItemsControl].((observers:NodeObserver)DataContext).FilterText, FallbackValue={x:Null}}"
+                                Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                            <TextBlock
+                                x:Name="Separator"
+                                Text="/"
+                                Padding="2 0 2 1"
+                                Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+
+            </ItemsControl>
+
+            <controls:HighlightableTextBlock
+                Text="{Binding Name}"
+                HighlightedText="{Binding FilterText}"
+                Margin="2 0 0 0"
+                FontWeight="{a:ThemeResource HeadingFontWeightSmall}"/>
+
+        </StackPanel>
+
     </DataTemplate>
 
 </ResourceDictionary>

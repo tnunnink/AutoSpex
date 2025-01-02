@@ -6,6 +6,7 @@ using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using AutoSpex.Persistence;
 using Avalonia.Threading;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
@@ -19,8 +20,13 @@ public partial class SpecsPageModel(NodeObserver node) : PageViewModel("Specs"),
     IRecipient<NodeObserver.Moved>
 {
     public override string Route => $"{node.Type}/{node.Id}/{Title}";
+    public override string Icon => "IconLineListCheck";
     public ObserverCollection<Node, NodeObserver> Specs { get; } = [];
     public ObservableCollection<NodeObserver> Selected { get; } = [];
+
+    [ObservableProperty] private bool _showDrawer;
+
+    [ObservableProperty] private ResultDrawerPageModel? _resultDrawer;
 
     /// <inheritdoc />
     public override async Task Load()
@@ -38,7 +44,6 @@ public partial class SpecsPageModel(NodeObserver node) : PageViewModel("Specs"),
     [RelayCommand]
     private async Task AddSpec()
     {
-        //Adds to the current parent node.
         var spec = node.Model.AddSpec();
 
         var result = await Mediator.Send(new CreateNode(spec));
@@ -74,11 +79,13 @@ public partial class SpecsPageModel(NodeObserver node) : PageViewModel("Specs"),
     public void Receive(Observer.Deleted message)
     {
         if (message.Observer is not NodeObserver observer) return;
+        Selected.Clear();
         Specs.RemoveAny(s => s.Id == observer.Id);
     }
 
     /// <summary>
-    /// 
+    /// Hadle the request for renaming the node by determining if this is a descendant of this node and then resorting
+    /// the current spec node collection.
     /// </summary>
     public void Receive(Observer.Renamed message)
     {
@@ -108,11 +115,13 @@ public partial class SpecsPageModel(NodeObserver node) : PageViewModel("Specs"),
     {
         if (message.Node.Model.IsDescendantOf(node) && !Specs.Contains(message.Node))
         {
+            Selected.Clear();
             Specs.Add(message.Node);
         }
 
         if (!message.Node.Model.IsDescendantOf(node) && Specs.Contains(message.Node))
         {
+            Selected.Clear();
             Specs.Remove(message.Node);
         }
     }
@@ -124,5 +133,23 @@ public partial class SpecsPageModel(NodeObserver node) : PageViewModel("Specs"),
     protected override void FilterChanged(string? filter)
     {
         Specs.Filter(filter);
+    }
+    
+    /// <summary>
+    /// Uses the current test runner page to execeute this specification.
+    /// Opens the runner drawer if not alread open.
+    /// </summary>
+    public async Task RunSpec(Guid nodeId)
+    {
+        if (ResultDrawer is null) return;
+
+        var result = await Mediator.Send(new NewRun(nodeId));
+        if (Notifier.ShowIfFailed(result)) return;
+
+        var run = new RunObserver(result.Value);
+        await run.Execute();
+
+        ResultDrawer.Outcome = run.Outcomes.Count == 1 ? run.Outcomes[0] : null;
+        ShowDrawer = true;
     }
 }

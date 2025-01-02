@@ -1,0 +1,55 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
+
+    <Design.PreviewWith>
+        <Border Padding="200">
+            <ContentControl
+                Content="{x:Static components:TestData.QueryObserver}"
+                ContentTemplate="{DynamicResource FilterButton}" />
+        </Border>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="FilterButton" x:DataType="observers:QueryObserver">
+
+        <Button
+            Command="{Binding AddFitlerStepCommand}"
+            Classes="link-invisible"
+            ToolTip.Placement="BottomEdgeAlignedLeft">
+
+            <StackPanel Orientation="Horizontal" Spacing="7">
+                <PathIcon
+                    Theme="{StaticResource IconFilledFunnel}"
+                    Classes="size-sm"
+                    Foreground="{Binding $parent[Button].Foreground}" />
+                <TextBlock Text="Filter" />
+            </StackPanel>
+
+            <ToolTip.Tip>
+                <StackPanel Spacing="10" Margin="10">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <PathIcon
+                            Theme="{StaticResource IconFilledFunnel}"
+                            Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}" />
+                        <TextBlock
+                            Text="Add Filter"
+                            FontSize="{a:ThemeResource DefaultFontSizeMedium}"
+                            FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
+                    </StackPanel>
+
+                    <TextBlock
+                        Text="Add a filter step in order find specific objects from the previous step. Each filter step can contain multiple filter criteria."
+                        MaxWidth="300"
+                        Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                        TextWrapping="Wrap" />
+
+                </StackPanel>
+            </ToolTip.Tip>
+
+        </Button>
+
+    </DataTemplate>
+
+</ResourceDictionary>

@@ -1,0 +1,147 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors"
+             x:Class="AutoSpex.Client.Pages.ResultDrawerPage"
+             x:DataType="pages:ResultDrawerPageModel">
+
+    <Design.Width>800</Design.Width>
+    <Design.Height>600</Design.Height>
+
+    <DockPanel>
+
+        <Border
+            DockPanel.Dock="Top"
+            Background="{a:ThemeResource Container2BackgroundBrush}"
+            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+            BorderThickness="0 0 0 1"
+            Padding="15 7"
+            MinHeight="50">
+
+            <Grid ColumnDefinitions="1.5*,*,1.5*">
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10">
+
+                    <PathIcon
+                        Theme="{StaticResource IconFilledResults}"
+                        Margin="0 0 5 0" />
+
+                    <TextBlock
+                        Text="Results"
+                        FontWeight="{a:ThemeResource HeadingFontWeightMedium}">
+                        <TextBlock.IsVisible>
+                            <MultiBinding Converter="{x:Static BoolConverters.Or}">
+                                <Binding Path="Outcome" Converter="{x:Static ObjectConverters.IsNull}" />
+                                <Binding Path="!$parent[controls:DrawerView].IsDrawerOpen" />
+                            </MultiBinding>
+                        </TextBlock.IsVisible>
+                    </TextBlock>
+
+                    <ContentControl
+                        Content="{Binding Outcome}"
+                        ContentTemplate="{StaticResource OutcomeStatus}"
+                        Margin="0 1 0 0">
+                        <TextBlock.IsVisible>
+                            <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                <Binding Path="Outcome" Converter="{x:Static ObjectConverters.IsNotNull}" />
+                                <Binding Path="$parent[controls:DrawerView].IsDrawerOpen" />
+                            </MultiBinding>
+                        </TextBlock.IsVisible>
+                    </ContentControl>
+
+                </StackPanel>
+
+                <TextBox
+                    Grid.Column="1"
+                    Watermark="Search"
+                    Text="{Binding Filter}"
+                    Theme="{StaticResource TextBoxOutlineHighlight}"
+                    FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                    Background="Transparent"
+                    VerticalContentAlignment="Center"
+                    VerticalAlignment="Center"
+                    BorderThickness="1">
+                    <TextBox.IsVisible>
+                        <MultiBinding Converter="{x:Static BoolConverters.And}">
+                            <Binding Path="Outcome" Converter="{x:Static ObjectConverters.IsNotNull}" />
+                            <Binding Path="$parent[controls:DrawerView].IsDrawerOpen" />
+                        </MultiBinding>
+                    </TextBox.IsVisible>
+                    <TextBox.InnerLeftContent>
+                        <PathIcon
+                            Theme="{StaticResource IconLineSearch}"
+                            Margin="10 0 0 0"
+                            Classes="size-sm"
+                            Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                    </TextBox.InnerLeftContent>
+                    <Interaction.Behaviors>
+                        <SelectAllOnGotFocusBehavior />
+                    </Interaction.Behaviors>
+                </TextBox>
+
+                <StackPanel Grid.Column="2" HorizontalAlignment="Right" Orientation="Horizontal" Spacing="10">
+
+                    <Button
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconFilledArrowDown}"
+                        ToolTip.Tip="Export"
+                        ToolTip.Placement="BottomEdgeAlignedRight">
+                    </Button>
+
+                    <Button
+                        IsEnabled="{Binding Outcome.Result.IsFaulted, FallbackValue={x:False}}"
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconLineSliders}"
+                        ToolTip.Tip="Add Suppression"
+                        ToolTip.Placement="BottomEdgeAlignedRight">
+                        <Button.Flyout>
+                            <Flyout
+                                Placement="BottomEdgeAlignedRight"
+                                HorizontalOffset="8"
+                                VerticalOffset="2">
+                                <ContentControl
+                                    Content="{Binding }"
+                                    ContentTemplate="{StaticResource OutcomeSuppressor}" />
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+
+                    <Button
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconLineSidebar}"
+                        ToolTip.Tip="Show Results"
+                        ToolTip.Placement="BottomEdgeAlignedRight">
+                        <Button.RenderTransform>
+                            <RotateTransform Angle="270" />
+                        </Button.RenderTransform>
+                        <Interaction.Behaviors>
+                            <behaviors:ToggleDrawerOnClickBehavior />
+                        </Interaction.Behaviors>
+                    </Button>
+
+                </StackPanel>
+
+            </Grid>
+
+        </Border>
+
+        <Panel>
+
+            <controls:DefaultMessage
+                HorizontalAlignment="Center"
+                IsVisible="{Binding Outcome, Converter={x:Static ObjectConverters.IsNull}}"
+                HeaderIcon="{StaticResource IconLineListCheck}"
+                Message="Results will appear here when available." />
+
+            <ContentControl
+                Content="{Binding Outcome}"
+                ContentTemplate="{StaticResource EvaluationList}"
+                IsVisible="{Binding Outcome, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
+        </Panel>
+
+    </DockPanel>
+</UserControl>

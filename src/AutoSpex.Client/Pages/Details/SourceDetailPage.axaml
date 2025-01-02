@@ -3,78 +3,78 @@
              xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
              xmlns:shared="clr-namespace:AutoSpex.Client.Shared"
+             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
              x:Class="AutoSpex.Client.Pages.SourceDetailPage"
              x:DataType="pages:SourceDetailPageModel">
-
 
     <Design.Width>1400</Design.Width>
     <Design.Height>900</Design.Height>
 
     <DockPanel>
 
-        <Border DockPanel.Dock="Top" Padding="20 15">
+        <Border
+            DockPanel.Dock="Top"
+            Background="{a:ThemeResource Container2BackgroundBrush}"
+            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+            BorderThickness="0 0 0 1"
+            Padding="15 15 15 10">
 
-            <Grid ColumnDefinitions="*,Auto">
+            <StackPanel Spacing="10">
 
-                <StackPanel Grid.Column="0" Spacing="5" HorizontalAlignment="Left" Orientation="Horizontal">
-                    <PathIcon Theme="{Binding Icon, Converter={StaticResource KeyIconConverter}}" />
-                    <ContentControl
-                        Content="{Binding Source}"
-                        ContentTemplate="{StaticResource NameEntry}" />
-                </StackPanel>
+                <Grid ColumnDefinitions="*,Auto">
 
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
-                    <Button
-                        Classes="run accent"
-                        CornerRadius="{a:ThemeResource ButtonCornerRadius}" />
-                    <Button
-                        Command="{Binding SaveCommand}"
-                        Classes="save" />
-                    <Button Classes="more">
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5" Margin="5 0">
+                        <ContentControl Content="{Binding Source}" ContentTemplate="{StaticResource ObserverTitle}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
+                        <Button Command="{Binding RunCommand}" Classes="run accent" />
+                        <Button Command="{Binding SaveCommand}" Classes="save" />
+                    </StackPanel>
+
+                </Grid>
+
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+
+                    <TabStrip
+                        ItemsSource="{Binding Pages}"
+                        SelectedItem="{Binding CurrentPage}"
+                        BorderThickness="0"
+                        Padding="0 5">
+
+                        <TabStrip.ItemTemplate>
+                            <DataTemplate x:DataType="shared:PageViewModel">
+                                <TextBlock Text="{Binding Title}" />
+                            </DataTemplate>
+                        </TabStrip.ItemTemplate>
+
+                        <TabStrip.ItemContainerTheme>
+                            <ControlTheme TargetType="TabStripItem" BasedOn="{StaticResource TabStripItemExpandable}"
+                                          x:DataType="shared:PageViewModel">
+                                <Setter
+                                    Property="properties:Icon.Theme"
+                                    Value="{Binding Icon, Converter={StaticResource NamedIconConverter}}" />
+                            </ControlTheme>
+                        </TabStrip.ItemContainerTheme>
+
+                    </TabStrip>
+
+                    <Button Classes="more" ToolTip.Tip="Options">
                         <Button.Flyout>
                             <MenuFlyout
                                 ItemsSource="{Binding Source.MenuItems}"
                                 ItemContainerTheme="{StaticResource MenuActionItem}"
-                                Placement="BottomEdgeAlignedRight" HorizontalOffset="8" VerticalOffset="5" />
+                                Placement="BottomEdgeAlignedLeft" VerticalOffset="5" />
                         </Button.Flyout>
                     </Button>
+
                 </StackPanel>
-                
-            </Grid>
-            
+
+            </StackPanel>
+
         </Border>
 
-        <DockPanel>
-            <TabStrip
-                DockPanel.Dock="Top"
-                ItemsSource="{Binding Tabs}"
-                SelectedItem="{Binding Tab}"
-                ItemContainerTheme="{StaticResource TabStripItemStandard}"
-                BorderBrush="{a:ThemeResource Container1BorderBrush}"
-                Padding="20 0">
+        <ContentControl Content="{Binding CurrentPage}" />
 
-                <TabStrip.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal" Spacing="15" />
-                    </ItemsPanelTemplate>
-                </TabStrip.ItemsPanel>
-
-                <TabStrip.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Title}" />
-                    </DataTemplate>
-                </TabStrip.ItemTemplate>
-
-            </TabStrip>
-
-            <ContentControl Content="{Binding Tab}">
-                <ContentControl.ContentTemplate>
-                    <DataTemplate x:DataType="shared:PageViewModel">
-                        <ContentControl Content="{Binding}" />
-                    </DataTemplate>
-                </ContentControl.ContentTemplate>
-            </ContentControl>
-
-        </DockPanel>
     </DockPanel>
 </UserControl>

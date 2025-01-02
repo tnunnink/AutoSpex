@@ -8,27 +8,27 @@ namespace AutoSpex.Engine;
 /// Represents a source L5X content that can be run against any set of specifications.
 /// Source content will be stored locally and the user can inspect, update, and create runs against the source.
 /// </summary>
-public class Source
+public class Source()
 {
-    private readonly Dictionary<Guid, Suppression> _suppressions = [];
-    private readonly Dictionary<Guid, Node> _overrides = [];
+    private readonly Dictionary<Guid, Action> _rules = [];
 
     /// <summary>
     /// Creates a new <see cref="Source"/> with no content. 
     /// </summary>
-    public Source()
+    public Source(string? name = default) : this()
     {
+        Name = name ?? "New Source";
     }
 
     /// <summary>
     /// Creates a new <see cref="Source"/> provided the location on disc of the L5X file.
     /// </summary>
-    public Source(L5X content)
+    public Source(L5X content, string? name = default) : this()
     {
         if (content is null)
             throw new ArgumentNullException(nameof(content));
 
-        Name = content.Info.TargetName ?? "New Source";
+        Name = name ?? content.Info.TargetName ?? "New Source";
         TargetName = content.Info.TargetName ?? string.Empty;
         TargetType = content.Info.TargetType ?? string.Empty;
         ExportedOn = content.Info.ExportDate?.ToString() ?? string.Empty;
@@ -36,7 +36,7 @@ public class Source
         Description = content.Controller.Description ?? string.Empty;
 
         InjectMetadata(content);
-        ScrubData(content);
+        ScrubContent(content);
         Content = content;
     }
 
@@ -93,7 +93,7 @@ public class Source
     /// The controller/project description of the L5X content.
     /// </summary>
     [JsonInclude]
-    public string Description { get; private set; } = string.Empty;
+    public string? Description { get; set; } = string.Empty;
 
     /// <summary>
     /// The <see cref="L5X"/> content this source contains.
@@ -102,24 +102,17 @@ public class Source
     public L5X? Content { get; private set; }
 
     /// <summary>
-    /// Represents the collection of nodes that should be ignored when this source is run.
-    /// These nodes will be excluded from processing or consideration within the specified context.
-    /// The user can add, remove, or clear the ignored nodes as needed.
+    /// The set of rules to be applied to specifications when this source is run. A rule will define whether to suppress
+    /// or override the configuration of a specification. Each rule corresponds to a single node for this source and
+    /// will be ustilized to alter the outcomes of specs when this source is run.
     /// </summary>
     [JsonInclude]
-    public IEnumerable<Suppression> Suppressions => _suppressions.Values;
-
-    /// <summary>
-    /// Gets the collection of <see cref="Override"/> objects representing the overrides that allow the user to
-    /// change the configuration of a spec when this source is run.
-    /// </summary>
-    [JsonInclude]
-    public IEnumerable<Node> Overrides => _overrides.Values;
+    public IEnumerable<Action> Rules => _rules.Values;
 
     /// <summary>
     /// Represents an empty source object with default property values and an empty source id.
     /// </summary>
-    public static Source Empty => new() { SourceId = Guid.Empty };
+    public static Source Empty(string? name = default) => new() { SourceId = Guid.Empty, Name = name ?? "New Source" };
 
     /// <summary>
     /// Updates the internal <see cref="Content"/> of the source with the provided L5X. 
@@ -138,87 +131,45 @@ public class Source
         Description = content.Controller.Description ?? string.Empty;
 
         InjectMetadata(content);
-        ScrubData(content);
+        ScrubContent(content);
         Content = content;
     }
 
     /// <summary>
-    /// Adds the specified node as an override to the source.
+    /// Adds a new rule to the Source based on the provided Rule.
     /// </summary>
-    /// <param name="node">The node to add as an override.</param>
-    public void AddOverride(Node node)
+    /// <param name="action">The Rule object to be added. Must not be null.</param>
+    public void AddRule(Action action)
     {
-        ArgumentNullException.ThrowIfNull(node);
-        _overrides[node.NodeId] = node;
+        ArgumentNullException.ThrowIfNull(action);
+        _rules[action.NodeId] = action;
     }
 
     /// <summary>
-    /// Removes the specified node override from the source.
+    /// Removes a specified rule from the Source based on the provided rule parameter.
     /// </summary>
-    /// <param name="node">The node to remove as an override.</param>
-    public void RemoveOverride(Node node)
+    /// <param name="action">The rule to be removed from the Source.</param>
+    public void RemoveRule(Action action)
     {
-        ArgumentNullException.ThrowIfNull(node);
-        _overrides.Remove(node.NodeId);
+        ArgumentNullException.ThrowIfNull(action);
+        _rules.Remove(action.NodeId);
     }
 
     /// <summary>
-    /// Clears all overrides stored in the source.
+    /// Clears all rules associated with this source.
     /// </summary>
-    public void ClearOverrides() => _overrides.Clear();
+    public void ClearRules() => _rules.Clear();
 
     /// <summary>
-    /// Adds a suppression to the source with the specified node ID and reason.
-    /// </summary>
-    /// <param name="nodeId">The ID of the node to be suppressed.</param>
-    /// <param name="reason">The reason for the suppression.</param>
-    /// <exception cref="ArgumentException">Thrown if the nodeId is empty or if the reason is null or empty.</exception>
-    public void AddSuppression(Guid nodeId, string reason)
-    {
-        if (nodeId == Guid.Empty)
-            throw new ArgumentException("Supupressions require a non-empty node id");
-
-        if (string.IsNullOrEmpty(reason))
-            throw new ArgumentException("Suppressions require a valid reason.");
-
-        _suppressions[nodeId] = new Suppression(nodeId, reason);
-    }
-
-    /// <summary>
-    /// Adds a suppression for a specific node identified by its unique nodeId in the source.
-    /// </summary>
-    /// <param name="suppression">The suppression object containing information about the node to suppress.</param>
-    public void AddSuppression(Suppression suppression)
-    {
-        ArgumentNullException.ThrowIfNull(suppression);
-        _suppressions[suppression.NodeId] = suppression;
-    }
-
-    /// <summary>
-    /// Removes the specified suppression entry corresponding to the given suppression from the Source object.
-    /// </summary>
-    /// <param name="suppression">The suppression entry to be removed.</param>
-    public void RemoveSuppression(Suppression suppression)
-    {
-        ArgumentNullException.ThrowIfNull(suppression);
-        _suppressions.Remove(suppression.NodeId);
-    }
-
-    /// <summary>
-    /// Clears the list of nodes to suppress for this source.
-    /// </summary>
-    public void ClearSuppressions() => _suppressions.Clear();
-
-    /// <summary>
-    /// Applies overrides for the specified nodes based on the stored specifications in the Source.
+    /// Applies overrides for the specified nodes based on the stored rules defined in the Source.
     /// </summary>
     /// <param name="nodes">The collection of nodes to apply the overrides to.</param>
     public void Override(IEnumerable<Node> nodes)
     {
         foreach (var node in nodes)
         {
-            if (!_overrides.TryGetValue(node.NodeId, out var match)) continue;
-            node.Configure(match.Spec);
+            if (!_rules.TryGetValue(node.NodeId, out var rule)) continue;
+            node.Configure(rule.Config);
         }
     }
 
@@ -230,8 +181,11 @@ public class Source
     public bool Suppresses(Outcome outcome)
     {
         ArgumentNullException.ThrowIfNull(outcome);
-        if (!_suppressions.TryGetValue(outcome.NodeId, out var suppression)) return false;
-        outcome.Suppress(suppression.Reason);
+
+        if (!_rules.TryGetValue(outcome.NodeId, out var rule)) return false;
+        if (rule.Type != ActionType.Suppress) return false;
+
+        outcome.Suppress(rule.Reason);
         return true;
     }
 
@@ -252,11 +206,8 @@ public class Source
             Content = Content
         };
 
-        foreach (var node in _overrides.Values)
-            duplicate.AddOverride(node);
-
-        foreach (var suppression in _suppressions.Values)
-            duplicate.AddSuppression(suppression);
+        foreach (var rule in _rules.Values)
+            duplicate.AddRule(rule);
 
         return duplicate;
     }
@@ -282,90 +233,6 @@ public class Source
     }
 
     /// <summary>
-    /// Finds values based on the specified property for elements in the content source.
-    /// </summary>
-    /// <param name="property">The property for which values need to be found.</param>
-    /// <returns>An enumerable collection of distinct values for the specified property.</returns>
-    public IEnumerable<object> FindValues(Property property)
-    {
-        if (Content is null) return [];
-
-        //For any statically known value type like boolean or enum we can return early with predefined options.
-        if (property.Group == TypeGroup.Boolean || property.Group == TypeGroup.Enum)
-            return GetOptions(property.Type);
-
-        try
-        {
-            //Since every property origin is/should be the L5Sharp type, we can use that to query for elements in the source.
-            var elements = Content.Query(property.Origin);
-
-            //Essentially just get non-null distinct values for the specified property for all elements of the origin type.
-            var values = elements.Select(property.GetValue).Where(x => x is not null).Cast<object>().Distinct();
-
-            return values.ToList();
-        }
-        catch (Exception)
-        {
-            // Ignored because this is just optional.
-            // It's only to suggest possible values based on a known source content.
-            return [];
-        }
-    }
-
-    /// <summary>
-    /// Handles the request for tag names to suggest to the user as then enter text in a property entry with indexer
-    /// notation. This is very usefuly because we don't need to look up the tag structure,
-    /// and instead we can have it prompted to us.
-    /// </summary>
-    public IEnumerable<TagName> FindTagNames(Spec spec, string? filter)
-    {
-        if (Content is null) return [];
-
-        //This only applies to tag elements. Guard agains anything else.
-        if (spec.Element != Element.Tag) return [];
-
-        try
-        {
-            //Ideally we want to narrow the search space for tag names using the currently configured filters to
-            //improve the performance of this lookup which will happen continuously as text changes
-
-            /*var elements = spec.GetCandidates(Content);*/
-
-            var tags = Content.Query<Tag>().Where(t => spec.Filters.All(f => f.Evaluate(t))).ToList();
-
-            /*return tags.SelectMany(t => t.TagNames()).Select(t => t.Path).Distinct().Select(x => new TagName(x));*/
-
-            var tagNames = tags
-                .SelectMany(t => t.TagNames())
-                .Select(t => t.Path)
-                .Distinct()
-                .Where(t => !string.IsNullOrEmpty(t) && t.Satisfies(filter))
-                .OrderBy(t => t)
-                .Select(t => new TagName($"[{t}]"));
-
-            return tagNames.ToList();
-        }
-        catch (Exception)
-        {
-            // ignored because this is just optional.
-            // If the user enteres invalid tagnames it will result in and errored evaluation telling them the issue.
-            return [];
-        }
-    }
-
-    /// <summary>
-    /// Returns a collection of possible values. This is meant primarily for enumeration types so that we
-    /// can provide the user with a selectable set of options for a given enum value. This however will also return
-    /// true/false for boolean type and empty collection for anything else (numbers, string, collections, complex objects).
-    /// </summary>
-    private static IEnumerable<object> GetOptions(Type type)
-    {
-        var group = TypeGroup.FromType(type);
-        if (group == TypeGroup.Boolean) return new object[] { true, false };
-        return typeof(LogixEnum).IsAssignableFrom(type) ? LogixEnum.Options(type) : [];
-    }
-
-    /// <summary>
     /// Adds/sets the source metadata to the L5X content.
     /// This is so we can read back this data from the element without having to find the source information.
     /// </summary>
@@ -380,7 +247,7 @@ public class Source
     /// can still be restored without L5K data anyway. We are only interested in decorated clear text data.
     /// </summary>
     /// <param name="content">The L5X content from which to scrub the data.</param>
-    private static void ScrubData(L5X content)
+    private static void ScrubContent(L5X content)
     {
         content.Serialize().Descendants(L5XName.Data)
             .Where(d => d.Attribute(L5XName.Format)?.Value == "L5K")

@@ -59,10 +59,31 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
     }
 
     /// <summary>
+    /// Opens a page specified by the route and returns the page of type TPage if found or resolved.
+    /// If the page is not found or resolved, an InvalidOperationException is thrown.
+    /// </summary>
+    /// <param name="route">The route to identify the page to open.</param>
+    /// <typeparam name="TPage">The type of the page view model to open.</typeparam>
+    /// <returns>The page of type TPage that was opened.</returns>
+    public TPage Open<TPage>(string route) where TPage : PageViewModel
+    {
+        if (!_openPages.TryGetValue(route, out var match))
+            throw new InvalidOperationException($"Could not find page '{route}'");
+
+        if (match is not TPage page)
+            throw new InvalidOperationException($"Page '{route}' is not of type {typeof(TPage)}");
+
+        var request = new NavigationRequest(page);
+        messenger.Send(request);
+
+        return page;
+    }
+
+    /// <summary>
     /// Closes the provided <see cref="PageViewModel"/> by issuing the close cation navigation request message. 
     /// </summary>
     /// <param name="page">The page to close.</param>
-    public void Close(PageViewModel page) => ClosePage(page);
+    public void Close(PageViewModel? page) => ClosePage(page);
 
     /// <summary>
     /// Disposes/Deactivates all pages current open in this instance of the <see cref="Navigator"/> service.
@@ -116,12 +137,18 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
     }
 
 
-    private void ClosePage(PageViewModel page)
+    /// <summary>
+    /// Closes the specified <see cref="PageViewModel"/> by sending a navigation request with <see cref="NavigationAction.Close"/>.
+    /// The method also removes the page from the open pages dictionary and disposes of the page.
+    /// </summary>
+    /// <param name="page">The page to be closed.</param>
+    private void ClosePage(PageViewModel? page)
     {
+        if (page is null) return;
         var request = new NavigationRequest(page, NavigationAction.Close);
         messenger.Send(request);
         _openPages.Remove(page.Route);
-        page.IsActive = false;
+        page.Dispose();
     }
 
     /// <summary>
@@ -135,10 +162,7 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
     {
         var page = factory();
 
-        if (!page.KeepAlive)
-        {
-            return page;
-        }
+        if (!page.KeepAlive) return page;
 
         if (!_openPages.TryAdd(page.Route, page))
         {
@@ -156,7 +180,15 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
     /// </summary>
     private static async Task ActivatePage(PageViewModel page)
     {
-        if (page.IsActive) return;
+        switch (page)
+        {
+            case { IsActive: true, Reload: false }:
+                return;
+            case { IsActive: true, Reload: true }:
+                page.Flush();
+                break;
+        }
+
         page.IsActive = true;
         await page.Load();
     }
@@ -167,6 +199,7 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
     private void CleanUp()
     {
         var deactivated = _openPages.Where(p => !p.Value.IsActive).Select(p => p.Key).ToList();
+
         foreach (var page in deactivated)
         {
             _openPages.Remove(page);

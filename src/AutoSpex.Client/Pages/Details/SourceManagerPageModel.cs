@@ -57,6 +57,7 @@ public partial class SourceManagerPageModel() : DetailPageModel("Sources"), IRec
     public override void Receive(Observer.Deleted message)
     {
         if (message.Observer is not SourceObserver observer) return;
+        Selected.Clear();
         Sources.Remove(observer);
     }
 

@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using System.Text.Json;
+﻿using System.Text.Json;
 using Task = System.Threading.Tasks.Task;
 
 namespace AutoSpex.Engine.Tests;
@@ -7,14 +6,16 @@ namespace AutoSpex.Engine.Tests;
 [TestFixture]
 public class CriterionTests
 {
+    private static readonly JsonSerializerOptions Options = new() { WriteIndented = true };
+
+
     [Test]
     public void New_Default_ShouldHaveExpectedDefaults()
     {
         var criterion = new Criterion();
 
         criterion.Should().NotBeNull();
-        criterion.Type.Should().Be(typeof(object));
-        criterion.Property.Should().Be(Property.Default);
+        criterion.Property.Should().Be(string.Empty);
         criterion.Operation.Should().Be(Operation.None);
         criterion.Argument.Should().BeNull();
     }
@@ -22,34 +23,31 @@ public class CriterionTests
     [Test]
     public void New_SimpleOverloads_ShouldHaveExpected()
     {
-        var criterion = new Criterion(Element.Tag.Property("Value"), Operation.Between, 0, 100);
+        var criterion = new Criterion("Value", Operation.Between, new Range(0, 100));
 
-        criterion.Type.Should().Be(typeof(Tag));
-        criterion.Property.Should().Be(Element.Tag.Property("Value"));
+        criterion.Property.Should().Be("Value");
         criterion.Operation.Should().Be(Operation.Between);
-        criterion.Argument.Should().BeOfType<List<object>>();
-        criterion.Argument.As<List<object>>().Should().HaveCount(2);
+        criterion.Argument.Should().BeOfType<Range>();
+        criterion.Argument.Should().BeEquivalentTo(new Range(0, 100));
     }
 
     [Test]
     public void New_InnerCriterionArgument_ShouldHaveExpected()
     {
-        var innerCriterion = new Criterion(Element.Tag.Property("Name"), Operation.Containing, "Test");
-        var criterion = new Criterion(Element.Tag.Property("Members"), Operation.Any, innerCriterion);
+        var inner = new Criterion("Name", Operation.Containing, "Test");
+        var criterion = new Criterion("Members", Operation.Any, inner);
 
-        criterion.Type.Should().Be(typeof(Tag));
-        criterion.Property.Should().Be(Element.Tag.Property("Members"));
+        criterion.Property.Should().Be("Members");
         criterion.Operation.Should().Be(Operation.Any);
         criterion.Argument.Should().BeOfType<Criterion>();
-        criterion.Argument.Should().BeEquivalentTo(innerCriterion);
+        criterion.Argument.Should().BeEquivalentTo(inner);
     }
 
     [Test]
-    public void Evaluate_SimpleImmediateProperty_ShouldBeExpectedResult()
+    public void Evaluate_UnaryOperation_ShouldBeExpectedResult()
     {
         var tag = new Tag { Name = "Test" };
-
-        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.EqualTo, "Test");
+        var criterion = new Criterion("Name", Operation.Void) { Negation = Negation.Not };
 
         var evaluation = criterion.Evaluate(tag);
 
@@ -57,11 +55,10 @@ public class CriterionTests
     }
 
     [Test]
-    public void Evaluate_StringBetweenValidValues_ShouldHavePassedEvaluation()
+    public void Evaluate_BinaryOperation_ShouldBeExpectedResult()
     {
-        var tag = new Tag { Name = "MyName" };
-
-        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.Between, "C", "T");
+        var tag = new Tag { Name = "Test" };
+        var criterion = new Criterion("Name", Operation.EqualTo, "Test");
 
         var evaluation = criterion.Evaluate(tag);
 
@@ -69,23 +66,42 @@ public class CriterionTests
     }
 
     [Test]
-    public void AsExpression_WhenCompiled_ShouldAlsoWork()
+    public void Evaluate_BetweenOperation_ShouldBeExpectedResult()
     {
-        var tag = new Tag { Name = "Test" };
+        var tag = new Tag { Name = "MyName", Value = 12 };
+        var criterion = new Criterion("Value", Operation.Between, new Range(1, 10));
 
-        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.EqualTo, "Test");
+        var evaluation = criterion.Evaluate(tag);
 
-        var expression = (Expression<Func<object, bool>>)criterion;
-        var func = expression.Compile();
+        evaluation.Result.Should().Be(ResultState.Failed);
+    }
 
-        var result = func(tag);
-        result.Should().BeTrue();
+    [Test]
+    public void Evaluate_InOperation_ShouldBeExpectedResult()
+    {
+        var tag = new Tag { Name = "MyName", Value = 12 };
+        var criterion = new Criterion("Value", Operation.In, new List<int> { 1, 10, 12 });
+
+        var evaluation = criterion.Evaluate(tag);
+
+        evaluation.Result.Should().Be(ResultState.Passed);
+    }
+
+    [Test]
+    public void Evaluate_CollectionOperation_ShouldBeExpectedResult()
+    {
+        var tag = new Tag { Name = "MyName", Value = new TIMER { PRE = 1230 } };
+        var criterion = new Criterion("Members", Operation.Any, new Criterion("Value", Operation.EqualTo, 1230));
+
+        var evaluation = criterion.Evaluate(tag);
+
+        evaluation.Result.Should().Be(ResultState.Passed);
     }
 
     [Test]
     public void ToString_SimpleStringArgument_ShouldBeExpected()
     {
-        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.EqualTo, "Test");
+        var criterion = new Criterion("Name", Operation.EqualTo, "Test");
 
         var result = criterion.ToString();
 
@@ -95,7 +111,7 @@ public class CriterionTests
     [Test]
     public void ToString_SimpleEnumArgument_ShouldBeExpected()
     {
-        var criterion = new Criterion(Element.Tag.Property("Radix"), Operation.EqualTo, Radix.Ascii);
+        var criterion = new Criterion("Radix", Operation.EqualTo, Radix.Ascii);
 
         var result = criterion.ToString();
 
@@ -105,7 +121,7 @@ public class CriterionTests
     [Test]
     public void ToString_SimpleUnaryOperation_ShouldBeExpected()
     {
-        var criterion = new Criterion(Element.Tag.Property("Constant"), Operation.Null);
+        var criterion = new Criterion("Constant", Operation.Null);
 
         var result = criterion.ToString();
 
@@ -115,8 +131,8 @@ public class CriterionTests
     [Test]
     public void ToString_NestedCriterion_ShouldBeExpected()
     {
-        var criterion = new Criterion(Element.Tag.Property("Members"), Operation.Any,
-            new Criterion(Element.Tag.Property("TagName"), Operation.Containing, "SomeValue"));
+        var criterion = new Criterion("Members", Operation.Any,
+            new Criterion("TagName", Operation.Containing, "SomeValue"));
 
         var result = criterion.ToString();
 
@@ -124,149 +140,75 @@ public class CriterionTests
     }
 
     [Test]
-    public void Parse_ValidExampleUnaryOperationOnTag_ShouldBeExpected()
+    public Task Serialize_DefaultCriterion_ShouldBeVerified()
     {
-        var type = typeof(Tag);
-        const string text = "TagName Is Null";
+        var criterion = new Criterion();
 
-        var criterion = Criterion.Parse(type, text);
+        var json = JsonSerializer.Serialize(criterion, Options);
 
-        criterion.Should().NotBeNull();
-        criterion.Type.Should().Be(typeof(Tag));
-        criterion.Property.Should().Be(Property.This(type).GetProperty("TagName"));
-        criterion.Negation.Should().Be(Negation.Is);
-        criterion.Operation.Should().Be(Operation.Null);
-        criterion.Argument.Should().BeNull();
-    }
-
-    [Test]
-    public void Parse_ValidExampleBinaryOperationOnTag_ShouldBeExpected()
-    {
-        var type = typeof(Tag);
-        const string text = "Value Is Equal To 123";
-
-        var criterion = Criterion.Parse(type, text);
-
-        criterion.Should().NotBeNull();
-        criterion.Type.Should().Be(typeof(Tag));
-        criterion.Property.Should().Be(Property.This(type).GetProperty("Value"));
-        criterion.Negation.Should().Be(Negation.Is);
-        criterion.Operation.Should().Be(Operation.EqualTo);
-        criterion.Argument.Should().Be(123);
-    }
-
-    [Test]
-    public void Parse_ValidExampleTernaryOperationOnTag_ShouldBeExpected()
-    {
-        var type = typeof(Tag);
-        const string text = "Value Is Between 1 and 10";
-
-        var criterion = Criterion.Parse(type, text);
-
-        criterion.Should().NotBeNull();
-        criterion.Type.Should().Be(typeof(Tag));
-        criterion.Property.Should().Be(Property.This(type).GetProperty("Value"));
-        criterion.Negation.Should().Be(Negation.Is);
-        criterion.Operation.Should().Be(Operation.Between);
-        criterion.Argument.Should().BeEquivalentTo(new Range(1, 10));
-    }
-
-    [Test]
-    public void Parse_ValidExampleCollectionOperationOnTag_ShouldBeExpected()
-    {
-        var type = typeof(Tag);
-        const string text = "Members Is Any TagName Is Containing This is some text";
-
-        var criterion = Criterion.Parse(type, text);
-
-        criterion.Should().NotBeNull();
-        criterion.Type.Should().Be(typeof(Tag));
-        criterion.Property.Should().Be(Property.This(type).GetProperty("Members"));
-        criterion.Negation.Should().Be(Negation.Is);
-        criterion.Operation.Should().Be(Operation.Any);
-        criterion.Argument.Should().BeOfType<Criterion>();
-        criterion.Argument.As<Criterion>().Property.Should().Be(Property.This(typeof(Tag)).GetProperty("TagName"));
-        criterion.Argument.As<Criterion>().Negation.Should().Be(Negation.Is);
-        criterion.Argument.As<Criterion>().Operation.Should().Be(Operation.Containing);
-        criterion.Argument.As<Criterion>().Argument.Should().Be("This is some text");
-    }
-
-    [Test]
-    public void Parse_ValidExampleInOperationOnTagEnum_ShouldBeExpected()
-    {
-        var type = typeof(Tag);
-        const string text = "Radix Not In [Decimal,Octal,Binary]";
-
-        var criterion = Criterion.Parse(type, text);
-
-        criterion.Should().NotBeNull();
-        criterion.Type.Should().Be(typeof(Tag));
-        criterion.Property.Should().Be(Property.This(type).GetProperty("Radix"));
-        criterion.Negation.Should().Be(Negation.Not);
-        criterion.Operation.Should().Be(Operation.In);
-        criterion.Argument.Should().BeOfType<List<object>>();
-        criterion.Argument.As<List<object>>().Should().ContainInOrder([Radix.Decimal, Radix.Octal, Radix.Binary]);
-    }
-
-    [Test]
-    public void Parse_InvalidPropertyName_ShouldWorkButNotParseValue()
-    {
-        var type = typeof(Tag);
-        const string text = "WTF Not Equal To Something";
-
-        var criterion = Criterion.Parse(type, text);
-
-        criterion.Should().NotBeNull();
-        criterion.Type.Should().Be(typeof(Tag));
-        criterion.Property.Should().Be(Property.This(type).GetProperty("WTF"));
-        criterion.Negation.Should().Be(Negation.Not);
-        criterion.Operation.Should().Be(Operation.EqualTo);
-        criterion.Argument.Should().Be("Something");
-    }
-
-    [Test]
-    public void Parse_InvalidNegation_ShouldThrowException()
-    {
-        var type = typeof(Tag);
-        const string text = "TagName IsNot Equal To Something";
-
-        FluentActions.Invoking(() => Criterion.Parse(type, text)).Should().Throw<FormatException>();
-    }
-
-    [Test]
-    public void Parse_InvalidOperation_ShouldThrowException()
-    {
-        var type = typeof(Tag);
-        const string text = "TagName Is Whatever Something";
-
-        FluentActions.Invoking(() => Criterion.Parse(type, text)).Should().Throw<FormatException>();
+        return Verify(json);
     }
 
     [Test]
     public Task Serialize_ValidCriterion_ShouldBeVerified()
     {
-        var criterion = new Criterion(Element.Tag.Property("Name"), Operation.EqualTo, "Testing");
+        var criterion = new Criterion("Name", Operation.EqualTo, "Testing");
 
-        var json = JsonSerializer.Serialize(criterion);
+        var json = JsonSerializer.Serialize(criterion, Options);
 
-        return VerifyJson(json);
+        return Verify(json);
+    }
+
+    [Test]
+    public Task Serialize_WithNegation_ShouldBeVerified()
+    {
+        var criterion = new Criterion("Name", Operation.EqualTo, "Testing") { Negation = Negation.Not };
+
+        var json = JsonSerializer.Serialize(criterion, Options);
+
+        return Verify(json);
+    }
+
+    [Test]
+    public Task Serialize_RangeArgument_ShouldBeVerified()
+    {
+        var criterion = new Criterion("Value", Operation.Between, new Range(1, 10));
+
+        var json = JsonSerializer.Serialize(criterion, Options);
+
+        return Verify(json);
+    }
+
+    [Test]
+    public Task Serialize_CollectionArgument_ShouldBeVerified()
+    {
+        var criterion = new Criterion("Radix", Operation.In,
+            new List<object> { Radix.Decimal, Radix.Float, Radix.Binary });
+
+        var json = JsonSerializer.Serialize(criterion, Options);
+
+        return Verify(json);
+    }
+
+    [Test]
+    public Task Serialize_CriterionArgument_ShouldBeVerified()
+    {
+        var criterion = new Criterion("Members", Operation.Any,
+            new Criterion("TagName", Operation.Containing, "Testing"));
+
+        var json = JsonSerializer.Serialize(criterion, Options);
+
+        return Verify(json);
     }
 
     [Test]
     public void Deserialize_WhenCalled_ShouldBeExpected()
     {
-        var spec = new Spec();
-        spec.Query(Element.Tag)
-            .Filter("Name", Operation.Containing, "Test")
-            .Verify("DataType", Negation.Not, Operation.NullOrEmpty);
-        var data = JsonSerializer.Serialize(spec);
+        var criterion = new Criterion("Name", Operation.EqualTo, "Testing");
+        var json = JsonSerializer.Serialize(criterion);
 
-        var result = JsonSerializer.Deserialize<Spec>(data);
+        var result = JsonSerializer.Deserialize<Criterion>(json);
 
-        result?.Element.Should().Be(Element.Tag);
-        result?.Filters.Should().HaveCount(1);
-        result?.Verifications.Should().HaveCount(1);
-
-        result.Should().BeEquivalentTo(spec);
+        result.Should().BeEquivalentTo(criterion);
     }
 }

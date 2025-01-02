@@ -25,6 +25,8 @@ public partial class SourceObserver : Observer<Source>,
 
     public override Guid Id => Model.SourceId;
     public override string Icon => nameof(Source);
+    public string TargetType => Model.TargetType;
+    public string ExportedOn => Model.ExportedOn;
 
     public override string Name
     {
@@ -32,16 +34,17 @@ public partial class SourceObserver : Observer<Source>,
         set => SetProperty(Model.Name, value, Model, (s, v) => s.Name = v);
     }
 
+    public override string? Description
+    {
+        get => Model.Description;
+        set => SetProperty(Model.Description, value, Model, (s, v) => s.Description = v);
+    }
+
     public bool IsTarget
     {
         get => Model.IsTarget;
         private set => SetProperty(Model.IsTarget, value, Model, (s, v) => s.IsTarget = v);
     }
-
-    public string TargetType => Model.TargetType;
-    public string ExportedOn => Model.ExportedOn;
-    public string Description => Model.Description;
-
 
     #region Commands
 
@@ -139,7 +142,7 @@ public partial class SourceObserver : Observer<Source>,
     /// <inheritdoc />
     protected override Task<Result> DeleteItems(IEnumerable<Observer> observers)
     {
-        return Mediator.Send(new DeleteSources(observers.Select(o => o.Id)));
+        return Mediator.Send(new DeleteSources(observers.Cast<SourceObserver>().Select(o => o.Model)));
     }
 
     /// <inheritdoc />

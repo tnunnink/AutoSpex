@@ -7,10 +7,10 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record LoadNodes(IEnumerable<Guid> Ids) : IDbQuery<Result<IEnumerable<Node>>>;
+public record LoadNodes(IEnumerable<Guid> Ids) : IRequest<IEnumerable<Node>>;
 
 [UsedImplicitly]
-internal class LoadNodesHandler(IConnectionManager manager) : IRequestHandler<LoadNodes, Result<IEnumerable<Node>>>
+internal class LoadNodesHandler(IConnectionManager manager) : IRequestHandler<LoadNodes, IEnumerable<Node>>
 {
     private const string LoadNodes =
         """
@@ -30,7 +30,7 @@ internal class LoadNodesHandler(IConnectionManager manager) : IRequestHandler<Lo
         ORDER BY n.Distance DESC, n.Name;
         """;
 
-    public async Task<Result<IEnumerable<Node>>> Handle(LoadNodes request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Node>> Handle(LoadNodes request, CancellationToken cancellationToken)
     {
         using var connection = await manager.Connect(cancellationToken);
         
@@ -61,6 +61,6 @@ internal class LoadNodesHandler(IConnectionManager manager) : IRequestHandler<Lo
             splitOn: "Config",
             param: new { Ids = ids });
 
-        return Result.Ok(nodes.AsEnumerable());
+        return nodes;
     }
 }

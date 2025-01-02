@@ -1,0 +1,19 @@
+﻿{
+  Element: Tag,
+  Steps: [
+    {
+      Match: All,
+      Criteria: [
+        {
+          Property: Name,
+          Negation: Is,
+          Operation: Containing,
+          Argument: {
+            Group: Text,
+            Data: Test
+          }
+        }
+      ]
+    }
+  ]
+}

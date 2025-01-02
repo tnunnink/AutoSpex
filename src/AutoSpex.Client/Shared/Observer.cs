@@ -47,6 +47,13 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     public virtual string Icon => string.Empty;
 
     /// <summary>
+    /// The description of the observer.
+    /// This can be implemented as needed. only some observers will contain a description, but we want it here to use
+    /// in a generic way with the info page.
+    /// </summary>
+    public virtual string? Description { get; set; }
+
+    /// <summary>
     /// Indicates that this observer should be visible in the UI.
     /// </summary>
     [ObservableProperty] private bool _isVisible = true;
@@ -165,6 +172,7 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
         }
 
         var result = await DeleteItems([this]);
+
         if (Notifier.ShowIfFailed(result,
                 $"Failed to delete {Name} due to {result.Reasons.FirstOrDefault()?.Message}")) return;
 
@@ -191,7 +199,9 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
         }
 
         var result = await DeleteItems(selected);
-        if (result.IsFailed) return;
+
+        if (Notifier.ShowIfFailed(result,
+                $"Failed to delete selected items due to {result.Reasons.FirstOrDefault()?.Message}")) return;
 
         foreach (var deleted in selected)
             Messenger.Send(new Deleted(deleted));
@@ -204,14 +214,13 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     [RelayCommand]
     private async Task Rename(string? name)
     {
-        //If empty prompt the user for a new name.
+        //If empty prompt the user for a new name. This makes this command more flexible (can be used in multiple ways).
         if (string.IsNullOrEmpty(name))
         {
             name = await Prompter.PromptRename(this);
         }
 
-        //If still null or empty return.
-        if (string.IsNullOrEmpty(name)) return;
+        if (string.IsNullOrEmpty(name) || Name == name) return;
 
         var result = await UpdateName(name);
         if (Notifier.ShowIfFailed(result, $"Failed to rename item: {result.Reasons}")) return;
@@ -260,6 +269,9 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
         if (clipboard is null) return;
         await clipboard.SetTextAsync(Name);
     }
+
+    [RelayCommand]
+    protected virtual Task Paste() => Task.CompletedTask;
 
     #endregion
 
@@ -398,6 +410,31 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     }
 
     /// <summary>
+    /// A helper method that allows derived classes to get data from the clipboard. This method assumes a single object
+    /// of the specified type has been serialized to the clipboard as JSON. This is how we will handle copying
+    /// objects since the current Avalonia Clipboard does not support getting data objects in memory.
+    /// </summary>
+    /// <typeparam name="TData">The model type that was set on the clipboard.</typeparam>
+    protected async Task<TData?> GetClipboardObserver<TData>()
+    {
+        try
+        {
+            var clipboard = Shell.Clipboard;
+            if (clipboard is null) return default;
+
+            var json = await clipboard.GetTextAsync();
+            if (json is null) return default;
+
+            return JsonSerializer.Deserialize<TData>(json);
+        }
+        catch (Exception e)
+        {
+            Notifier.ShowError("Unable to parse data from clipboard.", e.Message);
+            return default;
+        }
+    }
+
+    /// <summary>
     /// A helper method that allows derived classes to get data from the clipboard. This assumes a collection of
     /// objects of the specified type have been serialized to the clipboard as JSON. This is how we will handle copying
     /// objects since the current Avalonia Clipboard does not support getting data objects in memory.
@@ -419,9 +456,8 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
         catch (Exception e)
         {
             Notifier.ShowError("Unable to parse data from clipboard.", e.Message);
+            return [];
         }
-
-        return [];
     }
 
     /// <summary>

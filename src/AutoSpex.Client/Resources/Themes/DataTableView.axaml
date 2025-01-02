@@ -1,0 +1,81 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
+
+
+    <Design.PreviewWith>
+        <controls:DataTableView
+
+            MinWidth="600" Height="200" Margin="20"
+            DefaultIcon="{StaticResource IconLineListStaggered}"
+            DefaultCaption="No results found in the query">
+
+        </controls:DataTableView>
+
+    </Design.PreviewWith>
+
+    <ControlTheme x:Key="{x:Type controls:DataTableView}" TargetType="controls:DataTableView">
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderBrush" Value="{a:ThemeResource Container1BorderBrush}" />
+        <Setter Property="CornerRadius" Value="5" />
+        <Setter Property="Padding" Value="0" />
+
+        <Setter Property="Template">
+            <ControlTemplate>
+
+                <Panel>
+
+                    <controls:DefaultMessage
+                        IsVisible="{Binding Table, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ObjectConverters.IsNull}}"
+                        HeaderIcon="{TemplateBinding DefaultIcon}"
+                        Header="{TemplateBinding DefaultMessage}"
+                        Message="{TemplateBinding DefaultCaption}"
+                        Margin="20" />
+
+                    <controls:DefaultMessage
+                        HeaderIcon="{StaticResource IconLineSearch}"
+                        Header="No items found"
+                        Message="Could not find any items matching the current filter text."
+                        Margin="20">
+                        <controls:DefaultMessage.IsVisible>
+                            <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                <Binding
+                                    Path="Table"
+                                    RelativeSource="{RelativeSource TemplatedParent}"
+                                    Converter="{x:Static ObjectConverters.IsNotNull}" />
+                                <Binding
+                                    Path="!Table.Rows.Count"
+                                    RelativeSource="{RelativeSource TemplatedParent}"
+                                    FallbackValue="{x:False}" />
+                            </MultiBinding>
+                        </controls:DefaultMessage.IsVisible>
+                    </controls:DefaultMessage>
+
+                    <DataGrid
+                        x:Name="PART_DataGrid"
+                        ItemsSource="{Binding Items, RelativeSource={RelativeSource TemplatedParent}}"
+                        IsVisible="{Binding Table.Rows.Count, RelativeSource={RelativeSource TemplatedParent}, FallbackValue={x:False}}"
+                        ColumnHeaderTheme="{TemplateBinding ColumnTheme}"
+                        RowTheme="{TemplateBinding RowTheme}"
+                        CellTheme="{TemplateBinding CellTheme}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        Margin="{TemplateBinding Padding}"
+                        AutoGenerateColumns="False"
+                        CanUserResizeColumns="True"
+                        CanUserSortColumns="True"
+                        IsReadOnly="True"
+                        SelectionMode="Extended"
+                        GridLinesVisibility="Vertical"/>
+
+                </Panel>
+
+            </ControlTemplate>
+        </Setter>
+
+    </ControlTheme>
+
+</ResourceDictionary>

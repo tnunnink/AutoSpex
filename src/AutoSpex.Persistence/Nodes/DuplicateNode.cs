@@ -7,7 +7,13 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record DuplicateNode(Guid NodeId, string Name) : IDbCommand<Result<Node>>;
+public record DuplicateNode(Guid NodeId, string Name) : ICommandRequest<Result<Node>>
+{
+    public IEnumerable<Change> GetChanges()
+    {
+        yield return Change.For<DuplicateNode>(NodeId, ChangeType.Created, $"Created Node {Name}");
+    }
+}
 
 [UsedImplicitly]
 internal class DuplicateNodeHandler(IConnectionManager manager) : IRequestHandler<DuplicateNode, Result<Node>>
@@ -32,8 +38,8 @@ internal class DuplicateNodeHandler(IConnectionManager manager) : IRequestHandle
 
     private const string InsertNode =
         """
-        INSERT INTO Node (NodeId, ParentId, Type, Name, Comment)
-        VALUES (@NodeId, @ParentId, @Type, @Name, @Comment)
+        INSERT INTO Node (NodeId, ParentId, Type, Name, Description)
+        VALUES (@NodeId, @ParentId, @Type, @Name, @Description)
         """;
 
     private const string InsertSpec =

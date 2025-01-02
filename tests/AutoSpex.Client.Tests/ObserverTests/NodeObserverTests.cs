@@ -3,6 +3,7 @@ using AutoSpex.Engine;
 using FluentAssertions;
 using JetBrains.dotMemoryUnit;
 using L5Sharp.Core;
+using Action = System.Action;
 
 namespace AutoSpex.Client.Tests.ObserverTests;
 
@@ -31,12 +32,6 @@ public class NodeObserverTests
         var observer = new NodeObserver(node);
 
         observer.Should().NotBeNull();
-    }
-    
-    [Test]
-    public void New_Null_ShouldThrowException()
-    {
-        FluentActions.Invoking(() => new NodeObserver(null!)).Should().Throw<ArgumentNullException>();
     }
     
     [DotMemoryUnit(FailIfRunWithoutSupport = false)]

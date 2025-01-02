@@ -1,0 +1,9 @@
+﻿{
+  "Property": "Name",
+  "Negation": "Not",
+  "Operation": "Equal To",
+  "Argument": {
+    "Group": "Text",
+    "Data": "Testing"
+  }
+}

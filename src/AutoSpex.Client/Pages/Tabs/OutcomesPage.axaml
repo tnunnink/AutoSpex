@@ -3,39 +3,45 @@
              xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
              xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
-             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
-             xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors"
              x:Class="AutoSpex.Client.Pages.OutcomesPage"
              x:DataType="pages:OutcomesPageModel">
 
     <Design.Width>800</Design.Width>
     <Design.Height>700</Design.Height>
 
-    <Grid RowDefinitions="Auto,*" Margin="20">
+    <controls:DrawerView
+        IsDrawerOpen="{Binding ShowDrawer, Mode=TwoWay}"
+        DrawerMinLength="49"
+        DrawerPlacement="Bottom"
+        HideSplitter="False"
+        DrawerOpenLength="{Binding $parent[controls:DrawerView].Bounds.Height, Converter={StaticResource MathConverter}, ConverterParameter='x / 2'}">
 
-        <Border
-            Background="{a:ThemeResource Container2BackgroundBrush}"
-            BorderBrush="{a:ThemeResource Container1BorderBrush}"
-            BorderThickness="1"
-            CornerRadius="4 4 0 0"
-            MinHeight="40">
+        <Grid RowDefinitions="3,Auto,*" Margin="20" Grid.IsSharedSizeScope="True">
 
-            <Grid ColumnDefinitions="*,Auto">
+            <ProgressBar
+                Grid.Row="0"
+                Value="{Binding Run.Progress}"
+                IsVisible="{Binding !Run.Result.IsDetermined}"
+                Background="Transparent"
+                Classes="accent"
+                CornerRadius="0"
+                MinHeight="3" />
+
+            <DockPanel Grid.Row="1" LastChildFill="False">
 
                 <TextBox
-                    Grid.Column="0"
+                    DockPanel.Dock="Left"
                     Text="{Binding Run.FilterText}"
-                    Watermark="Search outcomes"
-                    Theme="{StaticResource TextBoxSimple}"
-                    FontSize="{a:ThemeResource DefaultFontSizeSmall}"
-                    VerticalContentAlignment="Center"
-                    BorderBrush="{a:ThemeResource Container1BorderBrush}"
-                    CornerRadius="0" BorderThickness="0" Padding="0 10">
+                    Theme="{StaticResource TextBoxOutlineHighlight}"
+                    Watermark="Search results"
+                    VerticalAlignment="Center"
+                    MinWidth="300">
                     <TextBox.InnerLeftContent>
-                        <PathIcon Theme="{StaticResource IconLineSearch}"
-                                  VerticalAlignment="Center" Margin="10 0"
-                                  Classes="size-sm"
-                                  Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                        <PathIcon
+                            Theme="{StaticResource IconLineSearch}"
+                            VerticalAlignment="Center" Margin="10 0 0 0"
+                            Classes="size-sm"
+                            Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
                     </TextBox.InnerLeftContent>
                     <Interaction.Behaviors>
                         <SelectAllOnGotFocusBehavior />
@@ -43,195 +49,28 @@
                 </TextBox>
 
                 <ContentControl
-                    Grid.Column="1"
-                    Margin="10 0"
+                    DockPanel.Dock="Right"
                     Content="{Binding Run}"
-                    ContentTemplate="{StaticResource RunResult}" />
+                    ContentTemplate="{StaticResource RunFilters}" />
 
-            </Grid>
+            </DockPanel>
 
-        </Border>
+            <controls:ListView
+                Grid.Row="2"
+                HasItems="{Binding Run.Outcomes.HasItems}"
+                ItemsSource="{Binding Run.Outcomes}"
+                SelectedItem="{Binding ResultDrawer.Outcome, FallbackValue={x:Null}}"
+                ItemTemplate="{StaticResource OutcomeListItem}"
+                ItemContainerTheme="{StaticResource ListBoxItemEntry}"
+                Margin="0 20 0 0" />
 
-        <Border
-            Grid.Row="1"
-            BorderThickness="1 0 1 1"
-            BorderBrush="{a:ThemeResource Container1BorderBrush}"
-            CornerRadius="0 0 4 4">
+        </Grid>
 
-            <controls:DrawerView
-                DrawerMinLength="40"
-                DrawerPlacement="Bottom"
-                HideSplitter="False"
-                DrawerOpenLength="{Binding $parent[controls:DrawerView].Bounds.Height, Converter={StaticResource MathConverter}, ConverterParameter='x / 2'}">
+        <controls:DrawerView.Drawer>
 
-                <Grid RowDefinitions="3,*">
+            <ContentControl Content="{Binding ResultDrawer}" />
 
-                    <ProgressBar
-                        Grid.Row="0"
-                        Value="{Binding Run.Progress}"
-                        IsVisible="{Binding !Run.Result.IsOutcome}"
-                        Background="Transparent"
-                        Classes="accent"
-                        CornerRadius="0"
-                        MinHeight="3" />
+        </controls:DrawerView.Drawer>
 
-                    <ListBox
-                        Grid.Row="1"
-                        IsVisible="{Binding Run.Outcomes.Count}"
-                        ItemsSource="{Binding Run.Outcomes}"
-                        SelectedItem="{Binding Outcome}"
-                        ItemTemplate="{StaticResource OutcomeListItem}"
-                        ItemContainerTheme="{StaticResource ListBoxItemSimple}"
-                        Padding="5" />
-
-                </Grid>
-
-                <controls:DrawerView.Drawer>
-
-                    <DockPanel>
-
-                        <Border
-                            x:Name="HeaderBorder"
-                            DockPanel.Dock="Top"
-                            Padding="10 7"
-                            Background="{a:ThemeResource Container2BackgroundBrush}"
-                            BorderBrush="{a:ThemeResource Container1BorderBrush}"
-                            BorderThickness="0 0 0 1">
-
-                            <Grid ColumnDefinitions="*,Auto">
-
-                                <StackPanel
-                                    Grid.Column="0" Orientation="Horizontal" Spacing="7" ClipToBounds="True"
-                                    IsVisible="{Binding Outcome, Converter={x:Static ObjectConverters.IsNotNull}}">
-
-                                    <TextBlock
-                                        Text="{Binding Outcome.Name, FallbackValue={x:Null}}"
-                                        FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
-
-                                    <ContentControl
-                                        Content="{Binding Outcome}"
-                                        ContentTemplate="{StaticResource OutcomeResult}"
-                                        VerticalAlignment="Center" />
-
-                                </StackPanel>
-
-                                <Border Grid.Column="1">
-
-                                    <StackPanel Orientation="Horizontal" Spacing="7">
-
-                                        <ToggleButton
-                                            IsVisible="{Binding $parent[controls:DrawerView].IsDrawerOpen}"
-                                            IsChecked="{Binding #SearchTextBox.IsVisible}"
-                                            Theme="{StaticResource IconToggleButton}"
-                                            properties:Icon.Theme="{StaticResource IconLineSearch}"
-                                            Padding="1 0 0 0"
-                                            HotKey="Ctrl+F"
-                                            ToolTip.Tip="Search"
-                                            ToolTip.Placement="BottomEdgeAlignedRight" />
-
-                                        <Button
-                                            IsVisible="{Binding $parent[controls:DrawerView].IsDrawerOpen}"
-                                            IsEnabled="{Binding Outcome.Result.IsSuppressible, FallbackValue={x:False}}"
-                                            Theme="{StaticResource IconButton}"
-                                            properties:Icon.Theme="{StaticResource IconLineBan}"
-                                            ToolTip.Tip="Add Suppression"
-                                            ToolTip.Placement="BottomEdgeAlignedRight">
-                                            <Button.Flyout>
-                                                <Flyout
-                                                    Placement="BottomEdgeAlignedRight"
-                                                    HorizontalOffset="8"
-                                                    VerticalOffset="2">
-                                                    <ContentControl
-                                                        Content="{Binding Outcome }"
-                                                        ContentTemplate="{StaticResource OutcomeSuppressor}" />
-                                                </Flyout>
-                                            </Button.Flyout>
-                                        </Button>
-
-                                        <Button
-                                            IsVisible="{Binding $parent[controls:DrawerView].IsDrawerOpen}"
-                                            Command="{Binding Outcome.Node.NavigateCommand, FallbackValue={x:Null}}"
-                                            Theme="{StaticResource IconButton}"
-                                            properties:Icon.Theme="{StaticResource IconLineLaunch}"
-                                            ToolTip.Tip="Open Spec"
-                                            ToolTip.Placement="BottomEdgeAlignedRight" />
-
-                                        <Button
-                                            Theme="{StaticResource IconButton}"
-                                            properties:Icon.Theme="{StaticResource IconLineSidebar}"
-                                            ToolTip.Tip="Show Results"
-                                            ToolTip.Placement="BottomEdgeAlignedRight">
-                                            <Interaction.Behaviors>
-                                                <behaviors:ToggleDrawerOnClickBehavior />
-                                            </Interaction.Behaviors>
-
-                                            <Button.Styles>
-                                                <Style Selector="Button">
-                                                    <Setter Property="RenderTransform">
-                                                        <RotateTransform Angle="270" />
-                                                    </Setter>
-                                                </Style>
-                                            </Button.Styles>
-
-                                        </Button>
-
-                                    </StackPanel>
-                                </Border>
-
-                            </Grid>
-                        </Border>
-
-                        <TextBox
-                            x:Name="SearchTextBox"
-                            DockPanel.Dock="Top"
-                            Text="{Binding Filter}"
-                            IsVisible="False"
-                            Watermark="Search results"
-                            Theme="{StaticResource TextBoxSimple}"
-                            VerticalContentAlignment="Center"
-                            Background="Transparent"
-                            BorderBrush="{a:ThemeResource Container1BorderBrush}"
-                            Padding="0 10" BorderThickness="0 0 0 1" CornerRadius="0">
-                            <TextBox.InnerLeftContent>
-                                <PathIcon
-                                    Theme="{StaticResource IconLineSearch}"
-                                    VerticalAlignment="Center"
-                                    Margin="10 0"
-                                    Classes="size-sm"
-                                    Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
-                            </TextBox.InnerLeftContent>
-                            <Interaction.Behaviors>
-                                <DataTriggerBehavior
-                                    Binding="{Binding #SearchTextBox.IsVisible}"
-                                    ComparisonCondition="Equal"
-                                    Value="True">
-                                    <FocusControlAction TargetControl="SearchTextBox" />
-                                </DataTriggerBehavior>
-                                <SelectAllOnGotFocusBehavior />
-                            </Interaction.Behaviors>
-                        </TextBox>
-
-                        <Panel>
-                            <controls:DefaultMessage
-                                HorizontalAlignment="Center"
-                                IsVisible="{Binding Outcome, Converter={x:Static ObjectConverters.IsNull}}"
-                                HeaderIcon="{StaticResource IconLineListCheck}"
-                                Header="No outcome selected"
-                                Message="Select an outcome from the list to view result." />
-
-                            <ContentControl
-                                Content="{Binding Outcome}"
-                                ContentTemplate="{StaticResource EvaluationList}"
-                                IsVisible="{Binding Outcome, Converter={x:Static ObjectConverters.IsNotNull}}" />
-
-                        </Panel>
-
-                    </DockPanel>
-
-                </controls:DrawerView.Drawer>
-
-            </controls:DrawerView>
-        </Border>
-
-    </Grid>
+    </controls:DrawerView>
 </UserControl>

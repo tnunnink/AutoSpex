@@ -1,0 +1,55 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine">
+
+    <Design.PreviewWith>
+        <StackPanel Spacing="10" Margin="20">
+            <a:ToggleThemeButton Theme="{a:ControlTheme ToggleThemeButtonSoft}" />
+            <ContentControl
+                Content="{x:Static engine:ResultState.None}"
+                ContentTemplate="{DynamicResource ResultStateItem}" />
+            <ContentControl
+                Content="{x:Static engine:ResultState.Pending}"
+                ContentTemplate="{DynamicResource ResultStateItem}" />
+            <ContentControl
+                Content="{x:Static engine:ResultState.Suppressed}"
+                ContentTemplate="{DynamicResource ResultStateItem}" />
+            <ContentControl
+                Content="{x:Static engine:ResultState.Passed}"
+                ContentTemplate="{DynamicResource ResultStateItem}" />
+            <ContentControl
+                Content="{x:Static engine:ResultState.Inconclusive}"
+                ContentTemplate="{DynamicResource ResultStateItem}" />
+            <ContentControl
+                Content="{x:Static engine:ResultState.Failed}"
+                ContentTemplate="{DynamicResource ResultStateItem}" />
+            <ContentControl
+                Content="{x:Static engine:ResultState.Errored}"
+                ContentTemplate="{DynamicResource ResultStateItem}" />
+        </StackPanel>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="ResultStateItem" x:DataType="engine:ResultState">
+
+        <StackPanel Orientation="Horizontal" Spacing="7">
+
+            <PathIcon
+                Theme="{Binding Converter={StaticResource ResultStateIconConverter}}"
+                Classes="size-sm" />
+
+            <TextBlock
+                Text="All"
+                IsVisible="{Binding Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.None}}"
+                FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
+
+            <TextBlock
+                Text="{Binding Name}"
+                IsVisible="{Binding Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:ResultState.None}}"
+                FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
+
+        </StackPanel>
+
+    </DataTemplate>
+
+</ResourceDictionary>

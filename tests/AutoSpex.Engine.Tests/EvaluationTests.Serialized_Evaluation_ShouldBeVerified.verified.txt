@@ -2,9 +2,7 @@
   Result: Passed,
   Candidate: /Tag/Test,
   Criteria: Name Is Containing,
-  Expected: [
-    Test
-  ],
+  Expected: Test,
   Actual: Test,
   Error: null
 }

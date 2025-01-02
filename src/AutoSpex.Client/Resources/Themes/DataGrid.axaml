@@ -36,7 +36,7 @@
 
         </ControlTheme.Resources>
 
-        <Setter Property="ColumnHeaderTheme" Value="{StaticResource DataGridColumnHeaderSoft}" />
+        <Setter Property="ColumnHeaderTheme" Value="{StaticResource DataGridColumnHeaderSubtle}" />
         <Setter Property="ColumnHeaderHeight" Value="30" />
         <Setter Property="RowTheme" Value="{StaticResource DataGridRowSoft}" />
         <Setter Property="CellTheme" Value="{StaticResource DataGridCellSoft}" />
@@ -46,7 +46,7 @@
         <Setter Property="Background" Value="{actipro:ThemeResource Container1BackgroundBrush}" />
         <Setter Property="BorderBrush" Value="{actipro:ThemeResource Container1BorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="5" />
+        <Setter Property="CornerRadius" Value="0" />
         <Setter Property="FocusAdorner" Value="{x:Null}" />
         <Setter Property="RowBackground" Value="Transparent" />
         <Setter Property="SelectionMode" Value="Single" />

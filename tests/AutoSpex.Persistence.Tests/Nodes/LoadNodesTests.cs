@@ -10,9 +10,8 @@ public class LoadNodesTests
         var mediator = context.Resolve<IMediator>();
 
         var result = await mediator.Send(new LoadNodes([Guid.NewGuid()]));
-
-        result.IsSuccess.Should().BeTrue();
-        result.Value.Should().BeEmpty();
+        
+        result.Should().BeEmpty();
     }
 
     [Test]
@@ -28,9 +27,8 @@ public class LoadNodesTests
         await mediator.Send(new CreateNode(spec03));
 
         var result = await mediator.Send(new LoadNodes([spec01.NodeId, spec02.NodeId, spec03.NodeId]));
-
-        result.IsSuccess.Should().BeTrue();
-        result.Value.Should().HaveCount(3);
+        
+        result.Should().HaveCount(3);
     }
 
     [Test]
@@ -49,11 +47,10 @@ public class LoadNodesTests
         await mediator.Send(new CreateNode(spec02));
         await mediator.Send(new CreateNode(spec03));
 
-        var result = await mediator.Send(new LoadNodes([spec01.NodeId, spec02.NodeId, spec03.NodeId]));
-
-        result.IsSuccess.Should().BeTrue();
-        result.Value.Should().HaveCount(3);
-        result.Value.Should().AllSatisfy(node => node.Ancestors().Should().HaveCount(2));
+        var result = (await mediator.Send(new LoadNodes([spec01.NodeId, spec02.NodeId, spec03.NodeId]))).ToList();
+        
+        result.Should().HaveCount(3);
+        result.Should().AllSatisfy(node => node.Ancestors().Should().HaveCount(2));
     }
 
     [Test]
@@ -64,16 +61,15 @@ public class LoadNodesTests
         var node = Node.NewSpec("Test");
         node.Configure(c =>
         {
-            c.Query(Element.Tag);
-            c.Filter("TagName", Operation.Containing, "SomeValue");
-            c.Verify("Comment", Operation.EqualTo, "SomeValue");
+            c.Get(Element.Tag);
+            c.Where("TagName", Operation.Containing, "SomeValue");
+            c.Validate("Comment", Operation.EqualTo, "SomeValue");
         });
         await mediator.Send(new CreateNode(node));
 
-        var result = await mediator.Send(new LoadNodes([node.NodeId]));
-
-        result.IsSuccess.Should().BeTrue();
-        result.Value.Should().HaveCount(1);
-        result.Value.First().Spec.Should().BeEquivalentTo(node.Spec);
+        var result = (await mediator.Send(new LoadNodes([node.NodeId]))).ToList();
+        
+        result.Should().HaveCount(1);
+        result.First().Spec.Should().BeEquivalentTo(node.Spec);
     }
 }

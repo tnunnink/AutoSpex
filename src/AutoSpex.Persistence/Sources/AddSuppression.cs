@@ -3,19 +3,26 @@ using Dapper;
 using FluentResults;
 using JetBrains.Annotations;
 using MediatR;
+using Action = AutoSpex.Engine.Action;
 
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record AddSuppression(Guid SourceId, Suppression Suppression) : IDbCommand<Result>;
+public record AddSuppression(Guid SourceId, Action Action) : ICommandRequest<Result>
+{
+    public IEnumerable<Change> GetChanges()
+    {
+        yield return Change.For<AddSuppression>(SourceId, ChangeType.Updated, $"Added Suppression {Action.Reason}");
+    }
+}
 
 [UsedImplicitly]
 internal class AddSuppressionHandler(IConnectionManager manager) : IRequestHandler<AddSuppression, Result>
 {
     private const string AddSuppression =
         """
-        INSERT INTO Suppression (SourceId, NodeId, Reason) 
-        VALUES (@SourceId, @NodeId, @Reason)
+        INSERT INTO Action (SourceId, NodeId, Type, Reason) 
+        VALUES (@SourceId, @NodeId, @Type, @Reason)
         ON CONFLICT DO UPDATE SET Reason = @Reason;
         """;
 
@@ -25,8 +32,9 @@ internal class AddSuppressionHandler(IConnectionManager manager) : IRequestHandl
         await connection.ExecuteAsync(AddSuppression, new
             {
                 request.SourceId,
-                request.Suppression.NodeId,
-                request.Suppression.Reason
+                request.Action.NodeId,
+                request.Action.Type,
+                request.Action.Reason
             }
         );
         return Result.Ok();

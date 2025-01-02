@@ -77,7 +77,7 @@
                     <Button
                         Command="{Binding OpenHistoryCommand}"
                         Theme="{StaticResource IconButton}"
-                        properties:Icon.Theme="{StaticResource IconLineHistory}"
+                        properties:Icon.Theme="{StaticResource IconLineClock}"
                         ToolTip.Tip="History" />
 
                 </StackPanel>

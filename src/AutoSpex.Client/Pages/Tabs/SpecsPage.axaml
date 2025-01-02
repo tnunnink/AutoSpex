@@ -1,8 +1,8 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
              xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
-             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
              x:Class="AutoSpex.Client.Pages.SpecsPage"
              x:DataType="pages:SpecsPageModel">
 
@@ -11,14 +11,36 @@
 
     <Grid RowDefinitions="Auto,*" Margin="20">
 
-        <Grid ColumnDefinitions="*,Auto" Margin="0 0 0 10">
+        <Panel Margin="0 0 0 20">
 
-            <TextBlock
-                Text="View and manage all specification configured for this container."
-                Classes="faint" />
+            <TextBox
+                HorizontalAlignment="Left"
+                Text="{Binding Filter}"
+                Theme="{StaticResource TextBoxOutlineHighlight}"
+                Watermark="Search specs"
+                VerticalAlignment="Center"
+                MinWidth="300">
+                <TextBox.InnerLeftContent>
+                    <PathIcon
+                        Theme="{StaticResource IconLineSearch}"
+                        VerticalAlignment="Center" Margin="10 0 0 0"
+                        Classes="size-sm"
+                        Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                </TextBox.InnerLeftContent>
+                <Interaction.Behaviors>
+                    <SelectAllOnGotFocusBehavior />
+                </Interaction.Behaviors>
+            </TextBox>
 
-        </Grid>
+            <Button
+                HorizontalAlignment="Right"
+                Command="{Binding AddSpecCommand}"
+                Theme="{a:ControlTheme ButtonOutline}"
+                Content="New Spec"
+                Classes="accent"
+                VerticalAlignment="Center" />
 
+        </Panel>
 
         <controls:ListView
             Grid.Row="1"
@@ -29,18 +51,8 @@
             HasItems="{Binding Specs.HasItems}"
             DefaultIcon="{StaticResource IconFilledClipboard}"
             DefaultMessage="No specs defined"
-            DefaultCaption="Add a spec to this collection to get started">
-
-            <controls:ListView.Header>
-                <Button
-                    Command="{Binding AddSpecCommand}"
-                    Theme="{StaticResource IconButton}"
-                    properties:Icon.Theme="{StaticResource IconAdd}"
-                    VerticalAlignment="Center"
-                    Classes="accent" />
-            </controls:ListView.Header>
-
-        </controls:ListView>
+            DefaultCaption="Add a spec to this collection to get started"
+            SelectionMode="Multiple" />
 
     </Grid>
 

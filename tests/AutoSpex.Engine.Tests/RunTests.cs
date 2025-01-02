@@ -11,11 +11,13 @@ public class RunTests
         var run = Run.Empty;
 
         run.RunId.Should().NotBeEmpty();
-        run.Source.Should().BeEquivalentTo(Source.Empty, o => o.Excluding(s => s.Content));
+        run.Source.Should().BeEquivalentTo(Source.Empty(), o => o.Excluding(s => s.Content));
         run.Node.Should().BeEquivalentTo(Node.Empty);
         run.Result.Should().Be(ResultState.None);
         run.RanBy.Should().BeEmpty();
         run.RanOn.Should().Be(default);
+        run.Duration.Should().Be(0);
+        run.PassRate.Should().Be(0);
         run.Outcomes.Should().BeEmpty();
     }
 
@@ -55,7 +57,7 @@ public class RunTests
         var source = new Source(L5X.Load(Known.Test));
 
         var spec = Node.NewSpec("Test",
-            s => { s.Query(Element.Module).Verify("Inhibited", Operation.EqualTo, false); });
+            s => { s.Get(Element.Module).Validate("Inhibited", Operation.EqualTo, false); });
 
         var run = new Run(spec, source);
 
@@ -64,7 +66,8 @@ public class RunTests
         run.Result.Should().Be(ResultState.Passed);
         run.RanBy.Should().NotBeEmpty();
         run.RanOn.Should().BeWithin(TimeSpan.FromSeconds(1));
-        run.Outcomes.First().Verification.Evaluations.Should().NotBeEmpty();
+        run.PassRate.Should().Be(100);
+        run.Outcomes.First().Evaluations.Should().NotBeEmpty();
     }
 
     [Test]
@@ -74,10 +77,9 @@ public class RunTests
 
         var spec = Node.NewSpec("Test", s =>
         {
-            s.Query(Element.DataType)
-                .Filter("Name", Operation.EqualTo, "ComplexType")
-                .Verify("Members", Operation.Any,
-                    new Criterion(Element.DataTypeMember.Property("DataType"), Operation.EqualTo, "SimpleType"));
+            s.Get(Element.DataType);
+            s.Where("Name", Operation.EqualTo, "ComplexType");
+            s.Validate("Members", Operation.Any, new Criterion("DataType", Operation.EqualTo, "SimpleType"));
         });
 
         var run = new Run(spec, source);
@@ -87,6 +89,6 @@ public class RunTests
         run.Result.Should().Be(ResultState.Passed);
         run.RanBy.Should().NotBeEmpty();
         run.RanOn.Should().BeWithin(TimeSpan.FromSeconds(1));
-        run.Outcomes.First().Verification.Evaluations.Should().NotBeEmpty();
+        run.Outcomes.First().Evaluations.Should().NotBeEmpty();
     }
 }
