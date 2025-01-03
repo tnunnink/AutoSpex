@@ -6,7 +6,7 @@
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
              x:Class="AutoSpex.Client.Pages.NewSourcePage"
              x:DataType="pages:NewSourcePageModel"
-             Width="650">
+             Width="700">
 
     <controls:Prompt
         Header="New Source"
@@ -19,64 +19,96 @@
         ActionCommandParameter="{Binding $parent[Window]}"
         Classes="accent">
 
-        <controls:Section
-            Header="Select file"
-            Description="Select the file from disc to add.">
+        <StackPanel Spacing="10">
 
-            <controls:Section.Icon>
-                <PathIcon Theme="{StaticResource IconFilledFile}" />
-            </controls:Section.Icon>
+            <controls:Section
+                Header="Select file"
+                Description="Select the file from disc to add.">
 
-            <controls:Section.Action>
-                <Button
-                    Command="{Binding BrowseCommand}"
-                    Theme="{a:ControlTheme ButtonSoft}"
-                    Width="100" Height="30">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <PathIcon Theme="{StaticResource IconFilledFolderOpen}" />
-                        <TextBlock
-                            Text="Browse"
-                            FontWeight="{a:ThemeResource HeadingFontWeightSmall}"
-                            Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}" />
-                    </StackPanel>
-                </Button>
-            </controls:Section.Action>
+                <controls:Section.Icon>
+                    <PathIcon Theme="{StaticResource IconFilledFile}" />
+                </controls:Section.Icon>
 
-            <Border
-                Background="{a:ThemeResource Container2BackgroundBrush}"
-                BorderBrush="{a:ThemeResource Container2BackgroundBrush}"
-                BorderThickness="1"
-                CornerRadius="5"
-                MinHeight="200">
+                <controls:Section.Action>
+                    <Button
+                        Command="{Binding BrowseCommand}"
+                        Theme="{a:ControlTheme ButtonSoft}"
+                        Width="100" Height="30">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <PathIcon Theme="{StaticResource IconFilledFolderOpen}" />
+                            <TextBlock
+                                Text="Browse"
+                                FontWeight="{a:ThemeResource HeadingFontWeightSmall}"
+                                Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}" />
+                        </StackPanel>
+                    </Button>
+                </controls:Section.Action>
 
-                <Border.Styles>
-                    <Style Selector="Border.dragover">
-                        <Setter Property="BorderBrush" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
-                    </Style>
-                </Border.Styles>
+                <Border
+                    Background="{a:ThemeResource Container2BackgroundBrush}"
+                    BorderBrush="{a:ThemeResource Container2BackgroundBrush}"
+                    BorderThickness="1"
+                    CornerRadius="5"
+                    MinHeight="200">
 
-                <Interaction.Behaviors>
-                    <behaviors:ExecuteCommandOnDropBehavior
-                        DataFormat="{x:Static DataFormats.Files}"
-                        Command="{Binding DropCommand}" />
-                </Interaction.Behaviors>
+                    <Border.Styles>
+                        <Style Selector="Border.dragover">
+                            <Setter Property="BorderBrush"
+                                    Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+                        </Style>
+                    </Border.Styles>
 
-                <Panel>
-                    <controls:DefaultMessage
-                        IsVisible="{Binding File, Converter={x:Static ObjectConverters.IsNull}}"
-                        HeaderIcon="{StaticResource IconLineUpload}"
-                        Header="Drop here to import"
-                        Message="Drag and drop a L5X file from the exporer here to add." />
+                    <Interaction.Behaviors>
+                        <behaviors:ExecuteCommandOnDropBehavior
+                            DataFormat="{x:Static DataFormats.Files}"
+                            Command="{Binding DropCommand}" />
+                    </Interaction.Behaviors>
 
-                    <controls:DefaultMessage
-                        IsVisible="{Binding File, Converter={x:Static ObjectConverters.IsNotNull}}"
-                        HeaderIcon="{StaticResource IconThemedSource}"
-                        Header="{Binding File.Name, FallbackValue={x:Null}}"
-                        Message="{Binding File.DirectoryName, FallbackValue={x:Null}}" />
-                </Panel>
+                    <Panel>
+                        <controls:DefaultMessage
+                            IsVisible="{Binding File, Converter={x:Static ObjectConverters.IsNull}}"
+                            HeaderIcon="{StaticResource IconLineUpload}"
+                            Header="Drop here to import"
+                            Message="Drag and drop a L5X file from the exporer here to add." />
 
-            </Border>
-        </controls:Section>
+                        <controls:DefaultMessage
+                            IsVisible="{Binding File, Converter={x:Static ObjectConverters.IsNotNull}}"
+                            HeaderIcon="{StaticResource IconThemedSource}"
+                            Header="{Binding File.Name, FallbackValue={x:Null}}"
+                            Message="{Binding File.DirectoryName, FallbackValue={x:Null}}" />
+                    </Panel>
+
+                </Border>
+
+            </controls:Section>
+
+            <controls:Section
+                Header="Source Name"
+                Description="Enter a unique name to identify this source."
+                ShowContent="False">
+
+                <controls:Section.Icon>
+                    <PathIcon Theme="{StaticResource IconLineFingerprint}" />
+                </controls:Section.Icon>
+
+                <controls:Section.Action>
+                    <TextBox
+                        Watermark="Enter name"
+                        Text="{Binding Name}"
+                        Theme="{StaticResource TextBoxOutlineHighlight}"
+                        Width="240"
+                        ToolTip.Placement="BottomEdgeAlignedRight">
+                        <TextBox.Styles>
+                            <Style Selector="DataValidationErrors">
+                                <Setter Property="Theme" Value="{a:ControlTheme ToolTipDataValidationErrors}" />
+                            </Style>
+                        </TextBox.Styles>
+                    </TextBox>
+                </controls:Section.Action>
+
+            </controls:Section>
+
+        </StackPanel>
 
     </controls:Prompt>
 </UserControl>
