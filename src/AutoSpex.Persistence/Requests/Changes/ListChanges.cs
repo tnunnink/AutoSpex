@@ -2,7 +2,7 @@
 using JetBrains.Annotations;
 using MediatR;
 
-namespace AutoSpex.Persistence.General;
+namespace AutoSpex.Persistence;
 
 [PublicAPI]
 public record ListChanges(Guid EntityId) : IRequest<IEnumerable<Change>>;

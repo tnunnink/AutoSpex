@@ -8,7 +8,6 @@ using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using JetBrains.Annotations;
 using L5Sharp.Core;
-using Action = AutoSpex.Engine.Action;
 using Range = AutoSpex.Engine.Range;
 
 namespace AutoSpex.Client.Components;
@@ -19,7 +18,7 @@ public static class TestData
 {
     #region Sources
 
-    private const string TestSource = @"C:\Users\tnunn\Documents\L5X\Test.L5X";
+    private const string TestSource = @"C:\Users\tnunnink\Documents\Rockwell\Test.L5X";
 
     public static SourceObserver SourceTest = new(new Source(L5X.Load(TestSource)));
 
@@ -277,18 +276,6 @@ public static class TestData
 
     public static ObservableCollection<EvaluationObserver> Evaluations =
         new(new[] { PassedEvaluation, FailedEvaluation, ErroredEvaluation });
-
-    #endregion
-
-    #region Rules
-
-    public static ActionObserver ActionSuppress =
-        new(Action.Suppress(Guid.NewGuid(), "This is the reason why this spec is being suppressed. This has to have a really long reason so that I can test the overlow text layout for the list items and other controls."));
-
-    public static ActionObserver ActionOverride =
-        new(Action.Override(Node.NewSpec(), "This is the reason why this spec is being suppressed."));
-
-    public static ObservableCollection<ActionObserver> Actions = [ActionSuppress, ActionOverride, ActionOverride];
 
     #endregion
 }

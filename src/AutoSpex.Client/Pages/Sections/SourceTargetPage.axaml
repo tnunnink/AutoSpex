@@ -51,14 +51,5 @@
             </Button.Flyout>
         </Button>
 
-        <Button
-            Grid.Column="1"
-            Command="{Binding Target.NavigateCommand, FallbackValue={x:Null}}"
-            IsVisible="{Binding Target, Converter={x:Static ObjectConverters.IsNotNull}}"
-            Theme="{StaticResource IconButton}"
-            properties:Icon.Theme="{StaticResource IconLineLaunch}"
-            Margin="5 0 0 0"
-            ToolTip.Tip="Open" />
-
     </Grid>
 </UserControl>

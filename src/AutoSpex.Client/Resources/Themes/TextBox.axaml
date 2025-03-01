@@ -66,7 +66,7 @@
         <Setter Property="(Interaction.Behaviors)">
             <BehaviorCollectionTemplate>
                 <BehaviorCollection>
-                    <SelectAllOnGotFocusBehavior />
+                    <TextBoxSelectAllOnGotFocusBehavior />
                 </BehaviorCollection>
             </BehaviorCollectionTemplate>
         </Setter>

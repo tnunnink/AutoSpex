@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using ActiproSoftware.UI.Avalonia.Controls;
 using ActiproSoftware.UI.Avalonia.Media;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -8,7 +7,6 @@ using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
 using JetBrains.Annotations;
-using Serilog;
 
 namespace AutoSpex.Client;
 
@@ -53,12 +51,10 @@ public sealed class App : Application, IDisposable, IAsyncDisposable
     public void Dispose()
     {
         Container.Dispose();
-        Log.CloseAndFlush();
     }
 
     public async ValueTask DisposeAsync()
     {
         await Container.DisposeAsync();
-        await Log.CloseAndFlushAsync();
     }
 }

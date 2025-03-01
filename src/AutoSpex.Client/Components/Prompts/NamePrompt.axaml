@@ -42,7 +42,7 @@
                                              Focusable="True">
                                         <Interaction.Behaviors>
                                             <FocusOnAttachedToVisualTreeBehavior />
-                                            <SelectAllOnGotFocusBehavior />
+                                            <TextBoxSelectAllOnGotFocusBehavior />
                                             <ExecuteCommandOnKeyUpBehavior
                                                 Key="Enter"
                                                 Command="{Binding $parent[controls:Prompt].ActionCommand}"

@@ -28,7 +28,7 @@
                         Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
                 </TextBox.InnerLeftContent>
                 <Interaction.Behaviors>
-                    <SelectAllOnGotFocusBehavior />
+                    <TextBoxSelectAllOnGotFocusBehavior />
                 </Interaction.Behaviors>
             </TextBox>
 

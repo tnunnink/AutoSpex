@@ -38,45 +38,23 @@
                 <PathIcon
                     Grid.Column="0"
                     Theme="{StaticResource IconThemedSource}"
-                    VerticalAlignment="Top"
-                    Margin="0 3 0 0" />
-
-                <StackPanel Grid.Column="1" Spacing="5" Margin="10 0" ClipToBounds="True">
-
-                    <Button
-                        Command="{Binding NavigateCommand}"
-                        Theme="{a:ControlTheme ButtonInvisible}"
-                        HorizontalAlignment="Left">
-                        <controls:HighlightableTextBlock
-                            Text="{Binding Name}"
-                            HighlightedText="{Binding FilterText}"
-                            FontSize="{a:ThemeResource DefaultFontSizeMedium}"
-                            FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
-                        <Button.Styles>
-                            <Style Selector="Button:pointerover">
-                                <Setter
-                                    Property="Foreground"
-                                    Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
-                            </Style>
-                        </Button.Styles>
-                    </Button>
-
-                    <controls:HighlightableTextBlock
-                        Text="{Binding Description}"
-                        HighlightedText="{Binding FilterText}"
-                        Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
-
-                </StackPanel>
-
+                    Classes="centered"/>
+                
+                <controls:HighlightableTextBlock
+                    Grid.Column="1"
+                    Text="{Binding Name}"
+                    HighlightedText="{Binding FilterText}"
+                    FontWeight="{a:ThemeResource HeadingFontWeightMedium}"
+                    Margin="10 0"/>
+                
                 <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="20" Margin="20 0">
 
                     <StackPanel Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
 
                         <controls:HighlightableTextBlock
-                            Text="{Binding TargetType}"
+                            Text="{Binding Description}"
                             HighlightedText="{Binding FilterText}"
-                            Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
-                            FontSize="{a:ThemeResource DefaultFontSizeExtraSmall}" />
+                            Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
 
                         <Ellipse Height="5" Width="5" Fill="{a:ThemeResource Container2BorderBrush}" Margin="3" />
 

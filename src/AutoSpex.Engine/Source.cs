@@ -10,12 +10,10 @@ namespace AutoSpex.Engine;
 /// </summary>
 public class Source()
 {
-    private readonly Dictionary<Guid, Action> _rules = [];
-
     /// <summary>
     /// Creates a new <see cref="Source"/> with no content. 
     /// </summary>
-    public Source(string? name = default) : this()
+    public Source(string? name = null) : this()
     {
         Name = name ?? "New Source";
     }
@@ -23,7 +21,7 @@ public class Source()
     /// <summary>
     /// Creates a new <see cref="Source"/> provided the location on disc of the L5X file.
     /// </summary>
-    public Source(L5X content, string? name = default) : this()
+    public Source(L5X content, string? name = null) : this()
     {
         if (content is null)
             throw new ArgumentNullException(nameof(content));
@@ -102,17 +100,9 @@ public class Source()
     public L5X? Content { get; private set; }
 
     /// <summary>
-    /// The set of rules to be applied to specifications when this source is run. A rule will define whether to suppress
-    /// or override the configuration of a specification. Each rule corresponds to a single node for this source and
-    /// will be ustilized to alter the outcomes of specs when this source is run.
-    /// </summary>
-    [JsonInclude]
-    public IEnumerable<Action> Rules => _rules.Values;
-
-    /// <summary>
     /// Represents an empty source object with default property values and an empty source id.
     /// </summary>
-    public static Source Empty(string? name = default) => new() { SourceId = Guid.Empty, Name = name ?? "New Source" };
+    public static Source Empty(string? name = null) => new() { SourceId = Guid.Empty, Name = name ?? "New Source" };
 
     /// <summary>
     /// Updates the internal <see cref="Content"/> of the source with the provided L5X. 
@@ -136,60 +126,6 @@ public class Source()
     }
 
     /// <summary>
-    /// Adds a new rule to the Source based on the provided Rule.
-    /// </summary>
-    /// <param name="action">The Rule object to be added. Must not be null.</param>
-    public void AddRule(Action action)
-    {
-        ArgumentNullException.ThrowIfNull(action);
-        _rules[action.NodeId] = action;
-    }
-
-    /// <summary>
-    /// Removes a specified rule from the Source based on the provided rule parameter.
-    /// </summary>
-    /// <param name="action">The rule to be removed from the Source.</param>
-    public void RemoveRule(Action action)
-    {
-        ArgumentNullException.ThrowIfNull(action);
-        _rules.Remove(action.NodeId);
-    }
-
-    /// <summary>
-    /// Clears all rules associated with this source.
-    /// </summary>
-    public void ClearRules() => _rules.Clear();
-
-    /// <summary>
-    /// Applies overrides for the specified nodes based on the stored rules defined in the Source.
-    /// </summary>
-    /// <param name="nodes">The collection of nodes to apply the overrides to.</param>
-    public void Override(IEnumerable<Node> nodes)
-    {
-        foreach (var node in nodes)
-        {
-            if (!_rules.TryGetValue(node.NodeId, out var rule)) continue;
-            node.Configure(rule.Config);
-        }
-    }
-
-    /// <summary>
-    /// Tries to suppress the outcome by applying a suppression if one is configured for the specified node.
-    /// </summary>
-    /// <param name="outcome">The outcome to potentially suppress</param>
-    /// <returns><c>true</c> if the outcome was suppressed by the source configuration; otherwise, <c>false</c>.</returns>
-    public bool Suppresses(Outcome outcome)
-    {
-        ArgumentNullException.ThrowIfNull(outcome);
-
-        if (!_rules.TryGetValue(outcome.NodeId, out var rule)) return false;
-        if (rule.Type != ActionType.Suppress) return false;
-
-        outcome.Suppress(rule.Reason);
-        return true;
-    }
-
-    /// <summary>
     /// Creates a duplicate instance of the current <see cref="Source"/> object with the same content and configuration.
     /// </summary>
     /// <returns>A new <see cref="Source"/> object that is a duplicate of the current instance.</returns>
@@ -205,9 +141,6 @@ public class Source()
             Description = Description,
             Content = Content
         };
-
-        foreach (var rule in _rules.Values)
-            duplicate.AddRule(rule);
 
         return duplicate;
     }

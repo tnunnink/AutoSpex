@@ -115,16 +115,6 @@ public class ExtensionTests
         
         File.WriteAllText(Known.Compressed, data);
     }
-    
-    [Test]
-    public void Compress_Example_ShouldWork()
-    {
-        var content = L5X.Load(Known.Example);
-
-        var data = content.ToString().Compress();
-        
-        File.WriteAllText(Known.Compressed, data);
-    }
 
     [Test]
     public void Decompress_Compressed_ShouldWork()

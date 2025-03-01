@@ -9,6 +9,14 @@ namespace AutoSpex.Persistence;
 public interface IConnectionManager
 {
     /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="token"></param>
+    /// <returns></returns>
+    Task<Result> Register(Uri path, CancellationToken token);
+        
+    /// <summary>
     /// Opens a connection to the application database and returns the new <see cref="IDbConnection"/> instance.
     /// </summary>
     /// <param name="token">The token used to cancel the request.</param>
