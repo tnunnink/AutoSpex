@@ -11,11 +11,6 @@ public class ConnectionManager : IConnectionManager
     private const string AppDatabase = "../spex.db";
     public static readonly string ConnectionString = BuildConnectionString();
 
-    public Task<Result> Register(Uri path, CancellationToken token)
-    {
-        throw new NotImplementedException();
-    }
-
     /// <inheritdoc />
     public async Task<IDbConnection> Connect(CancellationToken token)
     {
