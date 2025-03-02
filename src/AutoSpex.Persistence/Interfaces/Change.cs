@@ -43,7 +43,6 @@ public record Change
     /// </summary>
     public string Message { get; init; } = string.Empty;
 
-
     /// <summary>
     /// Creates a new instance of a Change record with the specified parameters.
     /// </summary>

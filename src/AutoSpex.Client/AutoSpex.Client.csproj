@@ -20,6 +20,7 @@
 
     <ItemGroup>
         <PackageReference Include="ActiproSoftware.Controls.Avalonia" Version="25.1.1" />
+        <PackageReference Include="ActiproSoftware.Controls.Avalonia.Pro" Version="25.1.1" />
         <PackageReference Include="ActiproSoftware.Controls.Avalonia.Themes.ColorPicker" Version="25.1.1" />
         <PackageReference Include="ActiproSoftware.Controls.Avalonia.Themes.DataGrid" Version="25.1.1" />
         <PackageReference Include="Avalonia" Version="11.2.5" />

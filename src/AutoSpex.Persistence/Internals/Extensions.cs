@@ -1,4 +1,6 @@
-﻿using AutoSpex.Engine;
+﻿using System.Data;
+using AutoSpex.Engine;
+using Dapper;
 
 namespace AutoSpex.Persistence;
 
@@ -17,5 +19,10 @@ public static class Extensions
         }
 
         return lookup;
+    }
+    
+    public static Task Vacuum(this IDbConnection connection)
+    {
+        return connection.ExecuteAsync("VACUUM");
     }
 }

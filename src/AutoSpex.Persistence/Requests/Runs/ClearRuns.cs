@@ -30,7 +30,7 @@ internal class ClearRunsHandler(IConnectionManager manager) : IRequestHandler<Cl
             await connection.ExecuteAsync(ClearRunsFor, new { Id = request.EntityId.ToString() });
         }
 
-        await manager.Vacuum(connection);
+        await connection.Vacuum();
         return Result.Ok();
     }
 }
