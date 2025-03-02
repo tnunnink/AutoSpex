@@ -25,7 +25,7 @@ internal class DeleteSourcesHandler(IConnectionManager manager) : IRequestHandle
     {
         using var connection = await manager.Connect(cancellationToken);
         await connection.ExecuteAsync(DeleteSource, request.Sources);
-        await manager.Vacuum(connection);
+        await connection.Vacuum();
         return Result.Ok();
     }
 }
