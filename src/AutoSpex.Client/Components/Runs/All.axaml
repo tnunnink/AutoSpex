@@ -5,7 +5,6 @@
         <ResourceInclude Source="EvaluationListItem.axaml" />
         <ResourceInclude Source="OutcomeListItem.axaml" />
         <ResourceInclude Source="OutcomeStatus.axaml" />
-        <ResourceInclude Source="OutcomeSuppress.axaml" />
         <ResourceInclude Source="ResultPill.axaml" />
         <ResourceInclude Source="ResultStateItem.axaml" />
         <ResourceInclude Source="ResultStateText.axaml" />

@@ -89,7 +89,7 @@
                                 a:ThemeProperties.CopyClassesFrom="{TemplateBinding}">
                                 <Interaction.Behaviors>
                                     <FocusOnAttachedToVisualTreeBehavior />
-                                    <SelectAllOnGotFocusBehavior />
+                                    <TextBoxSelectAllOnGotFocusBehavior />
                                 </Interaction.Behaviors>
                             </TextBox>
 

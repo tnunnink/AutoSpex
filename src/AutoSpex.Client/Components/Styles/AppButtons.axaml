@@ -148,7 +148,7 @@
                     </StackPanel>
 
                     <TextBlock
-                        Text="Collections organize specifications into groups to be run together. Add a new container to starting building specs."
+                        Text="Collections organize specifications into groups to be run together. Add a new container to start building specs."
                         Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
                         TextWrapping="Wrap" />
 

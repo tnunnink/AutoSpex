@@ -95,14 +95,12 @@ public class Run
     /// This action provides the outcome instance that ran so that the UI can respond and update the result state and result data.</param>
     /// <param name="token">The cancellation token to cancel the execution of this run.</param>
     public async Task Execute(ICollection<Node> nodes, Source source,
-        Action<Outcome>? running = default,
-        Action<Outcome>? complete = default,
+        Action<Outcome>? running = null,
+        Action<Outcome>? complete = null,
         CancellationToken token = default)
     {
         if (source is null)
             throw new ArgumentNullException(nameof(source));
-
-        source.Override(nodes);
 
         await RunAllNodes(nodes, source, running, complete, token);
 
@@ -132,12 +130,6 @@ public class Run
                 continue;
 
             running?.Invoke(outcome);
-
-            if (source.Suppresses(outcome))
-            {
-                complete?.Invoke(outcome);
-                continue;
-            }
 
             var verification = await node.Run(content, token);
             outcome.Apply(verification);

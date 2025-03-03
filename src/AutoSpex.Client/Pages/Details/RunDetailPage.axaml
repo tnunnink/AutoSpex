@@ -53,8 +53,7 @@
                                 IsVisible="{Binding Run.Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Pending}}" />
 
                         </Panel>
-
-                        <Button Classes="save" Command="{Binding SaveCommand}" />
+                        
                         <Button Classes="export" />
 
                     </StackPanel>

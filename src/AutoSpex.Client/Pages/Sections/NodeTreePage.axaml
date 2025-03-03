@@ -81,7 +81,7 @@
                     Value="True">
                     <FocusControlAction TargetControl="SearchTextBox" />
                 </DataTriggerBehavior>
-                <SelectAllOnGotFocusBehavior />
+                <TextBoxSelectAllOnGotFocusBehavior />
             </Interaction.Behaviors>
         </TextBox>
 

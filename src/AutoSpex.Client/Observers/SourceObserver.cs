@@ -48,15 +48,6 @@ public partial class SourceObserver : Observer<Source>,
 
     #region Commands
 
-    /// <inheritdoc />
-    protected override async Task Navigate()
-    {
-        var result = await Mediator.Send(new LoadSource(Id));
-        if (Notifier.ShowIfFailed(result)) return;
-        var source = new SourceObserver(result.Value);
-        await Navigator.Navigate(source);
-    }
-
     /// <summary>
     /// Sends a target source command to the mediator and notifies observers of the target.
     /// </summary>
@@ -150,24 +141,9 @@ public partial class SourceObserver : Observer<Source>,
     {
         yield return new MenuActionItem
         {
-            Header = "Run",
-            Icon = Resource.Find("IconFilledLightning"),
-            Classes = "accent",
-            Command = RunCommand
-        };
-
-        yield return new MenuActionItem
-        {
             Header = "Target",
             Icon = Resource.Find("IconLineTarget"),
             Command = TargetCommand
-        };
-
-        yield return new MenuActionItem
-        {
-            Header = "Open",
-            Icon = Resource.Find("IconLineLaunch"),
-            Command = NavigateCommand
         };
 
         yield return new MenuActionItem
@@ -199,29 +175,12 @@ public partial class SourceObserver : Observer<Source>,
     /// <inheritdoc />
     protected override IEnumerable<MenuActionItem> GenerateContextItems()
     {
-        yield return new MenuActionItem
-        {
-            Header = "Run",
-            Icon = Resource.Find("IconFilledLightning"),
-            Classes = "accent",
-            Command = RunCommand,
-            DetermineVisibility = () => HasSingleSelection
-        };
-
+        
         yield return new MenuActionItem
         {
             Header = "Target",
             Icon = Resource.Find("IconLineTarget"),
             Command = TargetCommand,
-            DetermineVisibility = () => HasSingleSelection
-        };
-
-        yield return new MenuActionItem
-        {
-            Header = "Open",
-            Icon = Resource.Find("IconLineLaunch"),
-            Command = NavigateCommand,
-            Gesture = new KeyGesture(Key.Enter),
             DetermineVisibility = () => HasSingleSelection
         };
 

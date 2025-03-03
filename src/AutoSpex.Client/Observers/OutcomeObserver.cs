@@ -4,12 +4,9 @@ using System.Linq;
 using AutoSpex.Client.Resources;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
-using AutoSpex.Persistence;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using Action = AutoSpex.Engine.Action;
 
 namespace AutoSpex.Client.Observers;
 
@@ -65,27 +62,6 @@ public partial class OutcomeObserver : Observer<Outcome>,
                || Name.Satisfies(filter)
                || Node?.Filter(filter) is true;
     }
-
-    [RelayCommand(CanExecute = nameof(CanAddSuppression))]
-    private async Task AddSuppression(string? reason)
-    {
-        if (string.IsNullOrEmpty(reason))
-        {
-            //todo prompt for reason
-            /*reason = await Prompter.Show<string?>(new () => )*/
-        }
-
-        if (string.IsNullOrEmpty(reason)) return;
-
-        var run = GetObserver<RunObserver>(r => r.Model.Outcomes.Any(x => x.OutcomeId == Id));
-        if (run is null) return;
-
-        var fule = Action.Suppress(Model.NodeId, reason);
-        var result = await Mediator.Send(new AddSuppression(run.Source.Id, fule));
-        Notifier.ShowIfFailed(result);
-    }
-
-    private bool CanAddSuppression() => Result.Value > ResultState.Passed.Value;
 
     /// <summary>
     /// When the selected filter state changes refresh the visible evaluations.
@@ -146,22 +122,6 @@ public partial class OutcomeObserver : Observer<Outcome>,
     {
         yield return new MenuActionItem
         {
-            Header = "Suppress",
-            Icon = Resource.Find("IconLineBan"),
-            Command = AddSuppressionCommand,
-            DetermineVisibility = () => Result.IsFaulted
-        };
-
-        yield return new MenuActionItem
-        {
-            Header = "Override",
-            Icon = Resource.Find("IconFilledPencil"),
-            Command = AddSuppressionCommand,
-            DetermineVisibility = () => Result.IsFaulted
-        };
-
-        yield return new MenuActionItem
-        {
             Header = $"Open {Node?.Type}",
             Icon = Resource.Find("IconLineLaunch"),
             Command = Node?.NavigateCommand,
@@ -172,22 +132,6 @@ public partial class OutcomeObserver : Observer<Outcome>,
     /// <inheritdoc />
     protected override IEnumerable<MenuActionItem> GenerateMenuItems()
     {
-        yield return new MenuActionItem
-        {
-            Header = "Suppress",
-            Icon = Resource.Find("IconLineBan"),
-            Command = AddSuppressionCommand,
-            DetermineVisibility = () => Result.IsFaulted
-        };
-
-        yield return new MenuActionItem
-        {
-            Header = "Override",
-            Icon = Resource.Find("IconFilledPencil"),
-            Command = AddSuppressionCommand,
-            DetermineVisibility = () => Result.IsFaulted
-        };
-
         yield return new MenuActionItem
         {
             Header = $"Open {Node?.Type}",

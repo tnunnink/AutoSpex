@@ -8,13 +8,13 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record PostRun(Run Run) : ICommandRequest<Result>
+public record PostRun(Run Run) : IRequest<Result>
 {
-    public IEnumerable<Change> GetChanges()
+    /*public IEnumerable<Change> GetChanges()
     {
         yield return Change.For<PostRun>(Run.Node.NodeId, ChangeType.Created, $"Run posted for {Run.Node.Name}");
         yield return Change.For<PostRun>(Run.Source.SourceId, ChangeType.Created, $"Run posted for {Run.Source.Name}");
-    }
+    }*/
 }
 
 [UsedImplicitly]
