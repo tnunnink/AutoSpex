@@ -40,7 +40,6 @@ public partial class SourceManagerPageModel() : DetailPageModel("Sources"), IRec
 
         Sources.Add(source);
         Messenger.Send(new Observer.Created<SourceObserver>(source));
-        await Navigator.Navigate(source);
     }
 
     public void Receive(Observer.GetSelected message)

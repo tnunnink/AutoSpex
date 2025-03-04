@@ -7,12 +7,12 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record DeleteRuns(IEnumerable<Run> Runs) : ICommandRequest<Result>
+public record DeleteRuns(IEnumerable<Run> Runs) : IRequest<Result>
 {
-    public IEnumerable<Change> GetChanges()
+    /*public IEnumerable<Change> GetChanges()
     {
         return Runs.Select(x => Change.For<DeleteRuns>(x.RunId, ChangeType.Deleted, $"Deleted Run for {x.Name}"));
-    }
+    }*/
 }
 
 [UsedImplicitly]

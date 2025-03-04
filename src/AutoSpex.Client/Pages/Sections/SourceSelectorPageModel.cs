@@ -33,7 +33,6 @@ public partial class SourceSelectorPageModel : PageViewModel
 
         Sources.Add(source);
         Messenger.Send(new Observer.Created<SourceObserver>(source));
-        await Navigator.Navigate(source);
     }
 
     protected override void FilterChanged(string? filter)

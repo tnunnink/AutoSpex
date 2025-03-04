@@ -61,7 +61,6 @@ public partial class NavigationPageModel : PageViewModel
 
         var observer = new SourceObserver(source);
         Messenger.Send(new Observer.Created<SourceObserver>(observer));
-        await Navigator.Navigate(observer);
     }
 
     /// <summary>
