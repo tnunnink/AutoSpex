@@ -3,6 +3,7 @@ using AutoSpex.Engine;
 using Dapper;
 using FluentMigrator.Runner;
 using Microsoft.Extensions.DependencyInjection;
+using NLog.Extensions.Logging;
 
 namespace AutoSpex.Persistence;
 
@@ -10,10 +11,13 @@ public static class ServiceExtensions
 {
     public static void RegisterPersistence(this IServiceCollection services)
     {
+        services.AddLogging(c => c.AddNLog());
+        
         services.AddMediatR(c => c.RegisterServicesFromAssembly(typeof(ServiceExtensions).Assembly)
-            .AddOpenBehavior(typeof(NotificationBehavior<,>))
-            .AddOpenBehavior(typeof(ChangeRequestBehavior<,>))
+            //.AddOpenBehavior(typeof(LoggingBehavior<,>))
         );
+        
+        /*services.For(typeof(IRequestExceptionHandler<,,>)).Use(typeof(ExceptionBehavior<,,>));*/
 
         services.AddTransient<IConnectionManager, ConnectionManager>();
 
@@ -25,7 +29,6 @@ public static class ServiceExtensions
         SqlMapper.AddTypeHandler(new SqlUriHandler());
         SqlMapper.AddTypeHandler(new SqlObjectHandler());
         SqlMapper.AddTypeHandler(new SqlSpecHandler());
-        SqlMapper.AddTypeHandler(new SqlVerificationHandler());
         SqlMapper.AddTypeHandler(new SqlL5XHandler());
         SqlMapper.AddTypeHandler(new SmartEnumByNameTypeHandler<Element, string>());
         SqlMapper.AddTypeHandler(new SmartEnumByNameTypeHandler<Operation, string>());
@@ -34,7 +37,6 @@ public static class ServiceExtensions
         SqlMapper.AddTypeHandler(new SmartEnumByNameTypeHandler<ResultState, int>());
         SqlMapper.AddTypeHandler(new SmartEnumByNameTypeHandler<Negation, bool>());
         SqlMapper.AddTypeHandler(new SmartEnumByNameTypeHandler<Match, int>());
-        SqlMapper.AddTypeHandler(new SmartEnumByNameTypeHandler<ChangeType, int>());
 
         Migrate();
     }

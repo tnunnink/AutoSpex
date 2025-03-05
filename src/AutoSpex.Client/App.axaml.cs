@@ -15,7 +15,7 @@ public sealed class App : Application, IDisposable, IAsyncDisposable
 {
     public App()
     {
-        Container.Build();
+        Registrar.Build();
     }
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
@@ -42,7 +42,7 @@ public sealed class App : Application, IDisposable, IAsyncDisposable
             // Without this line you will get duplicate validations from both Avalonia and CT
             BindingPlugins.DataValidators.RemoveAt(0);
 
-            desktop.MainWindow = Container.Resolve<Shell>();
+            desktop.MainWindow = Registrar.Resolve<Shell>();
         }
 
         base.OnFrameworkInitializationCompleted();
@@ -50,11 +50,11 @@ public sealed class App : Application, IDisposable, IAsyncDisposable
 
     public void Dispose()
     {
-        Container.Dispose();
+        Registrar.Dispose();
     }
 
     public async ValueTask DisposeAsync()
     {
-        await Container.DisposeAsync();
+        await Registrar.DisposeAsync();
     }
 }

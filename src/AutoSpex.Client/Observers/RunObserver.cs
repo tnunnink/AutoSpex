@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoSpex.Client.Resources;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using AutoSpex.Persistence;
@@ -57,19 +56,6 @@ public partial class RunObserver : Observer<Run>, IRecipient<Observer.Get<RunObs
     public float Progress => Total > 0 ? (float)Ran / Total * 100 : 0;
     public int Count => GetFilterCount();
     public IEnumerable<ResultState> States => GetDistinctStates();
-
-
-    /// <inheritdoc />
-    /// <remarks>
-    /// Since the run detail page expects the fully loaded observer we will load that here.
-    /// This is for navigation of exiting run objects.
-    /// </remarks>
-    protected override async Task Navigate()
-    {
-        var result = await Mediator.Send(new LoadRun(Id));
-        if (Notifier.ShowIfFailed(result)) return;
-        await Navigator.Navigate(new RunObserver(result.Value));
-    }
 
     /// <inheritdoc />
     public override bool Filter(string? filter)
@@ -137,7 +123,6 @@ public partial class RunObserver : Observer<Run>, IRecipient<Observer.Get<RunObs
 
         Result = Model.Result;
         OnPropertyChanged(string.Empty);
-        Messenger.Send(new Finished(this));
     }
 
     /// <summary>
@@ -281,58 +266,6 @@ public partial class RunObserver : Observer<Run>, IRecipient<Observer.Get<RunObs
         states.AddRange(Model.Outcomes.Select(x => x.Result).Distinct());
         return states.OrderBy(r => r.Value).ToList();
     }
-
-    /// <inheritdoc />
-    protected override IEnumerable<MenuActionItem> GenerateContextItems()
-    {
-        yield return new MenuActionItem
-        {
-            Header = "View Results",
-            Icon = Resource.Find("IconLineLaunch"),
-            Command = NavigateCommand,
-            DetermineVisibility = () => HasSingleSelection
-        };
-
-        yield return new MenuActionItem
-        {
-            Header = "Delete Run",
-            Icon = Resource.Find("IconFilledTrash"),
-            Classes = "danger",
-            Command = DeleteSelectedCommand
-        };
-    }
-
-    /// <inheritdoc />
-    protected override IEnumerable<MenuActionItem> GenerateMenuItems()
-    {
-        yield return new MenuActionItem
-        {
-            Header = "View Results",
-            Icon = Resource.Find("IconLineLaunch"),
-            Command = NavigateCommand
-        };
-
-        yield return new MenuActionItem
-        {
-            Header = "Delete Run",
-            Icon = Resource.Find("IconFilledTrash"),
-            Classes = "danger",
-            Command = DeleteSelectedCommand
-        };
-    }
-
-    /// <inheritdoc />
-    protected override async Task<Result> DeleteItems(IEnumerable<Observer> observers)
-    {
-        var result = await Mediator.Send(new DeleteRuns(observers.Cast<RunObserver>().Select(x => x.Model)));
-        Notifier.ShowIfFailed(result);
-        return result;
-    }
-
-    /// <summary>
-    /// A message that indicates this run has finished executing.
-    /// </summary>
-    public record Finished(RunObserver Run);
 
     public static implicit operator Run(RunObserver observer) => observer.Model;
     public static implicit operator RunObserver(Run model) => new(model);

@@ -1,31 +1,26 @@
-﻿using System;
-using System.Threading;
-using AutoSpex.Client.Services;
-using FluentResults;
+﻿using FluentResults;
 using MediatR.Pipeline;
+using NLog;
 
-namespace AutoSpex.Client.Behaviors;
+namespace AutoSpex.Persistence;
 
-public class ExceptionBehavior<TRequest, TResponse, TException>(Notifier notifier) :
+public class ExceptionBehavior<TRequest, TResponse, TException> :
     IRequestExceptionHandler<TRequest, TResponse, TException>
     where TRequest : notnull
     where TResponse : class, IResultBase, new()
     where TException : Exception
 {
-    private const string Message =
-        "The request encounter an unexpected error. See log for details. If this issue persists, please report it.";
-
+    
     public Task Handle(TRequest request, TException exception, RequestExceptionHandlerState<TResponse> state,
         CancellationToken cancellationToken)
     {
-        var error = new Error(Message).CausedBy(exception);
-
-        notifier.ShowError("Request Error", error.Message);
-
+        var error = new Error("Request failed").CausedBy(exception);
+        //Logger.Error(error);
+        
         var response = new TResponse();
         response.Reasons.Add(error);
-
         state.SetHandled(response);
+        
         return Task.CompletedTask;
     }
 }

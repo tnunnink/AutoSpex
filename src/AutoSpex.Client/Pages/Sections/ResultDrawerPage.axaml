@@ -86,31 +86,6 @@
 
                     <Button
                         Theme="{StaticResource IconButton}"
-                        properties:Icon.Theme="{StaticResource IconFilledArrowDown}"
-                        ToolTip.Tip="Export"
-                        ToolTip.Placement="BottomEdgeAlignedRight">
-                    </Button>
-
-                    <Button
-                        IsEnabled="{Binding Outcome.Result.IsFaulted, FallbackValue={x:False}}"
-                        Theme="{StaticResource IconButton}"
-                        properties:Icon.Theme="{StaticResource IconLineSliders}"
-                        ToolTip.Tip="Add Suppression"
-                        ToolTip.Placement="BottomEdgeAlignedRight">
-                        <Button.Flyout>
-                            <Flyout
-                                Placement="BottomEdgeAlignedRight"
-                                HorizontalOffset="8"
-                                VerticalOffset="2">
-                                <ContentControl
-                                    Content="{Binding }"
-                                    ContentTemplate="{StaticResource OutcomeSuppressor}" />
-                            </Flyout>
-                        </Button.Flyout>
-                    </Button>
-
-                    <Button
-                        Theme="{StaticResource IconButton}"
                         properties:Icon.Theme="{StaticResource IconLineSidebar}"
                         ToolTip.Tip="Show Results"
                         ToolTip.Placement="BottomEdgeAlignedRight">

@@ -83,7 +83,6 @@ public partial class NodeDetailPageModel : DetailPageModel
         }
 
         /*await Navigator.Navigate(() => new VariablesPageModel(Node));*/
-        await Navigator.Navigate(() => new HistoryPageModel(Node));
         /*await Navigator.Navigate(() => new CommentsPageModel(Node));*/
         await Navigator.Navigate(() => new InfoPageModel(Node));
     }

@@ -19,6 +19,8 @@
       <PackageReference Include="MediatR" Version="12.4.1" />
       <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.8" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+      <PackageReference Include="NLog" Version="5.4.0" />
+      <PackageReference Include="NLog.Extensions.Logging" Version="5.4.0" />
       <PackageReference Include="System.Data.SQLite" Version="1.0.118" />
     </ItemGroup>
 

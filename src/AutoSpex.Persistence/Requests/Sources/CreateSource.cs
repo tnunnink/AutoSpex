@@ -7,13 +7,7 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record CreateSource(Source Source) : ICommandRequest<Result>
-{
-    public IEnumerable<Change> GetChanges()
-    {
-        yield return Change.For<CreateSource>(Source.SourceId, ChangeType.Created, $"Created Source {Source.Name}");
-    }
-}
+public record CreateSource(Source Source) : IRequest<Result>;
 
 [UsedImplicitly]
 internal class CreateSourceHandler(IConnectionManager manager) : IRequestHandler<CreateSource, Result>

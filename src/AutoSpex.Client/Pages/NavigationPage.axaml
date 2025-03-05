@@ -74,12 +74,6 @@
                         properties:Icon.Theme="{StaticResource IconLineXml}"
                         ToolTip.Tip="Sources" />
 
-                    <Button
-                        Command="{Binding OpenHistoryCommand}"
-                        Theme="{StaticResource IconButton}"
-                        properties:Icon.Theme="{StaticResource IconLineClock}"
-                        ToolTip.Tip="History" />
-
                 </StackPanel>
 
                 <StackPanel DockPanel.Dock="Bottom" Spacing="15">

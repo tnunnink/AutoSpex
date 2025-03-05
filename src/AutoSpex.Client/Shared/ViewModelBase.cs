@@ -23,11 +23,11 @@ public abstract partial class ViewModelBase : ObservableValidator
     //but rather using the real implementations to preform integration testing for my application pages.
     //I think this is (should be) a small enough app where DI is overkill.
     //These services are singleton so memory allocation should not be an issue.
-    protected readonly Shell Shell = Container.Resolve<Shell>();
-    protected readonly IMediator Mediator = Container.Resolve<IMediator>();
-    protected readonly Navigator Navigator = Container.Resolve<Navigator>();
-    protected readonly Notifier Notifier = Container.Resolve<Notifier>();
-    protected readonly Prompter Prompter = Container.Resolve<Prompter>();
+    protected readonly Shell Shell = Registrar.Resolve<Shell>();
+    protected readonly IMediator Mediator = Registrar.Resolve<IMediator>();
+    protected readonly Navigator Navigator = Registrar.Resolve<Navigator>();
+    protected readonly Notifier Notifier = Registrar.Resolve<Notifier>();
+    protected readonly Prompter Prompter = Registrar.Resolve<Prompter>();
 
     /// <summary>
     /// A command to request navigation of the view model into the view of the application.

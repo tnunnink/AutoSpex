@@ -14,9 +14,6 @@
                 Content="{x:Static engine:ResultState.Pending}"
                 ContentTemplate="{DynamicResource ResultPill}" />
             <ContentControl
-                Content="{x:Static engine:ResultState.Suppressed}"
-                ContentTemplate="{DynamicResource ResultPill}" />
-            <ContentControl
                 Content="{x:Static engine:ResultState.Passed}"
                 ContentTemplate="{DynamicResource ResultPill}" />
             <ContentControl

@@ -4,12 +4,12 @@ using FluentAssertions;
 namespace AutoSpex.Client.Tests;
 
 [TestFixture]
-public class ContainerTests
+public class RegistrarTests
 {
     [Test]
     public void Build_WhenCalled_ReturnsWithoutError()
     {
-        Container.Build();
+        Registrar.Build();
         Assert.Pass();
     }
 
@@ -20,10 +20,10 @@ public class ContainerTests
             .UsePlatformDetect()
             .SetupWithoutStarting();
         
-        Container.Build();
+        Registrar.Build();
 
-        var first = Container.Resolve<Shell>();
-        var second = Container.Resolve<Shell>();
+        var first = Registrar.Resolve<Shell>();
+        var second = Registrar.Resolve<Shell>();
 
         first.Should().BeSameAs(second);
     }

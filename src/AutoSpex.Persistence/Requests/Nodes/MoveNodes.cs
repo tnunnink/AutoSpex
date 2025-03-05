@@ -7,15 +7,7 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record MoveNodes(IEnumerable<Node> Nodes, Guid ParentId) : ICommandRequest<Result>
-{
-    public IEnumerable<Change> GetChanges()
-    {
-        return Nodes.Select(n => Change.For<MoveNodes>(n.NodeId, ChangeType.Updated,
-            $"Moved {n.Type} {n.Name} to {n.Parent?.Name}")
-        );
-    }
-}
+public record MoveNodes(IEnumerable<Node> Nodes, Guid ParentId) : IRequest<Result>;
 
 [UsedImplicitly]
 internal class MoveNodesHandler(IConnectionManager manager) : IRequestHandler<MoveNodes, Result>

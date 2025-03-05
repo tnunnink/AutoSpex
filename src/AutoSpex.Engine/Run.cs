@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using JetBrains.Annotations;
 using L5Sharp.Core;
+using NLog;
 using Task = System.Threading.Tasks.Task;
 
 namespace AutoSpex.Engine;
@@ -11,6 +12,7 @@ namespace AutoSpex.Engine;
 /// </summary>
 public class Run
 {
+    private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
     private readonly Dictionary<Guid, Outcome> _outcomes = [];
 
     public Run(Node node, Source source)

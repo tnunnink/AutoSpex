@@ -25,13 +25,6 @@
 
             <controls:DefaultMessage
                 HorizontalAlignment="Center"
-                HeaderIcon="{StaticResource IconThemedSuppressed}"
-                Header="Result is suppressed"
-                Message="{Binding Model.Suppression}"
-                IsVisible="{Binding Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Suppressed}}" />
-
-            <controls:DefaultMessage
-                HorizontalAlignment="Center"
                 HeaderIcon="{StaticResource IconThemedInconclusive}"
                 Header="No results produced"
                 Message="No source object passed the configured filters for this spec."

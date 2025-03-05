@@ -106,12 +106,6 @@ public partial class NavigationPageModel : PageViewModel
     }
 
     [RelayCommand]
-    private async Task OpenHistory()
-    {
-        await Navigator.Navigate<HistoryDetailPageModel>();
-    }
-
-    [RelayCommand]
     private Task OpenSettings()
     {
         return Prompter.Show(() => new SettingsPageModel());

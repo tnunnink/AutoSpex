@@ -7,14 +7,7 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record DeleteSources(IEnumerable<Source> Sources) : ICommandRequest<Result>
-{
-    public IEnumerable<Change> GetChanges()
-    {
-        return Sources.Select(x =>
-            Change.For<DeleteSources>(x.SourceId, ChangeType.Deleted, $"Deleted Source {x.Name}"));
-    }
-}
+public record DeleteSources(IEnumerable<Source> Sources) : IRequest<Result>;
 
 [UsedImplicitly]
 internal class DeleteSourcesHandler(IConnectionManager manager) : IRequestHandler<DeleteSources, Result>
