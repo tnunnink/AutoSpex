@@ -6,6 +6,5 @@
   Path: This/Is/A/Test,
   Result: Passed,
   Duration: 0,
-  PassRate: 0,
-  Suppression: null
+  PassRate: 0
 }

@@ -7,13 +7,7 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record DuplicateNode(Guid NodeId, string Name) : ICommandRequest<Result<Node>>
-{
-    public IEnumerable<Change> GetChanges()
-    {
-        yield return Change.For<DuplicateNode>(NodeId, ChangeType.Created, $"Created Node {Name}");
-    }
-}
+public record DuplicateNode(Guid NodeId, string Name) : IRequest<Result<Node>>;
 
 [UsedImplicitly]
 internal class DuplicateNodeHandler(IConnectionManager manager) : IRequestHandler<DuplicateNode, Result<Node>>

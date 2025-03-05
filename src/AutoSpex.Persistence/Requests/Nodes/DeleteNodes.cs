@@ -7,13 +7,7 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record DeleteNodes(IEnumerable<Node> Nodes) : ICommandRequest<Result>
-{
-    public IEnumerable<Change> GetChanges()
-    {
-        return Nodes.Select(n => Change.For<DeleteNodes>(n.NodeId, ChangeType.Deleted, $"Deleted {n.Type} {n.Name}"));
-    }
-}
+public record DeleteNodes(IEnumerable<Node> Nodes) : IRequest<Result>;
 
 [UsedImplicitly]
 internal class DeleteNodesHandler(IConnectionManager manager) : IRequestHandler<DeleteNodes, Result>

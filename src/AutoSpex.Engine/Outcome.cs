@@ -63,13 +63,6 @@ public class Outcome
     public double PassRate { get; private set; }
 
     /// <summary>
-    /// A supporession message that explains why this outcome is not applicable to necessary for the run it was a part of.
-    /// This allows user to ignore certain specs/outcomes as part of a run that don't apply to a certain source/project.
-    /// </summary>
-    [JsonInclude]
-    public string? Suppression { get; private set; }
-
-    /// <summary>
     /// The collection of <see cref="Evaluation"/> results that this outcome contains by having run a spec against a source.
     /// </summary>
     [JsonIgnore]
@@ -88,19 +81,5 @@ public class Outcome
         PassRate = verification.PassRate;
 
         _evaluations = verification.Evaluations.ToList();
-    }
-
-    /// <summary>
-    /// Suppresses the current verification, setting the ResultState to Suppressed while keeping the
-    /// original evaluations and duration.
-    /// </summary>
-    /// <param name="reason">The reason for suppressing the verification.</param>
-    public void Suppress(string reason)
-    {
-        _evaluations.Clear();
-        Result = ResultState.Suppressed;
-        Duration = 0;
-        PassRate = 0;
-        Suppression = reason;
     }
 }

@@ -12,7 +12,7 @@ public class Verification
         PassRate = passRate;
     }
 
-    private Verification(ResultState result, IEnumerable<Evaluation>? evaluations = default,
+    private Verification(ResultState result, IEnumerable<Evaluation>? evaluations = null,
         long duration = 0,
         double passRate = 0.0)
     {
@@ -55,11 +55,6 @@ public class Verification
     /// It is useful when you need to initialize a verification object with no evaluations.
     /// </remarks>
     public static Verification None => new(ResultState.None);
-
-    /// <summary>
-    /// Represents a verification object with no evaluations and a result state of Suppressed.
-    /// </summary>
-    public static Verification Suppressed => new(ResultState.Suppressed);
 
     /// <summary>
     /// Creates a new <see cref="Verification"/> for a single evaluation, using the result as the total result for the

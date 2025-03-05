@@ -1,18 +1,15 @@
 ﻿using System;
-using AutoSpex.Client.Behaviors;
 using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
 using AutoSpex.Persistence;
 using CommunityToolkit.Mvvm.Messaging;
 using Lamar;
-using MediatR.Pipeline;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace AutoSpex.Client;
 
-public class Container
+public static class Registrar
 {
-    private static IContainer? _container;
+    private static Container? _container;
 
     public static T Resolve<T>() where T : class
     {
@@ -28,7 +25,6 @@ public class Container
         var registry = new ServiceRegistry();
 
         registry.RegisterShell();
-        registry.RegisterMediatr();
         registry.RegisterPersistence();
         registry.RegisterMessenger();
         registry.RegisterNavigator();
@@ -36,7 +32,7 @@ public class Container
         registry.RegisterPrompter();
         registry.RegisterPages();
 
-        _container = new Lamar.Container(registry);
+        _container = new Container(registry);
     }
 
     public static void Dispose()
@@ -55,14 +51,6 @@ internal static class RegistrationExtensions
     internal static void RegisterShell(this ServiceRegistry registry)
     {
         registry.For<Shell>().Use<Shell>().Singleton();
-    }
-
-    internal static void RegisterMediatr(this ServiceRegistry registry)
-    {
-        registry.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Container>()
-            .AddOpenBehavior(typeof(LoggingBehavior<,>)));
-
-        registry.For(typeof(IRequestExceptionHandler<,,>)).Use(typeof(ExceptionBehavior<,,>));
     }
 
     internal static void RegisterMessenger(this ServiceRegistry registry)

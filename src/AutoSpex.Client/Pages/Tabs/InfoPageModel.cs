@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.ObjectModel;
-using System.Linq;
 using AutoSpex.Client.Shared;
-using AutoSpex.Engine;
-using AutoSpex.Persistence;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -22,17 +18,7 @@ public partial class InfoPageModel(Observer observer) : PageViewModel("Details")
     [ObservableProperty] private string? _updatedOn;
 
     [ObservableProperty] private string? _updatedBy;
-    public ObservableCollection<Change> Changes { get; } = [];
-
-    /// <inheritdoc />
-    public override async Task Load()
-    {
-        var changes = await Mediator.Send(new ListChanges(Observer.Id));
-        Changes.Refresh(changes);
-
-        PopuplateCreatedMessage();
-        PopuplateUpdatedMessage();
-    }
+    
 
     [RelayCommand]
     private async Task CopyId()
@@ -43,7 +29,7 @@ public partial class InfoPageModel(Observer observer) : PageViewModel("Details")
         Notifier.Notify($"{Observer.Name} Id Copied", "Successfully copied Id to clipboard");
     }
 
-    /// <summary>
+    /*/// <summary>
     /// Set the local created properties using the loaded changes for this entity.
     /// </summary>
     private void PopuplateCreatedMessage()
@@ -69,7 +55,7 @@ public partial class InfoPageModel(Observer observer) : PageViewModel("Details")
 
         UpdatedBy = change.ChangedBy;
         UpdatedOn = TimeAgo(change.ChangedOn);
-    }
+    }*/
 
     /// <summary>
     /// Gets the string of how long ago the change was.

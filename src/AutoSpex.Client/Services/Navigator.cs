@@ -21,14 +21,14 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
 
     /// <summary>
     /// Performs navigation of the <see cref="PageViewModel"/> specified using the generic type parameter. This method
-    /// will use the application <see cref="Container"/> to resolve the page specified.
+    /// will use the application <see cref="Registrar"/> to resolve the page specified.
     /// </summary>
     /// <param name="action">The optional navigation action to perform.</param>
     /// <typeparam name="TPage">The page view model type to navigate.</typeparam>
     /// <returns>The page that was created and navigated.</returns>
     public Task<TPage> Navigate<TPage>(NavigationAction action = NavigationAction.Open) where TPage : PageViewModel
     {
-        return OpenPage(Container.Resolve<TPage>);
+        return OpenPage(Registrar.Resolve<TPage>);
     }
 
     /// <summary>

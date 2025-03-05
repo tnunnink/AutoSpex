@@ -51,7 +51,7 @@ internal class NewRunHandler(IConnectionManager manager) : IRequestHandler<NewRu
 
         Source? source;
 
-        if (request.SourceId == default)
+        if (request.SourceId == Guid.Empty)
         {
             source = await connection.QuerySingleOrDefaultAsync<Source>(GetTargetSource);
             if (source is null)

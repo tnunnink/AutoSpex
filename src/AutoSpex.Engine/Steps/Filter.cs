@@ -18,7 +18,7 @@ public class Filter : Step
     /// <summary>
     /// Creates a new default <see cref="Filter"/> step initialized with a criterion defined by the provided parameters.
     /// </summary>
-    public Filter(string property, Operation operation, object? argument = default)
+    public Filter(string property, Operation operation, object? argument = null)
     {
         Criteria.Add(new Criterion(property, operation, argument));
     }

@@ -25,9 +25,6 @@ public partial class RunDetailPageModel(RunObserver run) : DetailPageModel(run.N
 
         if (Run.Result != ResultState.None) return;
         await Run.Execute();
-        
-        var result = await Mediator.Send(new PostRun(Run));
-        if (Notifier.ShowIfFailed(result)) return;
 
         Notifier.ShowSuccess("Run completed successfully",
             $"{Run.Node.Name} {Run.Result} for {Run.Source.Name} in {Run.Duration}.");

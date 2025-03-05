@@ -16,7 +16,7 @@ public sealed class TestContext : IDisposable
                 .SetupWithoutStarting();
         }
         
-        Container.Build();
+        Registrar.Build();
 
         TestProjectUri = new Uri(Path.Combine(Directory.GetCurrentDirectory(), ProjectName));
     }
@@ -24,11 +24,11 @@ public sealed class TestContext : IDisposable
     public readonly Uri TestProjectUri;
 
     public const string TestL5X = @"C:\Users\tnunn\Documents\L5X\Example.L5X";
-    public static T Resolve<T>() where T : class => Container.Resolve<T>();
+    public static T Resolve<T>() where T : class => Registrar.Resolve<T>();
 
     public void Dispose()
     {
-        Container.Dispose();
+        Registrar.Dispose();
         GC.Collect();
         GC.WaitForPendingFinalizers();
 

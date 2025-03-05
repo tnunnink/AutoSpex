@@ -7,13 +7,7 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record SaveNodes(IEnumerable<Node> Nodes) : ICommandRequest<Result>
-{
-    public IEnumerable<Change> GetChanges()
-    {
-        return Nodes.Select(n => Change.For<SaveNodes>(n.NodeId, ChangeType.Updated, $"Updated {n.Type} {n.Name}"));
-    }
-}
+public record SaveNodes(IEnumerable<Node> Nodes) : IRequest<Result>;
 
 [UsedImplicitly]
 internal class SaveNodesHandler(IConnectionManager manager) : IRequestHandler<SaveNodes, Result>

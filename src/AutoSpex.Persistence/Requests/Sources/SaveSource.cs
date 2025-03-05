@@ -7,13 +7,7 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record SaveSource(Source Source) : ICommandRequest<Result>
-{
-    public IEnumerable<Change> GetChanges()
-    {
-        yield return Change.For<SaveSource>(Source.SourceId, ChangeType.Updated, $"Updated Source {Source.Name}");
-    }
-}
+public record SaveSource(Source Source) : IRequest<Result>;
 
 [UsedImplicitly]
 internal class SaveSourceHandler(IConnectionManager manager) : IRequestHandler<SaveSource, Result>
