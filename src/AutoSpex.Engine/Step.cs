@@ -7,6 +7,7 @@ namespace AutoSpex.Engine;
 /// to have. Each step will process some data and return a collection of resulting data. 
 /// </summary>
 [JsonPolymorphic]
+[JsonDerivedType(typeof(Count), nameof(Count))]
 [JsonDerivedType(typeof(Filter), nameof(Filter))]
 [JsonDerivedType(typeof(Select), nameof(Select))]
 [JsonDerivedType(typeof(Verify), nameof(Verify))]
