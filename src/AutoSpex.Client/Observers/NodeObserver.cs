@@ -210,6 +210,8 @@ public partial class NodeObserver : Observer<Node>,
             Messenger.Send(new Created<NodeObserver>(node));
             Notifier.ShowSuccess("Duplicate node request complete",
                 $"{node.Name} was successfully created @ {DateTime.Now}");
+            
+            await Navigator.Navigate(node);
         }
         catch (Exception e)
         {
