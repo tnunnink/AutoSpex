@@ -109,17 +109,14 @@ public class Spec() : IEquatable<Spec>
     }
 
     /// <summary>
-    /// 
+    /// Adds a new selection to the query's selection list based on the specified property.
     /// </summary>
-    /// <param name="property"></param>
-    /// <returns></returns>
+    /// <param name="property">The property to select.</param>
+    /// <returns>The updated Spec instance with the new selection added.</returns>
     public Spec Select(string property)
     {
-        if (Query.Steps.All(s => s is not Engine.Select))
-            Query.Steps.Add(new Select());
-
-        var select = (Select)Query.Steps.First(x => x is Select);
-        select.Selections.Add(new Selection(property));
+        var select = new Select(property);
+        Query.Steps.Add(select);
         return this;
     }
 
