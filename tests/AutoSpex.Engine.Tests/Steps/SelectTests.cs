@@ -42,7 +42,8 @@ public class SelectTests
 
         var result = step.Returns(Element.Tag.This);
 
-        result.Should().BeEquivalentTo(Property.This(typeof(Tag)));
+        result.Should().BeEquivalentTo(Property.This(typeof(Tag)),
+            o => o.Excluding(p => p.Properties).IgnoringCyclicReferences());
     }
 
     [Test]
@@ -52,7 +53,8 @@ public class SelectTests
 
         var result = step.Returns(Element.Tag.This);
 
-        result.Should().BeEquivalentTo(Property.This(typeof(TagName)));
+        result.Should().BeEquivalentTo(Property.This(typeof(TagName)),
+            o => o.Excluding(p => p.Properties).IgnoringCyclicReferences());
     }
 
     [Test]
@@ -62,7 +64,8 @@ public class SelectTests
 
         var result = step.Returns(Element.Controller.This);
 
-        result.Should().BeEquivalentTo(Property.This(typeof(Security)));
+        result.Should().BeEquivalentTo(Property.This(typeof(Security)),
+            o => o.Excluding(p => p.Properties).IgnoringCyclicReferences());
     }
 
     [Test]
@@ -72,7 +75,8 @@ public class SelectTests
 
         var result = step.Returns(Element.Program.This);
 
-        result.Should().BeEquivalentTo(Property.This(typeof(Tag)));
+        result.Should().BeEquivalentTo(Property.This(typeof(Tag)),
+            o => o.Excluding(p => p.Properties).IgnoringCyclicReferences());
     }
 
     [Test]

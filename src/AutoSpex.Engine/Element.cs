@@ -166,33 +166,24 @@ public abstract class Element : SmartEnum<Element, string>
     /// any custom properties that have been defined for the Element instance.
     /// </summary>
     /// <returns>A list of properties associated with the Element instance.</returns>
-    private List<Property> GetProperties()
+    private IEnumerable<Property> GetProperties()
     {
-        var properties = new List<Property>();
-
         //Get or cache static properties for this type.
         //Since they should not change at runtime we can avoid reusing reflection every time.
         //Only perform this step for non-dynamic type elements.
-        if (!PropertyCache.Value.TryGetValue(Type, out var cached))
+        if (!PropertyCache.Value.ContainsKey(Type) && Name != nameof(Dynamic))
         {
-            if (Name != nameof(Dynamic))
-            {
-                var known = Type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                    .Where(p => p.GetIndexParameters().Length == 0 && !p.Name.Contains("L5X"))
-                    .Select(x => new Property(x.Name, x.PropertyType, This))
-                    .ToList();
+            var known = Type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Where(p => p.GetIndexParameters().Length == 0 && !p.Name.Contains("L5X"))
+                .Select(x => new Property(x.Name, x.PropertyType, This))
+                .ToList();
 
-                PropertyCache.Value.TryAdd(Type, known);
-                properties.AddRange(known);
-            }
-        }
-        else
-        {
-            properties.AddRange(cached);
+            PropertyCache.Value.TryAdd(Type, known);
         }
 
-        properties.AddRange(_customProperties);
-        return properties;
+        return PropertyCache.Value.TryGetValue(Type, out var cached)
+            ? cached.Concat(_customProperties)
+            : _customProperties;
     }
 
     /// <summary>

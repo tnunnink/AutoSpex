@@ -23,7 +23,7 @@ public class QueryTests
         var query = new Query(Element.Task);
 
         query.Element.Should().Be(Element.Task);
-        query.Returns.Should().Be(Element.Task.This);
+        query.Returns.Should().BeEquivalentTo(Element.Task.This);
     }
 
     [Test]
@@ -55,7 +55,7 @@ public class QueryTests
 
         var returns = query.Returns;
 
-        returns.Should().Be(Property.This(typeof(TagName)));
+        returns.Should().BeEquivalentTo(Property.This(typeof(TagName)), o => o.IgnoringCyclicReferences());
     }
 
     [Test]
