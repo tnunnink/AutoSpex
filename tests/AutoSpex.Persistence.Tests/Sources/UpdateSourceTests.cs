@@ -3,7 +3,7 @@
 namespace AutoSpex.Persistence.Tests.Sources;
 
 [TestFixture]
-public class SaveSourceTests
+public class UpdateSourceTests
 {
     [Test]
     public async Task SaveSource_NotSeeded_ShouldBeBecauseNoneExists()
@@ -12,7 +12,7 @@ public class SaveSourceTests
         var mediator = context.Resolve<IMediator>();
         var source = new Source();
 
-        var result = await mediator.Send(new SaveSource(source));
+        var result = await mediator.Send(new UpdateSource(source));
 
         result.IsFailed.Should().BeTrue();
     }
@@ -25,7 +25,7 @@ public class SaveSourceTests
         var source = new Source();
         await mediator.Send(new CreateSource(source));
 
-        var result = await mediator.Send(new SaveSource(source));
+        var result = await mediator.Send(new UpdateSource(source));
 
         result.IsSuccess.Should().BeTrue();
     }
@@ -38,7 +38,7 @@ public class SaveSourceTests
         var source = new Source();
         await mediator.Send(new CreateSource(source));
 
-        var result = await mediator.Send(new SaveSource(source));
+        var result = await mediator.Send(new UpdateSource(source));
         result.IsSuccess.Should().BeTrue();
 
         var get = await mediator.Send(new LoadSource(source.SourceId));
