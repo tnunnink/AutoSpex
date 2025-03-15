@@ -148,6 +148,12 @@ public class Property
     public static Property Default => new(string.Empty, typeof(object), null, x => x);
 
     /// <summary>
+    /// Indicates whether the Property instance is a default property.
+    /// A Property is considered default if its Type is typeof(object) and its Name is an empty string.
+    /// </summary>
+    public bool IsDefault => Type == typeof(object) && string.IsNullOrEmpty(Name);
+
+    /// <summary>
     /// Creates a default self-referential property called "This" with a null parent, which can be used as a root
     /// property for all sub properties of the provided type. This is need with how <see cref="Property"/> is designed
     /// to get values, since it needs some root pseudo property as the origin of the type graph.

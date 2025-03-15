@@ -105,7 +105,7 @@ public partial class PropertyInput : Observer
     /// Gets a value indicating whether the PropertyInput is empty.
     /// Returns true if the Value property is equal to the default Property instance.
     /// </summary>
-    public bool IsEmpty => Value == Property.Default;
+    public bool IsEmpty => Value.IsDefault;
 
     /// <summary>
     /// A function that takes some input filter and returns a set of suggesstable property values that can match the
