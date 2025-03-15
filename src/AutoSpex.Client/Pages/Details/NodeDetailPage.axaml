@@ -4,6 +4,7 @@
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
              xmlns:shared="clr-namespace:AutoSpex.Client.Shared"
              xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
              x:Class="AutoSpex.Client.Pages.NodeDetailPage"
              x:DataType="pages:NodeDetailPageModel">
 
@@ -29,13 +30,13 @@
                         HorizontalAlignment="Left"
                         IsVisible="{Binding Node.Model.Parent, Converter={x:Static ObjectConverters.IsNotNull}}" />
 
-                    <Grid ColumnDefinitions="*,Auto" Margin="5 0" >
+                    <Grid ColumnDefinitions="*,Auto" Margin="5 0">
 
                         <ContentControl
                             Grid.Column="0"
                             Content="{Binding Node}"
                             ContentTemplate="{StaticResource ObserverTitle}"
-                            HorizontalAlignment="Left"/>
+                            HorizontalAlignment="Left" />
 
                         <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
                             <Button Command="{Binding RunCommand}" Classes="run accent" />
@@ -86,7 +87,23 @@
 
         </Border>
 
-        <ContentControl Content="{Binding CurrentPage}" />
+        <controls:DrawerView
+            IsDrawerOpen="{Binding ShowDrawer, Mode=TwoWay}"
+            DrawerMinLength="49"
+            DrawerPlacement="Bottom"
+            DrawerOpenLength="500"
+            HideSplitter="False">
+
+            <ContentControl Content="{Binding CurrentPage}" />
+
+            <controls:DrawerView.Drawer>
+
+                <ContentControl Content="{Binding ResultDrawer}" />
+
+            </controls:DrawerView.Drawer>
+
+        </controls:DrawerView>
+
 
     </DockPanel>
 

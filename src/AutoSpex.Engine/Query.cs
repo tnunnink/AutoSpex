@@ -39,11 +39,11 @@ public class Query()
     public Element Element { get; set; } = Element.Default;
 
     /// <summary>
-    /// The collection of <see cref="Step"/> that define how to filter and select data for the query.
+    /// The collection of <see cref="Step"/> that define how to process data for the query.
     /// </summary>
     /// <remarks>
-    /// Each step is run in sequence to produce the result. The user can add as filte and select steps in any order.
-    /// This allows use to narrow search in steps and then select nested properties from collection of object to make
+    /// Each step is run in sequence to produce the result. The user can add steps in any order.
+    /// This allows us to narrow search in steps and then select nested properties from collection of object to make
     /// evaluations more clear. 
     /// </remarks>
     [JsonInclude]

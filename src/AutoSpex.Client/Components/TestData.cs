@@ -18,7 +18,7 @@ public static class TestData
 {
     #region Sources
 
-    private const string TestSource = @"C:\Users\tnunnink\Documents\Rockwell\Test.L5X";
+    private const string TestSource = @"C:\Users\tnunn\Documents\L5X\Test.L5X";
 
     public static SourceObserver SourceTest = new(new Source(L5X.Load(TestSource)));
 
@@ -116,6 +116,7 @@ public static class TestData
 
     public static FilterObserver FilterObserver = new(new Filter("TagName", Operation.Containing, "TestTag"));
     public static SelectObserver SelectObserver = new(new Select("TagName.Operand"));
+    public static CountObserver CountObserver = new(new Count(new Criterion("TagName", Operation.Containing, "TestTag")));
     public static VerifyObserver VerifyObserver = new(new Verify("TagName", Operation.Containing, "TestTag"));
 
     public static QueryObserver DefaultQueryObserver = new(new Query());

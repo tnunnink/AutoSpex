@@ -19,7 +19,6 @@
     <DataTemplate x:Key="SourceInfoButton" x:DataType="observers:SourceObserver">
 
         <Button
-            Command="{Binding NavigateCommand}"
             Theme="{a:ControlTheme ButtonSubtle}"
             ToolTip.Placement="Bottom">
 

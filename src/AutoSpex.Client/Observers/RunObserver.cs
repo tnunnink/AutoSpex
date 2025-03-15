@@ -64,34 +64,6 @@ public partial class RunObserver : Observer<Run>, IRecipient<Observer.Get<RunObs
     }
 
     /// <summary>
-    /// 
-    /// </summary>
-    public async Task ExecuteLocal()
-    {
-        _cancellation = new CancellationTokenSource();
-        var token = _cancellation.Token;
-
-        try
-        {
-            var source = await LoadSource(token);
-            List<Node> nodes = [Node.Model];
-            await ResolveReferences(nodes);
-            await Model.Execute(nodes, source, OnSpecRunning, OnSpecCompleted, token);
-        }
-        catch (OperationCanceledException)
-        {
-            Notifier.ShowWarning("Run canceled", $"{Name} was canceled prior to finishing execution.");
-        }
-        catch (InvalidOperationException e)
-        {
-            Notifier.ShowWarning("Run failed", $"{Name} failed because {e.Message}.");
-        }
-
-        Result = Model.Result;
-        OnPropertyChanged(string.Empty);
-    }
-
-    /// <summary>
     /// Command to execute this run by retrieving, resolving, and evaluating all configured spec/source pairs and
     /// producing new outcome results.
     /// </summary>

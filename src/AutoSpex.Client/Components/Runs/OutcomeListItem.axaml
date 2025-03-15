@@ -76,7 +76,7 @@
                         ContentTemplate="{StaticResource ObserverLink}" />
 
                     <controls:HighlightableTextBlock
-                        Text="{Binding Node.Model.Route, FallbackValue='Spec not found'}"
+                        Text="{Binding Node.Model.Path, FallbackValue='Spec not found'}"
                         Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
                         HighlightedText="{Binding FilterText}"
                         ToolTip.Tip="{Binding Node.Model.Route, FallbackValue='The spec that produced this result no longer exists'}" />

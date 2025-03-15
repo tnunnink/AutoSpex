@@ -166,8 +166,10 @@ public abstract class Element : SmartEnum<Element, string>
     /// any custom properties that have been defined for the Element instance.
     /// </summary>
     /// <returns>A list of properties associated with the Element instance.</returns>
-    private IEnumerable<Property> GetProperties()
+    private List<Property> GetProperties()
     {
+        var properties = new List<Property>();
+        
         //Get or cache static properties for this type.
         //Since they should not change at runtime we can avoid reusing reflection every time.
         //Only perform this step for non-dynamic type elements.
@@ -180,10 +182,19 @@ public abstract class Element : SmartEnum<Element, string>
 
             PropertyCache.Value.TryAdd(Type, known);
         }
+        
+        if (PropertyCache.Value.TryGetValue(Type, out var cached))
+        {
+            properties.AddRange(cached);
+        }
+        
+        var customProperties = _customProperties.ToList();
+        properties.AddRange(customProperties);
+        return properties;
 
-        return PropertyCache.Value.TryGetValue(Type, out var cached)
+        /*return PropertyCache.Value.TryGetValue(Type, out var cached)
             ? cached.Concat(_customProperties)
-            : _customProperties;
+            : _customProperties;*/
     }
 
     /// <summary>

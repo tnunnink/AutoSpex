@@ -52,7 +52,8 @@
             DefaultIcon="{StaticResource IconFilledClipboard}"
             DefaultMessage="No specs defined"
             DefaultCaption="Add a spec to this collection to get started"
-            SelectionMode="Multiple" />
+            SelectionMode="Multiple" 
+            ScrollViewer.VerticalScrollBarVisibility="Hidden"/>
 
     </Grid>
 
