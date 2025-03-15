@@ -76,6 +76,16 @@ public partial class QueryObserver : Observer<Query>,
         var step = new Select(new Selection());
         Steps.Add(new SelectObserver(step));
     }
+    
+    /// <summary>
+    /// Command to add a <see cref="Select"/> step to this query.
+    /// </summary>
+    [RelayCommand]
+    private void AddCountStep()
+    {
+        var step = new Count();
+        Steps.Add(new CountObserver(step));
+    }
 
     /// <summary>
     /// Handles the request to get the observer that passes the provied predicate.

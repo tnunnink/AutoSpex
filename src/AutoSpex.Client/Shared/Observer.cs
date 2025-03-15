@@ -341,17 +341,6 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
         public Observer Observer { get; } = observer;
     }
 
-    /// <summary>
-    /// A request to retrieve all in memory instances of and observer that satisfy the provided predicate.
-    /// </summary>
-    /// <param name="predicate">The predicate the observer must satisfy.</param>
-    /// <typeparam name="TObserver">The type of observer the request is representing.</typeparam>
-    public class Find<TObserver>(Func<TObserver, bool> predicate)
-        : AsyncCollectionRequestMessage<TObserver> where TObserver : Observer
-    {
-        public Func<TObserver, bool> Predicate { get; } = predicate;
-    }
-
     #endregion
 
     #region Equality

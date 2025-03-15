@@ -9,7 +9,7 @@ namespace AutoSpex.Engine;
 /// contains all the functionality we need for our object graph navigation as well as type information and getter functions
 /// which will be used in criteria for getting the values to evaluate filters and verifications.
 /// </summary>
-public class Property : IEquatable<Property>
+public class Property
 {
     private const char KeySeparator = ':';
     private const char MemberSeparator = '.';
@@ -278,33 +278,8 @@ public class Property : IEquatable<Property>
         return getter(parent);
     }
 
-    /// <summary>
-    /// Determines if two <see cref="Property"/> objects are equal. We are using the <see cref="Origin"/> and <see cref="Path"/>
-    /// to indicate if one property is the "same" as another, since properties on different type could have same name or path.
-    /// </summary>
-    /// <param name="other">The other <see cref="Property"/> to compare.</param>
-    /// <returns><c>true</c> if the properties are equal, otherwise, <c>false</c>.</returns>
-    public bool Equals(Property? other)
-    {
-        if (ReferenceEquals(null, other)) return false;
-        if (ReferenceEquals(this, other)) return true;
-        return Key == other.Key;
-    }
-
-    /// <summary>
-    /// Determines if two <see cref="Property"/> objects are equal. We are using the <see cref="Origin"/> and <see cref="Path"/>
-    /// to indicate if one property is the "same" as another, since properties on different type could have same name or path.
-    /// </summary>
-    public override bool Equals(object? obj) => obj is Property other && string.Equals(Key, other.Key);
-
-    /// <inheritdoc />
-    public override int GetHashCode() => Key.GetHashCode();
-
     /// <inheritdoc />
     public override string ToString() => Path;
-
-    public static bool operator ==(Property left, Property right) => Equals(left, right);
-    public static bool operator !=(Property left, Property right) => !Equals(left, right);
 
     /// <summary>
     /// Gets all child properties of the current property type.
@@ -325,7 +300,7 @@ public class Property : IEquatable<Property>
         //Elements are special case since they have their own code for getting properties.
         if (Element.TryFromType(Type, out var element))
         {
-            return element.Properties.Select(p => new Property(p, this));
+            return element.Properties;
         }
 
         //Check if this type's properties we already cached to exit early and avoid reflection usage.

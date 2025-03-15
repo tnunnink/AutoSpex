@@ -53,7 +53,7 @@ public class Select() : Step
             }
         }
 
-        return results;
+        return results; 
     }
 
     /// <inheritdoc />

@@ -5,6 +5,7 @@ using AutoSpex.Client.Observers;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using AutoSpex.Persistence;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FluentResults;
@@ -22,11 +23,18 @@ public partial class NodeDetailPageModel : DetailPageModel
     public override string Route => $"{Node.Type}/{Node.Id}";
     public override string Icon => Node.Type.Name;
     public NodeObserver Node { get; }
+    
+    [ObservableProperty] private bool _showDrawer;
+
+    [ObservableProperty] private ResultDrawerPageModel? _resultDrawer;
 
     /// <inheritdoc />
     public override async Task Load()
     {
         await base.Load();
+        
+        ResultDrawer = new ResultDrawerPageModel();
+        RegisterDisposable(ResultDrawer);
 
         //Any time a node is open locate it in the navigation tree.
         Messenger.Send(new NodeObserver.ExpandTo(Node.Id));
@@ -83,7 +91,6 @@ public partial class NodeDetailPageModel : DetailPageModel
         }
 
         /*await Navigator.Navigate(() => new VariablesPageModel(Node));*/
-        /*await Navigator.Navigate(() => new CommentsPageModel(Node));*/
         await Navigator.Navigate(() => new InfoPageModel(Node));
     }
 

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using AutoSpex.Client.Pages;
 using AutoSpex.Client.Resources;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
@@ -11,6 +11,7 @@ using Avalonia.Input;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FluentResults;
+using L5Sharp.Core;
 
 namespace AutoSpex.Client.Observers;
 
@@ -25,7 +26,6 @@ public partial class SourceObserver : Observer<Source>,
 
     public override Guid Id => Model.SourceId;
     public override string Icon => nameof(Source);
-    public string TargetType => Model.TargetType;
     public string ExportedOn => Model.ExportedOn;
 
     public override string Name
@@ -59,21 +59,25 @@ public partial class SourceObserver : Observer<Source>,
         Messenger.Send(new Targeted(result.Value));
     }
 
-    /// <summary>
-    /// Command to create and navigate a new run object using this source observer instance.
-    /// </summary>
     [RelayCommand]
-    private async Task Run()
+    private async Task UpdateContent()
     {
-        var node = await Prompter.Show<NodeObserver?>(() => new SelectContainerPageModel { ButtonText = "Run" });
-        if (node is null) return;
+        var path = await Shell.StorageProvider.SelectSourceFile();
+        if (path is null) return;
 
-        var result = await Mediator.Send(new NewRun(node.Id, Id));
-        if (Notifier.ShowIfFailed(result)) return;
-
-        var run = new RunObserver(result.Value);
-
-        await Navigator.Navigate(() => new RunDetailPageModel(run));
+        try
+        {
+            var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(20));
+            var content = await L5X.LoadAsync(path.LocalPath, cancellation.Token);
+            Model.Update(content);
+            var result = await Mediator.Send(new UpdateSource(Model), cancellation.Token);
+            if (Notifier.ShowIfFailed(result)) return;
+            Notifier.ShowSuccess("Source content updated", $"Successfully updated content for {Name} @ {DateTime.Now}");
+        }
+        catch (Exception e)
+        {
+            Notifier.ShowError("Load Failure", $"Failed to load the selected source file with error {e.Message}.");
+        }
     }
 
     #endregion
@@ -120,7 +124,7 @@ public partial class SourceObserver : Observer<Source>,
     public override bool Filter(string? filter)
     {
         FilterText = filter;
-        return Name.Satisfies(filter) || Description.Satisfies(filter) || TargetType.Satisfies(filter);
+        return Name.Satisfies(filter) || Description.Satisfies(filter);
     }
 
     /// <inheritdoc />
@@ -148,18 +152,17 @@ public partial class SourceObserver : Observer<Source>,
 
         yield return new MenuActionItem
         {
-            Header = "Rename",
-            Icon = Resource.Find("IconFilledPencil"),
-            Command = RenameCommand,
-            Gesture = new KeyGesture(Key.E, KeyModifiers.Control),
+            Header = "Update",
+            Icon = Resource.Find("IconLineUpload"),
+            Command = UpdateContentCommand,
         };
 
         yield return new MenuActionItem
         {
-            Header = "Duplicate",
-            Icon = Resource.Find("IconFilledClone"),
-            Command = DuplicateCommand,
-            Gesture = new KeyGesture(Key.D, KeyModifiers.Control),
+            Header = "Rename",
+            Icon = Resource.Find("IconFilledPencil"),
+            Command = RenameCommand,
+            Gesture = new KeyGesture(Key.E, KeyModifiers.Control),
         };
 
         yield return new MenuActionItem
@@ -175,7 +178,6 @@ public partial class SourceObserver : Observer<Source>,
     /// <inheritdoc />
     protected override IEnumerable<MenuActionItem> GenerateContextItems()
     {
-        
         yield return new MenuActionItem
         {
             Header = "Target",
@@ -186,19 +188,17 @@ public partial class SourceObserver : Observer<Source>,
 
         yield return new MenuActionItem
         {
-            Header = "Rename",
-            Icon = Resource.Find("IconFilledPencil"),
-            Command = RenameCommand,
-            Gesture = new KeyGesture(Key.E, KeyModifiers.Control),
-            DetermineVisibility = () => HasSingleSelection
+            Header = "Update",
+            Icon = Resource.Find("IconLineUpload"),
+            Command = UpdateContentCommand,
         };
 
         yield return new MenuActionItem
         {
-            Header = "Duplicate",
-            Icon = Resource.Find("IconFilledClone"),
-            Command = DuplicateCommand,
-            Gesture = new KeyGesture(Key.D, KeyModifiers.Control),
+            Header = "Rename",
+            Icon = Resource.Find("IconFilledPencil"),
+            Command = RenameCommand,
+            Gesture = new KeyGesture(Key.E, KeyModifiers.Control),
             DetermineVisibility = () => HasSingleSelection
         };
 

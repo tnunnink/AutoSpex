@@ -1,65 +1,38 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
              xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
              xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
              x:Class="AutoSpex.Client.Pages.SpecPage"
              x:DataType="pages:SpecPageModel">
 
-    <controls:DrawerView
-        IsDrawerOpen="{Binding ShowDrawer, Mode=TwoWay}"
-        DrawerMinLength="49"
-        DrawerPlacement="Bottom"
-        DrawerOpenLength="500"
-        HideSplitter="False">
+    <controls:Section
+        Header="Specification"
+        Description="Configure the specification criteria by defining the query and verification to perform."
+        VerticalAlignment="Top"
+        Margin="20">
 
-        <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+        <controls:Section.Icon>
+            <PathIcon Theme="{StaticResource IconFilledClipboard}" />
+        </controls:Section.Icon>
 
-            <controls:Section
-                Header="Specification"
-                Description="Configure the specification criteria by defining the query and verification to perform."
-                VerticalAlignment="Top"
-                Margin="20">
+        <controls:Section.Action>
+            <StackPanel Orientation="Horizontal" Spacing="5">
 
-                <controls:Section.Icon>
-                    <PathIcon Theme="{StaticResource IconFilledClipboard}" />
-                </controls:Section.Icon>
+                <Button
+                    Theme="{StaticResource IconButton}"
+                    properties:Icon.Theme="{StaticResource IconEllipsis}"
+                    ToolTip.Tip="Options">
 
-                <controls:Section.Action>
-                    <StackPanel Orientation="Horizontal" Spacing="5">
+                </Button>
 
-                        <Button
-                            Command="{Binding TestSpecCommand}"
-                            Theme="{StaticResource IconButton}"
-                            properties:Icon.Theme="{StaticResource IconFilledLightning}"
-                            Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}"
-                            ToolTip.Tip="Test Spec"/>
+            </StackPanel>
+        </controls:Section.Action>
 
-                        <Button
-                            Theme="{StaticResource IconButton}"
-                            properties:Icon.Theme="{StaticResource IconEllipsis}"
-                            ToolTip.Tip="Options">
+        <ContentControl
+            Content="{Binding Spec}"
+            ContentTemplate="{StaticResource SpecConfig}" />
 
-                        </Button>
-
-                    </StackPanel>
-                </controls:Section.Action>
-
-                <ContentControl
-                    Content="{Binding Spec}"
-                    ContentTemplate="{StaticResource SpecConfig}" />
-
-            </controls:Section>
-
-        </ScrollViewer>
-
-        <controls:DrawerView.Drawer>
-
-            <ContentControl Content="{Binding ResultDrawer}" />
-
-        </controls:DrawerView.Drawer>
-
-    </controls:DrawerView>
+    </controls:Section>
 
 </UserControl>
