@@ -16,7 +16,7 @@ public partial class SpecPageModel(NodeObserver node) : PageViewModel("Spec")
 
     [ObservableProperty] private bool _showDrawer;
 
-    [ObservableProperty] private ResultDrawerPageModel? _resultDrawer;
+    [ObservableProperty] private ResultPageModel? _resultDrawer;
 
     /// <inheritdoc />
     public override async Task Load()
@@ -41,8 +41,6 @@ public partial class SpecPageModel(NodeObserver node) : PageViewModel("Spec")
         if (Spec is null)
             return Result.Fail($"Spec configuration was not correctly loaded for {node.Name}.");
 
-        var payload = node.Model.Copy();
-        payload.Configure(Spec.Model);
-        return await Mediator.Send(new SaveSpec(payload));
+        return await Mediator.Send(new SaveSpec(Spec.Model));
     }
 }

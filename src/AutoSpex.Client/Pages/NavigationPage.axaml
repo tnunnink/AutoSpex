@@ -69,21 +69,6 @@
                         ToolTip.Tip="Search" />
 
                     <Button
-                        Command="{Binding OpenSourcesCommand}"
-                        Theme="{StaticResource IconButton}"
-                        properties:Icon.Theme="{StaticResource IconLineXml}"
-                        ToolTip.Tip="Sources" />
-
-                </StackPanel>
-
-                <StackPanel DockPanel.Dock="Bottom" Spacing="15">
-                    <Button
-                        Command="{Binding OpenSettingsCommand}"
-                        Theme="{StaticResource IconButton}"
-                        properties:Icon.Theme="{StaticResource IconFilledCog}"
-                        FontSize="16"
-                        ToolTip.Tip="Settings" />
-                    <Button
                         Theme="{StaticResource IconButton}"
                         properties:Icon.Theme="{StaticResource IconLineSidebar}"
                         ToolTip.Tip="Hide Navigation">
@@ -91,25 +76,13 @@
                             <behaviors:ToggleDrawerOnClickBehavior />
                         </Interaction.Behaviors>
                     </Button>
+
                 </StackPanel>
 
             </DockPanel>
         </Border>
 
-        <Grid RowDefinitions="*,Auto">
-
-            <ContentControl
-                Grid.Row="0"
-                Content="{Binding NodeTree^}" />
-
-            <Border
-                Grid.Row="1"
-                BorderBrush="{a:ThemeResource Container1BorderBrush}"
-                BorderThickness="0 1 0 0" Padding="10" Height="50">
-                <ContentControl Content="{Binding SourceSelector^}" />
-            </Border>
-
-        </Grid>
+        <ContentControl Content="{Binding NodeTree^}" />
 
     </DockPanel>
 </UserControl>

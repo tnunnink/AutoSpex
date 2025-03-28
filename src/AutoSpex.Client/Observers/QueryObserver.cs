@@ -135,13 +135,13 @@ public partial class QueryObserver : Observer<Query>,
     /// </summary>
     public void Receive(PropertyInput.GetDataTo message)
     {
-        if (_source?.Model.Content is null) return;
+        if (_source is null) return;
         if (!TryGetStep(message.Observer, out var step)) return;
 
         try
         {
             var index = Steps.IndexOf(step);
-            var data = Model.ExecuteTo(_source.Model.Content, index).ToList();
+            var data = Model.ExecuteTo(_source.Model.Open(), index).ToList();
             data.ForEach(message.Reply);
         }
         catch (Exception)
@@ -159,14 +159,14 @@ public partial class QueryObserver : Observer<Query>,
     /// </summary>
     public void Receive(ArgumentInput.SuggestionRequest message)
     {
-        if (_source?.Model.Content is null) return;
+        if (_source is null) return;
         if (!TryGetStep(message.Argument, out var step)) return;
         if (!step.TryFind(c => c.Contains(message.Argument), out var criterion)) return;
 
         try
         {
             var index = Steps.IndexOf(step);
-            var data = Model.ExecuteTo(_source.Model.Content, index);
+            var data = Model.ExecuteTo(_source.Model.Open(), index);
             var values = criterion.ValuesFor(message.Argument, data);
             var suggestions = values.Select(v => new ValueObserver(v)).Where(x => !x.IsEmpty).ToList();
             suggestions.ForEach(message.Reply);

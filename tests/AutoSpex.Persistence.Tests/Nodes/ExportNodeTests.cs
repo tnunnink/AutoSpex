@@ -72,19 +72,19 @@ public class ExportNodeTests
         var mediator = context.Resolve<IMediator>();
         var collection = Node.NewCollection();
         var spec = collection.AddSpec("Test");
-        spec.Configure(s =>
+        spec.Specify(s =>
         {
             s.Get(Element.Tag);
             s.Where("Name", Operation.Like, "someName");
             s.Validate("Value", Operation.EqualTo, 123);
         });
-        spec.Configure(s =>
+        spec.Specify(s =>
         {
             s.Get(Element.Tag);
             s.Where("Name", Operation.Containing, "anotherName");
             s.Validate("Value", Operation.GreaterThan, 456);
         });
-        spec.Configure(s =>
+        spec.Specify(s =>
         {
             s.Get(Element.Tag);
             s.Where("Name", Operation.EqualTo, "yetAnotherName");

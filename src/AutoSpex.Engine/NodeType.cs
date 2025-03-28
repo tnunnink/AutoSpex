@@ -10,6 +10,7 @@ public class NodeType : SmartEnum<NodeType, int>
     {
     }
 
+    public static readonly NodeType None = new(nameof(None), 0);
     public static readonly NodeType Collection = new(nameof(Collection), 1);
     public static readonly NodeType Container = new(nameof(Container), 2);
     public static readonly NodeType Spec = new(nameof(Spec), 3);
@@ -21,8 +22,7 @@ public class NodeType : SmartEnum<NodeType, int>
     /// <returns><c>true</c> if the node can be contained by this node type, otherwise, <c>false</c>.</returns>
     public bool CanContain(NodeType type)
     {
-        if (type == Collection) return false;
-        if (this == Spec) return false;
+        if (type == Collection || type == None || this == Spec) return false;
         return true;
     }
 }

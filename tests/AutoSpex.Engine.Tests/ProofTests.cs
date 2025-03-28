@@ -18,11 +18,10 @@ public class ProofTests
             c.Validate("DataType", Operation.EqualTo, "SimpleType");
         });
 
+        var evals = await spec.RunAsync(source);
 
-        var outcome = await spec.RunAsync(source);
-
-        outcome.Result.Should().Be(ResultState.Passed);
-        outcome.Evaluations.Should().HaveCount(1);
+        evals.Should().AllSatisfy(e => e.Result.Should().Be(ResultState.Passed));
+        evals.Should().HaveCount(1);
     }
 
     [Test]
@@ -37,18 +36,18 @@ public class ProofTests
         });
 
         var stopwatch = Stopwatch.StartNew();
-        var verifications = new List<Verification>();
+        var evaluations = new List<Evaluation>();
 
         for (var i = 0; i < 100; i++)
         {
             var result = await spec.RunAsync(source);
-            verifications.Add(result);
+            evaluations.AddRange(result);
         }
 
         stopwatch.Stop();
 
         Console.WriteLine(stopwatch.ElapsedMilliseconds);
-        verifications.Should().NotBeEmpty();
+        evaluations.Should().NotBeEmpty();
     }
 
     [Test]
@@ -63,8 +62,25 @@ public class ProofTests
             c.Validate("Revision", Operation.EqualTo, "2.1");
         });
 
-        var verification = await spec.RunAsync(source);
+        var evalus = await spec.RunAsync(source);
 
-        verification.Result.Should().Be(ResultState.Passed);
+        evalus.Should().AllSatisfy(e => e.Result.Should().Be(ResultState.Passed));
+    }
+
+    [Test]
+    public void ValueExtraction()
+    {
+        var source = L5X.Load(Known.Example);
+
+        var tagNames = source.Query<Tag>()
+            .Select(t => new
+            {
+                t.DataType,
+                Members = t.TagNames().Where(x => !string.IsNullOrWhiteSpace(x.Path)).Select(n => n.Path).ToList()
+            })
+            .DistinctBy(t => t.DataType)
+            .ToList();
+
+        tagNames.Should().NotBeEmpty();
     }
 }

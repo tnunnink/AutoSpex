@@ -71,7 +71,7 @@ public partial class ArgumentInput : Observer
     [NotifyPropertyChangedFor(nameof(IsEmpty))]
     [NotifyPropertyChangedFor(nameof(Suggestions))]
     private ITrackable _value;
-    
+
     /// <summary>
     /// 
     /// </summary>
@@ -288,13 +288,14 @@ public partial class ArgumentInput : Observer
 
         try
         {
-            var references = await Mediator.Send(new ListReferences(key), token);
+            /*var references = await Mediator.Send(new ListReferences(key), token);
 
             return references
                 .Select(r => new ValueObserver(r))
                 .Where(x => x.Filter(filter))
                 .OrderByDescending(x => x.Text.StartsWith(filter))
-                .ThenBy(x => x.Text);
+                .ThenBy(x => x.Text);*/
+            return [];
         }
         catch (Exception)
         {

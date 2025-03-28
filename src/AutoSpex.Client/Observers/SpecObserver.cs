@@ -29,8 +29,7 @@ public class SpecObserver : Observer<Spec>,
     /// The reference to the targeted source for the application. This is the source we need to find suggestions for
     /// nested criterion objects of this spec observer.
     /// </summary>
-    private SourceObserver? Source =>
-        GetObserver<SourceObserver>(s => s.Model is { IsTarget: true, Content: not null });
+    private SourceObserver? Source { get; }
 
     /// <summary>
     /// Handles the request to get the spec observer that passes the provied predicate. This allows child criteria
@@ -64,13 +63,13 @@ public class SpecObserver : Observer<Spec>,
     /// </summary>
     public void Receive(PropertyInput.GetDataTo message)
     {
-        if (Source?.Model.Content is null) return;
+        if (Source is null) return;
         if (message.Observer is not PropertyInput input) return;
         if (Verify.Criteria.All(c => c.Property != input)) return;
 
         try
         {
-            var data = Query.Model.Execute(Source.Model.Content).ToList();
+            var data = Query.Model.Execute(Source.Model.Open()).ToList();
             data.ForEach(message.Reply);
         }
         catch (Exception)
@@ -88,14 +87,14 @@ public class SpecObserver : Observer<Spec>,
     /// </summary>
     public void Receive(ArgumentInput.SuggestionRequest message)
     {
-        if (Source?.Model.Content is null) return;
+        if (Source is null) return;
 
         var criterion = Verify.Criteria.SingleOrDefault(c => c.Contains(message.Argument));
         if (criterion is null) return;
 
         try
         {
-            var data = Query.Model.Execute(Source.Model.Content);
+            var data = Query.Model.Execute(Source.Model.Open());
             var values = criterion.ValuesFor(message.Argument, data);
             var suggestions = values.Select(v => new ValueObserver(v)).Where(x => !x.IsEmpty).ToList();
             suggestions.ForEach(message.Reply);

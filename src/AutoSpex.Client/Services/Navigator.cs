@@ -214,7 +214,6 @@ public sealed class Navigator(IMessenger messenger) : IDisposable
         return observer switch
         {
             NodeObserver node => () => new NodeDetailPageModel(node),
-            RunObserver run => () => new RunDetailPageModel(run),
             _ => throw new NotSupportedException($"The observer type {observer.GetType()} does not support navigation")
         };
     }

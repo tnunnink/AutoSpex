@@ -1,85 +1,92 @@
-﻿using System.Text.Json.Serialization;
-
-namespace AutoSpex.Engine;
+﻿namespace AutoSpex.Engine;
 
 public class Verification
 {
-    [JsonConstructor]
-    private Verification(ResultState result, long duration, double passRate)
-    {
-        Result = result ?? throw new ArgumentNullException(nameof(result));
-        Duration = duration;
-        PassRate = passRate;
-    }
-
-    private Verification(ResultState result, IEnumerable<Evaluation>? evaluations = null,
-        long duration = 0,
-        double passRate = 0.0)
-    {
-        Result = result ?? throw new ArgumentNullException(nameof(result));
-        Evaluations = evaluations?.ToList() ?? [];
-        Duration = duration;
-        PassRate = passRate;
-    }
+    /// <summary>
+    /// Gets the unique identifier of the verification.
+    /// </summary>
+    public Guid VerificationId { get; } = Guid.NewGuid();
 
     /// <summary>
-    /// The total result for all evaluations of this verification, indicating whether is Passed/Failed/Errored.
+    /// The information of the node that produced the verification.
     /// </summary>
-    public ResultState Result { get; }
+    public NodeInfo Node { get; private set; } = NodeInfo.Empty;
+
+    /// <summary>
+    /// The information of the source that produced the verification.
+    /// </summary>
+    public SourceInfo Source { get; private set; } = SourceInfo.Empty;
+
+    /// <summary>
+    /// The total result for all evaluations of this verification, indicating whether a spec Passed/Failed/Errored.
+    /// </summary>
+    public ResultState Result { get; private set; } = ResultState.None;
 
     /// <summary>
     /// The duration or time it took for all evaluations of this verification to process.
     /// </summary>
-    public long Duration { get; }
-
-    /// <summary>
-    /// The pass rate of the verification, representing the percentage of evaluations that passed successfully.
-    /// </summary>
-    /// <remarks>
-    /// This property is a float value indicating the ratio of successful evaluations to the total number of evaluations.
-    /// </remarks>
-    public double PassRate { get; }
+    public long Duration { get; private set; }
 
     /// <summary>
     /// The collection of <see cref="Evaluation"/> that belong to the verification.
-    /// These represent the checks that were made and grouped together to form this single verification.
-    /// Verification can also be combined to further flatten and group sets of evaluations.
+    /// These represent the checks produced by a spec object and grouped together to form this single verification.
     /// </summary>
-    public IReadOnlyCollection<Evaluation> Evaluations { get; } = [];
+    public IReadOnlyCollection<Evaluation> Evaluations { get; private set; } = [];
+
 
     /// <summary>
-    /// Represents a verification object with no evaluations and a result state of None.
+    /// Marks the verification as pending with the provided source information.
     /// </summary>
-    /// <remarks>
-    /// The None property is a predefined instance of the <see cref="Verification"/> class.
-    /// It is useful when you need to initialize a verification object with no evaluations.
-    /// </remarks>
-    public static Verification None => new(ResultState.None);
-
-    /// <summary>
-    /// Creates a new <see cref="Verification"/> for a single evaluation, using the result as the total result for the
-    /// verification. 
-    /// </summary>
-    /// <param name="evaluation">The <see cref="Evaluation"/> the verification contains</param>
-    /// <returns>A <see cref="Verification"/> with the result state of the provided evaluation.</returns>
-    public static Verification For(Evaluation evaluation) => new(evaluation.Result, [evaluation]);
-
-    /// <summary>
-    /// Creates a new <see cref="Verification"/> for the provided collection of evaluations by considering the maximum
-    /// result state of the collection.
-    /// </summary>
-    /// <param name="evaluations">The collection of evaluation instances.</param>
-    /// <param name="duration">The optional duration in which it took to process the provided collection of evaluations.</param>
-    /// <returns>A <see cref="Verification"/> with the max result state of the provided evaluations.</returns>
-    /// <remarks>
-    /// In other words, the resulting verification will be Passed only if all provided evaluations Passed.
-    /// If any one is marked Failed then the result for the verification will be Failed.
-    /// If any one is marked Errored then the result for the verification will be Errored.
-    /// </remarks>
-    public static Verification For(ICollection<Evaluation> evaluations, long duration = 0)
+    /// <param name="node">The node for which verification is pending.</param>
+    /// <param name="source">The source for which this verification is pending.</param>
+    /// <param name="callback">A callback to invoke when the result state changes.</param>
+    public void MarkPending(NodeInfo node, SourceInfo source, Action<Verification>? callback = null)
     {
-        var result = ResultState.MaxOrDefault(evaluations.Select(e => e.Result).ToList());
-        var rate = evaluations.Percent(e => e.Result == ResultState.Passed);
-        return new Verification(result, evaluations, duration, rate);
+        Node = node;
+        Source = source;
+        Result = ResultState.Pending;
+        Duration = 0;
+        Evaluations = [];
+
+        callback?.Invoke(this);
+    }
+
+    /// <summary>
+    /// Marks the verification as currently running.
+    /// </summary>
+    /// <param name="callback">A callback to invoke when the result state changes.</param>
+    public void MarkRunning(Action<Verification>? callback = null)
+    {
+        Result = ResultState.Running;
+
+        callback?.Invoke(this);
+    }
+
+    /// <summary>
+    /// Marks the verification as complete with the provided evaluations and duration.
+    /// </summary>
+    /// <param name="evaluations">The array of evaluations to set for the verification.</param>
+    /// <param name="duration">The duration of the verification process.</param>
+    /// <param name="callback">A callback to invoke when the result state changes.</param>
+    public void MarkComplete(Evaluation[] evaluations, long duration, Action<Verification>? callback = null)
+    {
+        Result = ResultState.MaxOrDefault(evaluations.Select(e => e.Result).ToList());
+        Duration = duration;
+        Evaluations = evaluations;
+
+        callback?.Invoke(this);
+    }
+
+    /// <summary>
+    /// Marks the verification as complete with the provided child verifications for which to summarize.
+    /// </summary>
+    /// <param name="verifications">The array of verification to summarize for this aggregate verification.</param>
+    /// <param name="callback">A callback to invoke when the result state changes.</param>
+    public void MarkComplete(Verification[] verifications, Action<Verification>? callback = null)
+    {
+        Result = ResultState.MaxOrDefault(verifications.Select(v => v.Result).ToList());
+        Duration = verifications.Sum(v => v.Duration);
+
+        callback?.Invoke(this);
     }
 }

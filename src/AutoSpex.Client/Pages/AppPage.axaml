@@ -3,6 +3,7 @@
              xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
              xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
              x:Class="AutoSpex.Client.Pages.AppPage"
              x:DataType="pages:AppPageModel">
 
@@ -21,10 +22,22 @@
             </a:ChromedTitleBar.LeftContent>
 
             <a:ChromedTitleBar.RightContent>
-                <a:ToggleThemeButton
-                    Theme="{a:ControlTheme TitleBarToggleThemeButton}"
-                    IsTabStop="False"
-                    ToolTip.Tip="Toggle Theme" />
+                <StackPanel Orientation="Horizontal" Spacing="5">
+
+                    <a:ToggleThemeButton
+                        Theme="{a:ControlTheme TitleBarToggleThemeButton}"
+                        IsTabStop="False"
+                        ToolTip.Tip="Toggle Theme" />
+
+                    <Button
+                        Command="{Binding OpenSettingsCommand}"
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconFilledCog}"
+                        FontSize="16"
+                        ToolTip.Tip="Settings" />
+
+                </StackPanel>
+
             </a:ChromedTitleBar.RightContent>
         </a:ChromedTitleBar>
 
@@ -32,20 +45,40 @@
             BorderBrush="{a:ThemeResource Container1BorderBrush}"
             BorderThickness="0 1 0 0">
 
-            <controls:DrawerView
-                DrawerPlacement="Left"
-                IsDrawerOpen="True"
-                DrawerOpenLength="400"
-                DrawerMinLength="46"
-                DrawerMaxLength="800">
+            <Panel>
 
-                <controls:DrawerView.Drawer>
-                    <ContentControl Content="{Binding NavigationPage}" />
-                </controls:DrawerView.Drawer>
+                <controls:DrawerView
+                    x:Name="NavDrawer"
+                    DrawerPlacement="Left"
+                    IsDrawerOpen="True"
+                    DrawerOpenLength="400"
+                    DrawerMinLength="46"
+                    DrawerMaxLength="800">
 
-                <ContentControl Content="{Binding DetailsPage}" />
+                    <controls:DrawerView.Drawer>
+                        <ContentControl Content="{Binding NavigationPage}" />
+                    </controls:DrawerView.Drawer>
 
-            </controls:DrawerView>
+                    <ContentControl Content="{Binding DetailsPage}" />
+
+                </controls:DrawerView>
+
+                <controls:DrawerView
+                    x:Name="RunnerDrawer"
+                    DrawerPlacement="Bottom"
+                    IsDrawerOpen="{Binding IsRunnerDrawerOpen}"
+                    DrawerMinLength="40"
+                    DrawerOpenLength="500"
+                    HideSplitter="False">
+
+                    <controls:DrawerView.Drawer>
+                        <ContentControl Content="{Binding RunnerPage}" />
+                    </controls:DrawerView.Drawer>
+
+                </controls:DrawerView>
+
+            </Panel>
+
         </Border>
     </DockPanel>
 </UserControl>

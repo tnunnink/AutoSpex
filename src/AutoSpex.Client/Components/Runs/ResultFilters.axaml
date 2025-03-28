@@ -1,0 +1,24 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers">
+
+    <Design.PreviewWith>
+        <StackPanel Spacing="20" Margin="20">
+            <a:ToggleThemeButton Theme="{a:ControlTheme ToggleThemeButtonSoft}" />
+            <ContentControl
+                Content="{x:Static components:TestData.DefaultResult}"
+                ContentTemplate="{DynamicResource ResultStatus}" />
+        </StackPanel>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="ResultStatus" x:DataType="observers:ResultObserver">
+
+        <StackPanel Orientation="Horizontal" Spacing="10">
+
+        </StackPanel>
+
+    </DataTemplate>
+
+</ResourceDictionary>

@@ -59,7 +59,7 @@
                         <Ellipse Height="5" Width="5" Fill="{a:ThemeResource Container2BorderBrush}" Margin="3" />
 
                         <controls:HighlightableTextBlock
-                            Text="{Binding ExportedOn}"
+                            Text="{Binding UpdatedOn}"
                             HighlightedText="{Binding FilterText}"
                             Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
                             FontSize="{a:ThemeResource DefaultFontSizeExtraSmall}" />

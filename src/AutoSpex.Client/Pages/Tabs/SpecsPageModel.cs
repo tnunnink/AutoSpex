@@ -26,7 +26,7 @@ public partial class SpecsPageModel(NodeObserver node) : PageViewModel("Specs"),
 
     [ObservableProperty] private bool _showDrawer;
 
-    [ObservableProperty] private ResultDrawerPageModel? _resultDrawer;
+    [ObservableProperty] private ResultPageModel? _resultDrawer;
 
     /// <inheritdoc />
     public override async Task Load()
@@ -133,23 +133,5 @@ public partial class SpecsPageModel(NodeObserver node) : PageViewModel("Specs"),
     protected override void FilterChanged(string? filter)
     {
         Specs.Filter(filter);
-    }
-    
-    /// <summary>
-    /// Uses the current test runner page to execeute this specification.
-    /// Opens the runner drawer if not alread open.
-    /// </summary>
-    public async Task RunSpec(Guid nodeId)
-    {
-        if (ResultDrawer is null) return;
-
-        var result = await Mediator.Send(new NewRun(nodeId));
-        if (Notifier.ShowIfFailed(result)) return;
-
-        var run = new RunObserver(result.Value);
-        await run.Execute();
-
-        ResultDrawer.Outcome = run.Outcomes.Count == 1 ? run.Outcomes[0] : null;
-        ShowDrawer = true;
     }
 }

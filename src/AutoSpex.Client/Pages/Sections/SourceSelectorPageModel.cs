@@ -15,26 +15,6 @@ public partial class SourceSelectorPageModel : PageViewModel
     public override bool Reload => true;
     public ObserverCollection<Source, SourceObserver> Sources { get; } = [];
 
-    public override async Task Load()
-    {
-        var result = await Mediator.Send(new ListSources());
-        Sources.Bind(result.ToList(), x => new SourceObserver(x));
-        RegisterDisposable(Sources);
-    }
-
-    [RelayCommand]
-    private async Task AddSource()
-    {
-        var source = await Prompter.Show<SourceObserver?>(() => new NewSourcePageModel());
-        if (source is null) return;
-
-        var result = await Mediator.Send(new CreateSource(source));
-        if (Notifier.ShowIfFailed(result)) return;
-
-        Sources.Add(source);
-        Messenger.Send(new Observer.Created<SourceObserver>(source));
-    }
-
     protected override void FilterChanged(string? filter)
     {
         Sources.Filter(filter);

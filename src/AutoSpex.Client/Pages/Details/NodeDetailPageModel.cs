@@ -23,18 +23,11 @@ public partial class NodeDetailPageModel : DetailPageModel
     public override string Route => $"{Node.Type}/{Node.Id}";
     public override string Icon => Node.Type.Name;
     public NodeObserver Node { get; }
-    
-    [ObservableProperty] private bool _showDrawer;
-
-    [ObservableProperty] private ResultDrawerPageModel? _resultDrawer;
 
     /// <inheritdoc />
     public override async Task Load()
     {
         await base.Load();
-        
-        ResultDrawer = new ResultDrawerPageModel();
-        RegisterDisposable(ResultDrawer);
 
         //Any time a node is open locate it in the navigation tree.
         Messenger.Send(new NodeObserver.ExpandTo(Node.Id));
@@ -68,14 +61,16 @@ public partial class NodeDetailPageModel : DetailPageModel
     }
 
     /// <summary>
-    /// Runs this node against the target source. This involves loading the source and creating a new run
-    /// instance with this node (and all descendant spec nodes if a container). Then navigates the run detail page into view
-    /// which will execute the created run instance. 
+    /// Runs this node against the target source.
     /// </summary>
     [RelayCommand]
-    private async Task Run()
+    private void Run()
     {
-        await Node.RunCommand.ExecuteAsync(null);
+        var config = new RunConfig(Node.Model);
+
+        //todo where are we getting the source...we probably need to make run config editable first.
+
+        Messenger.Send(new RunnerObserver.Run(new RunnerObserver(config)));
     }
 
     /// <inheritdoc />

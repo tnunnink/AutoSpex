@@ -56,15 +56,15 @@ public partial class ContentPageModel(SourceObserver source) : PageViewModel("Co
         }
     }
 
-    private bool CanSearch() => !string.IsNullOrEmpty(Filter) && source.Model.Content is not null;
+    private bool CanSearch() => !string.IsNullOrEmpty(Filter);
 
     private Task<IEnumerable<ValueObserver>> QueryElements(CancellationToken token)
     {
-        return Task.Run(() =>
+        return Task.Run(async () =>
         {
-            if (source.Model.Content is null || string.IsNullOrEmpty(Filter)) return [];
+            if (string.IsNullOrEmpty(Filter)) return [];
 
-            var content = source.Model.Content;
+            var content = await source.Model.OpenAsync(token);
             var filter = Filter;
             var size = PageSize;
 

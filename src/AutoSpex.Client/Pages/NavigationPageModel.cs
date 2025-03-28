@@ -14,7 +14,6 @@ namespace AutoSpex.Client.Pages;
 public partial class NavigationPageModel : PageViewModel
 {
     public Task<NodeTreePageModel> NodeTree => Navigator.Navigate<NodeTreePageModel>();
-    public Task<SourceTargetPageModel> SourceSelector => Navigator.Navigate<SourceTargetPageModel>();
 
     #region Commands
 
@@ -97,18 +96,6 @@ public partial class NavigationPageModel : PageViewModel
     private async Task OpenSearch()
     {
         await Prompter.Show(() => new SearchPageModel());
-    }
-
-    [RelayCommand]
-    private async Task OpenSources()
-    {
-        await Navigator.Navigate<SourceManagerPageModel>();
-    }
-
-    [RelayCommand]
-    private Task OpenSettings()
-    {
-        return Prompter.Show(() => new SettingsPageModel());
     }
 
     #endregion

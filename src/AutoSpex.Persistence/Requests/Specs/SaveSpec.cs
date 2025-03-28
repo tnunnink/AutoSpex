@@ -7,7 +7,7 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record SaveSpec(Node Node) : IRequest<Result>;
+public record SaveSpec(Spec Spec) : IRequest<Result>;
 
 [UsedImplicitly]
 internal class SaveSpecHandler(IConnectionManager manager) : IRequestHandler<SaveSpec, Result>
@@ -19,7 +19,7 @@ internal class SaveSpecHandler(IConnectionManager manager) : IRequestHandler<Sav
     {
         using var connection = await manager.Connect(cancellationToken);
 
-        var spec = request.Node.Spec;
+        var spec = request.Spec;
 
         var exists = await connection.QuerySingleAsync<int>(Exists, new { spec.SpecId });
         if (exists != 1) return Result.Fail($"Spec not found: {spec.SpecId}");

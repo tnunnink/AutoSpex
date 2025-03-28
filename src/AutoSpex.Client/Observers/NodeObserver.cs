@@ -175,19 +175,17 @@ public partial class NodeObserver : Observer<Node>,
     }
 
     /// <summary>
-    /// Command to run this node agains the target source and navigate a new run detail page.
-    /// Runs are created and configured as a request to the database. This will populate the run with all descendant specs.
-    /// The created run is then passed to the run detail page which will execute the run and display the results.
+    /// Command to run this node against the target source. The command must first ensure the node detail page is open.
+    /// Once open a message whill be sent to trigger the remaining process.
     /// </summary>
     [RelayCommand]
-    private async Task Run()
+    private void Run()
     {
-        var result = await Mediator.Send(new NewRun(Id));
-        if (Notifier.ShowIfFailed(result)) return;
+        var config = new RunConfig(Model);
 
-        var run = new RunObserver(result.Value);
+        //todo where are we getting the source...we probably need to make run config editable first.
 
-        await Navigator.Navigate(() => new RunDetailPageModel(run));
+        Messenger.Send(new RunnerObserver.Run(new RunnerObserver(config)));
     }
 
     /// <inheritdoc />
@@ -210,7 +208,7 @@ public partial class NodeObserver : Observer<Node>,
             Messenger.Send(new Created<NodeObserver>(node));
             Notifier.ShowSuccess("Duplicate node request complete",
                 $"{node.Name} was successfully created @ {DateTime.Now}");
-            
+
             await Navigator.Navigate(node);
         }
         catch (Exception e)

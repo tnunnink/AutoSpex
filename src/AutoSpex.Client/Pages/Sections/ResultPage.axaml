@@ -1,0 +1,89 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+             x:Class="AutoSpex.Client.Pages.ResultPage"
+             x:DataType="pages:ResultPageModel">
+
+    <Design.Width>800</Design.Width>
+    <Design.Height>600</Design.Height>
+
+    <DockPanel Margin="15">
+
+        <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto">
+
+            <ContentControl
+                Grid.Column="0"
+                Content="{Binding Result}"
+                ContentTemplate="{StaticResource ResultStatus}" />
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="7">
+
+                <Button
+                    Theme="{StaticResource IconButton}"
+                    properties:Icon.Theme="{StaticResource IconFilledLightning}"
+                    Classes="accent"
+                    ToolTip.Tip="Run" />
+
+                <Button
+                    Command="{Binding Result.NavigateCommand, FallbackValue={x:Null}}"
+                    Theme="{StaticResource IconButton}"
+                    properties:Icon.Theme="{StaticResource IconLineLaunch}"
+                    ToolTip.Tip="Open" />
+
+                <Button
+                    Theme="{StaticResource IconButton}"
+                    properties:Icon.Theme="{StaticResource IconLineDownload}"
+                    ToolTip.Tip="Export" />
+
+                <Button
+                    Theme="{StaticResource IconButton}"
+                    properties:Icon.Theme="{StaticResource IconEllipsis}"
+                    ToolTip.Tip="Options" />
+
+            </StackPanel>
+
+        </Grid>
+
+        <TextBox
+            DockPanel.Dock="Top"
+            Watermark="Filters results"
+            Text="{Binding Filter}"
+            Theme="{StaticResource TextBoxOutlineHighlight}"
+            FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+            Background="Transparent"
+            VerticalContentAlignment="Center"
+            VerticalAlignment="Center"
+            BorderThickness="1"
+            Margin="0 10">
+            <TextBox.InnerLeftContent>
+                <PathIcon
+                    Theme="{StaticResource IconLineSearch}"
+                    Margin="10 0 0 0"
+                    Classes="size-sm"
+                    Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+            </TextBox.InnerLeftContent>
+            <Interaction.Behaviors>
+                <TextBoxSelectAllOnGotFocusBehavior />
+            </Interaction.Behaviors>
+        </TextBox>
+
+        <Panel>
+
+            <controls:DefaultMessage
+                HorizontalAlignment="Center"
+                IsVisible="{Binding Result, Converter={x:Static ObjectConverters.IsNull}}"
+                HeaderIcon="{StaticResource IconLineListCheck}"
+                Message="Results will appear here when available." />
+
+            <ContentControl
+                Content="{Binding Result}"
+                ContentTemplate="{StaticResource EvaluationList}"
+                IsVisible="{Binding Result, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
+        </Panel>
+
+    </DockPanel>
+</UserControl>

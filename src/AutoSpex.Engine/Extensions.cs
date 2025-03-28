@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Dynamic;
 using System.IO.Compression;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using L5Sharp.Core;
+using Task = System.Threading.Tasks.Task;
 
 // ReSharper disable InvalidXmlDocComment
 
@@ -94,47 +96,32 @@ public static class Extensions
     }
 
     /// <summary>
-    /// Compresses a string data value using built in .net <see cref="GZipStream"/> class.
+    /// Decompresses the base64-encoded GZip data to a file specified by the fileName.
     /// </summary>
-    /// <param name="data">The data to compress.</param>
-    /// <returns>A base 64 string representing the compressed data of the clear text provided.</returns>
-    /// <remarks>
-    /// I'm using this for L5X files since we store them in the project database, I want to conserve as much
-    /// physical memory as possible as sources are added.
-    /// </remarks>
-    public static string Compress(this string data)
+    /// <param name="data">The base64-encoded GZip data to decompress.</param>
+    /// <param name="fileName">The path of the file where the decompressed data will be written.</param>
+    public static async Task DecompressToAsync(this string data, string fileName, CancellationToken token)
     {
-        var bytes = Encoding.Unicode.GetBytes(data);
-        using var msi = new MemoryStream(bytes);
-        using var mso = new MemoryStream();
-        using (var gs = new GZipStream(mso, CompressionMode.Compress))
-        {
-            msi.CopyTo(gs);
-        }
+        var bytes = Convert.FromBase64String(data);
 
-        return Convert.ToBase64String(mso.ToArray());
+        using var inputStream = new MemoryStream(bytes);
+        await using var zipStream = new GZipStream(inputStream, CompressionMode.Decompress);
+        await using var outputStream = File.Create(fileName);
+
+        await zipStream.CopyToAsync(outputStream, token);
     }
 
     /// <summary>
-    /// Decompresses a string data value using built in .net <see cref="GZipStream"/> class.
+    /// Computes the hash for the specified FileInfo object based on its components.
     /// </summary>
-    /// <param name="data">The data to decompress.</param>
-    /// <returns>A string representation of the decompressed data.</returns>
-    /// <remarks>
-    /// I'm using this for L5X files since we store them in the project database, I want to conserve as much
-    /// physical memory as possible as sources are added.
-    /// </remarks>
-    public static string Decompress(this string data)
+    /// <param name="file">The file for which to compute the hash.</param>
+    /// <returns>A string representing the computed hash value for the file.</returns>
+    public static string ComputeHash(this FileInfo file)
     {
-        var bytes = Convert.FromBase64String(data);
-        using var msi = new MemoryStream(bytes);
-        using var mso = new MemoryStream();
-        using (var gs = new GZipStream(msi, CompressionMode.Decompress))
-        {
-            gs.CopyTo(mso);
-        }
-
-        return Encoding.Unicode.GetString(mso.ToArray());
+        ArgumentNullException.ThrowIfNull(file);
+        var components = $"{file.FullName}|{file.LastWriteTimeUtc:0}|{file.Length}";
+        var hash = SHA256.HashData(Encoding.UTF8.GetBytes(components));
+        return Convert.ToBase64String(hash).Replace('/', '-').Replace('+', '_').TrimEnd('=');
     }
 
     /// <summary>

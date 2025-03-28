@@ -10,9 +10,9 @@ public class SaveSpecTests
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-        var spec = Node.NewSpec();
+        var node = Node.NewSpec();
 
-        var result = await mediator.Send(new SaveSpec(spec));
+        var result = await mediator.Send(new SaveSpec(node.Spec));
 
         result.IsFailed.Should().BeTrue();
     }
@@ -25,7 +25,7 @@ public class SaveSpecTests
         var node = Node.NewSpec();
         await mediator.Send(new CreateNode(node));
 
-        var result = await mediator.Send(new SaveSpec(node));
+        var result = await mediator.Send(new SaveSpec(node.Spec));
 
         result.IsSuccess.Should().BeTrue();
     }
@@ -38,7 +38,7 @@ public class SaveSpecTests
         var node = Node.NewSpec();
         await mediator.Send(new CreateNode(node));
 
-        node.Configure(c =>
+        node.Specify(c =>
         {
             c.Get(Element.Program);
             c.Where("Name", Operation.EqualTo, "SomeName");
@@ -46,7 +46,7 @@ public class SaveSpecTests
         });
 
 
-        var result = await mediator.Send(new SaveSpec(node));
+        var result = await mediator.Send(new SaveSpec(node.Spec));
 
         result.IsSuccess.Should().BeTrue();
     }
@@ -59,14 +59,14 @@ public class SaveSpecTests
         var node = Node.NewSpec();
         await mediator.Send(new CreateNode(node));
 
-        node.Configure(c =>
+        node.Specify(c =>
         {
             c.Get(Element.Program);
             c.Where("Name", Operation.EqualTo, "SomeName");
             c.Validate("Disabled", Operation.EqualTo, false);
         });
 
-        var result = await mediator.Send(new SaveSpec(node));
+        var result = await mediator.Send(new SaveSpec(node.Spec));
 
         result.IsSuccess.Should().BeTrue();
     }

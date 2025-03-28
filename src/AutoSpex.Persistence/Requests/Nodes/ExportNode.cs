@@ -46,7 +46,7 @@ internal class ExportNodeHandler(IConnectionManager manager) : IRequestHandler<E
                     parent.AddNode(node);
 
                 if (spec is not null)
-                    node.Configure(spec);
+                    node.Specify(spec);
 
                 return node;
             },

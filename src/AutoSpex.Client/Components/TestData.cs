@@ -20,11 +20,9 @@ public static class TestData
 
     private const string TestSource = @"C:\Users\tnunn\Documents\L5X\Test.L5X";
 
-    public static SourceObserver SourceTest = new(new Source(L5X.Load(TestSource)));
+    public static SourceObserver SourceTest = new(Source.Create(TestSource));
 
-    public static SourceObserver SourceEmpty = new(new Source());
-
-    public static ObservableCollection<SourceObserver> Sources = [SourceTest, SourceTest, SourceEmpty];
+    public static ObservableCollection<SourceObserver> Sources = [SourceTest, SourceTest, SourceTest];
 
     #endregion
 
@@ -237,19 +235,20 @@ public static class TestData
 
     #endregion
 
-    #region Runs
+    #region Verifications
 
-    public static RunObserver Run => new(new Run(Node.NewCollection(), new Source()));
+    public static ResultObserver DefaultResult = new(Node.NewSpec());
 
-    public static ObservableCollection<RunObserver> Runs = [Run, Run, Run];
+    public static ResultObserver PassedResult = new(Node.NewSpec());
 
-    #endregion
+    public static ResultObserver FailedResult = new(Node.NewSpec());
 
-    #region Outcomes
+    public static ResultObserver ErroredResult = new(Node.NewSpec());
 
-    public static OutcomeObserver DefaultOutcome = new(new Outcome { Name = "Default Outcome" });
+    public static ResultObserver NestedResult = new(Node.NewCollection());
 
-    public static IEnumerable<OutcomeObserver> DefaultOutcomes = [DefaultOutcome, DefaultOutcome, DefaultOutcome];
+    public static ObservableCollection<ResultObserver> Results =
+        [NestedResult, PassedResult, FailedResult, ErroredResult];
 
     #endregion
 

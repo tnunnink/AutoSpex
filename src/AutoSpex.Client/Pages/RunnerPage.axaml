@@ -1,0 +1,174 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors"
+             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+             x:Class="AutoSpex.Client.Pages.RunnerPage"
+             x:DataType="pages:RunnerPageModel"
+             Background="{a:ThemeResource Container1BackgroundBrush}"
+             ZIndex="10">
+
+    <Design.Height>800</Design.Height>
+    <Design.Width>1000</Design.Width>
+
+    <DockPanel>
+
+        <Border
+            DockPanel.Dock="Top"
+            Background="{a:ThemeResource Container2BackgroundBrush}"
+            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+            BorderThickness="0 0 0 1"
+            Padding="15, 7"
+            Height="40">
+
+            <Grid ColumnDefinitions="1.5*,*,1.5*">
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10">
+
+                    <PathIcon
+                        Theme="{StaticResource IconFilledResults}"
+                        Margin="0 0 5 0" />
+
+
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" HorizontalAlignment="Right" Orientation="Horizontal" Spacing="10">
+
+                    <ContentControl Content="{Binding SourceSelector^}" />
+
+                    <Button
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconLineSidebar}"
+                        ToolTip.Tip="Show/Hide"
+                        ToolTip.Placement="BottomEdgeAlignedRight">
+                        <Button.RenderTransform>
+                            <RotateTransform Angle="270" />
+                        </Button.RenderTransform>
+                        <Interaction.Behaviors>
+                            <behaviors:ToggleDrawerOnClickBehavior />
+                        </Interaction.Behaviors>
+                    </Button>
+
+                </StackPanel>
+
+            </Grid>
+
+        </Border>
+
+        <controls:DrawerView
+            DrawerPlacement="Left"
+            DrawerMinLength="30"
+            DrawerOpenLength="400"
+            IsDrawerOpen="True">
+
+            <controls:DrawerView.Drawer>
+
+                <Border Background="{a:ThemeResource Container2BackgroundBrush}">
+
+                    <DockPanel>
+
+                        <Border DockPanel.Dock="Left"
+                                BorderThickness="0 0 1 0"
+                                BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                                Padding="10">
+
+                            <StackPanel Spacing="15">
+
+                                <Button
+                                    Command="{Binding RunAllCommand}"
+                                    Theme="{StaticResource IconButton}"
+                                    properties:Icon.Theme="{StaticResource IconFilledLightning}"
+                                    ToolTip.Tip="Run Again">
+
+                                </Button>
+
+                                <Button
+                                    Command="{Binding CancelCommand}"
+                                    Theme="{StaticResource IconButton}"
+                                    properties:Icon.Theme="{StaticResource IconLineBan}"
+                                    ToolTip.Tip="Cancel Run">
+
+                                </Button>
+
+                                <Button
+                                    Theme="{StaticResource IconButton}"
+                                    properties:Icon.Theme="{StaticResource IconLineCircleHalfFill}">
+
+                                    <Button.Flyout>
+                                        <Flyout Placement="RightEdgeAlignedTop" VerticalOffset="5">
+                                            <ListBox
+                                                ItemTemplate="{StaticResource ResultStateItem}"
+                                                ItemContainerTheme="{StaticResource ListBoxItemSelection}"
+                                                SelectedItem="{Binding FilterState}"
+                                                Padding="5">
+                                                <Interaction.Behaviors>
+                                                    <behaviors:HideFlyoutPointerReleasedBehavior />
+                                                </Interaction.Behaviors>
+                                            </ListBox>
+                                        </Flyout>
+                                    </Button.Flyout>
+                                </Button>
+
+                                <Button
+                                    Theme="{StaticResource IconButton}"
+                                    properties:Icon.Theme="{StaticResource IconEllipsis}">
+
+                                </Button>
+
+                            </StackPanel>
+
+                        </Border>
+
+                        <Border
+                            DockPanel.Dock="Top"
+                            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                            BorderThickness="0 0 0 1">
+
+                            <TextBox
+                                Text="{Binding Filter}"
+                                Watermark="Search Results"
+                                Theme="{StaticResource TextBoxSimple}">
+                                <TextBox.InnerLeftContent>
+                                    <PathIcon
+                                        Theme="{StaticResource IconLineSearch}"
+                                        VerticalAlignment="Center" Margin="10 0"
+                                        Classes="size-sm"
+                                        Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                                </TextBox.InnerLeftContent>
+                                <Interaction.Behaviors>
+                                    <TextBoxSelectAllOnGotFocusBehavior />
+                                </Interaction.Behaviors>
+                            </TextBox>
+                        </Border>
+
+                        <TreeView
+                            ItemsSource="{Binding Nodes}"
+                            SelectedItem="{Binding Selected}"
+                            ItemTemplate="{StaticResource ResultTreeItem}"
+                            ItemContainerTheme="{StaticResource ResultTreeItemTheme}"
+                            SelectionMode="Single"
+                            Padding="10 5">
+                        </TreeView>
+
+                    </DockPanel>
+                </Border>
+
+            </controls:DrawerView.Drawer>
+
+
+            <controls:DrawerView
+                DrawerPlacement="Right"
+                DrawerMinLength="0"
+                DrawerOpenLength="200">
+
+                <ContentControl Content="{Binding ResultPage}" />
+
+            </controls:DrawerView>
+
+        </controls:DrawerView>
+
+    </DockPanel>
+
+</UserControl>

@@ -51,7 +51,7 @@ internal class LoadNodesHandler(IConnectionManager manager) : IRequestHandler<Lo
                     parent.AddNode(node);
                 
                 if (spec is not null)
-                    node.Configure(spec);
+                    node.Specify(spec);
                 
                 if (ids.Contains(node.NodeId.ToString()))
                     nodes.Add(node);

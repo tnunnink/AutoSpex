@@ -13,7 +13,7 @@
 
     <DataTemplate x:Key="SourceInfo" x:DataType="observers:SourceObserver">
 
-        <StackPanel Spacing="5">
+        <!--<StackPanel Spacing="5">
 
             <StackPanel Orientation="Horizontal" Spacing="10" Margin="0 0 0 3">
                 <PathIcon Theme="{StaticResource IconThemedSource}" Classes="centered" />
@@ -52,11 +52,11 @@
                     Classes="faint" />
                 <TextBlock
                     Grid.Column="2"
-                    Text="{Binding Model.ExportedOn}"
+                    Text="{Binding Model.UpdatedOn}"
                     Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
             </Grid>
 
-        </StackPanel>
+        </StackPanel>-->
 
     </DataTemplate>
 

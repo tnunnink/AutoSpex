@@ -59,7 +59,7 @@ public partial class SearchPageModel : PageViewModel
         var result = observer.Replace(search, replace);
         if (Notifier.ShowIfFailed(result)) return;
 
-        var saved = await Mediator.Send(new SaveSpec(observer.Node));
+        var saved = await Mediator.Send(new SaveSpec(observer.Node.Spec));
         Notifier.ShowIfFailed(saved);
 
         Search();

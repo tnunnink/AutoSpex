@@ -37,13 +37,12 @@ public partial class QueryPageModel : PageViewModel
     [RelayCommand(CanExecute = nameof(CanExecute))]
     private async Task Execute()
     {
-        if (_source.Model.Content is null) return;
         if (Query.Element == Element.Default) return;
 
         try
         {
             var query = Query.Model;
-            var content = _source.Model.Content;
+            var content = await _source.Model.OpenAsync();
             var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(10));
 
             var results = (await Task.Run(() => query.Execute(content), cancellation.Token)).ToList();
@@ -64,7 +63,7 @@ public partial class QueryPageModel : PageViewModel
         }
     }
 
-    private bool CanExecute() => _source.Model.Content is not null;
+    private bool CanExecute() => true;
 
     /// <inheritdoc />
     protected override void FilterChanged(string? filter)

@@ -19,7 +19,6 @@
     <DataTemplate x:Key="SourceTargetButton" x:DataType="observers:SourceObserver">
 
         <Button
-            Command="{Binding TargetCommand}"
             Theme="{a:ControlTheme ButtonInvisible}"
             HorizontalAlignment="Stretch"
             HorizontalContentAlignment="Left"

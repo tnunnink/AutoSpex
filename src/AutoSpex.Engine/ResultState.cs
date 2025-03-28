@@ -17,15 +17,15 @@ public class ResultState : SmartEnum<ResultState, int>
     public static readonly ResultState Errored = new(nameof(Errored), 6);
 
     /// <summary>
+    /// Indicates whether the current ResultState is in a processing state, which includes Pending or Running states.
+    /// </summary>
+    public bool IsProcessing => Value is 1 or 2;
+
+    /// <summary>
     /// Indicates that the <see cref="ResultState"/> has been determined (result of running a spec). This means
     /// it is either passed, failed, or errored.
     /// </summary>
     public bool IsDetermined => Value is 3 or 5 or 6;
-
-    /// <summary>
-    /// Indicates that the <see cref="ResultState"/> is a determined non-passing state (inconclusive, failed, errored).
-    /// </summary>
-    public bool IsFaulted => Value > 3;
 
     /// <summary>
     /// Gets the maximum value of a collection of ResultState values or returns a default value if the collection is empty.

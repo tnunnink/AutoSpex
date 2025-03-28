@@ -4,7 +4,10 @@ public static class Known
 {
     public static readonly string Test = Path.Combine(Path.GetDirectoryName(typeof(Known).Assembly.Location)!,
         "Test.xml");
-    
+
+    public static readonly string Fake = Path.Combine(Path.GetDirectoryName(typeof(Known).Assembly.Location)!,
+        "Fake.L5X");
+
     public static readonly string Compressed = Path.Combine(Path.GetDirectoryName(typeof(Known).Assembly.Location)!,
         "Compressed.txt");
 

@@ -1,24 +1,32 @@
 using System;
+using AutoSpex.Client.Observers;
 using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
 
 namespace AutoSpex.Client.Pages;
 
 [UsedImplicitly]
-public partial class AppPageModel : PageViewModel, IRecipient<NavigationRequest>
+public partial class AppPageModel : PageViewModel, IRecipient<NavigationRequest>, IRecipient<RunnerObserver.Run>
 {
     [ObservableProperty] private NavigationPageModel? _navigationPage;
 
     [ObservableProperty] private DetailsPageModel? _detailsPage;
+
+    [ObservableProperty] private RunnerPageModel? _runnerPage;
+
+    [ObservableProperty] private bool _isRunnerDrawerOpen;
+
 
     /// <inheritdoc />
     public override async Task Load()
     {
         await Navigator.Navigate<NavigationPageModel>();
         await Navigator.Navigate<DetailsPageModel>();
+        await Navigator.Navigate<RunnerPageModel>();
     }
 
     /// <inheritdoc />
@@ -30,7 +38,16 @@ public partial class AppPageModel : PageViewModel, IRecipient<NavigationRequest>
         if (DetailsPage is not null)
             Navigator.Close(DetailsPage);
 
+        if (RunnerPage is not null)
+            Navigator.Close(RunnerPage);
+
         base.OnDeactivated();
+    }
+
+    [RelayCommand]
+    private Task OpenSettings()
+    {
+        return Prompter.Show(() => new SettingsPageModel());
     }
 
     /// <summary>
@@ -66,6 +83,9 @@ public partial class AppPageModel : PageViewModel, IRecipient<NavigationRequest>
             case DetailsPageModel page:
                 DetailsPage = page;
                 break;
+            case RunnerPageModel page:
+                RunnerPage = page;
+                break;
         }
     }
 
@@ -82,6 +102,17 @@ public partial class AppPageModel : PageViewModel, IRecipient<NavigationRequest>
             case DetailsPageModel:
                 DetailsPage = null;
                 break;
+            case RunnerPageModel:
+                RunnerPage = null;
+                break;
         }
+    }
+
+    /// <summary>
+    /// When a node is triggered to run from somewhere, open the runner drawer automatically to show the process.
+    /// </summary>
+    public void Receive(RunnerObserver.Run message)
+    {
+        IsRunnerDrawerOpen = true;
     }
 }

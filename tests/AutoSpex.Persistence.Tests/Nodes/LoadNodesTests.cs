@@ -59,7 +59,7 @@ public class LoadNodesTests
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
         var node = Node.NewSpec("Test");
-        node.Configure(c =>
+        node.Specify(c =>
         {
             c.Get(Element.Tag);
             c.Where("TagName", Operation.Containing, "SomeValue");

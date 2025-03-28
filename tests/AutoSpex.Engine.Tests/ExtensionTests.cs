@@ -105,26 +105,4 @@ public class ExtensionTests
         
         result.Should().Be("12 and 1424");
     }
-    
-    [Test]
-    public void Compress_Test_ShouldWork()
-    {
-        var content = L5X.Load(Known.Test);
-
-        var data = content.ToString().Compress();
-        
-        File.WriteAllText(Known.Compressed, data);
-    }
-
-    [Test]
-    public void Decompress_Compressed_ShouldWork()
-    {
-        var text = File.ReadAllText(Known.Compressed);
-
-        var data = text.Decompress();
-
-        var content = L5X.Parse(data);
-        
-        content.Should().NotBeNull();
-    }
 }

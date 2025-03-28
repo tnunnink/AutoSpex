@@ -91,10 +91,9 @@ public class SpecTests
         var spec = new Spec();
         var content = L5X.Load(Known.Test);
 
-        var verification = await spec.RunAsync(content);
-
-        verification.Result.Should().Be(ResultState.Inconclusive);
-        verification.Evaluations.Should().BeEmpty();
+        var evals = await spec.RunAsync(content);
+        
+        evals.Should().BeEmpty();
     }
 
     [Test]
@@ -107,10 +106,10 @@ public class SpecTests
             .Where("Name", Operation.Containing, "Test")
             .Validate("DataType", Negation.Not, Operation.Void);
 
-        var verification = await spec.RunAsync(content);
-
-        verification.Result.Should().Be(ResultState.Passed);
-        verification.Evaluations.Should().NotBeEmpty();
+        var evals = await spec.RunAsync(content);
+        
+        evals.Should().AllSatisfy(e => e.Result.Should().Be(ResultState.Passed));
+        evals.Should().NotBeEmpty();
     }
 
     [Test]
@@ -120,10 +119,10 @@ public class SpecTests
         var content = L5X.Load(Known.Test);
         spec.Get(Element.Module).Validate("Inhibited", Operation.EqualTo, false);
 
-        var verification = await spec.RunAsync(content);
-
-        verification.Result.Should().Be(ResultState.Passed);
-        verification.Evaluations.Should().NotBeEmpty();
+        var evals = await spec.RunAsync(content);
+        
+        evals.Should().AllSatisfy(e => e.Result.Should().Be(ResultState.Passed));
+        evals.Should().NotBeEmpty();
     }
 
     [Test]
@@ -227,8 +226,8 @@ public class SpecTests
                 c.Validate("Inhibited", Negation.Is, Operation.EqualTo, false);
             });
 
-            var verification = spec.Run(content);
-            verification.Result.Should().Be(ResultState.Passed);
+            var evals = spec.Run(content);
+            evals.Should().AllSatisfy(e => e.Result.Should().Be(ResultState.Passed));
         });
 
         isolator();

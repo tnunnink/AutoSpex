@@ -4,7 +4,6 @@
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
              xmlns:shared="clr-namespace:AutoSpex.Client.Shared"
              xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
-             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
              x:Class="AutoSpex.Client.Pages.NodeDetailPage"
              x:DataType="pages:NodeDetailPageModel">
 
@@ -87,23 +86,7 @@
 
         </Border>
 
-        <controls:DrawerView
-            IsDrawerOpen="{Binding ShowDrawer, Mode=TwoWay}"
-            DrawerMinLength="49"
-            DrawerPlacement="Bottom"
-            DrawerOpenLength="500"
-            HideSplitter="False">
-
-            <ContentControl Content="{Binding CurrentPage}" />
-
-            <controls:DrawerView.Drawer>
-
-                <ContentControl Content="{Binding ResultDrawer}" />
-
-            </controls:DrawerView.Drawer>
-
-        </controls:DrawerView>
-
+        <ContentControl Content="{Binding CurrentPage}" />
 
     </DockPanel>
 

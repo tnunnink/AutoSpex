@@ -1,80 +1,36 @@
-﻿namespace AutoSpex.Engine.Tests;
+﻿using Task = System.Threading.Tasks.Task;
+
+namespace AutoSpex.Engine.Tests;
 
 [TestFixture]
 public class SourceTests
 {
     [Test]
-    public void New_DefaultOverload_ShouldBeExpected()
+    public void New_ValidSourcePath_ShouldBeExpected()
     {
-        var source = new Source();
+        var source = Source.Create(Known.Test);
 
-        source.Should().NotBeNull();
-        source.SourceId.Should().NotBeEmpty();
-        source.Name.Should().Be("New Source");
-        source.IsTarget.Should().BeFalse();
-        source.TargetName.Should().BeEmpty();
-        source.TargetType.Should().BeEmpty();
-        source.ExportedOn.Should().BeEmpty();
-        source.ExportedBy.Should().BeEmpty();
-        source.Content.Should().BeNull();
+        source.Hash.Should().NotBeEmpty();
+        source.Location.Should().NotBeEmpty();
+        source.Name.Should().Be("Test");
+        source.Type.Should().Be(SourceType.Markup);
+        source.UpdatedOn.Should().BeWithin(TimeSpan.FromDays(1000));
+        source.Size.Should().BeGreaterThan(0);
     }
 
     [Test]
-    public void New_ValidFile_ShouldBeExpected()
+    public void New_FakeSourcePath_ShouldThrowException()
     {
-        var file = L5X.Load(Known.Test);
-        var source = new Source(file);
-
-        source.Should().NotBeNull();
-        source.SourceId.Should().NotBeEmpty();
-        source.Name.Should().Be("TestController");
-        source.IsTarget.Should().BeFalse();
-        source.TargetName.Should().Be("TestController");
-        source.TargetType.Should().Be("Controller");
-        source.ExportedOn.Should().NotBeEmpty();
-        source.ExportedBy.Should().NotBeEmpty();
-        source.Content.Should().NotBeNull();
+        FluentActions.Invoking(() => Source.Create(Known.Fake)).Should().Throw<ArgumentException>();
     }
 
     [Test]
-    public void Update_ValidContent_ShouldBeExpected()
+    public async Task OpenAsync_TestFile_ShouldNotBeNull()
     {
-        var source = new Source();
+        var source = Source.Create(Known.Test);
 
-        var file = L5X.Load(Known.Test);
-        source.Update(file);
+        var content = await source.OpenAsync();
 
-        source.Should().NotBeNull();
-        source.SourceId.Should().NotBeEmpty();
-        source.Name.Should().Be("New Source");
-        source.IsTarget.Should().BeFalse();
-        source.TargetName.Should().Be("TestController");
-        source.TargetType.Should().Be("Controller");
-        source.ExportedOn.Should().NotBeEmpty();
-        source.ExportedBy.Should().NotBeEmpty();
-        source.Content.Should().NotBeNull();
-    }
-
-    [Test]
-    public void SourceIdShouldBeInjectedIntoContentFileUponCreation()
-    {
-        var source = new Source(L5X.Load(Known.Test));
-
-        var content = source.Content;
-        var sourceId = content?.Serialize().Attribute("SourceId")?.Value.Parse<Guid>();
-
-        sourceId.Should().Be(source.SourceId);
-    }
-
-    [Test]
-    public void SourceIdShouldBeInjectedIntoContentFileUponUpdate()
-    {
-        var source = new Source();
-        source.Update(L5X.Load(Known.Test));
-
-        var content = source.Content;
-        var sourceId = content?.Serialize().Attribute("SourceId")?.Value.Parse<Guid>();
-
-        sourceId.Should().Be(source.SourceId);
+        content.Should().NotBeNull();
     }
 }

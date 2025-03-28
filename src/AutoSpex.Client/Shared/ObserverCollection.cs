@@ -224,8 +224,9 @@ public sealed class ObserverCollection<TModel, TObserver> : ObservableCollection
     /// <param name="filter">The filter function to apply to each item in the underlying collection.</param>
     public void Filter(Func<TObserver, bool> filter)
     {
-        var collection = _refresh.Invoke().Where(filter).ToList();
-        RefreshCollection(collection);
+        var collection = _refresh.Invoke();
+        var filtered = collection.Where(filter).ToList();
+        RefreshCollection(filtered);
     }
 
     /// <summary>

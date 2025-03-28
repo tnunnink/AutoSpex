@@ -33,9 +33,6 @@
       <None Update="Test.xml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="OutcomeTests.Serialize_WithNode_ShouldBeVerified.verified.txt">
-        <DependentUpon>OutcomeTests.cs</DependentUpon>
-      </None>
       <None Update="SpecTests.Serialize_ConfiguredSpec_ShouldBeVerified.verified.txt">
         <DependentUpon>SpecTests.cs</DependentUpon>
       </None>
@@ -147,9 +144,6 @@
       </None>
       <None Update="Steps\SelectTests.Serialize_ProeprtiesWithAlias_ShouldBeVerified.verified.txt">
         <DependentUpon>SelectTests.cs</DependentUpon>
-      </None>
-      <None Update="OutcomeTests.Serialized_Verification_ShouldBeVerified.verified.txt">
-        <DependentUpon>OutcomeTests.cs</DependentUpon>
       </None>
       <None Update="Steps\CountTests.Serialize_ConfiguredTypeAndCriteria_ShouldBeVerified.verified.txt">
         <DependentUpon>CountTests.cs</DependentUpon>

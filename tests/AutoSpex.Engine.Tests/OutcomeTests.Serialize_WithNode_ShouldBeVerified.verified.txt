@@ -1,6 +1,0 @@
-﻿{
-  SpecId: Guid_1,
-  Name: MySpec,
-  Result: None,
-  Duration: 0
-}

@@ -383,7 +383,7 @@ public class NodeTests
     {
         var node = Node.NewSpec();
 
-        node.Configure(c =>
+        node.Specify(c =>
         {
             c.Get(Element.Program);
             c.Where("Name", Operation.Like, "%Test");
@@ -398,7 +398,7 @@ public class NodeTests
     {
         var node = Node.NewSpec();
 
-        FluentActions.Invoking(() => node.Configure((Action<Spec>)null!)).Should().Throw<ArgumentNullException>();
+        FluentActions.Invoking(() => node.Specify((Action<Spec>)null!)).Should().Throw<ArgumentNullException>();
     }
 
     [Test]
@@ -407,15 +407,15 @@ public class NodeTests
         var node = Node.NewSpec();
         var expected = new Spec(Element.Tag);
 
-        node.Configure(expected);
+        node.Specify(expected);
 
         node.Spec.Should().BeEquivalentTo(expected);
     }
 
     [Test]
-    public async Task RunAll_SingleConfiguredSpec_ShouldReturnExpectedResult()
+    public async Task RunAsync_SingleConfiguredSpecNode_ShouldReturnExpectedResult()
     {
-        var content = L5X.Load(Known.Test);
+        var source = Source.Create(Known.Test);
 
         var node = Node.NewSpec("Test", s =>
         {
@@ -424,10 +424,188 @@ public class NodeTests
             s.Validate("DataType", Operation.EqualTo, "SimpleType");
         });
 
-        var verification = await node.Run(content);
+        var verification = await node.RunAsync(source);
 
+        verification.Node.NodeId.Should().Be(node.NodeId);
+        verification.Node.Name.Should().Be(node.Name);
+        verification.Node.Type.Should().Be(node.Type);
+        verification.Source.Name.Should().Be(source.Name);
         verification.Result.Should().Be(ResultState.Passed);
         verification.Evaluations.Should().NotBeEmpty();
-        verification.Duration.Should().BeGreaterThan(0);
+    }
+
+    [Test]
+    public async Task RunAsync_SingleSpecNodeInContainingNode_ShouldReturnExpectedVerification()
+    {
+        var source = Source.Create(Known.Test);
+        var container = Node.NewCollection("MyCollection");
+        container.AddSpec("Test", s =>
+        {
+            s.Get(Element.Tag);
+            s.Where("TagName", Operation.EqualTo, "TestSimpleTag");
+            s.Validate("DataType", Operation.EqualTo, "SimpleType");
+        });
+
+        var verification = await container.RunAsync(source);
+
+        verification.Result.Should().Be(ResultState.Passed);
+        verification.Evaluations.Should().BeEmpty();
+    }
+
+    [Test]
+    public async Task RunAsync_MultipleSpecNodeInContainingNode_ShouldReturnExpectedVerifications()
+    {
+        var source = Source.Create(Known.Test);
+        var container = Node.NewCollection("MyCollection");
+
+        container.AddSpec("First", s =>
+        {
+            s.Get(Element.Tag);
+            s.Where("TagName", Operation.EqualTo, "TestSimpleTag");
+            s.Validate("DataType", Operation.EqualTo, "SimpleType");
+        });
+
+        container.AddSpec("Second", s =>
+        {
+            s.Get(Element.Module);
+            s.Validate("Inhibited", Operation.EqualTo, false);
+        });
+
+        container.AddSpec("Third", s =>
+        {
+            s.Get(Element.Program);
+            s.Validate("Disabled", Operation.EqualTo, false);
+        });
+
+        var verification = await container.RunAsync(source);
+
+        verification.Result.Should().Be(ResultState.Passed);
+        verification.Evaluations.Should().BeEmpty();
+    }
+
+
+    [Test]
+    public void DistinctResults_SingleState_ShouldHaveExpected()
+    {
+        var source = Source.Create(Known.Test);
+        var node = Node.NewSpec("Test", s =>
+        {
+            s.Get(Element.Tag);
+            s.Where("TagName", Operation.EqualTo, "TestSimpleTag");
+            s.Validate("DataType", Operation.EqualTo, "SimpleType");
+        });
+
+        node.Run(source);
+
+        var states = node.DistinctResults().ToList();
+
+        states.Should().HaveCount(1);
+        states.Should().Contain(ResultState.Passed);
+    }
+
+    [Test]
+    public void DistinctStates_MultipleState_ShouldHaveExpected()
+    {
+        var source = Source.Create(Known.Test);
+        var container = Node.NewCollection("MyCollection");
+
+        container.AddSpec("First", s =>
+        {
+            s.Get(Element.Tag);
+            s.Where("TagName", Operation.EqualTo, "TestSimpleTag");
+            s.Validate("DataType", Operation.EqualTo, "SimpleType");
+        });
+
+        container.AddSpec("Second", s =>
+        {
+            s.Get(Element.Module);
+            s.Validate("Inhibited", Operation.EqualTo, true);
+        });
+
+        container.AddSpec("Third", s =>
+        {
+            s.Get(Element.Program);
+            s.Validate("IsDisabled", Operation.EqualTo, false);
+        });
+
+        container.Run(source);
+
+        var states = container.DistinctResults().ToList();
+
+        states.Should().HaveCount(3);
+        states.Should().Contain(ResultState.Passed);
+        states.Should().Contain(ResultState.Failed);
+        states.Should().Contain(ResultState.Errored);
+    }
+
+    [Test]
+    public void TotalBy_PassedWithOnlyPassed_ShouldHaveExpected()
+    {
+        var source = Source.Create(Known.Test);
+        var node = Node.NewSpec("Test", s =>
+        {
+            s.Get(Element.Tag);
+            s.Where("TagName", Operation.EqualTo, "TestSimpleTag");
+            s.Validate("DataType", Operation.EqualTo, "SimpleType");
+        });
+        node.Run(source);
+
+        var total = node.TotalBy(ResultState.Passed);
+
+        total.Should().Be(1);
+    }
+
+    [Test]
+    public void TotalBy_FailedWithOnlyPassed_ShouldHaveExpected()
+    {
+        var source = Source.Create(Known.Test);
+        var node = Node.NewSpec("Test", s =>
+        {
+            s.Get(Element.Tag);
+            s.Where("TagName", Operation.EqualTo, "TestSimpleTag");
+            s.Validate("DataType", Operation.EqualTo, "SimpleType");
+        });
+        node.Run(source);
+
+        var total = node.TotalBy(ResultState.Failed);
+
+        total.Should().Be(0);
+    }
+
+    [Test]
+    public void TotalBy_MultipleState_ShouldHaveExpected()
+    {
+        var source = Source.Create(Known.Test);
+        var container = Node.NewCollection("MyCollection");
+
+        container.AddSpec("First", s =>
+        {
+            s.Get(Element.Tag);
+            s.Where("TagName", Operation.EqualTo, "TestSimpleTag");
+            s.Validate("DataType", Operation.EqualTo, "SimpleType");
+        });
+
+        container.AddSpec("Second", s =>
+        {
+            s.Get(Element.Module);
+            s.Validate("Inhibited", Operation.EqualTo, true);
+        });
+
+        container.AddSpec("Third", s =>
+        {
+            s.Get(Element.Program);
+            s.Validate("IsDisabled", Operation.EqualTo, false);
+        });
+
+        container.Run(source);
+
+        var totalPassed = container.TotalBy(ResultState.Passed);
+        totalPassed.Should().Be(1);
+
+        var totalFailed = container.TotalBy(ResultState.Failed);
+        totalFailed.Should().Be(1);
+
+        var totalErrored = container.TotalBy(ResultState.Errored);
+        totalErrored.Should().Be(1);
     }
 }

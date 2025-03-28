@@ -189,7 +189,7 @@ public class Spec() : IEquatable<Spec>
     /// <param name="content">The L5X content to run this specification against.</param>
     /// <returns>The <see cref="Verification"/> containing the specification results.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="content"/> is null.</exception>
-    public Verification Run(L5X content)
+    public Evaluation[] Run(L5X content)
     {
         return RunSpec(content);
     }
@@ -201,7 +201,7 @@ public class Spec() : IEquatable<Spec>
     /// <param name="token">The optional cancellation token to stop the run.</param>
     /// <returns>The <see cref="Verification"/> containing the specification results.</returns>
     /// <exception cref="ArgumentNullException">Thrown when the content parameter is null.</exception>
-    public Task<Verification> RunAsync(L5X content, CancellationToken token = default)
+    public Task<Evaluation[]> RunAsync(L5X content, CancellationToken token = default)
     {
         return Task.Run(() => RunSpec(content), token);
     }
@@ -211,23 +211,20 @@ public class Spec() : IEquatable<Spec>
     /// </summary>
     /// <param name="content">The L5X content to run this spec against.</param>
     /// <returns>A <see cref="Verification"/> indicating the result of the specification.</returns>
-    private Verification RunSpec(L5X content)
+    private Evaluation[] RunSpec(L5X content)
     {
         ArgumentNullException.ThrowIfNull(content);
 
         try
         {
-            var stopwatch = Stopwatch.StartNew();
             var candidates = Query.Execute(content).ToList();
-            var evaluations = Verify.Process(candidates).Cast<Evaluation>().ToList();
-            stopwatch.Stop();
-
-            return Verification.For(evaluations, stopwatch.ElapsedMilliseconds);
+            var evaluations = Verify.Process(candidates).Cast<Evaluation>();
+            return evaluations.ToArray();
         }
         catch (Exception e)
         {
             //If anything fails just return a single failed verification with the exception message.
-            return Verification.For(Evaluation.Errored(e));
+            return [Evaluation.Errored(e)];
         }
     }
 
@@ -238,6 +235,5 @@ public class Spec() : IEquatable<Spec>
     }
 
     public override bool Equals(object? obj) => obj is Spec other && Equals(other);
-
     public override int GetHashCode() => SpecId.GetHashCode();
 }
