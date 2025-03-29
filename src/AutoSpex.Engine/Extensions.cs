@@ -96,19 +96,36 @@ public static class Extensions
     }
 
     /// <summary>
-    /// Decompresses the base64-encoded GZip data to a file specified by the fileName.
+    /// 
     /// </summary>
-    /// <param name="data">The base64-encoded GZip data to decompress.</param>
-    /// <param name="fileName">The path of the file where the decompressed data will be written.</param>
-    public static async Task DecompressToAsync(this string data, string fileName, CancellationToken token)
+    /// <param name="data"></param>
+    /// <param name="fileName"></param>
+    /// <param name="token"></param>
+    public static async Task CompressToAsync(this string data, string fileName, CancellationToken token = default)
     {
-        var bytes = Convert.FromBase64String(data);
+        var bytes = Encoding.UTF8.GetBytes(data);
 
         using var inputStream = new MemoryStream(bytes);
-        await using var zipStream = new GZipStream(inputStream, CompressionMode.Decompress);
         await using var outputStream = File.Create(fileName);
+        await using var zipStream = new GZipStream(outputStream, CompressionMode.Compress);
+        await inputStream.CopyToAsync(zipStream, token);
+    }
+
+    /// <summary>
+    /// Decompresses the specified file and returns the decompressed data as a base64-encoded string.
+    /// </summary>
+    /// <param name="fileName">The file name of the compressed file to decompress.</param>
+    /// <param name="token">A cancellation token to observe while waiting for the task to complete.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result contains the decompressed data as a base64-encoded string.</returns>
+    public static async Task<string> DecompressToAsync(this string fileName, CancellationToken token = default)
+    {
+        await using var inputStream = File.OpenRead(fileName);
+        await using var zipStream = new GZipStream(inputStream, CompressionMode.Decompress);
+        using var outputStream = new MemoryStream();
 
         await zipStream.CopyToAsync(outputStream, token);
+
+        return Encoding.UTF8.GetString(outputStream.ToArray());
     }
 
     /// <summary>
@@ -119,7 +136,7 @@ public static class Extensions
     public static string ComputeHash(this FileInfo file)
     {
         ArgumentNullException.ThrowIfNull(file);
-        var components = $"{file.FullName}|{file.LastWriteTimeUtc:0}|{file.Length}";
+        var components = $"{file.FullName}|{file.LastWriteTimeUtc:O}|{file.Length}";
         var hash = SHA256.HashData(Encoding.UTF8.GetBytes(components));
         return Convert.ToBase64String(hash).Replace('/', '-').Replace('+', '_').TrimEnd('=');
     }

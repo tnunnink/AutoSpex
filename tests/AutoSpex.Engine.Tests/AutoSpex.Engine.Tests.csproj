@@ -24,6 +24,7 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="RockwellAutomation.LogixDesigner.CSClient" Version="2.1.974" />
         <PackageReference Include="System.DirectoryServices.AccountManagement" Version="8.0.0" />
         <PackageReference Include="System.Text.Json" Version="8.0.5" />
         <PackageReference Include="Verify.NUnit" Version="25.0.4" />
@@ -147,6 +148,9 @@
       </None>
       <None Update="Steps\CountTests.Serialize_ConfiguredTypeAndCriteria_ShouldBeVerified.verified.txt">
         <DependentUpon>CountTests.cs</DependentUpon>
+      </None>
+      <None Update="Test.ACD">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>
 

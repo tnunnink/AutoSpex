@@ -66,7 +66,7 @@ public partial class NodeDetailPageModel : DetailPageModel
     [RelayCommand]
     private void Run()
     {
-        var config = new RunConfig(Node.Model);
+        var config = new RunContext(Node.Model);
 
         //todo where are we getting the source...we probably need to make run config editable first.
 

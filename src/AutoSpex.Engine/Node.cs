@@ -50,7 +50,7 @@ public class Node : IEquatable<Node>
     public Node? Parent { get; private set; }
 
     /// <summary>
-    /// The node type which idendtifies this node as a collection, container, or spec type node. 
+    /// The node type which identifies this node as a collection, container, or spec type node. 
     /// </summary>
     [JsonInclude]
     [JsonConverter(typeof(SmartEnumNameConverter<NodeType, int>))]
@@ -82,7 +82,7 @@ public class Node : IEquatable<Node>
     public Spec Spec { get; private set; } = new();
 
     /// <summary>
-    /// The depth or level of this node the tree heirarchy.
+    /// The depth or level of this node the tree hierarchy.
     /// </summary>
     [JsonIgnore]
     public int Depth => GetDepth();
@@ -113,7 +113,7 @@ public class Node : IEquatable<Node>
     /// </summary>
     /// <param name="name">The name of the node (optional). If not provided, the default name will be "New Container".</param>
     /// <returns>The newly created collection node.</returns>
-    public static Node NewCollection(string? name = default)
+    public static Node NewCollection(string? name = null)
     {
         var node = new Node
         {
@@ -129,7 +129,7 @@ public class Node : IEquatable<Node>
     /// </summary>
     /// <param name="name">The name of the node (optional). If not provided, the default name will be "New Container".</param>
     /// <returns>The newly created container node.</returns>
-    public static Node NewContainer(string? name = default)
+    public static Node NewContainer(string? name = null)
     {
         var node = new Node
         {
@@ -146,7 +146,7 @@ public class Node : IEquatable<Node>
     /// <param name="name">The name of the node (optional). If not provided, the default name will be "New Spec".</param>
     /// <param name="config">The optional spec config to apply to the <see cref="Spec"/> property upon creation.</param>
     /// <returns>The newly created <see cref="Node"/> instance.</returns>
-    public static Node NewSpec(string? name = default, Action<Spec>? config = default)
+    public static Node NewSpec(string? name = null, Action<Spec>? config = null)
     {
         var node = new Node
         {
@@ -166,7 +166,7 @@ public class Node : IEquatable<Node>
     /// <param name="name">The name of the container node (optional). If not provided, the default name will be "New Container".</param>
     /// <returns>The newly added container node.</returns>
     /// <exception cref="InvalidOperationException">Thrown when trying to add a folder to a container node.</exception>
-    public Node AddContainer(string? name = default)
+    public Node AddContainer(string? name = null)
     {
         if (Type == NodeType.Spec)
             throw new InvalidOperationException("Can not add a container to a spec node.");
@@ -191,7 +191,7 @@ public class Node : IEquatable<Node>
     /// <param name="config"></param>
     /// <returns>The newly added specification node.</returns>
     /// <exception cref="InvalidOperationException">Thrown when this node is a spec type node.</exception>
-    public Node AddSpec(string? name = default, Action<Spec>? config = default)
+    public Node AddSpec(string? name = null, Action<Spec>? config = null)
     {
         if (Type == NodeType.Spec)
             throw new InvalidOperationException("Can not add a spec to another spec node.");
@@ -243,7 +243,7 @@ public class Node : IEquatable<Node>
         var result = _nodes.Remove(node);
         if (!result) return;
 
-        node.Parent = default;
+        node.Parent = null;
         node.ParentId = Guid.Empty;
     }
 
@@ -259,7 +259,7 @@ public class Node : IEquatable<Node>
     {
         foreach (var node in _nodes)
         {
-            node.Parent = default;
+            node.Parent = null;
             node.ParentId = Guid.Empty;
         }
 
@@ -293,7 +293,7 @@ public class Node : IEquatable<Node>
     /// The new node will not have a parent node set. It's up to the user to add the duplicate where needed.
     /// </summary>
     /// <returns>A duplicate of the current node.</returns>
-    public Node Duplicate(string? name = default)
+    public Node Duplicate(string? name = null)
     {
         var duplicate = new Node
         {
@@ -384,7 +384,7 @@ public class Node : IEquatable<Node>
     }
 
     /// <summary>
-    /// Gets all descendant nodes of this node, inclusing this node itself.
+    /// Gets all descendant nodes of this node, including this node itself.
     /// </summary>
     /// <returns>A collection of node that are immediate and/or nested children of this node as well as this node itself.</returns>
     public IEnumerable<Node> DescendantsAndSelf()
@@ -449,14 +449,14 @@ public class Node : IEquatable<Node>
         ArgumentNullException.ThrowIfNull(source);
 
         //At this point we need the actual file contents.
-        var content = source.Open();
+        var content = source.OpenAsync().GetAwaiter().GetResult();
 
         //Resets the verification states for all nodes (this and descendants)
         PrepareForRun(content, callback);
 
         //Run this and all descendant nodes against the provided source content.
         RunNode(content, callback);
-        
+
         //Return the aggregate verification for all nodes.
         return Verification;
     }
@@ -517,11 +517,7 @@ public class Node : IEquatable<Node>
             total++;
         }
 
-        foreach (var node in _nodes)
-        {
-            total += node.TotalBy(state);
-        }
-
+        total += _nodes.Sum(n => n.TotalBy(state));
         return total;
     }
 
@@ -547,7 +543,7 @@ public class Node : IEquatable<Node>
     #region Internals
 
     /// <summary>
-    /// Gets the depth or level of the node in the tree heirarchy.
+    /// Gets the depth or level of the node in the tree hierarchy.
     /// </summary>
     private int GetDepth()
     {
@@ -609,10 +605,10 @@ public class Node : IEquatable<Node>
         if (Type == NodeType.Spec)
         {
             var stopwatch = Stopwatch.StartNew();
-            var evals = await Spec.RunAsync(content, token);
+            var results = await Spec.RunAsync(content, token);
             stopwatch.Stop();
 
-            Verification.MarkComplete(evals, stopwatch.ElapsedMilliseconds, callback);
+            Verification.MarkComplete(results, stopwatch.ElapsedMilliseconds, callback);
             return;
         }
 
@@ -621,7 +617,7 @@ public class Node : IEquatable<Node>
             token.ThrowIfCancellationRequested();
             await node.RunNodeAsync(content, callback, token);
         }
-        
+
         Verification.MarkComplete(_nodes.Select(n => n.Verification).ToArray(), callback);
     }
 
@@ -638,10 +634,10 @@ public class Node : IEquatable<Node>
         if (Type == NodeType.Spec)
         {
             var stopwatch = Stopwatch.StartNew();
-            var evals = Spec.Run(content);
+            var results = Spec.Run(content);
             stopwatch.Stop();
 
-            Verification.MarkComplete(evals, stopwatch.ElapsedMilliseconds, callback);
+            Verification.MarkComplete(results, stopwatch.ElapsedMilliseconds, callback);
             return;
         }
 
@@ -649,7 +645,7 @@ public class Node : IEquatable<Node>
         {
             node.RunNode(content, callback);
         }
-        
+
         Verification.MarkComplete(_nodes.Select(n => n.Verification).ToArray(), callback);
     }
 

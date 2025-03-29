@@ -10,7 +10,7 @@ using Task = L5Sharp.Core.Task;
 namespace AutoSpex.Engine;
 
 /// <summary>
-/// A enumeration of all usable Logix program element in which we can write specifications for. This smart enum class
+/// An enumeration of all usable Logix program element in which we can write specifications for. This smart enum class
 /// add functionality needed to this application to navigate the property graphic of the logix elements and components.
 /// It also allows the ability to define some custom properties which expose getters to other data on the object as a property
 /// which can be selected for various criteria. These types are persisted and deserialized by name using the
@@ -66,12 +66,7 @@ public abstract class Element : SmartEnum<Element, string>
     /// </summary>
     public static IEnumerable<Element> Selectable => List.Where(e => e.IsComponent || e == Rung);
 
-    /// <summary>
-    /// A default element instance that just matches a generic object type and has no properties.
-    /// </summary>
     public static readonly Element Default = new DefaultElement();
-
-    //ComponentTypes
     public static readonly Element Controller = new ControllerElement();
     public static readonly Element DataType = new DataTypeElement();
     public static readonly Element AddOnInstruction = new AddOnInstructionElement();
@@ -80,26 +75,10 @@ public abstract class Element : SmartEnum<Element, string>
     public static readonly Element Program = new ProgramElement();
     public static readonly Element Routine = new RoutineElement();
     public static readonly Element Task = new TaskElement();
-    public static readonly Element Trend = new TrendElement();
-
-    public static readonly Element WatchList = new WatchListElement();
-
-    //ElementTypes
-    public static readonly Element Block = new BlockElement();
-    public static readonly Element Communications = new CommunicationsElement();
-    public static readonly Element Connection = new ConnectionElement();
-    public static readonly Element DataTypeMember = new DataTypeMemberElement();
-    public static readonly Element Line = new LineElement();
-    public static readonly Element Parameter = new ParameterElement();
-    public static readonly Element Pen = new PenElement();
-    public static readonly Element ParameterConnection = new ParameterConnectionElement();
-    public static readonly Element Port = new PortElement();
-    public static readonly Element RedundancyInfo = new RedundancyInfoElement();
     public static readonly Element Rung = new RungElement();
-    public static readonly Element SafetyInfo = new SafetyInfoElement();
-    public static readonly Element Security = new SecurityElement();
+    public static readonly Element Line = new LineElement();
     public static readonly Element Sheet = new SheetElement();
-    public static readonly Element WatchTag = new WatchTagElement();
+    public static readonly Element Block = new BlockElement();
 
     /// <summary>
     /// A <see cref="Element"/> that represents a dynamic object. This corresponds to the <see cref="ExpandoObject"/>
@@ -107,7 +86,7 @@ public abstract class Element : SmartEnum<Element, string>
     /// </summary>
     /// <param name="expando">The <see cref="ExpandoObject"/> instance to use for registering custom properties.</param>
     /// <returns></returns>
-    public static Element Dynamic(ExpandoObject? expando = default)
+    public static Element Dynamic(ExpandoObject? expando = null)
     {
         return new DynamicElement(expando);
     }
@@ -115,7 +94,7 @@ public abstract class Element : SmartEnum<Element, string>
     /// <summary>
     /// Creates an instance of <see cref="Element"/> that represents a dynamic object with the provided origin and selections.
     /// </summary>
-    /// <param name="origin">The origin proeprty type from which the selections are made.</param>
+    /// <param name="origin">The origin property type from which the selections are made.</param>
     /// <param name="selections">The collection or selections that make up the properties of the dynamic object.</param>
     /// <returns>An instance of <see cref="Element"/> representing a dynamic object with custom selection properties.</returns>
     public static Element Dynamic(Property origin, IEnumerable<Selection> selections)
@@ -169,7 +148,7 @@ public abstract class Element : SmartEnum<Element, string>
     private List<Property> GetProperties()
     {
         var properties = new List<Property>();
-        
+
         //Get or cache static properties for this type.
         //Since they should not change at runtime we can avoid reusing reflection every time.
         //Only perform this step for non-dynamic type elements.
@@ -182,12 +161,12 @@ public abstract class Element : SmartEnum<Element, string>
 
             PropertyCache.Value.TryAdd(Type, known);
         }
-        
+
         if (PropertyCache.Value.TryGetValue(Type, out var cached))
         {
             properties.AddRange(cached);
         }
-        
+
         var customProperties = _customProperties.ToList();
         properties.AddRange(customProperties);
         return properties;
@@ -201,7 +180,7 @@ public abstract class Element : SmartEnum<Element, string>
     /// Registers a custom property for the element type using the provided property name and getter function.
     /// </summary>
     /// <param name="name">The name of the custom property.</param>
-    /// <param name="getter">A function for retrieving the value of the property given a input object.</param>
+    /// <param name="getter">A function for retrieving the value of the property given an input object.</param>
     /// <typeparam name="T">The property return type.</typeparam>
     /// <remarks>This allows me to turn methods into properties so that they are discoverable from the UI. This requires
     /// that the method takes no arguments, but is a convenient way to provide some additional properties without changing the base API.</remarks>
@@ -220,10 +199,10 @@ public abstract class Element : SmartEnum<Element, string>
 
     private class DynamicElement : Element
     {
-        public DynamicElement(ExpandoObject? obj = default) : base("Dynamic", typeof(ExpandoObject))
+        public DynamicElement(ExpandoObject? obj = null) : base("Dynamic", typeof(ExpandoObject))
         {
             if (obj is null) return;
-            var dictionary = (IDictionary<string, object?>)obj;
+            IDictionary<string, object?> dictionary = obj;
 
             foreach (var item in dictionary)
             {
@@ -334,92 +313,6 @@ public abstract class Element : SmartEnum<Element, string>
         }
     }
 
-    private class TrendElement : Element
-    {
-        public TrendElement() : base(typeof(Trend))
-        {
-            Register<Controller>("Controller", x => (x as Trend)?.L5X?.Controller);
-        }
-    }
-
-    private class WatchListElement : Element
-    {
-        public WatchListElement() : base(typeof(WatchList))
-        {
-            Register<Controller>("Controller", x => (x as WatchList)?.L5X?.Controller);
-        }
-    }
-
-    private class BlockElement : Element
-    {
-        public BlockElement() : base(typeof(Block))
-        {
-        }
-    }
-
-    private class CommunicationsElement : Element
-    {
-        public CommunicationsElement() : base(typeof(Communications))
-        {
-        }
-    }
-
-    private class ConnectionElement : Element
-    {
-        public ConnectionElement() : base(typeof(Connection))
-        {
-        }
-    }
-
-    private class DataTypeMemberElement : Element
-    {
-        public DataTypeMemberElement() : base(typeof(DataTypeMember))
-        {
-        }
-    }
-
-    private class LineElement : Element
-    {
-        public LineElement() : base(typeof(Line))
-        {
-        }
-    }
-
-    private class ParameterElement : Element
-    {
-        public ParameterElement() : base(typeof(Parameter))
-        {
-        }
-    }
-
-    private class ParameterConnectionElement : Element
-    {
-        public ParameterConnectionElement() : base(typeof(ParameterConnection))
-        {
-        }
-    }
-
-    private class PenElement : Element
-    {
-        public PenElement() : base(typeof(Pen))
-        {
-        }
-    }
-
-    private class PortElement : Element
-    {
-        public PortElement() : base(typeof(Port))
-        {
-        }
-    }
-
-    private class RedundancyInfoElement : Element
-    {
-        public RedundancyInfoElement() : base(typeof(RedundancyInfo))
-        {
-        }
-    }
-
     private class RungElement : Element
     {
         public RungElement() : base(typeof(Rung))
@@ -430,16 +323,9 @@ public abstract class Element : SmartEnum<Element, string>
         }
     }
 
-    private class SafetyInfoElement : Element
+    private class LineElement : Element
     {
-        public SafetyInfoElement() : base(typeof(SafetyInfo))
-        {
-        }
-    }
-
-    private class SecurityElement : Element
-    {
-        public SecurityElement() : base(typeof(Security))
+        public LineElement() : base(typeof(Line))
         {
         }
     }
@@ -451,9 +337,9 @@ public abstract class Element : SmartEnum<Element, string>
         }
     }
 
-    private class WatchTagElement : Element
+    private class BlockElement : Element
     {
-        public WatchTagElement() : base(typeof(WatchTag))
+        public BlockElement() : base(typeof(Block))
         {
         }
     }

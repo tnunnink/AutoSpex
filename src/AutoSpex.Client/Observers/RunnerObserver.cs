@@ -6,9 +6,9 @@ using JetBrains.Annotations;
 namespace AutoSpex.Client.Observers;
 
 [UsedImplicitly]
-public class RunnerObserver(RunConfig model) : Observer<RunConfig>(model)
+public class RunnerObserver(RunContext model) : Observer<RunContext>(model)
 {
-    public override Guid Id => Model.ConfigId;
+    public override Guid Id => Model.RunId;
     public override string Name => Model.Name;
 
     /// <summary>

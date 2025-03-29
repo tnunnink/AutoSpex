@@ -3,7 +3,7 @@
 namespace AutoSpex.Engine;
 
 /// <summary>
-/// A type that allows us to dynamically specify how to retreive a value at runtime so that we don't have to statically
+/// A type that allows us to dynamically specify how to retrieve a value at runtime so that we don't have to statically
 /// configure a criterion argument.
 /// </summary>
 public class Reference

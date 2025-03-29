@@ -43,7 +43,12 @@ public class Repo
     /// </summary>
     public static Repo Cache => new() { RepoId = Guid.Empty, Location = CacheLocation, Name = CacheName };
 
-
+    /// <summary>
+    /// Searches for and retrieves all sources in the repository that match predefined searchable file extensions.
+    /// </summary>
+    /// <returns>
+    /// A collection of Source objects representing the found files, or an empty collection if no matching files are located.
+    /// </returns>
     public IEnumerable<Source> FindSources()
     {
         if (!Directory.Exists(Location)) yield break;

@@ -124,7 +124,7 @@ public partial class RunnerPageModel : PageViewModel, IRecipient<RunnerObserver.
     /// Command to execute this run by retrieving, resolving, and evaluating all configured spec/source pairs and
     /// producing new outcome results.
     /// </summary>
-    private async Task ExecuteRunner(RunConfig runConfig)
+    private async Task ExecuteRunner(RunContext runContext)
     {
         _cancellation = new CancellationTokenSource();
 

@@ -19,7 +19,7 @@ public class Runner(IMessenger messenger, IMediator mediator, Notifier notifier)
     public IEnumerable<ResultObserver> Results => _results;
     public ResultState Result { get; private set; } = ResultState.None;
 
-    public async Task Run(RunConfig config, CancellationToken token)
+    public async Task Run(RunContext config, CancellationToken token)
     {
         if (Result == ResultState.Pending)
         {

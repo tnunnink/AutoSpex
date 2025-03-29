@@ -181,7 +181,7 @@ public partial class NodeObserver : Observer<Node>,
     [RelayCommand]
     private void Run()
     {
-        var config = new RunConfig(Model);
+        var config = new RunContext(Model);
 
         //todo where are we getting the source...we probably need to make run config editable first.
 

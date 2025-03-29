@@ -89,40 +89,40 @@ public class SpecTests
     public async Task RunAsync_Default_ShouldReturnNoneDueToNoVerifications()
     {
         var spec = new Spec();
-        var content = L5X.Load(Known.Test);
+        var content = await L5X.LoadAsync(Known.Test);
 
-        var evals = await spec.RunAsync(content);
-        
-        evals.Should().BeEmpty();
+        var evaluations = await spec.RunAsync(content);
+
+        evaluations.Should().BeEmpty();
     }
 
     [Test]
     public async Task RunAsync_ValidSpec_ShouldReturnSuccess()
     {
         var spec = new Spec();
-        var content = L5X.Load(Known.Test);
+        var content = await L5X.LoadAsync(Known.Test);
 
         spec.Get(Element.Tag)
             .Where("Name", Operation.Containing, "Test")
             .Validate("DataType", Negation.Not, Operation.Void);
 
-        var evals = await spec.RunAsync(content);
-        
-        evals.Should().AllSatisfy(e => e.Result.Should().Be(ResultState.Passed));
-        evals.Should().NotBeEmpty();
+        var evaluations = await spec.RunAsync(content);
+
+        evaluations.Should().AllSatisfy(e => e.Result.Should().Be(ResultState.Passed));
+        evaluations.Should().NotBeEmpty();
     }
 
     [Test]
     public async Task RunAsync_InhibitedIsFalse_ShouldReturnSuccess()
     {
         var spec = new Spec();
-        var content = L5X.Load(Known.Test);
+        var content = await L5X.LoadAsync(Known.Test);
         spec.Get(Element.Module).Validate("Inhibited", Operation.EqualTo, false);
 
-        var evals = await spec.RunAsync(content);
-        
-        evals.Should().AllSatisfy(e => e.Result.Should().Be(ResultState.Passed));
-        evals.Should().NotBeEmpty();
+        var evaluations = await spec.RunAsync(content);
+
+        evaluations.Should().AllSatisfy(e => e.Result.Should().Be(ResultState.Passed));
+        evaluations.Should().NotBeEmpty();
     }
 
     [Test]
@@ -215,9 +215,9 @@ public class SpecTests
 
     [DotMemoryUnit(FailIfRunWithoutSupport = false)]
     [Test]
-    public void CheckForMemeoryLeaksAgainstSpec()
+    public void CheckForMemoryLeaksAgainstSpec()
     {
-        var isolator = new System.Action(() =>
+        var isolator = new Action(() =>
         {
             var content = L5X.Load(Known.Test);
             var spec = Spec.Configure(c =>
@@ -226,8 +226,8 @@ public class SpecTests
                 c.Validate("Inhibited", Negation.Is, Operation.EqualTo, false);
             });
 
-            var evals = spec.Run(content);
-            evals.Should().AllSatisfy(e => e.Result.Should().Be(ResultState.Passed));
+            var evaluations = spec.Run(content);
+            evaluations.Should().AllSatisfy(e => e.Result.Should().Be(ResultState.Passed));
         });
 
         isolator();

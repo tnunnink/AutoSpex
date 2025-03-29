@@ -25,7 +25,27 @@ public class SourceTests
     }
 
     [Test]
-    public async Task OpenAsync_TestFile_ShouldNotBeNull()
+    public async Task OpenAsync_MarkupFile_ShouldNotBeNull()
+    {
+        var source = Source.Create(Known.Test);
+
+        var content = await source.OpenAsync();
+
+        content.Should().NotBeNull();
+    }
+    
+    [Test]
+    public async Task OpenAsync_ArchiveFile_ShouldNotBeNull()
+    {
+        var source = Source.Create(Known.Archive);
+
+        var content = await source.OpenAsync();
+
+        content.Should().NotBeNull();
+    }
+
+    [Test]
+    public async Task OpenAsync_CompressedFile_ShouldNotBeNull()
     {
         var source = Source.Create(Known.Test);
 

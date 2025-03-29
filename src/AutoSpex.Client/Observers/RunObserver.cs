@@ -4,10 +4,10 @@ using AutoSpex.Engine;
 
 namespace AutoSpex.Client.Observers;
 
-public class RunObserver : Observer<Run>
+public class RunObserver : Observer<RunResult>
 {
     /// <inheritdoc/>
-    public RunObserver(Run model) : base(model)
+    public RunObserver(RunResult model) : base(model)
     {
     }
     

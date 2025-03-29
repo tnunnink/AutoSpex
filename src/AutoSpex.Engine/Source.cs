@@ -53,7 +53,13 @@ public class Source
     /// </summary>
     public long Size { get; }
 
-
+    /// <summary>
+    /// Creates a new instance of the Source class using the specified file location.
+    /// </summary>
+    /// <param name="location">The file path to the source file for which the Source instance will be created.</param>
+    /// <returns>A new instance of the Source class representing the specified file.</returns>
+    /// <exception cref="ArgumentException">Thrown if the location is null, empty, or the file does not exist at the specified location.</exception>
+    /// <exception cref="NotSupportedException">Thrown if the file extension is not supported.</exception>
     public static Source Create(string location)
     {
         if (string.IsNullOrEmpty(location))
@@ -62,23 +68,10 @@ public class Source
         if (!File.Exists(location))
             throw new ArgumentException($"No file exists at provided location '{location}'");
 
-        if (!SupportedExtensions.Contains(Path.GetExtension(location)))
+        if (!SupportedExtensions.Contains(Path.GetExtension(location).ToUpper()))
             throw new NotSupportedException("The specified file extension is not supported.");
 
         return new Source(new FileInfo(location));
-    }
-
-    /// <summary>
-    /// Opens the source file and loads its content as an L5X object.
-    /// </summary>
-    /// <returns>The content of the source file as an L5X object.</returns>
-    /// <exception cref="InvalidOperationException">Thrown when the source file has not been properly staged.</exception>
-    public L5X Open()
-    {
-        if (!File.Exists(Location))
-            throw new InvalidOperationException($"Source no longer exists at '{Location}'.");
-
-        return Type.Open(Location);
     }
 
     /// <summary>
