@@ -14,8 +14,8 @@ public partial class ResultObserver : Observer<Node>, IRecipient<ResultObserver.
     public ResultObserver(Node model) : base(model)
     {
         Evaluations = new ObserverCollection<Evaluation, EvaluationObserver>(
-            refresh: () => Model.Verification.Evaluations.Select(x => new EvaluationObserver(x)).ToList(),
-            count: () => Model.Verification.Evaluations.Count
+            refresh: () => Model.Result.Evaluations.Select(x => new EvaluationObserver(x)).ToList(),
+            count: () => Model.Result.Evaluations.Count
         );
 
         Nodes = new ObserverCollection<Node, ResultObserver>(
@@ -30,9 +30,9 @@ public partial class ResultObserver : Observer<Node>, IRecipient<ResultObserver.
     protected override bool PromptForDeletion => false;
     public override Guid Id => Model.NodeId;
     public override string Name => Model.Name;
-    public string SourceName => $"[{Model.Verification.Source.Name}]";
-    public ResultState Result => Model.Verification.Result;
-    public string Duration => $"{Model.Verification.Duration} ms";
+    public string SourceName => $"[{Model.Result.Source.Name}]";
+    public ResultState Result => Model.Result.State;
+    public string Duration => $"{Model.Result.Duration} ms";
     public ObserverCollection<Evaluation, EvaluationObserver> Evaluations { get; }
     public ObserverCollection<Node, ResultObserver> Nodes { get; }
 
@@ -83,7 +83,7 @@ public partial class ResultObserver : Observer<Node>, IRecipient<ResultObserver.
     /// </summary>
     public void Receive(ResultChange message)
     {
-        if (message.Verification.VerificationId != Model.Verification.VerificationId) return;
+        if (message.Verification.VerificationId != Model.Result.VerificationId) return;
         Evaluations.Refresh();
         OnPropertyChanged(string.Empty);
     }

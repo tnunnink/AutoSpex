@@ -50,16 +50,9 @@ public partial class NavigationPageModel : PageViewModel
     /// Command to quickly create a new source and open the details for in the detail view.
     /// </summary>
     [RelayCommand]
-    private async Task AddSource()
+    private Task AddSource()
     {
-        var source = await Prompter.Show<SourceObserver?>(() => new NewSourcePageModel());
-        if (source is null) return;
-
-        var result = await Mediator.Send(new CreateSource(source));
-        if (Notifier.ShowIfFailed(result, "Failed to create new source. See notifications for details.")) return;
-
-        var observer = new SourceObserver(source);
-        Messenger.Send(new Observer.Created<SourceObserver>(observer));
+        throw new NotImplementedException();
     }
 
     /// <summary>

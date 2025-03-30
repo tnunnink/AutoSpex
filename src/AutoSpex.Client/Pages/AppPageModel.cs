@@ -1,5 +1,4 @@
 using System;
-using AutoSpex.Client.Observers;
 using AutoSpex.Client.Services;
 using AutoSpex.Client.Shared;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -10,7 +9,7 @@ using JetBrains.Annotations;
 namespace AutoSpex.Client.Pages;
 
 [UsedImplicitly]
-public partial class AppPageModel : PageViewModel, IRecipient<NavigationRequest>, IRecipient<RunnerObserver.Run>
+public partial class AppPageModel : PageViewModel, IRecipient<NavigationRequest>
 {
     [ObservableProperty] private NavigationPageModel? _navigationPage;
 
@@ -108,11 +107,11 @@ public partial class AppPageModel : PageViewModel, IRecipient<NavigationRequest>
         }
     }
 
-    /// <summary>
+    /*/// <summary>
     /// When a node is triggered to run from somewhere, open the runner drawer automatically to show the process.
     /// </summary>
     public void Receive(RunnerObserver.Run message)
     {
         IsRunnerDrawerOpen = true;
-    }
+    }*/
 }

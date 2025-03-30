@@ -1,48 +1,41 @@
-using System.Diagnostics;
 using NLog;
 
 namespace AutoSpex.Engine;
 
 public static class Runner
 {
-    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-    private static readonly SourceCache Cache = SourceCache.Default;
-
-    public static async Task<RunResult> Run(RunContext config, CancellationToken token = default)
+    /// <summary>
+    /// Executes the provided run instance and returns the result state.
+    /// </summary>
+    /// <param name="run">The run instance to be executed.</param>
+    /// <param name="callback">An optional callback invoked when a node changes state.</param>
+    /// <param name="token">An optional cancellation token to cancel the operation.</param>
+    /// <returns>A task that represents the asynchronous operation and contains the resulting state of the run.</returns>
+    public static async Task<ResultState> Run(Run run, Action<Verification>? callback = null,
+        CancellationToken token = default)
     {
-        if (config == null) throw new ArgumentNullException(nameof(config));
-        if (config.Node == null)
-            throw new ArgumentException("The run configuration must specify a node to run.", nameof(config));
+        await run.RunAll(callback, token);
+        return run.State;
+    }
 
-        Logger.Info($"Starting run for configuration '{config.Name}' against {config.Sources.Count} sources.");
-        var stopwatch = Stopwatch.StartNew();
-
+    /// <summary>
+    /// Executes an array of runs in parallel and returns the aggregated result state.
+    /// </summary>
+    /// <param name="runs">The array of runs to be executed.</param>
+    /// <param name="callback">An optional callback invoked when a verification changes state.</param>
+    /// <param name="token">An optional cancellation token to cancel the operation.</param>
+    /// <returns>A task that represents the asynchronous operation and contains the final aggregated result state of the runs.</returns>
+    public static async Task<ResultState> Run(Run[] runs, Action<Verification>? callback = null,
+        CancellationToken token = default)
+    {
         var options = new ParallelOptions
         {
             MaxDegreeOfParallelism = Environment.ProcessorCount,
             CancellationToken = token
         };
 
-        await Parallel.ForEachAsync(config.Sources, options, async (source, cancel) =>
-        {
-            try
-            {
-                Logger.Info($"Loading source '{source.Name}'.");
-                var cached = await Cache.GetOrAdd(source, cancel);
-                Logger.Info($"Running source '{source.Name}' against node '{config.Node.Name}'.");
-                var verification = await config.Node.RunAsync(cached, token: cancel);
-                Logger.Info($"Source '{source.Name}' completed with result: {verification.Result}.");
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex, $"An error occurred while processing source '{source.Name}'.");
-            }
-        });
+        await Parallel.ForEachAsync(runs, options, async (run, cancel) => { await run.RunAll(callback, cancel); });
 
-        stopwatch.Stop();
-
-        var run = new RunResult(config.Node);
-        Logger.Info($"Run completed in {stopwatch.Elapsed} with result: {run.Result}.");
-        return run;
+        return ResultState.MaxOrDefault(runs.Select(r => r.State).ToArray());
     }
 }

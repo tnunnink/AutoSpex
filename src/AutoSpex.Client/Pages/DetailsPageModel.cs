@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoSpex.Client.Observers;
@@ -66,16 +67,9 @@ public partial class DetailsPageModel : PageViewModel, IRecipient<NavigationRequ
     /// Command to quickly create a new source and open the details for in the detail view.
     /// </summary>
     [RelayCommand]
-    private async Task NewSource()
+    private Task NewSource()
     {
-        var source = await Prompter.Show<SourceObserver?>(() => new NewSourcePageModel());
-        if (source is null) return;
-
-        var result = await Mediator.Send(new CreateSource(source));
-        if (Notifier.ShowIfFailed(result, "Failed to create new source. See notifications for details.")) return;
-
-        var observer = new SourceObserver(source);
-        Messenger.Send(new Observer.Created<SourceObserver>(observer));
+        throw new NotImplementedException();
     }
 
     /// <summary>

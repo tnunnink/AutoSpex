@@ -424,14 +424,14 @@ public class NodeTests
             s.Validate("DataType", Operation.EqualTo, "SimpleType");
         });
 
-        var verification = await node.RunAsync(source);
+        var result = await node.RunAsync(source);
 
-        verification.Node.NodeId.Should().Be(node.NodeId);
-        verification.Node.Name.Should().Be(node.Name);
-        verification.Node.Type.Should().Be(node.Type);
-        verification.Source.Name.Should().Be(source.Name);
-        verification.Result.Should().Be(ResultState.Passed);
-        verification.Evaluations.Should().NotBeEmpty();
+        result.Node.NodeId.Should().Be(node.NodeId);
+        result.Node.Name.Should().Be(node.Name);
+        result.Node.Type.Should().Be(node.Type);
+        result.Source.Name.Should().Be("TestController");
+        result.State.Should().Be(ResultState.Passed);
+        result.Evaluations.Should().NotBeEmpty();
     }
 
     [Test]
@@ -448,7 +448,7 @@ public class NodeTests
 
         var verification = await container.RunAsync(source);
 
-        verification.Result.Should().Be(ResultState.Passed);
+        verification.State.Should().Be(ResultState.Passed);
         verification.Evaluations.Should().BeEmpty();
     }
 
@@ -479,7 +479,7 @@ public class NodeTests
 
         var verification = await container.RunAsync(source);
 
-        verification.Result.Should().Be(ResultState.Passed);
+        verification.State.Should().Be(ResultState.Passed);
         verification.Evaluations.Should().BeEmpty();
     }
 

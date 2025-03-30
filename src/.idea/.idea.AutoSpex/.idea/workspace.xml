@@ -7,7 +7,51 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a07f1d3f-6f03-47ec-a0a7-cdecae08accf" name="Changes" comment="" />
+    <list default="true" id="a07f1d3f-6f03-47ec-a0a7-cdecae08accf" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/AutoSpex.Engine/Function.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/AutoSpex.Persistence/Migrations/Migration20250326.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/AutoSpex.Persistence/Migrations/Migration20250327.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../tests/AutoSpex.Engine.Tests/RunTests.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../tests/AutoSpex.Engine.Tests/RunnerTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.AutoSpex/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AutoSpex/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Components/Runs/ResultStatus.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Components/Runs/ResultStatus.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Observers/NodeObserver.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Observers/NodeObserver.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Observers/QueryObserver.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Observers/QueryObserver.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Observers/ResultObserver.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Observers/ResultObserver.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Observers/RunObserver.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Observers/RunObserver.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Observers/RunnerObserver.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Observers/SpecObserver.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Observers/SpecObserver.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Observers/VerifyObserver.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Observers/VerifyObserver.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/AppPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/AppPageModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Details/NodeDetailPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Details/NodeDetailPageModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/DetailsPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/DetailsPageModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Dialogs/NewSourcePage.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Dialogs/NewRepoPage.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Dialogs/NewSourcePage.axaml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Dialogs/NewRepoPage.axaml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Dialogs/NewSourcePageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Dialogs/NewRepoPageModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/NavigationPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/NavigationPageModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/RunnerPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/RunnerPageModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Sections/SourceSelectorPage.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Sections/SourceSelectorPage.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Tabs/ContentPage.axaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Tabs/ContentPage.axaml.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Tabs/ContentPageModel.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Tabs/QueryPage.axaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Tabs/QueryPage.axaml.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Tabs/QueryPageModel.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Services/Runner.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Services/Runner.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Shared/DialogExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Shared/DialogExtensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Engine/Node.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Engine/Node.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Engine/Operation.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Engine/Operation.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Engine/RunContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Engine/Run.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Engine/RunResult.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Engine/Runner.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Engine/Runner.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Engine/SourceInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Engine/SourceInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Engine/Verification.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Engine/Verification.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Persistence/Migrations/Migration20250325.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Persistence/Migrations/Migration20250325.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Persistence/Requests/Repos/ListRepos.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Persistence/Requests/Repos/ListRepos.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../tests/AutoSpex.Engine.Tests/Known.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../tests/AutoSpex.Engine.Tests/Known.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../tests/AutoSpex.Engine.Tests/NodeTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../tests/AutoSpex.Engine.Tests/NodeTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../tests/AutoSpex.Engine.Tests/ProofTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../tests/AutoSpex.Engine.Tests/ProofTests.cs" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -45,54 +89,6 @@
     <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/930117f062144f539a280420337fa0cf1162e0/b1/8733b7d4/ThemeResourceExtension.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/dc6539f9f707d8aa2d7385dd5d6b65cf749fe1b2e92ce2cd2ea4fe29aa691/DateTimeFormat.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
@@ -114,6 +110,8 @@
     "5c12c6cb-16d5-4932-ad8f-e7cf53b8cabd.executor": "Debug",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
+    "cb184d9d-96fa-4c02-aa8f-bd985cca87c7.executor": "Debug",
+    "git-widget-placeholder": "release",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -123,7 +121,7 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager" selected=".NET Project.AutoSpex.Client">
+  <component name="RunManager">
     <configuration name="AutoSpex.Client" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="" />
       <option name="PROGRAM_PARAMETERS" value="" />
@@ -160,6 +158,7 @@
       <workItem from="1740710686919" duration="1574000" />
       <workItem from="1740767420874" duration="26166000" />
       <workItem from="1743174352567" duration="17060000" />
+      <workItem from="1743275033856" duration="15155000" />
     </task>
     <task id="LOCAL-00001" summary="Removed Actions. Removed SourceDetailPage. Updated packages in client. Moves all requests in persistence layer.">
       <option name="closed" value="true" />

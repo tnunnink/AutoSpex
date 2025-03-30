@@ -5,7 +5,7 @@ public static class Known
     public static readonly string Test = Path.Combine(Path.GetDirectoryName(typeof(Known).Assembly.Location)!,
         "Test.xml");
 
-    public static readonly string Example = Path.Combine(@"C:\Users\tnunn\Documents\L5X\Example.L5X");
+    public static readonly string Example = Path.Combine(@"C:\Users\tnunnink\Documents\Rockwell\Example.L5X");
 
     public static readonly string Archive = Path.Combine(Path.GetDirectoryName(typeof(Known).Assembly.Location)!,
         "Test.ACD");

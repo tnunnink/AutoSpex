@@ -15,8 +15,8 @@ public record SourceInfo
         Name = content.Info.TargetName!;
         Type = content.Info.TargetType!;
         Revision = content.Info.SoftwareRevision!;
-        Exported = content.Info.ExportDate?.ToString()!;
-        User = content.Info.Owner!;
+        ExportedOn = content.Info.ExportDate?.ToString()!;
+        Owner = content.Info.Owner!;
     }
 
     /// <summary>
@@ -37,12 +37,12 @@ public record SourceInfo
     /// <summary>
     /// The date/time that the content was exported.
     /// </summary>
-    public string Exported { get; private init; } = string.Empty;
+    public string ExportedOn { get; private init; } = string.Empty;
 
     /// <summary>
     /// The name of the user that exported the content.
     /// </summary>
-    public string User { get; private init; } = string.Empty;
+    public string Owner { get; private init; } = string.Empty;
 
     /// <summary>
     /// Represents an empty instance of the SourceInfo class.

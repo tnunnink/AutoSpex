@@ -3,12 +3,10 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceInclude Source="EvaluationList.axaml" />
         <ResourceInclude Source="EvaluationListItem.axaml" />
-        <ResourceInclude Source="OutcomeListItem.axaml" />
-        <ResourceInclude Source="OutcomeStatus.axaml" />
+        <ResourceInclude Source="ResultFilters.axaml" />
         <ResourceInclude Source="ResultPill.axaml" />
         <ResourceInclude Source="ResultStateItem.axaml" />
-        <ResourceInclude Source="ResultStateText.axaml" />
-        <ResourceInclude Source="RunFilters.axaml" />
-        <ResourceInclude Source="RunListItem.axaml" />
+        <ResourceInclude Source="ResultStatus.axaml" />
+        <ResourceInclude Source="ResultTreeItem.axaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

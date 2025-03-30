@@ -6,22 +6,17 @@ using System.Threading.Tasks;
 using AutoSpex.Client.Observers;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
-using AutoSpex.Persistence;
-using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
 
 namespace AutoSpex.Client.Pages;
 
 [UsedImplicitly]
-public partial class RunnerPageModel : PageViewModel, IRecipient<RunnerObserver.Run>
+public partial class RunnerPageModel : PageViewModel
 {
     private readonly List<ResultObserver> _nodes = [];
     private CancellationTokenSource? _cancellation;
-    private int _total;
-    private int _ran;
 
     public RunnerPageModel()
     {
@@ -51,7 +46,6 @@ public partial class RunnerPageModel : PageViewModel, IRecipient<RunnerObserver.
     [ObservableProperty] private ResultState _filterState = ResultState.None;
 
     [ObservableProperty] private string? _runningSource;
-    public float Progress => _ran / (float)_total * 100;
 
 
     [RelayCommand(CanExecute = nameof(CanRun))]
@@ -88,7 +82,7 @@ public partial class RunnerPageModel : PageViewModel, IRecipient<RunnerObserver.
     /// </summary>
     private bool CanCancel() => _cancellation is not null && Result == ResultState.Pending;
 
-    /// <summary>
+    /*/// <summary>
     /// When we recieve a message to run a specific node, configure the runner and start the execution.
     /// </summary>
     public async void Receive(RunnerObserver.Run message)
@@ -103,7 +97,7 @@ public partial class RunnerPageModel : PageViewModel, IRecipient<RunnerObserver.
         }
 
         await ExecuteRunner(message.Runner.Model);
-    }
+    }*/
 
     /// <summary>
     /// Update the selected result ....
@@ -124,16 +118,12 @@ public partial class RunnerPageModel : PageViewModel, IRecipient<RunnerObserver.
     /// Command to execute this run by retrieving, resolving, and evaluating all configured spec/source pairs and
     /// producing new outcome results.
     /// </summary>
-    private async Task ExecuteRunner(RunContext runContext)
+    private async Task ExecuteRunner(Run run)
     {
         _cancellation = new CancellationTokenSource();
 
-        //Update UI to show progress start
-        ExecutionStarting();
-
         try
         {
-           
         }
         catch (OperationCanceledException)
         {
@@ -142,42 +132,5 @@ public partial class RunnerPageModel : PageViewModel, IRecipient<RunnerObserver.
 
         Result = ResultState.MaxOrDefault(Nodes.Select(r => r.Result).ToArray());
         OnPropertyChanged(string.Empty);
-    }
-
-    private void OnRunStarting(Source source)
-    {
-        Dispatcher.UIThread.Invoke(() =>
-        {
-            RunningSource = source.Name;
-            Nodes.Refresh();
-        });
-    }
-
-    /// <summary>
-    /// Sends a message that the provided node has completed running and its state is updated with the result.
-    /// </summary>
-    private void OnNodeStateChanged(Verification verification)
-    {
-        Messenger.Send(new ResultObserver.ResultChange(verification));
-
-        Dispatcher.UIThread.Invoke(() =>
-        {
-            _ran++;
-            OnPropertyChanged(nameof(Progress));
-        });
-    }
-
-    /// <summary>
-    /// Prepare the UI for the start of execution of the current runner.
-    /// </summary>
-    private void ExecutionStarting()
-    {
-        Dispatcher.UIThread.Invoke(() =>
-        {
-            Nodes.Clear();
-            Result = ResultState.Pending;
-            _ran = 0;
-            OnPropertyChanged(nameof(Progress));
-        });
     }
 }

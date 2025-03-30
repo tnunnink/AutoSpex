@@ -1,20 +1,15 @@
 ﻿using System;
-using System.Linq;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using CommunityToolkit.Mvvm.Messaging;
 
 namespace AutoSpex.Client.Observers;
 
-public class SpecObserver : Observer<Spec>,
-    IRecipient<Observer.Get<SpecObserver>>,
-    IRecipient<StepObserver.GetInputTo>,
-    IRecipient<PropertyInput.GetDataTo>,
-    IRecipient<ArgumentInput.SuggestionRequest>
+public class SpecObserver : Observer<Spec>, IRecipient<Observer.Get<SpecObserver>>, IRecipient<StepObserver.GetInputTo>
 {
     public SpecObserver(Spec model) : base(model)
     {
-        Query = new QueryObserver(Model.Query, Source);
+        Query = new QueryObserver(Model.Query);
         Verify = new VerifyObserver(Model.Verify);
 
         Track(Query);
@@ -24,12 +19,6 @@ public class SpecObserver : Observer<Spec>,
     public override Guid Id => Model.SpecId;
     public QueryObserver Query { get; }
     public VerifyObserver Verify { get; }
-
-    /// <summary>
-    /// The reference to the targeted source for the application. This is the source we need to find suggestions for
-    /// nested criterion objects of this spec observer.
-    /// </summary>
-    private SourceObserver? Source { get; }
 
     /// <summary>
     /// Handles the request to get the spec observer that passes the provied predicate. This allows child criteria
@@ -46,7 +35,7 @@ public class SpecObserver : Observer<Spec>,
     }
 
     /// <summary>
-    /// Responds to the request for determining the step input proeprty for this query observer.
+    /// Responds to the request for determining the step input property for this query observer.
     /// If this spec verify step is the requesting step then reply with the current configured return property of the query.
     /// </summary>
     public void Receive(StepObserver.GetInputTo message)
@@ -54,57 +43,6 @@ public class SpecObserver : Observer<Spec>,
         if (message.HasReceivedResponse) return;
         if (!Verify.Is(message.Step)) return;
         message.Reply(Query.Model.Returns);
-    }
-
-    /// <summary>
-    /// Responds to the request for data to the finaly verification step of this spec.
-    /// This is sent by a requesting <see cref="PropertyInput"/> observer.
-    /// This handler only responds for criterion it contains, and simply uses the current Query config to return.
-    /// </summary>
-    public void Receive(PropertyInput.GetDataTo message)
-    {
-        if (Source is null) return;
-        if (message.Observer is not PropertyInput input) return;
-        if (Verify.Criteria.All(c => c.Property != input)) return;
-
-        try
-        {
-            var data = Query.Model.Execute(Source.Model.Open()).ToList();
-            data.ForEach(message.Reply);
-        }
-        catch (Exception)
-        {
-            // Ignored because this is just optional.
-            // It's only to suggest possible values based on a known source content and current property type.
-            // If getting object value fails then it could be because the user configured the criterion incorrectly.
-        }
-    }
-
-    /// <summary>
-    /// Responds to an argument suggestion request for argument contained in verify criteria in this spec instance.
-    /// Since we may have an in-memory source context, we can use that to evaluate what are possible values that could
-    /// be input to the criterion.
-    /// </summary>
-    public void Receive(ArgumentInput.SuggestionRequest message)
-    {
-        if (Source is null) return;
-
-        var criterion = Verify.Criteria.SingleOrDefault(c => c.Contains(message.Argument));
-        if (criterion is null) return;
-
-        try
-        {
-            var data = Query.Model.Execute(Source.Model.Open());
-            var values = criterion.ValuesFor(message.Argument, data);
-            var suggestions = values.Select(v => new ValueObserver(v)).Where(x => !x.IsEmpty).ToList();
-            suggestions.ForEach(message.Reply);
-        }
-        catch (Exception)
-        {
-            // Ignored because this is just optional.
-            // It's only to suggest possible values based on a known source content and current property type.
-            // If getting object value fails then it could be because the user configured the criterion incorrectly.
-        }
     }
 
     public static implicit operator SpecObserver(Spec model) => new(model);

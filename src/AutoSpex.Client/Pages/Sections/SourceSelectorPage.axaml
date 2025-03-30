@@ -3,7 +3,6 @@
              xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
              xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
-             xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors"
              x:Class="AutoSpex.Client.Pages.SourceSelectorPage"
              x:DataType="pages:SourceSelectorPageModel"
              MinHeight="300" MaxHeight="600">
@@ -27,21 +26,6 @@
                         Text="Select a source to run specs against."
                         Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
                         TextWrapping="Wrap" MaxWidth="400" />
-                </StackPanel>
-
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="5">
-                    <Button
-                        Command="{Binding AddSourceCommand}"
-                        Theme="{a:ControlTheme ButtonSolid}"
-                        Classes="accent"
-                        VerticalAlignment="Center">
-                        <Button.Content>
-                            <TextBlock Text="Add Source" FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
-                        </Button.Content>
-                        <Interaction.Behaviors>
-                            <behaviors:HideFlyoutOnClickedBehavior />
-                        </Interaction.Behaviors>
-                    </Button>
                 </StackPanel>
 
             </Grid>

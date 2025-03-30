@@ -30,7 +30,7 @@
             <Ellipse Classes="separator" />
 
             <TextBlock
-                Text="{Binding Model.Verification.Source.Name}"
+                Text="{Binding Model.Result.Source.Name}"
                 FontWeight="{a:ThemeResource HeadingFontWeightSmall}"
                 Padding="5" />
 

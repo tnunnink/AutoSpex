@@ -11,7 +11,7 @@ public record ListRepos : IRequest<IEnumerable<Repo>>;
 [UsedImplicitly]
 internal class ListReposHandler(IConnectionManager manager) : IRequestHandler<ListRepos, IEnumerable<Repo>>
 {
-    private const string ListRepos = "SELECT Location, Name FROM Repository";
+    private const string ListRepos = "SELECT Location, Name FROM Repo";
 
     public async Task<IEnumerable<Repo>> Handle(ListRepos request, CancellationToken cancellationToken)
     {

@@ -10,20 +10,10 @@ namespace AutoSpex.Client.Observers;
 public partial class QueryObserver : Observer<Query>,
     IRecipient<Observer.Get<QueryObserver>>,
     IRecipient<Observer.Deleted>,
-    IRecipient<StepObserver.GetInputTo>,
-    IRecipient<PropertyInput.GetDataTo>,
-    IRecipient<ArgumentInput.SuggestionRequest>
+    IRecipient<StepObserver.GetInputTo>
 {
-    /// <summary>
-    /// An optional source that can be used to get data by executing this query.
-    /// This is needed to suggest data for property inputs.
-    /// </summary>
-    private readonly SourceObserver? _source;
-
-    public QueryObserver(Query model, SourceObserver? source = default) : base(model)
+    public QueryObserver(Query model) : base(model)
     {
-        _source = source;
-
         Steps = new ObserverCollection<Step, StepObserver>(Model.Steps, InstantiateStep);
 
         Track(nameof(Element));
@@ -76,7 +66,7 @@ public partial class QueryObserver : Observer<Query>,
         var step = new Select(new Selection());
         Steps.Add(new SelectObserver(step));
     }
-    
+
     /// <summary>
     /// Command to add a <see cref="Select"/> step to this query.
     /// </summary>
@@ -117,7 +107,7 @@ public partial class QueryObserver : Observer<Query>,
     }
 
     /// <summary>
-    /// Responds to the request for determining the step input proeprty for this query observer.
+    /// Responds to the request for determining the step input property for this query observer.
     /// If this query contains the requesting step then reply with the current configured input to the step.
     /// </summary>
     public void Receive(StepObserver.GetInputTo message)
@@ -129,58 +119,7 @@ public partial class QueryObserver : Observer<Query>,
     }
 
     /// <summary>
-    /// Responds to the request for data to a particular point in a query step.
-    /// This is sent by a requesting <see cref="PropertyInput"/> observer.
-    /// The expected observer type is either a select or criterion.
-    /// </summary>
-    public void Receive(PropertyInput.GetDataTo message)
-    {
-        if (_source is null) return;
-        if (!TryGetStep(message.Observer, out var step)) return;
-
-        try
-        {
-            var index = Steps.IndexOf(step);
-            var data = Model.ExecuteTo(_source.Model.Open(), index).ToList();
-            data.ForEach(message.Reply);
-        }
-        catch (Exception)
-        {
-            // Ignored because this is just optional.
-            // It's only to suggest possible values based on a known source content and current property type.
-            // If getting object value fails then it could be because the user configured the criterion incorrectly.
-        }
-    }
-
-    /// <summary>
-    /// Responds to an argument suggestion request for argument contained in filter criteria in this query instance.
-    /// Since we may have an in-memory source context, we can use that to evaluate what are possible values that could
-    /// be input to the criterion.
-    /// </summary>
-    public void Receive(ArgumentInput.SuggestionRequest message)
-    {
-        if (_source is null) return;
-        if (!TryGetStep(message.Argument, out var step)) return;
-        if (!step.TryFind(c => c.Contains(message.Argument), out var criterion)) return;
-
-        try
-        {
-            var index = Steps.IndexOf(step);
-            var data = Model.ExecuteTo(_source.Model.Open(), index);
-            var values = criterion.ValuesFor(message.Argument, data);
-            var suggestions = values.Select(v => new ValueObserver(v)).Where(x => !x.IsEmpty).ToList();
-            suggestions.ForEach(message.Reply);
-        }
-        catch (Exception)
-        {
-            // Ignored because this is just optional.
-            // It's only to suggest possible values based on a known source content and current property type.
-            // If getting object value fails then it could be because the user configured the criterion incorrectly.
-        }
-    }
-
-    /// <summary>
-    /// Gets the step that contains the provided observer instance. This instance should either be a select step itslef
+    /// Gets the step that contains the provided observer instance. This instance should either be a select step itself
     /// or a nested criterion observer that is contained by a filter step in the query.
     /// </summary>
     private bool TryGetStep(Observer observer, out StepObserver step)
@@ -192,7 +131,7 @@ public partial class QueryObserver : Observer<Query>,
             SelectionObserver selection => Steps.SingleOrDefault(s => s.Contains(selection)),
             ArgumentInput argument => Steps.SingleOrDefault(s => s.Contains(argument)),
             PropertyInput property => Steps.SingleOrDefault(s => s.Contains(property)),
-            _ => default
+            _ => null
         };
 
         if (target is null)

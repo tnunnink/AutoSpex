@@ -1,15 +1,15 @@
-﻿using System;
-using AutoSpex.Client.Shared;
+﻿using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 
 namespace AutoSpex.Client.Observers;
 
-public class RunObserver : Observer<RunResult>
+public class RunObserver : Observer<Run>
 {
     /// <inheritdoc/>
-    public RunObserver(RunResult model) : base(model)
+    public RunObserver(Run model) : base(model)
     {
     }
-    
-    public ResultState Result => Model.Result;
+
+    public ResultObserver Node { get; set; }
+    public ResultState State => Model.State;
 }

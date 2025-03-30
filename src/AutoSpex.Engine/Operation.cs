@@ -27,7 +27,7 @@ public abstract class Operation(string name, string value) : SmartEnum<Operation
     /// Be aware that this function may throw exceptions if input data is not of the expected 
     /// type or proper format for the executing operation.
     /// </remarks>
-    public abstract bool Execute(object? input, object? value = default);
+    public abstract bool Execute(object? input, object? value = null);
 
     /// <summary>
     /// Returns a collection of operations that support the specified property group.
@@ -37,10 +37,10 @@ public abstract class Operation(string name, string value) : SmartEnum<Operation
     public static IEnumerable<Operation> Supporting(Property property) => List.Where(x => x.Supports(property.Group));
 
     /// <summary>
-    /// Determins whether the given property is supported by the current operation type.
+    /// Determines whether the given property is supported by the current operation type.
     /// </summary>
     /// <param name="property">The property to check.</param>
-    /// <returns>True if the Operation supports the Proeprty; otherwise, false.</returns>
+    /// <returns>True if the Operation supports the Property; otherwise, false.</returns>
     public bool Supports(Property property) => Supports(property.Group);
 
     /// <summary>

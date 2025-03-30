@@ -39,7 +39,25 @@ public static class DialogExtensions
         var file = (await provider.OpenFilePickerAsync(options)).SingleOrDefault();
         return file?.Path;
     }
-    
+
+    /// <summary>
+    /// Opens the file picker with options to select a source L5X file to be added to the application.
+    /// </summary>
+    /// <param name="provider">The storage provider service.</param>
+    /// <param name="title">The title of the file explorer</param>
+    /// <returns>The <see cref="Uri"/> of the selected file.</returns>
+    public static async Task<string?> SelectLocation(this IStorageProvider provider, string title)
+    {
+        var options = new FolderPickerOpenOptions
+        {
+            Title = title,
+            AllowMultiple = false
+        };
+
+        var folder = (await provider.OpenFolderPickerAsync(options)).SingleOrDefault();
+        return folder?.Path.LocalPath;
+    }
+
     /// <summary>
     /// Opens the file picker with options to select a import JSON file to be imported to the application.
     /// </summary>
@@ -67,7 +85,8 @@ public static class DialogExtensions
     public static async Task<Result> ExportPackage(this IStorageProvider provider, Package package)
     {
         var invalidChars = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
-        var fileName = invalidChars.Aggregate(package.Collection.Name, (current, c) => current.Replace(c.ToString(), ""));
+        var fileName =
+            invalidChars.Aggregate(package.Collection.Name, (current, c) => current.Replace(c.ToString(), ""));
 
         var options = new FilePickerSaveOptions
         {

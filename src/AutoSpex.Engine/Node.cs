@@ -106,7 +106,7 @@ public class Node : IEquatable<Node>
     /// The state of this verification is updated as the node is run using <see cref="Run"/> or <see cref="RunAsync"/>.
     /// </summary>
     [JsonIgnore]
-    public Verification Verification { get; private init; } = new();
+    public Verification Result { get; private init; } = new();
 
     /// <summary>
     /// Creates a new Collection type node.
@@ -458,7 +458,7 @@ public class Node : IEquatable<Node>
         RunNode(content, callback);
 
         //Return the aggregate verification for all nodes.
-        return Verification;
+        return Result;
     }
 
     /// <summary>
@@ -484,7 +484,7 @@ public class Node : IEquatable<Node>
         await RunNodeAsync(content, callback, token);
 
         //Return the aggregate verification for all nodes.
-        return Verification;
+        return Result;
     }
 
     /// <summary>
@@ -493,7 +493,7 @@ public class Node : IEquatable<Node>
     /// <returns>The distinct set of <see cref="ResultState"/> values in ascending order.</returns>
     public IEnumerable<ResultState> DistinctResults()
     {
-        var states = new HashSet<ResultState> { Verification.Result };
+        var states = new HashSet<ResultState> { Result.State };
 
         foreach (var node in _nodes)
         {
@@ -512,7 +512,7 @@ public class Node : IEquatable<Node>
     {
         var total = 0;
 
-        if (Type == NodeType.Spec && Verification.Result == state)
+        if (Type == NodeType.Spec && Result.State == state)
         {
             total++;
         }
@@ -582,7 +582,7 @@ public class Node : IEquatable<Node>
     /// </summary>
     private void PrepareForRun(SourceInfo source, Action<Verification>? callback = null)
     {
-        Verification.MarkPending(this, source, callback);
+        Result.MarkPending(this, source, callback);
 
         foreach (var node in _nodes)
         {
@@ -600,7 +600,7 @@ public class Node : IEquatable<Node>
     private async Task RunNodeAsync(L5X content, Action<Verification>? callback = null,
         CancellationToken token = default)
     {
-        Verification.MarkRunning(callback);
+        Result.MarkRunning(callback);
 
         if (Type == NodeType.Spec)
         {
@@ -608,7 +608,7 @@ public class Node : IEquatable<Node>
             var results = await Spec.RunAsync(content, token);
             stopwatch.Stop();
 
-            Verification.MarkComplete(results, stopwatch.ElapsedMilliseconds, callback);
+            Result.MarkComplete(results, stopwatch.ElapsedMilliseconds, callback);
             return;
         }
 
@@ -618,7 +618,7 @@ public class Node : IEquatable<Node>
             await node.RunNodeAsync(content, callback, token);
         }
 
-        Verification.MarkComplete(_nodes.Select(n => n.Verification).ToArray(), callback);
+        Result.MarkComplete(_nodes.Select(n => n.Result).ToArray(), callback);
     }
 
     /// <summary>
@@ -629,7 +629,7 @@ public class Node : IEquatable<Node>
     /// <param name="callback">An optional callback action to be executed for result state changes.</param>
     private void RunNode(L5X content, Action<Verification>? callback = null)
     {
-        Verification.MarkRunning(callback);
+        Result.MarkRunning(callback);
 
         if (Type == NodeType.Spec)
         {
@@ -637,7 +637,7 @@ public class Node : IEquatable<Node>
             var results = Spec.Run(content);
             stopwatch.Stop();
 
-            Verification.MarkComplete(results, stopwatch.ElapsedMilliseconds, callback);
+            Result.MarkComplete(results, stopwatch.ElapsedMilliseconds, callback);
             return;
         }
 
@@ -646,7 +646,7 @@ public class Node : IEquatable<Node>
             node.RunNode(content, callback);
         }
 
-        Verification.MarkComplete(_nodes.Select(n => n.Verification).ToArray(), callback);
+        Result.MarkComplete(_nodes.Select(n => n.Result).ToArray(), callback);
     }
 
     #endregion

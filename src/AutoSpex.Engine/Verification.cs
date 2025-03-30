@@ -20,7 +20,7 @@ public class Verification
     /// <summary>
     /// The total result for all evaluations of this verification, indicating whether a spec Passed/Failed/Errored.
     /// </summary>
-    public ResultState Result { get; private set; } = ResultState.None;
+    public ResultState State { get; private set; } = ResultState.None;
 
     /// <summary>
     /// The duration or time it took for all evaluations of this verification to process.
@@ -44,7 +44,7 @@ public class Verification
     {
         Node = node;
         Source = source;
-        Result = ResultState.Pending;
+        State = ResultState.Pending;
         Duration = 0;
         Evaluations = [];
 
@@ -57,7 +57,7 @@ public class Verification
     /// <param name="callback">A callback to invoke when the result state changes.</param>
     public void MarkRunning(Action<Verification>? callback = null)
     {
-        Result = ResultState.Running;
+        State = ResultState.Running;
 
         callback?.Invoke(this);
     }
@@ -70,7 +70,7 @@ public class Verification
     /// <param name="callback">A callback to invoke when the result state changes.</param>
     public void MarkComplete(Evaluation[] evaluations, long duration, Action<Verification>? callback = null)
     {
-        Result = ResultState.MaxOrDefault(evaluations.Select(e => e.Result).ToList());
+        State = ResultState.MaxOrDefault(evaluations.Select(e => e.Result).ToList());
         Duration = duration;
         Evaluations = evaluations;
 
@@ -84,7 +84,7 @@ public class Verification
     /// <param name="callback">A callback to invoke when the result state changes.</param>
     public void MarkComplete(Verification[] verifications, Action<Verification>? callback = null)
     {
-        Result = ResultState.MaxOrDefault(verifications.Select(v => v.Result).ToList());
+        State = ResultState.MaxOrDefault(verifications.Select(v => v.State).ToList());
         Duration = verifications.Sum(v => v.Duration);
 
         callback?.Invoke(this);

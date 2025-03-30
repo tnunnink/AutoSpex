@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using Task = System.Threading.Tasks.Task;
-using System.DirectoryServices.AccountManagement;
 
 namespace AutoSpex.Engine.Tests;
 
@@ -10,7 +9,7 @@ public class ProofTests
     [Test]
     public async Task Run_SpecWithValidConfig_ShouldBePassedAndExpectedValues()
     {
-        var source = L5X.Load(Known.Test);
+        var source = await L5X.LoadAsync(Known.Test);
         var spec = Spec.Configure(c =>
         {
             c.Get(Element.Tag);
@@ -18,16 +17,16 @@ public class ProofTests
             c.Validate("DataType", Operation.EqualTo, "SimpleType");
         });
 
-        var evals = await spec.RunAsync(source);
+        var results = await spec.RunAsync(source);
 
-        evals.Should().AllSatisfy(e => e.Result.Should().Be(ResultState.Passed));
-        evals.Should().HaveCount(1);
+        results.Should().AllSatisfy(e => e.Result.Should().Be(ResultState.Passed));
+        results.Should().HaveCount(1);
     }
 
     [Test]
     public async Task Run_SpecManyTimes_ShouldRunRelativelyQuickly()
     {
-        var source = L5X.Load(Known.Test);
+        var source = await L5X.LoadAsync(Known.Test);
         var spec = Spec.Configure(c =>
         {
             c.Get(Element.Tag);
@@ -53,7 +52,7 @@ public class ProofTests
     [Test]
     public async Task Run_5094IB16A_ShouldBeAtRevision_2_011()
     {
-        var source = L5X.Load(Known.Test);
+        var source = await L5X.LoadAsync(Known.Test);
 
         var spec = Spec.Configure(c =>
         {
@@ -62,9 +61,9 @@ public class ProofTests
             c.Validate("Revision", Operation.EqualTo, "2.1");
         });
 
-        var evalus = await spec.RunAsync(source);
+        var results = await spec.RunAsync(source);
 
-        evalus.Should().AllSatisfy(e => e.Result.Should().Be(ResultState.Passed));
+        results.Should().AllSatisfy(e => e.Result.Should().Be(ResultState.Passed));
     }
 
     [Test]

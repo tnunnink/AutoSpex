@@ -2,9 +2,9 @@
 
 namespace AutoSpex.Client.Pages;
 
-public partial class NewSourcePage : UserControl
+public partial class NewRepoPage : UserControl
 {
-    public NewSourcePage()
+    public NewRepoPage()
     {
         InitializeComponent();
     }

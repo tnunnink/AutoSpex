@@ -95,7 +95,7 @@ public partial class NodeObserver : Observer<Node>,
             if (parent is not null) return parent;
         }
 
-        return default;
+        return null;
     }
 
     #region Commands
@@ -176,21 +176,17 @@ public partial class NodeObserver : Observer<Node>,
 
     /// <summary>
     /// Command to run this node against the target source. The command must first ensure the node detail page is open.
-    /// Once open a message whill be sent to trigger the remaining process.
+    /// Once open a message will be sent to trigger the remaining process.
     /// </summary>
     [RelayCommand]
     private void Run()
     {
-        var config = new RunContext(Model);
-
-        //todo where are we getting the source...we probably need to make run config editable first.
-
-        Messenger.Send(new RunnerObserver.Run(new RunnerObserver(config)));
+        throw new NotImplementedException();
     }
 
     /// <inheritdoc />
     /// <remarks>
-    /// For a node we wil prompt the user for a new name, then duplicate the entire node instance, including
+    /// For a node we wil prompt the user for the new name, then duplicate the entire node instance, including
     /// all variables, specs, and child nodes.
     /// </remarks>
     protected override async Task Duplicate()
@@ -307,7 +303,7 @@ public partial class NodeObserver : Observer<Node>,
     }
 
     /// <summary>
-    /// Handles the observer moved message by removing from the old parent if the recieved
+    /// Handles the observer moved message by removing from the old parent if the received
     /// node is a child of the old or new node.
     /// </summary>
     public void Receive(Moved message)
@@ -487,7 +483,7 @@ public partial class NodeObserver : Observer<Node>,
 
         yield return new MenuActionItem
         {
-            Header = "Reaplce",
+            Header = "Replace",
             Icon = Resource.Find("IconLineSearch"),
             Gesture = new KeyGesture(Key.H, KeyModifiers.Control)
         };
