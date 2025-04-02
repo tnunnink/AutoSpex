@@ -1,0 +1,96 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+             x:Class="AutoSpex.Client.Pages.NodeTreePage"
+             x:DataType="pages:NodeTreePageModel"
+             Background="{a:ThemeResource Container2BackgroundBrush}">
+
+    <Design.Height>800</Design.Height>
+    <Design.Width>400</Design.Width>
+
+    <DockPanel>
+
+        <Border DockPanel.Dock="Top" Padding="10">
+
+            <DockPanel LastChildFill="False">
+
+                <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" Spacing="5">
+                    <Button
+                        Command="{Binding AddCollectionCommand}"
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconAdd}"
+                        Classes="accent"
+                        ToolTip.Tip="Add Collection" />
+                    <Button
+                        Command="{Binding ImportCommand}"
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconLineUpload}"
+                        ToolTip.Tip="Import Collection" />
+                    <Button
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconLineMerge}"
+                        ToolTip.Tip="SVN Checkout" />
+                </StackPanel>
+
+
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="5">
+
+
+                    <Button
+                        Command="{Binding ExpandAllCommand}"
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconLineExpand}"
+                        ToolTip.Tip="Expand All" />
+
+                    <Button
+                        Command="{Binding CollapseAllCommand}"
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconLineCollapse}"
+                        ToolTip.Tip="Collapse All" />
+
+                    <Button
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconEllipsis}"
+                        ToolTip.Tip="More" />
+
+                </StackPanel>
+
+            </DockPanel>
+        </Border>
+
+        <TextBox
+            x:Name="SearchTextBox"
+            DockPanel.Dock="Top"
+            Text="{Binding Filter}"
+            Watermark="Search"
+            Theme="{StaticResource TextBoxOutlineHighlight}"
+            Background="Transparent"
+            VerticalContentAlignment="Center"
+            Padding="0 5"
+            BorderThickness="2"
+            Margin="10 0">
+            <TextBox.InnerLeftContent>
+                <PathIcon
+                    Theme="{StaticResource IconLineSearch}"
+                    VerticalAlignment="Center" Margin="10 0"
+                    Classes="size-sm"
+                    Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+            </TextBox.InnerLeftContent>
+            <Interaction.Behaviors>
+                <TextBoxSelectAllOnGotFocusBehavior />
+            </Interaction.Behaviors>
+        </TextBox>
+
+        <TreeView
+            ItemsSource="{Binding Nodes}"
+            SelectedItems="{Binding Selected}"
+            ItemContainerTheme="{StaticResource NodeTreeItemTheme}"
+            ItemTemplate="{StaticResource NodeTreeItem}"
+            SelectionMode="Multiple"
+            Padding="10 5" />
+
+    </DockPanel>
+
+</UserControl>

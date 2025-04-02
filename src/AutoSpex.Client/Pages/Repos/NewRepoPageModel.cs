@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
+using AutoSpex.Persistence;
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -23,12 +25,14 @@ public partial class NewRepoPageModel : PageViewModel
     [ObservableProperty]
     [NotifyDataErrorInfo]
     [Required]
-    [CustomValidation(typeof(NewRepoPageModel), nameof(ValidateRepoName))]
+//todo need to add those custom folder path validations    [CustomValidation(typeof(NewRepoPageModel), nameof(ValidateRepoName))]
     [NotifyCanExecuteChangedFor(nameof(AddCommand))]
     private string? _location;
 
     public override async Task Load()
     {
+        var repos = await Mediator.Send(new ListRepos());
+        _names.AddRange(repos.Select(r => r.Name));
     }
 
     [RelayCommand]

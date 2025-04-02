@@ -20,6 +20,7 @@
             <PathIcon Theme="{DynamicResource IconThemedContainer}" />
             <PathIcon Theme="{DynamicResource IconThemedCollection}" />
             <PathIcon Theme="{DynamicResource IconThemedSpec}" />
+            <PathIcon Theme="{DynamicResource IconThemedRepo}" />
             <PathIcon Theme="{DynamicResource IconThemedSource}" />
             <PathIcon Theme="{DynamicResource IconThemedRun}" />
             <PathIcon Theme="{DynamicResource IconThemedHistory}" />
@@ -51,6 +52,9 @@
     </ControlTheme>
     <ControlTheme x:Key="IconThemedSpec" TargetType="PathIcon" BasedOn="{StaticResource IconFilledClipboard}">
         <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushSpec}" />
+    </ControlTheme>
+    <ControlTheme x:Key="IconThemedRepo" TargetType="PathIcon" BasedOn="{StaticResource IconFilledDatabase}">
+        <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushRepo}" />
     </ControlTheme>
     <ControlTheme x:Key="IconThemedSource" TargetType="PathIcon" BasedOn="{StaticResource IconLineXml}">
         <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushSource}" />

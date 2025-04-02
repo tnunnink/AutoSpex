@@ -1,0 +1,40 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+             x:Class="AutoSpex.Client.Pages.RepoSelectorPage"
+             x:DataType="pages:RepoSelectorPageModel">
+
+
+    <Button Theme="{a:ControlTheme TitleBarButton}">
+
+
+        <StackPanel Orientation="Horizontal" Spacing="5">
+
+            <Panel>
+
+                <StackPanel
+                    IsVisible="{Binding Repo, Converter={x:Static ObjectConverters.IsNotNull}}"
+                    Orientation="Horizontal"
+                    Spacing="5">
+                    <PathIcon Theme="{StaticResource IconFilledDatabase}" />
+                    <TextBlock Text="{Binding Repo.Name, FallbackValue='Select repository'}" />
+                </StackPanel>
+
+            </Panel>
+
+            <ContentControl
+                ContentTemplate="{a:GlyphTemplate DropDownArrow16}"
+                Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                Margin="0 1 0 0" />
+
+        </StackPanel>
+
+        <Button.Flyout>
+
+        </Button.Flyout>
+
+    </Button>
+
+</UserControl>

@@ -7,14 +7,15 @@ using MediatR;
 namespace AutoSpex.Persistence;
 
 [PublicAPI]
-public record UpdateRepo(Repo Repo) : IRequest<Result>;
+public record SaveRepo(Repo Repo) : IRequest<Result>;
 
 [UsedImplicitly]
-internal class UpdateRepoHandler(IConnectionManager manager) : IRequestHandler<UpdateRepo, Result>
+internal class SaveRepoHandler(IConnectionManager manager) : IRequestHandler<SaveRepo, Result>
 {
-    private const string UpdateLocation = "UPDATE Repo SET Location = @Location WHERE RepoId = @RepoId";
+    private const string UpdateLocation =
+        "UPDATE Repo SET Location = @Location, Name = @Name WHERE RepoId = @RepoId";
 
-    public async Task<Result> Handle(UpdateRepo request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(SaveRepo request, CancellationToken cancellationToken)
     {
         using var connection = await manager.Connect(cancellationToken);
         var result = await connection.ExecuteAsync(UpdateLocation, request.Repo);

@@ -14,7 +14,7 @@ using FluentResults;
 namespace AutoSpex.Client.Shared;
 
 /// <summary>
-/// A generic view model class that represents a entity or item that is has shared common functionality.
+/// A generic view model class that represents an entity or item that is has shared common functionality.
 /// This class is intended to wrap model classes and add UI related functionality for the application.
 /// </summary>
 public abstract partial class Observer : TrackableViewModel, IEquatable<Observer>, IRecipient<Observer.Renamed>
@@ -104,7 +104,7 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     public IEnumerable<MenuActionItem> ContextItems => GenerateContextItems();
 
     /// <summary>
-    /// Gets a value indicating whether this observer belongs to a items collection where only a single item is selected.
+    /// Gets a value indicating whether this observer belongs to an items collection where only a single item is selected.
     /// We need to know this for context menu items, as the options would change based on how many items the user is
     /// selecting.
     /// </summary>
@@ -320,7 +320,7 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
 
     /// <summary>
     /// A request to get an in memory instance of an observer that satisfies the provided condition. This will return
-    /// a single observer instance, and if multiple are in memory, should return the first instance that recieves the
+    /// a single observer instance, and if multiple are in memory, should return the first instance that receives the
     /// message.
     /// </summary>
     /// <param name="predicate">The predicate the observer must satisfy.</param>

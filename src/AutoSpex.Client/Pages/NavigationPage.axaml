@@ -2,8 +2,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
-             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
-             xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors"
              x:Class="AutoSpex.Client.Pages.NavigationPage"
              x:DataType="pages:NavigationPageModel"
              Background="{a:ThemeResource Container2BackgroundBrush}">
@@ -11,78 +9,6 @@
     <Design.Width>500</Design.Width>
     <Design.Height>1080</Design.Height>
 
-    <DockPanel>
+    <ContentControl Content="{Binding NodeTree^}" />
 
-        <Border
-            DockPanel.Dock="Left"
-            BorderBrush="{a:ThemeResource Container1BorderBrush}"
-            BorderThickness="0 0 1 0" Padding="10">
-
-            <DockPanel LastChildFill="False">
-
-                <StackPanel DockPanel.Dock="Top" Spacing="15">
-
-                    <Button
-                        Theme="{StaticResource IconButton}"
-                        properties:Icon.Theme="{StaticResource IconAdd}"
-                        Classes="accent"
-                        ToolTip.Tip="Add">
-                        <Button.Flyout>
-                            <Flyout Placement="RightEdgeAlignedTop">
-                                <StackPanel Spacing="5" Margin="5">
-                                    <Button
-                                        Command="{Binding AddCollectionCommand}"
-                                        Classes="new-collection">
-                                        <Interaction.Behaviors>
-                                            <behaviors:HideFlyoutOnClickedBehavior />
-                                        </Interaction.Behaviors>
-                                    </Button>
-                                    <Button
-                                        Command="{Binding AddSpecCommand}"
-                                        Classes="new-specification">
-                                        <Interaction.Behaviors>
-                                            <behaviors:HideFlyoutOnClickedBehavior />
-                                        </Interaction.Behaviors>
-                                    </Button>
-                                    <Button
-                                        Command="{Binding AddSourceCommand}"
-                                        Classes="new-source">
-                                        <Interaction.Behaviors>
-                                            <behaviors:HideFlyoutOnClickedBehavior />
-                                        </Interaction.Behaviors>
-                                    </Button>
-                                </StackPanel>
-                            </Flyout>
-                        </Button.Flyout>
-                    </Button>
-
-                    <Button
-                        Command="{Binding ImportCommand}"
-                        Theme="{StaticResource IconButton}"
-                        properties:Icon.Theme="{StaticResource IconLineUpload}"
-                        ToolTip.Tip="Import" />
-
-                    <Button
-                        Command="{Binding OpenSearchCommand}"
-                        Theme="{StaticResource IconButton}"
-                        properties:Icon.Theme="{StaticResource IconLineSearch}"
-                        ToolTip.Tip="Search" />
-
-                    <Button
-                        Theme="{StaticResource IconButton}"
-                        properties:Icon.Theme="{StaticResource IconLineSidebar}"
-                        ToolTip.Tip="Hide Navigation">
-                        <Interaction.Behaviors>
-                            <behaviors:ToggleDrawerOnClickBehavior />
-                        </Interaction.Behaviors>
-                    </Button>
-
-                </StackPanel>
-
-            </DockPanel>
-        </Border>
-
-        <ContentControl Content="{Binding NodeTree^}" />
-
-    </DockPanel>
 </UserControl>

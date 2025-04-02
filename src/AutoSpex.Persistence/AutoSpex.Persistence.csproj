@@ -8,20 +8,19 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Ardalis.SmartEnum.Dapper" Version="7.0.0" />
-      <PackageReference Include="Dapper" Version="2.1.35" />
-      <PackageReference Include="FluentMigrator" Version="5.0.0" />
-      <PackageReference Include="FluentMigrator.Runner" Version="5.0.0" />
-      <PackageReference Include="FluentMigrator.Runner.SQLite" Version="5.0.0" />
+      <PackageReference Include="Ardalis.SmartEnum.Dapper" Version="8.2.0" />
+      <PackageReference Include="Dapper" Version="2.1.66" />
+      <PackageReference Include="FluentMigrator" Version="7.1.0" />
+      <PackageReference Include="FluentMigrator.Runner" Version="7.1.0" />
+      <PackageReference Include="FluentMigrator.Runner.SQLite" Version="7.1.0" />
       <PackageReference Include="FluentResults" Version="3.16.0" />
-      <PackageReference Include="FluentValidation" Version="11.9.2" />
       <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" />
-      <PackageReference Include="MediatR" Version="12.4.1" />
-      <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.8" />
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+      <PackageReference Include="MediatR" Version="12.5.0" />
+      <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.3" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.3" />
       <PackageReference Include="NLog" Version="5.4.0" />
       <PackageReference Include="NLog.Extensions.Logging" Version="5.4.0" />
-      <PackageReference Include="System.Data.SQLite" Version="1.0.118" />
+      <PackageReference Include="System.Data.SQLite" Version="1.0.119" />
     </ItemGroup>
 
     <ItemGroup>

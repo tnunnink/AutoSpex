@@ -54,6 +54,11 @@ public class Source
     public long Size { get; }
 
     /// <summary>
+    /// Represents the parent repository to which the source belongs to.
+    /// </summary>
+    public Repo? Repo => FindParentRepo(Location);
+
+    /// <summary>
     /// Creates a new instance of the Source class using the specified file location.
     /// </summary>
     /// <param name="location">The file path to the source file for which the Source instance will be created.</param>
@@ -86,5 +91,26 @@ public class Source
             throw new InvalidOperationException($"Source no longer exists at '{Location}'.");
 
         return await Type.OpenAsync(Location, token);
+    }
+
+    /// <summary>
+    /// Finds the parent repository path of the provided location by recursively checking up the directory structure.
+    /// </summary>
+    /// <param name="path">The location for which to find the parent repository path.</param>
+    /// <returns>The path of the parent repository if found, otherwise null.</returns>
+    private static Repo? FindParentRepo(string path)
+    {
+        var current = Path.GetFullPath(path);
+
+        while (!string.IsNullOrEmpty(current))
+        {
+            var repo = Path.Combine(current, ".spex");
+            if (Directory.Exists(repo)) return new Repo(repo);
+            var parent = Path.GetDirectoryName(current);
+            if (parent == current || parent == null) break;
+            current = parent;
+        }
+
+        return null;
     }
 }

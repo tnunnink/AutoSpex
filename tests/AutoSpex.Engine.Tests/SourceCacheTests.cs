@@ -8,7 +8,7 @@ public class SourceCacheTests
     [Test]
     public void Default_WhenCalled_ShouldBeExpected()
     {
-        var cache = SourceCache.Default;
+        var cache = SourceCache.In;
 
         cache.Should().NotBeNull();
         cache.Repo.Location.Should().Be(@"..\cache");
@@ -21,7 +21,7 @@ public class SourceCacheTests
     [Test]
     public async Task GetOrAdd_MarkupSource_ShouldReturnCachedInstance()
     {
-        var cache = SourceCache.Default;
+        var cache = SourceCache.In;
         var source = Source.Create(Known.Test);
 
         var cached = await cache.GetOrAdd(source);
@@ -37,7 +37,7 @@ public class SourceCacheTests
     [Test]
     public async Task GetOrAdd_MarkupSourceTwice_SecondTimeShouldNotCreateSecondCachedSource()
     {
-        var cache = SourceCache.Default;
+        var cache = SourceCache.In;
         var source = Source.Create(Known.Test);
 
         var first = await cache.GetOrAdd(source);
@@ -52,7 +52,7 @@ public class SourceCacheTests
     [Test]
     public async Task GetOrAdd_ArchiveSource_ShouldReturnCachedInstance()
     {
-        var cache = SourceCache.Default;
+        var cache = SourceCache.In;
         var source = Source.Create(Known.Archive);
 
         var cached = await cache.GetOrAdd(source);
@@ -68,7 +68,7 @@ public class SourceCacheTests
     [Test]
     public void ClearCache_EmptyCache_ShouldHaveNoSources()
     {
-        var cache = SourceCache.Default;
+        var cache = SourceCache.In;
 
         cache.ClearCache();
 
@@ -80,7 +80,7 @@ public class SourceCacheTests
     [Test]
     public async Task ClearCache_CachedCache_ShouldHaveNoSources()
     {
-        var cache = SourceCache.Default;
+        var cache = SourceCache.In;
         var source = Source.Create(Known.Test);
         await cache.GetOrAdd(source);
         cache.Repo.FindSources().Should().HaveCount(1);

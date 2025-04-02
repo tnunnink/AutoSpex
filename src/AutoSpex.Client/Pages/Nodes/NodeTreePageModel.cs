@@ -34,6 +34,65 @@ public partial class NodeTreePageModel : PageViewModel,
     }
 
     /// <summary>
+    /// Command to quickly create a new collection node.
+    /// </summary>
+    [RelayCommand]
+    private async Task AddCollection()
+    {
+        var node = Node.NewCollection();
+
+        var result = await Mediator.Send(new CreateNode(node));
+        if (Notifier.ShowIfFailed(result)) return;
+
+        var observer = new NodeObserver(node) { IsNew = true };
+        Messenger.Send(new Observer.Created<NodeObserver>(observer));
+        await Navigator.Navigate(observer);
+    }
+
+    /// <summary>
+    /// Command to quickly create a new spec node and open the details for the user to configure.
+    /// This will be a virtual node until the user attempts to save it, in which case they should get prompted where
+    /// to save it.
+    /// </summary>
+    [RelayCommand]
+    private async Task AddSpec()
+    {
+        var node = Node.NewSpec();
+        var observer = new NodeObserver(node) { IsNew = true };
+        await Navigator.Navigate(observer);
+    }
+
+    /// <summary>
+    /// Command to import new package into the application.
+    /// </summary>
+    [RelayCommand]
+    private async Task Import()
+    {
+        var package = await Prompter.Show<Package?>(() => new OpenPackagePageModel());
+        if (package is null) return;
+
+        var action = ImportAction.None;
+        var exists = await Mediator.Send(new ContainsNode(package.Collection.Name, NodeType.Collection));
+
+        if (exists)
+        {
+            action = await Prompter.Show<ImportAction?>(() => new ImportConflictPageModel(package));
+        }
+
+        if (action is null || action == ImportAction.Cancel) return;
+
+        var import = await Mediator.Send(new ImportNode(package, action));
+        if (Notifier.ShowIfFailed(import)) return;
+
+        Messenger.Send(new Observer.Created<NodeObserver>(new NodeObserver(import.Value)));
+
+        Notifier.ShowSuccess(
+            "Import request complete",
+            $"Import of {import.Value.Name} completed successfully @ {DateTime.Now}"
+        );
+    }
+
+    /// <summary>
     /// Expands all nodes in the tree. This is implemented through the node IsExpanded property.
     /// </summary>
     [RelayCommand]
@@ -135,7 +194,7 @@ public partial class NodeTreePageModel : PageViewModel,
             }
         }
     }
-    
+
     /// <inheritdoc />
     protected override void FilterChanged(string? filter)
     {

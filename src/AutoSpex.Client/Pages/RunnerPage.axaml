@@ -36,8 +36,6 @@
 
                 <StackPanel Grid.Column="2" HorizontalAlignment="Right" Orientation="Horizontal" Spacing="10">
 
-                    <ContentControl Content="{Binding SourceSelector^}" />
-
                     <Button
                         Theme="{StaticResource IconButton}"
                         properties:Icon.Theme="{StaticResource IconLineSidebar}"
@@ -113,7 +111,7 @@
 
                                 <Button
                                     Theme="{StaticResource IconButton}"
-                                    properties:Icon.Theme="{StaticResource IconEllipsis}">
+                                    properties:Icon.Theme="{StaticResource IconEllipsisVertical}">
 
                                 </Button>
 

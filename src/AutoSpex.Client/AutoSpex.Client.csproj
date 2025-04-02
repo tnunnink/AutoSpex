@@ -33,13 +33,13 @@
         <PackageReference Include="Avalonia.Fonts.Inter" Version="11.2.5" />
         <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.5" />
         <PackageReference Include="Avalonia.Xaml.Behaviors" Version="11.2.0.9" />
-        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
         <PackageReference Include="FluentResults" Version="3.16.0"/>
         <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" />
         <PackageReference Include="Lamar" Version="14.0.1" />
-        <PackageReference Include="MediatR" Version="12.4.1"/>
-        <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.2" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.2" />
+        <PackageReference Include="MediatR" Version="12.5.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.3" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.3" />
         <PackageReference Include="Velopack" Version="0.0.1053" />
     </ItemGroup>
 
@@ -216,16 +216,88 @@
             <DependentUpon>DetailTabList.axaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
-        <Compile Update="Pages\Dialogs\SettingsPage.axaml.cs">
-            <DependentUpon>SettingsPage.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
         <Compile Update="Pages\Parts\SettingsAboutPage.axaml.cs">
           <DependentUpon>SettingsAboutPage.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
         <Compile Update="Pages\Parts\SettingsGeneralPage.axaml.cs">
           <DependentUpon>SettingsGeneralPage.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Pages\Settings\SettingsPage.axaml.cs">
+          <DependentUpon>SettingsPage.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Pages\Settings\SettingsAboutPage.axaml.cs">
+          <DependentUpon>SettingsAboutPage.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Pages\Settings\SettingsGeneralPage.axaml.cs">
+          <DependentUpon>SettingsGeneralPage.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Pages\Nodes\NodeDetailPage.axaml.cs">
+          <DependentUpon>NodeDetailPage.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Pages\Nodes\SelectContainerPage.axaml.cs">
+          <DependentUpon>SelectContainerPage.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Pages\Nodes\SelectSpecPage.axaml.cs">
+          <DependentUpon>SelectSpecPage.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Pages\Nodes\NodeSelectorPage.axaml.cs">
+          <DependentUpon>NodeSelectorPage.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Pages\Nodes\NodeTreePage.axaml.cs">
+          <DependentUpon>NodeTreePage.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Pages\Nodes\SpecPage.axaml.cs">
+          <DependentUpon>SpecPage.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Pages\Nodes\SpecsPage.axaml.cs">
+          <DependentUpon>SpecsPage.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Pages\Repos\NewRepoPage.axaml.cs">
+          <DependentUpon>NewRepoPage.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Pages\Nodes\OpenPackagePage.axaml.cs">
+          <DependentUpon>OpenPackagePage.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Pages\Nodes\ImportConflictPage.axaml.cs">
+          <DependentUpon>ImportConflictPage.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Pages\SearchPage.axaml.cs">
+          <DependentUpon>SearchPage.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Pages\Sources\SourceSelectorPage.axaml.cs">
+          <DependentUpon>SourceSelectorPage.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Pages\Sources\SourceTargetPage.axaml.cs">
+          <DependentUpon>SourceTargetPage.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Pages\Runs\ResultPage.axaml.cs">
+          <DependentUpon>ResultPage.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Pages\General\DetailTabListPage.axaml.cs">
+          <DependentUpon>DetailTabListPage.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Pages\General\InfoPage.axaml.cs">
+          <DependentUpon>InfoPage.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
     </ItemGroup>
@@ -314,5 +386,9 @@
       <Content Include="..\..\README.md">
         <Link>README.md</Link>
       </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Components\Repos\" />
     </ItemGroup>
 </Project>

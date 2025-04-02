@@ -7,6 +7,8 @@ namespace AutoSpex.Engine;
 /// </summary>
 public class SourceCache
 {
+    private const string CacheDirectory = "cache";
+
     /// <summary>
     /// Creates a new <see cref="SourceCache"/> instance using the provided repo as the location in
     /// which to cache sources.
@@ -14,7 +16,7 @@ public class SourceCache
     private SourceCache(Repo repo)
     {
         Repo = repo ?? throw new ArgumentNullException(nameof(repo));
-        Directory.CreateDirectory(Repo.Location);
+        Directory.CreateDirectory(Path.Combine(Repo.Location, CacheDirectory));
     }
 
     /// <summary>
@@ -24,10 +26,9 @@ public class SourceCache
     public Repo Repo { get; }
 
     /// <summary>
-    /// Provides a singleton instance of the <see cref="SourceCache"/> class,
-    /// initialized with the default repository for caching purposes.
+    /// 
     /// </summary>
-    public static SourceCache Default => new(Repo.Cache);
+    public static SourceCache In(Repo repo) => new(repo);
 
     /// <summary>
     /// Caches the specified source asynchronously if it is not already cached.

@@ -14,7 +14,7 @@ public class Migration20250325 : Migration
         Create.Table("Repo")
             .WithColumn("RepoId").AsString().PrimaryKey()
             .WithColumn("Location").AsString().NotNullable()
-            .WithColumn("Name").AsString().NotNullable();
+            .WithColumn("Name").AsString().NotNullable().Unique();
     }
 
     public override void Down()

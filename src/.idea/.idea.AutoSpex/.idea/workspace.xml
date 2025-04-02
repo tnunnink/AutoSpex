@@ -8,49 +8,94 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a07f1d3f-6f03-47ec-a0a7-cdecae08accf" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/AutoSpex.Engine/Function.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AutoSpex.Persistence/Migrations/Migration20250326.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AutoSpex.Persistence/Migrations/Migration20250327.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../tests/AutoSpex.Engine.Tests/RunTests.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../tests/AutoSpex.Engine.Tests/RunnerTests.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/AutoSpex.Client/Observers/RepoObserver.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Repos/RepoSelectorPage.axaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Repos/RepoSelectorPage.axaml.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Repos/RepoSelectorPageModel.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/AutoSpex.Persistence/Internals/Database.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/AutoSpex.Persistence/Internals/RepoMigration.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/AutoSpex.Persistence/Internals/SpexMigration.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.AutoSpex/.idea/projectSettingsUpdater.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AutoSpex/.idea/projectSettingsUpdater.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.AutoSpex/.idea/shelf/Uncommitted_changes_before_Checkout_at_3_28_2025_10_07_AM__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AutoSpex/.idea/shelf/Uncommitted_changes_before_Checkout_at_3_28_2025_10_07_AM__Changes_.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AutoSpex/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AutoSpex/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Components/Runs/ResultStatus.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Components/Runs/ResultStatus.axaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Observers/NodeObserver.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Observers/NodeObserver.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Observers/QueryObserver.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Observers/QueryObserver.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Observers/ResultObserver.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Observers/ResultObserver.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Observers/RunObserver.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Observers/RunObserver.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Observers/RunnerObserver.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Observers/SpecObserver.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Observers/SpecObserver.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Observers/VerifyObserver.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Observers/VerifyObserver.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/AppPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/AppPageModel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Details/NodeDetailPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Details/NodeDetailPageModel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/DetailsPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/DetailsPageModel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Dialogs/NewSourcePage.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Dialogs/NewRepoPage.axaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Dialogs/NewSourcePage.axaml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Dialogs/NewRepoPage.axaml.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Dialogs/NewSourcePageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Dialogs/NewRepoPageModel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/NavigationPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/NavigationPageModel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/RunnerPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/RunnerPageModel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Sections/SourceSelectorPage.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Sections/SourceSelectorPage.axaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Tabs/ContentPage.axaml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Tabs/ContentPage.axaml.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Tabs/ContentPageModel.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Tabs/QueryPage.axaml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Tabs/QueryPage.axaml.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Tabs/QueryPageModel.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Services/Runner.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Services/Runner.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Shared/DialogExtensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Shared/DialogExtensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Engine/Node.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Engine/Node.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Engine/Operation.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Engine/Operation.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Engine/RunContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Engine/Run.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Engine/RunResult.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Engine/Runner.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Engine/Runner.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Engine/SourceInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Engine/SourceInfo.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Engine/Verification.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Engine/Verification.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/AutoSpex.Client.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/AutoSpex.Client.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/AutoSpex.Client.csproj.DotSettings" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/AutoSpex.Client.csproj.DotSettings" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Details/NodeDetailPage.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/NodeDetailPage.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Details/NodeDetailPage.axaml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/NodeDetailPage.axaml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Details/NodeDetailPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/NodeDetailPageModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Dialogs/ImportConflictPage.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/ImportConflictPage.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Dialogs/ImportConflictPage.axaml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/ImportConflictPage.axaml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Dialogs/ImportConflictPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/ImportConflictPageModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Dialogs/NewRepoPage.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Repos/NewRepoPage.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Dialogs/NewRepoPage.axaml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Repos/NewRepoPage.axaml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Dialogs/NewRepoPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Repos/NewRepoPageModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Dialogs/OpenPackagePage.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/OpenPackagePage.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Dialogs/OpenPackagePage.axaml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/OpenPackagePage.axaml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Dialogs/OpenPackagePageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/OpenPackagePageModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Dialogs/SearchPage.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/SearchPage.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Dialogs/SearchPage.axaml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/SearchPage.axaml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Dialogs/SearchPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/SearchPageModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Dialogs/SelectContainerPage.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/SelectContainerPage.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Dialogs/SelectContainerPage.axaml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/SelectContainerPage.axaml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Dialogs/SelectContainerPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/SelectContainerPageModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Dialogs/SelectSpecPage.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/SelectSpecPage.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Dialogs/SelectSpecPage.axaml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/SelectSpecPage.axaml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Dialogs/SelectSpecPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/SelectSpecPageModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Dialogs/SettingsPage.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Settings/SettingsPage.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Dialogs/SettingsPage.axaml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Settings/SettingsPage.axaml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Dialogs/SettingsPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Settings/SettingsPageModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/NavigationPage.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/NavigationPage.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/RunnerPage.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/RunnerPage.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Sections/DetailTabListPage.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/General/DetailTabListPage.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Sections/DetailTabListPage.axaml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/General/DetailTabListPage.axaml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Sections/DetailTabListPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/General/DetailTabListPageModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Sections/NodeSelectorPage.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/NodeSelectorPage.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Sections/NodeSelectorPage.axaml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/NodeSelectorPage.axaml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Sections/NodeSelectorPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/NodeSelectorPageModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Sections/NodeTreePage.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/NodeTreePage.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Sections/NodeTreePage.axaml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/NodeTreePage.axaml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Sections/NodeTreePageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/NodeTreePageModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Sections/ResultPage.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Runs/ResultPage.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Sections/ResultPage.axaml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Runs/ResultPage.axaml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Sections/ResultPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Runs/ResultPageModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Sections/SettingsAboutPage.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Settings/SettingsAboutPage.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Sections/SettingsAboutPage.axaml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Settings/SettingsAboutPage.axaml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Sections/SettingsAboutPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Settings/SettingsAboutPageModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Sections/SettingsGeneralPage.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Settings/SettingsGeneralPage.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Sections/SettingsGeneralPage.axaml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Settings/SettingsGeneralPage.axaml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Sections/SettingsGeneralPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Settings/SettingsGeneralPageModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Sections/SourceSelectorPage.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Sources/SourceSelectorPage.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Sections/SourceSelectorPage.axaml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Sources/SourceSelectorPage.axaml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Sections/SourceSelectorPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Sources/SourceSelectorPageModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Sections/SourceTargetPage.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Sources/SourceTargetPage.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Sections/SourceTargetPage.axaml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Sources/SourceTargetPage.axaml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Sections/SourceTargetPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Sources/SourceTargetPageModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Tabs/InfoPage.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/General/InfoPage.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Tabs/InfoPage.axaml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/General/InfoPage.axaml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Tabs/InfoPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/General/InfoPageModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Tabs/SpecPage.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/SpecPage.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Tabs/SpecPage.axaml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/SpecPage.axaml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Tabs/SpecPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/SpecPageModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Tabs/SpecsPage.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/SpecsPage.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Tabs/SpecsPage.axaml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/SpecsPage.axaml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Tabs/SpecsPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/SpecsPageModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Resources/Brushes.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Resources/Brushes.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Resources/Icons/IconsFilled.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Resources/Icons/IconsFilled.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Resources/Icons/IconsThemed.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Resources/Icons/IconsThemed.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Shared/Observer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Shared/Observer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Engine/AutoSpex.Engine.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Engine/AutoSpex.Engine.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Engine/Repo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Engine/Repo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Engine/Run.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Engine/Run.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Engine/SourceCache.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Engine/SourceCache.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Persistence/AutoSpex.Persistence.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Persistence/AutoSpex.Persistence.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Persistence/Migrations/Migration10000.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Persistence/Migrations/Migration10000.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Persistence/Migrations/Migration20241024.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Persistence/Migrations/Migration20241024.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AutoSpex.Persistence/Migrations/Migration20250325.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Persistence/Migrations/Migration20250325.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Persistence/Requests/Repos/CreateRepo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Persistence/Requests/Repos/CreateRepo.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AutoSpex.Persistence/Requests/Repos/ListRepos.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Persistence/Requests/Repos/ListRepos.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tests/AutoSpex.Engine.Tests/Known.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../tests/AutoSpex.Engine.Tests/Known.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tests/AutoSpex.Engine.Tests/NodeTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../tests/AutoSpex.Engine.Tests/NodeTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tests/AutoSpex.Engine.Tests/ProofTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../tests/AutoSpex.Engine.Tests/ProofTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Persistence/Requests/Repos/UpdateRepo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Persistence/Requests/Repos/SaveRepo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../tests/AutoSpex.Client.Tests/AutoSpex.Client.Tests.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/../tests/AutoSpex.Client.Tests/AutoSpex.Client.Tests.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../tests/AutoSpex.Engine.Tests/SourceCacheTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../tests/AutoSpex.Engine.Tests/SourceCacheTests.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,7 +103,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="DpaMonitoringSettings">
-    <option name="firstShow" value="false" />
+    <option name="autoShow" value="false" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
@@ -81,18 +126,22 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/930117f062144f539a280420337fa0cf1162e0/b1/8733b7d4/ThemeResourceExtension.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/dc6539f9f707d8aa2d7385dd5d6b65cf749fe1b2e92ce2cd2ea4fe29aa691/DateTimeFormat.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/AutoSpex.Client/Components/Criteria/All.axaml" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/AutoSpex.Client/Components/Criteria/ArgumentSelector.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/AutoSpex.Client/Components/Criteria/ReplaceListItem.axaml" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/AutoSpex.Client/Components/General/ObserverLink.axaml" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/AutoSpex.Client/Components/General/ObserverTitle.axaml" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/AutoSpex.Client/Components/Nodes/Breadcrumb.axaml" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/AutoSpex.Client/Observers/ResultObserver.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/AutoSpex.Client/Pages/NavigationPage.axaml" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/ImportConflictPage.axaml" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/AutoSpex.Client/Resources/Themes/TabStripItem.axaml" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/AutoSpex.Client/Shared/Observer.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 0
 }</component>
@@ -104,23 +153,34 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    ".NET Project.AutoSpex.Client.executor": "Run",
-    "5c12c6cb-16d5-4932-ad8f-e7cf53b8cabd.executor": "Debug",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "cb184d9d-96fa-4c02-aa8f-bd985cca87c7.executor": "Debug",
-    "git-widget-placeholder": "release",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;.NET Project.AutoSpex.Client.executor&quot;: &quot;Run&quot;,
+    &quot;5c12c6cb-16d5-4932-ad8f-e7cf53b8cabd.executor&quot;: &quot;Debug&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;cb184d9d-96fa-4c02-aa8f-bd985cca87c7.executor&quot;: &quot;Debug&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;release&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;sqlite&quot;
+    ],
+    &quot;rider.external.source.directories&quot;: [
+      &quot;C:\\Users\\tnunnink\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\DecompilerCache&quot;,
+      &quot;C:\\Users\\tnunnink\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\SourcesCache&quot;,
+      &quot;C:\\Users\\tnunnink\\AppData\\Local\\Symbols\\src&quot;
+    ]
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="AutoSpex.Client" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="" />
@@ -142,6 +202,9 @@
     </configuration>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="SvnConfiguration">
+    <configuration>C:\Users\tnunnink\AppData\Roaming\Subversion</configuration>
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="a07f1d3f-6f03-47ec-a0a7-cdecae08accf" name="Changes" comment="" />
@@ -158,7 +221,17 @@
       <workItem from="1740710686919" duration="1574000" />
       <workItem from="1740767420874" duration="26166000" />
       <workItem from="1743174352567" duration="17060000" />
-      <workItem from="1743275033856" duration="15155000" />
+      <workItem from="1743275033856" duration="23079000" />
+      <workItem from="1743469280299" duration="428000" />
+      <workItem from="1743469734108" duration="249000" />
+      <workItem from="1743470121800" duration="334000" />
+      <workItem from="1743470565895" duration="105000" />
+      <workItem from="1743470680212" duration="99000" />
+      <workItem from="1743470970128" duration="246000" />
+      <workItem from="1743471375547" duration="830000" />
+      <workItem from="1743472319815" duration="2294000" />
+      <workItem from="1743535012465" duration="9620000" />
+      <workItem from="1743559654670" duration="5020000" />
     </task>
     <task id="LOCAL-00001" summary="Removed Actions. Removed SourceDetailPage. Updated packages in client. Moves all requests in persistence layer.">
       <option name="closed" value="true" />
@@ -208,7 +281,15 @@
       <option name="project" value="LOCAL" />
       <updated>1741182897677</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Fixed all errors. Update Run/Runner and added tests. Added migrations">
+      <option name="closed" value="true" />
+      <created>1743359196592</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1743359196592</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -216,6 +297,17 @@
   </component>
   <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="Removed Actions. Removed SourceDetailPage. Updated packages in client. Moves all requests in persistence layer." />
@@ -224,6 +316,11 @@
     <MESSAGE value="Removed IChangeRequested from PostRun for the time being." />
     <MESSAGE value="updated version" />
     <MESSAGE value="Removed history pages. Removed run table and all persistence related code with runs (not interested in storing this data anymore). Removed the changes table and added new log table to eventually be used in its place. Updated related UI components and elements. Finished removing rule/suppression based code. Renamed container to Registrar.cs." />
-    <option name="LAST_COMMIT_MESSAGE" value="Removed history pages. Removed run table and all persistence related code with runs (not interested in storing this data anymore). Removed the changes table and added new log table to eventually be used in its place. Updated related UI components and elements. Finished removing rule/suppression based code. Renamed container to Registrar.cs." />
+    <MESSAGE value="Fixed all errors. Update Run/Runner and added tests. Added migrations" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed all errors. Update Run/Runner and added tests. Added migrations" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>
