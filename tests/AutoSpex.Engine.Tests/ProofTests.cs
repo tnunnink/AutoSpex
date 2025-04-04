@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Security.Cryptography;
 using Task = System.Threading.Tasks.Task;
 
 namespace AutoSpex.Engine.Tests;

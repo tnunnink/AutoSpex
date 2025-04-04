@@ -6,6 +6,7 @@ namespace AutoSpex.Engine;
 public class Run(Node node, Source source)
 {
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+    private static readonly SourceCache Cache = SourceCache.Local;
     private int _specTotal;
     private int _specCount;
 
@@ -34,8 +35,7 @@ public class Run(Node node, Source source)
         try
         {
             Logger.Info($"Loading source '{Source.Name}'.");
-            var loadSource = source.Repo is not null ? source.Repo.GetOrCache(Source, token) : Task.FromResult(source);
-            var target = await loadSource;
+            var target = await Cache.GetOrAdd(source, token);
 
             Logger.Info($"Running node '{Node.Name}'.");
             State = ResultState.Running;

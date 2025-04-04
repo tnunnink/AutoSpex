@@ -28,6 +28,7 @@ public abstract partial class ViewModelBase : ObservableValidator
     protected readonly Navigator Navigator = Registrar.Resolve<Navigator>();
     protected readonly Notifier Notifier = Registrar.Resolve<Notifier>();
     protected readonly Prompter Prompter = Registrar.Resolve<Prompter>();
+    protected readonly Settings Settings = Registrar.Resolve<Settings>();
 
     /// <summary>
     /// A command to request navigation of the view model into the view of the application.

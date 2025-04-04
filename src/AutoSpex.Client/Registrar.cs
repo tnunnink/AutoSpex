@@ -30,6 +30,7 @@ public static class Registrar
         registry.RegisterNavigator();
         registry.RegisterNotifier();
         registry.RegisterPrompter();
+        registry.RegisterSettings();
         registry.RegisterPages();
 
         _container = new Container(registry);
@@ -71,6 +72,11 @@ internal static class RegistrationExtensions
     internal static void RegisterPrompter(this ServiceRegistry registry)
     {
         registry.For<Prompter>().Use<Prompter>().Singleton();
+    }
+    
+    internal static void RegisterSettings(this ServiceRegistry registry)
+    {
+        registry.For<Settings>().Use<Settings>().Singleton();
     }
 
     internal static void RegisterPages(this ServiceRegistry registry)

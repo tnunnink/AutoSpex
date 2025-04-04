@@ -13,8 +13,9 @@ public class Migration20250325 : Migration
 
         Create.Table("Repo")
             .WithColumn("RepoId").AsString().PrimaryKey()
-            .WithColumn("Location").AsString().NotNullable()
-            .WithColumn("Name").AsString().NotNullable().Unique();
+            .WithColumn("Location").AsString().NotNullable().Unique()
+            .WithColumn("Name").AsString().NotNullable()
+            .WithColumn("LastConnected").AsString().NotNullable().WithDefault(SystemMethods.CurrentUTCDateTime);
     }
 
     public override void Down()

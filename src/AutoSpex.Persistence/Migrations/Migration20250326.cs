@@ -1,4 +1,3 @@
-using System.Data;
 using FluentMigrator;
 using JetBrains.Annotations;
 
@@ -13,10 +12,9 @@ public class Migration20250326 : Migration
         Delete.Table("Reference");
 
         Create.Table("Reference")
-            .WithColumn("Scope").AsString().PrimaryKey()
-            .WithColumn("NodeId").AsString().ForeignKey("Node", "NodeId").OnDelete(Rule.Cascade)
+            .WithColumn("ReferenceId").AsInt64().PrimaryKey().Identity()
+            .WithColumn("Scope").AsString().NotNullable().Unique()
             .WithColumn("Element").AsString().NotNullable()
-            .WithColumn("Hash").AsString().NotNullable()
             .WithColumn("Content").AsString().NotNullable();
     }
 

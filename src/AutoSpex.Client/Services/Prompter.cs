@@ -56,8 +56,7 @@ public static class PromptExtensions
 {
     public static Task<string?> PromptSave(this Prompter prompter, string name)
     {
-        var control = new SaveChangesPrompt { ItemName = name };
-        return prompter.Show<string?>(control);
+        return prompter.Show<string?>(() => new SaveChangesPageModel(name));
     }
 
     public static Task<bool?> PromptDelete(this Prompter prompter, string message)

@@ -1,4 +1,4 @@
-﻿using JetBrains.Annotations;
+﻿using System.Text.Json.Serialization;
 
 namespace AutoSpex.Engine;
 
@@ -7,79 +7,59 @@ namespace AutoSpex.Engine;
 /// </summary>
 public class Repo
 {
-    private static readonly string AppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-    private const string AppFolder = "AutoSpex";
-    private const string LocalRepo = "local";
     private static readonly string[] SearchableExtensions = [".L5X", ".ACD", ".L5Z"];
-    private const string RootFolder = ".spex";
-    private const string DatabaseName = "repo.db";
-    private const string CacheFolder = "cache";
 
-    private readonly string _cacheLocation;
-
-    [UsedImplicitly]
-    private Repo()
+    [JsonConstructor]
+    private Repo(Guid repoId, string location, string name)
     {
-        Location = Path.Combine(AppData, AppFolder, LocalRepo);
-        Name = Path.GetFileNameWithoutExtension(Location);
-        ConnectionString = Path.Combine(Location, RootFolder, DatabaseName);
-        _cacheLocation = Path.Combine(Location, RootFolder, CacheFolder);
+        ValidateLocation(location);
+
+        RepoId = repoId;
+        Location = location;
+        Name = name;
     }
 
     /// <summary>
-    /// Creates a new repository instance pointing to the provided database location.
+    /// Creates a new repository instance pointing to the provided configuration.
     /// </summary>
     public Repo(string location, string? name = null)
     {
-        Location = location ?? throw new ArgumentNullException(nameof(location));
+        ValidateLocation(location);
+        Location = location;
         Name = name ?? Path.GetFileNameWithoutExtension(location);
-        ConnectionString = Path.Combine(Location, RootFolder, DatabaseName);
-        _cacheLocation = Path.Combine(Location, RootFolder, CacheFolder);
     }
 
     /// <summary>
-    /// Represents the unique identifier of the repository.
+    /// Gets the unique identifier for the repository instance.
     /// </summary>
+    [JsonInclude]
     public Guid RepoId { get; private init; } = Guid.NewGuid();
 
     /// <summary>
-    /// The location of the repository directory. This will be the root directory in which we seed our
-    /// sidecar files and scan subdirectories for source files.
+    /// Gets the root directory location where the repository resides.
     /// </summary>
-    public string Location { get; private init; }
+    [JsonInclude]
+    public string Location { get; }
 
     /// <summary>
-    /// The name that identifies the repository.
+    /// Gets or sets the name of the repository. This will be a client specific name, and not persisted in the actual
+    /// repo database since we don't really care about the name from there, and we don't want to maintain it's state.
     /// </summary>
+    [JsonInclude]
     public string Name { get; set; }
 
     /// <summary>
-    /// Represents the connection string to the database associated with the repository.
-    /// The connection string is formed by combining the repository location, root folder, and database name.
+    /// Checks whether the repository is configured by verifying the existence of the root folder location.
     /// </summary>
-    /// <remarks>
-    /// The connection string is used to establish a connection to the database for storing and retrieving data.
-    /// </remarks>
-    public string ConnectionString { get; }
+    [JsonIgnore]
+    public bool Exists => Directory.Exists(Location);
 
     /// <summary>
-    /// Builds a new repository instance at the specified location by creating the necessary directory structure.
+    /// Configures and initializes a new repository instance using the specified location path.
     /// </summary>
-    /// <param name="location">The location where the repository will be created.</param>
-    /// <returns>A new Repo instance pointing to the provided location.</returns>
-    public static Repo Build(string location)
-    {
-        BuildRepoStructure(location);
-        return new Repo(location);
-    }
-
-    /// <summary>
-    /// Checks whether the repository is configured by verifying the existence of the root folder in the provided location.
-    /// </summary>
-    /// <returns>
-    /// True if the repository is configured (root folder exists), otherwise false.
-    /// </returns>
-    public bool IsConfigured() => Directory.Exists(Path.Combine(Location, RootFolder));
+    /// <param name="location">The file system path where the repository is located or will be created.</param>
+    /// <returns>A <see cref="Repo"/> instance initialized at the specified location.</returns>
+    public static Repo Configure(string location) => new(location);
 
     /// <summary>
     /// Searches for and retrieves all sources in the repository that match predefined searchable file extensions.
@@ -110,160 +90,27 @@ public class Repo
     }
 
     /// <summary>
-    /// 
+    /// Builds the repository by creating the necessary directory structure for storage.
     /// </summary>
-    public void Rebuild()
+    /// <returns>The current Repo instance after successfully building the repository.</returns>
+    /// <exception cref="InvalidOperationException">Thrown if a parent repository is found at the specified location.</exception>
+    public Repo Build()
     {
-        Directory.Delete(Path.Combine(Location, RootFolder), true);
-        BuildRepoStructure(Location);
+        Directory.CreateDirectory(Location);
+        return this;
     }
 
     /// <summary>
-    /// 
+    /// Validates the provided location to ensure it is a valid path for the repository database.
     /// </summary>
-    public void Delete()
+    /// <param name="location">The location to be validated.</param>
+    /// <exception cref="ArgumentException">Thrown when the location is empty or contains invalid characters.</exception>
+    private static void ValidateLocation(string location)
     {
-        Directory.Delete(Path.Combine(Location, RootFolder), true);
-    }
+        if (string.IsNullOrWhiteSpace(location))
+            throw new ArgumentException("Location cannot be empty", nameof(location));
 
-    /// <summary>
-    /// Caches the specified source asynchronously if it is not already cached.
-    /// </summary>
-    /// <param name="source">The source object to be cached.</param>
-    /// <param name="token">A cancellation token to observe while waiting for the task to complete.</param>
-    /// <returns>A task that represents the asynchronous caching operation.</returns>
-    public async Task Cache(Source source, CancellationToken token = default)
-    {
-        if (IsCached(source)) return;
-        await CacheSource(source, token);
-    }
-
-    /// <summary>
-    /// Retrieves the specified source from the repository if it is already cached;
-    /// otherwise, adds it to the cache by compressing its contents and saving it to a file.
-    /// </summary>
-    /// <param name="source">The source object to be retrieved or cached.</param>
-    /// <param name="token">A cancellation token that can be used to cancel the asynchronous operation.</param>
-    /// <returns>
-    /// A task that represents the asynchronous operation. The task result contains the retrieved or newly cached source instance.
-    /// </returns>
-    public Task<Source> GetOrCache(Source source, CancellationToken token = default)
-    {
-        return TryGetCachedSource(source, out var cached) ? Task.FromResult(cached) : CacheSource(source, token);
-    }
-
-    /// <summary>
-    /// Removes all cached files of the Compressed source type from the repository's location.
-    /// This method enumerates the files in the repository directory matching the Compressed source file extension
-    /// and deletes them in order to free up storage or clear outdated cache entries.
-    /// </summary>
-    public void ClearCache()
-    {
-        var files = Directory.EnumerateFiles(_cacheLocation, $"*{SourceType.Compressed.Extension}");
-
-        foreach (var file in files)
-        {
-            File.Delete(file);
-        }
-    }
-
-    /// <summary>
-    /// Caches the specified source in the repository by compressing its contents and saving it to a file.
-    /// </summary>
-    /// <param name="source">The source object to be cached.</param>
-    /// <param name="token">A cancellation token that can be used to cancel the asynchronous operation.</param>
-    /// <returns>
-    /// A task that represents the asynchronous operation. The task result contains the newly cached source instance created from the saved file.
-    /// </returns>
-    private async Task<Source> CacheSource(Source source, CancellationToken token)
-    {
-        var fileName = Path.Combine(_cacheLocation, $"{source.Hash}.L5Z");
-        var content = await source.OpenAsync(token);
-        await content.Serialize().ToString().CompressToAsync(fileName, token);
-        return Source.Create(fileName);
-    }
-
-    /// <summary>
-    /// Attempts to retrieve a cached source matching the specified source's hash from the repository.
-    /// </summary>
-    /// <param name="source">The source object used to identify the cached source in the repository.</param>
-    /// <param name="cached">When this method returns, contains the cached source if it exists; otherwise, null.</param>
-    /// <returns>
-    /// true if a cached source matching the specified source's hash is found in the repository; otherwise, false.
-    /// </returns>
-    private bool TryGetCachedSource(Source source, out Source cached)
-    {
-        var files = Directory.EnumerateFiles(_cacheLocation, $"*{SourceType.Compressed.Extension}");
-
-        foreach (var file in files)
-        {
-            var hash = Path.GetFileNameWithoutExtension(file);
-            if (hash != source.Hash) continue;
-            cached = Source.Create(file);
-            return true;
-        }
-
-        cached = null!;
-        return false;
-    }
-
-    /// <summary>
-    /// Determines whether the specified source is already cached within the repository.
-    /// </summary>
-    /// <param name="source">The source to check for existence in the cache.</param>
-    /// <returns>True if the source is cached; otherwise, false.</returns>
-    private bool IsCached(Source source)
-    {
-        var files = Directory.EnumerateFiles(_cacheLocation, $"*{SourceType.Compressed.Extension}");
-
-        foreach (var file in files)
-        {
-            var hash = Path.GetFileNameWithoutExtension(file);
-            if (hash == source.Hash) return true;
-        }
-
-        return false;
-    }
-
-    /// <summary>
-    /// Builds the required directory structure for a new repository at the specified location.
-    /// </summary>
-    /// <param name="location">The directory path where the repository structure will be built.</param>
-    private static void BuildRepoStructure(string location)
-    {
-        if (string.IsNullOrEmpty(location))
-            throw new ArgumentException("Can not build repo without a directory location");
-
-        //We only allow single root repo directories, so check for a parent repo and throw if found.
-        var parentRepo = FindParentRepoPath(location);
-        if (parentRepo is not null)
-            throw new InvalidOperationException($"A repo already exists at '{parentRepo}'");
-
-        //Will ensure the location is created to the nested path if not already.
-        var repoPath = Path.Combine(location, RootFolder);
-        Directory.CreateDirectory(repoPath);
-
-        var cachePath = Path.Combine(repoPath, CacheFolder);
-        Directory.CreateDirectory(cachePath);
-    }
-
-    /// <summary>
-    /// Finds the parent repository path of the provided location by recursively checking up the directory structure.
-    /// </summary>
-    /// <param name="path">The location for which to find the parent repository path.</param>
-    /// <returns>The path of the parent repository if found, otherwise null.</returns>
-    private static string? FindParentRepoPath(string path)
-    {
-        var current = Path.GetFullPath(path);
-
-        while (!string.IsNullOrEmpty(current))
-        {
-            if (Directory.Exists(Path.Combine(current, RootFolder))) return current;
-            var parent = Path.GetDirectoryName(current);
-            if (parent == current || parent == null) break;
-            current = parent;
-        }
-
-        return null;
+        if (location.Any(c => Path.GetInvalidPathChars().Contains(c)))
+            throw new ArgumentException("Location contains invalid characters", nameof(location));
     }
 }

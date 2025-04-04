@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using AutoSpex.Engine;
 
 namespace AutoSpex.Persistence;
 
@@ -13,8 +14,7 @@ public interface IConnectionManager
     /// <param name="token">The token used to cancel the request.</param>
     /// <returns>A <see cref="IDbConnection"/> instance to the specified database.</returns>
     /// <remarks>
-    /// This method will attempt to create/migrate the database if the registered source path does not exist
-    /// on disc. Ensure proper migration before calling if that is what is needed.
+    /// This method will attempt to create and migrate the database if it does not exist on disc.
     /// </remarks>
     Task<IDbConnection> Connect(CancellationToken token);
 }

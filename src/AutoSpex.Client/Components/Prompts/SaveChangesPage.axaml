@@ -1,0 +1,56 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             xmlns:components="clr-namespace:AutoSpex.Client.Components"
+             x:Class="AutoSpex.Client.Components.SaveChangesPage"
+             x:DataType="components:SaveChangesPageModel">
+
+    <controls:Prompt Header="Do you want to save changes?"
+                     ActionButtonText="Save"
+                     ActionButtonTheme="{a:ControlTheme ButtonSolid}"
+                     ActionCommandParameter="Save"
+                     CancelButtonTheme="{a:ControlTheme ButtonSoft}"
+                     CancelCommandParameter="Cancel"
+                     UseAlternateButton="True"
+                     AlternateButtonText="Discard"
+                     AlternateButtonTheme="{a:ControlTheme ButtonSoft}"
+                     AlternateCommandParameter="Discard"
+                     Classes="warning"
+                     MaxWidth="500">
+
+        <controls:Prompt.HeaderIcon>
+            <ControlTheme TargetType="PathIcon" BasedOn="{StaticResource IconFilledWarning}">
+                <Setter Property="Foreground"
+                        Value="{a:ThemeResource ControlForegroundBrushOutlineWarning}" />
+                <Setter Property="FontSize" Value="20" />
+            </ControlTheme>
+        </controls:Prompt.HeaderIcon>
+
+        <controls:Prompt.Content>
+            <StackPanel Spacing="10">
+                <TextBlock TextWrapping="Wrap">
+                    <TextBlock.Inlines>
+                        <Run Text="This item" />
+                        <Run Text="{Binding Name}"
+                             FontWeight="SemiBold"
+                             Foreground="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
+                        <Run
+                            Text="has unsaved changes which will be lost if you choose to close it. Save these changes to avoid losing changes." />
+                    </TextBlock.Inlines>
+                </TextBlock>
+
+                <StackPanel Margin="5">
+                    <CheckBox IsChecked="{Binding DiscardChanges, Mode=TwoWay}"
+                              Content="Always discard unsaved changes when closing a tab"
+                              Theme="{a:ControlTheme CheckBoxSolid}"
+                              Classes=" accent" />
+                    <Label Theme="{a:ControlTheme LabelFormControlLabel}"
+                           Content="You'll no longer be prompted to save changes when closing a tab. You can change this anytime from your Settings."
+                           Margin="28 3" />
+                </StackPanel>
+            </StackPanel>
+        </controls:Prompt.Content>
+
+    </controls:Prompt>
+</UserControl>

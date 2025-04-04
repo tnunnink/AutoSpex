@@ -80,7 +80,7 @@ public abstract partial class DetailPageModel(string? title) : PageViewModel(tit
     [RelayCommand]
     public async Task<bool> Close()
     {
-        var discard = Settings.App.AlwaysDiscardChanges;
+        var discard = await Settings.GetValue<bool>(SettingKey.AlwaysDiscardChanges);
         if (discard || !IsChanged)
         {
             Navigator.Close(this);

@@ -7,28 +7,32 @@ namespace AutoSpex.Engine;
 /// </summary>
 public class SourceCache
 {
-    private const string CacheDirectory = "cache";
+    private static readonly string AppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+    private const string AppFolder = "AutoSpex";
+    private const string CacheRepo = "cache";
+    private readonly Repo _repo;
 
     /// <summary>
     /// Creates a new <see cref="SourceCache"/> instance using the provided repo as the location in
     /// which to cache sources.
     /// </summary>
-    private SourceCache(Repo repo)
+    public SourceCache(Repo repo)
     {
-        Repo = repo ?? throw new ArgumentNullException(nameof(repo));
-        Directory.CreateDirectory(Path.Combine(Repo.Location, CacheDirectory));
+        _repo = repo ?? throw new ArgumentNullException(nameof(repo));
     }
 
     /// <summary>
-    /// Gets the repository instance associated with the current cache,
-    /// which provides access to the underlying storage of source data.
+    /// Gets a static instance of the <see cref="SourceCache"/> class that operates
+    /// on the local user's app data repository.
     /// </summary>
-    public Repo Repo { get; }
+    public static SourceCache Local => new(Repo.Configure(Path.Combine(AppData, AppFolder, CacheRepo)));
 
     /// <summary>
-    /// 
+    /// Gets a collection of <see cref="Source"/> objects retrieved from the repository.
+    /// The retrieved sources represent cached or discoverable files that match
+    /// the predefined criteria in the current caching context.
     /// </summary>
-    public static SourceCache In(Repo repo) => new(repo);
+    public IEnumerable<Source> Sources => _repo.FindSources();
 
     /// <summary>
     /// Caches the specified source asynchronously if it is not already cached.
@@ -38,7 +42,11 @@ public class SourceCache
     /// <returns>A task that represents the asynchronous caching operation.</returns>
     public async Task Cache(Source source, CancellationToken token = default)
     {
-        if (IsCached(source)) return;
+        ArgumentNullException.ThrowIfNull(source);
+
+        _repo.Build();
+
+        if (IsSourceCached(source)) return;
         await CacheSource(source, token);
     }
 
@@ -53,21 +61,27 @@ public class SourceCache
     /// </returns>
     public Task<Source> GetOrAdd(Source source, CancellationToken token = default)
     {
-        return TryGetSource(source, out var cached) ? Task.FromResult(cached) : CacheSource(source, token);
+        ArgumentNullException.ThrowIfNull(source);
+
+        _repo.Build();
+
+        return TryGetCachedSource(source, out var cached)
+            ? Task.FromResult(cached)
+            : CacheSource(source, token);
     }
 
     /// <summary>
-    /// Removes all cached files of the Compressed source type from the repository's location.
-    /// This method enumerates the files in the repository directory matching the Compressed source file extension
-    /// and deletes them in order to free up storage or clear outdated cache entries.
+    /// Deletes all cached folders/files from the repository's location.
     /// </summary>
-    public void ClearCache()
+    public void Clear()
     {
-        var files = Directory.EnumerateFiles(Repo.Location, $"*{SourceType.Compressed.Extension}");
+        if (!Directory.Exists(_repo.Location)) return;
 
-        foreach (var file in files)
+        var folders = Directory.EnumerateDirectories(_repo.Location);
+
+        foreach (var file in folders)
         {
-            File.Delete(file);
+            Directory.Delete(file, true);
         }
     }
 
@@ -81,10 +95,21 @@ public class SourceCache
     /// </returns>
     private async Task<Source> CacheSource(Source source, CancellationToken token)
     {
-        var fileName = Path.Combine(Repo.Location, $"{source.Hash}.L5Z");
+        //Prep the cache folder for this source be creating the info object, deleting current directory if it exists,
+        //and then recreating the new empty directory. 
+        var cacheFolder = new DirectoryInfo(Path.Combine(_repo.Location, source.FileHash));
+        if (cacheFolder.Exists) cacheFolder.Delete(true);
+        cacheFolder.Create();
+
+        //Compute the new file path for the cache compressed content file 
+        var cacheFile = Path.Combine(_repo.Location, cacheFolder.Name, $"{source.ContentHash}.L5Z");
+
+        //Compress the source content and save it to the cache file
         var content = await source.OpenAsync(token);
-        await content.Serialize().ToString().CompressToAsync(fileName, token);
-        return Source.Create(fileName);
+        await content.Serialize().ToString().CompressToAsync(cacheFile, token);
+
+        //Return the new cached source instance to reference instead of the actual provided source.
+        return Source.Create(cacheFile);
     }
 
     /// <summary>
@@ -95,15 +120,18 @@ public class SourceCache
     /// <returns>
     /// true if a cached source matching the specified source's hash is found in the repository; otherwise, false.
     /// </returns>
-    private bool TryGetSource(Source source, out Source cached)
+    private bool TryGetCachedSource(Source source, out Source cached)
     {
-        var files = Directory.EnumerateFiles(Repo.Location, $"*{SourceType.Compressed.Extension}");
+        var folders = Directory.EnumerateDirectories(_repo.Location);
 
-        foreach (var file in files)
+        foreach (var folder in folders)
         {
-            var hash = Path.GetFileNameWithoutExtension(file);
-            if (hash != source.Hash) continue;
-            cached = Source.Create(file);
+            if (Path.GetFileName(folder) != source.FileHash) continue;
+
+            var cachedFile = Path.Combine(folder, $"{source.ContentHash}.L5Z");
+            if (!File.Exists(cachedFile)) break;
+
+            cached = Source.Create(cachedFile);
             return true;
         }
 
@@ -116,16 +144,10 @@ public class SourceCache
     /// </summary>
     /// <param name="source">The source to check for existence in the cache.</param>
     /// <returns>True if the source is cached; otherwise, false.</returns>
-    private bool IsCached(Source source)
+    private bool IsSourceCached(Source source)
     {
-        var files = Directory.EnumerateFiles(Repo.Location, $"*{SourceType.Compressed.Extension}");
-
-        foreach (var file in files)
-        {
-            var hash = Path.GetFileNameWithoutExtension(file);
-            if (hash == source.Hash) return true;
-        }
-
-        return false;
+        var cacheFolder = Path.Combine(_repo.Location, source.FileHash);
+        var cacheFile = Path.Combine(cacheFolder, $"{source.ContentHash}.L5Z");
+        return File.Exists(cacheFile);
     }
 }

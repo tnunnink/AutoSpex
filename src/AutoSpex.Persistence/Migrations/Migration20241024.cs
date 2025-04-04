@@ -6,7 +6,7 @@ namespace AutoSpex.Persistence;
 
 [UsedImplicitly]
 [Migration(20241024, "Add Suppression")]
-internal class Migration20241024 : SpexMigration
+public class Migration20241024 : Migration
 {
     public override void Up()
     {

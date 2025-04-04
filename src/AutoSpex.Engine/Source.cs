@@ -13,7 +13,8 @@ public class Source
     {
         ArgumentNullException.ThrowIfNull(file);
 
-        Hash = file.ComputeHash();
+        FileHash = file.ComputeFileHash();
+        ContentHash = file.ComputeContentHash();
         Location = file.FullName;
         Name = Path.GetFileNameWithoutExtension(file.Name);
         Type = SourceType.FromExtension(file.Extension);
@@ -22,10 +23,14 @@ public class Source
     }
 
     /// <summary>
-    /// The hash of the file metadata (location, last write time, and size). This is what we will use to identify a
-    /// source file and whether it has changes.
+    /// Represents the hash value of the file, uniquely identifying the file itself.
     /// </summary>
-    public string Hash { get; }
+    public string FileHash { get; }
+
+    /// <summary>
+    /// Represents the hash value of the content of the source file, uniquely identifying its contents.
+    /// </summary>
+    public string ContentHash { get; }
 
     /// <summary>
     /// The absolute location on disc of the source file.
@@ -52,11 +57,6 @@ public class Source
     /// The size in bytes of the file.
     /// </summary>
     public long Size { get; }
-
-    /// <summary>
-    /// Represents the parent repository to which the source belongs to.
-    /// </summary>
-    public Repo? Repo => FindParentRepo(Location);
 
     /// <summary>
     /// Creates a new instance of the Source class using the specified file location.
@@ -91,26 +91,5 @@ public class Source
             throw new InvalidOperationException($"Source no longer exists at '{Location}'.");
 
         return await Type.OpenAsync(Location, token);
-    }
-
-    /// <summary>
-    /// Finds the parent repository path of the provided location by recursively checking up the directory structure.
-    /// </summary>
-    /// <param name="path">The location for which to find the parent repository path.</param>
-    /// <returns>The path of the parent repository if found, otherwise null.</returns>
-    private static Repo? FindParentRepo(string path)
-    {
-        var current = Path.GetFullPath(path);
-
-        while (!string.IsNullOrEmpty(current))
-        {
-            var repo = Path.Combine(current, ".spex");
-            if (Directory.Exists(repo)) return new Repo(repo);
-            var parent = Path.GetDirectoryName(current);
-            if (parent == current || parent == null) break;
-            current = parent;
-        }
-
-        return null;
     }
 }

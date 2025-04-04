@@ -10,7 +10,7 @@ public class SourceTests
     {
         var source = Source.Create(Known.Test);
 
-        source.Hash.Should().NotBeEmpty();
+        source.ContentHash.Should().NotBeEmpty();
         source.Location.Should().NotBeEmpty();
         source.Name.Should().Be("Test");
         source.Type.Should().Be(SourceType.Markup);

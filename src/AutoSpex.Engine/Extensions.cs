@@ -129,16 +129,30 @@ public static class Extensions
     }
 
     /// <summary>
-    /// Computes the hash for the specified FileInfo object based on its components.
+    /// Computes the hash of the specified file path using the MD5 algorithm.
     /// </summary>
-    /// <param name="file">The file for which to compute the hash.</param>
-    /// <returns>A string representing the computed hash value for the file.</returns>
-    public static string ComputeHash(this FileInfo file)
+    /// <param name="file">The <see cref="FileInfo"/> object representing the file to compute the hash for.</param>
+    /// <returns>A string representing the computed MD5 hash of the file in a lowercase hexadecimal format.</returns>
+    public static string ComputeFileHash(this FileInfo file)
     {
         ArgumentNullException.ThrowIfNull(file);
-        var components = $"{file.FullName}|{file.LastWriteTimeUtc:O}|{file.Length}";
-        var hash = SHA256.HashData(Encoding.UTF8.GetBytes(components));
-        return Convert.ToBase64String(hash).Replace('/', '-').Replace('+', '_').TrimEnd('=');
+        
+        var hash = MD5.HashData(Encoding.UTF8.GetBytes(file.FullName));
+        return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+    }
+    
+    /// <summary>
+    /// Computes the MD5 hash for the specified file content and returns it as a lowercase string representation.
+    /// </summary>
+    /// <param name="file">The file for which to compute the hash.</param>
+    /// <returns>A string representation of the computed MD5 hash in lowercase.</returns>
+    public static string ComputeContentHash(this FileInfo file)
+    {
+        ArgumentNullException.ThrowIfNull(file);
+
+        using var stream = File.OpenRead(file.FullName);
+        var hash = MD5.HashData(stream);
+        return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
     }
 
     /// <summary>
@@ -208,4 +222,18 @@ public static class Extensions
     /// <param name="type">The type to evaluate.</param>
     /// <returns>True if the type is nullable, false otherwise.</returns>
     private static bool IsNullable(this Type type) => Nullable.GetUnderlyingType(type) is not null;
+
+    /// <summary>
+    /// Executes the task without waiting for its completion, and optionally handles exceptions that may occur.
+    /// </summary>
+    /// <param name="task">The task to be executed.</param>
+    /// <param name="errorHandler">An optional action to handle exceptions thrown by the task.</param>
+    public static void FireAndForget(this Task task, Action<Exception>? errorHandler = null)
+    {
+        task.ContinueWith(t =>
+        {
+            if (t.IsFaulted && errorHandler != null)
+                errorHandler(t.Exception);
+        }, TaskContinuationOptions.OnlyOnFaulted);
+    }
 }

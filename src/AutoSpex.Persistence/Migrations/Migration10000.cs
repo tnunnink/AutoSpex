@@ -9,7 +9,7 @@ namespace AutoSpex.Persistence;
 //From here on we will just use the format yyyyMMdd for the migration ID.
 [UsedImplicitly]
 [Migration(10000, "Initial Build")]
-internal class Migration10000 : SpexAutoReverseMigration
+public class Migration10000 : AutoReversingMigration
 {
     public override void Up()
     {

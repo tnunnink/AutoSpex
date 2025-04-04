@@ -3,7 +3,6 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceInclude Source="ErrorPrompt.axaml" />
         <ResourceInclude Source="DeletePrompt.axaml" />
-        <ResourceInclude Source="SaveChangesPrompt.axaml" />
         <ResourceInclude Source="NamePrompt.axaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

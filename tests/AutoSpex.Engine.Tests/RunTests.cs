@@ -18,7 +18,7 @@ public class RunTests
         run.State.Should().Be(ResultState.None);
         run.Progress.Should().Be(0);
         run.RanOn.Should().Be(default);
-        run.RanBy.Should().BeEmpty();
+        run.RanBy.Should().BeNull();
         run.Duration.Should().Be(0);
     }
 
@@ -41,7 +41,5 @@ public class RunTests
         run.RanOn.Should().BeWithin(TimeSpan.FromSeconds(1));
         run.RanBy.Should().NotBeEmpty();
         run.Duration.Should().BeGreaterThan(0);
-
-        Directory.Delete(Repo.Cache.Location, true);
     }
 }

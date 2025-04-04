@@ -1,29 +1,15 @@
-﻿using FluentMigrator.Runner;
-using Microsoft.Extensions.DependencyInjection;
-
-namespace AutoSpex.Persistence.Tests;
+﻿namespace AutoSpex.Persistence.Tests;
 
 [TestFixture]
 public class RunMigration
 {
     [Test]
-    public void RunMigrationTest()
+    public async Task RunSpexDatabaseMigration()
     {
-        var provider = BuildServiceProvider();
-        var runner = provider.GetRequiredService<IMigrationRunner>();
-        runner.MigrateUp();
-    }
-    
-    private static ServiceProvider BuildServiceProvider()
-    {
-        var services = new ServiceCollection();
+        var manager = new ConnectionManager("app.db");
 
-        services.AddFluentMigratorCore()
-            .ConfigureRunner(rb => rb
-                .AddSQLite()
-                .WithGlobalConnectionString("DataSource=app.db")
-                .ScanIn(typeof(ServiceExtensions).Assembly).For.Migrations());
+        var connection = await manager.Connect(CancellationToken.None);
 
-        return services.BuildServiceProvider();
+        connection.Should().NotBeNull();
     }
 }

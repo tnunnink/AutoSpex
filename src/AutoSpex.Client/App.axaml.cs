@@ -1,6 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using ActiproSoftware.UI.Avalonia.Media;
+using AutoSpex.Client.Services;
+using AutoSpex.Engine;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
@@ -13,9 +15,12 @@ namespace AutoSpex.Client;
 [UsedImplicitly]
 public sealed class App : Application, IDisposable, IAsyncDisposable
 {
+    private readonly Settings _settings;
+
     public App()
     {
         Registrar.Build();
+        _settings = Registrar.Resolve<Settings>();
     }
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
@@ -24,14 +29,17 @@ public sealed class App : Application, IDisposable, IAsyncDisposable
 
         if (change.Property != RequestedThemeVariantProperty) return;
         var theme = (ThemeVariant)change.NewValue!;
-        Settings.App.Save(s => s.Theme = theme);
+        _settings.SaveValue(SettingKey.Theme, theme.ToString()).FireAndForget();
     }
 
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
         ImageProvider.Default.ChromaticAdaptationMode = ImageChromaticAdaptationMode.DarkThemes;
-        RequestedThemeVariant = Settings.App.Theme;
+
+        _settings.GetTheme()
+            .ContinueWith(t => RequestedThemeVariant = t.Result)
+            .FireAndForget(e => { Console.WriteLine(e.Message); });
     }
 
     public override void OnFrameworkInitializationCompleted()

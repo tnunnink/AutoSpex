@@ -4,29 +4,31 @@ namespace AutoSpex.Engine.Tests;
 public class RepoTests
 {
     [Test]
-    public void Cache_WhenCalled_ShouldBeExpected()
+    public void Configure_SomeDirectory_ShouldHaveExpectedValues()
     {
-        var repo = Repo.Cache;
+        var repo = Repo.Configure(@"C:\Path\To\TestRepo");
 
-        repo.RepoId.Should().BeEmpty();
-        repo.Location.Should().Be(@"..\cache");
-        repo.Name.Should().Be("cache");
+        repo.RepoId.Should().NotBeEmpty();
+        repo.Location.Should().Be(@"C:\Path\To\TestRepo");
+        repo.Name.Should().Be("TestRepo");
     }
 
     [Test]
-    public void New_ValidLocation_ShouldBeExpected()
+    public void Build_TempDirectory_ShouldExists()
     {
-        var repo = new Repo(@"C:\Users\tnunnink\Documents");
+        var directory = Directory.CreateTempSubdirectory("AutoSpexTest");
+        var repo = Repo.Configure(directory.FullName);
 
-        repo.RepoId.Should().NotBeEmpty();
-        repo.Location.Should().Be(@"C:\Users\tnunnink\Documents");
-        repo.Name.Should().Be("Documents");
+        repo.Build();
+
+        repo.Exists.Should().BeTrue();
+        directory.Delete(true);
     }
-    
+
     [Test]
     public void FindSources_FakeLocation_ShouldBeEmpty()
     {
-        var repo = new Repo(@"C:\Users\tnunnink\Documents\Fake");
+        var repo = Repo.Configure(@"C:\Users\tnunnink\Documents\Fake");
 
         var sources = repo.FindSources().ToList();
 
@@ -36,17 +38,17 @@ public class RepoTests
     [Test]
     public void FindSources_ValidLocationWithNoSource_ShouldBeEmpty()
     {
-        var repo = new Repo(@"C:\Users\tnunnink\Documents\Empty");
+        var repo = Repo.Configure(@"C:\Users\tnunnink\Documents\Empty");
 
         var sources = repo.FindSources().ToList();
 
         sources.Should().BeEmpty();
     }
-    
+
     [Test]
     public void FindSources_ValidLocationWithSources_ShouldBeEmpty()
     {
-        var repo = new Repo(@"C:\Users\tnunnink\Documents\Rockwell");
+        var repo = Repo.Configure(@"C:\Users\tnunnink\Documents\Rockwell");
 
         var sources = repo.FindSources().ToList();
 
