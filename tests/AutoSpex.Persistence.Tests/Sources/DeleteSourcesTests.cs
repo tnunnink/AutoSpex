@@ -31,4 +31,18 @@ public class DeleteSourcesTests
 
         deleted.IsSuccess.Should().BeTrue();
     }
+
+    [Test]
+    public async Task DeleteSources_SeededSource_NoReferencesShouldExists()
+    {
+        var context = new TestContext();
+        var mediator = context.Resolve<IMediator>();
+        var test = new Source("Test");
+        await mediator.Send(new CreateSource(test));
+
+        await mediator.Send(new DeleteSources([test]));
+
+        var references = await mediator.Send(new ListReferences(test.Name));
+        references.Should().BeEmpty();
+    }
 }
