@@ -8,12 +8,12 @@
 
     <Design.PreviewWith>
         <ListBox
-            Margin="20" Width="1000" Height="200"
+            Margin="20" Width="400" Height="200"
             ItemsSource="{x:Static components:TestData.Sources}"
             ItemTemplate="{DynamicResource SourceListItem}"
-            ItemContainerTheme="{StaticResource ListBoxItemEntry}"
+            ItemContainerTheme="{StaticResource ListBoxItemSimple}"
             SelectionMode="Multiple"
-            BorderThickness="1" CornerRadius="5"
+            BorderThickness="0" CornerRadius="5" Padding="5"
             BorderBrush="{a:ThemeResource Container1BorderBrush}"
             VerticalAlignment="Top" />
     </Design.PreviewWith>
@@ -33,66 +33,66 @@
                     Placement="Pointer" />
             </Border.ContextFlyout>
 
-            <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+            <StackPanel Orientation="Horizontal" Spacing="7" ClipToBounds="True">
 
-                <PathIcon
-                    Grid.Column="0"
-                    Theme="{StaticResource IconThemedSource}"
-                    Classes="centered"/>
-                
+                <Panel Width="20" Height="20">
+
+                    <PathIcon
+                        Theme="{Binding Icon, Converter={StaticResource KeyIconConverter}}"
+                        IsVisible="{Binding !$parent[ListBoxItem].IsPointerOver}" />
+
+                    <Button
+                        Command="{Binding ToggleTargetCommand}"
+                        Theme="{StaticResource IconButtonSmall}"
+                        properties:Icon.Theme="{StaticResource IconFilledLightning}"
+                        Classes="accent"
+                        ToolTip.Tip="Target">
+                        <Button.IsVisible>
+                            <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                <Binding Path="$parent[ListBoxItem].IsPointerOver" />
+                                <Binding Path="!IsChecked" />
+                            </MultiBinding>
+                        </Button.IsVisible>
+                    </Button>
+
+                    <Button
+                        Command="{Binding ToggleTargetCommand}"
+                        Theme="{StaticResource IconButtonSmall}"
+                        properties:Icon.Theme="{StaticResource IconFilledDash}"
+                        Classes="danger"
+                        ToolTip.Tip="Remove">
+                        <Button.IsVisible>
+                            <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                <Binding Path="$parent[ListBoxItem].IsPointerOver" />
+                                <Binding Path="IsChecked" />
+                            </MultiBinding>
+                        </Button.IsVisible>
+                    </Button>
+
+                </Panel>
+
                 <controls:HighlightableTextBlock
-                    Grid.Column="1"
                     Text="{Binding Name}"
                     HighlightedText="{Binding FilterText}"
-                    FontWeight="{a:ThemeResource HeadingFontWeightMedium}"
-                    Margin="10 0"/>
-                
-                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="20" Margin="20 0">
+                    FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
 
-                    <StackPanel Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
+                <controls:HighlightableTextBlock
+                    Text="{Binding RelativePath}"
+                    HighlightedText="{Binding FilterText}"
+                    Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                    FontSize="{a:ThemeResource DefaultFontSizeExtraSmall}"
+                    TextTrimming="CharacterEllipsis"
+                    MaxWidth="{Binding $parent[StackPanel].Bounds.Width}"
+                    ToolTip.Placement="BottomEdgeAlignedRight">
+                    <ToolTip.Tip>
+                        <ContentControl
+                            Content="{Binding}"
+                            ContentTemplate="{StaticResource SourceInfo}" />
+                    </ToolTip.Tip>
+                </controls:HighlightableTextBlock>
 
-                        <controls:HighlightableTextBlock
-                            Text="{Binding Description}"
-                            HighlightedText="{Binding FilterText}"
-                            Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+            </StackPanel>
 
-                        <Ellipse Height="5" Width="5" Fill="{a:ThemeResource Container2BorderBrush}" Margin="3" />
-
-                        <controls:HighlightableTextBlock
-                            Text="{Binding UpdatedOn}"
-                            HighlightedText="{Binding FilterText}"
-                            Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
-                            FontSize="{a:ThemeResource DefaultFontSizeExtraSmall}" />
-
-                    </StackPanel>
-
-                </StackPanel>
-
-                <Button
-                    Grid.Column="3"
-                    Theme="{StaticResource IconButton}"
-                    properties:Icon.Theme="{StaticResource IconEllipsis}"
-                    ToolTip.Tip="Options">
-                    <Button.Flyout>
-                        <MenuFlyout
-                            ItemsSource="{Binding MenuItems}"
-                            ItemContainerTheme="{StaticResource MenuActionItem}"
-                            Placement="BottomEdgeAlignedRight" HorizontalOffset="8" VerticalOffset="5" />
-                    </Button.Flyout>
-                </Button>
-
-            </Grid>
-
-            <Interaction.Behaviors>
-                <ExecuteCommandOnKeyDownBehavior
-                    Gesture="Ctrl+E"
-                    Command="{Binding RenameCommand}"
-                    MarkAsHandled="True" />
-                <ExecuteCommandOnKeyDownBehavior
-                    Gesture="Delete"
-                    Command="{Binding DeleteCommand}"
-                    MarkAsHandled="True" />
-            </Interaction.Behaviors>
         </Border>
     </DataTemplate>
 

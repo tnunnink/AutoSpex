@@ -1,0 +1,103 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             x:Class="AutoSpex.Client.Pages.RepoListPage"
+             x:DataType="pages:RepoListPageModel">
+
+    <Border
+        Background="{a:ThemeResource Container2BackgroundBrush}"
+        CornerRadius="{a:ThemeResource PopupCornerRadius}"
+        Padding="15"
+        MaxHeight="600">
+
+        <Grid RowDefinitions="Auto,*">
+
+            <StackPanel Spacing="15">
+
+                <Grid ColumnDefinitions="*,Auto">
+
+                    <StackPanel Grid.Column="0" Spacing="5" HorizontalAlignment="Left" Margin="0 0 100 0">
+                        <TextBlock
+                            Text="Repositories"
+                            FontSize="{a:ThemeResource DefaultFontSizeMedium}"
+                            FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
+                        <TextBlock
+                            Text="Select a location where sources can be found."
+                            Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                            TextWrapping="Wrap" MaxWidth="400" />
+                    </StackPanel>
+
+                    <Button
+                        Grid.Column="1"
+                        Margin="0 0 5 0"
+                        Command="{Binding OpenRepoCommand}"
+                        Theme="{a:ControlTheme ButtonSolid}"
+                        Classes="accent"
+                        VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" Spacing="7">
+                            <PathIcon Theme="{StaticResource IconFilledFolderOpen}"
+                                      Foreground="{Binding $parent[Button].Foreground}" />
+                            <TextBlock Text="Open" />
+                        </StackPanel>
+                    </Button>
+
+                </Grid>
+
+                <TextBox
+                    DockPanel.Dock="Top"
+                    Text="{Binding Filter}"
+                    Watermark="Search recent"
+                    Theme="{StaticResource TextBoxSimple}"
+                    VerticalContentAlignment="Center"
+                    BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                    Padding="0 5">
+                    <TextBox.InnerLeftContent>
+                        <PathIcon Theme="{StaticResource IconLineSearch}"
+                                  VerticalAlignment="Center" Margin="10 0"
+                                  Classes="size-sm"
+                                  Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                    </TextBox.InnerLeftContent>
+                    <Interaction.Behaviors>
+                        <TextBoxSelectAllOnGotFocusBehavior />
+                    </Interaction.Behaviors>
+                </TextBox>
+
+                <Panel>
+
+                    <controls:DefaultMessage
+                        IsVisible="{Binding !Recent.HasItems}"
+                        HeaderIcon="{StaticResource IconLineXml}"
+                        Header="No repo configured"
+                        Message="Add source files to run configured specs against." />
+
+                    <controls:DefaultMessage
+                        HeaderIcon="{StaticResource IconLineSearch}"
+                        Header="No sources found"
+                        Message="Could not find any sources matching the current filter text.">
+                        <controls:DefaultMessage.IsVisible>
+                            <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                <Binding Path="Recent.HasItems" />
+                                <Binding Path="!Recent.Count" />
+                            </MultiBinding>
+                        </controls:DefaultMessage.IsVisible>
+                    </controls:DefaultMessage>
+
+                </Panel>
+
+            </StackPanel>
+
+            <ListBox
+                Grid.Row="1"
+                ItemsSource="{Binding Recent, FallbackValue={x:Null}}"
+                ItemContainerTheme="{StaticResource ListBoxItemInvisible}"
+                ItemTemplate="{StaticResource RepoListItemButton}"
+                IsVisible="{Binding Recent.Count}"
+                Margin="0 15 0 0 " />
+
+        </Grid>
+
+    </Border>
+
+</UserControl>

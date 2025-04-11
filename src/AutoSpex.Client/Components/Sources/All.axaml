@@ -2,9 +2,6 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <ResourceDictionary.MergedDictionaries>
         <ResourceInclude Source="SourceInfo.axaml" />
-        <ResourceInclude Source="SourceInfoButton.axaml" />
         <ResourceInclude Source="SourceListItem.axaml" />
-        <ResourceInclude Source="SourceSelectionItem.axaml" />
-        <ResourceInclude Source="SourceTargetButton.axaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

@@ -1,4 +1,5 @@
-﻿using Task = System.Threading.Tasks.Task;
+﻿using System.Diagnostics;
+using Task = System.Threading.Tasks.Task;
 
 namespace AutoSpex.Engine.Tests;
 
@@ -9,8 +10,7 @@ public class SourceTests
     public void New_ValidSourcePath_ShouldBeExpected()
     {
         var source = Source.Create(Known.Test);
-
-        source.ContentHash.Should().NotBeEmpty();
+        
         source.Location.Should().NotBeEmpty();
         source.Name.Should().Be("Test");
         source.Type.Should().Be(SourceType.Markup);
@@ -52,5 +52,47 @@ public class SourceTests
         var content = await source.OpenAsync();
 
         content.Should().NotBeNull();
+    }
+    
+    [Test]
+    public void HashContent_ArchiveFile_ShouldReturnValueQuicklyAndNotContainInvalidPathChars()
+    {
+        var source = Source.Create(Known.Archive);
+        
+        var stopwatch = Stopwatch.StartNew();
+        var hash = source.HashContent();
+        stopwatch.Stop();
+
+        Console.WriteLine($"Hash: {hash}");
+        Console.WriteLine($"Time Taken: {stopwatch.ElapsedMilliseconds}ms");
+        hash.Select(c => c).Should().AllSatisfy(x => Path.GetInvalidFileNameChars().Should().NotContain(x));
+    }
+    
+    [Test]
+    public void HashContent_MarkupFile_ShouldReturnValueQuicklyAndNotContainInvalidPathChars()
+    {
+        var source = Source.Create(Known.Test);
+        
+        var stopwatch = Stopwatch.StartNew();
+        var hash = source.HashContent();
+        stopwatch.Stop();
+
+        Console.WriteLine($"Hash: {hash}");
+        Console.WriteLine($"Time Taken: {stopwatch.ElapsedMilliseconds}ms");
+        hash.Select(c => c).Should().AllSatisfy(x => Path.GetInvalidFileNameChars().Should().NotContain(x));
+    }
+    
+    [Test]
+    public void HashContent_CompressedFile_ShouldReturnValueQuicklyAndNotContainInvalidPathChars()
+    {
+        var source = Source.Create(Known.Compressed);
+        
+        var stopwatch = Stopwatch.StartNew();
+        var hash = source.HashContent();
+        stopwatch.Stop();
+
+        Console.WriteLine($"Hash: {hash}");
+        Console.WriteLine($"Time Taken: {stopwatch.ElapsedMilliseconds}ms");
+        hash.Select(c => c).Should().AllSatisfy(x => Path.GetInvalidFileNameChars().Should().NotContain(x));
     }
 }

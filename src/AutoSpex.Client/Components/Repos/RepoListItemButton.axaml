@@ -1,0 +1,91 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+
+    <Design.PreviewWith>
+        <ListBox
+            Margin="20" Width="400" Height="200"
+            ItemsSource="{x:Static components:TestData.Repos}"
+            ItemTemplate="{DynamicResource RepoListItemButton}"
+            ItemContainerTheme="{StaticResource ListBoxItemSimple}"
+            BorderThickness="0" CornerRadius="5" Padding="5"
+            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+            VerticalAlignment="Top" />
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="RepoListItemButton" DataType="observers:RepoObserver">
+
+        <Button
+            Theme="{a:ControlTheme ButtonSubtle}"
+            Command="{Binding ConnectCommand}"
+            HorizontalContentAlignment="Stretch"
+            Classes.non-existing="{Binding !Exists}">
+
+            <Button.Styles>
+                <Style Selector="Button.non-existing">
+                    <Setter Property="Opacity" Value="0.5" />
+                </Style>
+            </Button.Styles>
+
+            <Button.ContextFlyout>
+                <MenuFlyout
+                    ItemsSource="{Binding MenuItems}"
+                    ItemContainerTheme="{StaticResource MenuActionItem}"
+                    Placement="Pointer" />
+            </Button.ContextFlyout>
+
+            <DockPanel LastChildFill="False">
+
+                <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" Spacing="10">
+
+                    <PathIcon Theme="{StaticResource IconFilledFolderOpen}"
+                              VerticalAlignment="Top"
+                              Margin="0 1 0 0" />
+
+                    <StackPanel Spacing="3" ClipToBounds="True">
+
+                        <TextBlock
+                            Text="{Binding Name}"
+                            FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
+
+                        <TextBlock
+                            Text="{Binding Location}"
+                            Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                            FontSize="{a:ThemeResource DefaultFontSizeExtraSmall}"
+                            TextTrimming="CharacterEllipsis" />
+
+                    </StackPanel>
+
+                </StackPanel>
+
+                <Button
+                    DockPanel.Dock="Right"
+                    Command="{Binding DeleteCommand}"
+                    Theme="{StaticResource IconButton}"
+                    properties:Icon.Theme="{StaticResource IconClose}"
+                    Classes="size-xs"
+                    ToolTip.Tip="Remove">
+
+                    <Button.IsVisible>
+                        <MultiBinding Converter="{x:Static BoolConverters.And}">
+                            <Binding Path="!Exists" />
+                            <Binding Path="$parent[ListBoxItem].IsPointerOver" />
+                        </MultiBinding>
+                    </Button.IsVisible>
+
+                </Button>
+
+            </DockPanel>
+
+            <Interaction.Behaviors>
+                <behaviors:HideFlyoutOnClickedBehavior />
+            </Interaction.Behaviors>
+        </Button>
+
+    </DataTemplate>
+
+</ResourceDictionary>

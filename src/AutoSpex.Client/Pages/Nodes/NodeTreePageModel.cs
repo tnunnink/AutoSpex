@@ -14,13 +14,14 @@ using JetBrains.Annotations;
 namespace AutoSpex.Client.Pages;
 
 [UsedImplicitly]
-public partial class NodeTreePageModel : PageViewModel,
+public partial class NodeTreePageModel() : PageViewModel("Specs"),
     IRecipient<Observer.Created<NodeObserver>>,
     IRecipient<Observer.Deleted>,
     IRecipient<Observer.Renamed>,
     IRecipient<Observer.GetSelected>,
     IRecipient<Observer.Get<NodeObserver>>
 {
+    public override string Icon => "Specs";
     public ObserverCollection<Node, NodeObserver> Nodes { get; } = [];
     public ObservableCollection<NodeObserver> Selected { get; } = [];
 
@@ -28,8 +29,8 @@ public partial class NodeTreePageModel : PageViewModel,
 
     public override async Task Load()
     {
-        var result = await Mediator.Send(new ListNodes());
-        Nodes.Bind(result.ToList(), n => new NodeObserver(n));
+        var nodes = await Mediator.Send(new ListNodes());
+        Nodes.Bind(nodes.ToList(), n => new NodeObserver(n));
         RegisterDisposable(Nodes);
     }
 
@@ -46,19 +47,6 @@ public partial class NodeTreePageModel : PageViewModel,
 
         var observer = new NodeObserver(node) { IsNew = true };
         Messenger.Send(new Observer.Created<NodeObserver>(observer));
-        await Navigator.Navigate(observer);
-    }
-
-    /// <summary>
-    /// Command to quickly create a new spec node and open the details for the user to configure.
-    /// This will be a virtual node until the user attempts to save it, in which case they should get prompted where
-    /// to save it.
-    /// </summary>
-    [RelayCommand]
-    private async Task AddSpec()
-    {
-        var node = Node.NewSpec();
-        var observer = new NodeObserver(node) { IsNew = true };
         await Navigator.Navigate(observer);
     }
 

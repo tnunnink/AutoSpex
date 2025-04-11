@@ -64,7 +64,7 @@
                         </TabStripItem>
                         <TabStripItem>
                             <PathIcon
-                                Theme="{StaticResource IconFilledCog}"
+                                Theme="{StaticResource IconFilledDatabase}"
                                 Foreground="{Binding $parent[TabStripItem].Foreground}" />
                         </TabStripItem>
                         <TabStripItem>
@@ -264,10 +264,10 @@
         <Setter Property="FontSize" Value="{a:ThemeResource TabItemFontSizeSubtle}" />
         <Setter Property="FontWeight" Value="{a:ThemeResource TabItemFontWeightSubtle}" />
         <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushDefault}" />
-        <Setter Property="CornerRadius" Value="{a:ThemeResource ButtonCornerRadius}" />
+        <Setter Property="CornerRadius" Value="10" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="Padding" Value="10 5" />
+        <Setter Property="Padding" Value="10" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Border
@@ -292,6 +292,7 @@
         </Style>
         <Style Selector="^:selected">
             <Setter Property="Background" Value="{a:ThemeResource TitleBarButtonBackgroundBrushPointerOver}" />
+            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
         </Style>
         <Style Selector="^:disabled">
             <Setter Property="Foreground" Value="{a:ThemeResource TabItemForegroundBrushSubtleDisabled}" />

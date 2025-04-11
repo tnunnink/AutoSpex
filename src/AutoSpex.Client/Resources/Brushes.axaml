@@ -5,8 +5,10 @@
     <SolidColorBrush x:Key="{actipro:ThemeResourceKey FocusAdornerBorderBrush}"
                      Color="{actipro:ThemeResource ButtonBackgroundBrushEmphasized}" />
 
+
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Light">
+            <SolidColorBrush x:Key="HeaderBackgroundBrush" Color="#396fbc" />
             <SolidColorBrush x:Key="IconForegroundBrushDefault" Color="#6a7599" />
             <SolidColorBrush x:Key='IconForegroundBrushCollection' Color="#7B6BA9" />
             <SolidColorBrush x:Key='IconForegroundBrushContainer' Color="#97a9b4" />

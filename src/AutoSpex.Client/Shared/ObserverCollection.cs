@@ -14,6 +14,7 @@ public sealed class ObserverCollection<TModel, TObserver> : ObservableCollection
 {
     private bool _changed;
     private bool _refreshing;
+    private List<TModel> _models = [];
     private Func<ICollection<TObserver>> _refresh;
     private Action<int, TModel>? _add;
     private Action<int, TModel>? _insert;

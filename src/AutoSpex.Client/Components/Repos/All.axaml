@@ -1,0 +1,10 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceInclude Source="RepoAvailable.axaml" />
+        <ResourceInclude Source="RepoConnection.axaml" />
+        <ResourceInclude Source="RepoListItemButton.axaml" />
+        <ResourceInclude Source="RepoTargeted.axaml" />
+        <ResourceInclude Source="RepoTargeted.axaml" />
+    </ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>

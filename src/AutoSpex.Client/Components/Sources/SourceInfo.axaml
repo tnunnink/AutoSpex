@@ -13,26 +13,17 @@
 
     <DataTemplate x:Key="SourceInfo" x:DataType="observers:SourceObserver">
 
-        <!--<StackPanel Spacing="5">
+        <StackPanel Spacing="5">
 
-            <StackPanel Orientation="Horizontal" Spacing="10" Margin="0 0 0 3">
-                <PathIcon Theme="{StaticResource IconThemedSource}" Classes="centered" />
+            <StackPanel Spacing="3">
                 <TextBlock
                     Text="{Binding Name}"
                     FontSize="{a:ThemeResource DefaultFontSizeMedium}"
                     FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
-            </StackPanel>
-
-            <Grid ColumnDefinitions="*,30,Auto">
                 <TextBlock
-                    Grid.Column="0"
-                    Text="Project:"
-                    Classes="faint" />
-                <TextBlock
-                    Grid.Column="2"
-                    Text="{Binding Model.TargetName}"
+                    Text="{Binding Location}"
                     Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
-            </Grid>
+            </StackPanel>
 
             <Grid ColumnDefinitions="*,30,Auto">
                 <TextBlock
@@ -41,22 +32,33 @@
                     Classes="faint" />
                 <TextBlock
                     Grid.Column="2"
-                    Text="{Binding Model.TargetType}"
+                    Text="{Binding Model.Type}"
                     Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
             </Grid>
 
             <Grid ColumnDefinitions="*,30,Auto">
                 <TextBlock
                     Grid.Column="0"
-                    Text="Exported:"
+                    Text="Updated on"
                     Classes="faint" />
                 <TextBlock
                     Grid.Column="2"
-                    Text="{Binding Model.UpdatedOn}"
+                    Text="{Binding UpdatedOn}"
                     Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
             </Grid>
 
-        </StackPanel>-->
+            <Grid ColumnDefinitions="*,30,Auto">
+                <TextBlock
+                    Grid.Column="0"
+                    Text="Size"
+                    Classes="faint" />
+                <TextBlock
+                    Grid.Column="2"
+                    Text="{Binding Size}"
+                    Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+            </Grid>
+
+        </StackPanel>
 
     </DataTemplate>
 

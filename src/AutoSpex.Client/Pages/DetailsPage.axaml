@@ -3,12 +3,14 @@
              xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
              xmlns:shared="clr-namespace:AutoSpex.Client.Shared"
+             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
              x:Class="AutoSpex.Client.Pages.DetailsPage"
              x:DataType="pages:DetailsPageModel">
 
     <Design.Width>1200</Design.Width>
     <Design.Height>800</Design.Height>
-    
+
     <UserControl.Resources>
         <DataTemplate x:Key="DetailTabTemplate" x:DataType="shared:DetailPageModel">
             <Grid>
@@ -84,24 +86,23 @@
 
         <Border
             DockPanel.Dock="Top"
-            Height="41"
+            Height="42"
             BorderBrush="{a:ThemeResource Container1BorderBrush}"
             BorderThickness="0 0 0 1">
 
-            <Grid ColumnDefinitions="*,Auto">
+            <Grid ColumnDefinitions="*,Auto,Auto">
 
                 <ScrollViewer
                     Grid.Column="0"
-                    Classes="theme-scroll-overlay"
                     VerticalScrollBarVisibility="Disabled"
-                    HorizontalScrollBarVisibility="Hidden">
+                    HorizontalScrollBarVisibility="Hidden"
+                    Theme="{a:ControlTheme ScrollViewerOverlay}">
 
                     <TabStrip
                         ItemsSource="{Binding Pages}"
                         SelectedItem="{Binding Selected}"
                         ItemTemplate="{StaticResource DetailTabTemplate}"
                         ItemContainerTheme="{StaticResource DetailTabTheme}"
-                        Background="{a:ThemeResource Container2BackgroundBrush}"
                         BorderThickness="0" Padding="5 0">
                         <TabStrip.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -112,77 +113,83 @@
 
                 </ScrollViewer>
 
-                <Border
-                    Grid.Column="1"
-                    Padding="10 0"
-                    Background="{a:ThemeResource Container2BackgroundBrush}">
+                <Border Grid.Column="1" Padding="10 0">
 
-                    <Button Theme="{a:ControlTheme ButtonSubtle}"
-                            ContentTemplate="{a:GlyphTemplate DropDownArrow16}"
-                            Padding="3" VerticalAlignment="Center"
-                            IsTabStop="False">
-                        <Button.Flyout>
-                            <Flyout Placement="BottomEdgeAlignedRight" VerticalOffset="3" HorizontalOffset="8">
-                                <ContentControl Content="{Binding TabList^}" />
-                            </Flyout>
-                        </Button.Flyout>
-                    </Button>
-
-                </Border>
-            </Grid>
-        </Border>
-
-        <Panel>
-            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="10"
-                        IsVisible="{Binding !Pages.Count}">
-
-                <Image Source="../../Resources/Images/logo.png" Height="60" Width="60" Margin="20" />
-
-                <StackPanel Spacing="10">
-
-                    <TextBlock Text="Create new item to get started"
-                               TextAlignment="Center"
-                               Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
-
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-
-                        <StackPanel.Styles>
-                            <Style Selector="Button">
-                                <Setter Property="Theme" Value="{a:ControlTheme ButtonSubtle}" />
-                                <Setter Property="Margin" Value="5" />
-                                <Setter Property="Width" Value="40" />
-                                <Setter Property="Height" Value="40" />
-                                <Setter Property="VerticalAlignment" Value="Center" />
-                                <Setter Property="HorizontalAlignment" Value="Center" />
-                            </Style>
-                        </StackPanel.Styles>
-
-                        <Button
-                            Command="{Binding NewCollectionCommand}"
-                            ToolTip.Tip="New Collection">
-                            <PathIcon Theme="{StaticResource IconThemedCollection}" />
-                        </Button>
+                    <StackPanel Orientation="Horizontal" Spacing="7">
 
                         <Button
                             Command="{Binding NewSpecCommand}"
-                            ToolTip.Tip="New Specification">
-                            <PathIcon Theme="{StaticResource IconThemedSpec}" />
-                        </Button>
+                            Theme="{StaticResource IconButton}"
+                            properties:Icon.Theme="{StaticResource IconAdd}"
+                            VerticalAlignment="Center" Padding="5"
+                            IsTabStop="False" />
 
                         <Button
-                            Command="{Binding NewSourceCommand}"
-                            ToolTip.Tip="New Source">
-                            <PathIcon Theme="{StaticResource IconThemedSource}" />
+                            Theme="{StaticResource IconButton}"
+                            properties:Icon.Theme="{StaticResource IconLineChevronDown}"
+                            VerticalAlignment="Center"
+                            Padding="5 7 5 5"
+                            Classes="size-sm"
+                            IsTabStop="False">
+                            <Button.Flyout>
+                                <Flyout Placement="BottomEdgeAlignedRight" VerticalOffset="3" HorizontalOffset="8">
+                                    <ContentControl Content="{Binding TabList^}" />
+                                </Flyout>
+                            </Button.Flyout>
                         </Button>
 
                     </StackPanel>
 
-                </StackPanel>
-            </StackPanel>
+                </Border>
 
-            <ContentControl
-                IsVisible="{Binding Selected, Converter={x:Static ObjectConverters.IsNotNull}}"
-                Content="{Binding Selected}" />
+                <Border
+                    Grid.Column="2"
+                    BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                    BorderThickness="1 0 0 0"
+                    Padding="10 0">
+
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+
+                        <ContentControl Content="{Binding RepoConnector^}" />
+
+                        <Border Width="1" Background="{a:ThemeResource Container3BorderBrush}" Margin="0 10" />
+
+                        <Button
+                            Command="{Binding ToggleDrawerCommand}"
+                            Theme="{StaticResource IconButton}"
+                            properties:Icon.Theme="{StaticResource IconLineSliders}"
+                            VerticalAlignment="Center"
+                            Padding="5"
+                            IsTabStop="False" />
+
+                    </StackPanel>
+
+                </Border>
+
+            </Grid>
+        </Border>
+
+        <Panel>
+
+            <!--todo default view-->
+
+            <controls:DrawerView
+                DrawerPlacement="Right"
+                IsDrawerOpen="{Binding IsDrawerOpen}"
+                DrawerMinLength="0"
+                DrawerOpenLength="400">
+
+                <ContentControl
+                    IsVisible="{Binding Selected, Converter={x:Static ObjectConverters.IsNotNull}}"
+                    Content="{Binding Selected}" />
+
+                <controls:DrawerView.Drawer>
+
+                    <ContentControl Content="{Binding RepoConfig^}" />
+
+                </controls:DrawerView.Drawer>
+
+            </controls:DrawerView>
 
         </Panel>
 

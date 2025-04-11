@@ -129,33 +129,6 @@ public static class Extensions
     }
 
     /// <summary>
-    /// Computes the hash of the specified file path using the MD5 algorithm.
-    /// </summary>
-    /// <param name="file">The <see cref="FileInfo"/> object representing the file to compute the hash for.</param>
-    /// <returns>A string representing the computed MD5 hash of the file in a lowercase hexadecimal format.</returns>
-    public static string ComputeFileHash(this FileInfo file)
-    {
-        ArgumentNullException.ThrowIfNull(file);
-        
-        var hash = MD5.HashData(Encoding.UTF8.GetBytes(file.FullName));
-        return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
-    }
-    
-    /// <summary>
-    /// Computes the MD5 hash for the specified file content and returns it as a lowercase string representation.
-    /// </summary>
-    /// <param name="file">The file for which to compute the hash.</param>
-    /// <returns>A string representation of the computed MD5 hash in lowercase.</returns>
-    public static string ComputeContentHash(this FileInfo file)
-    {
-        ArgumentNullException.ThrowIfNull(file);
-
-        using var stream = File.OpenRead(file.FullName);
-        var hash = MD5.HashData(stream);
-        return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
-    }
-
-    /// <summary>
     /// Determines whether the input string satisfies the given filter text.
     /// </summary>
     /// <param name="input">The input string to evaluate.</param>

@@ -14,11 +14,15 @@
 
         <a:ChromedTitleBar DockPanel.Dock="Top" Height="40">
             <a:ChromedTitleBar.LeftContent>
-                <Border Width="46">
-                    <Image
-                        Source="../Resources/Images/logo.png"
-                        Height="20" Width="20" />
-                </Border>
+                <StackPanel Orientation="Horizontal" Spacing="10">
+
+                    <Border Width="46">
+                        <Image
+                            Source="../Resources/Images/logo.png"
+                            Height="20" Width="20" />
+                    </Border>
+
+                </StackPanel>
             </a:ChromedTitleBar.LeftContent>
 
             <a:ChromedTitleBar.RightContent>
@@ -56,23 +60,23 @@
                     DrawerMaxLength="800">
 
                     <controls:DrawerView.Drawer>
-                        <ContentControl Content="{Binding NavigationPage}" />
+                        <ContentControl Content="{Binding Navigation^}" />
                     </controls:DrawerView.Drawer>
 
-                    <ContentControl Content="{Binding DetailsPage}" />
+                    <ContentControl Content="{Binding Details^}" />
 
                 </controls:DrawerView>
 
                 <controls:DrawerView
                     x:Name="RunnerDrawer"
                     DrawerPlacement="Bottom"
-                    IsDrawerOpen="{Binding IsRunnerDrawerOpen}"
+                    IsDrawerOpen="{Binding IsDrawerOpen}"
                     DrawerMinLength="40"
                     DrawerOpenLength="500"
                     HideSplitter="False">
 
                     <controls:DrawerView.Drawer>
-                        <ContentControl Content="{Binding RunnerPage}" />
+                        <ContentControl Content="{Binding Drawer^}" />
                     </controls:DrawerView.Drawer>
 
                 </controls:DrawerView>
@@ -80,5 +84,6 @@
             </Panel>
 
         </Border>
+
     </DockPanel>
 </UserControl>

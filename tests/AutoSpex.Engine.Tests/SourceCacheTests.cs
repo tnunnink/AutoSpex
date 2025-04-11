@@ -24,7 +24,7 @@ public class SourceCacheTests
         var cached = await cache.GetOrAdd(source);
 
         cached.Should().NotBeNull();
-        cached.Name.Should().Be(source.ContentHash);
+        cached.Name.Should().NotBeEmpty();
         cached.Location.Should().EndWith(".L5Z");
         cached.Location.Should().Contain(temp.FullName);
 
@@ -59,7 +59,7 @@ public class SourceCacheTests
         var cached = await cache.GetOrAdd(source);
 
         cached.Should().NotBeNull();
-        cached.Name.Should().Be(source.ContentHash);
+        cached.Name.Should().NotBeEmpty();
         cached.Location.Should().EndWith(".L5Z");
         cached.Location.Should().Contain(temp.FullName);
 

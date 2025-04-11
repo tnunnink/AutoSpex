@@ -38,6 +38,7 @@ public partial class Shell : Window, IRecipient<NavigationRequest>
         InitializeComponent();
     }
 
+    [UsedImplicitly]
     public Shell(IMessenger messenger, Navigator navigator)
     {
         InitializeComponent();

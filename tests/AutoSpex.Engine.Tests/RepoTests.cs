@@ -1,3 +1,6 @@
+using System.Diagnostics;
+using Task = System.Threading.Tasks.Task;
+
 namespace AutoSpex.Engine.Tests;
 
 [TestFixture]
@@ -12,24 +15,22 @@ public class RepoTests
         repo.Location.Should().Be(@"C:\Path\To\TestRepo");
         repo.Name.Should().Be("TestRepo");
     }
-
+    
     [Test]
-    public void Build_TempDirectory_ShouldExists()
+    public void Configure_EndsInSlash_ShouldHaveExpectedValues()
     {
-        var directory = Directory.CreateTempSubdirectory("AutoSpexTest");
-        var repo = Repo.Configure(directory.FullName);
+        var repo = Repo.Configure(@"C:\Path\To\TestRepo\");
 
-        repo.Build();
-
-        repo.Exists.Should().BeTrue();
-        directory.Delete(true);
+        repo.RepoId.Should().NotBeEmpty();
+        repo.Location.Should().Be(@"C:\Path\To\TestRepo");
+        repo.Name.Should().Be("TestRepo");
     }
 
     [Test]
     public void FindSources_FakeLocation_ShouldBeEmpty()
     {
         var repo = Repo.Configure(@"C:\Users\tnunnink\Documents\Fake");
-
+        
         var sources = repo.FindSources().ToList();
 
         sources.Should().BeEmpty();
@@ -54,4 +55,34 @@ public class RepoTests
 
         sources.Should().NotBeEmpty();
     }
+    
+    [Test]
+    public void FindSources_WhenCalled_ShouldYieldReturn()
+    {
+        var repo = Repo.Configure(@"C:\Users\Public");
+
+        var stopWatch = Stopwatch.StartNew();
+        var sources = repo.FindSources().ToList();
+        stopWatch.Stop();
+
+        sources.Should().NotBeEmpty();
+        Console.WriteLine(stopWatch.ElapsedMilliseconds);
+    }
+
+    /*[Test]
+    public async Task FindSourcesAsync_WhenCalled_ShouldYieldReturn()
+    {
+        var repo = Repo.Configure(@"C:\Users\Public");
+
+        var stopWatch = Stopwatch.StartNew();
+        
+        await foreach (var source in repo.FindSourcesAsync())
+        {
+            Console.WriteLine(source.Location);
+            source.Should().NotBeNull();
+        }
+        
+        stopWatch.Stop();
+        Console.WriteLine(stopWatch.ElapsedMilliseconds);
+    }*/
 }

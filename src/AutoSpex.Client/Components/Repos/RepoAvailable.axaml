@@ -1,0 +1,94 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+
+
+    <Design.PreviewWith>
+        <Border Height="300">
+            <ContentControl
+                Content="{x:Static components:TestData.RepoTest}"
+                ContentTemplate="{DynamicResource RepoAvailable}"
+                Margin="40"
+                Width="400" />
+        </Border>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="RepoAvailable" DataType="observers:RepoObserver">
+
+        <Expander
+            Theme="{StaticResource ExpanderSimple}"
+            BorderBrush="{a:ThemeResource Container1BorderBrush}">
+
+            <Expander.Styles>
+                <Style Selector="Expander.dragover">
+                    <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBackgroundBrushEmphasizedAccent}" />
+                </Style>
+            </Expander.Styles>
+
+            <Interaction.Behaviors>
+                <behaviors:ExecuteCommandOnDropBehavior />
+            </Interaction.Behaviors>
+
+            <Expander.Header>
+
+                <Grid ColumnDefinitions="*,Auto" Margin="5">
+
+                    <StackPanel Grid.Column="0" Spacing="5" Orientation="Horizontal" ClipToBounds="True">
+
+                        <PathIcon
+                            Theme="{StaticResource IconLineXml}"
+                            Classes.warning="{Binding AvailableCount}" />
+
+                        <Panel Margin="7 0">
+
+                            <TextBlock
+                                Text="No sources are available"
+                                Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                                IsVisible="{Binding !AvailableCount}" />
+
+                            <TextBlock
+                                IsVisible="{Binding AvailableCount}"
+                                Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}">
+                                <TextBlock.Inlines>
+                                    <Run Text="{Binding AvailableCount}"
+                                         Foreground="{a:ThemeResource DefaultForegroundBrush}"
+                                         FontWeight="{a:ThemeResource HeadingFontWeightExtraSmall}" />
+                                    <Run Text="source(s) are available" />
+                                </TextBlock.Inlines>
+                            </TextBlock>
+
+                        </Panel>
+
+                    </StackPanel>
+
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="5" Margin="10 0 0 0">
+                        <Button
+                            Command="{Binding TargetSourcesCommand}"
+                            CommandParameter="{x:True}"
+                            Theme="{StaticResource IconButton}"
+                            properties:Icon.Theme="{StaticResource IconFilledArrowUp}"
+                            ToolTip.Tip="Target Selected" />
+                    </StackPanel>
+
+                </Grid>
+
+            </Expander.Header>
+
+            <ListBox
+                ItemsSource="{Binding Available}"
+                ItemContainerTheme="{StaticResource ListBoxItemSimple}"
+                ItemTemplate="{StaticResource SourceListItem}"
+                IsVisible="{Binding AvailableCount}"
+                SelectionMode="Multiple"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
+
+        </Expander>
+
+    </DataTemplate>
+
+</ResourceDictionary>

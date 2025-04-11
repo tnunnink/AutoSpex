@@ -16,9 +16,20 @@ namespace AutoSpex.Client.Components;
 [SuppressMessage("Usage", "CA2211:Non-constant fields should not be visible")]
 public static class TestData
 {
+    
+    #region Reops
+
+    private const string TestRepo = @"C:\Users\tnunnink\Documents\Rockwell";
+
+    public static RepoObserver RepoTest = new(Repo.Configure(TestRepo));
+
+    public static ObservableCollection<RepoObserver> Repos = [RepoTest, RepoTest, RepoTest];
+
+    #endregion
+    
     #region Sources
 
-    private const string TestSource = @"C:\Users\tnunn\Documents\L5X\Test.L5X";
+    private const string TestSource = @"C:\Users\tnunnink\Documents\Rockwell\Test.L5X";
 
     public static SourceObserver SourceTest = new(Source.Create(TestSource));
 

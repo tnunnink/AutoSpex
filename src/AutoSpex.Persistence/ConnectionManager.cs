@@ -7,6 +7,8 @@ namespace AutoSpex.Persistence;
 
 public class ConnectionManager(string dataSource) : IConnectionManager
 {
+    /*private static readonly string AppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+    public static string SpexDb = Path.Combine(AppData, "AutoSpex", "spex.db");*/
     private const string AppDatabase = "../spex.db";
 
     /// <summary>

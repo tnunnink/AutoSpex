@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoSpex.Client.Observers;
@@ -10,20 +9,28 @@ using AutoSpex.Persistence;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using FluentResults;
 using JetBrains.Annotations;
 
 namespace AutoSpex.Client.Pages;
 
 [UsedImplicitly]
-public partial class DetailsPageModel : PageViewModel, IRecipient<NavigationRequest>
+public partial class DetailsPageModel : PageViewModel,
+    IRecipient<NavigationRequest>,
+    IRecipient<AppPageModel.SaveAllRequest>,
+    IRecipient<AppPageModel.SaveSelectedRequest>,
+    IRecipient<AppPageModel.CloseAllTabsRequest>
 {
     [ObservableProperty] private ObservableCollection<DetailPageModel> _pages = [];
 
     [ObservableProperty] private DetailPageModel? _selected;
 
-    public Task<DetailTabListPageModel> TabList => Navigator.Navigate(() => new DetailTabListPageModel(Pages.ToList()));
+    [ObservableProperty] private bool _isDrawerOpen;
 
+    public Task<DetailTabListPageModel> TabList => Navigator.Navigate(() => new DetailTabListPageModel(Pages.ToList()));
+    public Task<RepoConnectorPageModel> RepoConnector => Navigator.Navigate<RepoConnectorPageModel>();
+    public Task<RepoConfigPageModel> RepoConfig => Navigator.Navigate<RepoConfigPageModel>();
+
+    /// <inheritdoc />
     protected override void OnDeactivated()
     {
         foreach (var page in Pages.ToList())
@@ -33,6 +40,9 @@ public partial class DetailsPageModel : PageViewModel, IRecipient<NavigationRequ
 
         base.OnDeactivated();
     }
+
+
+    #region Commands
 
     /// <summary>
     /// Command to quickly create a new collection node.
@@ -61,15 +71,6 @@ public partial class DetailsPageModel : PageViewModel, IRecipient<NavigationRequ
         var node = Node.NewSpec();
         var observer = new NodeObserver(node) { IsNew = true };
         await Navigator.Navigate(observer);
-    }
-
-    /// <summary>
-    /// Command to quickly create a new source and open the details for in the detail view.
-    /// </summary>
-    [RelayCommand]
-    private Task NewSource()
-    {
-        throw new NotImplementedException();
     }
 
     /// <summary>
@@ -172,9 +173,44 @@ public partial class DetailsPageModel : PageViewModel, IRecipient<NavigationRequ
         }
     }
 
+    [RelayCommand]
+    private void ToggleDrawer()
+    {
+        IsDrawerOpen = !IsDrawerOpen;
+    }
+
+    #endregion
+
+    #region Messages
+
     /// <summary>
-    /// Handle the reception of the navigation request for a detail page model object. Either open (add to pages) or
-    /// close (remove from pages) depending on the action. Also don't open duplicate detail pages.
+    /// Reply to the message with the async command for saving all current open tabs.
+    /// </summary>
+    public void Receive(AppPageModel.SaveAllRequest message)
+    {
+        message.Reply(SaveAllCommand);
+    }
+
+    /// <summary>
+    /// Reply to the message with the async command for saving the current selected tab.
+    /// </summary>
+    public void Receive(AppPageModel.SaveSelectedRequest message)
+    {
+        message.Reply(SaveSelectedCommand);
+    }
+
+    /// <summary>
+    /// Reply to the message with the async command for closing all open tabs.
+    /// </summary>
+    public void Receive(AppPageModel.CloseAllTabsRequest message)
+    {
+        message.Reply(CloseAllTabsCommand);
+    }
+
+    /// <summary>
+    /// Handle the reception of the navigation request for a detail page model object.
+    /// Either open (add to pages) or close (remove from pages) depending on the action.
+    /// Also don't open duplicate detail pages.
     /// </summary>
     public void Receive(NavigationRequest message)
     {
@@ -186,7 +222,7 @@ public partial class DetailsPageModel : PageViewModel, IRecipient<NavigationRequ
             return;
         }
 
-        if (SelectExistingIfOpen(detail)) return;
+        if (ShowIfOpen(detail)) return;
 
         if (message.Action == NavigationAction.Replace)
         {
@@ -196,6 +232,10 @@ public partial class DetailsPageModel : PageViewModel, IRecipient<NavigationRequ
 
         OpenPage(detail);
     }
+
+    #endregion
+
+    #region Internals
 
     private void OpenPage(DetailPageModel page)
     {
@@ -211,7 +251,7 @@ public partial class DetailsPageModel : PageViewModel, IRecipient<NavigationRequ
             Selected = Pages.FirstOrDefault();
     }
 
-    private bool SelectExistingIfOpen(PageViewModel page)
+    private bool ShowIfOpen(PageViewModel page)
     {
         var existing = Pages.SingleOrDefault(x => x.Route == page.Route);
         if (existing is null) return false;
@@ -236,4 +276,6 @@ public partial class DetailsPageModel : PageViewModel, IRecipient<NavigationRequ
         Pages.Add(page);
         Selected = page;
     }
+
+    #endregion
 }

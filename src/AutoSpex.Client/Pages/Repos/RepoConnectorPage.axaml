@@ -1,0 +1,67 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             x:Class="AutoSpex.Client.Pages.RepoConnectorPage"
+             x:DataType="pages:RepoConnectorPageModel">
+
+    <Button
+        Theme="{a:ControlTheme ButtonSubtle}"
+        VerticalAlignment="Center"
+        ToolTip.Placement="BottomEdgeAlignedRight">
+
+        <StackPanel Spacing="10" Orientation="Horizontal">
+
+            <Panel>
+                <PathIcon
+                    Theme="{StaticResource IconFilledFolderOpen}"
+                    IsVisible="{Binding !Repo.IsSyncing, FallbackValue={x:False}}" />
+
+                <PathIcon
+                    Theme="{StaticResource IconThemedPending}"
+                    IsVisible="{Binding Repo.IsSyncing, FallbackValue={x:False}}">
+
+                    <PathIcon.Styles>
+                        <Style Selector="PathIcon">
+                            <Style.Animations>
+                                <Animation Duration="0:0:1" IterationCount="INFINITE">
+                                    <KeyFrame Cue="0%">
+                                        <Setter Property="RotateTransform.Angle" Value="0" />
+                                    </KeyFrame>
+                                    <KeyFrame Cue="100%">
+                                        <Setter Property="RotateTransform.Angle" Value="360" />
+                                    </KeyFrame>
+                                </Animation>
+                            </Style.Animations>
+                        </Style>
+                    </PathIcon.Styles>
+                </PathIcon>
+            </Panel>
+
+            <Panel>
+                <TextBlock
+                    IsVisible="{Binding Repo, Converter={x:Static ObjectConverters.IsNull}}"
+                    Text="Select repo"
+                    Opacity="{a:ThemeResource EditWatermarkOpacity}"
+                    FontStyle="Italic" />
+                <TextBlock
+                    IsVisible="{Binding Repo, Converter={x:Static ObjectConverters.IsNotNull}}"
+                    Text="{Binding Repo.Name, FallbackValue={x:Null}}"
+                    FontWeight="{a:ThemeResource HeadingFontWeightMedium}" />
+            </Panel>
+
+            <PathIcon
+                Theme="{StaticResource IconLineExpand}"
+                Classes="size-sm" />
+
+        </StackPanel>
+
+        <Button.Flyout>
+            <Flyout Placement="BottomEdgeAlignedRight" VerticalOffset="2" HorizontalOffset="8">
+                <ContentControl Content="{Binding RepoList^}" />
+            </Flyout>
+        </Button.Flyout>
+
+    </Button>
+
+</UserControl>

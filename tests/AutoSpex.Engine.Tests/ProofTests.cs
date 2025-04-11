@@ -83,4 +83,18 @@ public class ProofTests
 
         tagNames.Should().NotBeEmpty();
     }
+
+    [Test]
+    public void HowToReadFileContentForOpenFile()
+    {
+        const string openFile =
+            @"C:\Users\tnunnink\Documents\Projects\L5Sharp\tests\L5Sharp.Samples\Test.ACD";
+
+        using var stream = File.Open(openFile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+        
+        var hash = MD5.HashData(stream);
+        var result = BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+
+        result.Should().NotBeEmpty();
+    }
 }

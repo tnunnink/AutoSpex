@@ -1,12 +1,12 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
 namespace AutoSpex.Client.Pages;
 
-public partial class SourceSelectorPage : UserControl
+public partial class RepoConnectorPage : UserControl
 {
-    public SourceSelectorPage()
+    public RepoConnectorPage()
     {
         InitializeComponent();
     }

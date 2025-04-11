@@ -126,46 +126,4 @@ public class ExtensionTests
 
         content.Should().NotBeEmpty();
     }
-
-    [Test]
-    public void ComputeHash_ArchiveFile_ShouldReturnValueQuicklyAndNotContainInvalidPathChars()
-    {
-        var file = new FileInfo(Known.Archive);
-        
-        var stopwatch = Stopwatch.StartNew();
-        var hash = file.ComputeContentHash();
-        stopwatch.Stop();
-
-        Console.WriteLine($"Hash: {hash}");
-        Console.WriteLine($"Time Taken: {stopwatch.ElapsedMilliseconds}ms");
-        hash.Select(c => c).Should().AllSatisfy(x => Path.GetInvalidFileNameChars().Should().NotContain(x));
-    }
-    
-    [Test]
-    public void ComputeHash_MarkupFile_ShouldReturnValueQuicklyAndNotContainInvalidPathChars()
-    {
-        var file = new FileInfo(Known.Test);
-        
-        var stopwatch = Stopwatch.StartNew();
-        var hash = file.ComputeContentHash();
-        stopwatch.Stop();
-
-        Console.WriteLine($"Hash: {hash}");
-        Console.WriteLine($"Time Taken: {stopwatch.ElapsedMilliseconds}ms");
-        hash.Select(c => c).Should().AllSatisfy(x => Path.GetInvalidFileNameChars().Should().NotContain(x));
-    }
-    
-    [Test]
-    public void ComputeHash_CompressedFile_ShouldReturnValueQuicklyAndNotContainInvalidPathChars()
-    {
-        var file = new FileInfo(Known.Compressed);
-        
-        var stopwatch = Stopwatch.StartNew();
-        var hash = file.ComputeContentHash();
-        stopwatch.Stop();
-
-        Console.WriteLine($"Hash: {hash}");
-        Console.WriteLine($"Time Taken: {stopwatch.ElapsedMilliseconds}ms");
-        hash.Select(c => c).Should().AllSatisfy(x => Path.GetInvalidFileNameChars().Should().NotContain(x));
-    }
 }

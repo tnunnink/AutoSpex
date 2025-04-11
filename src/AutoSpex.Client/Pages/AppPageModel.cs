@@ -1,47 +1,22 @@
-using System;
-using AutoSpex.Client.Services;
+using System.Threading.Tasks;
 using AutoSpex.Client.Shared;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging.Messages;
+using FluentResults;
 using JetBrains.Annotations;
 
 namespace AutoSpex.Client.Pages;
 
 [UsedImplicitly]
-public partial class AppPageModel : PageViewModel, IRecipient<NavigationRequest>
+public partial class AppPageModel : PageViewModel
 {
-    [ObservableProperty] private NavigationPageModel? _navigationPage;
+    public Task<NavigationPageModel> Navigation => Navigator.Navigate<NavigationPageModel>();
+    public Task<DetailsPageModel> Details => Navigator.Navigate<DetailsPageModel>();
+    public Task<RunnerPageModel> Drawer => Navigator.Navigate<RunnerPageModel>();
 
-    [ObservableProperty] private DetailsPageModel? _detailsPage;
-
-    [ObservableProperty] private RunnerPageModel? _runnerPage;
-
-    [ObservableProperty] private bool _isRunnerDrawerOpen;
-
-
-    /// <inheritdoc />
-    public override async Task Load()
-    {
-        await Navigator.Navigate<NavigationPageModel>();
-        await Navigator.Navigate<DetailsPageModel>();
-        await Navigator.Navigate<RunnerPageModel>();
-    }
-
-    /// <inheritdoc />
-    protected override void OnDeactivated()
-    {
-        if (NavigationPage is not null)
-            Navigator.Close(NavigationPage);
-
-        if (DetailsPage is not null)
-            Navigator.Close(DetailsPage);
-
-        if (RunnerPage is not null)
-            Navigator.Close(RunnerPage);
-
-        base.OnDeactivated();
-    }
+    [ObservableProperty] private bool _isDrawerOpen;
 
     [RelayCommand]
     private Task OpenSettings()
@@ -49,63 +24,32 @@ public partial class AppPageModel : PageViewModel, IRecipient<NavigationRequest>
         return Prompter.Show(() => new SettingsPageModel());
     }
 
-    /// <summary>
-    /// Handles the navigation requests for this main project page.
-    /// </summary>
-    public void Receive(NavigationRequest message)
+    [RelayCommand]
+    private async Task SaveAll()
     {
-        switch (message.Action)
-        {
-            case NavigationAction.Open:
-                OpenPage(message);
-                break;
-            case NavigationAction.Close:
-                ClosePage(message);
-                break;
-            case NavigationAction.Replace:
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(message), "Navigation action out of expected range");
-        }
+        var command = Messenger.Send(new SaveAllRequest()).Response;
+        await command.ExecuteAsync(null);
+    }
+    
+    [RelayCommand]
+    private async Task SaveSelected()
+    {
+        var command = Messenger.Send(new SaveSelectedRequest()).Response;
+        await command.ExecuteAsync(null);
+    }
+    
+    [RelayCommand]
+    private async Task CloseAllTabs()
+    {
+        var command = Messenger.Send(new CloseAllTabsRequest()).Response;
+        await command.ExecuteAsync(null);
     }
 
-    /// <summary>
-    /// Opens the requested page depending on the model that is passed in.
-    /// </summary>
-    private void OpenPage(NavigationRequest message)
-    {
-        switch (message.Page)
-        {
-            case NavigationPageModel page:
-                NavigationPage = page;
-                break;
-            case DetailsPageModel page:
-                DetailsPage = page;
-                break;
-            case RunnerPageModel page:
-                RunnerPage = page;
-                break;
-        }
-    }
+    public class SaveAllRequest : RequestMessage<IAsyncRelayCommand>;
 
-    /// <summary>
-    /// Closes the requested page depending on the model that is passed in.
-    /// </summary>
-    private void ClosePage(NavigationRequest message)
-    {
-        switch (message.Page)
-        {
-            case NavigationPageModel:
-                NavigationPage = null;
-                break;
-            case DetailsPageModel:
-                DetailsPage = null;
-                break;
-            case RunnerPageModel:
-                RunnerPage = null;
-                break;
-        }
-    }
+    public class SaveSelectedRequest : RequestMessage<IAsyncRelayCommand>;
+
+    public class CloseAllTabsRequest : RequestMessage<IAsyncRelayCommand>;
 
     /*/// <summary>
     /// When a node is triggered to run from somewhere, open the runner drawer automatically to show the process.

@@ -1,4 +1,6 @@
-﻿using L5Sharp.Core;
+﻿using System.Security.Cryptography;
+using System.Text;
+using L5Sharp.Core;
 
 namespace AutoSpex.Engine;
 
@@ -13,24 +15,12 @@ public class Source
     {
         ArgumentNullException.ThrowIfNull(file);
 
-        FileHash = file.ComputeFileHash();
-        ContentHash = file.ComputeContentHash();
         Location = file.FullName;
         Name = Path.GetFileNameWithoutExtension(file.Name);
         Type = SourceType.FromExtension(file.Extension);
         UpdatedOn = file.LastWriteTimeUtc;
         Size = file.Length;
     }
-
-    /// <summary>
-    /// Represents the hash value of the file, uniquely identifying the file itself.
-    /// </summary>
-    public string FileHash { get; }
-
-    /// <summary>
-    /// Represents the hash value of the content of the source file, uniquely identifying its contents.
-    /// </summary>
-    public string ContentHash { get; }
 
     /// <summary>
     /// The absolute location on disc of the source file.
@@ -91,5 +81,26 @@ public class Source
             throw new InvalidOperationException($"Source no longer exists at '{Location}'.");
 
         return await Type.OpenAsync(Location, token);
+    }
+
+    /// <summary>
+    /// Computes the MD5 hash of the location of the source file.
+    /// </summary>
+    /// <returns>The MD5 hash string of the source file's location.</returns>
+    public string HashLocation()
+    {
+        var hash = MD5.HashData(Encoding.UTF8.GetBytes(Location));
+        return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+    }
+
+    /// <summary>
+    /// Computes the hash of the content of the source file.
+    /// </summary>
+    /// <returns>The MD5 hash string representing the content of the source file.</returns>
+    public string HashContent()
+    {
+        using var stream = File.Open(Location, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+        var hash = MD5.HashData(stream);
+        return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
     }
 }

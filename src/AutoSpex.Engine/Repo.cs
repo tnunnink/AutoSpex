@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Runtime.CompilerServices;
+using JetBrains.Annotations;
 
 namespace AutoSpex.Engine;
 
@@ -9,49 +10,39 @@ public class Repo
 {
     private static readonly string[] SearchableExtensions = [".L5X", ".ACD", ".L5Z"];
 
-    [JsonConstructor]
-    private Repo(Guid repoId, string location, string name)
+    [UsedImplicitly]
+    private Repo()
     {
-        ValidateLocation(location);
-
-        RepoId = repoId;
-        Location = location;
-        Name = name;
+        Location = ValidateAndNormalize(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
     }
 
     /// <summary>
     /// Creates a new repository instance pointing to the provided configuration.
     /// </summary>
-    public Repo(string location, string? name = null)
+    public Repo(string location)
     {
-        ValidateLocation(location);
-        Location = location;
-        Name = name ?? Path.GetFileNameWithoutExtension(location);
+        Location = ValidateAndNormalize(location);
     }
 
     /// <summary>
     /// Gets the unique identifier for the repository instance.
     /// </summary>
-    [JsonInclude]
     public Guid RepoId { get; private init; } = Guid.NewGuid();
 
     /// <summary>
     /// Gets the root directory location where the repository resides.
     /// </summary>
-    [JsonInclude]
     public string Location { get; }
 
     /// <summary>
     /// Gets or sets the name of the repository. This will be a client specific name, and not persisted in the actual
     /// repo database since we don't really care about the name from there, and we don't want to maintain it's state.
     /// </summary>
-    [JsonInclude]
-    public string Name { get; set; }
+    public string Name => Path.GetFileName(Location.TrimEnd('\\'));
 
     /// <summary>
     /// Checks whether the repository is configured by verifying the existence of the root folder location.
     /// </summary>
-    [JsonIgnore]
     public bool Exists => Directory.Exists(Location);
 
     /// <summary>
@@ -62,11 +53,10 @@ public class Repo
     public static Repo Configure(string location) => new(location);
 
     /// <summary>
-    /// Searches for and retrieves all sources in the repository that match predefined searchable file extensions.
+    /// Finds all source files in the current repository location. This wil return archive, markup, and our custom
+    /// compressed file extensions. 
     /// </summary>
-    /// <returns>
-    /// A collection of Source objects representing the found files, or an empty collection if no matching files are located.
-    /// </returns>
+    /// <returns>The collection of sources found in the repo.</returns>
     public IEnumerable<Source> FindSources()
     {
         if (!Directory.Exists(Location)) yield break;
@@ -78,39 +68,28 @@ public class Repo
             MatchType = MatchType.Simple
         };
 
-        foreach (var extension in SearchableExtensions)
-        {
-            var files = Directory.EnumerateFiles(Location, $"*{extension}", options);
+        var files = SearchableExtensions.AsParallel()
+            .SelectMany(extension => Directory.EnumerateFiles(Location, $"*{extension}", options));
 
-            foreach (var file in files)
-            {
-                yield return Source.Create(file);
-            }
+        foreach (var file in files)
+        {
+            yield return Source.Create(file);
         }
     }
 
     /// <summary>
-    /// Builds the repository by creating the necessary directory structure for storage.
+    /// Validates and normalizes the provided location string for a repository.
     /// </summary>
-    /// <returns>The current Repo instance after successfully building the repository.</returns>
-    /// <exception cref="InvalidOperationException">Thrown if a parent repository is found at the specified location.</exception>
-    public Repo Build()
-    {
-        Directory.CreateDirectory(Location);
-        return this;
-    }
-
-    /// <summary>
-    /// Validates the provided location to ensure it is a valid path for the repository database.
-    /// </summary>
-    /// <param name="location">The location to be validated.</param>
-    /// <exception cref="ArgumentException">Thrown when the location is empty or contains invalid characters.</exception>
-    private static void ValidateLocation(string location)
+    /// <param name="location">The file system path to be validated and normalized.</param>
+    /// <returns>The validated and normalized version of the input location string.</returns>
+    private static string ValidateAndNormalize(string location)
     {
         if (string.IsNullOrWhiteSpace(location))
             throw new ArgumentException("Location cannot be empty", nameof(location));
 
         if (location.Any(c => Path.GetInvalidPathChars().Contains(c)))
             throw new ArgumentException("Location contains invalid characters", nameof(location));
+
+        return location.TrimEnd('\\');
     }
 }

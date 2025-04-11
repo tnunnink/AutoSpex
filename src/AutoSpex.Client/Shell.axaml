@@ -4,41 +4,42 @@
         xmlns:client="clr-namespace:AutoSpex.Client"
         x:Class="AutoSpex.Client.Shell"
         x:DataType="client:Shell"
-        Width="1400" Height="980"
+        Height="1000"
+        Width="1600"
         WindowState="Normal"
-        Icon="Resources/Images/logo.ico"
         WindowStartupLocation="CenterScreen"
-        ExtendClientAreaToDecorationsHint="True"
-        ExtendClientAreaChromeHints="SystemChrome"
-        ExtendClientAreaTitleBarHeightHint="0"
-        SystemDecorations="BorderOnly"
+        Icon="Resources/Images/logo.ico"
         Focusable="True"
         IsTabStop="False">
 
     <Window.KeyBindings>
-        <KeyBinding Gesture="Ctrl+S"
-                    Command="{Binding AppPage.DetailsPage.SaveSelectedCommand, FallbackValue={x:Null}}" />
         <KeyBinding Gesture="Ctrl+Shift+S"
-                    Command="{Binding AppPage.DetailsPage.SaveAllCommand, FallbackValue={x:Null}}" />
+                    Command="{Binding AppPage.SaveAllCommand, FallbackValue={x:Null}}" />
+        <KeyBinding Gesture="Ctrl+S"
+                    Command="{Binding AppPage.SaveSelectedCommand, FallbackValue={x:Null}}" />
         <KeyBinding Gesture="Ctrl+Shift+W"
-                    Command="{Binding AppPage.DetailsPage.CloseAllTabsCommand, FallbackValue={x:Null}}" />
-        <KeyBinding Gesture="Ctrl+F"
-                    Command="{Binding AppPage.NavigationPage.OpenSearchCommand, FallbackValue={x:Null}}" />
+                    Command="{Binding AppPage.CloseAllTabsCommand, FallbackValue={x:Null}}" />
+        <!--<KeyBinding Gesture="Ctrl+F"
+                    Command="{Binding AppPage.OpenSearchCommand, FallbackValue={x:Null}}" />-->
     </Window.KeyBindings>
 
-    <Panel a:BorderChildClipConverter.ClipToContainingBorder="True">
+    <Border BorderBrush="{a:ThemeResource Container3BorderBrush}" BorderThickness="1">
 
-        <ContentControl
-            x:Name="ClientArea"
-            Content="{Binding AppPage}" />
+        <Panel a:BorderChildClipConverter.ClipToContainingBorder="True">
 
-        <Border
-            x:Name="DialogShadow"
-            IsVisible="{Binding DialogOpen}"
-            PointerPressed="DialogShadowPointerPressed"
-            Background="Black"
-            Opacity="0.3" />
+            <ContentControl
+                x:Name="ClientArea"
+                Content="{Binding AppPage}" />
 
-    </Panel>
+            <Border
+                x:Name="DialogShadow"
+                IsVisible="{Binding DialogOpen}"
+                PointerPressed="DialogShadowPointerPressed"
+                Background="Black"
+                Opacity="0.3" />
+
+        </Panel>
+
+    </Border>
 
 </Window>

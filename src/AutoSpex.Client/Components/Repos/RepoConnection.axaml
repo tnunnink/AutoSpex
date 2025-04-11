@@ -1,0 +1,97 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+
+    <Design.PreviewWith>
+        <ContentControl
+            Content="{x:Static components:TestData.RepoTest}"
+            ContentTemplate="{DynamicResource RepoConnection}"
+            Margin="40"
+            Width="300" />
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="RepoConnection" DataType="observers:RepoObserver">
+
+        <Border
+            BorderThickness="{a:ThemeResource ButtonBorderThickness}"
+            CornerRadius="{a:ThemeResource ButtonCornerRadius}"
+            Classes.not-existing="{Binding !Exists}"
+            Classes.sync-required="{Binding SyncRequired}"
+            Padding="10">
+
+            <Border.Styles>
+                <Style Selector="Border">
+                    <Setter Property="BorderBrush" Value="{a:ThemeResource Container1BorderBrush}" />
+                </Style>
+                <Style Selector="Border.not-existing">
+                    <Setter Property="BorderBrush" Value="{a:ThemeResource ControlForegroundBrushOutlineDanger}" />
+                </Style>
+                <Style Selector="Border.sync-required">
+                    <Setter Property="BorderBrush" Value="{a:ThemeResource ControlForegroundBrushOutlineWarning}" />
+                </Style>
+            </Border.Styles>
+
+            <Grid ColumnDefinitions="*,Auto">
+
+                <StackPanel Grid.Column="0" Spacing="5" Orientation="Horizontal" ClipToBounds="True">
+
+                    <Panel>
+                        <PathIcon
+                            IsVisible="{Binding Exists}"
+                            Theme="{StaticResource IconFilledFolderOpen}" />
+                        <PathIcon
+                            IsVisible="{Binding !Exists}"
+                            Theme="{StaticResource IconFilledExclamation}"
+                            Classes="danger"
+                            ToolTip.Tip="Location no longer exists" />
+                    </Panel>
+
+                    <StackPanel Spacing="2" Margin="7 0">
+                        <TextBlock
+                            Text="{Binding Name}"
+                            FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
+                        <TextBlock
+                            Text="{Binding Location}"
+                            Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                            FontSize="{a:ThemeResource DefaultFontSizeExtraSmall}"
+                            TextTrimming="CharacterEllipsis"
+                            FlowDirection="LeftToRight"
+                            ToolTip.Tip="{Binding Location}" />
+                    </StackPanel>
+
+                </StackPanel>
+
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="5" Margin="10 0 0 0">
+
+                    <Button
+                        Command="{Binding SyncCommand}"
+                        IsVisible="{Binding Exists}"
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconLineRotate}"
+                        Classes.warning="{Binding SyncRequired}" />
+
+                    <Button
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconEllipsis}">
+
+                        <Button.Flyout>
+                            <MenuFlyout
+                                Placement="BottomEdgeAlignedRight"
+                                ItemContainerTheme="{StaticResource MenuActionItem}"
+                                ItemsSource="{Binding MenuItems}" />
+                        </Button.Flyout>
+                    </Button>
+
+                </StackPanel>
+
+            </Grid>
+
+        </Border>
+
+    </DataTemplate>
+
+</ResourceDictionary>

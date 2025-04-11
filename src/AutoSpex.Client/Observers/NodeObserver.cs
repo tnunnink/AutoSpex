@@ -364,10 +364,9 @@ public partial class NodeObserver : Observer<Node>,
     protected override Task<Result> DeleteItems(IEnumerable<Observer> observers)
     {
         //If this node has not been saved to the database, just return ok to allow the node to be deleted virtually.
-        if (IsVirtual) return Task.FromResult(Result.Ok());
-
-        //Otherwise, send the request to update the database.
-        return Mediator.Send(new DeleteNodes(observers.Cast<NodeObserver>().Select(n => n.Model)));
+        return IsVirtual ? Task.FromResult(Result.Ok()) :
+            //Otherwise, send the request to update the database.
+            Mediator.Send(new DeleteNodes(observers.Cast<NodeObserver>().Select(n => n.Model)));
     }
 
     /// <summary>

@@ -1,0 +1,95 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors"
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+
+
+    <Design.PreviewWith>
+        <Border Height="300">
+            <ContentControl
+                Content="{x:Static components:TestData.RepoTest}"
+                ContentTemplate="{DynamicResource RepoTargeted}"
+                Margin="40"
+                Width="400" />
+        </Border>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="RepoTargeted" DataType="observers:RepoObserver">
+
+
+        <Expander
+            Theme="{StaticResource ExpanderSimple}"
+            BorderBrush="{a:ThemeResource Container1BorderBrush}">
+
+            <Expander.Styles>
+                <Style Selector="Expander.dragover">
+                    <Setter Property="BorderBrush" Value="{a:ThemeResource ControlBackgroundBrushEmphasizedAccent}" />
+                </Style>
+            </Expander.Styles>
+
+            <Interaction.Behaviors>
+                <behaviors:ExecuteCommandOnDropBehavior />
+            </Interaction.Behaviors>
+
+            <Expander.Header>
+
+                <Grid ColumnDefinitions="*,Auto" Margin="5">
+
+                    <StackPanel Grid.Column="0" Spacing="5" Orientation="Horizontal" ClipToBounds="True">
+
+                        <PathIcon
+                            Theme="{StaticResource IconFilledLightning}"
+                            Classes.accent="{Binding TargetedCount}" />
+
+                        <Panel Margin="7 0">
+
+                            <TextBlock
+                                Text="No sources are targeted"
+                                Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                                IsVisible="{Binding !TargetedCount}" />
+
+                            <TextBlock
+                                IsVisible="{Binding TargetedCount}"
+                                Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}">
+                                <TextBlock.Inlines>
+                                    <Run Text="{Binding TargetedCount}"
+                                         Foreground="{a:ThemeResource DefaultForegroundBrush}"
+                                         FontWeight="{a:ThemeResource HeadingFontWeightExtraSmall}" />
+                                    <Run Text="source(s) are targeted" />
+                                </TextBlock.Inlines>
+                            </TextBlock>
+
+                        </Panel>
+
+                    </StackPanel>
+
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="5" Margin="10 0 0 0">
+                        <Button
+                            Command="{Binding TargetSourcesCommand}"
+                            CommandParameter="{x:False}"
+                            Theme="{StaticResource IconButton}"
+                            properties:Icon.Theme="{StaticResource IconFilledArrowDown}"
+                            ToolTip.Tip="Remove Selected" />
+                    </StackPanel>
+
+                </Grid>
+
+            </Expander.Header>
+
+            <ListBox
+                ItemsSource="{Binding Targeted}"
+                ItemContainerTheme="{StaticResource ListBoxItemSimple}"
+                ItemTemplate="{StaticResource SourceListItem}"
+                IsVisible="{Binding TargetedCount}"
+                SelectionMode="Multiple"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
+
+        </Expander>
+
+    </DataTemplate>
+
+</ResourceDictionary>

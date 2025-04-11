@@ -20,6 +20,7 @@
             <PathIcon Theme="{DynamicResource IconFilledStack}" />
             <PathIcon Theme="{DynamicResource IconFilledFolder}" />
             <PathIcon Theme="{DynamicResource IconFilledFolderOpen}" />
+            <PathIcon Theme="{DynamicResource IconFilledFolderTree}" />
             <PathIcon Theme="{DynamicResource IconFilledCog}" />
             <PathIcon Theme="{DynamicResource IconFilledGear}" />
             <PathIcon Theme="{DynamicResource IconFilledPlus}" />
@@ -55,6 +56,7 @@
             <PathIcon Theme="{DynamicResource IconFilledQuote}" />
             <PathIcon Theme="{DynamicResource IconFilledFile}" />
             <PathIcon Theme="{DynamicResource IconFilledFileCode}" />
+            <PathIcon Theme="{DynamicResource IconFilledFileZip}" />
             <PathIcon Theme="{DynamicResource IconFilledTag}" />
             <PathIcon Theme="{DynamicResource IconFilledGrip}" />
             <PathIcon Theme="{DynamicResource IconFilledBook}" />
@@ -110,6 +112,14 @@
         <Setter Property="Data">
             <StreamGeometry>
                 M384 480h48c11.4 0 21.9-6 27.6-15.9l112-192c5.8-9.9 5.8-22.1 .1-32.1S555.5 224 544 224H144c-11.4 0-21.9 6-27.6 15.9L48 357.1V96c0-8.8 7.2-16 16-16H181.5c4.2 0 8.3 1.7 11.3 4.7l26.5 26.5c21 21 49.5 32.8 79.2 32.8H416c8.8 0 16 7.2 16 16v32h48V160c0-35.3-28.7-64-64-64H298.5c-17 0-33.3-6.7-45.3-18.7L226.7 50.7c-12-12-28.3-18.7-45.3-18.7H64C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H87.7 384z
+            </StreamGeometry>
+        </Setter>
+    </ControlTheme>
+
+    <ControlTheme x:Key="IconFilledFolderTree" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
+        <Setter Property="Data">
+            <StreamGeometry>
+                M64 32C64 14.3 49.7 0 32 0S0 14.3 0 32l0 96L0 384c0 35.3 28.7 64 64 64l192 0 0-64L64 384l0-224 192 0 0-64L64 96l0-64zM288 192c0 17.7 14.3 32 32 32l224 0c17.7 0 32-14.3 32-32l0-128c0-17.7-14.3-32-32-32l-98.7 0c-8.5 0-16.6-3.4-22.6-9.4L409.4 9.4c-6-6-14.1-9.4-22.6-9.4L320 0c-17.7 0-32 14.3-32 32l0 160zm0 288c0 17.7 14.3 32 32 32l224 0c17.7 0 32-14.3 32-32l0-128c0-17.7-14.3-32-32-32l-98.7 0c-8.5 0-16.6-3.4-22.6-9.4l-13.3-13.3c-6-6-14.1-9.4-22.6-9.4L320 288c-17.7 0-32 14.3-32 32l0 160z
             </StreamGeometry>
         </Setter>
     </ControlTheme>
@@ -381,6 +391,14 @@
             </StreamGeometry>
         </Setter>
     </ControlTheme>
+    
+    <ControlTheme x:Key="IconFilledFileZip" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
+        <Setter Property="Data">
+            <StreamGeometry>
+                M64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-288-128 0c-17.7 0-32-14.3-32-32L224 0 64 0zM256 0l0 128 128 0L256 0zM96 48c0-8.8 7.2-16 16-16l32 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-32 0c-8.8 0-16-7.2-16-16zm0 64c0-8.8 7.2-16 16-16l32 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-32 0c-8.8 0-16-7.2-16-16zm0 64c0-8.8 7.2-16 16-16l32 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-32 0c-8.8 0-16-7.2-16-16zm-6.3 71.8c3.7-14 16.4-23.8 30.9-23.8l14.8 0c14.5 0 27.2 9.7 30.9 23.8l23.5 88.2c1.4 5.4 2.1 10.9 2.1 16.4c0 35.2-28.8 63.7-64 63.7s-64-28.5-64-63.7c0-5.5 .7-11.1 2.1-16.4l23.5-88.2zM112 336c-8.8 0-16 7.2-16 16s7.2 16 16 16l32 0c8.8 0 16-7.2 16-16s-7.2-16-16-16l-32 0z
+            </StreamGeometry>
+        </Setter>
+    </ControlTheme>
 
     <ControlTheme x:Key="IconFilledInfo" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
         <Setter Property="Data">
@@ -405,7 +423,7 @@
             </StreamGeometry>
         </Setter>
     </ControlTheme>
-    
+
     <ControlTheme x:Key="IconFilledBook" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
         <Setter Property="Data">
             <StreamGeometry>
@@ -413,7 +431,7 @@
             </StreamGeometry>
         </Setter>
     </ControlTheme>
-    
+
     <ControlTheme x:Key="IconFilledDatabase" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
         <Setter Property="Data">
             <StreamGeometry>

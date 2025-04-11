@@ -41,11 +41,12 @@ public static class DialogExtensions
     }
 
     /// <summary>
-    /// Opens the file picker with options to select a source L5X file to be added to the application.
+    /// Opens a dialog box for selecting a location with the specified title.
     /// </summary>
     /// <param name="provider">The storage provider service.</param>
-    /// <param name="title">The title of the file explorer</param>
-    /// <returns>The <see cref="Uri"/> of the selected file.</returns>
+    /// <param name="title">The title of the dialog box.</param>
+    /// <returns>The local path of the selected location as a <see cref="string"/>.</returns>
+    /// <seealso cref="DialogExtensions"/>
     public static async Task<string?> SelectLocation(this IStorageProvider provider, string title)
     {
         var options = new FolderPickerOpenOptions

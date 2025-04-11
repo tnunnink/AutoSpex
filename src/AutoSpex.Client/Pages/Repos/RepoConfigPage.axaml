@@ -1,0 +1,107 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             x:Class="AutoSpex.Client.Pages.RepoConfigPage"
+             x:DataType="pages:RepoConfigPageModel">
+
+    <Design.Height>600</Design.Height>
+    <Design.Width>400</Design.Width>
+
+    <Panel>
+
+        <StackPanel Spacing="10" Margin="15">
+
+            <TextBox
+                Text="{Binding Filter}"
+                Watermark="Search sources"
+                Theme="{StaticResource TextBoxOutlineHighlight}"
+                IsVisible="{Binding Repo, Converter={x:Static ObjectConverters.IsNotNull}}"
+                VerticalContentAlignment="Center"
+                Padding="0 5">
+                <TextBox.InnerLeftContent>
+                    <PathIcon Theme="{StaticResource IconLineSearch}"
+                              VerticalAlignment="Center" Margin="10 0"
+                              Classes="size-sm"
+                              Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                </TextBox.InnerLeftContent>
+                <Interaction.Behaviors>
+                    <TextBoxSelectAllOnGotFocusBehavior />
+                </Interaction.Behaviors>
+            </TextBox>
+
+            <ContentControl
+                Content="{Binding Repo}"
+                ContentTemplate="{StaticResource RepoConnection}"
+                IsVisible="{Binding Repo, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
+            <ContentControl
+                Content="{Binding Repo}"
+                ContentTemplate="{StaticResource RepoTargeted}"
+                IsVisible="{Binding Repo.Exists, FallbackValue={x:False}}"
+                MaxHeight="{Binding $parent[UserControl].Bounds.Height, Converter={StaticResource MathConverter}, ConverterParameter='(x/5)*2'}">
+            </ContentControl>
+
+            <ContentControl
+                Content="{Binding Repo}"
+                ContentTemplate="{StaticResource RepoAvailable}"
+                IsVisible="{Binding Repo.Exists, FallbackValue={x:False}}"
+                MaxHeight="{Binding $parent[UserControl].Bounds.Height, Converter={StaticResource MathConverter}, ConverterParameter='(x/5)*2'}" />
+
+        </StackPanel>
+
+        <controls:DefaultMessage
+            IsVisible="{Binding Repo, Converter={x:Static ObjectConverters.IsNull}}"
+            Header="No repository connected"
+            Message="Select or open a new repo to view source projects.">
+
+            <controls:DefaultMessage.Action>
+
+                <Button
+                    Command="{Binding OpenRepoCommand}"
+                    Theme="{a:ControlTheme ButtonSolid}"
+                    Classes="accent"
+                    Margin="10">
+                    <StackPanel Orientation="Horizontal" Spacing="7">
+                        <PathIcon Theme="{StaticResource IconFilledFolderOpen}"
+                                  Foreground="{Binding $parent[Button].Foreground}" />
+                        <TextBlock Text="Open" />
+                    </StackPanel>
+                </Button>
+
+            </controls:DefaultMessage.Action>
+
+        </controls:DefaultMessage>
+
+        <controls:DefaultMessage
+            IsVisible="{Binding Repo.IsSyncing, FallbackValue={x:False}}"
+            Header="Syncing repository..."
+            Message="{Binding Repo.Location, FallbackValue={x:Null}}">
+
+            <controls:DefaultMessage.Action>
+
+                <PathIcon Theme="{StaticResource IconThemedPending}" Margin="10" Classes="size-lg">
+                    <PathIcon.Styles>
+                        <Style Selector="PathIcon">
+                            <Style.Animations>
+                                <Animation Duration="0:0:1" IterationCount="INFINITE">
+                                    <KeyFrame Cue="0%">
+                                        <Setter Property="RotateTransform.Angle" Value="0" />
+                                    </KeyFrame>
+                                    <KeyFrame Cue="100%">
+                                        <Setter Property="RotateTransform.Angle" Value="360" />
+                                    </KeyFrame>
+                                </Animation>
+                            </Style.Animations>
+                        </Style>
+                    </PathIcon.Styles>
+                </PathIcon>
+
+            </controls:DefaultMessage.Action>
+
+        </controls:DefaultMessage>
+
+    </Panel>
+
+</UserControl>

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using AutoSpex.Client.Observers;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
@@ -27,7 +26,6 @@ public partial class RunnerPageModel : PageViewModel
         RegisterDisposable(Nodes);
     }
 
-    public Task<SourceTargetPageModel> SourceSelector => Navigator.Navigate<SourceTargetPageModel>();
     public ResultPageModel? ResultPage { get; private set; }
 
     public override async Task Load()

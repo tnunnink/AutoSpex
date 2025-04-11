@@ -14,7 +14,6 @@
 
         <Border
             DockPanel.Dock="Top"
-            Background="{a:ThemeResource Container2BackgroundBrush}"
             BorderBrush="{a:ThemeResource Container1BorderBrush}"
             BorderThickness="0 0 0 1"
             Padding="15 15 15 10">

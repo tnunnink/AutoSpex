@@ -306,31 +306,32 @@
     </ControlTheme>
 
     <!--ToggleIconButton-->
-    <ControlTheme x:Key="IconToggleButton" TargetType="ToggleButton"
-                  BasedOn="{actipro:ControlTheme ToggleButtonSubtle}">
+    <ControlTheme
+        x:Key="IconToggleButton"
+        TargetType="ToggleButton"
+        BasedOn="{actipro:ControlTheme ToggleButtonSubtle}">
         <Setter Property="CornerRadius" Value="{actipro:ThemeResource ButtonCornerRadius}" />
         <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushDefault}" />
-        <Setter Property="Height" Value="26" />
-        <Setter Property="Width" Value="26" />
-        <Setter Property="Padding" Value="0" />
+        <Setter Property="Padding" Value="4" />
         <Setter Property="IsTabStop" Value="False" />
+
         <Setter Property="Template">
             <ControlTemplate>
-                <Border x:Name="Border"
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding CornerRadius}"
-                        HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
-                        VerticalAlignment="{TemplateBinding VerticalAlignment}">
-                    <PathIcon x:Name="Icon"
-                              Theme="{TemplateBinding properties:Icon.Theme}"
-                              FontSize="{TemplateBinding FontSize}"
-                              Margin="{TemplateBinding Padding}"
-                              Foreground="{TemplateBinding Foreground}"
-                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                              actipro:ThemeProperties.CopyClassesFrom="{TemplateBinding }" />
+                <Border
+                    x:Name="Border"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="{TemplateBinding CornerRadius}"
+                    HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                    VerticalAlignment="{TemplateBinding VerticalAlignment}">
+                    <PathIcon
+                        x:Name="Icon"
+                        Theme="{TemplateBinding properties:Icon.Theme}"
+                        FontSize="{TemplateBinding FontSize}"
+                        Margin="{TemplateBinding Padding}"
+                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                 </Border>
             </ControlTemplate>
         </Setter>
@@ -352,12 +353,12 @@
             <Style Selector="^.accent">
                 <Style Selector="^ /template/ Border#Border">
                     <Setter Property="Background"
-                            Value="{actipro:ThemeResource ControlBackgroundBrushSoftAccentDisabled}" />
+                            Value="{actipro:ThemeResource ControlBackgroundBrushSolidAccent}" />
                     <Setter Property="BorderBrush"
-                            Value="{actipro:ThemeResource ControlBackgroundBrushSoftAccentDisabled}" />
+                            Value="{actipro:ThemeResource ControlBackgroundBrushSolidAccent}" />
                 </Style>
                 <Style Selector="^ /template/ PathIcon#Icon">
-                    <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushOutlineAccent}" />
+                    <Setter Property="Foreground" Value="{actipro:ThemeResource ControlForegroundBrushSolidAccent}" />
                 </Style>
             </Style>
 

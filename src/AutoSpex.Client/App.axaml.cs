@@ -8,6 +8,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
+using Avalonia.Threading;
 using JetBrains.Annotations;
 
 namespace AutoSpex.Client;
@@ -38,7 +39,7 @@ public sealed class App : Application, IDisposable, IAsyncDisposable
         ImageProvider.Default.ChromaticAdaptationMode = ImageChromaticAdaptationMode.DarkThemes;
 
         _settings.GetTheme()
-            .ContinueWith(t => RequestedThemeVariant = t.Result)
+            .ContinueWith(t => Dispatcher.UIThread.Invoke(() => RequestedThemeVariant = t.Result))
             .FireAndForget(e => { Console.WriteLine(e.Message); });
     }
 

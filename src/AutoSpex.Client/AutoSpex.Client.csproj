@@ -264,10 +264,6 @@
           <DependentUpon>SpecsPage.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
-        <Compile Update="Pages\Repos\NewRepoPage.axaml.cs">
-          <DependentUpon>NewRepoPage.axaml</DependentUpon>
-          <SubType>Code</SubType>
-        </Compile>
         <Compile Update="Pages\Nodes\OpenPackagePage.axaml.cs">
           <DependentUpon>OpenPackagePage.axaml</DependentUpon>
           <SubType>Code</SubType>
@@ -280,14 +276,6 @@
           <DependentUpon>SearchPage.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
-        <Compile Update="Pages\Sources\SourceSelectorPage.axaml.cs">
-          <DependentUpon>SourceSelectorPage.axaml</DependentUpon>
-          <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="Pages\Sources\SourceTargetPage.axaml.cs">
-          <DependentUpon>SourceTargetPage.axaml</DependentUpon>
-          <SubType>Code</SubType>
-        </Compile>
         <Compile Update="Pages\Runs\ResultPage.axaml.cs">
           <DependentUpon>ResultPage.axaml</DependentUpon>
           <SubType>Code</SubType>
@@ -298,6 +286,10 @@
         </Compile>
         <Compile Update="Pages\General\InfoPage.axaml.cs">
           <DependentUpon>InfoPage.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Pages\Repos\RepoListPage.axaml.cs">
+          <DependentUpon>RepoSelectorPage.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
     </ItemGroup>
@@ -389,6 +381,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Components\Repos\" />
+      <Folder Include="Pages\Sources\" />
     </ItemGroup>
 </Project>
