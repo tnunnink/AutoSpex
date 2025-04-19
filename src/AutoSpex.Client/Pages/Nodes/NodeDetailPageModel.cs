@@ -71,7 +71,6 @@ public partial class NodeDetailPageModel : DetailPageModel
     /// <inheritdoc />
     protected override async Task NavigatePages()
     {
-        //todo probably create on method per type
         if (Node.Type != NodeType.Spec)
         {
             await Navigator.Navigate(() => new SpecsPageModel(Node));
@@ -82,7 +81,6 @@ public partial class NodeDetailPageModel : DetailPageModel
         }
 
         /*await Navigator.Navigate(() => new VariablesPageModel(Node));*/
-        
     }
 
     /// <summary>
