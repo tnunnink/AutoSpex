@@ -3,10 +3,15 @@
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
                     xmlns:components="clr-namespace:AutoSpex.Client.Components"
-                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+                    xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors">
 
     <Design.PreviewWith>
         <StackPanel Spacing="10" Margin="60">
+            <ContentControl
+                Content="{x:Static components:TestData.SpecNode}"
+                ContentTemplate="{DynamicResource BreadcrumbHeader}"
+                Padding="10" />
             <ContentControl
                 Content="{x:Static components:TestData.SpecNode}"
                 ContentTemplate="{DynamicResource BreadcrumbLink}"
@@ -21,6 +26,71 @@
                 Padding="10" />
         </StackPanel>
     </Design.PreviewWith>
+
+    <DataTemplate x:Key="BreadcrumbHeader" x:DataType="observers:NodeObserver">
+
+        <StackPanel Orientation="Horizontal">
+
+            <ItemsControl ItemsSource="{Binding Crumbs}" ClipToBounds="True">
+
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="observers:NodeObserver">
+
+                        <StackPanel Orientation="Horizontal">
+
+                            <Button
+                                Content="{Binding Name}"
+                                Command="{Binding NavigateCommand}"
+                                Theme="{a:ControlTheme ButtonSubtle}"
+                                Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                                FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                                IsTabStop="False"
+                                Padding="3" />
+
+                            <TextBlock
+                                Text="/"
+                                Margin="2 0 0 0"
+                                Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}"
+                                TextTrimming="CharacterEllipsis" />
+
+                        </StackPanel>
+
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+
+            </ItemsControl>
+
+            <TextBox
+                x:Name="NameEntry"
+                Theme="{DynamicResource TextBoxSubtle}"
+                Text="{Binding Name, Mode=OneWay}"
+                FontWeight="{a:ThemeResource HeadingFontWeightSmall}"
+                FontSize="{a:ThemeResource DefaultFontSizeSmall}"
+                Padding="3"
+                Watermark="Enter name">
+
+                <Interaction.Behaviors>
+                    <ExecuteCommandOnKeyUpBehavior
+                        Key="Enter"
+                        Command="{Binding RenameCommand}"
+                        CommandParameter="{Binding #NameEntry.Text}"
+                        FocusTopLevel="True" />
+                    <DataTriggerBehavior Binding="{Binding IsNew}" ComparisonCondition="Equal" Value="True">
+                        <FocusControlAction TargetControl="NameEntry" />
+                    </DataTriggerBehavior>
+                    <behaviors:SelectAllTextOnGotFocusBehavior />
+                </Interaction.Behaviors>
+            </TextBox>
+
+        </StackPanel>
+
+    </DataTemplate>
 
     <DataTemplate x:Key="BreadcrumbLink" x:DataType="observers:NodeObserver">
 
@@ -124,7 +194,7 @@
                 Text="{Binding Name}"
                 HighlightedText="{Binding FilterText}"
                 Margin="2 0 0 0"
-                FontWeight="{a:ThemeResource HeadingFontWeightSmall}"/>
+                FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
 
         </StackPanel>
 

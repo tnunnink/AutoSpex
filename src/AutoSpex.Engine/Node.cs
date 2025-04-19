@@ -1,9 +1,6 @@
-﻿using System.Diagnostics;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using Ardalis.SmartEnum.SystemTextJson;
 using JetBrains.Annotations;
-using L5Sharp.Core;
-using Task = System.Threading.Tasks.Task;
 
 namespace AutoSpex.Engine;
 
@@ -11,6 +8,7 @@ namespace AutoSpex.Engine;
 public class Node : IEquatable<Node>
 {
     private readonly List<Node> _nodes = [];
+    private readonly List<Variable> _variables = [];
 
     private Node()
     {
@@ -18,7 +16,7 @@ public class Node : IEquatable<Node>
 
     [JsonConstructor]
     private Node(Guid nodeId, Guid parentId, NodeType type, string name,
-        IEnumerable<Node> nodes, Spec spec)
+        IEnumerable<Node> nodes, IEnumerable<Variable> variables, Spec spec)
     {
         NodeId = nodeId;
         ParentId = parentId;
@@ -100,13 +98,6 @@ public class Node : IEquatable<Node>
     /// </summary>
     [JsonIgnore]
     public string Route => $"{Path}/{Name}".Trim('/');
-
-    /// <summary>
-    /// Represents the verification result associated with this node instance.
-    /// The state of this verification is updated as the node is run using <see cref="Run"/> or <see cref="RunAsync"/>.
-    /// </summary>
-    [JsonIgnore]
-    public Verification Result { get; private init; } = new();
 
     /// <summary>
     /// Creates a new Collection type node.
@@ -252,8 +243,8 @@ public class Node : IEquatable<Node>
     /// </summary>
     /// <remarks>
     /// This method removes all child nodes from the current node.
-    /// The child nodes will have their parent node set to null and their parent ID set to Guid.Empty.
-    /// This operation does not affect the other properties of the child nodes such as their type, name, or variables.
+    /// The child nodes will have their parent node set to null, and their parent ID set to Guid.Empty.
+    /// This operation does not affect the other properties of the child nodes, such as their type, name, or variables.
     /// </remarks>
     public void ClearNodes()
     {
@@ -386,7 +377,7 @@ public class Node : IEquatable<Node>
     /// <summary>
     /// Gets all descendant nodes of this node, including this node itself.
     /// </summary>
-    /// <returns>A collection of node that are immediate and/or nested children of this node as well as this node itself.</returns>
+    /// <returns>A collection of nodes that are immediate and/or nested children of this node as well as this node itself.</returns>
     public IEnumerable<Node> DescendantsAndSelf()
     {
         List<Node> nodes = [this];
@@ -435,90 +426,6 @@ public class Node : IEquatable<Node>
         }
 
         return false;
-    }
-
-    /// <summary>
-    /// Runs this node against the provided source. This will run all descendent nodes and return a verification tree
-    /// representing the full result.
-    /// </summary>
-    /// <param name="source">The source to run the node against.</param>
-    /// <param name="callback">A callback that is executed as verification result states change.</param>
-    /// <returns>The verification result of the operation.</returns>
-    public Verification Run(Source source, Action<Verification>? callback = null)
-    {
-        ArgumentNullException.ThrowIfNull(source);
-
-        //At this point we need the actual file contents.
-        var content = source.OpenAsync().GetAwaiter().GetResult();
-
-        //Resets the verification states for all nodes (this and descendants)
-        PrepareForRun(content, callback);
-
-        //Run this and all descendant nodes against the provided source content.
-        RunNode(content, callback);
-
-        //Return the aggregate verification for all nodes.
-        return Result;
-    }
-
-    /// <summary>
-    /// Runs this node against the provided source. This will run all descendent nodes and return a verification
-    /// tree representing the full result.
-    /// </summary>
-    /// <param name="source">The source to run this node against.</param>
-    /// <param name="callback">A callback that is executed as verification result states change.</param>
-    /// <param name="token">The token to cancel the run operation.</param>
-    /// <returns>A <see cref="Task"/> that executes and returns the verification result of the operation.</returns>
-    public async Task<Verification> RunAsync(Source source, Action<Verification>? callback = null,
-        CancellationToken token = default)
-    {
-        ArgumentNullException.ThrowIfNull(source);
-
-        //At this point we need the actual file contents.
-        var content = await source.OpenAsync(token);
-
-        //Resets the verification states for all nodes (this and descendants)
-        PrepareForRun(content, callback);
-
-        //Run this and all descendant nodes against the provided source content.
-        await RunNodeAsync(content, callback, token);
-
-        //Return the aggregate verification for all nodes.
-        return Result;
-    }
-
-    /// <summary>
-    /// Returns the distinct set of result values from the node and its descendants.
-    /// </summary>
-    /// <returns>The distinct set of <see cref="ResultState"/> values in ascending order.</returns>
-    public IEnumerable<ResultState> DistinctResults()
-    {
-        var states = new HashSet<ResultState> { Result.State };
-
-        foreach (var node in _nodes)
-        {
-            states.UnionWith(node.DistinctResults());
-        }
-
-        return states.OrderBy(s => s.Value);
-    }
-
-    /// <summary>
-    /// Calculates the total number of nodes with a specific <see cref="ResultState"/>.
-    /// </summary>
-    /// <param name="state">The <see cref="ResultState"/> to calculate the total for.</param>
-    /// <returns>The total number of nodes with the specified <see cref="ResultState"/>.</returns>
-    public int TotalBy(ResultState state)
-    {
-        var total = 0;
-
-        if (Type == NodeType.Spec && Result.State == state)
-        {
-            total++;
-        }
-
-        total += _nodes.Sum(n => n.TotalBy(state));
-        return total;
     }
 
     /// <inheritdoc />
@@ -578,75 +485,29 @@ public class Node : IEquatable<Node>
     }
 
     /// <summary>
-    /// Prepares the node and its child nodes for running against a source content.
+    /// Resolves all references configured in the node's spec to the variables that defined in the scope of this node.
+    /// This is called before running a specification so that all configured criteria have the appropriate value
+    /// base on mapped variable references.
     /// </summary>
-    private void PrepareForRun(SourceInfo source, Action<Verification>? callback = null)
+    private void ResolveReferences()
     {
-        Result.MarkPending(this, source, callback);
+        var references = Spec.GetAllReferences();
 
-        foreach (var node in _nodes)
+        foreach (var reference in references)
         {
-            node.PrepareForRun(source, callback);
+            var variable = FindVariable(reference.Key);
+            if (variable is null) continue;
+            reference.ResolveTo(variable);
         }
     }
 
     /// <summary>
-    /// Asynchronously runs the node with the provided content and optional callback to indicate result state changes
-    /// (for consumer/UI updates).
+    /// 
     /// </summary>
-    /// <param name="content">The L5X content source to run the node against.</param>
-    /// <param name="callback">An optional callback action to be executed for result state changes.</param>
-    /// <param name="token">A token to cancel execution of the current task.</param>
-    private async Task RunNodeAsync(L5X content, Action<Verification>? callback = null,
-        CancellationToken token = default)
+    private Variable? FindVariable(string name)
     {
-        Result.MarkRunning(callback);
-
-        if (Type == NodeType.Spec)
-        {
-            var stopwatch = Stopwatch.StartNew();
-            var results = await Spec.RunAsync(content, token);
-            stopwatch.Stop();
-
-            Result.MarkComplete(results, stopwatch.ElapsedMilliseconds, callback);
-            return;
-        }
-
-        foreach (var node in _nodes)
-        {
-            token.ThrowIfCancellationRequested();
-            await node.RunNodeAsync(content, callback, token);
-        }
-
-        Result.MarkComplete(_nodes.Select(n => n.Result).ToArray(), callback);
-    }
-
-    /// <summary>
-    /// Runs the node against the provided content. Optional callback is used to indicate result state changes for
-    /// consumer/UI updates.
-    /// </summary>
-    /// <param name="content">The L5X content source to run the node against.</param>
-    /// <param name="callback">An optional callback action to be executed for result state changes.</param>
-    private void RunNode(L5X content, Action<Verification>? callback = null)
-    {
-        Result.MarkRunning(callback);
-
-        if (Type == NodeType.Spec)
-        {
-            var stopwatch = Stopwatch.StartNew();
-            var results = Spec.Run(content);
-            stopwatch.Stop();
-
-            Result.MarkComplete(results, stopwatch.ElapsedMilliseconds, callback);
-            return;
-        }
-
-        foreach (var node in _nodes)
-        {
-            node.RunNode(content, callback);
-        }
-
-        Result.MarkComplete(_nodes.Select(n => n.Result).ToArray(), callback);
+        var variable = _variables.FirstOrDefault(x => string.Equals(x.Name, name));
+        return variable ?? Parent?.FindVariable(name);
     }
 
     #endregion

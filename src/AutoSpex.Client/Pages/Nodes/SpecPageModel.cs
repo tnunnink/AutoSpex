@@ -7,7 +7,7 @@ using FluentResults;
 
 namespace AutoSpex.Client.Pages;
 
-public partial class SpecPageModel(NodeObserver node) : PageViewModel("Spec")
+public partial class SpecPageModel(NodeObserver node) : PageViewModel("Specification")
 {
     public override string Route => $"{node.Type}/{node.Id}/{Title}";
     public override string Icon => "IconFilledClipboard";

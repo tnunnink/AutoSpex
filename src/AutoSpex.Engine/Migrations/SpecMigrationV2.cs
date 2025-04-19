@@ -34,7 +34,7 @@ public class SpecMigrationV2 : ISpecMigration
     }
 
     /// <summary>
-    /// Write the new query object with the current element and single filter step.
+    /// Write the new query object with the current element and a single filter step.
     /// </summary>
     private static void WriterQuery(Utf8JsonWriter writer, JsonElement root)
     {
@@ -74,7 +74,7 @@ public class SpecMigrationV2 : ISpecMigration
     }
 
     /// <summary>
-    /// Migrates a collection of criterion
+    /// Migrates a collection of criteria.
     /// </summary>
     private static void WriteCriteria(Utf8JsonWriter writer, JsonElement element)
     {

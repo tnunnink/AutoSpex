@@ -40,9 +40,9 @@ public class SaveSpecTests
 
         node.Specify(c =>
         {
-            c.Get(Element.Program);
+            c.Query(Element.Program);
             c.Where("Name", Operation.EqualTo, "SomeName");
-            c.Validate("Disabled", Operation.EqualTo, false);
+            c.Verify("Disabled", Operation.EqualTo, false);
         });
 
 
@@ -61,9 +61,9 @@ public class SaveSpecTests
 
         node.Specify(c =>
         {
-            c.Get(Element.Program);
+            c.Query(Element.Program);
             c.Where("Name", Operation.EqualTo, "SomeName");
-            c.Validate("Disabled", Operation.EqualTo, false);
+            c.Verify("Disabled", Operation.EqualTo, false);
         });
 
         var result = await mediator.Send(new SaveSpec(node.Spec));

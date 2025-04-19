@@ -71,16 +71,11 @@ public partial class RepoObserver : Observer<Repo>,
         var result = await Mediator.Send(new ConnectRepo(Model));
         if (Notifier.ShowIfFailed(result)) return;
 
-        //Update connected repo in UI before syncing
+        //Watch directory for changes to notify UI.
+        SetupRepoWatcher();
+
+        //Update connected repo in UI before syncing (syncing called in config page after UI is updated. 
         Messenger.Send(new SetConnected(this));
-
-        //Even if this repo does not exist, call sync, so we can notify connection error to the user.
-        await Sync();
-
-        if (Model.Exists)
-        {
-            SetupRepoWatcher();
-        }
     }
 
     /// <summary>
@@ -98,7 +93,7 @@ public partial class RepoObserver : Observer<Repo>,
     /// local sources collection for the repo.
     /// </summary>
     [RelayCommand]
-    private async Task Sync()
+    public async Task Sync()
     {
         IsSyncing = true;
         SyncRequired = false;

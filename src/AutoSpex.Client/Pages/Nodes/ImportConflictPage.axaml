@@ -15,7 +15,7 @@
         CancelCommandParameter="{x:Static engine:ImportAction.Cancel}"
         ActionButtonText="Replace"
         ActionButtonTheme="{a:ControlTheme ButtonSolid}"
-        ActionCommandParameter="{x:Static engine:ImportAction.Repalce}"
+        ActionCommandParameter="{x:Static engine:ImportAction.Replace}"
         UseAlternateButton="True"
         AlternateButtonText="Import Copy"
         AlternateButtonTheme="{a:ControlTheme ButtonSoft}"

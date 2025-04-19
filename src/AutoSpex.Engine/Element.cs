@@ -1,4 +1,5 @@
-﻿using System.Dynamic;
+﻿using System.Collections.Concurrent;
+using System.Dynamic;
 using System.Reflection;
 using Ardalis.SmartEnum;
 using L5Sharp.Core;
@@ -11,7 +12,7 @@ namespace AutoSpex.Engine;
 
 /// <summary>
 /// An enumeration of all usable Logix program element in which we can write specifications for. This smart enum class
-/// add functionality needed to this application to navigate the property graphic of the logix elements and components.
+/// adds functionality needed to this application to navigate the property graphic of the logix elements and components.
 /// It also allows the ability to define some custom properties which expose getters to other data on the object as a property
 /// which can be selected for various criteria. These types are persisted and deserialized by name using the
 /// <see cref="SmartEnum{TEnum}"/> library.
@@ -22,7 +23,7 @@ public abstract class Element : SmartEnum<Element, string>
     /// A dictionary of cached known or static properties for a given type. This is used to avoid always using reflection
     /// each time we want to get the list of properties for a type.
     /// </summary>
-    private static readonly Lazy<Dictionary<Type, List<Property>>> PropertyCache = new();
+    private static readonly Lazy<ConcurrentDictionary<Type, List<Property>>> PropertyCache = new();
 
     /// <summary>
     /// Holds "custom" properties, or properties we attach to the element and provide a custom function to retrieve its value.
@@ -139,6 +140,26 @@ public abstract class Element : SmartEnum<Element, string>
     public Property GetProperty(string? path) => This.GetProperty(path);
 
     /// <summary>
+    /// Retrieves key-value pairs of indexable properties and their respective values for a given L5X content.
+    /// </summary>
+    /// <param name="content">The <see cref="L5X"/> content to query for extracting properties and values.</param>
+    /// <returns>A collection of key-value pairs, where the key is a <see cref="Property"/> and the value is the corresponding object value.</returns>
+    public virtual IEnumerable<KeyValuePair<Property, object>> IndexValues(L5X content)
+    {
+        var elements = content.Query(Type);
+
+        foreach (var element in elements)
+        {
+            foreach (var property in Properties.Where(p => p.Group.IsIndexable))
+            {
+                var value = property.GetValue(element);
+                if (value is null) continue;
+                yield return new KeyValuePair<Property, object>(property, value);
+            }
+        }
+    }
+
+    /// <summary>
     /// Retrieves and returns a list of properties for the current Element instance. This method
     /// first checks if the properties for the given Type are cached, and if not, it retrieves
     /// static properties of the Type using reflection. It excludes certain properties and adds
@@ -147,33 +168,22 @@ public abstract class Element : SmartEnum<Element, string>
     /// <returns>A list of properties associated with the Element instance.</returns>
     private List<Property> GetProperties()
     {
-        var properties = new List<Property>();
+        if (Name == nameof(Dynamic))
+        {
+            return _customProperties;
+        }
 
         //Get or cache static properties for this type.
-        //Since they should not change at runtime we can avoid reusing reflection every time.
+        //Since they should not change at runtime, we can avoid reusing reflection every time.
         //Only perform this step for non-dynamic type elements.
-        if (!PropertyCache.Value.ContainsKey(Type) && Name != nameof(Dynamic))
+        return PropertyCache.Value.GetOrAdd(Type, type =>
         {
-            var known = Type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+            return type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
                 .Where(p => p.GetIndexParameters().Length == 0 && !p.Name.Contains("L5X"))
                 .Select(x => new Property(x.Name, x.PropertyType, This))
+                .Concat(_customProperties)
                 .ToList();
-
-            PropertyCache.Value.TryAdd(Type, known);
-        }
-
-        if (PropertyCache.Value.TryGetValue(Type, out var cached))
-        {
-            properties.AddRange(cached);
-        }
-
-        var customProperties = _customProperties.ToList();
-        properties.AddRange(customProperties);
-        return properties;
-
-        /*return PropertyCache.Value.TryGetValue(Type, out var cached)
-            ? cached.Concat(_customProperties)
-            : _customProperties;*/
+        });
     }
 
     /// <summary>
@@ -195,6 +205,8 @@ public abstract class Element : SmartEnum<Element, string>
         public DefaultElement() : base("None", typeof(object))
         {
         }
+
+        public override IEnumerable<KeyValuePair<Property, object>> IndexValues(L5X content) => [];
     }
 
     private class DynamicElement : Element
@@ -233,6 +245,8 @@ public abstract class Element : SmartEnum<Element, string>
 
             return value;
         }
+
+        public override IEnumerable<KeyValuePair<Property, object>> IndexValues(L5X content) => [];
     }
 
     private class ControllerElement : Element
@@ -280,6 +294,22 @@ public abstract class Element : SmartEnum<Element, string>
             Register<List<LogixComponent>>("Dependencies", x => (x as Tag)?.Dependencies().ToList());
             Register<List<CrossReference>>("References", x => (x as Tag)?.References().ToList());
             Register<IList<Tag>>("Members", x => (x as Tag)?.Members().ToList() ?? []);
+        }
+
+        public override IEnumerable<KeyValuePair<Property, object>> IndexValues(L5X content)
+        {
+            //Want to get all nested tag members as well.
+            var elements = content.Query<Tag>().SelectMany(t => t.Members());
+
+            foreach (var element in elements)
+            {
+                foreach (var property in Properties.Where(p => p.Group.IsIndexable))
+                {
+                    var value = property.GetValue(element);
+                    if (value is null) continue;
+                    yield return new KeyValuePair<Property, object>(property, value);
+                }
+            }
         }
     }
 

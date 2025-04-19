@@ -1,0 +1,9 @@
+﻿{
+  VariableId: Guid_1,
+  Name: Test,
+  Group: Number,
+  Value: {
+    Group: Number,
+    Data: 123
+  }
+}

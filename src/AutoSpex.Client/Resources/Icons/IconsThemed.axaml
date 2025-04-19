@@ -3,8 +3,8 @@
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui">
 
     <Design.PreviewWith>
-        <StackPanel Width="1000" Height="100" Margin="10" Orientation="Horizontal">
-            <StackPanel.Styles>
+        <WrapPanel Orientation="Horizontal" Width="800" Height="500" Margin="5">
+            <WrapPanel.Styles>
                 <Styles>
                     <Style Selector="PathIcon">
                         <Setter Property="Height" Value="30" />
@@ -14,12 +14,13 @@
                         <Setter Property="BorderBrush" Value="{a:ThemeResource Container3BorderBrush}" />
                     </Style>
                 </Styles>
-            </StackPanel.Styles>
+            </WrapPanel.Styles>
 
             <a:ToggleThemeButton Height="30" Width="30" Theme="{a:ControlTheme ToggleThemeButtonSubtle}" />
             <PathIcon Theme="{DynamicResource IconThemedContainer}" />
             <PathIcon Theme="{DynamicResource IconThemedCollection}" />
             <PathIcon Theme="{DynamicResource IconThemedSpec}" />
+            <PathIcon Theme="{DynamicResource IconThemedQuery}" />
             <PathIcon Theme="{DynamicResource IconThemedRepo}" />
             <PathIcon Theme="{DynamicResource IconThemedSource}" />
             <PathIcon Theme="{DynamicResource IconThemedRun}" />
@@ -41,7 +42,7 @@
             <PathIcon Theme="{DynamicResource IconThemedArray}" />
             <PathIcon Theme="{DynamicResource IconThemedTag}" />
             <PathIcon Theme="{DynamicResource IconThemedReference}" />
-        </StackPanel>
+        </WrapPanel>
     </Design.PreviewWith>
 
     <ControlTheme x:Key="IconThemedCollection" TargetType="PathIcon" BasedOn="{StaticResource IconFilledStack}">
@@ -50,10 +51,13 @@
     <ControlTheme x:Key="IconThemedContainer" TargetType="PathIcon" BasedOn="{StaticResource IconFilledFolder}">
         <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushContainer}" />
     </ControlTheme>
-    <ControlTheme x:Key="IconThemedSpec" TargetType="PathIcon" BasedOn="{StaticResource IconFilledClipboard}">
+    <ControlTheme x:Key="IconThemedSpec" TargetType="PathIcon" BasedOn="{StaticResource IconFilledClipboardCheck}">
         <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushSpec}" />
     </ControlTheme>
-    <ControlTheme x:Key="IconThemedRepo" TargetType="PathIcon" BasedOn="{StaticResource IconFilledFolderTree}">
+    <ControlTheme x:Key="IconThemedQuery" TargetType="PathIcon" BasedOn="{StaticResource IconFilledClipboardList}">
+        <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushSpec}" />
+    </ControlTheme>
+    <ControlTheme x:Key="IconThemedRepo" TargetType="PathIcon" BasedOn="{StaticResource IconFilledFolderOpen}">
         <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushRepo}" />
     </ControlTheme>
     <ControlTheme x:Key="IconThemedSource" TargetType="PathIcon" BasedOn="{StaticResource IconLineXml}">

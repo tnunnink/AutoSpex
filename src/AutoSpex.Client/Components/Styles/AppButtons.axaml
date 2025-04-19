@@ -87,47 +87,28 @@
         <Setter Property="Content">
             <Template>
                 <StackPanel Orientation="Horizontal" Spacing="7">
-                    <PathIcon Theme="{StaticResource IconFilledArrowUp}" />
-                    <TextBlock Text="Save" Padding="0 0 0 1" FontSize="{a:ThemeResource DefaultFontSizeMedium}" />
+                    <PathIcon
+                        Theme="{StaticResource IconFilledArrowUp}" />
+                    <TextBlock
+                        Text="Save"
+                        FontSize="{a:ThemeResource DefaultFontSizeMedium}" />
                 </StackPanel>
             </Template>
         </Setter>
         <Style Selector="^:disabled PathIcon">
             <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushDisabled}" />
         </Style>
-    </Style>
 
-    <Style Selector="Button.export">
-        <Setter Property="Theme" Value="{a:ControlTheme ButtonSoft}" />
-        <Setter Property="Content">
-            <Template>
-                <StackPanel Orientation="Horizontal" Spacing="7">
-                    <PathIcon Theme="{StaticResource IconFilledArrowDown}" />
-                    <TextBlock Text="Export" Padding="0 0 0 1" FontSize="{a:ThemeResource DefaultFontSizeMedium}" />
-                </StackPanel>
-            </Template>
-        </Setter>
-        <Style Selector="^:disabled PathIcon">
-            <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushDisabled}" />
-        </Style>
     </Style>
 
     <Style Selector="Button.more">
-        <Setter Property="Theme" Value="{a:ControlTheme ButtonSubtle}" />
+        <Setter Property="Theme" Value="{a:ControlTheme ButtonSoft}" />
         <Setter Property="Padding" Value="{a:ThemeResource ButtonPadding}" />
-        <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="Content">
             <Template>
                 <PathIcon Theme="{StaticResource IconEllipsis}" FontSize="{a:ThemeResource TabItemFontSizeSubtle}" />
             </Template>
         </Setter>
-
-        <Style Selector="^:pointerover">
-            <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
-            <Style Selector="^ > PathIcon">
-                <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
-            </Style>
-        </Style>
     </Style>
 
     <Style Selector="Button.new-collection">

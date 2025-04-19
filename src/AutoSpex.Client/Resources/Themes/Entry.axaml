@@ -27,6 +27,7 @@
         <Setter Property="ButtonTheme" Value="{a:ControlTheme ButtonSubtle}" />
         <Setter Property="FontFamily" Value="{a:ThemeResource CodeFontFamily}" />
         <Setter Property="FontSize" Value="{a:ThemeResource DefaultFontSizeSmall}" />
+        <Setter Property="Padding" Value="{a:ThemeResource ButtonPadding}" />
         <Setter Property="MaxDropDownHeight" Value="300" />
         <Setter Property="MinDropDownWidth" Value="300" />
         <Setter Property="MaxDropDownWidth" Value="400" />
@@ -38,6 +39,7 @@
                     <Button
                         x:Name="PART_Button"
                         Theme="{TemplateBinding ButtonTheme}"
+                        Padding="{TemplateBinding Padding}"
                         HorizontalContentAlignment="Left"
                         IsTabStop="True"
                         Focusable="True"

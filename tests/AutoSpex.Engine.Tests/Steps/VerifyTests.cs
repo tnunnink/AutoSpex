@@ -39,7 +39,7 @@ public class VerifyTests
         var results = step.Process(tags).ToList();
 
         results.Should().HaveCount(3);
-        results.Cast<Evaluation>().Should().AllSatisfy(x => x.Result.Should().Be(ResultState.Passed));
+        results.Cast<Verification>().Should().AllSatisfy(x => x.Result.Should().Be(ResultState.Passed));
     }
 
     [Test]

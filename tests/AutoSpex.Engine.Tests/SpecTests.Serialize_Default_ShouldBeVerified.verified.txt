@@ -1,11 +1,6 @@
 ﻿{
-  "SchemaVersion": 2,
+  "SchemaVersion": 3,
   "SpecId": "Guid_1",
-  "Query": {
-    "Element": "None",
-    "Steps": []
-  },
-  "Verify": {
-    "Criteria": []
-  }
+  "Element": "None",
+  "Steps": []
 }

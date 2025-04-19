@@ -76,7 +76,7 @@ public static class TestData
     private static IEnumerable<Node> GenerateSpecs()
     {
         var collection = Node.NewContainer();
-        collection.AddSpec("Test Spec", s => s.Get(Element.Tag).Where("TagName", Operation.Containing, "Test"));
+        collection.AddSpec("Test Spec", s => s.Query(Element.Tag).Where("TagName", Operation.Containing, "Test"));
         collection.AddSpec("Another Spec");
         collection.AddSpec("A Spec with a longer name then most of the other specs that you'd want");
         var folder = collection.AddContainer();
@@ -100,22 +100,22 @@ public static class TestData
 
     public static SpecObserver SpecObserver = new(Spec.Configure(c =>
         {
-            c.Get(Element.Tag);
+            c.Query(Element.Tag);
             c.Where("TagName", Operation.Containing, "TestTag");
-            c.Validate("Value", Operation.EqualTo, 123);
+            c.Verify("Value", Operation.EqualTo, 123);
         })
     );
 
     public static SpecObserver SpecObserverManyCriterion = new(Spec.Configure(c =>
         {
-            c.Get(Element.Tag);
+            c.Query(Element.Tag);
             c.Where("TagName", Operation.Containing, "TestTag");
             c.Where("DataType", Operation.EqualTo, "MyType");
             c.Where("ExternalAccess", Operation.In,
                 new List<object> { ExternalAccess.ReadOnly, ExternalAccess.ReadWrite });
-            c.Validate("Value", Operation.GreaterThan, 123);
-            c.Validate("Description", Operation.EndingWith, "Some text value");
-            c.Validate("Scope.Program", Negation.Not, Operation.EqualTo, "MyContianer");
+            c.Verify("Value", Operation.GreaterThan, 123);
+            c.Verify("Description", Operation.EndingWith, "Some text value");
+            c.Verify("Scope.Program", Negation.Not, Operation.EqualTo, "MyContianer");
         })
     );
 

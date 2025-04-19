@@ -1,34 +1,33 @@
 ﻿{
-  "SchemaVersion": 2,
+  "SchemaVersion": 3,
   "SpecId": "Guid_1",
-  "Query": {
-    "Element": "Tag",
-    "Steps": [
-      {
-        "$type": "Filter",
-        "Match": "All",
-        "Criteria": [
-          {
-            "Property": "Name",
-            "Negation": "Is",
-            "Operation": "Containing",
-            "Argument": {
-              "Group": "Text",
-              "Data": "Test"
-            }
+  "Element": "Tag",
+  "Steps": [
+    {
+      "$type": "Filter",
+      "Match": "All",
+      "Criteria": [
+        {
+          "Property": "Name",
+          "Negation": "Is",
+          "Operation": "Containing",
+          "Argument": {
+            "Group": "Text",
+            "Data": "Test"
           }
-        ]
-      }
-    ]
-  },
-  "Verify": {
-    "Criteria": [
-      {
-        "Property": "DataType",
-        "Negation": "Not",
-        "Operation": "Void",
-        "Argument": null
-      }
-    ]
-  }
+        }
+      ]
+    },
+    {
+      "$type": "Verify",
+      "Criteria": [
+        {
+          "Property": "DataType",
+          "Negation": "Not",
+          "Operation": "Void",
+          "Argument": null
+        }
+      ]
+    }
+  ]
 }

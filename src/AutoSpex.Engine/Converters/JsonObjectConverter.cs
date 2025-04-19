@@ -8,7 +8,7 @@ public class JsonObjectConverter : JsonConverter<object?>
     public override object? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         var group = TypeGroup.Default;
-        object? value = default;
+        object? value = null;
 
         while (reader.Read() && reader.TokenType != JsonTokenType.EndObject)
         {

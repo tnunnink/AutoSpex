@@ -264,12 +264,13 @@ public partial class ArgumentInput : Observer
         if (token.IsCancellationRequested) return [];
         if (string.IsNullOrEmpty(filter) || !filter.StartsWith(Reference.KeyStart)) return [];
         if (filter.Count(c => c == Reference.KeyStart) == filter.Count(c => c == Reference.KeyEnd)) return [];
+        return [];
 
-        return Reference.Special
+        /*return Reference.THis
             .Select(r => new ValueObserver(r))
             .Where(x => x.Filter(filter))
             .OrderByDescending(x => x.Text.StartsWith(filter))
-            .ThenBy(x => x.Text);
+            .ThenBy(x => x.Text);*/
     }
 
     /// <summary>
@@ -306,15 +307,15 @@ public partial class ArgumentInput : Observer
     }
 
     /// <summary>
-    /// Handles getting suggestable properties for a reference input argument based on the current text input.
+    /// Handles getting suggestible properties for a reference input argument based on the current text input.
     /// This will parse the input, determine the origin type from the reference, and then use that type to return
     /// a list of possible properties that we know statically and filter them to that of the current text.
     /// This will not handle nested tagnames like property input. We will get nested tag names from the reference scope/key.
     /// </summary>
     private IEnumerable<object> GetPropertySuggestions(string filter, CancellationToken token)
     {
-        if (token.IsCancellationRequested) return [];
-        if (!filter.Contains("}.")) return [];
+        return [];
+        /*if (token.IsCancellationRequested || !filter.Contains("}.")) return [];
 
         //Get/parse the base reference.
         var close = filter.IndexOf(Reference.KeyEnd) + 1;
@@ -332,7 +333,7 @@ public partial class ArgumentInput : Observer
                     ? Property.This(_input().Origin)
                     : Property.Default;
 
-            //Parse the property path and create suggestions baed on the origin type.
+            //Parse the property path and create suggestions based on the origin type.
             var remaining = filter[close..].TrimStart('.');
             var index = remaining.LastIndexOf('.');
             var path = index > 0 ? remaining[..index] : string.Empty;
@@ -349,7 +350,7 @@ public partial class ArgumentInput : Observer
             // Ignored because this is just optional.
             // It's only to suggest possible values based on a known source content.
             return [];
-        }
+        }*/
     }
 
     #endregion

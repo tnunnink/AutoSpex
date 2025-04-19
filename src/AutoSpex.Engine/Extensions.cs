@@ -18,7 +18,7 @@ public static class Extensions
     /// is.
     /// </summary>
     /// <param name="type">The type to get the identifier for.</param>
-    /// <returns>A string representing a UI friendly name of the type.</returns>
+    /// <returns>A string representing a UI-friendly name of the type.</returns>
     public static string DisplayName(this Type? type)
     {
         if (type is null) return "unknown";
@@ -55,7 +55,7 @@ public static class Extensions
     }
 
     /// <summary>
-    /// Based on the object type return a UI friendly text representation for which we can identify this object value.
+    /// Based on the object type, return a UI-friendly text representation for which we can identify this object value.
     /// </summary>
     public static string ToText(this object? candidate)
     {
@@ -77,13 +77,13 @@ public static class Extensions
     /// <param name="typeName">The name of the type.</param>
     /// <returns>A <see cref="Type"/> object if found, otherwise null.</returns>
     /// <remarks>
-    /// This is a specialized extension which tries to get the Type form a string which is how some data
+    /// This is a specialized extension that tries to get the Type to form a string, which is how some data
     /// will be persisted into the database. This method should work for standard .NET types, types defined in L5Sharp,
     /// as well as types defined in this AutoSpex.Engine project.
     /// </remarks>
     public static Type? ToType(this string? typeName)
     {
-        if (string.IsNullOrEmpty(typeName)) return default;
+        if (string.IsNullOrEmpty(typeName)) return null;
 
         var nativeType = Type.GetType(typeName);
         if (nativeType is not null) return nativeType;
@@ -96,11 +96,27 @@ public static class Extensions
     }
 
     /// <summary>
-    /// 
+    /// If the current object is a LogixElement, we want to clone it to remove its reference to the parent
+    /// L5X so that it can be disposed of once a run is completed. If we continue to hold onto this reference,
+    /// we consume unneeded memory (especially since a L5X instance can be very large).
     /// </summary>
-    /// <param name="data"></param>
-    /// <param name="fileName"></param>
-    /// <param name="token"></param>
+    public static object Dereference(this object candidate)
+    {
+        if (candidate is LogixElement element)
+        {
+            return element.Clone();
+        }
+
+        return candidate;
+    }
+
+    /// <summary>
+    /// Compresses the provided string data into a GZip format and saves it to the specified file asynchronously.
+    /// </summary>
+    /// <param name="data">The string data to be compressed.</param>
+    /// <param name="fileName">The name and path of the file where the compressed data will be saved.</param>
+    /// <param name="token">A cancellation token that can be used to cancel the asynchronous operation.</param>
+    /// <returns>A task that represents the asynchronous compression operation.</returns>
     public static async Task CompressToAsync(this string data, string fileName, CancellationToken token = default)
     {
         var bytes = Encoding.UTF8.GetBytes(data);
@@ -126,6 +142,17 @@ public static class Extensions
         await zipStream.CopyToAsync(outputStream, token);
 
         return Encoding.UTF8.GetString(outputStream.ToArray());
+    }
+
+    /// <summary>
+    /// Computes the MD5 hash for the given text and returns it as a lowercase hexadecimal string.
+    /// </summary>
+    /// <param name="text">The input text to compute the hash for.</param>
+    /// <returns>A lowercase hexadecimal MD5 hash of the input text.</returns>
+    public static string Hash(this string text)
+    {
+        var hash = MD5.HashData(Encoding.UTF8.GetBytes(text));
+        return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
     }
 
     /// <summary>
@@ -197,7 +224,7 @@ public static class Extensions
     private static bool IsNullable(this Type type) => Nullable.GetUnderlyingType(type) is not null;
 
     /// <summary>
-    /// Executes the task without waiting for its completion, and optionally handles exceptions that may occur.
+    /// Executes the task without waiting for its completion and optionally handles exceptions that may occur.
     /// </summary>
     /// <param name="task">The task to be executed.</param>
     /// <param name="errorHandler">An optional action to handle exceptions thrown by the task.</param>

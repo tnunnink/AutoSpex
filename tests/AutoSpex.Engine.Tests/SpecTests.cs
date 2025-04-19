@@ -20,21 +20,45 @@ public class SpecTests
     private static readonly JsonSerializerOptions Options = new() { WriteIndented = true };
 
     [Test]
-    public void New_Default_ShouldHaveExpectedValues()
+    public void New_Default_ShouldBeExpected()
     {
-        var spec = new Spec();
+        var query = new Spec();
 
-        spec.SpecId.Should().NotBeEmpty();
-        spec.Query.Should().NotBeNull();
-        spec.Verify.Should().NotBeNull();
+        query.Element.Should().Be(Element.Default);
+        query.Steps.Should().BeEmpty();
     }
 
     [Test]
-    public void New_ValidElement_ShouldHaveExpectedElementForQueryStep()
+    public void New_Element_ShouldBeExpected()
+    {
+        var query = new Spec(Element.Task);
+
+        query.Element.Should().Be(Element.Task);
+        query.Steps.Should().BeEmpty();
+        query.Returns.Should().BeEquivalentTo(Element.Task.This);
+    }
+    
+    [Test]
+    public void Returns_WithMultipleSteps_ShouldBeExpected()
+    {
+        var spec = new Spec(Element.Tag);
+        spec.Steps.Add(new Filter());
+        spec.Steps.Add(new Select("TagName"));
+        spec.Steps.Add(new Filter());
+
+        var returns = spec.Returns;
+
+        returns.Should().BeEquivalentTo(Property.This(typeof(TagName)), o => o.IgnoringCyclicReferences());
+    }
+
+    [Test]
+    public void AddStep_ValidStep_ShouldBeExpected()
     {
         var spec = new Spec(Element.Tag);
 
-        spec.Query.Element.Should().Be(Element.Tag);
+        spec.Steps.Add(new Filter());
+
+        spec.Steps.Should().HaveCount(1);
     }
 
     [Test]
@@ -42,15 +66,16 @@ public class SpecTests
     {
         var spec = Spec.Configure(s =>
         {
-            s.Get(Element.Tag);
+            s.Query(Element.Tag);
             s.Where("Name", Operation.Containing, "Test");
             s.Select("Value");
-            s.Validate("This", Operation.EqualTo, 4);
+            s.Verify("This", Operation.EqualTo, 4);
         });
 
-        spec.Query.Element.Should().Be(Element.Tag);
-        spec.Query.Steps.Should().HaveCount(2);
-        spec.Verify.Criteria.Should().HaveCount(1);
+        spec.Element.Should().Be(Element.Tag);
+        spec.Steps.Should().HaveCount(3);
+        spec.Steps.First().As<Filter>().Criteria.Should().HaveCount(1);
+        spec.Steps.Last().As<Verify>().Criteria.Should().HaveCount(1);
     }
 
     [Test]
@@ -58,16 +83,16 @@ public class SpecTests
     {
         var spec = Spec.Configure(s =>
         {
-            s.Get(Element.Tag);
+            s.Query(Element.Tag);
             s.Where("Name", Operation.Containing, "Test");
-            s.Validate("Value", Operation.EqualTo, 4);
+            s.Verify("Value", Operation.EqualTo, 4);
         });
 
         var duplicate = spec.Duplicate();
 
         duplicate.Should().NotBeSameAs(spec);
-        duplicate.Query.Should().BeEquivalentTo(spec.Query);
-        duplicate.Verify.Should().BeEquivalentTo(spec.Verify);
+        duplicate.Element.Should().BeEquivalentTo(spec.Element);
+        duplicate.Steps.Should().BeEquivalentTo(spec.Steps);
     }
 
     [Test]
@@ -75,9 +100,9 @@ public class SpecTests
     {
         var spec = Spec.Configure(s =>
         {
-            s.Get(Element.Tag);
+            s.Query(Element.Tag);
             s.Where("Name", Operation.Containing, "Test");
-            s.Validate("Value", Operation.EqualTo, 4);
+            s.Verify("Value", Operation.EqualTo, 4);
         });
 
         var criteria = spec.GetAllCriteria();
@@ -91,9 +116,9 @@ public class SpecTests
         var spec = new Spec();
         var content = await L5X.LoadAsync(Known.Test);
 
-        var evaluations = await spec.RunAsync(content);
+        var verifications = await spec.RunAsync(content);
 
-        evaluations.Should().BeEmpty();
+        verifications.Should().BeEmpty();
     }
 
     [Test]
@@ -102,14 +127,14 @@ public class SpecTests
         var spec = new Spec();
         var content = await L5X.LoadAsync(Known.Test);
 
-        spec.Get(Element.Tag)
+        spec.Query(Element.Tag)
             .Where("Name", Operation.Containing, "Test")
-            .Validate("DataType", Negation.Not, Operation.Void);
+            .Verify("DataType", Negation.Not, Operation.Void);
 
-        var evaluations = await spec.RunAsync(content);
+        var results = (await spec.RunAsync(content)).ToList();
 
-        evaluations.Should().AllSatisfy(e => e.Result.Should().Be(ResultState.Passed));
-        evaluations.Should().NotBeEmpty();
+        results.Should().NotBeEmpty();
+        results.Should().AllSatisfy(e => e.Result.Should().Be(ResultState.Passed));
     }
 
     [Test]
@@ -117,12 +142,12 @@ public class SpecTests
     {
         var spec = new Spec();
         var content = await L5X.LoadAsync(Known.Test);
-        spec.Get(Element.Module).Validate("Inhibited", Operation.EqualTo, false);
+        spec.Query(Element.Module).Verify("Inhibited", Operation.EqualTo, false);
 
-        var evaluations = await spec.RunAsync(content);
+        var verifications = (await spec.RunAsync(content)).ToList();
 
-        evaluations.Should().AllSatisfy(e => e.Result.Should().Be(ResultState.Passed));
-        evaluations.Should().NotBeEmpty();
+        verifications.Should().AllSatisfy(e => e.Result.Should().Be(ResultState.Passed));
+        verifications.Should().NotBeEmpty();
     }
 
     [Test]
@@ -140,9 +165,9 @@ public class SpecTests
     {
         var spec = Spec.Configure(s =>
         {
-            s.Get(Element.Tag);
+            s.Query(Element.Tag);
             s.Where("Name", Operation.Containing, "Test");
-            s.Validate("DataType", Negation.Not, Operation.Void);
+            s.Verify("DataType", Negation.Not, Operation.Void);
         });
 
         var json = JsonSerializer.Serialize(spec, Options);
@@ -155,10 +180,10 @@ public class SpecTests
     {
         var spec = Spec.Configure(s =>
         {
-            s.Get(Element.Tag);
+            s.Query(Element.Tag);
             s.Where("Name", Operation.Containing, "Test");
             s.Select("Members");
-            s.Validate("DataType", Negation.Not, Operation.Void);
+            s.Verify("DataType", Negation.Not, Operation.Void);
         });
 
         var json = JsonSerializer.Serialize(spec, Options);
@@ -171,9 +196,9 @@ public class SpecTests
     {
         var spec = Spec.Configure(s =>
         {
-            s.Get(Element.Tag);
+            s.Query(Element.Tag);
             s.Where("Name", Operation.Containing, "Test");
-            s.Validate("Value", Negation.Is, Operation.Between, new Range(1, 10));
+            s.Verify("Value", Negation.Is, Operation.Between, new Range(1, 10));
         });
 
         var json = JsonSerializer.Serialize(spec, Options);
@@ -186,9 +211,9 @@ public class SpecTests
     {
         var spec = Spec.Configure(s =>
         {
-            s.Get(Element.Tag);
+            s.Query(Element.Tag);
             s.Where("Name", Operation.Containing, "Test");
-            s.Validate("DataType", Negation.Not, Operation.Void);
+            s.Verify("DataType", Negation.Not, Operation.Void);
         });
         var data = JsonSerializer.Serialize(spec);
 
@@ -202,9 +227,9 @@ public class SpecTests
     {
         var spec = Spec.Configure(s =>
         {
-            s.Get(Element.Tag);
+            s.Query(Element.Tag);
             s.Where("Name", Operation.Containing, "Test");
-            s.Validate("Value", Negation.Is, Operation.Between, new Range(1, 10));
+            s.Verify("Value", Negation.Is, Operation.Between, new Range(1, 10));
         });
         var data = JsonSerializer.Serialize(spec);
 
@@ -222,8 +247,8 @@ public class SpecTests
             var content = L5X.Load(Known.Test);
             var spec = Spec.Configure(c =>
             {
-                c.Get(Element.Module);
-                c.Validate("Inhibited", Negation.Is, Operation.EqualTo, false);
+                c.Query(Element.Module);
+                c.Verify("Inhibited", Negation.Is, Operation.EqualTo, false);
             });
 
             var evaluations = spec.Run(content);

@@ -76,6 +76,12 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
     public static readonly TypeGroup Reference = new ReferenceTypeGroup();
 
     /// <summary>
+    /// Indicates whether the current type group is indexable. A type group is considered indexable if it is
+    /// one of Text, Number, or Date type groups.
+    /// </summary>
+    public bool IsIndexable => this == Text || this == Number;
+
+    /// <summary>
     /// Retrieves the corresponding <see cref="TypeGroup"/> based on the provided <see cref="Type"/>.
     /// </summary>
     /// <param name="type">The type to determine the group for.</param>
@@ -96,12 +102,12 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
     /// method in order from most primitive (bool) to more complex/custom.
     /// </summary>
     /// <param name="value">The input text to parse.</param>
-    /// <returns>The stronly typed object value the input text represents.</returns>
+    /// <returns>The strongly typed object value the input text represents.</returns>
     public static object? Parse(string? value)
     {
-        if (string.IsNullOrWhiteSpace(value)) return default;
+        if (string.IsNullOrWhiteSpace(value)) return null;
 
-        //Obviously need to exlude the Text group since it will always be a string.
+        //Obviously need to exclude the Text group since it will always be a string.
         foreach (var group in List.Where(x => x != Default && x != Text).OrderBy(x => x.Value))
             if (group.TryParse(value, out var result))
                 return result;
@@ -111,10 +117,10 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
     }
 
     /// <summary>
-    /// Determines if this <see cref="TypeGroup"/> applies to the specficied <see cref="Type"/>.
+    /// Determines if this <see cref="TypeGroup"/> applies to the specified <see cref="Type"/>.
     /// </summary>
     /// <param name="type">The type to check.</param>
-    /// <returns><c>true</c> if this group applies to the secified type; otherwise, <c>false</c>.</returns>
+    /// <returns><c>true</c> if this group applies to the specified type; otherwise, <c>false</c>.</returns>
     protected abstract bool AppliesTo(Type type);
 
     /// <summary>
@@ -131,7 +137,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
     /// <param name="reader">The Utf8JsonReader used to read the JSON data.</param>
     /// <param name="options">The JsonSerializerOptions used during deserialization.</param>
     /// <returns>The deserialized object constructed from the JSON data.</returns>
-    public virtual object? ReadData(ref Utf8JsonReader reader, JsonSerializerOptions options) => default;
+    public virtual object? ReadData(ref Utf8JsonReader reader, JsonSerializerOptions options) => null;
 
     /// <summary>
     /// Writes the data from the specified object to a Utf8JsonWriter using the specified JsonSerializerOptions
@@ -140,7 +146,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
     /// <param name="writer">The Utf8JsonWriter to write the data to.</param>
     /// <param name="value">The object containing the data to be written.</param>
     /// <param name="options">The JsonSerializerOptions to be used during writing.</param>
-    public virtual void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions? options = default)
+    public virtual void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions? options = null)
     {
         writer.WriteStartObject();
         writer.WriteString("Group", Name);
@@ -176,7 +182,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
         }
 
         /// <inheritdoc />
-        public override void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions? options = default)
+        public override void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions? options = null)
         {
             writer.WriteStartObject();
             writer.WriteString("Group", Name);
@@ -203,7 +209,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
                 return true;
             }
 
-            value = default;
+            value = null;
             return false;
         }
 
@@ -214,7 +220,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
         }
 
         /// <inheritdoc />
-        public override void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions? options = default)
+        public override void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions? options = null)
         {
             var data = value is bool boolean ? boolean : throw new ArgumentException(WriteError, nameof(value));
 
@@ -300,7 +306,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
         public override object? ReadData(ref Utf8JsonReader reader, JsonSerializerOptions options)
         {
             var value = reader.GetString();
-            return !string.IsNullOrEmpty(value) && TryParse(value, out var number) ? number : default;
+            return !string.IsNullOrEmpty(value) && TryParse(value, out var number) ? number : null;
         }
     }
 
@@ -388,15 +394,15 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
         public override object? ReadData(ref Utf8JsonReader reader, JsonSerializerOptions options)
         {
             var data = reader.GetString()?.Split(':') ?? [];
-            if (data.Length != 2) return default;
+            if (data.Length != 2) return null;
 
             var type = data[0].ToType();
-            if (type is null) return default;
+            if (type is null) return null;
 
             return data[1].Parse(type);
         }
 
-        public override void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions? options = default)
+        public override void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions? options = null)
         {
             var data = value is LogixEnum enumeration
                 ? string.Concat(enumeration.GetType(), ':', enumeration.Name)
@@ -441,7 +447,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
             return element.Deserialize<LogixElement>();
         }
 
-        public override void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions? options = default)
+        public override void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions? options = null)
         {
             var data = value is LogixElement element
                 ? Encoding.UTF8.GetBytes(element.Serialize().ToString())
@@ -510,7 +516,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
             return result;
         }
 
-        public override void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions? options = default)
+        public override void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions? options = null)
         {
             var data = value is IEnumerable enumerable
                 ? enumerable.Cast<object>()
@@ -569,7 +575,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
             return JsonSerializer.Deserialize<Criterion>(ref reader, options);
         }
 
-        public override void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions? options = default)
+        public override void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions? options = null)
         {
             var data = value is Criterion criterion
                 ? JsonSerializer.Serialize(criterion, options)
@@ -626,7 +632,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
             return JsonSerializer.Deserialize<Range>(ref reader, options);
         }
 
-        public override void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions? options = default)
+        public override void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions? options = null)
         {
             var data = value is Range range
                 ? JsonSerializer.Serialize(range, options)
@@ -664,7 +670,7 @@ public abstract class TypeGroup : SmartEnum<TypeGroup, int>
             return Engine.Reference.Parse(data);
         }
 
-        public override void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions? options = default)
+        public override void WriteData(Utf8JsonWriter writer, object? value, JsonSerializerOptions? options = null)
         {
             var data = value is Reference reference
                 ? reference.ToString()

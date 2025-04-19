@@ -1,122 +1,93 @@
-﻿using System.Text.Json.Serialization;
-using Ardalis.SmartEnum.SystemTextJson;
-using JetBrains.Annotations;
+﻿using System.Text;
 
 namespace AutoSpex.Engine;
 
-[PublicAPI]
+/// <summary>
+/// A lightweight object containing the result of evaluating a criterion instance. This object will contain the result
+/// state value along with a formated message to provide further details.
+/// </summary>
 public record Evaluation
 {
-    [JsonConstructor]
-    private Evaluation(ResultState result, string candidate, string criteria, string expected, string actual,
-        string? error)
+    /// <summary>
+    /// Creates a new <see cref="Evaluation"/> instance with the provided result and message.
+    /// </summary>
+    private Evaluation(ResultState result, string message)
     {
-        Result = result;
-        Candidate = candidate;
-        Criteria = criteria;
-        Expected = expected;
-        Actual = actual;
-        Error = error;
-    }
-
-    private Evaluation(ResultState result, Criterion criterion, object? candidate, object? actual)
-    {
-        ArgumentNullException.ThrowIfNull(result);
-        ArgumentNullException.ThrowIfNull(criterion);
-
-        Result = result;
-        Candidate = candidate.ToText();
-        Criteria = criterion.GetCriteria();
-        Expected = criterion.GetExpected().ToText();
-        Actual = actual.ToText();
-    }
-
-    private Evaluation(ResultState result, Criterion criterion, object? candidate, Exception exception)
-    {
-        ArgumentNullException.ThrowIfNull(result);
-        ArgumentNullException.ThrowIfNull(criterion);
-
-        Result = result;
-        Candidate = candidate.ToText();
-        Criteria = criterion.GetCriteria();
-        Expected = criterion.GetExpected().ToText();
-        Error = exception.Message;
-    }
-
-    private Evaluation(ResultState result, Exception exception)
-    {
-        ArgumentNullException.ThrowIfNull(result);
-
-        Result = result;
-        Error = exception.Message;
+        Result = result ?? throw new ArgumentNullException(nameof(result));
+        Message = message ?? throw new ArgumentNullException(nameof(message));
     }
 
     /// <summary>
     /// The <see cref="ResultState"/> of the evaluation.
     /// </summary>
-    [JsonInclude]
-    [JsonConverter(typeof(SmartEnumNameConverter<ResultState, int>))]
-    public ResultState Result { get; private init; } = ResultState.None;
+    public ResultState Result { get; }
 
     /// <summary>
-    /// The string that identifies the candidate object this evaluation ran against.
-    /// This will essentially be the scope path of a given logix element. We can use this with source id to find
-    /// a strong reference to the evaluated object if needed.
+    /// The message associated with the evaluation, describing details of the result or any error encountered.
     /// </summary>
-    [JsonInclude]
-    public string Candidate { get; private init; } = string.Empty;
+    public string Message { get; }
 
     /// <summary>
-    /// The text the indicates the proeprty and operation that the criterion was configured to evaluate.
+    /// Creates a new passing <see cref="Evaluation"/> with the provided criterion, candidate, and actual value. 
     /// </summary>
-    [JsonInclude]
-    public string Criteria { get; private init; } = string.Empty;
+    public static Evaluation Passed(Criterion criterion, object? candidate, object? actual)
+    {
+        var builder = new StringBuilder();
+
+        builder.Append("Expected ")
+            .Append(candidate.ToText())
+            .Append(" to have ")
+            .Append(criterion)
+            .Append(" and found ")
+            .Append(actual.ToText());
+
+        return new Evaluation(ResultState.Passed, builder.ToString());
+    }
 
     /// <summary>
-    /// The set of values that the evaluation was expecting to find.
+    /// Creates a new failed <see cref="Evaluation"/> with the provided criterion, candidate, and actual value. 
     /// </summary>
-    [JsonInclude]
-    public string Expected { get; private init; } = string.Empty;
+    public static Evaluation Failed(Criterion criterion, object? candidate, object? actual)
+    {
+        var builder = new StringBuilder();
+
+        builder.Append("Expected ")
+            .Append(candidate.ToText())
+            .Append(" to have ")
+            .Append(criterion)
+            .Append(" but found ")
+            .Append(actual.ToText());
+
+        return new Evaluation(ResultState.Failed, builder.ToString());
+    }
 
     /// <summary>
-    /// The actual value that the was obtained from the candidate object. 
+    /// Creates a new errored <see cref="Evaluation"/> with the provided criterion, candidate, and the produced exception. 
     /// </summary>
-    [JsonInclude]
-    public string Actual { get; private init; } = string.Empty;
+    public static Evaluation Errored(Criterion criterion, object? candidate, Exception exception)
+    {
+        var builder = new StringBuilder();
+
+        builder.Append("Expected ")
+            .Append(candidate.ToText())
+            .Append(" to have ")
+            .Append(criterion)
+            .Append(" but got error ")
+            .Append(exception.Message);
+
+        return new Evaluation(ResultState.Errored, builder.ToString());
+    }
 
     /// <summary>
-    /// The error message that was produced by running the criterion to get the evaluation.
-    /// This is only set for "Errored" evaluations.
+    /// Creates a new errored <see cref="Evaluation"/> a produced exception. 
     /// </summary>
-    [JsonInclude]
-    public string? Error { get; private init; }
-
-    /// <summary>
-    /// Cretes a new passing <see cref="Evaluation"/> with the provided criterion, candidate, and actual value. 
-    /// </summary>
-    public static Evaluation Passed(Criterion criterion, object? candidate, object? actual) =>
-        new(ResultState.Passed, criterion, candidate, actual);
-
-    /// <summary>
-    /// Cretes a new failed <see cref="Evaluation"/> with the provided criterion, candidate, and actual value. 
-    /// </summary>
-    public static Evaluation Failed(Criterion criterion, object? candidate, object? actual) =>
-        new(ResultState.Failed, criterion, candidate, actual);
-
-    /// <summary>
-    /// Cretes a new errored <see cref="Evaluation"/> with the provided criterion, candidate, and the produced exception. 
-    /// </summary>
-    public static Evaluation Errored(Criterion criterion, object? candidate, Exception exception) =>
-        new(ResultState.Errored, criterion, candidate, exception);
-
-    /// <summary>
-    /// Cretes a new errored <see cref="Evaluation"/> a produced exception. 
-    /// </summary>
-    public static Evaluation Errored(Exception exception) =>
-        new(ResultState.Errored, exception);
+    public static Evaluation Errored(Exception exception)
+    {
+        return new Evaluation(ResultState.Errored, exception.Message);
+    }
 
     /// <inheritdoc />
-    public override string ToString() => $"Expected: {Criteria} {Expected} Found: {Actual};";
+    public override string ToString() => Message;
 
     public static implicit operator bool(Evaluation evaluation) => evaluation.Result == ResultState.Passed;
 }

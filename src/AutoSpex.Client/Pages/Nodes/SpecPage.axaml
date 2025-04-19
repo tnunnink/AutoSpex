@@ -12,10 +12,6 @@
         VerticalAlignment="Top"
         Margin="20">
 
-        <controls:Section.Icon>
-            <PathIcon Theme="{StaticResource IconFilledClipboard}" />
-        </controls:Section.Icon>
-
         <controls:Section.Action>
             <StackPanel Orientation="Horizontal" Spacing="5">
 

@@ -4,23 +4,13 @@
 public class ReferenceTests
 {
     [Test]
-    public void New_TempText_ShouldNotBeNull()
+    public void New_TempText_ShouldHaveExpectedValues()
     {
         var reference = new Reference("Test");
 
         reference.Should().NotBeNull();
-    }
-
-    [Test]
-    public void New_SimpleTextWithNoSpecialCharacters_ShouldBeExpected()
-    {
-        var reference = new Reference("SomeText");
-
-        reference.Key.Should().Be("SomeText");
+        reference.Key.Should().Be("Test");
         reference.Property.Should().BeNull();
-        reference.IsSource.Should().BeFalse();
-        reference.IsSpecial.Should().BeFalse();
-        reference.IsVariable.Should().BeFalse();
     }
 
     [Test]
@@ -31,12 +21,6 @@ public class ReferenceTests
         reference.Should().NotBeNull();
         reference.Key.Should().Be("MySource/Tag/SomeTagName");
         reference.Property.Should().BeNull();
-        reference.Scope.Should().NotBe(Scope.Empty);
-        reference.Scope.Controller.Should().Be("MySource");
-        reference.Scope.Should().Be("MySource/Tag/SomeTagName");
-        reference.IsSource.Should().BeTrue();
-        reference.IsSpecial.Should().BeFalse();
-        reference.IsVariable.Should().BeFalse();
     }
 
     [Test]
@@ -47,39 +31,6 @@ public class ReferenceTests
         reference.Should().NotBeNull();
         reference.Key.Should().Be("MySource/Tag/SomeTagName");
         reference.Property.Should().Be("Value");
-        reference.Scope.Should().NotBe(Scope.Empty);
-        reference.Scope.Controller.Should().Be("MySource");
-        reference.Scope.Should().Be("MySource/Tag/SomeTagName");
-        reference.IsSource.Should().BeTrue();
-        reference.IsSpecial.Should().BeFalse();
-        reference.IsVariable.Should().BeFalse();
-    }
-
-    [Test]
-    public void New_SpecialReference_ShouldBeExpected()
-    {
-        var reference = new Reference("$this");
-
-        reference.Should().NotBeNull();
-        reference.Key.Should().Be("$this");
-        reference.Property.Should().BeNull();
-        reference.Scope.Should().Be(Scope.Empty);
-        reference.IsSource.Should().BeFalse();
-        reference.IsSpecial.Should().BeTrue();
-        reference.IsVariable.Should().BeFalse();
-    }
-
-    [Test]
-    public void New_VariableReference_ShouldBeExpected()
-    {
-        var reference = new Reference("@MyVariable");
-
-        reference.Key.Should().Be("@MyVariable");
-        reference.Property.Should().BeNull();
-        reference.Scope.Should().Be(Scope.Empty);
-        reference.IsSource.Should().BeFalse();
-        reference.IsSpecial.Should().BeFalse();
-        reference.IsVariable.Should().BeTrue();
     }
 
     [Test]
@@ -90,22 +41,6 @@ public class ReferenceTests
         reference.Should().NotBeNull();
         reference.Key.Should().Be("$this");
         reference.Property.Should().BeNull();
-        reference.IsSource.Should().BeFalse();
-        reference.IsSpecial.Should().BeTrue();
-        reference.IsVariable.Should().BeFalse();
-    }
-
-    [Test]
-    public void Required_WhenCalled_ShouldBeExpected()
-    {
-        var reference = Reference.Required;
-
-        reference.Should().NotBeNull();
-        reference.Key.Should().Be("$required");
-        reference.Property.Should().BeNull();
-        reference.IsSource.Should().BeFalse();
-        reference.IsSpecial.Should().BeTrue();
-        reference.IsVariable.Should().BeFalse();
     }
 
     [Test]
@@ -135,33 +70,9 @@ public class ReferenceTests
     [Test]
     public void ToString_SpecialReference_ShouldBeExpected()
     {
-        var reference = new Reference("$this");
+        var reference = Reference.This;
 
         reference.ToString().Should().Be("{$this}");
-    }
-
-    [Test]
-    public void ToString_SpecialReferenceWithProeprty_ShouldBeExpected()
-    {
-        var reference = new Reference("$this", "Description");
-
-        reference.ToString().Should().Be("{$this}.Description");
-    }
-
-    [Test]
-    public void ToString_VariableReference_ShouldBeExpected()
-    {
-        var reference = new Reference("@MyVar");
-
-        reference.ToString().Should().Be("{@MyVar}");
-    }
-
-    [Test]
-    public void ToString_VariableReferenceWithProperty_ShouldBeExpected()
-    {
-        var reference = new Reference("@MyVar", "Name");
-
-        reference.ToString().Should().Be("{@MyVar}.Name");
     }
 
     [Test]
@@ -171,9 +82,6 @@ public class ReferenceTests
 
         reference.Key.Should().Be("something");
         reference.Property.Should().BeEmpty();
-        reference.IsSource.Should().BeFalse();
-        reference.IsSpecial.Should().BeFalse();
-        reference.IsVariable.Should().BeFalse();
     }
 
     [Test]
@@ -183,11 +91,6 @@ public class ReferenceTests
 
         reference.Key.Should().Be("something/program/tag/MyTag.Member");
         reference.Property.Should().BeEmpty();
-        reference.Scope.Should().NotBe(Scope.Empty);
-        reference.Scope.Should().Be("something/program/tag/MyTag.Member");
-        reference.IsSource.Should().BeTrue();
-        reference.IsSpecial.Should().BeFalse();
-        reference.IsVariable.Should().BeFalse();
     }
 
     [Test]
@@ -197,63 +100,6 @@ public class ReferenceTests
 
         reference.Key.Should().Be("something/program/tag/MyTag.Member");
         reference.Property.Should().Be("[MyNestedTag.Member.Value]");
-        reference.Scope.Should().NotBe(Scope.Empty);
-        reference.Scope.Should().Be("something/program/tag/MyTag.Member");
-        reference.IsSource.Should().BeTrue();
-        reference.IsSpecial.Should().BeFalse();
-        reference.IsVariable.Should().BeFalse();
-    }
-
-    [Test]
-    public void Parse_SpecialText_ShouldBeExpected()
-    {
-        var reference = Reference.Parse("{$something}");
-
-        reference.Key.Should().Be("$something");
-        reference.Property.Should().BeEmpty();
-        reference.Scope.Should().Be(Scope.Empty);
-        reference.IsSource.Should().BeFalse();
-        reference.IsSpecial.Should().BeTrue();
-        reference.IsVariable.Should().BeFalse();
-    }
-
-    [Test]
-    public void Parse_SpecialTextWithProperty_ShouldBeExpected()
-    {
-        var reference = Reference.Parse("{$something}.PropName");
-
-        reference.Key.Should().Be("$something");
-        reference.Property.Should().Be("PropName");
-        reference.Scope.Should().Be(Scope.Empty);
-        reference.IsSource.Should().BeFalse();
-        reference.IsSpecial.Should().BeTrue();
-        reference.IsVariable.Should().BeFalse();
-    }
-
-    [Test]
-    public void Parse_VariableText_ShouldBeExpected()
-    {
-        var reference = Reference.Parse("{@MyVar}");
-
-        reference.Key.Should().Be("@MyVar");
-        reference.Property.Should().BeEmpty();
-        reference.Scope.Should().Be(Scope.Empty);
-        reference.IsSource.Should().BeFalse();
-        reference.IsSpecial.Should().BeFalse();
-        reference.IsVariable.Should().BeTrue();
-    }
-
-    [Test]
-    public void Parse_VariableTextWithProperty_ShouldBeExpected()
-    {
-        var reference = Reference.Parse("{@MyVar}.Member.Nested.Value");
-
-        reference.Key.Should().Be("@MyVar");
-        reference.Property.Should().Be("Member.Nested.Value");
-        reference.Scope.Should().Be(Scope.Empty);
-        reference.IsSource.Should().BeFalse();
-        reference.IsSpecial.Should().BeFalse();
-        reference.IsVariable.Should().BeTrue();
     }
 
     [Test]
@@ -268,65 +114,13 @@ public class ReferenceTests
     }
 
     [Test]
-    public void Resolve_RequiredReference_ShouldThrowException()
-    {
-        var reference = Reference.Required;
-
-        FluentActions.Invoking(() => reference.Resolve(null))
-            .Should().Throw<InvalidOperationException>()
-            .WithMessage("Value is required for evaluation. Confiugre an override to replace required reference(s).");
-    }
-
-    [Test]
     public void ResolveUsing_SimpleResolver_ShouldReturnExpectedValue()
     {
         var reference = new Reference("@SomeValue");
-        
-        reference.ResolveUsing(_ => 123);
+
+        reference.ResolveTo(new Variable("Test", 123));
 
         var result = reference.Resolve(null);
         result.Should().Be(123);
-    }
-
-    [Test]
-    public void ResolveUsing_SourceReference_ShouldReturnExpectedValue()
-    {
-        var source = L5X.Load(Known.Test);
-        var reference = new Reference("/Tag/TestComplexTag");
-        
-        reference.ResolveUsing(source);
-        
-        var result = reference.Resolve(null);
-        result.Should().NotBeNull();
-        result.Should().BeOfType<Tag>();
-        result.As<Tag>().Name.Should().Be("TestComplexTag");
-    }
-    
-    [Test]
-    public void ResolveUsing_SourceReferenceWithProperty_ShouldReturnExpectedValue()
-    {
-        var source = L5X.Load(Known.Test);
-        var reference = new Reference("/Tag/TestComplexTag", "Description");
-        
-        reference.ResolveUsing(source);
-        
-        var result = reference.Resolve(null);
-        result.Should().NotBeNull();
-        result.Should().BeOfType<string>();
-        result.Should().Be("Base");
-    }
-    
-    [Test]
-    public void ResolveUsing_AbsolueSourceReference_ShouldReturnExpectedValue()
-    {
-        var source = L5X.Load(Known.Test);
-        var reference = new Reference("MySourceName/Tag/TestComplexTag", "ExternalAccess");
-        
-        reference.ResolveUsing(source);
-        
-        var result = reference.Resolve(null);
-        result.Should().NotBeNull();
-        result.Should().BeOfType<ExternalAccess>();
-        result.Should().Be(ExternalAccess.None);
     }
 }

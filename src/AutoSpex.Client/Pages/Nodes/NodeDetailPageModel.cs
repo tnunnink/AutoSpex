@@ -5,7 +5,6 @@ using AutoSpex.Client.Observers;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using AutoSpex.Persistence;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using FluentResults;
@@ -35,7 +34,7 @@ public partial class NodeDetailPageModel : DetailPageModel
 
     /// <inheritdoc />
     /// <remarks>
-    /// Check if the node is "virtual" (has no parent) and therfore not saved to the database
+    /// Check if the node is "virtual" (has no parent) and therefore not saved to the database
     /// (this only applies to spec or container nodes). Create node if virtual. Otherwise, continue saving.
     /// </remarks>
     public override async Task<Result> Save(Result? result = default)
@@ -72,6 +71,7 @@ public partial class NodeDetailPageModel : DetailPageModel
     /// <inheritdoc />
     protected override async Task NavigatePages()
     {
+        //todo probably create on method per type
         if (Node.Type != NodeType.Spec)
         {
             await Navigator.Navigate(() => new SpecsPageModel(Node));
@@ -82,7 +82,7 @@ public partial class NodeDetailPageModel : DetailPageModel
         }
 
         /*await Navigator.Navigate(() => new VariablesPageModel(Node));*/
-        await Navigator.Navigate(() => new InfoPageModel(Node));
+        
     }
 
     /// <summary>

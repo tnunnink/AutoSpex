@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using Task = System.Threading.Tasks.Task;
 
 namespace AutoSpex.Engine.Tests;
 
@@ -68,21 +67,4 @@ public class RepoTests
         sources.Should().NotBeEmpty();
         Console.WriteLine(stopWatch.ElapsedMilliseconds);
     }
-
-    /*[Test]
-    public async Task FindSourcesAsync_WhenCalled_ShouldYieldReturn()
-    {
-        var repo = Repo.Configure(@"C:\Users\Public");
-
-        var stopWatch = Stopwatch.StartNew();
-        
-        await foreach (var source in repo.FindSourcesAsync())
-        {
-            Console.WriteLine(source.Location);
-            source.Should().NotBeNull();
-        }
-        
-        stopWatch.Stop();
-        Console.WriteLine(stopWatch.ElapsedMilliseconds);
-    }*/
 }

@@ -11,5 +11,5 @@ public class RunObserver : Observer<Run>
     }
 
     public ResultObserver Node { get; set; }
-    public ResultState State => Model.State;
+    public ResultState State => Model.Result;
 }

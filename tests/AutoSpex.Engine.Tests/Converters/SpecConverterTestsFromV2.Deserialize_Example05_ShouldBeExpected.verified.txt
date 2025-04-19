@@ -1,0 +1,11 @@
+﻿{
+  "SchemaVersion": 3,
+  "SpecId": "b5019ba9-81a3-451a-ad2e-c612ffad97c6",
+  "Element": "None",
+  "Steps": [
+    {
+      "$type": "Verify",
+      "Criteria": []
+    }
+  ]
+}

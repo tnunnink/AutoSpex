@@ -1,11 +1,12 @@
-﻿using System.Dynamic;
+﻿using System.Collections.Concurrent;
+using System.Dynamic;
 using System.Linq.Expressions;
 using System.Reflection;
 
 namespace AutoSpex.Engine;
 
 /// <summary>
-/// A representation of a class property which can be navigated to from our logix or built in .NET types. This class
+/// A representation of a class property which can be navigated to from our logix or built-in.NET types. This class
 /// contains all the functionality we need for our object graph navigation as well as type information and getter functions
 /// which will be used in criteria for getting the values to evaluate filters and verifications.
 /// </summary>
@@ -24,15 +25,15 @@ public class Property
     /// A dictionary of cached known or static properties for a given type.
     /// This is used to avoid always using reflection each time we want to get the list of properties for a type.
     /// </summary>
-    private static readonly Lazy<Dictionary<Type, List<Property>>> PropertyCache = new();
+    private static readonly Lazy<ConcurrentDictionary<Type, List<Property>>> PropertyCache = new();
 
     /// <summary>
     /// Holds compiled property getter functions, so we don't have to recreate them each time we need to get a property.
-    /// This will improve the overall performance when we go to run many criterion for many specifications.
+    /// This will improve the overall performance when we go to run many criteria for many specifications.
     /// These are cached as they are accessed. We can't be greedy and create them ahead of time because of the recursive nature
-    /// of the type graph and these being static types, we could cause overflow exceptions. 
+    /// of the type graph, and these being static types, we could cause overflow exceptions. 
     /// </summary>
-    private static readonly Dictionary<string, Func<object?, object?>> GetterCache = new();
+    private static readonly ConcurrentDictionary<string, Func<object?, object?>> GetterCache = new();
 
     /// <summary>
     /// A custom getter function for this property which will be used instead of trying to create a getter expression
@@ -53,13 +54,13 @@ public class Property
     /// </summary>
     /// <param name="name">The name to the property.</param>
     /// <param name="type">The type of the property.</param>
-    /// <param name="parent">The parent property of this property. If null this property should represent the root property.</param>
+    /// <param name="parent">The parent property of this property. If null, this property should represent the root property.</param>
     /// <param name="getter">An optional custom getter that tells us how to get the value for this property given an instance of the parent object.</param>
     /// <param name="properties">an optional function that returns the collection of child properties for type.</param>
     /// <exception cref="ArgumentException"><paramref name="name"/> is null or empty.</exception>
     /// <exception cref="ArgumentNullException"><paramref name="type"/> is null.</exception>
-    public Property(string name, Type type, Property? parent = default,
-        Func<object?, object?>? getter = default, Func<IEnumerable<Property>>? properties = default)
+    public Property(string name, Type type, Property? parent = null,
+        Func<object?, object?>? getter = null, Func<IEnumerable<Property>>? properties = null)
     {
         Name = name ?? throw new ArgumentNullException(nameof(name));
         Type = type ?? throw new ArgumentNullException(nameof(type));
@@ -72,7 +73,7 @@ public class Property
     /// Creates a new nested property instance given an existing property definition and a new parent property.
     /// </summary>
     /// <param name="property">The property to recreate with a new parent.</param>
-    /// <param name="parent">The new parent to the property being creates.</param>
+    /// <param name="parent">The new parent to the property being created.</param>
     private Property(Property property, Property parent)
     {
         ArgumentNullException.ThrowIfNull(property);
@@ -95,12 +96,12 @@ public class Property
     public Type Origin => GetOriginType();
 
     /// <summary>
-    /// The parent property to which this property belongs. If null then this is the "root" of the type graph.
+    /// The parent property to which this property belongs. If null, then this is the "root" of the type graph.
     /// </summary>
     public Property? Parent { get; }
 
     /// <summary>
-    /// The full dot down path to this property from the origin.
+    /// The full dot-down property path from the origin type.
     /// </summary>
     public string Path => GetPath();
 
@@ -135,9 +136,9 @@ public class Property
     public Type[] TypeGraph => GetTypeGraph().ToArray();
 
     /// <summary>
-    /// Gets the inner generic parameter or array type if this property type represents a geneic collection or array.
+    /// Gets the inner generic parameter or array type if this property type represents a generic collection or array.
     /// Otherwise, it will return the same type as <see cref="Type"/>.
-    /// This is useful for collections where we want to know what the types of the items in the collection.
+    /// This is useful for collections where we want to know what the types of the items are in the collection are.
     /// </summary>
     public Type InnerType => GetSelfOrInnerType();
 
@@ -149,13 +150,13 @@ public class Property
 
     /// <summary>
     /// Indicates whether the Property instance is a default property.
-    /// A Property is considered default if its Type is typeof(object) and its Name is an empty string.
+    /// A Property is considered default if it is of a type object and has an empty name.
     /// </summary>
     public bool IsDefault => Type == typeof(object) && string.IsNullOrEmpty(Name);
 
     /// <summary>
     /// Creates a default self-referential property called "This" with a null parent, which can be used as a root
-    /// property for all sub properties of the provided type. This is need with how <see cref="Property"/> is designed
+    /// property for all sub properties of the provided type. This is needed with how <see cref="Property"/> is designed
     /// to get values, since it needs some root pseudo property as the origin of the type graph.
     /// </summary>
     /// <param name="type">The <see cref="System.Type"/> of the property.</param>
@@ -166,7 +167,7 @@ public class Property
     /// Creates a default self-referential property called "This" with a null parent, which can be used as a root
     /// property for all sub properties of the provided instance object.
     /// </summary>
-    /// <param name="instance">The object instance to get a self referencing property object for.</param>
+    /// <param name="instance">The object instance to get a self-referencing property object for.</param>
     /// <returns>A <see cref="Property"/> with the provided type named "This" and a null parent.</returns>
     public static Property This(object? instance)
     {
@@ -210,9 +211,9 @@ public class Property
     /// <param name="path">The path of the property from the current type.</param>
     /// <returns>The <see cref="Property"/> object representing the child property if found, Otherwise null.</returns>
     /// <remarks>
-    /// This is the primary extension fot getting a single child or nested property from a given type. Both
+    /// This is the primary extension for getting a single child or nested property from a given type. Both
     /// <see cref="Element"/> and <see cref="Property"/> make use of this extension to retrieve child property objects.
-    /// This extension will check if the type is an Element type and if so also search the defined custom properties.
+    /// This extension will check if the type is an Element type, and if so, also search the defined custom properties.
     /// </remarks>
     public Property GetProperty(string? path)
     {
@@ -259,10 +260,10 @@ public class Property
     /// property belongs to.
     /// </summary>
     /// <param name="origin">The origin object instance for which to get the property value of.</param>
-    /// <returns>A object representing the value of this property relative to the provided origin.</returns>
+    /// <returns>An object representing the value of this property relative to the provided origin.</returns>
     /// <remarks>
-    /// This is primary means though how we will get values from our element objet and use those to execute
-    /// criterion for filtering and verification.
+    /// This is the primary means though how we will get values from our element object and use those to execute
+    /// criteria for filtering and verification.
     /// </remarks>
     public object? GetValue(object? origin)
     {
@@ -272,7 +273,7 @@ public class Property
             throw new ArgumentException(
                 $"Input object of type '{origin.GetType()}' does not match the property origin type '{Origin}'");
 
-        //If we are at the root either use a custom getter or just return the origin object.
+        //If we are at the root, either use a custom getter or just return the origin object.
         //This marks the start of the traversal back down the tree.
         if (Parent is null) return _getter is not null ? _getter(origin) : origin;
 
@@ -297,7 +298,7 @@ public class Property
     /// </remarks>
     private IEnumerable<Property> GetProperties()
     {
-        //Use any custom provided getter function first.
+        //Use any custom-provided getter function first.
         if (_properties is not null)
         {
             return _properties.Invoke();
@@ -308,46 +309,40 @@ public class Property
         {
             return element.Properties;
         }
-
-        //Check if this type's properties we already cached to exit early and avoid reflection usage.
-        if (PropertyCache.Value.TryGetValue(Type, out var cached))
+        
+        // Use GetOrAdd to fetch or create the list of property definitions (name/type pairs).
+        var cached = PropertyCache.Value.GetOrAdd(Type, t =>
         {
-            return cached.Select(c => new Property(c, this));
-        }
-
-        //Get all static properties. Avoid indexer properties or properties we specifically are expluding.
-        var properties = Type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-            .Where(p => p.GetIndexParameters().Length == 0 && !PropertyExclusions.Contains(p.Name))
-            .Select(p => new Property(p.Name, p.PropertyType, this))
-            .ToList();
-
-        //Cache all properties for this type, they should not change at runtime, and we can avoid reusing reflection. 
-        PropertyCache.Value.TryAdd(Type, properties);
-        return properties;
+            //Get all static properties. Avoid indexer properties or properties we specifically are excluding.
+            return t.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Where(p => p.GetIndexParameters().Length == 0 && !PropertyExclusions.Contains(p.Name))
+                .Select(p => new Property(p.Name, p.PropertyType))
+                .ToList();
+        });
+        
+        //Return new property instances with the current (this) instance as the parent.
+        return cached.Select(p => new Property(p.Name, p.Type, this));
     }
 
     /// <summary>
     /// Retrieves the getter function for this property, which will either be the custom getter, cached expression,
     /// or the expression function we built using the info of this class. This getter function will return the value
-    /// of this property provided the parent object instance. As getters are created we are caching them so that we can
+    /// of this property provided the parent object instance. As getters are created, we are caching them so that we can
     /// reuse them and not have to recreate each time we ask for a property value (which will be a lot as each spec is run)
     /// </summary>
     private Func<object?, object?> GetGetter()
     {
-        //Always defer to the provided custom getter as the override to building an expression tree.
+        // Always defer to the provided custom getter first.
         if (_getter is not null) return _getter;
 
-        //If we have a cached getter function for this property then return that instead of creating it again.
-        if (GetterCache.TryGetValue(Key, out var cached)) return cached;
-
-        //Build the property expression and compile it.
-        var type = Parent is not null ? Parent.Type : Type;
-
-        var getter = type != typeof(ExpandoObject) ? BuildGetterExpression(type, Name) : BuildExpandoGetter(Path);
-
-        //Cache this getter for future or static calls to this property for other instance objects to improve performance.
-        GetterCache.Add(Key, getter);
-        return getter;
+        // Use GetOrAdd for atomic check, creation, and retrieval.
+        // If the key is not already in the dictionary, the function will generate, add, and return it.
+        return GetterCache.GetOrAdd(Key, _ =>
+        {
+            var type = Parent is not null ? Parent.Type : Type;
+            var getter = type != typeof(ExpandoObject) ? BuildGetterExpression(type, Name) : BuildExpandoGetter(Path);
+            return getter;
+        });
     }
 
     /// <summary>
@@ -367,7 +362,7 @@ public class Property
     }
 
     /// <summary>
-    /// Builds a getter expression for an expando objec input which is castable to a IDictionary. In this case we want
+    /// Builds a getter expression for an expando object input which is castable to a IDictionary. In this case we want
     /// to use the current property path to get the item from the dictionary.
     /// </summary>
     private static Func<object?, object?> BuildExpandoGetter(string path)
@@ -389,30 +384,30 @@ public class Property
         //Strip off the array brackets
         var key = name[1..^1];
 
-        //If "name" is just a number we need to parse it becuase there is no built-in coersion for string to int.
-        //In this case we can just use the propety getter for Item (built in indexer name).
+        //If "name" is just a number, we need to parse it because there is no built-in coercion for string to int.
+        //In this case we can just use the property getter for Item (built-in indexer name).
         if (int.TryParse(key, out var index))
             return Expression.Property(parameter, "Item", Expression.Constant(index));
 
-        //Otherwise, for now we are going to assume this is some string based indexer.
+        //Otherwise, for now we are going to assume this is some string-based indexer.
         //We will find the property and use its parameter type to form the expression.
         var indexer = parameter.Type.GetProperties().FirstOrDefault(x =>
             x.GetIndexParameters().Length == 1 &&
             TypeGroup.FromType(x.GetIndexParameters()[0].ParameterType) == TypeGroup.Text
         );
 
-        //If this type has no indexer that match the supported criteria, then just return this as a property accessor.
-        //This will probably fail when executed, but we want that rather than failing when attempting to generate the getter,
-        //since we don't normally handle exceptions here.
+        //If this type has no indexer that matches the supported criteria, then just return this as a property accessor.
+        //This will probably fail when executed, which is fine because we can pass that error onto the user.
         if (indexer is null)
         {
             return Expression.PropertyOrField(parameter, name);
         }
 
-        //Convert the provided text to the type of the parameter (my Tag indexer accepts TagName which has built in coersion).
-        var parameterType = indexer.GetIndexParameters()[0].ParameterType;
-        var paramaterValue = Expression.Convert(Expression.Constant(key), parameterType);
-        return Expression.Property(parameter, indexer, paramaterValue);
+        //Convert the provided text to the type of the parameter
+        //(L5Sharp Tag indexer accepts TagName, which has built-in coercion).
+        var indexerType = indexer.GetIndexParameters()[0].ParameterType;
+        var indexerValue = Expression.Convert(Expression.Constant(key), indexerType);
+        return Expression.Property(parameter, indexer, indexerValue);
     }
 
     /// <summary>
@@ -451,7 +446,7 @@ public class Property
     }
 
     /// <summary>
-    /// Gets the inner type for the collection type and if not found returns a generic type of object.
+    /// Gets the inner type for the collection type and if not found, returns a generic type of object.
     /// </summary>
     /// <returns></returns>
     private Type GetSelfOrInnerType()

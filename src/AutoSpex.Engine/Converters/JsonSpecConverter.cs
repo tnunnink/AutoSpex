@@ -42,8 +42,10 @@ public class JsonSpecConverter : JsonConverter<Spec>
         foreach (var type in types)
         {
             var instance = Activator.CreateInstance(type);
+
             if (instance is not ISpecMigration migration)
                 throw new InvalidOperationException($"Could not instantiate the ISpecMigration '{type.FullName}'");
+
             migrations.Add(migration);
         }
 

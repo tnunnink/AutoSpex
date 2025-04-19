@@ -46,7 +46,7 @@
                         <Panel Margin="7 0">
 
                             <TextBlock
-                                Text="No sources are available"
+                                Text="No sources are available to run"
                                 Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
                                 IsVisible="{Binding !AvailableCount}" />
 
@@ -57,7 +57,7 @@
                                     <Run Text="{Binding AvailableCount}"
                                          Foreground="{a:ThemeResource DefaultForegroundBrush}"
                                          FontWeight="{a:ThemeResource HeadingFontWeightExtraSmall}" />
-                                    <Run Text="source(s) are available" />
+                                    <Run Text="source(s) are available to run" />
                                 </TextBlock.Inlines>
                             </TextBlock>
 

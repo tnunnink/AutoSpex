@@ -61,9 +61,9 @@ public class LoadNodesTests
         var node = Node.NewSpec("Test");
         node.Specify(c =>
         {
-            c.Get(Element.Tag);
+            c.Query(Element.Tag);
             c.Where("TagName", Operation.Containing, "SomeValue");
-            c.Validate("Comment", Operation.EqualTo, "SomeValue");
+            c.Verify("Comment", Operation.EqualTo, "SomeValue");
         });
         await mediator.Send(new CreateNode(node));
 

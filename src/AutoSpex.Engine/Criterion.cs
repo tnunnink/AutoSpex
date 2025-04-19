@@ -12,7 +12,7 @@ namespace AutoSpex.Engine;
 /// it will be called, which makes it more flexible or reusable for any candidate object, as long as it is configured accordingly.
 /// I chose to avoid a generic type parameter since most of these will be defined at runtime and not compile time.
 /// This class relies on <see cref="Operation"/> to perform the <see cref="Evaluate"/> of the candidate object.
-/// This allows us to avoid having to build a complex expression tree for each criterion, and instead use a single
+/// This allows us to avoid having to build a complex expression tree for each criterion and instead use a single
 /// method call which handles the logic for each operation. However, we can implicitly convert this to a predicate expression
 /// using the local <see cref="Evaluate"/> method call so that this in theory could be used to build up a more complex
 /// expression tree.
@@ -20,7 +20,7 @@ namespace AutoSpex.Engine;
 public class Criterion
 {
     /// <summary>
-    /// Creates a new default <see cref="Criterion"/> instance with an empty property, no operation and no arguments.
+    /// Creates a new default <see cref="Criterion"/> instance with an empty property, no operation, and no arguments.
     /// </summary>
     public Criterion()
     {
@@ -40,7 +40,7 @@ public class Criterion
     /// </summary>
     /// <param name="operation">The operation to perform when evaluating.</param>
     /// <param name="argument">The argument value to use when evaluating.</param>
-    public Criterion(Operation operation, object? argument = default)
+    public Criterion(Operation operation, object? argument = null)
     {
         Operation = operation;
         Argument = argument;
@@ -52,7 +52,7 @@ public class Criterion
     /// <param name="property">The name of the property for which to retrieve the value from the candidate.</param>
     /// <param name="operation">The operation to perform when evaluating.</param>
     /// <param name="argument">The argument value to use when evaluating.</param>
-    public Criterion(string property, Operation operation, object? argument = default)
+    public Criterion(string property, Operation operation, object? argument = null)
     {
         Property = property;
         Operation = operation;
@@ -66,7 +66,7 @@ public class Criterion
     /// <param name="negation">The negation option to use on the operation result (Is/Not).</param>
     /// <param name="operation">The operation to perform when evaluating.</param>
     /// <param name="argument">The argument value to use when evaluating.</param>
-    public Criterion(string property, Negation negation, Operation operation, object? argument = default)
+    public Criterion(string property, Negation negation, Operation operation, object? argument = null)
     {
         Property = property;
         Negation = negation;
@@ -102,10 +102,10 @@ public class Criterion
     public object? Argument { get; set; }
 
     /// <summary>
-    /// Evaluates a candidate object using the current state/properties of the criterion object.
+    /// Evaluates a candidate object using the current criterion definition.
     /// </summary>
     /// <param name="candidate">The object to be evaluated.</param>
-    /// <returns>An Evaluation object indicating the result of the evaluation.</returns>
+    /// <returns>An <see cref="Evaluation"/> object indicating the result of the evaluation.</returns>
     public Evaluation Evaluate(object? candidate)
     {
         try
@@ -142,8 +142,7 @@ public class Criterion
     public bool Contains(Criterion criterion)
     {
         if (ReferenceEquals(this, criterion)) return true;
-        if (Argument is not Criterion other) return false;
-        return ReferenceEquals(other, criterion) || other.Contains(criterion);
+        return Argument is Criterion other && other.Contains(criterion);
     }
 
     /// <summary>
@@ -166,37 +165,6 @@ public class Criterion
     }
 
     /// <summary>
-    /// Gets the text containing the property, negation, and operation that this criterion is configured to evaluate.
-    /// This includes all nested criterion argument values, thereby forming a chain of readable text that identifies
-    /// what is being evaluated.
-    /// </summary>
-    /// <returns>A <see cref="string"/> containing the criteria text.</returns>
-    public string GetCriteria()
-    {
-        var rootText = $"{Property} {Negation} {Operation}";
-        var innerText = Argument is Criterion criterion ? criterion.GetCriteria() : string.Empty;
-        return $"{rootText} {innerText}".Trim();
-    }
-
-    /// <summary>
-    /// Traverses the argument value and retrieves the text representation of the final expected argument value(s).
-    /// </summary>
-    /// <returns>A collection of object values that represent the final arguments.</returns>
-    /// <remarks>
-    /// This helps for the complete text 
-    /// </remarks>
-    public string GetExpected()
-    {
-        if (Argument is null) return string.Empty;
-        
-        return Argument switch
-        {
-            Criterion criterion => criterion.GetExpected(),
-            _ => Argument.ToText()
-        };
-    }
-
-    /// <summary>
     /// Resolves the underlying argument value. Since an argument can be a complex object such as an inner criterion,
     /// range, list, property, or reference, we need to handle each case specifically to return the correct "argument"
     /// value for the operation.
@@ -208,6 +176,33 @@ public class Criterion
             List<object> collection => collection.Select(x => ResolveArgument(x, candidate)).ToList(),
             Reference reference => reference.Resolve(candidate),
             _ => argument
+        };
+    }
+
+    /// <summary>
+    /// Gets the text containing the property, negation, and operation that this criterion is configured to evaluate.
+    /// This includes all nested criterion argument values, thereby forming a readable string that identifies
+    /// what is being evaluated.
+    /// </summary>
+    private string GetCriteria()
+    {
+        var outer = $"{Property} {Negation} {Operation}";
+        var inner = Argument is Criterion criterion ? criterion.GetCriteria() : string.Empty;
+        return $"{outer} {inner}".Trim();
+    }
+
+    /// <summary>
+    /// Traverses the argument value and retrieves the text representation of the final expected argument value as
+    /// a textual representation.
+    /// </summary>
+    private string GetExpected()
+    {
+        if (Argument is null) return string.Empty;
+
+        return Argument switch
+        {
+            Criterion criterion => criterion.GetExpected(),
+            _ => Argument.ToText()
         };
     }
 }

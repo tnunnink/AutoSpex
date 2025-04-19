@@ -10,14 +10,6 @@ public class Migration20250402 : Migration
 {
     public override void Up()
     {
-        Create.Table("Variable")
-            .WithColumn("VariableId").AsString().PrimaryKey()
-            .WithColumn("NodeId").AsString().ForeignKey("Node", "NodeId").OnDelete(Rule.Cascade)
-            .WithColumn("Name").AsString().NotNullable()
-            .WithColumn("Group").AsString().NotNullable()
-            .WithColumn("Required").AsBinary().NotNullable().WithDefaultValue(false)
-            .WithColumn("Value").AsString();
-
         Create.Table("Profile")
             .WithColumn("ProfileId").AsString().PrimaryKey()
             .WithColumn("NodeId").AsString().ForeignKey("Node", "NodeId").OnDelete(Rule.Cascade)
@@ -33,6 +25,7 @@ public class Migration20250402 : Migration
 
     public override void Down()
     {
-        Delete.Table("Variable");
+        Delete.Table("Profile");
+        Delete.Table("Rule");
     }
 }

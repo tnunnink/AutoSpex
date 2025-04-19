@@ -19,8 +19,8 @@
                          Watermark="Label"
                          Text="This is test value"
                          MinWidth="100"
-                         BorderThickness="1" 
-                         ToolTip.Tip="TEst"/>
+                         BorderThickness="1"
+                         ToolTip.Tip="TEst" />
                 <TextBox Theme="{DynamicResource TextBoxOutlineHighlight}"
                          Watermark="Label"
                          Text="This is errored"
@@ -38,6 +38,15 @@
                          Text="This is the value"
                          Watermark="Label"
                          MinWidth="100" />
+                <TextBox Theme="{DynamicResource TextBoxSubtle}"
+                         Text="This is errored"
+                         MinWidth="100"
+                         BorderThickness="1"
+                         ToolTip.Tip="TEst">
+                    <DataValidationErrors.Error>
+                        <system:Exception />
+                    </DataValidationErrors.Error>
+                </TextBox>
                 <TextBox Theme="{DynamicResource TextBoxSubtle}"
                          IsEnabled="False"
                          Text="This is the value"

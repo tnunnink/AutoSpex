@@ -15,6 +15,7 @@ public class Source
     {
         ArgumentNullException.ThrowIfNull(file);
 
+        Hash = file.FullName.Hash();
         Location = file.FullName;
         Name = Path.GetFileNameWithoutExtension(file.Name);
         Type = SourceType.FromExtension(file.Extension);
@@ -23,7 +24,12 @@ public class Source
     }
 
     /// <summary>
-    /// The absolute location on disc of the source file.
+    /// The cryptographic hash of the source file location, used for identifying the file's unique content.
+    /// </summary>
+    public string Hash { get; }
+
+    /// <summary>
+    /// The absolute location of the source file.
     /// </summary>
     public string Location { get; }
 
@@ -84,17 +90,7 @@ public class Source
     }
 
     /// <summary>
-    /// Computes the MD5 hash of the location of the source file.
-    /// </summary>
-    /// <returns>The MD5 hash string of the source file's location.</returns>
-    public string HashLocation()
-    {
-        var hash = MD5.HashData(Encoding.UTF8.GetBytes(Location));
-        return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
-    }
-
-    /// <summary>
-    /// Computes the hash of the content of the source file.
+    /// Computes the content hash of the source file.
     /// </summary>
     /// <returns>The MD5 hash string representing the content of the source file.</returns>
     public string HashContent()

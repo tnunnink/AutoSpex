@@ -79,10 +79,9 @@ public class SourceCache
     /// </returns>
     private async Task<Source> CacheSource(Source source, CancellationToken token)
     {
-        //Prep the cache folder for this source be creating the info object, deleting current directory if it exists,
+        //Prep the cache folder for this source be creating the info object, deleting the current directory if it exists,
         //and then recreating the new empty directory. 
-        var locationHash = source.HashLocation();
-        var cacheFolder = new DirectoryInfo(Path.Combine(_repo.Location, locationHash));
+        var cacheFolder = new DirectoryInfo(Path.Combine(_repo.Location, source.Hash));
         if (cacheFolder.Exists) cacheFolder.Delete(true);
         cacheFolder.Create();
 
@@ -108,12 +107,11 @@ public class SourceCache
     /// </returns>
     private bool TryGetCachedSource(Source source, out Source cached)
     {
-        var locationHash = source.HashLocation();
         var folders = Directory.EnumerateDirectories(_repo.Location);
 
         foreach (var folder in folders)
         {
-            if (Path.GetFileName(folder) != locationHash) continue;
+            if (Path.GetFileName(folder) != source.Hash) continue;
 
             var contentHash = source.HashContent();
             var cachedFile = Path.Combine(folder, $"{contentHash}.L5Z");

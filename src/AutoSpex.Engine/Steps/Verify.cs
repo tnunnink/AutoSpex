@@ -17,7 +17,7 @@ public class Verify : Step
     /// <summary>
     /// Creates a new default <see cref="Filter"/> step initialized with a criterion defined by the provided parameters.
     /// </summary>
-    public Verify(string property, Operation operation, object? argument = default)
+    public Verify(string property, Operation operation, object? argument = null)
     {
         Criteria.Add(new Criterion(property, operation, argument));
     }
@@ -40,15 +40,15 @@ public class Verify : Step
     /// <inheritdoc />
     public override IEnumerable<object> Process(IEnumerable<object?> input)
     {
-        var evaluations = new List<Evaluation>();
-
+        var verifications = new List<Verification>();
+        
         foreach (var item in input)
         {
-            var results = Criteria.Select(x => x.Evaluate(item));
-            evaluations.AddRange(results);
+            var evaluations = Criteria.Select(x => x.Evaluate(item)).ToArray();
+            verifications.Add(new Verification(item, evaluations));
         }
 
-        return evaluations;
+        return verifications;
     }
     
     /// <inheritdoc />

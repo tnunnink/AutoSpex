@@ -47,7 +47,7 @@
                         <Panel Margin="7 0">
 
                             <TextBlock
-                                Text="No sources are targeted"
+                                Text="No sources are targeted to run"
                                 Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
                                 IsVisible="{Binding !TargetedCount}" />
 
@@ -58,7 +58,7 @@
                                     <Run Text="{Binding TargetedCount}"
                                          Foreground="{a:ThemeResource DefaultForegroundBrush}"
                                          FontWeight="{a:ThemeResource HeadingFontWeightExtraSmall}" />
-                                    <Run Text="source(s) are targeted" />
+                                    <Run Text="source(s) are targeted to run" />
                                 </TextBlock.Inlines>
                             </TextBlock>
 

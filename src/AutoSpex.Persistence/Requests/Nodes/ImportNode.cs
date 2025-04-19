@@ -54,7 +54,7 @@ internal class ImportNodeHandler(IConnectionManager manager) : IRequestHandler<I
 
         var collection = request.Package.Collection;
 
-        if (request.Action == ImportAction.Repalce)
+        if (request.Action == ImportAction.Replace)
         {
             await connection.ExecuteAsync(DeleteNode, new { collection.Name }, transaction);
         }

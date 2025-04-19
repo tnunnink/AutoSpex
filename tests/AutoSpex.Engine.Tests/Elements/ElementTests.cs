@@ -1,7 +1,7 @@
 ﻿namespace AutoSpex.Engine.Tests.Elements;
 
 [TestFixture]
-public class GeneralTests
+public class ElementTests
 {
     [Test]
     public void Property_Nested_ShouldNotBeNull()
@@ -44,4 +44,6 @@ public class GeneralTests
 
         result.Should().NotBeEmpty();
     }
+
+    
 }

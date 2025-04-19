@@ -63,9 +63,9 @@ public class LoadSpecTests
         var mediator = context.Resolve<IMediator>();
         var node = Node.NewSpec("test", s =>
         {
-            s.Get(Element.Program)
+            s.Query(Element.Program)
                 .Where("Name", Operation.EqualTo, "SomeName")
-                .Validate("Disabled", Operation.EqualTo, false);
+                .Verify("Disabled", Operation.EqualTo, false);
         });
         await mediator.Send(new CreateNode(node));
 

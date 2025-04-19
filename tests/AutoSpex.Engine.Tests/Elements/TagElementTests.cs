@@ -111,4 +111,61 @@ public class TagElementTests
         property.Group.Should().Be(TypeGroup.Collection);
         property.DisplayName.Should().Be("CrossReference[]");
     }
+
+    [Test]
+    public void IndexValues_KnownTest_ShouldNotBeEmpty()
+    {
+        var content = L5X.Load(Known.Test);
+        var element = Element.Tag;
+
+        var paris = element.IndexValues(content).ToList();
+
+        paris.Should().NotBeEmpty();
+    }
+
+    [Test]
+    public void IndexValues_KnownTest_ShouldContainExpectedPropertiesAtLeastOnce()
+    {
+        var content = L5X.Load(Known.Test);
+        var element = Element.Tag;
+
+        var properties = element.IndexValues(content).Select(x => x.Key).Distinct().ToList();
+
+        properties.Should().HaveCount(7);
+        properties.Should().Contain(p => p.Name == "Name");
+        properties.Should().Contain(p => p.Name == "Description");
+        properties.Should().Contain(p => p.Name == "Scope");
+        properties.Should().Contain(p => p.Name == "DataType");
+        properties.Should().Contain(p => p.Name == "Dimensions");
+        properties.Should().Contain(p => p.Name == "Value");
+        properties.Should().Contain(p => p.Name == "TagName");
+    }
+
+    [Test]
+    public void IndexValue_KnownTest_ShouldContainKnownValues()
+    {
+        var content = L5X.Load(Known.Test);
+        var element = Element.Tag;
+
+        var values = element.IndexValues(content).Select(x => x.Value).Distinct().ToList();
+
+        values.Should().Contain(0);
+        values.Should().Contain(1);
+    }
+    
+    [Test]
+    public void IndexValue_KnownTest_GetDistinctNumericTagValues()
+    {
+        var content = L5X.Load(Known.Example);
+        var element = Element.Tag;
+
+        var values = element.IndexValues(content)
+            .Where(x => x.Key.Group == TypeGroup.Number)
+            .Select(x => x.Value)
+            .Distinct()
+            .ToList();
+
+        values.Should().Contain(0);
+        values.Should().Contain(1);
+    }
 }

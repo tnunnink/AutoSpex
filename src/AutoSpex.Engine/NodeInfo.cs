@@ -2,7 +2,7 @@ namespace AutoSpex.Engine;
 
 public record NodeInfo(Guid NodeId, NodeType Type, string Name)
 {
-    public NodeInfo(Node node) : this(node.NodeId, node.Type, node.Name)
+    private NodeInfo(Node node) : this(node.NodeId, node.Type, node.Name)
     {
     }
 
