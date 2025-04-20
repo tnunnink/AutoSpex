@@ -45,6 +45,7 @@ public class Verify : Step
         foreach (var item in input)
         {
             var evaluations = Criteria.Select(x => x.Evaluate(item)).ToArray();
+            
             verifications.Add(new Verification(item, evaluations));
         }
 

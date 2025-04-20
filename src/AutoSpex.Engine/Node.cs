@@ -10,13 +10,18 @@ public class Node : IEquatable<Node>
     private readonly List<Node> _nodes = [];
     private readonly List<Variable> _variables = [];
 
+    /// <summary>
+    /// Internal and Dapper materialization constructor
+    /// </summary>
     private Node()
     {
     }
 
+    /// <summary>
+    /// Used to deserialize node instance from JSON.
+    /// </summary>
     [JsonConstructor]
-    private Node(Guid nodeId, Guid parentId, NodeType type, string name,
-        IEnumerable<Node> nodes, IEnumerable<Variable> variables, Spec spec)
+    private Node(Guid nodeId, Guid parentId, NodeType type, string name, IEnumerable<Node> nodes, Spec spec)
     {
         NodeId = nodeId;
         ParentId = parentId;

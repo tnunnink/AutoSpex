@@ -22,47 +22,96 @@ public class SpecTests
     [Test]
     public void New_Default_ShouldBeExpected()
     {
-        var query = new Spec();
+        var spec = new Spec();
 
-        query.Element.Should().Be(Element.Default);
-        query.Steps.Should().BeEmpty();
+        spec.SpecId.Should().NotBeEmpty();
+        spec.Element.Should().Be(Element.Default);
+        spec.Steps.Should().BeEmpty();
     }
 
     [Test]
     public void New_Element_ShouldBeExpected()
     {
-        var query = new Spec(Element.Task);
+        var spec = new Spec(Element.Task);
 
-        query.Element.Should().Be(Element.Task);
-        query.Steps.Should().BeEmpty();
-        query.Returns.Should().BeEquivalentTo(Element.Task.This);
-    }
-    
-    [Test]
-    public void Returns_WithMultipleSteps_ShouldBeExpected()
-    {
-        var spec = new Spec(Element.Tag);
-        spec.Steps.Add(new Filter());
-        spec.Steps.Add(new Select("TagName"));
-        spec.Steps.Add(new Filter());
-
-        var returns = spec.Returns;
-
-        returns.Should().BeEquivalentTo(Property.This(typeof(TagName)), o => o.IgnoringCyclicReferences());
+        spec.SpecId.Should().NotBeEmpty();
+        spec.Element.Should().Be(Element.Task);
+        spec.Steps.Should().BeEmpty();
     }
 
     [Test]
-    public void AddStep_ValidStep_ShouldBeExpected()
+    public void AddStep_FilterStep_ShouldHaveExpectedCount()
     {
         var spec = new Spec(Element.Tag);
 
-        spec.Steps.Add(new Filter());
+        spec.AddStep(new Filter());
 
         spec.Steps.Should().HaveCount(1);
     }
 
     [Test]
-    public void FluentBuild_WhenCalled_ShouldUpdateAsExpected()
+    public void AddStep_SelectStep_ShouldHaveExpectedCount()
+    {
+        var spec = new Spec(Element.Tag);
+
+        spec.AddStep(new Select());
+
+        spec.Steps.Should().HaveCount(1);
+    }
+
+    [Test]
+    public void AddStep_ManySteps_ShouldHaveExpectedCount()
+    {
+        var spec = new Spec(Element.Tag);
+
+        spec.AddStep(new Filter());
+        spec.AddStep(new Select());
+        spec.AddStep(new Filter());
+        spec.AddStep(new Select());
+
+        spec.Steps.Should().HaveCount(4);
+    }
+
+    [Test]
+    public void AddStep_WithVerifyStep_ShouldNotBeLastStep()
+    {
+        var spec = new Spec(Element.Tag);
+        spec.AddStep(new Filter());
+        spec.Verify(new Criterion("Test", Operation.Empty));
+
+        spec.AddStep(new Select());
+
+        spec.Steps.Should().HaveCount(3);
+        spec.Steps.FirstOrDefault().Should().BeOfType<Filter>();
+        spec.Steps.LastOrDefault().Should().BeOfType<Verify>();
+    }
+
+    [Test]
+    public void Verify_NoPreviousSteps_ShouldHaveSingleVerifyStepAsLastStep()
+    {
+        var spec = new Spec(Element.Tag);
+
+        spec.Verify(new Criterion("Test", Operation.Empty));
+
+        spec.Steps.Should().HaveCount(1);
+        spec.Steps.LastOrDefault().Should().BeOfType<Verify>();
+    }
+
+    [Test]
+    public void Verify_HasPreviousSteps_ShouldHaveExpectCountAndVerifyStepAsLastStep()
+    {
+        var spec = new Spec(Element.Tag);
+
+        spec.AddStep(new Filter());
+        spec.AddStep(new Select());
+        spec.Verify(new Criterion("Test", Operation.Empty));
+
+        spec.Steps.Should().HaveCount(3);
+        spec.Steps.LastOrDefault().Should().BeOfType<Verify>();
+    }
+
+    [Test]
+    public void Configure_WhenCalled_ShouldUpdateAsExpected()
     {
         var spec = Spec.Configure(s =>
         {
@@ -91,8 +140,7 @@ public class SpecTests
         var duplicate = spec.Duplicate();
 
         duplicate.Should().NotBeSameAs(spec);
-        duplicate.Element.Should().BeEquivalentTo(spec.Element);
-        duplicate.Steps.Should().BeEquivalentTo(spec.Steps);
+        duplicate.Should().BeEquivalentTo(spec, e => e.IgnoringCyclicReferences().Excluding(s => s.SpecId));
     }
 
     [Test]
@@ -219,7 +267,7 @@ public class SpecTests
 
         var result = JsonSerializer.Deserialize<Spec>(data);
 
-        result.Should().BeEquivalentTo(spec);
+        result.Should().BeEquivalentTo(spec, e => e.IgnoringCyclicReferences());
     }
 
     [Test]
@@ -235,7 +283,7 @@ public class SpecTests
 
         var result = JsonSerializer.Deserialize<Spec>(data);
 
-        result.Should().BeEquivalentTo(spec);
+        result.Should().BeEquivalentTo(spec, e => e.IgnoringCyclicReferences());
     }
 
     [DotMemoryUnit(FailIfRunWithoutSupport = false)]

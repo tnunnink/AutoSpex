@@ -37,7 +37,7 @@
                 Message="The results for this spec were not saved when run.">
                 <controls:DefaultMessage.IsVisible>
                     <MultiBinding Converter="{x:Static BoolConverters.And}">
-                        <Binding Path="Result.IsDetermined" FallbackValue="{x:False}" />
+                        <Binding Path="Result.IsCompleted" FallbackValue="{x:False}" />
                         <Binding Path="!Evaluations.HasItems" FallbackValue="{x:False}" />
                     </MultiBinding>
                 </controls:DefaultMessage.IsVisible>

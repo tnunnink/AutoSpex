@@ -18,8 +18,7 @@ public class Spec()
     //The internal list of steps that define the specification. Each step will process some input data and produce some
     //output data to be consumed by the next step. Internally, a spec should always end with a Verify step.
     //If none is configured, then we return the default result configured in the settings.
-    
-    //private readonly List<Step> _steps = [];
+    private readonly List<Step> _steps = [];
 
     /// <summary>
     /// Creates a new spec with the data from another spec.
@@ -27,7 +26,7 @@ public class Spec()
     private Spec(Spec spec) : this()
     {
         Element = spec.Element;
-        Steps = spec.Steps.ToList();
+        _steps = spec.Steps.ToList();
     }
 
     /// <summary>
@@ -43,10 +42,10 @@ public class Spec()
     /// Creates a new <see cref="Spec"/> initialized with the provided element type and steps.
     /// </summary>
     [JsonConstructor]
-    public Spec(Element element, List<Step> steps) : this()
+    public Spec(Element element, IEnumerable<Step> steps) : this()
     {
         Element = element ?? throw new ArgumentNullException(nameof(element));
-        Steps = steps;
+        _steps = steps.ToList();
     }
 
     /// <summary>
@@ -72,19 +71,7 @@ public class Spec()
     /// The collection of <see cref="Step"/> that define how to process data for the spec.
     /// </summary>
     [JsonInclude]
-    public List<Step> Steps { get; private init; } = [];
-
-    /// <summary>
-    /// 
-    /// </summary>
-    [JsonIgnore]
-    public ResultState DefaultResult { get; set; } = ResultState.Failed;
-
-    /// <summary>
-    /// Gets the <see cref="Property"/> that identifies the type this spec returns.
-    /// </summary>
-    [JsonIgnore]
-    public Property Returns => Steps.Aggregate(Element.This, (property, step) => step.Returns(property));
+    public IEnumerable<Step> Steps => _steps;
 
     /// <summary>
     /// Creates a new <see cref="Spec"/> with the provided configuration.
@@ -98,8 +85,59 @@ public class Spec()
         return spec;
     }
 
-    public void AddStep(Step step)
+    /// <summary>
+    /// Adds a new filter step to the specification. The filter will be inserted before the verification step if it exists,
+    /// otherwise, it will be appended to the end of the step collection.
+    /// </summary>
+    /// <param name="step">The filter step to be added to the specification.</param>
+    public void AddStep(Filter step)
     {
+        ArgumentNullException.ThrowIfNull(step);
+
+        if (_steps.Count > 0 && _steps[^1] is Verify)
+        {
+            _steps.Insert(_steps.Count - 1, step);
+            return;
+        }
+
+        _steps.Add(step);
+    }
+
+    /// <summary>
+    /// Adds a new step to the specification. The select will be inserted before the verification step if it exists,
+    /// otherwise, it will be appended to the end of the step collection.
+    /// </summary>
+    /// <param name="step">The select step to add to the spec.</param>
+    public void AddStep(Select step)
+    {
+        ArgumentNullException.ThrowIfNull(step);
+
+        if (_steps.Count > 0 && _steps[^1] is Verify)
+        {
+            _steps.Insert(_steps.Count - 1, step);
+            return;
+        }
+
+        _steps.Add(step);
+    }
+
+    /// <summary>
+    /// Removes the specified step from the collection of steps in the spec.
+    /// </summary>
+    /// <param name="step">The step to be removed from the collection.</param>
+    public void RemoveStep(Step step)
+    {
+        ArgumentNullException.ThrowIfNull(step);
+        _steps.Remove(step);
+    }
+
+    /// <summary>
+    /// Removes all configured steps from the specification, clearing the internal list of steps.
+    /// This operation resets the spec's step configuration, effectively preparing it for new steps to be added.
+    /// </summary>
+    public void ClearSteps()
+    {
+        _steps.Clear();
     }
 
     /// <summary>
@@ -131,10 +169,10 @@ public class Spec()
     /// </remarks>
     public Spec Where(string property, Operation operation, object? argument = null)
     {
-        if (Steps.All(s => s is not Filter))
-            Steps.Add(new Filter());
+        if (_steps.All(s => s is not Filter))
+            _steps.Add(new Filter());
 
-        var filter = (Filter)Steps.First(x => x is Filter);
+        var filter = (Filter)_steps.First(x => x is Filter);
         filter.Criteria.Add(new Criterion(property, operation, argument));
         return this;
     }
@@ -147,13 +185,31 @@ public class Spec()
     public Spec Select(string property)
     {
         var select = new Select(property);
-        Steps.Add(select);
+        _steps.Add(select);
         return this;
     }
 
     /// <summary>
-    /// Adds a <see cref="Criterion"/> as verification to this spec. All specs are initialized with a single verify step,
-    /// so this criterion will just be added to that step.
+    /// Verifies the given criterion, ensuring it adheres to the defined steps, and appends it to the
+    /// latest verification step.
+    /// </summary>
+    /// <param name="criterion">The criterion to be verified and added to the current verification step.</param>
+    /// <returns>The current <see cref="Spec"/> instance, allowing for method chaining.</returns>
+    public Spec Verify(Criterion criterion)
+    {
+        ArgumentNullException.ThrowIfNull(criterion);
+
+        if (_steps.Count == 0 || _steps[^1] is not Engine.Verify)
+            _steps.Add(new Verify());
+
+        var step = (Verify)_steps[^1];
+        step.Criteria.Add(criterion);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a <see cref="Criterion"/> as verification to this spec.
+    /// All specs are initialized with a single verify step, so this criterion will just be added to that step.
     /// This is exclusivity a method to help easily configure a simple spec object for testing purposes.
     /// The application will primarily add and configure steps manually.
     /// </summary>
@@ -163,10 +219,10 @@ public class Spec()
     /// <returns>The current configured <see cref="Spec"/> instance.</returns>
     public Spec Verify(string property, Operation operation, object? argument = null)
     {
-        if (Steps.All(s => s is not Engine.Verify))
-            Steps.Add(new Verify());
+        if (_steps.Count == 0 || _steps[^1] is not Engine.Verify)
+            _steps.Add(new Verify());
 
-        var step = (Verify)Steps.First(x => x is Verify);
+        var step = (Verify)_steps[^1];
         step.Criteria.Add(new Criterion(property, operation, argument));
         return this;
     }
@@ -184,10 +240,10 @@ public class Spec()
     /// <returns>The current configured <see cref="Spec"/> instance.</returns>
     public Spec Verify(string property, Negation negation, Operation operation, object? argument = null)
     {
-        if (Steps.All(s => s is not Engine.Verify))
-            Steps.Add(new Verify());
+        if (_steps.Count == 0 || _steps[^1] is not Engine.Verify)
+            _steps.Add(new Verify());
 
-        var step = (Verify)Steps.First(x => x is Verify);
+        var step = (Verify)_steps[^1];
         step.Criteria.Add(new Criterion(property, negation, operation, argument));
         return this;
     }
@@ -211,7 +267,7 @@ public class Spec()
     {
         var criteria = new List<Criterion>();
 
-        foreach (var step in Steps)
+        foreach (var step in _steps)
         {
             switch (step)
             {
@@ -243,9 +299,9 @@ public class Spec()
     /// <returns>The property to which the input will flow based on the provided step.</returns>
     public Property GetInputTo(Step step)
     {
-        var index = Steps.IndexOf(step);
+        var index = _steps.IndexOf(step);
         if (index == -1) return Property.Default;
-        return index > 0 ? Steps[..index].Aggregate(Element.This, (p, s) => s.Returns(p)) : Element.This;
+        return index > 0 ? _steps[..index].Aggregate(Element.This, (p, s) => s.Returns(p)) : Element.This;
     }
 
     /// <summary>
@@ -254,7 +310,7 @@ public class Spec()
     /// <param name="content">The L5X content to run this specification against.</param>
     /// <returns>The <see cref="Verification"/> containing the specification results.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="content"/> is null.</exception>
-    public IEnumerable<Verification> Run(L5X content)
+    public Verification[] Run(L5X content)
     {
         return ExecuteSpec(content);
     }
@@ -266,7 +322,7 @@ public class Spec()
     /// <param name="token">The optional cancellation token to stop the run.</param>
     /// <returns>The <see cref="Verification"/> containing the specification results.</returns>
     /// <exception cref="ArgumentNullException">Thrown when the content parameter is null.</exception>
-    public Task<IEnumerable<Verification>> RunAsync(L5X content, CancellationToken token = default)
+    public Task<Verification[]> RunAsync(L5X content, CancellationToken token = default)
     {
         return Task.Run(() => ExecuteSpec(content), token);
     }
@@ -276,7 +332,7 @@ public class Spec()
     /// </summary>
     /// <param name="content">The L5X content to process.</param>
     /// <returns>The result of executing the specified Query and Processing steps on the content.</returns>
-    private IEnumerable<Verification> ExecuteSpec(L5X content)
+    private Verification[] ExecuteSpec(L5X content)
     {
         ArgumentNullException.ThrowIfNull(content);
 
@@ -288,15 +344,13 @@ public class Spec()
             //Run the resulting elements through all configured steps to process data.
             var results = Steps.Aggregate(elements, (data, step) => step.Process(data)).ToArray();
 
-            //If we don't produce any results, then we resort to the default state.
-            if (results.Length == 0)
-            {
-                return [new Verification(DefaultResult)];
-            }
+            //We want to standardize the return type to Verification, even if the last step is not a Verify step.
+            var verifications = results.FirstOrDefault() is not Verification
+                ? results.Select(x => new Verification(x, []))
+                : results.Cast<Verification>();
 
-
-            //Returns the results of the processing.
-            return results.Cast<Verification>();
+            //Return an immutable array collection.
+            return verifications.ToArray();
         }
         catch (Exception e)
         {

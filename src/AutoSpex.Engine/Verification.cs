@@ -10,19 +10,14 @@ public class Verification
     /// </summary>
     public Verification(object? candidate, Evaluation[] evaluations)
     {
-        Result = ResultState.MaxOrDefault(evaluations.Select(e => e.Result).ToList());
+        Result = ResultState.MaxOrDefault(
+            evaluations.Select(e => e.Result).ToList(),
+            candidate is not null ? ResultState.Passed : ResultState.Failed
+        );
+
+        //Dereference the object to detach reference from L5X instance.
         Candidate = candidate?.Dereference();
         Evaluations = evaluations;
-    }
-    
-    /// <summary>
-    /// An object that will aggregate all evaluations that were executed for a single candidate object.
-    /// </summary>
-    public Verification(ResultState result, object? candidate = null)
-    {
-        Result = result;
-        Candidate = candidate?.Dereference();
-        Evaluations = [];
     }
 
     /// <summary>

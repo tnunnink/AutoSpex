@@ -131,9 +131,10 @@ public class TagElementTests
 
         var properties = element.IndexValues(content).Select(x => x.Key).Distinct().ToList();
 
-        properties.Should().HaveCount(7);
+        properties.Should().HaveCount(8);
         properties.Should().Contain(p => p.Name == "Name");
         properties.Should().Contain(p => p.Name == "Description");
+        properties.Should().Contain(p => p.Name == "Unit");
         properties.Should().Contain(p => p.Name == "Scope");
         properties.Should().Contain(p => p.Name == "DataType");
         properties.Should().Contain(p => p.Name == "Dimensions");
