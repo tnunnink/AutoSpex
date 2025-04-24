@@ -144,7 +144,7 @@
                         <TreeView
                             ItemsSource="{Binding Nodes}"
                             SelectedItem="{Binding Selected}"
-                            ItemTemplate="{StaticResource ResultTreeItem}"
+                            ItemTemplate="{StaticResource RunTreeItem}"
                             ItemContainerTheme="{StaticResource ResultTreeItemTheme}"
                             SelectionMode="Single"
                             Padding="10 5">

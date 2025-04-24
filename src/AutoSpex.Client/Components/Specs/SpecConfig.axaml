@@ -2,7 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
                     xmlns:components="clr-namespace:AutoSpex.Client.Components"
-                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine">
+                    xmlns:engine="clr-namespace:AutoSpex.Engine;assembly=AutoSpex.Engine"
+                    xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui">
 
     <Design.PreviewWith>
         <Border Width="800" Height="800">
@@ -17,34 +18,65 @@
 
         <StackPanel Spacing="30">
 
-            <StackPanel Spacing="10" ClipToBounds="True">
+            <StackPanel Spacing="10">
 
                 <ContentControl
-                    Content="{Binding Query}"
-                    ContentTemplate="{StaticResource QueryEntry}" />
+                    Content="{Binding }"
+                    ContentTemplate="{StaticResource ElementEntry}"
+                    HorizontalAlignment="Left" />
 
-                <ContentControl
-                    Content="{Binding Verify}"
-                    ContentTemplate="{StaticResource VerifyStep}"
-                    IsVisible="{Binding Query.Element, Converter={x:Static ObjectConverters.NotEqual}, ConverterParameter={x:Static engine:Element.Default}}" />
+                <ItemsControl
+                    ItemsSource="{Binding Steps}"
+                    IsVisible="{Binding Steps.HasItems}"
+                    ItemContainerTheme="{StaticResource ListBoxItemInvisible}"
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                    KeyboardNavigation.TabNavigation="Continue">
+
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Spacing="10" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <actipro:TypedDataTemplateSelector>
+                            <DataTemplate x:DataType="observers:FilterObserver">
+                                <ContentControl
+                                    Content="{Binding}"
+                                    ContentTemplate="{StaticResource FilterStep}" />
+                            </DataTemplate>
+                            <DataTemplate x:DataType="observers:SelectObserver">
+                                <ContentControl
+                                    Content="{Binding}"
+                                    ContentTemplate="{StaticResource SelectStep}" />
+                            </DataTemplate>
+                            <DataTemplate x:DataType="observers:VerifyObserver">
+                                <ContentControl
+                                    Content="{Binding}"
+                                    ContentTemplate="{StaticResource VerifyStep}" />
+                            </DataTemplate>
+                        </actipro:TypedDataTemplateSelector>
+                    </ItemsControl.ItemTemplate>
+
+                </ItemsControl>
 
             </StackPanel>
 
             <StackPanel
-                IsVisible="{Binding Query.Element, Converter={x:Static ObjectConverters.NotEqual}, ConverterParameter={x:Static engine:Element.Default}}"
+                IsVisible="{Binding Element, Converter={x:Static ObjectConverters.NotEqual}, ConverterParameter={x:Static engine:Element.Default}}"
                 Orientation="Horizontal"
                 Spacing="20">
 
                 <ContentControl
-                    Content="{Binding Query}"
+                    Content="{Binding}"
                     ContentTemplate="{StaticResource FilterButton}" />
 
                 <ContentControl
-                    Content="{Binding Query}"
+                    Content="{Binding}"
                     ContentTemplate="{StaticResource SelectButton}" />
 
                 <ContentControl
-                    Content="{Binding Verify}"
+                    Content="{Binding}"
                     ContentTemplate="{StaticResource VerifyButton}" />
 
             </StackPanel>

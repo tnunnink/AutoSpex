@@ -7,12 +7,12 @@
 
     <Design.PreviewWith>
         <ContentControl
-            Content="{x:Static components:TestData.DefaultResult}"
+            Content="{x:Static components:TestData.PassedVerification}"
             ContentTemplate="{DynamicResource EvaluationList}"
             Margin="20" />
     </Design.PreviewWith>
 
-    <DataTemplate x:Key="EvaluationList" x:DataType="observers:ResultObserver">
+    <DataTemplate x:Key="EvaluationList" x:DataType="observers:VerificationObserver">
 
         <Panel>
 
@@ -25,10 +25,8 @@
 
             <controls:DefaultMessage
                 HorizontalAlignment="Center"
-                HeaderIcon="{StaticResource IconThemedInconclusive}"
                 Header="No results produced"
-                Message="No source object passed the configured filters for this spec."
-                IsVisible="{Binding Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Inconclusive}}" />
+                Message="No source object passed the configured filters for this spec." />
 
             <controls:DefaultMessage
                 HorizontalAlignment="Center"

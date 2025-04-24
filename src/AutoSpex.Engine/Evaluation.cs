@@ -6,42 +6,20 @@ namespace AutoSpex.Engine;
 /// A lightweight object containing the result of evaluating a criterion instance. This object will contain the result
 /// state value along with a formated message to provide further details.
 /// </summary>
-public record Evaluation
+public record Evaluation(
+    ResultState Result,
+    string? Criteria = null,
+    string? Target = null,
+    string? Expected = null,
+    string? Actual = null,
+    string? Error = null)
 {
-    /// <summary>
-    /// Creates a new <see cref="Evaluation"/> instance with the provided result and message.
-    /// </summary>
-    private Evaluation(ResultState result, string message)
-    {
-        Result = result ?? throw new ArgumentNullException(nameof(result));
-        Message = message ?? throw new ArgumentNullException(nameof(message));
-    }
-
-    /// <summary>
-    /// The <see cref="ResultState"/> of the evaluation.
-    /// </summary>
-    public ResultState Result { get; }
-
-    /// <summary>
-    /// The message associated with the evaluation, describing details of the result or any error encountered.
-    /// </summary>
-    public string Message { get; }
-
     /// <summary>
     /// Creates a new passing <see cref="Evaluation"/> with the provided criterion, candidate, and actual value. 
     /// </summary>
     public static Evaluation Passed(Criterion criterion, object? candidate, object? actual)
     {
-        var builder = new StringBuilder();
-
-        builder.Append("Expected ")
-            .Append(candidate.ToText())
-            .Append(" to have ")
-            .Append(criterion)
-            .Append(" and found ")
-            .Append(actual.ToText());
-
-        return new Evaluation(ResultState.Passed, builder.ToString());
+        return new Evaluation(ResultState.Passed, criterion.ToString(), candidate.ToText(), "", actual.ToText());
     }
 
     /// <summary>
@@ -49,16 +27,7 @@ public record Evaluation
     /// </summary>
     public static Evaluation Failed(Criterion criterion, object? candidate, object? actual)
     {
-        var builder = new StringBuilder();
-
-        builder.Append("Expected ")
-            .Append(candidate.ToText())
-            .Append(" to have ")
-            .Append(criterion)
-            .Append(" but found ")
-            .Append(actual.ToText());
-
-        return new Evaluation(ResultState.Failed, builder.ToString());
+        return new Evaluation(ResultState.Failed, criterion.ToString(), candidate.ToText(), "", actual.ToText());
     }
 
     /// <summary>
@@ -66,28 +35,27 @@ public record Evaluation
     /// </summary>
     public static Evaluation Errored(Criterion criterion, object? candidate, Exception exception)
     {
-        var builder = new StringBuilder();
-
-        builder.Append("Expected ")
-            .Append(candidate.ToText())
-            .Append(" to have ")
-            .Append(criterion)
-            .Append(" but got error ")
-            .Append(exception.Message);
-
-        return new Evaluation(ResultState.Errored, builder.ToString());
-    }
-
-    /// <summary>
-    /// Creates a new errored <see cref="Evaluation"/> a produced exception. 
-    /// </summary>
-    public static Evaluation Errored(Exception exception)
-    {
-        return new Evaluation(ResultState.Errored, exception.Message);
+        return new Evaluation(ResultState.Errored, criterion.ToString(), candidate.ToText(), Error: exception.Message);
     }
 
     /// <inheritdoc />
-    public override string ToString() => Message;
+    public override string ToString()
+    {
+        var builder = new StringBuilder();
+
+        builder.Append("Expected ").Append(Target).Append(" to have ").Append(Criteria);
+
+        if (Result == ResultState.Passed)
+            builder.Append(" and found ").Append(Actual);
+
+        if (Result == ResultState.Failed)
+            builder.Append(" but found ").Append(Actual);
+
+        if (Result == ResultState.Errored)
+            builder.Append(" but got error ").Append(Error);
+
+        return builder.ToString();
+    }
 
     public static implicit operator bool(Evaluation evaluation) => evaluation.Result == ResultState.Passed;
 }

@@ -7,12 +7,12 @@
     <Design.PreviewWith>
         <Border Padding="200">
             <ContentControl
-                Content="{x:Static components:TestData.QueryObserver}"
+                Content="{x:Static components:TestData.SpecObserver}"
                 ContentTemplate="{DynamicResource SelectButton}" />
         </Border>
     </Design.PreviewWith>
 
-    <DataTemplate x:Key="SelectButton" x:DataType="observers:QueryObserver">
+    <DataTemplate x:Key="SelectButton" x:DataType="observers:SpecObserver">
 
         <Button
             Command="{Binding AddSelectStepCommand}"

@@ -2,6 +2,7 @@
 using System.Text.Json.Serialization;
 using Ardalis.SmartEnum.SystemTextJson;
 using L5Sharp.Core;
+using NLog;
 using Task = System.Threading.Tasks.Task;
 
 namespace AutoSpex.Engine;
@@ -15,6 +16,8 @@ namespace AutoSpex.Engine;
 /// </summary>
 public class Spec()
 {
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+    
     //The internal list of steps that define the specification. Each step will process some input data and produce some
     //output data to be consumed by the next step. Internally, a spec should always end with a Verify step.
     //If none is configured, then we return the default result configured in the settings.
@@ -338,6 +341,8 @@ public class Spec()
 
         try
         {
+            //todo add logging here.
+            
             //Query all elements of the specified type.
             var elements = content.Query(Element.Type).Cast<object?>();
 
@@ -355,7 +360,9 @@ public class Spec()
         catch (Exception e)
         {
             //If anything fails, just return a failed evaluation with the exception message.
-            return [new Verification(null, [Evaluation.Errored(e)])];
+            //todo we should instead maybe add a top level message to Verification which can contain
+            //this exception message, but should also log this.
+            return [new Verification(null, [])];
         }
     }
 }

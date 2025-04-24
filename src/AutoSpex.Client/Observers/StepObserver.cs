@@ -27,7 +27,7 @@ public abstract partial class StepObserver(Step model) : Observer<Step>(model),
     [RelayCommand]
     private void InsertFilterBefore()
     {
-        var query = GetObserver<QueryObserver>(x => x.Steps.Has(this));
+        var query = GetObserver<SpecObserver>(x => x.Steps.Has(this));
         if (query is null) return;
 
         var index = query.Steps.IndexOf(this);
@@ -41,7 +41,7 @@ public abstract partial class StepObserver(Step model) : Observer<Step>(model),
     [RelayCommand]
     private void InsertFilterAfter()
     {
-        var query = GetObserver<QueryObserver>(x => x.Steps.Has(this));
+        var query = GetObserver<SpecObserver>(x => x.Steps.Has(this));
         if (query is null) return;
 
         var index = query.Steps.IndexOf(this) + 1;
@@ -57,7 +57,7 @@ public abstract partial class StepObserver(Step model) : Observer<Step>(model),
     [RelayCommand]
     private void InsertSelectBefore()
     {
-        var query = GetObserver<QueryObserver>(x => x.Steps.Has(this));
+        var query = GetObserver<SpecObserver>(x => x.Steps.Has(this));
         if (query is null) return;
 
         var index = query.Steps.IndexOf(this);
@@ -71,7 +71,7 @@ public abstract partial class StepObserver(Step model) : Observer<Step>(model),
     [RelayCommand]
     private void InsertSelectAfter()
     {
-        var query = GetObserver<QueryObserver>(x => x.Steps.Has(this));
+        var query = GetObserver<SpecObserver>(x => x.Steps.Has(this));
         if (query is null) return;
 
         var index = query.Steps.IndexOf(this) + 1;
@@ -87,7 +87,7 @@ public abstract partial class StepObserver(Step model) : Observer<Step>(model),
     [RelayCommand]
     private void MoveUp()
     {
-        var query = GetObserver<QueryObserver>(x => x.Steps.Has(this));
+        var query = GetObserver<SpecObserver>(x => x.Steps.Has(this));
         if (query is null) return;
 
         var index = query.Steps.IndexOf(this);
@@ -102,7 +102,7 @@ public abstract partial class StepObserver(Step model) : Observer<Step>(model),
     [RelayCommand]
     private void MoveDown()
     {
-        var query = GetObserver<QueryObserver>(x => x.Steps.Has(this));
+        var query = GetObserver<SpecObserver>(x => x.Steps.Has(this));
         if (query is null) return;
 
         var index = query.Steps.IndexOf(this);
@@ -378,7 +378,7 @@ public abstract partial class StepObserver(Step model) : Observer<Step>(model),
 
         if (observer is null) return;
 
-        var query = GetObserver<QueryObserver>(x => x.Steps.Has(this));
+        var query = GetObserver<SpecObserver>(x => x.Steps.Has(this));
         if (query is null) return;
 
         var index = query.Steps.IndexOf(this) + 1;

@@ -19,10 +19,10 @@ public class EvaluationObserver : Observer<Evaluation>
     }
 
     public ResultState Result => Model.Result;
-    public string Candidate => Model.Candidate;
-    public string Criteria => Model.Criteria;
-    public string Expected => Model.Expected;
-    public string Actual => Model.Actual;
+    public string? Target => Model.Target;
+    public string? Criteria => Model.Criteria;
+    public string? Expected => Model.Expected;
+    public string? Actual => Model.Actual;
     public string? Error => Model.Error;
 
 
@@ -30,15 +30,7 @@ public class EvaluationObserver : Observer<Evaluation>
     public override bool Filter(string? filter)
     {
         FilterText = filter;
-
-        var passes = string.IsNullOrEmpty(filter)
-                     || Candidate.Satisfies(filter)
-                     || Criteria.Satisfies(filter)
-                     || Expected.Satisfies(filter)
-                     || Actual.Satisfies(filter)
-                     || Error is not null && Error.Satisfies(filter);
-
-        return passes;
+        return string.IsNullOrEmpty(filter) || Model.ToString().Satisfies(filter);
     }
 
     public static implicit operator Evaluation(EvaluationObserver observer) => observer.Model;

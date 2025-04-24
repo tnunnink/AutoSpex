@@ -8,12 +8,12 @@
         <StackPanel Spacing="20" Margin="20">
             <a:ToggleThemeButton Theme="{a:ControlTheme ToggleThemeButtonSoft}" />
             <ContentControl
-                Content="{x:Static components:TestData.DefaultResult}"
+                Content="{x:Static components:TestData.DefaultVerification}"
                 ContentTemplate="{DynamicResource ResultStatus}" />
         </StackPanel>
     </Design.PreviewWith>
 
-    <DataTemplate x:Key="ResultStatus" x:DataType="observers:ResultObserver">
+    <DataTemplate x:Key="ResultStatus" x:DataType="observers:RunObserver">
 
         <StackPanel Orientation="Horizontal" Spacing="10">
 

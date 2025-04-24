@@ -9,13 +9,13 @@
     <Design.PreviewWith>
         <Border Padding="30">
             <ContentControl
-                Content="{x:Static components:TestData.QueryObserver}"
+                Content="{x:Static components:TestData.SpecObserver}"
                 ContentTemplate="{DynamicResource ElementEntry}" />
         </Border>
     </Design.PreviewWith>
 
 
-    <DataTemplate x:Key="ElementEntry" x:DataType="observers:QueryObserver">
+    <DataTemplate x:Key="ElementEntry" x:DataType="observers:SpecObserver">
 
         <Border
             Classes="normal"
@@ -80,7 +80,7 @@
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate DataType="engine:Element">
                                         <Button
-                                            Command="{Binding $parent[ItemsControl].((observers:QueryObserver)DataContext).UpdateElementCommand, FallbackValue={x:Null}}"
+                                            Command="{Binding $parent[ItemsControl].((observers:SpecObserver)DataContext).UpdateElementCommand, FallbackValue={x:Null}}"
                                             CommandParameter="{Binding}"
                                             Theme="{a:ControlTheme ButtonSubtle}"
                                             HorizontalContentAlignment="Stretch">

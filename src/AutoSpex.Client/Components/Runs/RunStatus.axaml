@@ -9,18 +9,18 @@
         <StackPanel Spacing="20" Margin="20">
             <a:ToggleThemeButton Theme="{a:ControlTheme ToggleThemeButtonSoft}" />
             <ContentControl
-                Content="{x:Static components:TestData.DefaultResult}"
-                ContentTemplate="{DynamicResource ResultStatus}" />
+                Content="{x:Static components:TestData.PassedVerification}"
+                ContentTemplate="{DynamicResource RunStatus}" />
         </StackPanel>
     </Design.PreviewWith>
 
-    <DataTemplate x:Key="ResultStatus" x:DataType="observers:ResultObserver">
+    <DataTemplate x:Key="RunStatus" x:DataType="observers:RunObserver">
 
         <StackPanel Orientation="Horizontal" Spacing="7" VerticalAlignment="Center">
 
             <StackPanel Orientation="Horizontal">
                 <PathIcon
-                    Theme="{Binding Model.Type.Name, Converter={StaticResource KeyIconConverter}}" />
+                    Theme="{Binding Model.Node.Type.Name, Converter={StaticResource KeyIconConverter}}" />
                 <TextBlock
                     Text="{Binding Name}"
                     FontWeight="{a:ThemeResource HeadingFontWeightSmall}"
@@ -30,7 +30,7 @@
             <Ellipse Classes="separator" />
 
             <TextBlock
-                Text="{Binding Model.Result.Source.Name}"
+                Text="{Binding Model.Source.Name}"
                 FontWeight="{a:ThemeResource HeadingFontWeightSmall}"
                 Padding="5" />
 

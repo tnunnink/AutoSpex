@@ -7,14 +7,14 @@
     <Design.PreviewWith>
         <Border Width="300" Height="200">
             <TreeView ItemsSource="{x:Static components:TestData.Results}"
-                      ItemTemplate="{DynamicResource ResultTreeItem}"
+                      ItemTemplate="{DynamicResource RunTreeItem}"
                       ItemContainerTheme="{DynamicResource ResultTreeItemTheme}"
                       Padding="10" />
         </Border>
     </Design.PreviewWith>
 
 
-    <TreeDataTemplate x:Key="ResultTreeItem" x:DataType="observers:ResultObserver" ItemsSource="{Binding Nodes}">
+    <TreeDataTemplate x:Key="RunTreeItem" x:DataType="observers:RunObserver" ItemsSource="{Binding Runs}">
 
         <Border Background="Transparent" Focusable="True" IsTabStop="False">
 

@@ -33,11 +33,6 @@
                     <Setter Property="TextWrapping" Value="NoWrap" />
                     <Setter Property="TextTrimming" Value="CharacterEllipsis" />
                 </Style>
-                <Style Selector="TextBlock">
-                    <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushDisabled}" />
-                    <Setter Property="TextWrapping" Value="NoWrap" />
-                    <Setter Property="TextTrimming" Value="CharacterEllipsis" />
-                </Style>
             </Border.Styles>
 
             <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" Spacing="5" ClipToBounds="True">
@@ -45,44 +40,60 @@
                 <PathIcon Theme="{Binding Result, Converter={StaticResource ResultStateIconConverter}}"
                           Classes="size-sm" Margin="0 1 3 0" />
 
-                <TextBlock Text="Expected" />
-                <controls:HighlightableTextBlock Text="{Binding Candidate}" />
-                <TextBlock Text="to have" />
-                <controls:HighlightableTextBlock Text="{Binding Criteria}" />
-
-                <controls:HighlightableTextBlock
-                    Text="{Binding Expected}"
-                    Foreground="{DynamicResource TypeGroupForegroundBrushText}" />
-
-                <StackPanel
-                    Orientation="Horizontal" Spacing="5"
-                    IsVisible="{Binding Result, Converter={StaticResource NotEqualToConverter}, ConverterParameter={x:Static engine:ResultState.Errored}}">
-
-                    <TextBlock
-                        IsVisible="{Binding Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Passed}}"
-                        Text="and found" />
-                    <TextBlock
-                        IsVisible="{Binding Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Failed}}"
-                        Text="but found" />
+                <Panel>
 
                     <controls:HighlightableTextBlock
-                        Text="{Binding Actual}"
-                        Foreground="{DynamicResource TypeGroupForegroundBrushText}" />
+                        IsVisible="{Binding Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Passed}}">
 
-                </StackPanel>
+                        <controls:HighlightableTextBlock.Inlines>
+                            <Run Text="Expected" />
+                            <Run Text="{Binding Target}" />
+                            <Run Text="to have" />
+                            <Run Text="{Binding Criteria}" />
+                            <Run Text="and found" />
+                            <Run Text="{Binding Actual}" />
+                        </controls:HighlightableTextBlock.Inlines>
 
-                <StackPanel
-                    Orientation="Horizontal" Spacing="5"
-                    IsVisible="{Binding Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Errored}}">
-
-                    <TextBlock
-                        Text="but got error" />
+                    </controls:HighlightableTextBlock>
 
                     <controls:HighlightableTextBlock
-                        Text="{Binding Error, FallbackValue={x:Null}}"
-                        Foreground="{a:ThemeResource ControlForegroundBrushOutlineWarning}" />
-                </StackPanel>
+                        IsVisible="{Binding Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Failed}}">
+
+                        <controls:HighlightableTextBlock.Inlines>
+                            <Run Text="Expected" Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                            <Run Text="{Binding Target}" />
+                            <Run Text="to have" />
+                            <Run Text="{Binding Criteria}" />
+                            <Run Text="but found" />
+                            <Run Text="{Binding Actual}" />
+                        </controls:HighlightableTextBlock.Inlines>
+
+                    </controls:HighlightableTextBlock>
+
+                    <controls:HighlightableTextBlock
+                        IsVisible="{Binding Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.Errored}}"
+                        HighlightedText="{Binding FilterText}"
+                        TextWrapping="NoWrap"
+                        TextTrimming="CharacterEllipsis">
+
+                        <controls:HighlightableTextBlock.Inlines>
+                            <Run Text="Expected"
+                                 Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
+                            <Run Text="{Binding Target}" />
+                            <Run Text="to have" />
+                            <Run Text="{Binding Criteria}" />
+                            <Run Text="but got error" />
+                            <Run Text="{Binding Error}"
+                                 Foreground="{a:ThemeResource ControlForegroundBrushOutlineWarning}" />
+                        </controls:HighlightableTextBlock.Inlines>
+
+                    </controls:HighlightableTextBlock>
+
+                </Panel>
+
             </StackPanel>
+
         </Border>
+
     </DataTemplate>
 </ResourceDictionary>

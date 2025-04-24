@@ -16,7 +16,6 @@ namespace AutoSpex.Client.Components;
 [SuppressMessage("Usage", "CA2211:Non-constant fields should not be visible")]
 public static class TestData
 {
-    
     #region Reops
 
     private const string TestRepo = @"C:\Users\tnunnink\Documents\Rockwell";
@@ -26,7 +25,7 @@ public static class TestData
     public static ObservableCollection<RepoObserver> Repos = [RepoTest, RepoTest, RepoTest];
 
     #endregion
-    
+
     #region Sources
 
     private const string TestSource = @"C:\Users\tnunnink\Documents\Rockwell\Test.L5X";
@@ -98,6 +97,14 @@ public static class TestData
 
     #region Specs
 
+    public static FilterObserver FilterObserver = new(new Filter("TagName", Operation.Containing, "TestTag"));
+    public static SelectObserver SelectObserver = new(new Select("TagName.Operand"));
+
+    public static CountObserver CountObserver =
+        new(new Count(new Criterion("TagName", Operation.Containing, "TestTag")));
+
+    public static VerifyObserver VerifyObserver = new(new Verify("TagName", Operation.Containing, "TestTag"));
+
     public static SpecObserver SpecObserver = new(Spec.Configure(c =>
         {
             c.Query(Element.Tag);
@@ -117,24 +124,6 @@ public static class TestData
             c.Verify("Description", Operation.EndingWith, "Some text value");
             c.Verify("Scope.Program", Negation.Not, Operation.EqualTo, "MyContianer");
         })
-    );
-
-    #endregion
-
-    #region Query
-
-    public static FilterObserver FilterObserver = new(new Filter("TagName", Operation.Containing, "TestTag"));
-    public static SelectObserver SelectObserver = new(new Select("TagName.Operand"));
-    public static CountObserver CountObserver = new(new Count(new Criterion("TagName", Operation.Containing, "TestTag")));
-    public static VerifyObserver VerifyObserver = new(new Verify("TagName", Operation.Containing, "TestTag"));
-
-    public static QueryObserver DefaultQueryObserver = new(new Query());
-
-    public static QueryObserver QueryObserver = new(
-        new Query(
-            Element.Tag,
-            [new Filter("TagName", Operation.Containing, "TestTag"), new Select("TagName.Operand")]
-        )
     );
 
     #endregion
@@ -246,23 +235,6 @@ public static class TestData
 
     #endregion
 
-    #region Verifications
-
-    public static ResultObserver DefaultResult = new(Node.NewSpec());
-
-    public static ResultObserver PassedResult = new(Node.NewSpec());
-
-    public static ResultObserver FailedResult = new(Node.NewSpec());
-
-    public static ResultObserver ErroredResult = new(Node.NewSpec());
-
-    public static ResultObserver NestedResult = new(Node.NewCollection());
-
-    public static ObservableCollection<ResultObserver> Results =
-        [NestedResult, PassedResult, FailedResult, ErroredResult];
-
-    #endregion
-
     #region Evaluations
 
     public static EvaluationObserver PassedEvaluation = new(
@@ -287,6 +259,22 @@ public static class TestData
 
     public static ObservableCollection<EvaluationObserver> Evaluations =
         new(new[] { PassedEvaluation, FailedEvaluation, ErroredEvaluation });
+
+    #endregion
+
+    #region Verifications
+
+    public static VerificationObserver DefaultVerification = new(new Verification("Test", []));
+    public static VerificationObserver PassedVerification = new(new Verification("Test", [PassedEvaluation]));
+    public static VerificationObserver FailedVerification = new(new Verification("Test", [FailedEvaluation]));
+    public static VerificationObserver ErroredVerification = new(new Verification("Test", [ErroredEvaluation]));
+    public static ObservableCollection<VerificationObserver> Results =
+    [
+        DefaultVerification,
+        PassedVerification,
+        FailedVerification,
+        ErroredVerification
+    ];
 
     #endregion
 }

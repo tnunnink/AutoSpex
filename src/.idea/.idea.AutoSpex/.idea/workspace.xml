@@ -8,14 +8,44 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a07f1d3f-6f03-47ec-a0a7-cdecae08accf" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/AutoSpex.Client/Observers/VerificationObserver.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../tests/AutoSpex.Engine.Tests/VerificationTests.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AutoSpex/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AutoSpex/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Components/Runs/All.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Components/Runs/All.axaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Components/Runs/EvaluationList.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Components/Runs/EvaluationList.axaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Engine/Node.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Engine/Node.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Engine/ResultState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Engine/ResultState.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Components/Runs/EvaluationListItem.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Components/Runs/EvaluationListItem.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Components/Runs/ResultFilters.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Components/Runs/ResultFilters.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Components/Runs/ResultPill.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Components/Runs/ResultPill.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Components/Runs/ResultStateItem.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Components/Runs/ResultStateItem.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Components/Runs/ResultStatus.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Components/Runs/RunStatus.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Components/Runs/ResultTreeItem.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Components/Runs/RunTreeItem.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Components/Specs/SpecConfig.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Components/Specs/SpecConfig.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Components/Steps/All.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Components/Steps/All.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Components/Steps/ElementEntry.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Components/Steps/ElementEntry.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Components/Steps/FilterButton.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Components/Steps/FilterButton.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Components/Steps/QueryEntry.axaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Components/Steps/SelectButton.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Components/Steps/SelectButton.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Components/Steps/VerifyButton.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Components/Steps/VerifyButton.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Components/TestData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Components/TestData.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Observers/EvaluationObserver.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Observers/EvaluationObserver.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Observers/NodeObserver.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Observers/NodeObserver.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Observers/QueryObserver.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Observers/ResultObserver.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Observers/RunObserver.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Observers/RunObserver.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Observers/SpecObserver.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Observers/SpecObserver.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Observers/StepObserver.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Observers/StepObserver.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/SpecPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/SpecPageModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/SpecsPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/SpecsPageModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/RunnerPage.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/RunnerPage.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/RunnerPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/RunnerPageModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Runs/ResultPage.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Runs/ResultPage.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Runs/ResultPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Runs/RunDetailPageModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Resources/All.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Resources/All.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Resources/Icons/IconsThemed.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Resources/Icons/IconsThemed.axaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Services/Runner.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Engine/Evaluation.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Engine/Evaluation.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AutoSpex.Engine/Spec.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Engine/Spec.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Engine/Steps/Verify.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Engine/Steps/Verify.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Engine/Verification.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Engine/Verification.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tests/AutoSpex.Engine.Tests/Elements/TagElementTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../tests/AutoSpex.Engine.Tests/Elements/TagElementTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../tests/AutoSpex.Engine.Tests/EvaluationTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../tests/AutoSpex.Engine.Tests/EvaluationTests.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../tests/AutoSpex.Engine.Tests/SpecTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../tests/AutoSpex.Engine.Tests/SpecTests.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -51,22 +81,11 @@
     <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet.." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet.." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet.." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet.." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet.." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet.." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet.." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet.." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet.." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet.." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet.." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet.." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet.." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet.." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet.." root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///AIAssistantSnippet.." root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///AIAssistantSnippet." root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/eba546b0f0d448e0176a2222548fd7a2fbf464c0/src/libraries/System.Private.CoreLib/src/System/Collections/Generic/List.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/eba546b0f0d448e0176a2222548fd7a2fbf464c0/src/libraries/System.Private.CoreLib/src/System/IO/FileSystem.Windows.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/eba546b0f0d448e0176a2222548fd7a2fbf464c0/src/libraries/System.Private.CoreLib/src/System/Threading/ExecutionContext.cs" root0="SKIP_HIGHLIGHTING" />
@@ -80,14 +99,10 @@
     <setting file="file://$PROJECT_DIR$/AutoSpex.Client/Components/General/ObserverLink.axaml" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/AutoSpex.Client/Components/General/ObserverTitle.axaml" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/AutoSpex.Client/Components/Nodes/Breadcrumb.axaml" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/tnunnink/Documents/Projects/AutoSpex/AutoSpex/src/AutoSpex.Client/Components/Styles/AppButtons.axaml" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/AutoSpex.Client/Observers/ResultObserver.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/AutoSpex.Client/Pages/NavigationPage.axaml" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/ImportConflictPage.axaml" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/tnunnink/Documents/Projects/AutoSpex/AutoSpex/src/AutoSpex.Client/Pages/Nodes/NodeDetailPageModel.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/AutoSpex.Client/Resources/Themes/TabStripItem.axaml" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/AutoSpex.Client/Shared/Observer.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/tnunnink/Documents/Projects/AutoSpex/AutoSpex/src/AutoSpex.Engine/Verification.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProblemsViewState">
@@ -196,7 +211,8 @@
       <workItem from="1744837952058" duration="4554000" />
       <workItem from="1744982024202" duration="147000" />
       <workItem from="1744982190906" duration="690000" />
-      <workItem from="1744982903861" duration="50861000" />
+      <workItem from="1744982903861" duration="63922000" />
+      <workItem from="1745455112953" duration="1834000" />
     </task>
     <task id="LOCAL-00001" summary="Removed Actions. Removed SourceDetailPage. Updated packages in client. Moves all requests in persistence layer.">
       <option name="closed" value="true" />
@@ -286,7 +302,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745089453494</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Spec refinement">
+      <option name="closed" value="true" />
+      <created>1745175735353</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1745175735353</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -301,16 +325,16 @@
       <expand>
         <path>
           <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 25% 16810/22407" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Total 25% 16824/22421" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
         </path>
         <path>
           <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 25% 16810/22407" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Total 25% 16824/22421" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
           <item name="AutoSpex.Engine 85% 405/2626" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
         </path>
         <path>
           <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 25% 16810/22407" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Total 25% 16824/22421" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
           <item name="AutoSpex.Engine 85% 405/2626" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
           <item name="AutoSpex.Engine 85% 405/2626" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
         </path>
@@ -347,7 +371,8 @@
     <MESSAGE value="Continued rework of repo and source and ui" />
     <MESSAGE value="Spec Query Merge. Run rework. Migrations. Fixes to code to allow concurrent runs. Reintroducing variable and reworking Reference. Testing. Saving." />
     <MESSAGE value="removed todo" />
-    <option name="LAST_COMMIT_MESSAGE" value="removed todo" />
+    <MESSAGE value="Spec refinement" />
+    <option name="LAST_COMMIT_MESSAGE" value="Spec refinement" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -364,19 +389,6 @@
           <properties exception="System.Threading.ThreadAbortException" breakIfHandledByOtherCode="false" displayValue="System.Threading.ThreadAbortException" />
           <option name="timeStamp" value="10" />
         </breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/../tests/AutoSpex.Engine.Tests/RunnerTests.cs</url>
-          <line>38</line>
-          <properties documentPath="C:\Users\tnunnink\Documents\Projects\AutoSpex\AutoSpex\tests\AutoSpex.Engine.Tests\RunnerTests.cs" containingFunctionPresentation="Method 'Run_SameRunMultipleTimes_ShouldReturnExpectedResult'">
-            <startOffsets>
-              <option value="1126" />
-            </startOffsets>
-            <endOffsets>
-              <option value="1201" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="27" />
-        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
     <watches-manager>

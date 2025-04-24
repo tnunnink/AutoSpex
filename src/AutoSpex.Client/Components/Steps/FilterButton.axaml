@@ -7,15 +7,15 @@
     <Design.PreviewWith>
         <Border Padding="200">
             <ContentControl
-                Content="{x:Static components:TestData.QueryObserver}"
+                Content="{x:Static components:TestData.SpecObserver}"
                 ContentTemplate="{DynamicResource FilterButton}" />
         </Border>
     </Design.PreviewWith>
 
-    <DataTemplate x:Key="FilterButton" x:DataType="observers:QueryObserver">
+    <DataTemplate x:Key="FilterButton" x:DataType="observers:SpecObserver">
 
         <Button
-            Command="{Binding AddFitlerStepCommand}"
+            Command="{Binding AddFilterStepCommand}"
             Classes="link-invisible"
             ToolTip.Placement="BottomEdgeAlignedLeft">
 

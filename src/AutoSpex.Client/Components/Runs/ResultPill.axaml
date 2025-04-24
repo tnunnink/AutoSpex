@@ -17,9 +17,6 @@
                 Content="{x:Static engine:ResultState.Passed}"
                 ContentTemplate="{DynamicResource ResultPill}" />
             <ContentControl
-                Content="{x:Static engine:ResultState.Inconclusive}"
-                ContentTemplate="{DynamicResource ResultPill}" />
-            <ContentControl
                 Content="{x:Static engine:ResultState.Failed}"
                 ContentTemplate="{DynamicResource ResultPill}" />
             <ContentControl

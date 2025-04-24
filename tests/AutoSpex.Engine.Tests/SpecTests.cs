@@ -299,8 +299,8 @@ public class SpecTests
                 c.Verify("Inhibited", Negation.Is, Operation.EqualTo, false);
             });
 
-            var evaluations = spec.Run(content);
-            evaluations.Should().AllSatisfy(e => e.Result.Should().Be(ResultState.Passed));
+            var verifications = spec.Run(content);
+            verifications.Should().AllSatisfy(e => e.Result.Should().Be(ResultState.Passed));
         });
 
         isolator();

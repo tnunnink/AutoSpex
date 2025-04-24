@@ -1,24 +1,21 @@
 ﻿using AutoSpex.Client.Observers;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
-using CommunityToolkit.Mvvm.ComponentModel;
 using JetBrains.Annotations;
 
 namespace AutoSpex.Client.Pages;
 
 [UsedImplicitly]
-public partial class ResultPageModel : PageViewModel
+public class RunDetailPageModel(RunObserver run) : PageViewModel
 {
-    [ObservableProperty] private ResultObserver? _result;
+    public RunObserver Run { get; } = run;
 
     protected override void FilterChanged(string? filter)
     {
-        if (Result is null) return;
-
-        var state = Result.FilterState;
+        var state = Run.FilterState;
         var text = filter;
 
-        Result.Evaluations.Filter(x =>
+        Run.Evaluations.Filter(x =>
         {
             var hasState = state == ResultState.None || x.Result == state;
             var hasText = x.Filter(text);

@@ -5,7 +5,6 @@
         <ResourceInclude Source="ElementEntry.axaml" />
         <ResourceInclude Source="FilterButton.axaml" />
         <ResourceInclude Source="FilterStep.axaml" />
-        <ResourceInclude Source="QueryEntry.axaml" />
         <ResourceInclude Source="SelectButton.axaml" />
         <ResourceInclude Source="SelectEntry.axaml" />
         <ResourceInclude Source="SelectStep.axaml" />

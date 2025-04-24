@@ -7,15 +7,15 @@
     <Design.PreviewWith>
         <Border Padding="200">
             <ContentControl
-                Content="{x:Static components:TestData.VerifyObserver}"
+                Content="{x:Static components:TestData.SpecObserver}"
                 ContentTemplate="{DynamicResource VerifyButton}" />
         </Border>
     </Design.PreviewWith>
 
-    <DataTemplate x:Key="VerifyButton" x:DataType="observers:VerifyObserver">
+    <DataTemplate x:Key="VerifyButton" x:DataType="observers:SpecObserver">
 
         <Button
-            Command="{Binding AddCriteriaCommand}"
+            Command="{Binding AddVerificationCommand}"
             Classes="link-invisible"
             ToolTip.Placement="BottomEdgeAlignedLeft">
 

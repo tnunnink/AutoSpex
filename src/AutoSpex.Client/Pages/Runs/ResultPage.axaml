@@ -5,7 +5,7 @@
              xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
              xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
              x:Class="AutoSpex.Client.Pages.ResultPage"
-             x:DataType="pages:ResultPageModel">
+             x:DataType="pages:RunDetailPageModel">
 
     <Design.Width>800</Design.Width>
     <Design.Height>600</Design.Height>
@@ -17,7 +17,7 @@
             <ContentControl
                 Grid.Column="0"
                 Content="{Binding Result}"
-                ContentTemplate="{StaticResource ResultStatus}" />
+                ContentTemplate="{StaticResource RunStatus}" />
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="7">
 

@@ -10,7 +10,12 @@ public class EvaluationTests
         var evaluation = Evaluation.Passed(criterion, new Tag("Test", 123), "Test");
 
         evaluation.Result.Should().Be(ResultState.Passed);
-        evaluation.Message.Should().Be("Expected /Tag/Test to have Name Is Containing Test and found Test");
+        evaluation.Target.Should().Be("/Tag/Test");
+        evaluation.Criteria.Should().Be("Name Is Containing");
+        evaluation.Expected.Should().Be("Test");
+        evaluation.Actual.Should().Be("Test");
+        evaluation.Error.Should().BeNull();
+        evaluation.ToString().Should().Be("Expected /Tag/Test to have Name Is Containing Test and found Test");
     }
 
     [Test]
@@ -20,7 +25,12 @@ public class EvaluationTests
         var evaluation = Evaluation.Failed(criterion, new Tag("Test", 123), "Fake");
 
         evaluation.Result.Should().Be(ResultState.Failed);
-        evaluation.Message.Should().Be("Expected /Tag/Test to have Name Is Containing Test but found Fake");
+        evaluation.Target.Should().Be("/Tag/Test");
+        evaluation.Criteria.Should().Be("Name Is Containing");
+        evaluation.Expected.Should().Be("Test");
+        evaluation.Actual.Should().Be("Fake");
+        evaluation.Error.Should().BeNull();
+        evaluation.ToString().Should().Be("Expected /Tag/Test to have Name Is Containing Test but found Fake");
     }
 
     [Test]
@@ -31,7 +41,12 @@ public class EvaluationTests
             new InvalidOperationException("This evaluation failed to produce."));
 
         evaluation.Result.Should().Be(ResultState.Errored);
-        evaluation.Message.Should()
+        evaluation.Target.Should().Be("/Tag/Test");
+        evaluation.Criteria.Should().Be("Name Is Containing");
+        evaluation.Expected.Should().Be("Test");
+        evaluation.Actual.Should().BeNull();
+        evaluation.Error.Should().Be("This evaluation failed to produce.");
+        evaluation.ToString().Should()
             .Be("Expected /Tag/Test to have Name Is Containing Test but got error This evaluation failed to produce.");
     }
 }

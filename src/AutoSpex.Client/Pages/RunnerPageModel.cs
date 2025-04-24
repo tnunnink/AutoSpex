@@ -26,11 +26,11 @@ public partial class RunnerPageModel : PageViewModel
         RegisterDisposable(Nodes);
     }
 
-    public ResultPageModel? ResultPage { get; private set; }
+    public RunDetailPageModel? ResultPage { get; private set; }
 
     public override async Task Load()
     {
-        ResultPage = await Navigator.Navigate<ResultPageModel>();
+        ResultPage = await Navigator.Navigate<RunDetailPageModel>();
         RegisterDisposable(ResultPage);
     }
 
@@ -97,15 +97,6 @@ public partial class RunnerPageModel : PageViewModel
         await ExecuteRunner(message.Runner.Model);
     }*/
 
-    /// <summary>
-    /// Update the selected result ....
-    /// </summary>
-    partial void OnSelectedChanged(ResultObserver? value)
-    {
-        if (ResultPage is null) return;
-        ResultPage.Result = value;
-    }
-
     /// <inheritdoc />
     protected override void FilterChanged(string? filter)
     {
@@ -116,7 +107,7 @@ public partial class RunnerPageModel : PageViewModel
     /// Command to execute this run by retrieving, resolving, and evaluating all configured spec/source pairs and
     /// producing new outcome results.
     /// </summary>
-    private async Task ExecuteRunner(Run run)
+    private Task ExecuteRunner(Run run)
     {
         _cancellation = new CancellationTokenSource();
 
@@ -128,7 +119,6 @@ public partial class RunnerPageModel : PageViewModel
             Notifier.ShowWarning("Run canceled", "The current run was canceled prior to finishing execution.");
         }
 
-        Result = ResultState.MaxOrDefault(Nodes.Select(r => r.Result).ToArray());
         OnPropertyChanged(string.Empty);
     }
 }

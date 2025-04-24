@@ -138,7 +138,7 @@ public partial class NodeObserver : Observer<Node>,
     }
 
     /// <summary>
-    /// Determines if the provided source object is a node which has selected nodes that can be moved to this node.
+    /// Determines if the provided source object is a node that has selected nodes that can be moved to this node.
     /// </summary>
     /// <param name="source">The source command parameter.</param>
     /// <returns>true if the provided source contains valid nodes to be added to this node. Otherwise, false.</returns>
