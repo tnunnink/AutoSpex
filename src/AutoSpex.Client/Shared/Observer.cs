@@ -412,9 +412,7 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
             if (clipboard is null) return default;
 
             var json = await clipboard.GetTextAsync();
-            if (json is null) return default;
-
-            return JsonSerializer.Deserialize<TData>(json);
+            return json is null ? default : JsonSerializer.Deserialize<TData>(json);
         }
         catch (Exception e)
         {

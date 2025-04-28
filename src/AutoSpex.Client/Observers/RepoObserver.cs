@@ -18,7 +18,8 @@ namespace AutoSpex.Client.Observers;
 
 public partial class RepoObserver : Observer<Repo>,
     IRecipient<RepoObserver.SetConnected>,
-    IRecipient<Observer.GetSelected>
+    IRecipient<Observer.GetSelected>,
+    IRecipient<Observer.Get<RepoObserver>>
 {
     private readonly List<SourceObserver> _sources = [];
     private FileSystemWatcher? _watcher;
@@ -190,6 +191,19 @@ public partial class RepoObserver : Observer<Repo>,
     public void Receive(SetConnected message)
     {
         IsConnected = message.Repo is not null && Id == message.Repo.Id;
+    }
+    
+    /// <summary>
+    /// Handle the get repo message by returning this instance if it satisfies the predicate condition.
+    /// </summary>
+    public void Receive(Get<RepoObserver> message)
+    {
+        if (message.HasReceivedResponse) return;
+
+        if (message.Predicate.Invoke(this))
+        {
+            message.Reply(this);
+        }
     }
 
     /// <summary>

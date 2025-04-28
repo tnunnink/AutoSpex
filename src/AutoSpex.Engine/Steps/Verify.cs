@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using Microsoft.Extensions.Logging;
 
 namespace AutoSpex.Engine;
 
@@ -13,7 +14,7 @@ public class Verify : Step
     public Verify()
     {
     }
-    
+
     /// <summary>
     /// Creates a new default <see cref="Filter"/> step initialized with a criterion defined by the provided parameters.
     /// </summary>
@@ -21,7 +22,7 @@ public class Verify : Step
     {
         Criteria.Add(new Criterion(property, operation, argument));
     }
-    
+
     /// <summary>
     /// Creates a new default <see cref="Filter"/> step initialized the provided criterion.
     /// </summary>
@@ -29,29 +30,28 @@ public class Verify : Step
     {
         Criteria.Add(criterion);
     }
-    
+
     /// <summary>
     /// The collection of <see cref="Criterion"/> that define the step.
     /// Each step may have a collection of criteria configured for which it needs to process data.
     /// </summary>
     [JsonInclude]
     public List<Criterion> Criteria { get; private init; } = [];
-    
+
     /// <inheritdoc />
-    public override IEnumerable<object> Process(IEnumerable<object?> input)
+    public override IEnumerable<object> Process(IEnumerable<object?> input, ILogger? logger = null)
     {
         var verifications = new List<Verification>();
-        
+
         foreach (var item in input)
         {
             var evaluations = Criteria.Select(x => x.Evaluate(item)).ToArray();
-            
             verifications.Add(new Verification(item, evaluations));
         }
 
         return verifications;
     }
-    
+
     /// <inheritdoc />
     /// <remarks>
     /// Technically this step always returns an <see cref="Evaluation"/> object. At this point we don't totally care

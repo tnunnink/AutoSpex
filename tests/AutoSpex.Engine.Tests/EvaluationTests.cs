@@ -6,47 +6,38 @@ public class EvaluationTests
     [Test]
     public void Passed_ValidData_ShouldBeExpected()
     {
-        var criterion = new Criterion("Name", Operation.Containing, "Test");
-        var evaluation = Evaluation.Passed(criterion, new Tag("Test", 123), "Test");
+        var evaluation = Evaluation.Passed("Name Is Containing", "Test", "Test");
 
         evaluation.Result.Should().Be(ResultState.Passed);
-        evaluation.Target.Should().Be("/Tag/Test");
         evaluation.Criteria.Should().Be("Name Is Containing");
         evaluation.Expected.Should().Be("Test");
-        evaluation.Actual.Should().Be("Test");
-        evaluation.Error.Should().BeNull();
-        evaluation.ToString().Should().Be("Expected /Tag/Test to have Name Is Containing Test and found Test");
+        evaluation.Returned.Should().Be("Test");
+        evaluation.ToString().Should().Be("Expected Name Is Containing Test and found Test");
     }
 
     [Test]
     public void Failed_ValidData_ShouldBeExpected()
     {
-        var criterion = new Criterion("Name", Operation.Containing, "Test");
-        var evaluation = Evaluation.Failed(criterion, new Tag("Test", 123), "Fake");
+        var evaluation = Evaluation.Failed("Name Is Containing", "Test", "Fake");
 
         evaluation.Result.Should().Be(ResultState.Failed);
-        evaluation.Target.Should().Be("/Tag/Test");
         evaluation.Criteria.Should().Be("Name Is Containing");
         evaluation.Expected.Should().Be("Test");
-        evaluation.Actual.Should().Be("Fake");
-        evaluation.Error.Should().BeNull();
-        evaluation.ToString().Should().Be("Expected /Tag/Test to have Name Is Containing Test but found Fake");
+        evaluation.Returned.Should().Be("Fake");
+        evaluation.ToString().Should().Be("Expected Name Is Containing Test but found Fake");
     }
 
     [Test]
     public void Errored_ValidData_ShouldBeExpected()
     {
-        var criterion = new Criterion("Name", Operation.Containing, "Test");
-        var evaluation = Evaluation.Errored(criterion, new Tag("Test", 123),
-            new InvalidOperationException("This evaluation failed to produce."));
+        var exception = new InvalidOperationException("This evaluation failed to produce.");
+        var evaluation = Evaluation.Errored("Name Is Containing", "Test", exception);
 
         evaluation.Result.Should().Be(ResultState.Errored);
-        evaluation.Target.Should().Be("/Tag/Test");
         evaluation.Criteria.Should().Be("Name Is Containing");
         evaluation.Expected.Should().Be("Test");
-        evaluation.Actual.Should().BeNull();
-        evaluation.Error.Should().Be("This evaluation failed to produce.");
+        evaluation.Returned.Should().Be("This evaluation failed to produce.");
         evaluation.ToString().Should()
-            .Be("Expected /Tag/Test to have Name Is Containing Test but got error This evaluation failed to produce.");
+            .Be("Expected Name Is Containing Test but got error This evaluation failed to produce.");
     }
 }

@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Microsoft.Extensions.Logging;
 
 namespace AutoSpex.Engine;
 
@@ -19,8 +20,9 @@ public abstract class Step
     /// or different type, depending on the purpose or implementation of the step.
     /// </summary>
     /// <param name="input">A collection of objects to process.</param>
+    /// <param name="logger">Optional logger instance for logging during the execution.</param>
     /// <returns>A collection of objects that represent the result of the processing for this step.</returns>
-    public abstract IEnumerable<object?> Process(IEnumerable<object?> input);
+    public abstract IEnumerable<object?> Process(IEnumerable<object?> input, ILogger? logger = null);
 
     /// <summary>
     /// Determines what the return <see cref="Property"/> will be given an input property. Most steps will return the

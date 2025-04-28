@@ -60,12 +60,14 @@ public partial class NodeDetailPageModel : DetailPageModel
     }
 
     /// <summary>
-    /// Runs this node against the target source.
+    /// Fully loads this node instance and navigates a new runner page model to initiate the run.
     /// </summary>
     [RelayCommand]
-    private void Run()
+    private async Task Run()
     {
-        throw new NotImplementedException();
+        var loaded = await Mediator.Send(new LoadNode(Node.Id));
+        if (Notifier.ShowIfFailed(loaded)) return;
+        await Navigator.Navigate(() => new RunnerPageModel(loaded.Value));
     }
 
     /// <inheritdoc />

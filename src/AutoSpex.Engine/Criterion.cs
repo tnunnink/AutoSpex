@@ -117,12 +117,12 @@ public class Criterion
             var result = Operation.Execute(value, argument);
 
             return Negation.Satisfies(result)
-                ? Evaluation.Passed(this, candidate, value)
-                : Evaluation.Failed(this, candidate, value);
+                ? Evaluation.Passed(GetCriteria(), GetExpected(), value)
+                : Evaluation.Failed(GetCriteria(), GetExpected(), value);
         }
         catch (Exception e)
         {
-            return Evaluation.Errored(this, candidate, e);
+            return Evaluation.Errored(GetCriteria(), GetExpected(), e);
         }
     }
 

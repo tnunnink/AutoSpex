@@ -4,38 +4,32 @@ namespace AutoSpex.Engine;
 
 /// <summary>
 /// A lightweight object containing the result of evaluating a criterion instance. This object will contain the result
-/// state value along with a formated message to provide further details.
+/// state value along with result values.
 /// </summary>
-public record Evaluation(
-    ResultState Result,
-    string? Criteria = null,
-    string? Target = null,
-    string? Expected = null,
-    string? Actual = null,
-    string? Error = null)
+public record Evaluation(ResultState Result, string? Criteria = null, string? Expected = null, string? Returned = null)
 {
     /// <summary>
     /// Creates a new passing <see cref="Evaluation"/> with the provided criterion, candidate, and actual value. 
     /// </summary>
-    public static Evaluation Passed(Criterion criterion, object? candidate, object? actual)
+    public static Evaluation Passed(string criteria, string expected, object? result)
     {
-        return new Evaluation(ResultState.Passed, criterion.ToString(), candidate.ToText(), "", actual.ToText());
+        return new Evaluation(ResultState.Passed, criteria, expected, result.ToText());
     }
 
     /// <summary>
     /// Creates a new failed <see cref="Evaluation"/> with the provided criterion, candidate, and actual value. 
     /// </summary>
-    public static Evaluation Failed(Criterion criterion, object? candidate, object? actual)
+    public static Evaluation Failed(string criteria, string expected, object? result)
     {
-        return new Evaluation(ResultState.Failed, criterion.ToString(), candidate.ToText(), "", actual.ToText());
+        return new Evaluation(ResultState.Failed, criteria, expected, result.ToText());
     }
 
     /// <summary>
     /// Creates a new errored <see cref="Evaluation"/> with the provided criterion, candidate, and the produced exception. 
     /// </summary>
-    public static Evaluation Errored(Criterion criterion, object? candidate, Exception exception)
+    public static Evaluation Errored(string criteria, string expected, Exception exception)
     {
-        return new Evaluation(ResultState.Errored, criterion.ToString(), candidate.ToText(), Error: exception.Message);
+        return new Evaluation(ResultState.Errored, criteria, expected, exception.Message);
     }
 
     /// <inheritdoc />
@@ -43,16 +37,18 @@ public record Evaluation(
     {
         var builder = new StringBuilder();
 
-        builder.Append("Expected ").Append(Target).Append(" to have ").Append(Criteria);
+        builder.Append("Expected ").Append(Criteria).Append(' ').Append(Expected);
 
         if (Result == ResultState.Passed)
-            builder.Append(" and found ").Append(Actual);
+            builder.Append(" and found ");
 
         if (Result == ResultState.Failed)
-            builder.Append(" but found ").Append(Actual);
+            builder.Append(" but found ");
 
         if (Result == ResultState.Errored)
-            builder.Append(" but got error ").Append(Error);
+            builder.Append(" but got error ");
+
+        builder.Append(Returned);
 
         return builder.ToString();
     }

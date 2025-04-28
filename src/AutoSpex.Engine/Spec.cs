@@ -2,7 +2,7 @@
 using System.Text.Json.Serialization;
 using Ardalis.SmartEnum.SystemTextJson;
 using L5Sharp.Core;
-using NLog;
+using Microsoft.Extensions.Logging;
 using Task = System.Threading.Tasks.Task;
 
 namespace AutoSpex.Engine;
@@ -16,8 +16,6 @@ namespace AutoSpex.Engine;
 /// </summary>
 public class Spec()
 {
-    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-    
     //The internal list of steps that define the specification. Each step will process some input data and produce some
     //output data to be consumed by the next step. Internally, a spec should always end with a Verify step.
     //If none is configured, then we return the default result configured in the settings.
@@ -311,43 +309,46 @@ public class Spec()
     /// Runs the configured specification against the provided L5X content and returns a verification result.
     /// </summary>
     /// <param name="content">The L5X content to run this specification against.</param>
+    /// <param name="logger">Optional logger instance for logging during the execution.</param>
     /// <returns>The <see cref="Verification"/> containing the specification results.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="content"/> is null.</exception>
-    public Verification[] Run(L5X content)
+    public Verification[] Run(L5X content, ILogger? logger = null)
     {
-        return ExecuteSpec(content);
+        return ExecuteSpec(content, logger);
     }
 
     /// <summary>
     /// Runs the configured spec against the provided L5X content and returns a verification result.
     /// </summary>
     /// <param name="content">The L5X content to run this specification against.</param>
+    /// <param name="logger">Optional logger instance for logging during the execution.</param>
     /// <param name="token">The optional cancellation token to stop the run.</param>
     /// <returns>The <see cref="Verification"/> containing the specification results.</returns>
     /// <exception cref="ArgumentNullException">Thrown when the content parameter is null.</exception>
-    public Task<Verification[]> RunAsync(L5X content, CancellationToken token = default)
+    public Task<Verification[]> RunAsync(L5X content, ILogger? logger = null, CancellationToken token = default)
     {
-        return Task.Run(() => ExecuteSpec(content), token);
+        return Task.Run(() => ExecuteSpec(content, logger), token);
     }
 
     /// <summary>
     /// Executes the Query and Processing steps on the provided L5X content.
     /// </summary>
     /// <param name="content">The L5X content to process.</param>
+    /// <param name="logger">The logger instance that can be used to log diagnostic information to diagnose issues.</param>
     /// <returns>The result of executing the specified Query and Processing steps on the content.</returns>
-    private Verification[] ExecuteSpec(L5X content)
+    private Verification[] ExecuteSpec(L5X content, ILogger? logger = null)
     {
         ArgumentNullException.ThrowIfNull(content);
 
         try
         {
             //todo add logging here.
-            
+
             //Query all elements of the specified type.
             var elements = content.Query(Element.Type).Cast<object?>();
 
             //Run the resulting elements through all configured steps to process data.
-            var results = Steps.Aggregate(elements, (data, step) => step.Process(data)).ToArray();
+            var results = Steps.Aggregate(elements, (data, step) => step.Process(data, logger)).ToArray();
 
             //We want to standardize the return type to Verification, even if the last step is not a Verify step.
             var verifications = results.FirstOrDefault() is not Verification

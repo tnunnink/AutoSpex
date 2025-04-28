@@ -1,0 +1,117 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors"
+             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:shared="clr-namespace:AutoSpex.Client.Shared"
+             x:Class="AutoSpex.Client.Pages.DrawerPage"
+             x:DataType="pages:DrawerPageModel"
+             Background="{a:ThemeResource Container1BackgroundBrush}">
+
+    <DockPanel>
+
+        <Border
+            DockPanel.Dock="Top"
+            Background="{a:ThemeResource Container2BackgroundBrush}"
+            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+            BorderThickness="0 0 0 1"
+            Height="40">
+
+            <Grid ColumnDefinitions="*,Auto">
+
+                <ScrollViewer
+                    Grid.Column="0"
+                    VerticalScrollBarVisibility="Disabled"
+                    HorizontalScrollBarVisibility="Hidden"
+                    Theme="{a:ControlTheme ScrollViewerOverlay}">
+
+                    <TabStrip
+                        ItemsSource="{Binding Pages}"
+                        SelectedItem="{Binding Selected}"
+                        ItemTemplate="{StaticResource DetailTab}"
+                        BorderThickness="0">
+
+                        <TabStrip.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" Spacing="5" />
+                            </ItemsPanelTemplate>
+                        </TabStrip.ItemsPanel>
+
+                        <TabStrip.ItemContainerTheme>
+                            <ControlTheme
+                                x:DataType="shared:DetailPageModel"
+                                TargetType="TabStripItem"
+                                BasedOn="{a:ControlTheme TabStripOutline}">
+
+                                <Setter Property="Padding" Value="10 7 3 7" />
+                                <Setter Property="ContextFlyout">
+                                    <MenuFlyout>
+                                        <MenuFlyout.ItemContainerTheme>
+                                            <ControlTheme TargetType="MenuItem"
+                                                          BasedOn="{StaticResource ContextMenuItem}" />
+                                        </MenuFlyout.ItemContainerTheme>
+                                        <MenuItem Header="Close Tab"
+                                                  InputGesture="Ctrl+W"
+                                                  Command="{Binding CloseCommand}" />
+                                        <MenuItem Header="Close All Tabs"
+                                                  InputGesture="Ctrl+Shift+W"
+                                                  Command="{Binding $parent[TabStrip].((pages:DetailsPageModel)DataContext).CloseAllTabsCommand, FallbackValue={x:Null}}" />
+                                        <MenuItem Header="-" />
+                                        <MenuItem Header="Close Other Tabs"
+                                                  Command="{Binding $parent[TabStrip].((pages:DetailsPageModel)DataContext).CloseOtherTabsCommand, FallbackValue={x:Null}}"
+                                                  CommandParameter="{Binding}" />
+                                        <MenuItem Header="Close Tabs to Right"
+                                                  Command="{Binding $parent[TabStrip].((pages:DetailsPageModel)DataContext).CloseRightTabsCommand, FallbackValue={x:Null}}"
+                                                  CommandParameter="{Binding}" />
+                                        <MenuItem Header="Close Tabs to Left"
+                                                  Command="{Binding $parent[TabStrip].((pages:DetailsPageModel)DataContext).CloseLeftTabsCommand, FallbackValue={x:Null}}"
+                                                  CommandParameter="{Binding}" />
+                                        <MenuItem Header="-" />
+                                        <MenuItem Header="Force Close Tab"
+                                                  InputGesture="Alt+W"
+                                                  Command="{Binding ForceCloseCommand}" />
+                                        <MenuItem Header="Force Close Tabs"
+                                                  InputGesture="Alt+Shift+W"
+                                                  Command="{Binding $parent[TabStrip].((pages:DetailsPageModel)DataContext).ForceCloseAllTabsCommand, FallbackValue={x:Null}}" />
+                                    </MenuFlyout>
+                                </Setter>
+                            </ControlTheme>
+                        </TabStrip.ItemContainerTheme>
+
+                    </TabStrip>
+
+                </ScrollViewer>
+
+
+                <StackPanel
+                    Grid.Column="1"
+                    HorizontalAlignment="Right"
+                    Orientation="Horizontal"
+                    Spacing="10"
+                    Margin="10 0">
+
+                    <Button
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconLineSidebar}"
+                        ToolTip.Tip="Show/Hide"
+                        ToolTip.Placement="BottomEdgeAlignedRight">
+                        <Button.RenderTransform>
+                            <RotateTransform Angle="270" />
+                        </Button.RenderTransform>
+                        <Interaction.Behaviors>
+                            <behaviors:ToggleDrawerOnClickBehavior />
+                        </Interaction.Behaviors>
+                    </Button>
+
+                </StackPanel>
+
+            </Grid>
+
+        </Border>
+
+        <ContentControl Content="{Binding Selected}" />
+
+    </DockPanel>
+
+</UserControl>

@@ -10,11 +10,11 @@ using JetBrains.Annotations;
 namespace AutoSpex.Client.Pages;
 
 [UsedImplicitly]
-public partial class AppPageModel : PageViewModel
+public partial class AppPageModel : PageViewModel, IRecipient<AppPageModel.OpenDrawerRequest>
 {
     public Task<NavigationPageModel> Navigation => Navigator.Navigate<NavigationPageModel>();
     public Task<DetailsPageModel> Details => Navigator.Navigate<DetailsPageModel>();
-    public Task<RunnerPageModel> Drawer => Navigator.Navigate<RunnerPageModel>();
+    public Task<DrawerPageModel> Drawer => Navigator.Navigate<DrawerPageModel>();
 
     [ObservableProperty] private bool _isDrawerOpen;
 
@@ -30,14 +30,14 @@ public partial class AppPageModel : PageViewModel
         var command = Messenger.Send(new SaveAllRequest()).Response;
         await command.ExecuteAsync(null);
     }
-    
+
     [RelayCommand]
     private async Task SaveSelected()
     {
         var command = Messenger.Send(new SaveSelectedRequest()).Response;
         await command.ExecuteAsync(null);
     }
-    
+
     [RelayCommand]
     private async Task CloseAllTabs()
     {
@@ -51,11 +51,13 @@ public partial class AppPageModel : PageViewModel
 
     public class CloseAllTabsRequest : RequestMessage<IAsyncRelayCommand>;
 
-    /*/// <summary>
-    /// When a node is triggered to run from somewhere, open the runner drawer automatically to show the process.
+    public record OpenDrawerRequest;
+
+    /// <summary>
+    /// Handle the request to open the drawer view of the application.
     /// </summary>
-    public void Receive(RunnerObserver.Run message)
+    public void Receive(OpenDrawerRequest message)
     {
-        IsRunnerDrawerOpen = true;
-    }*/
+        IsDrawerOpen = true;
+    }
 }

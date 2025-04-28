@@ -6,7 +6,6 @@ using AutoSpex.Client.Observers;
 using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
 using AutoSpex.Persistence;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using JetBrains.Annotations;
@@ -14,18 +13,15 @@ using JetBrains.Annotations;
 namespace AutoSpex.Client.Pages;
 
 [UsedImplicitly]
-public partial class NodeTreePageModel() : PageViewModel("Specs"),
+public partial class NodeTreePageModel : PageViewModel,
     IRecipient<Observer.Created<NodeObserver>>,
     IRecipient<Observer.Deleted>,
     IRecipient<Observer.Renamed>,
     IRecipient<Observer.GetSelected>,
     IRecipient<Observer.Get<NodeObserver>>
 {
-    public override string Icon => "Specs";
     public ObserverCollection<Node, NodeObserver> Nodes { get; } = [];
     public ObservableCollection<NodeObserver> Selected { get; } = [];
-
-    [ObservableProperty] private bool _isExpanded;
 
     public override async Task Load()
     {
@@ -90,9 +86,6 @@ public partial class NodeTreePageModel() : PageViewModel("Specs"),
         {
             node.ExpandAll();
         }
-
-        //Indicate we have expanded all and toggles the state to the collapse button.
-        IsExpanded = true;
     }
 
     /// <summary>
@@ -105,9 +98,6 @@ public partial class NodeTreePageModel() : PageViewModel("Specs"),
         {
             node.CollapseAll();
         }
-
-        //Indicate we have collapsed all and toggles the state to the expand button.
-        IsExpanded = false;
     }
 
     /// <summary>
@@ -143,7 +133,7 @@ public partial class NodeTreePageModel() : PageViewModel("Specs"),
 
     /// <summary>
     /// When a selection request is sent we respond with all selected nodes in this page.
-    /// This page will hold all node instances in the app. However, we also check that the selected collectionc contains
+    /// This page will hold all node instances in the app. However, we also check that the selected collection contains
     /// the same instance that requested the selection, since there could be multiple collections in the UI that could
     /// respond to this message.
     /// </summary>
@@ -159,7 +149,7 @@ public partial class NodeTreePageModel() : PageViewModel("Specs"),
     }
 
     /// <summary>
-    /// Handles the request to get the first in memory node that passes the provided prediate condition.
+    /// Handles the request to get the first in memory node that passes the provided predicate condition.
     /// Since the node tree contains all nodes in the app, we only handle this message here and not from node itself,
     /// because there could be many instances of the "same" node alive in the app.
     /// </summary>

@@ -41,13 +41,13 @@ public partial class NodeObserver : Observer<Node>,
     public string Route => Model.Route;
     public string Path => Model.Path;
     public bool IsVirtual => Type != NodeType.Collection && ParentId == Guid.Empty;
-    
+
     public override string Name
     {
         get => Model.Name;
         set => SetProperty(Model.Name, value, Model, (s, v) => s.Name = v, true);
     }
-    
+
     public override string? Description
     {
         get => Model.Description;
@@ -175,13 +175,15 @@ public partial class NodeObserver : Observer<Node>,
     }
 
     /// <summary>
-    /// Command to run this node against the target source. The command must first ensure the node detail page is open.
-    /// Once open a message will be sent to trigger the remaining process.
+    /// Command to run this node against the targeted sources.
+    /// This will load the full node from the database and then navigate a runner page to initiate the run.
     /// </summary>
     [RelayCommand]
-    private void Run()
+    private async Task Run()
     {
-        throw new NotImplementedException();
+        var loaded = await Mediator.Send(new LoadNode(Id));
+        if (Notifier.ShowIfFailed(loaded)) return;
+        await Navigator.Navigate(() => new RunnerPageModel(loaded.Value));
     }
 
     /// <inheritdoc />
@@ -364,7 +366,9 @@ public partial class NodeObserver : Observer<Node>,
     protected override Task<Result> DeleteItems(IEnumerable<Observer> observers)
     {
         //If this node has not been saved to the database, just return ok to allow the node to be deleted virtually.
-        return IsVirtual ? Task.FromResult(Result.Ok()) :
+        return IsVirtual
+            ? Task.FromResult(Result.Ok())
+            :
             //Otherwise, send the request to update the database.
             Mediator.Send(new DeleteNodes(observers.Cast<NodeObserver>().Select(n => n.Model)));
     }
@@ -486,7 +490,7 @@ public partial class NodeObserver : Observer<Node>,
             Icon = Resource.Find("IconLineSearch"),
             Gesture = new KeyGesture(Key.H, KeyModifiers.Control)
         };
-        
+
         yield return new MenuActionItem
         {
             Header = "Duplicate",

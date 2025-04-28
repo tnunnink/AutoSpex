@@ -22,6 +22,7 @@ public class RunTests
         run.Result.Should().Be(ResultState.None);
         run.Duration.Should().Be(0);
         run.Results.Should().BeEmpty();
+        run.Logs.Should().BeEmpty();
     }
 
     [Test]
@@ -62,7 +63,6 @@ public class RunTests
         });
         var run = new Run(spec, source);
 
-        
         var result = await run.Execute();
 
         result.Result.Should().Be(ResultState.Passed);
@@ -104,7 +104,7 @@ public class RunTests
         result.Errored.Should().Be(0);
         result.RanOn.Should().BeWithin(TimeSpan.FromSeconds(1));
         result.RanBy.Should().NotBeEmpty();
-        
+
         run.Result.Should().Be(ResultState.Passed);
         run.Results.Should().BeEmpty();
         run.Runs.Should().HaveCount(1);
@@ -156,6 +156,23 @@ public class RunTests
         run.Runs.Should().HaveCount(3);
     }
 
+
+    [Test]
+    public async Task Logs_PostExecution_ShouldNotBeEmpty()
+    {
+        var source = Source.Create(Known.Test);
+        var node = Node.NewSpec("Test", s =>
+        {
+            s.Query(Element.Tag);
+            s.Where("TagName", Operation.EqualTo, "TestSimpleTag");
+            s.Verify("DataType", Operation.EqualTo, "SimpleType");
+        });
+        var run = new Run(node, source);
+        
+        await run.Execute();
+
+        run.Logs.Should().NotBeEmpty();
+    }
 
     [Test]
     public async Task DistinctResults_SingleState_ShouldHaveExpected()

@@ -3,7 +3,7 @@
 namespace AutoSpex.Engine;
 
 /// <summary>
-/// A type that defines a property selection and an optional alias name. This is to assist with builing complex dynamic
+/// A type that defines a property selection and an optional alias name. This is to help with building complex dynamic
 /// objects that are subsets of certain properties from complex element types.
 /// </summary>
 public class Selection()
@@ -15,9 +15,9 @@ public class Selection()
     /// Creates a new <see cref="Selection"/> with the specified property and optional alias.
     /// </summary>
     /// <param name="property">The property path that represents the selection.</param>
-    /// <param name="alias">The optional alias name to use as the key for this selection. If not provided it will be set
-    /// using the provided property name.</param>
-    public Selection(string property, string? alias = default) : this()
+    /// <param name="alias">The optional alias name to use as the key for this selection.
+    /// If not provided, it will be set using the provided property name.</param>
+    public Selection(string property, string? alias = null) : this()
     {
         Property = property;
         if (alias is not null) Alias = alias;

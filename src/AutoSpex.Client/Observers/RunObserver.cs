@@ -29,11 +29,12 @@ public partial class RunObserver : Observer<Run>, IRecipient<RunObserver.StateCh
 
     public override Guid Id => Model.RunId;
     public override string Name => Model.Node.Name;
-    public string SourceName => $"[{Model.Source.Name}]";
+    public string SourceName => $"({Model.Source.Name})";
     public ResultState Result => Model.Result;
     public string Duration => $"{Model.Duration} ms";
     public ObserverCollection<Verification, VerificationObserver> Results { get; }
     public ObserverCollection<Run, RunObserver> Runs { get; }
+    public string RunCount => $"({Runs.Count})";
     public int PassedCount => Results.Count(e => e.Result == ResultState.Passed);
     public int FailedCount => Results.Count(e => e.Result == ResultState.Failed);
     public int ErroredCount => Results.Count(e => e.Result == ResultState.Errored);
@@ -57,7 +58,22 @@ public partial class RunObserver : Observer<Run>, IRecipient<RunObserver.StateCh
     }
 
     /// <summary>
-    /// Sets the <see cref="FilterState"/> of this result object which will in turn filter the <see cref="Evaluations"/>
+    /// Filters the <see cref="Results"/> for this run instance using the provided filer text and configured
+    /// <see cref="FilterState"/>.
+    /// </summary>
+    /// <param name="filter">The filter text to apply.</param>
+    protected void FilterResults(string? filter)
+    {
+        Results.Filter(x =>
+        {
+            var hasState = FilterState == ResultState.None || x.Result == FilterState;
+            var hasText = x.Filter(filter);
+            return hasState && hasText;
+        });
+    }
+
+    /// <summary>
+    /// Sets the <see cref="FilterState"/> of this result object which will in turn filter the <see cref="Results"/>
     /// based on the provided state.
     /// </summary>
     [RelayCommand]
@@ -67,11 +83,39 @@ public partial class RunObserver : Observer<Run>, IRecipient<RunObserver.StateCh
     }
 
     /// <summary>
+    /// 
+    /// </summary>
+    [RelayCommand]
+    public void ExpandAll()
+    {
+        IsExpanded = true;
+
+        foreach (var run in Runs)
+        {
+            run.ExpandAll();
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    [RelayCommand]
+    public void CollapseAll()
+    {
+        IsExpanded = false;
+
+        foreach (var run in Runs)
+        {
+            run.CollapseAll();
+        }
+    }
+
+    /// <summary>
     /// When the underlying result state changes, trigger binding refresh.
     /// </summary>
     public void Receive(StateChange message)
     {
-        if (message.Run.Id != Model.RunId) return;
+        if (message.Run.RunId != Model.RunId) return;
         Results.Refresh();
         OnPropertyChanged(string.Empty);
     }
@@ -87,7 +131,7 @@ public partial class RunObserver : Observer<Run>, IRecipient<RunObserver.StateCh
     /// <summary>
     /// A message that is sent to notify the result observer to update or refresh the state of the result.
     /// </summary>
-    public record StateChange(RunObserver Run);
+    public record StateChange(Run Run);
 
     public static implicit operator Run(RunObserver observer) => observer.Model;
     public static implicit operator RunObserver(Run model) => new(model);

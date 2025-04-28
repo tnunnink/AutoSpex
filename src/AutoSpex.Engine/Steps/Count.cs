@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using Ardalis.SmartEnum.SystemTextJson;
+using Microsoft.Extensions.Logging;
 
 namespace AutoSpex.Engine;
 
@@ -34,7 +35,7 @@ public class Count : Step
     public List<Criterion> Criteria { get; private init; } = [];
     
     /// <inheritdoc />
-    public override IEnumerable<object?> Process(IEnumerable<object?> input)
+    public override IEnumerable<object?> Process(IEnumerable<object?> input, ILogger? logger = null)
     {
         if (Criteria.Count == 0) return [input.Count()];
         

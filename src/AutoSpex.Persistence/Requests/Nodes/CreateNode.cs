@@ -38,7 +38,7 @@ internal class CreateNodeHandler(IConnectionManager manager) : IRequestHandler<C
         using var transaction = connection.BeginTransaction();
 
         /*if (request.Node.Type != NodeType.Collection && request.Node.ParentId == Guid.Empty)
-            return Result.Fail("Can not save virutal node. Select a collection to which this node belongs");*/
+            return Result.Fail("Can not save virtual node. Select a collection to which this node belongs");*/
 
         var exists = await connection.QuerySingleAsync<int>(NodeExists, new { request.Node.NodeId }, transaction);
         if (exists != 0)

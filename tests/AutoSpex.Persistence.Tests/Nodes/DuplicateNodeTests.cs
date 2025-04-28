@@ -74,7 +74,7 @@ public class DuplicateNodeTests
 
         var config = result.Value.Spec;
         config.SpecId.Should().NotBe(expected.Spec.SpecId);
-        config.Should().BeEquivalentTo(expected.Spec);
+        config.Should().BeEquivalentTo(expected.Spec, e => e.Excluding(s => s.SpecId));
     }
 
     [Test]

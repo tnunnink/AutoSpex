@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using Ardalis.SmartEnum.SystemTextJson;
+using Microsoft.Extensions.Logging;
 
 namespace AutoSpex.Engine;
 
@@ -46,7 +47,7 @@ public class Filter : Step
     public List<Criterion> Criteria { get; private init; } = [];
 
     /// <inheritdoc />
-    public override IEnumerable<object?> Process(IEnumerable<object?> input)
+    public override IEnumerable<object?> Process(IEnumerable<object?> input, ILogger? logger = null)
     {
         var filtered = new List<object?>();
 
@@ -55,6 +56,8 @@ public class Filter : Step
             var evaluations = Criteria.Select(c => c.Evaluate(item));
             var passed = Match == Match.All ? evaluations.All(x => x) : evaluations.Any(x => x);
             if (!passed) continue;
+            
+            logger?.LogInformation("Subject {Item} passed configured filters.", item.ToText());
             filtered.Add(item);
         }
 

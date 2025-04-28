@@ -158,6 +158,7 @@ public partial class SpecObserver : Observer<Spec>,
         {
             Filter filter => new FilterObserver(filter),
             Select select => new SelectObserver(select),
+            Verify verify => new VerifyObserver(verify),
             _ => throw new ArgumentOutOfRangeException(nameof(step))
         };
     }

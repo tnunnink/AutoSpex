@@ -16,8 +16,7 @@ public class VerificationTests
     [Test]
     public void New_WithEvaluations_ShouldBeExpected()
     {
-        var candidate = new Tag("Test", 123);
-        var evaluation = Evaluation.Passed(new Criterion("Value", Operation.EqualTo, 123), candidate, 123);
+        var evaluation = Evaluation.Passed("Value Is Equal To", "123", 123);
         
         var verification = new Verification(new Tag("Test", 123), [evaluation]);
 

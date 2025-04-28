@@ -1,0 +1,38 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:shared="clr-namespace:AutoSpex.Client.Shared">
+    
+    
+    
+    <DataTemplate x:Key="DetailTab" x:DataType="shared:DetailPageModel">
+        <Grid>
+            <StackPanel Orientation="Horizontal" Spacing="7" HorizontalAlignment="Center" ClipToBounds="True">
+                <StackPanel.Styles>
+                    <Style Selector="TextBlock.changed">
+                        <Setter Property="Foreground"
+                                Value="{a:ThemeResource ControlForegroundBrushSoftWarning}" />
+                    </Style>
+                </StackPanel.Styles>
+                <PathIcon
+                    Theme="{Binding Icon,Converter={StaticResource KeyIconConverter}}" />
+                <TextBlock
+                    ClipToBounds="True"
+                    Text="{Binding Title}"
+                    Classes="centered"
+                    Classes.changed="{Binding IsChanged}"
+                    TextTrimming="CharacterEllipsis" />
+                <Border Height="20" Width="20" Background="Transparent">
+                    <Button
+                        Theme="{a:ControlTheme ButtonSubtle}"
+                        Command="{Binding CloseCommand}" HotKey="Ctrl+W"
+                        IsVisible="{Binding $parent[TabStripItem].IsPointerOver}"
+                        Background="{Binding $parent[TabStripItem].Background}"
+                        CornerRadius="5" Height="20" Width="20" Padding="0" Margin="0 1 0 0">
+                        <PathIcon Theme="{StaticResource IconClose}" Classes="size-xs" />
+                    </Button>
+                </Border>
+            </StackPanel>
+        </Grid>
+    </DataTemplate>
+</ResourceDictionary>

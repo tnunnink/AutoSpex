@@ -1,38 +1,35 @@
 ﻿namespace AutoSpex.Persistence.Tests.Nodes;
 
 [TestFixture]
-public class LoadNodesTests
+public class LoadNodeTests
 {
     [Test]
-    public async Task LoadSpecs_NoSpecExists_ShouldBePassedAndEmpty()
+    public async Task LoadSpecs_NoSpecExists_ShouldBeFailedResult()
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
 
-        var result = await mediator.Send(new LoadNodes([Guid.NewGuid()]));
-        
-        result.Should().BeEmpty();
+        var result = await mediator.Send(new LoadNode(Guid.NewGuid()));
+
+        result.IsFailed.Should().BeTrue();
     }
 
     [Test]
-    public async Task LoadSpecs_SeededSpecsNoVariables_ShouldBeSuccessAndExpected()
+    public async Task LoadSpecs_SeededSpecNoConfig_ShouldBeSuccessAndExpected()
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
-        var spec01 = Node.NewSpec();
-        var spec02 = Node.NewSpec();
-        var spec03 = Node.NewSpec();
-        await mediator.Send(new CreateNode(spec01));
-        await mediator.Send(new CreateNode(spec02));
-        await mediator.Send(new CreateNode(spec03));
+        var node = Node.NewSpec();
+        await mediator.Send(new CreateNode(node));
 
-        var result = await mediator.Send(new LoadNodes([spec01.NodeId, spec02.NodeId, spec03.NodeId]));
-        
-        result.Should().HaveCount(3);
+        var result = await mediator.Send(new LoadNode(node.NodeId));
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().BeEquivalentTo(node);
     }
 
     [Test]
-    public async Task LoadNodes_TreeWithSeveralSpecs_ShouldBeSuccessAndExpectedCountAndHaveParents()
+    public async Task LoadNodes_TreeWithSeveralSpecs_ShouldBeSuccessAndExpectedCount()
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
@@ -47,14 +44,15 @@ public class LoadNodesTests
         await mediator.Send(new CreateNode(spec02));
         await mediator.Send(new CreateNode(spec03));
 
-        var result = (await mediator.Send(new LoadNodes([spec01.NodeId, spec02.NodeId, spec03.NodeId]))).ToList();
-        
-        result.Should().HaveCount(3);
-        result.Should().AllSatisfy(node => node.Ancestors().Should().HaveCount(2));
+        var result = await mediator.Send(new LoadNode(collection.NodeId));
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().BeEquivalentTo(collection);
+        result.Value.Descendants().Should().HaveCount(4);
     }
 
     [Test]
-    public async Task LoadNodes_NodeWithSpecsConfiged_ShouldBeSuccessAndExpected()
+    public async Task LoadNodes_NodeWithSpecsConfigured_ShouldBeSuccessAndExpected()
     {
         using var context = new TestContext();
         var mediator = context.Resolve<IMediator>();
@@ -67,9 +65,10 @@ public class LoadNodesTests
         });
         await mediator.Send(new CreateNode(node));
 
-        var result = (await mediator.Send(new LoadNodes([node.NodeId]))).ToList();
-        
-        result.Should().HaveCount(1);
-        result.First().Spec.Should().BeEquivalentTo(node.Spec);
+        var result = await mediator.Send(new LoadNode(node.NodeId));
+
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Spec.Should().NotBeNull();
+        result.Value.Spec.Should().BeEquivalentTo(node.Spec);
     }
 }

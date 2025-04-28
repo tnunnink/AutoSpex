@@ -16,8 +16,8 @@
       <PackageReference Include="FluentResults" Version="3.16.0" />
       <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" />
       <PackageReference Include="MediatR" Version="12.5.0" />
-      <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.3" />
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.3" />
+      <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.4" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.4" />
       <PackageReference Include="NLog" Version="5.4.0" />
       <PackageReference Include="NLog.Extensions.Logging" Version="5.4.0" />
       <PackageReference Include="System.Data.SQLite" Version="1.0.119" />

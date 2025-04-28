@@ -238,22 +238,15 @@ public static class TestData
     #region Evaluations
 
     public static EvaluationObserver PassedEvaluation = new(
-        Evaluation.Passed(
-            new Criterion("DataType", Operation.EqualTo, "DINT"),
-            new Tag("TestTag", new DINT()),
-            "DINT")
+        Evaluation.Passed("DataType Is Equal To", "DINT", "DINT")
     );
 
     public static EvaluationObserver FailedEvaluation = new(
-        Evaluation.Failed(new Criterion("DataType", Operation.Containing, "Pump"),
-            new Tag("TestTag", new DINT()),
-            "DINT")
+        Evaluation.Failed("DataType Is Containing", "Pump", "DINT")
     );
 
     public static EvaluationObserver ErroredEvaluation = new(
-        Evaluation.Errored(
-            new Criterion("DataType", Operation.EqualTo, "DINT"),
-            new Tag("TestTag", new DINT()),
+        Evaluation.Errored("DataType Is Equal To", "DINT",
             new ArgumentException("Could not execute code due to this throw exception"))
     );
 
@@ -268,6 +261,7 @@ public static class TestData
     public static VerificationObserver PassedVerification = new(new Verification("Test", [PassedEvaluation]));
     public static VerificationObserver FailedVerification = new(new Verification("Test", [FailedEvaluation]));
     public static VerificationObserver ErroredVerification = new(new Verification("Test", [ErroredEvaluation]));
+
     public static ObservableCollection<VerificationObserver> Results =
     [
         DefaultVerification,
@@ -275,6 +269,14 @@ public static class TestData
         FailedVerification,
         ErroredVerification
     ];
+
+    #endregion
+
+    #region Runs
+
+    public static RunObserver RunTest => new(new Run(Node.NewCollection(), Source.Create(TestSource)));
+
+    public static ObservableCollection<RunObserver> Runs = [RunTest, RunTest, RunTest];
 
     #endregion
 }

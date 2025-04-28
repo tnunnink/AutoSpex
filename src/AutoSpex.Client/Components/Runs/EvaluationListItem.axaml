@@ -47,11 +47,10 @@
 
                         <controls:HighlightableTextBlock.Inlines>
                             <Run Text="Expected" />
-                            <Run Text="{Binding Target}" />
-                            <Run Text="to have" />
                             <Run Text="{Binding Criteria}" />
+                            <Run Text="{Binding Expected}" />
                             <Run Text="and found" />
-                            <Run Text="{Binding Actual}" />
+                            <Run Text="{Binding Returned}" />
                         </controls:HighlightableTextBlock.Inlines>
 
                     </controls:HighlightableTextBlock>
@@ -61,11 +60,10 @@
 
                         <controls:HighlightableTextBlock.Inlines>
                             <Run Text="Expected" Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
-                            <Run Text="{Binding Target}" />
-                            <Run Text="to have" />
                             <Run Text="{Binding Criteria}" />
+                            <Run Text="{Binding Expected}" />
                             <Run Text="but found" />
-                            <Run Text="{Binding Actual}" />
+                            <Run Text="{Binding Returned}" />
                         </controls:HighlightableTextBlock.Inlines>
 
                     </controls:HighlightableTextBlock>
@@ -79,11 +77,10 @@
                         <controls:HighlightableTextBlock.Inlines>
                             <Run Text="Expected"
                                  Foreground="{a:ThemeResource DefaultForegroundBrushDisabled}" />
-                            <Run Text="{Binding Target}" />
-                            <Run Text="to have" />
                             <Run Text="{Binding Criteria}" />
+                            <Run Text="{Binding Expected}" />
                             <Run Text="but got error" />
-                            <Run Text="{Binding Error}"
+                            <Run Text="{Binding Returned}"
                                  Foreground="{a:ThemeResource ControlForegroundBrushOutlineWarning}" />
                         </controls:HighlightableTextBlock.Inlines>
 

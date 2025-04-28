@@ -17,7 +17,7 @@ public class LoggingBehavior<TRequest, TResponse>(ILogger<LoggingBehavior<TReque
 
         try
         {
-            var response = await next();
+            var response = await next(cancellationToken);
             logger.LogInformation("Completed request: {RequestName} at {DateTime}", requestName, DateTime.UtcNow);
             return response;
         }

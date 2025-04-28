@@ -215,6 +215,7 @@ public partial class DetailsPageModel : PageViewModel,
     public void Receive(NavigationRequest message)
     {
         if (message.Page is not DetailPageModel detail) return;
+        if (!IsExpectedPage(detail)) return;
 
         if (message.Action == NavigationAction.Close)
         {
@@ -276,6 +277,11 @@ public partial class DetailsPageModel : PageViewModel,
         Pages.Add(page);
         Selected = page;
     }
+
+    /// <summary>
+    /// Indicates the page is one that this page should contain open/close as tabs in the tab strip.
+    /// </summary>
+    private static bool IsExpectedPage(DetailPageModel page) => page is NodeDetailPageModel;
 
     #endregion
 }

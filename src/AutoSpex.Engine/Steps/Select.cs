@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Dynamic;
 using System.Text.Json.Serialization;
+using Microsoft.Extensions.Logging;
 
 namespace AutoSpex.Engine;
 
@@ -33,7 +34,7 @@ public class Select() : Step
     public List<Selection> Selections { get; private init; } = [];
 
     /// <inheritdoc />
-    public override IEnumerable<object?> Process(IEnumerable<object?> input)
+    public override IEnumerable<object?> Process(IEnumerable<object?> input, ILogger? logger = null)
     {
         var results = new List<object?>();
 
@@ -53,7 +54,7 @@ public class Select() : Step
             }
         }
 
-        return results; 
+        return results;
     }
 
     /// <inheritdoc />
@@ -72,8 +73,8 @@ public class Select() : Step
     }
 
     /// <summary>
-    /// Handles selecting single inner property. If this is a collection will return each item in collection.
-    /// Otherwise, returns the strongly-typed object.
+    /// Handles selecting a single inner property. If this is a collection will return each item in a collection.
+    /// Otherwise, returns the strongly typed object.
     /// </summary>
     private IEnumerable<object?> SelectSingle(object? item)
     {
@@ -96,8 +97,7 @@ public class Select() : Step
     private ExpandoObject SelectMany(object? item)
     {
         var origin = Property.This(item);
-
-        var bag = (IDictionary<string, object?>)new ExpandoObject();
+        IDictionary<string, object?> bag = new ExpandoObject();
 
         foreach (var selection in Selections)
         {

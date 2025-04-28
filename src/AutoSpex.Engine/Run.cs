@@ -1,15 +1,15 @@
 ﻿using System.Diagnostics;
+using Microsoft.Extensions.Logging;
 using L5Sharp.Core;
-using NLog;
 using Task = System.Threading.Tasks.Task;
 
 namespace AutoSpex.Engine;
 
-public class Run(Node node, Source source)
+public class Run(Node node, Source source, ILogger? logger = null)
 {
-    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
     private static readonly SourceCache Cache = SourceCache.Local;
     private readonly Node _node = node ?? throw new ArgumentNullException(nameof(node));
+    private readonly ILogger _logger = logger ?? new RunLogger();
 
     public Guid RunId { get; } = Guid.NewGuid();
     public NodeInfo Node { get; } = node;
@@ -18,6 +18,7 @@ public class Run(Node node, Source source)
     public long Duration { get; private set; }
     public IReadOnlyCollection<Verification> Results { get; private set; } = [];
     public IReadOnlyCollection<Run> Runs { get; } = node.Nodes.Select(n => new Run(n, source)).ToArray();
+    public IEnumerable<RunLog> Logs => _logger is RunLogger logger ? logger.Logs : [];
 
     /// <summary>
     /// Executes the current run, loading the source, processing the node execution, and updating results.
@@ -27,38 +28,42 @@ public class Run(Node node, Source source)
     /// <returns>A task representing the asynchronous execution of the run operation.</returns>
     public async Task<RunResult> Execute(Action<Run>? callback = null, CancellationToken token = default)
     {
-        Logger.Info("Starting run for {Node} against {Source}.", Node.Name, Source.Location);
+        _logger.LogInformation("Starting run for {Node} against {Source}.", Node.Name, Source.Location);
+
         MarkPending(callback);
         var stopwatch = Stopwatch.StartNew();
 
         try
         {
             //Get or cache the specified source file. Load the L5X content from the cache.
-            Logger.Info("Loading source '{Source}'.", Source.Location);
+            _logger.LogInformation("Loading source '{Source}'.", Source.Location);
             var cached = await Cache.GetOrAdd(Source, token);
             var target = await cached.OpenAsync(token);
-            Logger.Info("Source '{Source}' successfully loaded and cached.", Source.Location);
+            _logger.LogInformation("Source '{Source}' successfully loaded and cached.", Source.Location);
 
             //Run this and all descendant nodes (if any) against the loaded content.
-            Logger.Info("Running node '{@Node}'.", Node.Name);
+            _logger.LogInformation("Running node '{@Node}'.", Node.Name);
             await RunNodeAsync(target, callback, token);
 
             stopwatch.Stop();
 
-            Logger.Info(
+            _logger.LogInformation(
                 "{@Node} finished run against {@Source} in {stopwatch.Elapsed} with result: {State}.",
                 Node.Name, Source.Name, Duration, Result
             );
 
             return ProduceRunResult(this, target, stopwatch.ElapsedMilliseconds);
         }
+        catch (OperationCanceledException ex)
+        {
+            throw new NotImplementedException();
+        }
         catch (Exception ex)
         {
             stopwatch.Stop();
 
-            Logger.Error(ex,
-                "An error occurred while processing '{@Source}' against '{@Node}'.",
-                Source.Name, Node.Name
+            _logger.LogError(ex,
+                "An error occurred while processing '{@Source}' against '{@Node}'.", Source.Name, Node.Name
             );
 
             Result = ResultState.Errored;
@@ -116,7 +121,7 @@ public class Run(Node node, Source source)
         if (_node.Type == NodeType.Spec)
         {
             var stopwatch = Stopwatch.StartNew();
-            var verifications = await _node.Spec.RunAsync(content, token);
+            var verifications = await _node.Spec.RunAsync(content, _logger, token);
             stopwatch.Stop();
 
             MarkComplete(verifications.ToArray(), stopwatch.ElapsedMilliseconds, callback);

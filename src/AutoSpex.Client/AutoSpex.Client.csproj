@@ -38,8 +38,12 @@
         <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" />
         <PackageReference Include="Lamar" Version="14.0.1" />
         <PackageReference Include="MediatR" Version="12.5.0" />
+        <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.4" />
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.3" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.3" />
+        <PackageReference Include="NLog" Version="5.4.0" />
+        <PackageReference Include="NLog.Database" Version="5.4.0" />
+        <PackageReference Include="RockwellAutomation.LogixDesigner.CSClient" Version="2.1.974" />
         <PackageReference Include="Velopack" Version="0.0.1053" />
     </ItemGroup>
 
@@ -276,10 +280,6 @@
           <DependentUpon>SearchPage.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
-        <Compile Update="Pages\Runs\ResultPage.axaml.cs">
-          <DependentUpon>ResultPage.axaml</DependentUpon>
-          <SubType>Code</SubType>
-        </Compile>
         <Compile Update="Pages\General\DetailTabListPage.axaml.cs">
           <DependentUpon>DetailTabListPage.axaml</DependentUpon>
           <SubType>Code</SubType>
@@ -292,6 +292,14 @@
           <DependentUpon>RepoSelectorPage.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Update="Pages\Runs\RunnerPage.axaml.cs">
+          <DependentUpon>RunnerPage.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Pages\DrawerPage.axaml.cs">
+          <DependentUpon>DrawerPage.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
     </ItemGroup>
 
     <ItemGroup>
@@ -299,6 +307,9 @@
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Remove="AutoSpex.Client.csproj.DotSettings" />
+        <None Update="NLog.config">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
     <ItemGroup>
@@ -378,9 +389,5 @@
       <Content Include="..\..\README.md">
         <Link>README.md</Link>
       </Content>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Pages\Sources\" />
     </ItemGroup>
 </Project>

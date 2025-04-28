@@ -26,8 +26,6 @@ public partial class SpecsPageModel(NodeObserver node) : PageViewModel("Specs"),
 
     [ObservableProperty] private bool _showDrawer;
 
-    [ObservableProperty] private RunDetailPageModel? _resultDrawer;
-
     /// <inheritdoc />
     public override async Task Load()
     {

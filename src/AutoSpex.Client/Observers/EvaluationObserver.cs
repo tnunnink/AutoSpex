@@ -19,12 +19,9 @@ public class EvaluationObserver : Observer<Evaluation>
     }
 
     public ResultState Result => Model.Result;
-    public string? Target => Model.Target;
     public string? Criteria => Model.Criteria;
     public string? Expected => Model.Expected;
-    public string? Actual => Model.Actual;
-    public string? Error => Model.Error;
-
+    public string? Returned => Model.Returned;
 
     /// <inheritdoc />
     public override bool Filter(string? filter)
