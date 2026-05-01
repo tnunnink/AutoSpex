@@ -6,6 +6,8 @@
         <ResourceInclude Source="ResultFilters.axaml" />
         <ResourceInclude Source="ResultPill.axaml" />
         <ResourceInclude Source="ResultStateItem.axaml" />
+        <ResourceInclude Source="RunFilter.axaml" />
+        <ResourceInclude Source="RunResults.axaml" />
         <ResourceInclude Source="RunStatus.axaml" />
         <ResourceInclude Source="RunTreeItem.axaml" />
     </ResourceDictionary.MergedDictionaries>

@@ -37,20 +37,33 @@
 
                 <Panel Width="20" Height="20">
 
-                    <PathIcon
-                        Theme="{Binding Icon, Converter={StaticResource KeyIconConverter}}"
-                        IsVisible="{Binding !$parent[ListBoxItem].IsPointerOver}" />
+                    <PathIcon Theme="{StaticResource IconThemedRun}">
+                        <PathIcon.IsVisible>
+                            <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                <Binding Path="!$parent[ListBoxItem].IsPointerOver" />
+                                <Binding Path="IsTargeted" />
+                            </MultiBinding>
+                        </PathIcon.IsVisible>
+                    </PathIcon>
+
+                    <PathIcon Theme="{StaticResource IconLineXml}">
+                        <PathIcon.IsVisible>
+                            <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                <Binding Path="!$parent[ListBoxItem].IsPointerOver" />
+                                <Binding Path="!IsTargeted" />
+                            </MultiBinding>
+                        </PathIcon.IsVisible>
+                    </PathIcon>
 
                     <Button
                         Command="{Binding ToggleTargetCommand}"
                         Theme="{StaticResource IconButtonSmall}"
-                        properties:Icon.Theme="{StaticResource IconFilledLightning}"
-                        Classes="accent"
-                        ToolTip.Tip="Target">
+                        properties:Icon.Theme="{StaticResource IconAdd}"
+                        ToolTip.Tip="Add Target">
                         <Button.IsVisible>
                             <MultiBinding Converter="{x:Static BoolConverters.And}">
                                 <Binding Path="$parent[ListBoxItem].IsPointerOver" />
-                                <Binding Path="!IsChecked" />
+                                <Binding Path="!IsTargeted" />
                             </MultiBinding>
                         </Button.IsVisible>
                     </Button>
@@ -58,13 +71,12 @@
                     <Button
                         Command="{Binding ToggleTargetCommand}"
                         Theme="{StaticResource IconButtonSmall}"
-                        properties:Icon.Theme="{StaticResource IconFilledDash}"
-                        Classes="danger"
-                        ToolTip.Tip="Remove">
+                        properties:Icon.Theme="{StaticResource IconLineMinus}"
+                        ToolTip.Tip="Remove Target">
                         <Button.IsVisible>
                             <MultiBinding Converter="{x:Static BoolConverters.And}">
                                 <Binding Path="$parent[ListBoxItem].IsPointerOver" />
-                                <Binding Path="IsChecked" />
+                                <Binding Path="IsTargeted" />
                             </MultiBinding>
                         </Button.IsVisible>
                     </Button>

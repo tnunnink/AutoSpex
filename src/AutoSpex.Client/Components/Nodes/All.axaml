@@ -4,7 +4,6 @@
         <ResourceInclude Source="Breadcrumb.axaml" />
         <ResourceInclude Source="NodeDisplay.axaml" />
         <ResourceInclude Source="NodeHeader.axaml" />
-        <ResourceInclude Source="NodeInfoButton.axaml" />
         <ResourceInclude Source="NodeListItem.axaml" />
         <ResourceInclude Source="NodeSimpleItem.axaml" />
         <ResourceInclude Source="NodeSelectionItem.axaml" />

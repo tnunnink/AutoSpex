@@ -20,6 +20,6 @@ public partial class SettingsGeneralPageModel() : PageViewModel("General")
     {
         Settings
             .SaveValue(SettingKey.AlwaysDiscardChanges, value)
-            .FireAndForget(e => Notifier.ShowError("Failed to save settings", $"{e.Message}"));
+            .Forget(e => Notifier.ShowError("Failed to save settings", $"{e.Message}"));
     }
 }

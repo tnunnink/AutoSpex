@@ -210,8 +210,8 @@
     </Style>
 
     <Style Selector="Ellipse.separator">
-        <Setter Property="Height" Value="5" />
-        <Setter Property="Width" Value="5" />
+        <Setter Property="Height" Value="4" />
+        <Setter Property="Width" Value="4" />
         <Setter Property="Fill" Value="{a:ThemeResource Container5BackgroundBrush}" />
         <Setter Property="Margin" Value="0 1 0 0" />
     </Style>

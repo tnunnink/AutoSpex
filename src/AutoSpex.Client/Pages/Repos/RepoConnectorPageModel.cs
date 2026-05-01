@@ -14,7 +14,7 @@ public partial class RepoConnectorPageModel : PageViewModel, IRecipient<RepoObse
     public Task<RepoListPageModel> RepoList => Navigator.Navigate<RepoListPageModel>();
 
     /// <summary>
-    /// When a repo is connected update the local instance to reflect the change in the UI.
+    /// When a repo is connected, update the local instance to reflect the change in the UI.
     /// </summary>
     public void Receive(RepoObserver.SetConnected message)
     {

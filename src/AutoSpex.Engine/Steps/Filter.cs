@@ -51,15 +51,18 @@ public class Filter : Step
     {
         var filtered = new List<object?>();
 
+        logger?.LogDebug("Starting filter step processing...");
+
         foreach (var item in input)
         {
             var evaluations = Criteria.Select(c => c.Evaluate(item));
             var passed = Match == Match.All ? evaluations.All(x => x) : evaluations.Any(x => x);
             if (!passed) continue;
-            
-            logger?.LogInformation("Subject {Item} passed configured filters.", item.ToText());
+            logger?.LogDebug("Subject {Item} passed configured filters.", item.ToText());
             filtered.Add(item);
         }
+
+        logger?.LogDebug("Filter step processing completed with {Count} objects passing criteria.", filtered.Count);
 
         return filtered;
     }

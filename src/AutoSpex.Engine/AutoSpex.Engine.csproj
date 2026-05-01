@@ -11,7 +11,7 @@
       <PackageReference Include="Ardalis.SmartEnum" Version="8.2.0" />
       <PackageReference Include="Ardalis.SmartEnum.SystemTextJson" Version="8.1.0" />
       <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" />
-      <PackageReference Include="L5Sharp" Version="4.8.3" />
+      <PackageReference Include="L5Sharp" Version="5.1.0" />
       <PackageReference Include="L5Sharp.Logix" Version="1.0.0" />
       <PackageReference Include="RockwellAutomation.LogixDesigner.CSClient" Version="2.1.974" />
     </ItemGroup>

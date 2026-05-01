@@ -19,6 +19,7 @@ public class EvaluationObserver : Observer<Evaluation>
     }
 
     public ResultState Result => Model.Result;
+    public string? Candidate { get; set; }
     public string? Criteria => Model.Criteria;
     public string? Expected => Model.Expected;
     public string? Returned => Model.Returned;

@@ -1,0 +1,70 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+             xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             x:Class="AutoSpex.Client.Pages.CollectionDetailPage"
+             x:DataType="pages:CollectionDetailPageModel">
+
+    <Design.Height>200</Design.Height>
+    <Design.Width>600</Design.Width>
+
+    <controls:Section
+        Header="{Binding Node.Name}"
+        VerticalAlignment="Top">
+
+        <!--<controls:Section.Action>
+            <StackPanel Orientation="Horizontal" Spacing="7">
+                <PathIcon Theme="{StaticResource IconLineClock}"
+                          FontSize="14" />
+                <TextBlock
+                    Text="Created on "
+                    Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+            </StackPanel>
+        </controls:Section.Action>-->
+
+        <Grid ColumnDefinitions="*,60,Auto">
+
+            <TextBox
+                Text="{Binding Node.Description}"
+                Theme="{StaticResource TextBoxSubtle}"
+                Watermark="Enter a description to explain the purpose of this collection."
+                VerticalContentAlignment="Top"
+                TextWrapping="Wrap">
+                <Interaction.Behaviors>
+                    <behaviors:SelectAllTextOnGotFocusBehavior />
+                </Interaction.Behaviors>
+            </TextBox>
+
+            <StackPanel Grid.Column="2" Spacing="10" Margin="5">
+                <StackPanel Orientation="Horizontal" Spacing="7">
+                    <PathIcon Theme="{StaticResource IconLineClock}"
+                              FontSize="14" />
+                    <TextBlock
+                        Text="Created on "
+                        Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Spacing="7">
+                    <PathIcon Theme="{StaticResource IconLineUser}"
+                              FontSize="14" />
+                    <TextBlock
+                        Text="Created by "
+                        Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Spacing="7">
+                    <PathIcon Theme="{StaticResource IconLineListCheck}"
+                              FontSize="14" />
+                    <TextBlock
+                        Text="Total specs "
+                        Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                </StackPanel>
+            </StackPanel>
+
+        </Grid>
+
+    </controls:Section>
+
+</UserControl>

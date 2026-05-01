@@ -16,12 +16,19 @@ public class SourceTests
         source.Type.Should().Be(SourceType.Markup);
         source.UpdatedOn.Should().BeWithin(TimeSpan.FromDays(1000));
         source.Size.Should().BeGreaterThan(0);
+        source.Exists.Should().BeTrue();
     }
 
     [Test]
-    public void New_FakeSourcePath_ShouldThrowException()
+    public void New_FakeSourcePath_ShouldBeExpected()
     {
-        FluentActions.Invoking(() => Source.Create(Known.Fake)).Should().Throw<ArgumentException>();
+        var source = Source.Create(Known.Fake);
+        
+        source.Location.Should().NotBeEmpty();
+        source.Name.Should().Be("Fake");
+        source.Type.Should().Be(SourceType.Markup);
+        source.Size.Should().Be(0);
+        source.Exists.Should().BeFalse();
     }
 
     [Test]

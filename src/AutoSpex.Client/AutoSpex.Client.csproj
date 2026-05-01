@@ -260,12 +260,8 @@
           <DependentUpon>NodeTreePage.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
-        <Compile Update="Pages\Nodes\SpecPage.axaml.cs">
+        <Compile Update="Pages\Nodes\SpecDetailPage.axaml.cs">
           <DependentUpon>SpecPage.axaml</DependentUpon>
-          <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="Pages\Nodes\SpecsPage.axaml.cs">
-          <DependentUpon>SpecsPage.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
         <Compile Update="Pages\Nodes\OpenPackagePage.axaml.cs">

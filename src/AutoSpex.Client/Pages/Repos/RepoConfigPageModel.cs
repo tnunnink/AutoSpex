@@ -16,19 +16,12 @@ public partial class RepoConfigPageModel : PageViewModel, IRecipient<RepoObserve
 
     public override async Task Load()
     {
-        var result = await Mediator.Send(new GetLastConnectedRepo());
+        var result = await Mediator.Send(new GetLastConnected());
         if (result.IsFailed) return;
 
-        //Since this page handles the SetConnected we will receive this instance back to update the UI.
+        //Since this page handles the SetConnected, we will receive this instance back to update the UI.
         var repo = new RepoObserver(result.Value);
         await repo.Connect();
-    }
-
-    /// <inheritdoc />
-    protected override void FilterChanged(string? filter)
-    {
-        Repo?.Sources.Filter(filter);
-        Repo?.Refresh();
     }
 
     /// <summary>
@@ -46,7 +39,7 @@ public partial class RepoConfigPageModel : PageViewModel, IRecipient<RepoObserve
     }
 
     /// <summary>
-    /// Reset when the connect repo is changed.
+    /// Reset when the connected repo is changed.
     /// </summary>
     public void Receive(RepoObserver.SetConnected message)
     {
@@ -54,7 +47,7 @@ public partial class RepoConfigPageModel : PageViewModel, IRecipient<RepoObserve
         Repo = null;
         Repo = message.Repo;
 
-        //Since we are not awaiting the response in this "event" then we need to fire and forget.
-        Repo?.Sync().FireAndForget(e => { Notifier.ShowError("Syncing failed", e.Message); });
+        //Since we are not awaiting the response in this "event," then we need to fire and forget.
+        Repo?.Sync().Forget(e => { Notifier.ShowError("Syncing failed", e.Message); });
     }
 }

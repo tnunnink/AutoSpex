@@ -228,7 +228,7 @@ public static class Extensions
     /// </summary>
     /// <param name="task">The task to be executed.</param>
     /// <param name="errorHandler">An optional action to handle exceptions thrown by the task.</param>
-    public static void FireAndForget(this Task task, Action<Exception>? errorHandler = null)
+    public static void Forget(this Task task, Action<Exception>? errorHandler = null)
     {
         task.ContinueWith(t =>
         {

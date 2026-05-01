@@ -30,7 +30,7 @@ public sealed class App : Application, IDisposable, IAsyncDisposable
 
         if (change.Property != RequestedThemeVariantProperty) return;
         var theme = (ThemeVariant)change.NewValue!;
-        _settings.SaveValue(SettingKey.Theme, theme.ToString()).FireAndForget();
+        _settings.SaveValue(SettingKey.Theme, theme.ToString()).Forget();
     }
 
     public override void Initialize()
@@ -40,7 +40,7 @@ public sealed class App : Application, IDisposable, IAsyncDisposable
 
         _settings.GetTheme()
             .ContinueWith(t => Dispatcher.UIThread.Invoke(() => RequestedThemeVariant = t.Result))
-            .FireAndForget(e => { Console.WriteLine(e.Message); });
+            .Forget(e => { Console.WriteLine(e.Message); });
     }
 
     public override void OnFrameworkInitializationCompleted()

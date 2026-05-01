@@ -46,9 +46,10 @@
                                 <Button.Flyout>
                                     <Flyout Placement="BottomEdgeAlignedLeft" VerticalOffset="5">
                                         <ListBox
+                                            ItemsSource="{Binding States}"
+                                            SelectedItem="{Binding FilterState}"
                                             ItemTemplate="{StaticResource ResultStateItem}"
                                             ItemContainerTheme="{StaticResource ListBoxItemSelection}"
-                                            SelectedItem="{Binding FilterState}"
                                             Padding="5">
                                             <Interaction.Behaviors>
                                                 <behaviors:HideFlyoutPointerReleasedBehavior />
@@ -125,7 +126,9 @@
             DrawerMinLength="0"
             DrawerOpenLength="200">
 
-            <ListBox ItemsSource="{Binding Logs}" Padding="20"/>
+            <ContentControl
+                Content="{Binding SelectedRun}"
+                ContentTemplate="{StaticResource RunResults}" />
 
         </controls:DrawerView>
 

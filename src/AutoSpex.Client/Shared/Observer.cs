@@ -48,8 +48,8 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
 
     /// <summary>
     /// The description of the observer.
-    /// This can be implemented as needed. only some observers will contain a description, but we want it here to use
-    /// in a generic way with the info page.
+    /// This can be implemented as needed. Only some observers will contain a description, but we want it here to use it
+    /// generically with the info page.
     /// </summary>
     public virtual string? Description { get; set; }
 
@@ -65,7 +65,7 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
 
     /// <summary>
     /// Indicates that this observer is expanded in the UI (assuming it's a tree view item).
-    /// This can be bound to in order to control the expanded state of the tree.
+    /// This can be bound to to control the expanded state of the tree.
     /// </summary>
     [ObservableProperty] private bool _isExpanded;
 
@@ -84,21 +84,21 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     /// <summary>
     /// The current filter text being applied to the observer. This is here because many observers we want trigger
     /// filtering based on some entered text/keyword. The <see cref="Filter"/> method by default will set this to the
-    /// text that is provided to the filter function. This allows controls to bind to and display/highlight the current
+    /// text provided to the filter function. This allows controls to bind to and display/highlight the current
     /// filter text.
     /// </summary>
     [ObservableProperty] private string? _filterText;
 
     /// <summary>
     /// The collection of <see cref="MenuActionItem"/> objects configured for the observer which are shown in the
-    /// flyout menu when the use clicks an ellipsis. These are configured since we want to control some of the options
+    /// flyout menu when the use clicks an ellipsis. These are configured since we want to control some options
     /// dynamically.
     /// </summary>
     public IEnumerable<MenuActionItem> MenuItems => GenerateMenuItems();
 
     /// <summary>
     /// The collection of <see cref="MenuActionItem"/> objects configured for the observer which are shown in the
-    /// context menu when an observer is right-clicked. These are configured since we want to control some of the options
+    /// context menu when an observer is right-clicked. These are configured since we want to control some options
     /// dynamically.
     /// </summary>
     public IEnumerable<MenuActionItem> ContextItems => GenerateContextItems();
@@ -109,7 +109,7 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     /// selecting.
     /// </summary>
     /// <remarks>
-    /// To accomplish this, we are using the <see cref="SelectedItems"/> collection with is retrieved by sending a request
+    /// To achieve this, we are using the <see cref="SelectedItems"/> collection with is retrieved by sending a request
     /// message for selected observers that are siblings (contained in the same list or tree) as this observer.
     /// </remarks>
     protected bool HasSingleSelection => SelectedItems.Count() == 1;
@@ -278,7 +278,7 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     #region Handlers
 
     /// <summary>
-    /// Handles the observer renamed message by updating this object's name if it is not the sender of the
+    /// Handles the observer-renamed message by updating this object's name if it is not the sender of the
     /// message. This will keep the observer instances in sync.
     /// </summary>
     public virtual void Receive(Renamed message)
@@ -379,11 +379,11 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
 
     /// <summary>
     /// Attempts to find a parent observer instance of the specified type using the current observer <see cref="Id"/>.
-    /// This would allow observer or page to request its parent from another observer/page assuming it is in memory.
-    /// This allows for loose coupling of parent child relationships and the ability to get a references to a specific
+    /// This would allow the observer or page to request its parent from another observer/page assuming it is in memory.
+    /// This allows for loose coupling of parent child relationships and the ability to get a reference to a specific
     /// object from across pages in the application.
     /// </summary>
-    /// <typeparam name="TObserver">The observer type to find.</typeparam>
+    /// <typeparam name="TObserver">The observer types to find.</typeparam>
     /// <returns>
     /// The observer instance of the specified type that contains (depending on how handler logic) the provided id.
     /// </returns>
@@ -395,7 +395,7 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     {
         var request = new Get<TObserver>(predicate);
         Messenger.Send(request);
-        return request.HasReceivedResponse ? request.Response : default;
+        return request.HasReceivedResponse ? request.Response : null;
     }
 
     /// <summary>
@@ -423,7 +423,7 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
 
     /// <summary>
     /// A helper method that allows derived classes to get data from the clipboard. This assumes a collection of
-    /// objects of the specified type have been serialized to the clipboard as JSON. This is how we will handle copying
+    /// objects of the specified type has been serialized to the clipboard as JSON. This is how we will handle copying
     /// objects since the current Avalonia Clipboard does not support getting data objects in memory.
     /// </summary>
     /// <typeparam name="TData">The model type that was set on the clipboard.</typeparam>
@@ -458,9 +458,9 @@ public abstract partial class Observer : TrackableViewModel, IEquatable<Observer
     /// <summary>
     /// The task to delete the provided items from the database if required by this observer. This is called by
     /// the <see cref="DeleteCommand"/> and <see cref="DeleteSelectedCommand"/>. By default, this simply returns an OK
-    /// result to allow deletion. Deriving classes implement this method to forward call to specific mediator request.
+    /// result to allow deletion. Deriving classes implement this method to forward a call to a specific mediator request.
     /// </summary>
-    /// <param name="observers">The observer instances to delete. This could be selected items or single item.</param>
+    /// <param name="observers">The observer instances to delete. These could be selected items or single item.</param>
     /// <returns>A result indicating the success or failure of the update.</returns>
     protected virtual Task<Result> DeleteItems(IEnumerable<Observer> observers) => Task.FromResult(Result.Ok());
 

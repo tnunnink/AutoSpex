@@ -21,27 +21,27 @@ public partial class RepoObserver : Observer<Repo>,
     IRecipient<Observer.GetSelected>,
     IRecipient<Observer.Get<RepoObserver>>
 {
-    private readonly List<SourceObserver> _sources = [];
+    private readonly List<SourceObserver> _sourceList = [];
+    private readonly ObserverCollection<Source, SourceObserver> _sources;
     private FileSystemWatcher? _watcher;
 
     public RepoObserver(Repo model) : base(model)
     {
-        Sources = new ObserverCollection<Source, SourceObserver>(
-            refresh: () => _sources,
-            count: () => _sources.Count
+        _sources = new ObserverCollection<Source, SourceObserver>(
+            refresh: () => _sourceList,
+            count: () => _sourceList.Count
         );
-        RegisterDisposable(Sources);
+        RegisterDisposable(_sources);
     }
 
     public override Guid Id => Model.RepoId;
     public override string Name => Model.Name;
     public string Location => Model.Location;
     public bool Exists => Model.Exists;
-    public ObserverCollection<Source, SourceObserver> Sources { get; }
-    public IEnumerable<SourceObserver> Targeted => Sources.Where(s => s.IsChecked);
-    public IEnumerable<SourceObserver> Available => Sources.Where(s => !s.IsChecked);
-    public int TargetedCount => _sources.Count(s => s.IsChecked);
-    public int AvailableCount => _sources.Count(s => !s.IsChecked);
+    public IEnumerable<SourceObserver> Targeted => _sources.Where(s => s.IsTargeted);
+    public IEnumerable<SourceObserver> Available => _sources.Where(s => !s.IsTargeted);
+    public int TargetedCount => _sourceList.Count(s => s.IsTargeted);
+    public int AvailableCount => _sourceList.Count(s => !s.IsTargeted);
 
     public ObservableCollection<SourceObserver> SelectedTargets { get; } = [];
 
@@ -52,6 +52,8 @@ public partial class RepoObserver : Observer<Repo>,
     [ObservableProperty] private bool _isSyncing;
 
     [ObservableProperty] private bool _syncRequired;
+
+    [ObservableProperty] private string? _sourceFilter;
 
 
     /// <inheritdoc />
@@ -72,10 +74,10 @@ public partial class RepoObserver : Observer<Repo>,
         var result = await Mediator.Send(new ConnectRepo(Model));
         if (Notifier.ShowIfFailed(result)) return;
 
-        //Watch directory for changes to notify UI.
+        //Watch the directory for changes to notify UI.
         SetupRepoWatcher();
 
-        //Update connected repo in UI before syncing (syncing called in config page after UI is updated. 
+        //Send the message to indicate this repo is not the connected instance. 
         Messenger.Send(new SetConnected(this));
     }
 
@@ -106,7 +108,14 @@ public partial class RepoObserver : Observer<Repo>,
             return;
         }
 
-        await RefreshSources();
+        await LoadTargets();
+        await LoadSources();
+
+        Dispatcher.UIThread.Post(() =>
+        {
+            _sources.Refresh();
+            Refresh();
+        });
 
         IsSyncing = false;
     }
@@ -121,7 +130,7 @@ public partial class RepoObserver : Observer<Repo>,
         var location = await Shell.StorageProvider.SelectLocation("Select repository location");
         if (string.IsNullOrEmpty(location)) return;
 
-        var updated = await Mediator.Send(new UpdateRepoLocation(Id, location));
+        var updated = await Mediator.Send(new UpdateLocation(Id, location));
         if (Notifier.ShowIfFailed(updated)) return;
 
         var repo = new RepoObserver(updated.Value);
@@ -129,7 +138,7 @@ public partial class RepoObserver : Observer<Repo>,
     }
 
     /// <summary>
-    /// Command copy the location of the repository to the clipboard
+    /// Command to copy the location of the repository to the clipboard
     /// </summary>
     [RelayCommand]
     private async Task CopyPath()
@@ -149,7 +158,7 @@ public partial class RepoObserver : Observer<Repo>,
     }
 
     /// <summary>
-    /// Command to open the file explorer to the location of the repository
+    /// 
     /// </summary>
     [RelayCommand]
     private Task Remove()
@@ -163,7 +172,7 @@ public partial class RepoObserver : Observer<Repo>,
     [RelayCommand]
     private void TargetSources(bool value)
     {
-        _sources.ForEach(s => s.IsChecked = value);
+        _sourceList.ForEach(s => s.IsChecked = value);
         Refresh();
     }
 
@@ -176,9 +185,9 @@ public partial class RepoObserver : Observer<Repo>,
     /// </summary>
     public void Receive(GetSelected message)
     {
-        if (!Sources.Has(message.Observer)) return;
+        if (!_sources.Has(message.Observer)) return;
 
-        foreach (var selected in Sources)
+        foreach (var selected in _sources)
         {
             message.Reply(selected);
         }
@@ -192,7 +201,7 @@ public partial class RepoObserver : Observer<Repo>,
     {
         IsConnected = message.Repo is not null && Id == message.Repo.Id;
     }
-    
+
     /// <summary>
     /// Handle the get repo message by returning this instance if it satisfies the predicate condition.
     /// </summary>
@@ -214,25 +223,35 @@ public partial class RepoObserver : Observer<Repo>,
     #endregion
 
     /// <summary>
+    /// When the source filter text changes filter the current sources list and refresh UI bindings.
+    /// </summary>
+    partial void OnSourceFilterChanged(string? value)
+    {
+        _sources.Filter(s => s.Filter(value));
+        Refresh();
+    }
+
+    /// <summary>
+    /// Asynchronously loads targets for the repository.
+    /// </summary>
+    private async Task LoadTargets()
+    {
+        var result = await Mediator.Send(new LoadTargets(Model));
+        Notifier.ShowIfFailed(result);
+    }
+
+    /// <summary>
     /// Asynchronously refreshes the list of sources for the current RepoObserver instance.
     /// Clears the existing sources list, fetches new sources for the associated Repo model, creates observer instances for the sources, and updates the UI bindings.
     /// </summary>
-    /// <returns>A <see cref="Task"/> representing the asynchronous operation of refreshing the sources list.</returns>
-    private async Task RefreshSources()
+    private async Task LoadSources()
     {
         try
         {
-            _sources.Clear();
+            _sourceList.Clear();
             var sources = await Task.Run(() => Model.FindSources()).ConfigureAwait(false);
             var observers = sources.Select(s => new SourceObserver(s, this)).OrderBy(s => s.Name);
-            _sources.AddRange(observers);
-
-            Dispatcher.UIThread.Post(() =>
-            {
-                //Refresh sources collection and refresh bindings to update the UI
-                Sources.Refresh();
-                Refresh();
-            });
+            _sourceList.AddRange(observers);
         }
         catch (Exception e)
         {
@@ -259,7 +278,6 @@ public partial class RepoObserver : Observer<Repo>,
         _watcher.Deleted += OnFileSystemChange;
         _watcher.Renamed += OnFileSystemChange;
         _watcher.Error += OnFileSystemError;
-        _watcher = null;
     }
 
     /// <inheritdoc />
@@ -278,7 +296,7 @@ public partial class RepoObserver : Observer<Repo>,
     }
 
     /// <summary>
-    /// When we detect a file system update we need refresh local state.
+    /// When we detect a file system update, we need to refresh local state.
     /// </summary>
     private void OnFileSystemChange(object sender, FileSystemEventArgs e)
     {

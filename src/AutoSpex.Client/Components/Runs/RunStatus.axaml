@@ -18,36 +18,32 @@
 
         <StackPanel Orientation="Horizontal" Spacing="7" VerticalAlignment="Center">
 
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" Spacing="7">
                 <PathIcon
                     Theme="{Binding Model.Node.Type.Name, Converter={StaticResource KeyIconConverter}}" />
                 <TextBlock
                     Text="{Binding Name}"
-                    FontWeight="{a:ThemeResource HeadingFontWeightSmall}"
-                    Padding="5" />
+                    FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
             </StackPanel>
 
             <Ellipse Classes="separator" />
 
             <TextBlock
                 Text="{Binding Model.Source.Name}"
-                FontWeight="{a:ThemeResource HeadingFontWeightSmall}"
-                Padding="5" />
+                FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
 
             <Ellipse Classes="separator" />
 
             <TextBlock
                 Text="{Binding Result}"
                 FontWeight="{a:ThemeResource HeadingFontWeightSmall}"
-                properties:StyleClasses.Classes="{Binding Result}"
-                Padding="5" />
+                properties:StyleClasses.Classes="{Binding Result}" />
 
             <Ellipse Classes="separator" />
 
             <TextBlock
                 Text="{Binding Duration}"
-                FontWeight="{a:ThemeResource HeadingFontWeightSmall}"
-                Padding="5" />
+                FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
 
 
         </StackPanel>

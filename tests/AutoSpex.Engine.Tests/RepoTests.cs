@@ -67,4 +67,75 @@ public class RepoTests
         sources.Should().NotBeEmpty();
         Console.WriteLine(stopWatch.ElapsedMilliseconds);
     }
+
+    [Test]
+    public void AddTarget_ValidPath_ShouldContainExpectedCount()
+    {
+        var repo = Repo.Configure(@"C:\Path\To\TestRepo\");
+        var source = Source.Create(@"C:\Path\To\TestRepo\SourceFile.L5X");
+        
+        repo.AddTarget(source);
+
+        repo.Targets.Should().HaveCount(1);
+    }
+    
+    [Test]
+    public void AddTarget_AlreadyContainsTarget_ShouldContainExpectedCount()
+    {
+        var repo = Repo.Configure(@"C:\Path\To\TestRepo\");
+        var source = Source.Create(@"C:\Path\To\TestRepo\SourceFile.L5X");
+        
+        repo.AddTarget(source);
+        repo.AddTarget(source);
+        repo.AddTarget(source);
+
+        repo.Targets.Should().HaveCount(1);
+    }
+
+    [Test]
+    public void AddTarget_InvalidPath_ShouldThrowException()
+    {
+        var repo = Repo.Configure(@"C:\Path\To\TestRepo\");
+        var source = Source.Create(@"C:\Path\To\AnotherRepo\SourceFile.L5X");
+        
+        var action = () => repo.AddTarget(source);
+
+        action.Should().Throw<ArgumentException>();
+    }
+    
+    [Test]
+    public void AddTarget_Null_ShouldThrowException()
+    {
+        var repo = Repo.Configure(@"C:\Path\To\TestRepo\");
+        
+        var action = () => repo.AddTarget((Source)null!);
+
+        action.Should().Throw<ArgumentNullException>();
+    }
+
+    [Test]
+    public void RemoveTarget_ValidTarget_ShouldHaveExpectedCount()
+    {
+        var repo = Repo.Configure(@"C:\Path\To\TestRepo\");
+        repo.AddTarget(Source.Create(@"C:\Path\To\TestRepo\File1.L5X"));
+        repo.AddTarget(Source.Create(@"C:\Path\To\TestRepo\File2.L5X"));
+        repo.AddTarget(Source.Create(@"C:\Path\To\TestRepo\File3.L5X"));
+        
+        repo.RemoveTarget(Source.Create(@"C:\Path\To\TestRepo\File2.L5X"));
+
+        repo.Targets.Should().HaveCount(2);
+    }
+
+    [Test]
+    public void ClearTargets_WhenCalled_ShouldHaveExpectedCount()
+    {
+        var repo = Repo.Configure(@"C:\Path\To\TestRepo\");
+        repo.AddTarget(Source.Create(@"C:\Path\To\TestRepo\File1.L5X"));
+        repo.AddTarget(Source.Create(@"C:\Path\To\TestRepo\File2.L5X"));
+        repo.AddTarget(Source.Create(@"C:\Path\To\TestRepo\File3.L5X"));
+        
+        repo.ClearTargets();
+        
+        repo.Targets.Should().BeEmpty();
+    }
 }

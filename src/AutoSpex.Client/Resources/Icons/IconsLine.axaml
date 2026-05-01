@@ -20,6 +20,7 @@
             <a:ToggleThemeButton Height="30" Width="30" Theme="{a:ControlTheme ToggleThemeButtonSubtle}" />
             <PathIcon Theme="{DynamicResource IconAdd}" />
             <PathIcon Theme="{DynamicResource IconClose}" />
+            <PathIcon Theme="{DynamicResource IconLineMinus}" />
             <PathIcon Theme="{DynamicResource IconEllipsis}" />
             <PathIcon Theme="{DynamicResource IconEllipsisVertical}" />
             <PathIcon Theme="{DynamicResource IconLineSearch}" />
@@ -37,6 +38,7 @@
             <PathIcon Theme="{DynamicResource IconLineInfo}" />
             <PathIcon Theme="{DynamicResource IconLineQuestion}" />
             <PathIcon Theme="{DynamicResource IconLineAt}" />
+            <PathIcon Theme="{DynamicResource IconLineUser}" />
             <PathIcon Theme="{DynamicResource IconLineClock}" />
             <PathIcon Theme="{DynamicResource IconLineClockRotate}" />
             <PathIcon Theme="{DynamicResource IconLineComment}" />
@@ -52,6 +54,7 @@
             <PathIcon Theme="{DynamicResource IconLineList}" />
             <PathIcon Theme="{DynamicResource IconLineListStaggered}" />
             <PathIcon Theme="{DynamicResource IconLineListCheck}" />
+            <PathIcon Theme="{DynamicResource IconLineListTable}" />
             <PathIcon Theme="{DynamicResource IconLineSliders}" />
             <PathIcon Theme="{DynamicResource IconLineCalendar}" />
             <PathIcon Theme="{DynamicResource IconLineCircleNotch}" />
@@ -62,6 +65,7 @@
             <PathIcon Theme="{DynamicResource IconLineFingerprint}" />
             <PathIcon Theme="{DynamicResource IconLineFileCode}" />
             <PathIcon Theme="{DynamicResource IconLineFileZip}" />
+            <PathIcon Theme="{DynamicResource IconLineFile}" />
         </WrapPanel>
     </Design.PreviewWith>
 
@@ -139,6 +143,15 @@
                 M12,18.17L8.83,15L7.42,16.41L12,21L16.59,16.41L15.17,15M12,5.83L15.17,9L16.58,7.59L12,3L7.41,7.59L8.83,9L12,5.83Z
             </StreamGeometry>
         </Setter>
+    </ControlTheme>
+
+    <ControlTheme x:Key="IconLineMinus" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
+        <Setter Property="Data">
+            <StreamGeometry>
+                M432 256c0 17.7-14.3 32-32 32L48 288c-17.7 0-32-14.3-32-32s14.3-32 32-32l352 0c17.7 0 32 14.3 32 32z
+            </StreamGeometry>
+        </Setter>
+        <Setter Property="FontSize" Value="13" />
     </ControlTheme>
 
     <ControlTheme x:Key="IconEllipsis" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
@@ -277,6 +290,14 @@
         </Setter>
     </ControlTheme>
 
+    <ControlTheme x:Key="IconLineFile" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
+        <Setter Property="Data">
+            <StreamGeometry>
+                M64 464c-8.8 0-16-7.2-16-16L48 64c0-8.8 7.2-16 16-16l160 0 0 80c0 17.7 14.3 32 32 32l80 0 0 288c0 8.8-7.2 16-16 16L64 464zM64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-293.5c0-17-6.7-33.3-18.7-45.3L274.7 18.7C262.7 6.7 246.5 0 229.5 0L64 0zm56 256c-13.3 0-24 10.7-24 24s10.7 24 24 24l144 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-144 0zm0 96c-13.3 0-24 10.7-24 24s10.7 24 24 24l144 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-144 0z
+            </StreamGeometry>
+        </Setter>
+    </ControlTheme>
+
     <ControlTheme x:Key="IconLineStopwatch" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
         <Setter Property="Data">
             <GeometryGroup>
@@ -335,6 +356,14 @@
         </Setter>
     </ControlTheme>
 
+    <ControlTheme x:Key="IconLineListTable" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
+        <Setter Property="Data">
+            <StreamGeometry>
+                M0 96C0 60.7 28.7 32 64 32l384 0c35.3 0 64 28.7 64 64l0 320c0 35.3-28.7 64-64 64L64 480c-35.3 0-64-28.7-64-64L0 96zm64 0l0 64 64 0 0-64L64 96zm384 0L192 96l0 64 256 0 0-64zM64 224l0 64 64 0 0-64-64 0zm384 0l-256 0 0 64 256 0 0-64zM64 352l0 64 64 0 0-64-64 0zm384 0l-256 0 0 64 256 0 0-64z
+            </StreamGeometry>
+        </Setter>
+    </ControlTheme>
+
     <ControlTheme x:Key="IconLineUpload" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
         <Setter Property="Data">
             <StreamGeometry>
@@ -386,6 +415,14 @@
         </Setter>
         <Setter Property="RenderTransform">
             <RotateTransform Angle="-90" />
+        </Setter>
+    </ControlTheme>
+
+    <ControlTheme x:Key="IconLineUser" TargetType="PathIcon" BasedOn="{StaticResource IconBase}">
+        <Setter Property="Data">
+            <StreamGeometry>
+                M304 128a80 80 0 1 0 -160 0 80 80 0 1 0 160 0zM96 128a128 128 0 1 1 256 0A128 128 0 1 1 96 128zM49.3 464l349.5 0c-8.9-63.3-63.3-112-129-112l-91.4 0c-65.7 0-120.1 48.7-129 112zM0 482.3C0 383.8 79.8 304 178.3 304l91.4 0C368.2 304 448 383.8 448 482.3c0 16.4-13.3 29.7-29.7 29.7L29.7 512C13.3 512 0 498.7 0 482.3z
+            </StreamGeometry>
         </Setter>
     </ControlTheme>
 

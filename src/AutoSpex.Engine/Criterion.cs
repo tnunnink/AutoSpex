@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using Ardalis.SmartEnum.SystemTextJson;
+using Microsoft.Extensions.Logging;
 
 namespace AutoSpex.Engine;
 
@@ -105,16 +106,24 @@ public class Criterion
     /// Evaluates a candidate object using the current criterion definition.
     /// </summary>
     /// <param name="candidate">The object to be evaluated.</param>
+    /// <param name="logger">The optional logger to capture diagnostic info on the evaluation.</param>
     /// <returns>An <see cref="Evaluation"/> object indicating the result of the evaluation.</returns>
-    public Evaluation Evaluate(object? candidate)
+    public Evaluation Evaluate(object? candidate, ILogger? logger = null)
     {
         try
         {
+            logger?.LogDebug("Evaluating candidate {Text}", candidate.ToText());
+            
             var origin = Engine.Property.This(candidate);
             var property = origin.GetProperty(Property);
             var value = property.GetValue(candidate);
             var argument = ResolveArgument(Argument, candidate);
+            
+            //some log message about the current state and starting execution of operation.
+            
             var result = Operation.Execute(value, argument);
+
+            //some log message about the result of the operation.
 
             return Negation.Satisfies(result)
                 ? Evaluation.Passed(GetCriteria(), GetExpected(), value)
@@ -122,6 +131,7 @@ public class Criterion
         }
         catch (Exception e)
         {
+            //some log message about evaluation error.
             return Evaluation.Errored(GetCriteria(), GetExpected(), e);
         }
     }

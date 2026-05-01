@@ -4,6 +4,6 @@ public class AllOperation() : CollectionOperation("All")
 {
     protected override bool Evaluate(IEnumerable<object> collection, Criterion criterion)
     {
-        return collection.Select(criterion.Evaluate).All(result => result);
+        return collection.Select(x => criterion.Evaluate(x)).All(result => result);
     }
 }

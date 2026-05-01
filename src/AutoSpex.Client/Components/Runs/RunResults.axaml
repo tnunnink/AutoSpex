@@ -3,8 +3,15 @@
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
-                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls">
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components">
 
+    <Design.PreviewWith>
+        <Border Width="800" Height="500">
+            <ContentControl
+                Content="{x:Static components:TestData.RunTest}"
+                ContentTemplate="{DynamicResource RunResults}" />
+        </Border>
+    </Design.PreviewWith>
 
     <DataTemplate x:Key="RunResults" x:DataType="observers:RunObserver">
 
@@ -14,38 +21,85 @@
 
                 <ContentControl
                     Grid.Column="0"
-                    Content="{Binding Result}"
+                    Content="{Binding }"
                     ContentTemplate="{StaticResource RunStatus}" />
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="7">
 
+                    <!--<TabStrip
+                        DockPanel.Dock="Right"
+                        ItemContainerTheme="{DynamicResource TabStripItemExpandable}"
+                        BorderThickness="0">
+
+                        <TabStripItem
+                            properties:Icon.Theme="{StaticResource IconLineListCheck}"
+                            Content="Checks" />
+                        <TabStripItem
+                            properties:Icon.Theme="{StaticResource IconLineListTable}"
+                            Content="Data" />
+                        <TabStripItem
+                            properties:Icon.Theme="{StaticResource IconLineFile}"
+                            Content="Logs" />
+
+                    </TabStrip>-->
+
                     <Button
+                        Command="{Binding UpdateViewCommand}"
+                        CommandParameter="Results"
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconLineListCheck}"
+                        Classes.accent="{Binding SelectedView, Converter={StaticResource EqualToConverter}, ConverterParameter='Results'}"
+                        ToolTip.Tip="Results" />
+
+                    <Button
+                        Command="{Binding UpdateViewCommand}"
+                        CommandParameter="Data"
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconLineListTable}"
+                        Classes.accent="{Binding SelectedView, Converter={StaticResource EqualToConverter}, ConverterParameter='Data'}"
+                        ToolTip.Tip="Data" />
+
+                    <Button
+                        Command="{Binding UpdateViewCommand}"
+                        CommandParameter="Logs"
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconLineFile}"
+                        Classes.accent="{Binding SelectedView, Converter={StaticResource EqualToConverter}, ConverterParameter='Logs'}"
+                        ToolTip.Tip="Logs" />
+
+                    <Border
+                        Width="1"
+                        Background="{a:ThemeResource Container1BorderBrush}"
+                        Margin="0 7" />
+
+                    <Button
+                        Command="{Binding RunCommand}"
                         Theme="{StaticResource IconButton}"
                         properties:Icon.Theme="{StaticResource IconFilledLightning}"
-                        Classes="accent"
                         ToolTip.Tip="Run" />
 
-                    <!--<Button
-                        Command="{Binding Result.NavigateCommand, FallbackValue={x:Null}}"
+                    <Button
+                        Command="{Binding OpenNodeCommand}"
                         Theme="{StaticResource IconButton}"
                         properties:Icon.Theme="{StaticResource IconLineLaunch}"
-                        ToolTip.Tip="Open" />-->
+                        ToolTip.Tip="Open" />
 
                     <Button
                         Theme="{StaticResource IconButton}"
                         properties:Icon.Theme="{StaticResource IconLineDownload}"
                         ToolTip.Tip="Export" />
 
-                    <Button
-                        Theme="{StaticResource IconButton}"
-                        properties:Icon.Theme="{StaticResource IconEllipsis}"
-                        ToolTip.Tip="Options" />
-
                 </StackPanel>
 
             </Grid>
 
-            <TextBox
+            <ContentControl
+                DockPanel.Dock="Top"
+                Content="{Binding}"
+                ContentTemplate="{StaticResource RunFilter}"
+                Margin="0 10" />
+
+            <!--<TextBox
                 DockPanel.Dock="Top"
                 Watermark="Filters results"
                 Text="{Binding FilterText}"
@@ -56,32 +110,29 @@
                 VerticalAlignment="Center"
                 BorderThickness="1"
                 Margin="0 10">
+
                 <TextBox.InnerLeftContent>
-                    <PathIcon
+                    <Button
+                        Theme="{StaticResource IconButton}"
+                        properties:Icon.Theme="{StaticResource IconLineCircleHalfFill}"
+                        ToolTip.Tip="Open" />
+                    ~1~<PathIcon
                         Theme="{StaticResource IconLineSearch}"
                         Margin="10 0 0 0"
                         Classes="size-sm"
-                        Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                        Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />@1@
                 </TextBox.InnerLeftContent>
+
                 <Interaction.Behaviors>
                     <TextBoxSelectAllOnGotFocusBehavior />
                 </Interaction.Behaviors>
-            </TextBox>
 
-            <Panel>
+            </TextBox>-->
 
-                <controls:DefaultMessage
-                    HorizontalAlignment="Center"
-                    IsVisible="{Binding Result, Converter={x:Static ObjectConverters.IsNull}}"
-                    HeaderIcon="{StaticResource IconLineListCheck}"
-                    Message="Results will appear here when available." />
-
-                <ContentControl
-                    Content="{Binding Result}"
-                    ContentTemplate="{StaticResource EvaluationList}"
-                    IsVisible="{Binding Result, Converter={x:Static ObjectConverters.IsNotNull}}" />
-
-            </Panel>
+            <ContentControl
+                Content="{Binding}"
+                ContentTemplate="{StaticResource EvaluationList}"
+                IsVisible="{Binding Result, Converter={x:Static ObjectConverters.IsNotNull}}" />
 
         </DockPanel>
 

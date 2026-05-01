@@ -1,5 +1,7 @@
-﻿using AutoSpex.Client.Shared;
+﻿using System.IO;
+using AutoSpex.Client.Shared;
 using AutoSpex.Engine;
+using AutoSpex.Persistence;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 
@@ -21,6 +23,7 @@ public partial class SourceObserver : Observer<Source>, IRecipient<Observer.Get<
     public string RelativePath => GetRelativeOrDefaultPath();
     public string UpdatedOn => $"{Model.UpdatedOn:G}";
     public string Size => $"{Model.Size / 1024} KB";
+    public bool IsTargeted => _repo?.Model.IsTargeted(Location) is true;
 
     /// <inheritdoc />
     public override bool Filter(string? filter)
@@ -28,10 +31,20 @@ public partial class SourceObserver : Observer<Source>, IRecipient<Observer.Get<
         return base.Filter(filter) || RelativePath.Satisfies(filter);
     }
 
+    /// <summary>
+    /// Command to toggle the target state of this source for its current parent repo. 
+    /// </summary>
     [RelayCommand]
-    private void ToggleTarget()
+    private async Task ToggleTarget()
     {
-        IsChecked = !IsChecked;
+        if (_repo is null) return;
+
+        _repo.Model.ToggleTarget(Model);
+
+        var result = await Mediator.Send(new UpdateTargets(_repo));
+        if (Notifier.ShowIfFailed(result)) return;
+
+        Refresh();
         _repo?.Refresh();
     }
 

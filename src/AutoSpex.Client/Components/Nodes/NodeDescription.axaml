@@ -1,0 +1,56 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors">
+
+    <Design.PreviewWith>
+        <StackPanel Spacing="50" Margin="20">
+            <ContentControl
+                Content="{x:Static components:TestData.SpecNode}"
+                ContentTemplate="{DynamicResource NodeInfo}"
+                Width="400" />
+        </StackPanel>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="NodeInfo" x:DataType="observers:NodeObserver">
+
+        <Border
+            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+            BorderThickness="1"
+            CornerRadius="{a:ThemeResource EditCornerRadius}"
+            Padding="{a:ThemeResource EditPadding}">
+
+            <StackPanel Spacing="5">
+
+                <TextBox
+                    Text="{Binding Name}"
+                    Theme="{StaticResource TextBoxSubtle}"
+                    FontSize="{a:ThemeResource HeadingFontSizeSmall}"
+                    HorizontalAlignment="Left"
+                    TextWrapping="Wrap">
+                    <Interaction.Behaviors>
+                        <behaviors:SelectAllTextOnGotFocusBehavior />
+                    </Interaction.Behaviors>
+                </TextBox>
+
+                <TextBox
+                    Watermark="Enter a description to explain the purpose for this collection"
+                    Theme="{StaticResource TextBoxSubtle}"
+                    Foreground="{a:ThemeResource DefaultForegroundBrushSecondary}"
+                    VerticalContentAlignment="Top"
+                    TextWrapping="Wrap">
+                    <Interaction.Behaviors>
+                        <behaviors:SelectAllTextOnGotFocusBehavior />
+                    </Interaction.Behaviors>
+                </TextBox>
+
+            </StackPanel>
+
+        </Border>
+
+    </DataTemplate>
+
+</ResourceDictionary>

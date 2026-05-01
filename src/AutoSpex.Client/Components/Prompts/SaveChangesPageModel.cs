@@ -20,6 +20,6 @@ public partial class SaveChangesPageModel(string? name = null) : PageViewModel
     {
         Settings
             .SaveValue(SettingKey.AlwaysDiscardChanges, value)
-            .FireAndForget(e => Notifier.ShowError("Failed to save settings", $"{e.Message}"));
+            .Forget(e => Notifier.ShowError("Failed to save settings", $"{e.Message}"));
     }
 }

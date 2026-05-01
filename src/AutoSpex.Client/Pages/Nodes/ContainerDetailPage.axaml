@@ -1,16 +1,16 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
-             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
              xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
-             x:Class="AutoSpex.Client.Pages.SpecPage"
-             x:DataType="pages:SpecPageModel">
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             x:Class="AutoSpex.Client.Pages.ContainerDetailPage"
+             x:DataType="pages:ContainerDetailPageModel">
+
 
     <controls:Section
-        Header="Specification"
-        Description="Configure the specification criteria by defining the query and verification to perform."
-        VerticalAlignment="Top"
-        Margin="20">
+        Header="Condition"
+        Description="Configure the specification that will control whether this container continues to run."
+        VerticalAlignment="Top">
 
         <controls:Section.Action>
             <StackPanel Orientation="Horizontal" Spacing="5">
@@ -26,7 +26,7 @@
         </controls:Section.Action>
 
         <ContentControl
-            Content="{Binding Spec}"
+            Content="{Binding Condition}"
             ContentTemplate="{StaticResource SpecConfig}" />
 
     </controls:Section>

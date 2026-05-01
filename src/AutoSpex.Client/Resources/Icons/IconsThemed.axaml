@@ -20,7 +20,6 @@
             <PathIcon Theme="{DynamicResource IconThemedContainer}" />
             <PathIcon Theme="{DynamicResource IconThemedCollection}" />
             <PathIcon Theme="{DynamicResource IconThemedSpec}" />
-            <PathIcon Theme="{DynamicResource IconThemedQuery}" />
             <PathIcon Theme="{DynamicResource IconThemedRepo}" />
             <PathIcon Theme="{DynamicResource IconThemedSource}" />
             <PathIcon Theme="{DynamicResource IconThemedRun}" />
@@ -50,10 +49,7 @@
     <ControlTheme x:Key="IconThemedContainer" TargetType="PathIcon" BasedOn="{StaticResource IconFilledFolder}">
         <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushContainer}" />
     </ControlTheme>
-    <ControlTheme x:Key="IconThemedSpec" TargetType="PathIcon" BasedOn="{StaticResource IconFilledClipboardCheck}">
-        <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushSpec}" />
-    </ControlTheme>
-    <ControlTheme x:Key="IconThemedQuery" TargetType="PathIcon" BasedOn="{StaticResource IconFilledClipboardList}">
+    <ControlTheme x:Key="IconThemedSpec" TargetType="PathIcon" BasedOn="{StaticResource IconFilledClipboard}">
         <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushSpec}" />
     </ControlTheme>
     <ControlTheme x:Key="IconThemedRepo" TargetType="PathIcon" BasedOn="{StaticResource IconFilledFolderOpen}">
@@ -69,7 +65,7 @@
         <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushTag}" />
     </ControlTheme>
 
-    <ControlTheme x:Key="IconThemedNone" TargetType="PathIcon" BasedOn="{StaticResource IconLineCircleDot}" />
+    <ControlTheme x:Key="IconThemedNone" TargetType="PathIcon" BasedOn="{StaticResource IconLineCircleHalfFill}" />
     <ControlTheme x:Key="IconThemedPending" TargetType="PathIcon" BasedOn="{StaticResource IconLineCircleNotch}">
         <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
     </ControlTheme>

@@ -7,12 +7,12 @@
 
     <Design.PreviewWith>
         <ContentControl
-            Content="{x:Static components:TestData.PassedVerification}"
+            Content="{x:Static components:TestData.RunTest}"
             ContentTemplate="{DynamicResource EvaluationList}"
             Margin="20" />
     </Design.PreviewWith>
 
-    <DataTemplate x:Key="EvaluationList" x:DataType="observers:VerificationObserver">
+    <DataTemplate x:Key="EvaluationList" x:DataType="observers:RunObserver">
 
         <Panel>
 
@@ -22,11 +22,6 @@
                 Header="Results not available"
                 Message="Results will appear here when the specification is run."
                 IsVisible="{Binding Result, Converter={StaticResource EqualToConverter}, ConverterParameter={x:Static engine:ResultState.None}}" />
-
-            <controls:DefaultMessage
-                HorizontalAlignment="Center"
-                Header="No results produced"
-                Message="No source object passed the configured filters for this spec." />
 
             <controls:DefaultMessage
                 HorizontalAlignment="Center"
@@ -44,7 +39,7 @@
             <controls:DefaultMessage
                 HorizontalAlignment="Center"
                 HeaderIcon="{StaticResource IconLineSearch}"
-                Header="No itms found"
+                Header="No items found"
                 Message="Could not find any items matching the current filter text.">
                 <controls:DefaultMessage.IsVisible>
                     <MultiBinding Converter="{x:Static BoolConverters.And}">
@@ -57,8 +52,7 @@
             <ListBox
                 ItemsSource="{Binding Evaluations}"
                 ItemTemplate="{StaticResource EvaluationListItem}"
-                IsVisible="{Binding Evaluations.Count}"
-                Padding="10">
+                IsVisible="{Binding Evaluations.Count}">
                 <ListBox.ItemContainerTheme>
                     <ControlTheme BasedOn="{StaticResource ListBoxItemSimple}" TargetType="ListBoxItem">
                         <Setter Property="Margin" Value="0" />

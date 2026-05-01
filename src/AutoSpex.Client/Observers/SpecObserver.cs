@@ -14,7 +14,10 @@ public partial class SpecObserver : Observer<Spec>,
 {
     public SpecObserver(Spec model) : base(model)
     {
-        Steps = new ObserverCollection<Step, StepObserver>(Model.Steps.ToList(), InstantiateStep);
+        Steps = new ObserverCollection<Step, StepObserver>(
+            refresh: () => Model.Steps.Select(InstantiateStep).ToList(),
+            count: () => Model.Steps.Count());
+        
         Track(nameof(Element));
         Track(Steps);
     }
@@ -55,7 +58,7 @@ public partial class SpecObserver : Observer<Spec>,
     private void AddFilterStep()
     {
         Model.AddStep(new Filter(new Criterion()));
-        Steps.Refresh();
+        Steps.Sync();
     }
 
     /// <summary>
@@ -65,7 +68,7 @@ public partial class SpecObserver : Observer<Spec>,
     private void AddSelectStep()
     {
         Model.AddStep(new Select(new Selection()));
-        Steps.Refresh();
+        Steps.Sync();
     }
 
     /// <summary>
@@ -75,7 +78,7 @@ public partial class SpecObserver : Observer<Spec>,
     private void AddVerification()
     {
         Model.Verify(new Criterion());
-        Steps.Refresh();
+        Steps.Sync();
     }
 
     /// <summary>

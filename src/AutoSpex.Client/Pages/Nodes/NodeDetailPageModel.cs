@@ -73,16 +73,13 @@ public partial class NodeDetailPageModel : DetailPageModel
     /// <inheritdoc />
     protected override async Task NavigatePages()
     {
-        if (Node.Type != NodeType.Spec)
+        CurrentPage = Node.Type.Name switch
         {
-            await Navigator.Navigate(() => new SpecsPageModel(Node));
-        }
-        else
-        {
-            await Navigator.Navigate(() => new SpecPageModel(Node));
-        }
-
-        /*await Navigator.Navigate(() => new VariablesPageModel(Node));*/
+            nameof(NodeType.Collection) => await Navigator.Navigate(() => new CollectionDetailPageModel(Node)),
+            nameof(NodeType.Container) => await Navigator.Navigate(() => new ContainerDetailPageModel(Node)),
+            nameof(NodeType.Spec) => await Navigator.Navigate(() => new SpecDetailPageModel(Node)),
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
     /// <summary>

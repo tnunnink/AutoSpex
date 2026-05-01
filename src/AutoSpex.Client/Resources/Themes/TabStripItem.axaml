@@ -76,13 +76,9 @@
 
                 <TabStrip
                     ItemContainerTheme="{DynamicResource TabStripItemExpandable}"
-                    BorderThickness="0" Padding="5"
-                    Background="{a:ThemeResource Container2BackgroundBrush}">
-                    <TabStrip.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal" Spacing="5" />
-                        </ItemsPanelTemplate>
-                    </TabStrip.ItemsPanel>
+                    BorderBrush="{a:ThemeResource ControlBackgroundBrushSoft}"
+                    BorderThickness="1"
+                    CornerRadius="5">
                     <TabStripItem
                         properties:Icon.Theme="{StaticResource IconFilledClipboard}"
                         Content="Item 1" />
@@ -162,7 +158,7 @@
         <Setter Property="Foreground" Value="{a:ThemeResource DefaultForegroundBrushTertiary}" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="Padding" Value="0 10" />
+        <Setter Property="Padding" Value="0 5" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Panel>
@@ -300,14 +296,15 @@
 
     <ControlTheme x:Key="TabStripItemExpandable" TargetType="TabStripItem">
         <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
         <Setter Property="FontSize" Value="{a:ThemeResource TabItemFontSizeSubtle}" />
         <Setter Property="FontWeight" Value="{a:ThemeResource HeadingFontWeightSmall}" />
         <Setter Property="Foreground" Value="{DynamicResource IconForegroundBrushDefault}" />
-        <Setter Property="CornerRadius" Value="{a:ThemeResource ButtonCornerRadius}" />
+
         <Setter Property="Padding" Value="{a:ThemeResource ButtonPadding}" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="Margin" Value="0 0 5 0" />
+
         <Setter Property="Template">
             <ControlTemplate>
                 <Border
@@ -316,7 +313,8 @@
                     BorderBrush="{TemplateBinding BorderBrush}"
                     BorderThickness="{TemplateBinding BorderThickness}"
                     CornerRadius="{TemplateBinding CornerRadius}"
-                    Padding="{TemplateBinding Padding}">
+                    Padding="{TemplateBinding Padding}"
+                    a:BorderChildClipConverter.ClipToContainingBorder="True">
 
                     <StackPanel Orientation="Horizontal" Spacing="7">
 
@@ -328,6 +326,7 @@
 
                         <a:AnimatedExpanderDecorator
                             x:Name="expanderDecorator"
+                            IsVisible="{TemplateBinding Content, Converter={x:Static ObjectConverters.IsNotNull}}"
                             IsExpanded="{TemplateBinding IsSelected}"
                             IsAnimationEnabled="{TemplateBinding a:ThemeProperties.IsAnimationEnabled}"
                             ExpandDirection="Right">
@@ -346,11 +345,11 @@
         </Setter>
 
         <Style Selector="^:pointerover">
-            <Setter Property="Background" Value="{a:ThemeResource ButtonBackgroundBrushSubtlePointerOver}" />
+            <Setter Property="Background" Value="{a:ThemeResource ButtonBackgroundBrushSoft}" />
             <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
         </Style>
         <Style Selector="^:selected">
-            <Setter Property="Background" Value="{a:ThemeResource ButtonBackgroundBrushSubtlePointerOver}" />
+            <Setter Property="Background" Value="{a:ThemeResource ButtonBackgroundBrushSoft}" />
             <Setter Property="Foreground" Value="{a:ThemeResource ControlForegroundBrushOutlineAccent}" />
         </Style>
         <Style Selector="^:disabled">

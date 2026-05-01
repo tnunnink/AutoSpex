@@ -8,7 +8,7 @@
              x:DataType="pages:AppPageModel">
 
     <Design.Width>1200</Design.Width>
-    <Design.Height>300</Design.Height>
+    <Design.Height>600</Design.Height>
 
     <DockPanel>
 
@@ -51,21 +51,26 @@
 
             <Panel>
 
-                <controls:DrawerView
-                    x:Name="NavDrawer"
-                    DrawerPlacement="Left"
-                    IsDrawerOpen="True"
-                    DrawerOpenLength="400"
-                    DrawerMinLength="46"
-                    DrawerMaxLength="800">
+                <Grid RowDefinitions="*,40">
 
-                    <controls:DrawerView.Drawer>
-                        <ContentControl Content="{Binding Navigation^}" />
-                    </controls:DrawerView.Drawer>
+                    <controls:DrawerView
+                        Grid.Row="0"
+                        x:Name="NavDrawer"
+                        DrawerPlacement="Left"
+                        IsDrawerOpen="True"
+                        DrawerOpenLength="400"
+                        DrawerMinLength="46"
+                        DrawerMaxLength="800">
 
-                    <ContentControl Content="{Binding Details^}" />
+                        <controls:DrawerView.Drawer>
+                            <ContentControl Content="{Binding Navigation^}" />
+                        </controls:DrawerView.Drawer>
 
-                </controls:DrawerView>
+                        <ContentControl Content="{Binding Details^}" />
+
+                    </controls:DrawerView>
+
+                </Grid>
 
                 <controls:DrawerView
                     x:Name="RunnerDrawer"
@@ -73,7 +78,8 @@
                     IsDrawerOpen="{Binding IsDrawerOpen}"
                     DrawerMinLength="40"
                     DrawerOpenLength="500"
-                    HideSplitter="False">
+                    HideSplitter="False"
+                    ZIndex="100">
 
                     <controls:DrawerView.Drawer>
                         <ContentControl Content="{Binding Drawer^}" />

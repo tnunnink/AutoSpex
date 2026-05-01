@@ -1,0 +1,33 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+             xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
+             xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+             x:Class="AutoSpex.Client.Pages.SpecDetailPage"
+             x:DataType="pages:SpecDetailPageModel">
+
+    <controls:Section
+        Header="Specification"
+        Description="Configure the specification criteria by defining the query and verification to perform."
+        VerticalAlignment="Top">
+
+        <controls:Section.Action>
+            <StackPanel Orientation="Horizontal" Spacing="5">
+
+                <Button
+                    Theme="{StaticResource IconButton}"
+                    properties:Icon.Theme="{StaticResource IconEllipsis}"
+                    ToolTip.Tip="Options">
+
+                </Button>
+
+            </StackPanel>
+        </controls:Section.Action>
+
+        <ContentControl
+            Content="{Binding Spec}"
+            ContentTemplate="{StaticResource SpecConfig}" />
+
+    </controls:Section>
+
+</UserControl>

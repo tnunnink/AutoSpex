@@ -5,11 +5,11 @@ using Task = System.Threading.Tasks.Task;
 
 namespace AutoSpex.Engine;
 
-public class Run(Node node, Source source, ILogger? logger = null)
+public class Run(Node node, Source source)
 {
     private static readonly SourceCache Cache = SourceCache.Local;
+    private readonly RunLogger _logger = new();
     private readonly Node _node = node ?? throw new ArgumentNullException(nameof(node));
-    private readonly ILogger _logger = logger ?? new RunLogger();
 
     public Guid RunId { get; } = Guid.NewGuid();
     public NodeInfo Node { get; } = node;
@@ -18,7 +18,7 @@ public class Run(Node node, Source source, ILogger? logger = null)
     public long Duration { get; private set; }
     public IReadOnlyCollection<Verification> Results { get; private set; } = [];
     public IReadOnlyCollection<Run> Runs { get; } = node.Nodes.Select(n => new Run(n, source)).ToArray();
-    public IEnumerable<RunLog> Logs => _logger is RunLogger logger ? logger.Logs : [];
+    public IEnumerable<RunLog> Logs => _logger.Logs.OrderBy(l => l.Logged).ToArray();
 
     /// <summary>
     /// Executes the current run, loading the source, processing the node execution, and updating results.
@@ -69,6 +69,16 @@ public class Run(Node node, Source source, ILogger? logger = null)
             Result = ResultState.Errored;
             return ProduceRunResult(this, TargetInfo.Empty, stopwatch.ElapsedMilliseconds);
         }
+    }
+
+    /// <summary>
+    /// Configures the logger associated with the run.
+    /// </summary>
+    /// <param name="config">A configuration action to modify the logger.</param>
+    public void ConfigureLogger(Action<RunLogger> config)
+    {
+        ArgumentNullException.ThrowIfNull(config);
+        config.Invoke(_logger);
     }
 
     /// <summary>

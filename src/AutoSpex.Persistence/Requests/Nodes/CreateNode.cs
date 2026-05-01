@@ -40,9 +40,10 @@ internal class CreateNodeHandler(IConnectionManager manager) : IRequestHandler<C
         /*if (request.Node.Type != NodeType.Collection && request.Node.ParentId == Guid.Empty)
             return Result.Fail("Can not save virtual node. Select a collection to which this node belongs");*/
 
-        var exists = await connection.QuerySingleAsync<int>(NodeExists, new { request.Node.NodeId }, transaction);
-        if (exists != 0)
+        if (await connection.QuerySingleAsync<int>(NodeExists, new { request.Node.NodeId }, transaction) != 0)
+        {
             return Result.Fail($"Node with id already exists: {request.Node.NodeId}");
+        }
 
         await connection.ExecuteAsync(InsertNode, request.Node, transaction);
 

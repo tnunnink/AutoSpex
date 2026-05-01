@@ -6,7 +6,7 @@ namespace AutoSpex.Persistence;
 
 [UsedImplicitly]
 //[Migration(20250402, "Add Source, Variable, Reference tables.")]
-public class Migration20250402 : Migration
+public class MigrationDraft01 : Migration
 {
     public override void Up()
     {

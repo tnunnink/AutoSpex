@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using Task = System.Threading.Tasks.Task;
 
 namespace AutoSpex.Engine.Tests;
@@ -156,7 +157,6 @@ public class RunTests
         run.Runs.Should().HaveCount(3);
     }
 
-
     [Test]
     public async Task Logs_PostExecution_ShouldNotBeEmpty()
     {
@@ -168,10 +168,28 @@ public class RunTests
             s.Verify("DataType", Operation.EqualTo, "SimpleType");
         });
         var run = new Run(node, source);
-        
+
         await run.Execute();
 
         run.Logs.Should().NotBeEmpty();
+    }
+
+    [Test]
+    public async Task ConfigureLogger_DebugLogLevel_ShouldReturnDebugLevelLogs()
+    {
+        var source = Source.Create(Known.Test);
+        var node = Node.NewSpec("Test", s =>
+        {
+            s.Query(Element.Tag);
+            s.Where("TagName", Operation.EqualTo, "TestSimpleTag");
+            s.Verify("DataType", Operation.EqualTo, "SimpleType");
+        });
+        var run = new Run(node, source);
+
+        run.ConfigureLogger(logger => logger.MinLogLevel = LogLevel.Debug);
+
+        await run.Execute();
+        run.Logs.Should().Contain(r => r.Level == LogLevel.Debug);
     }
 
     [Test]

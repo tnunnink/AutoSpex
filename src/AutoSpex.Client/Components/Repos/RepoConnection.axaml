@@ -3,90 +3,181 @@
                     xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
                     xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
                     xmlns:components="clr-namespace:AutoSpex.Client.Components"
-                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties">
+                    xmlns:properties="clr-namespace:AutoSpex.Client.Resources.Properties"
+                    xmlns:controls="clr-namespace:AutoSpex.Client.Resources.Controls"
+                    xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors">
 
     <Design.PreviewWith>
         <ContentControl
             Content="{x:Static components:TestData.RepoTest}"
             ContentTemplate="{DynamicResource RepoConnection}"
             Margin="40"
-            Width="300" />
+            Width="300" Height="400" />
     </Design.PreviewWith>
 
     <DataTemplate x:Key="RepoConnection" DataType="observers:RepoObserver">
 
         <Border
+            BorderBrush="{a:ThemeResource Container1BorderBrush}"
             BorderThickness="{a:ThemeResource ButtonBorderThickness}"
-            CornerRadius="{a:ThemeResource ButtonCornerRadius}"
-            Classes.not-existing="{Binding !Exists}"
-            Classes.sync-required="{Binding SyncRequired}"
-            Padding="10">
+            CornerRadius="{a:ThemeResource ButtonCornerRadius}">
 
-            <Border.Styles>
-                <Style Selector="Border">
-                    <Setter Property="BorderBrush" Value="{a:ThemeResource Container1BorderBrush}" />
-                </Style>
-                <Style Selector="Border.not-existing">
-                    <Setter Property="BorderBrush" Value="{a:ThemeResource ControlForegroundBrushOutlineDanger}" />
-                </Style>
-                <Style Selector="Border.sync-required">
-                    <Setter Property="BorderBrush" Value="{a:ThemeResource ControlForegroundBrushOutlineWarning}" />
-                </Style>
-            </Border.Styles>
+            <Grid RowDefinitions="Auto,Auto,Auto,*">
 
-            <Grid ColumnDefinitions="*,Auto">
+                <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="10">
 
-                <StackPanel Grid.Column="0" Spacing="5" Orientation="Horizontal" ClipToBounds="True">
+                    <StackPanel Grid.Column="0" Spacing="5" Orientation="Horizontal" ClipToBounds="True">
 
-                    <Panel>
-                        <PathIcon
-                            IsVisible="{Binding Exists}"
-                            Theme="{StaticResource IconFilledFolderOpen}" />
-                        <PathIcon
-                            IsVisible="{Binding !Exists}"
-                            Theme="{StaticResource IconFilledExclamation}"
-                            Classes="danger"
-                            ToolTip.Tip="Location no longer exists" />
-                    </Panel>
+                        <Panel>
+                            <PathIcon
+                                Theme="{StaticResource IconFilledFolderOpen}">
+                                <PathIcon.IsVisible>
+                                    <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                        <Binding Path="Exists" />
+                                        <Binding Path="!SyncRequired" />
+                                    </MultiBinding>
+                                </PathIcon.IsVisible>
+                            </PathIcon>
+                            <PathIcon
+                                IsVisible="{Binding !Exists}"
+                                Theme="{StaticResource IconFilledExclamation}"
+                                Classes="danger"
+                                ToolTip.Tip="Location no longer exists" />
+                            <PathIcon
+                                IsVisible="{Binding SyncRequired}"
+                                Theme="{StaticResource IconFilledExclamation}"
+                                Classes="warning"
+                                ToolTip.Tip="Sync required" />
+                        </Panel>
 
-                    <StackPanel Spacing="2" Margin="7 0">
-                        <TextBlock
-                            Text="{Binding Name}"
-                            FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
-                        <TextBlock
-                            Text="{Binding Location}"
-                            Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
-                            FontSize="{a:ThemeResource DefaultFontSizeExtraSmall}"
-                            TextTrimming="CharacterEllipsis"
-                            FlowDirection="LeftToRight"
-                            ToolTip.Tip="{Binding Location}" />
+                        <StackPanel Spacing="2" Margin="7 0">
+                            <TextBlock
+                                Text="{Binding Name}"
+                                FontWeight="{a:ThemeResource HeadingFontWeightSmall}" />
+                            <TextBlock
+                                Text="{Binding Location}"
+                                Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}"
+                                FontSize="{a:ThemeResource DefaultFontSizeExtraSmall}"
+                                TextTrimming="CharacterEllipsis"
+                                FlowDirection="LeftToRight"
+                                ToolTip.Tip="{Binding Location}" />
+                        </StackPanel>
+
                     </StackPanel>
 
-                </StackPanel>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="5" Margin="10 0 0 0">
 
+                        <Button
+                            Command="{Binding SyncCommand}"
+                            IsVisible="{Binding Exists}"
+                            Theme="{StaticResource IconButton}"
+                            properties:Icon.Theme="{StaticResource IconLineRotate}"
+                            Classes.warning="{Binding SyncRequired}" />
 
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="5" Margin="10 0 0 0">
+                        <Button
+                            Theme="{StaticResource IconButton}"
+                            properties:Icon.Theme="{StaticResource IconEllipsis}">
 
-                    <Button
-                        Command="{Binding SyncCommand}"
-                        IsVisible="{Binding Exists}"
-                        Theme="{StaticResource IconButton}"
-                        properties:Icon.Theme="{StaticResource IconLineRotate}"
-                        Classes.warning="{Binding SyncRequired}" />
+                            <Button.Flyout>
+                                <MenuFlyout
+                                    Placement="BottomEdgeAlignedRight"
+                                    ItemContainerTheme="{StaticResource MenuActionItem}"
+                                    ItemsSource="{Binding MenuItems}" />
+                            </Button.Flyout>
+                        </Button>
 
-                    <Button
-                        Theme="{StaticResource IconButton}"
-                        properties:Icon.Theme="{StaticResource IconEllipsis}">
+                    </StackPanel>
 
-                        <Button.Flyout>
-                            <MenuFlyout
-                                Placement="BottomEdgeAlignedRight"
-                                ItemContainerTheme="{StaticResource MenuActionItem}"
-                                ItemsSource="{Binding MenuItems}" />
-                        </Button.Flyout>
-                    </Button>
+                </Grid>
 
-                </StackPanel>
+                <TextBox
+                    Grid.Row="1"
+                    Text="{Binding SourceFilter}"
+                    Watermark="Search sources"
+                    Theme="{StaticResource TextBoxSimple}"
+                    VerticalContentAlignment="Center"
+                    BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                    BorderThickness="0 1 0 1"
+                    CornerRadius="0"
+                    Padding="0 7">
+                    <TextBox.InnerLeftContent>
+                        <PathIcon Theme="{StaticResource IconLineSearch}"
+                                  VerticalAlignment="Center" Margin="10 0"
+                                  Classes="size-sm"
+                                  Foreground="{a:ThemeResource DefaultForegroundBrushTertiary}" />
+                    </TextBox.InnerLeftContent>
+                    <Interaction.Behaviors>
+                        <behaviors:SelectAllTextOnGotFocusBehavior />
+                    </Interaction.Behaviors>
+                </TextBox>
+
+                <Border
+                    Grid.Row="2"
+                    BorderThickness="0 0 0 1"
+                    BorderBrush="{a:ThemeResource Container1BorderBrush}"
+                    IsVisible="{Binding TargetedCount}">
+
+                    <ListBox
+                        ItemsSource="{Binding Targeted}"
+                        ItemContainerTheme="{StaticResource ListBoxItemSimple}"
+                        ItemTemplate="{StaticResource SourceListItem}"
+                        SelectionMode="Multiple"
+                        ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                        Padding="5" />
+                </Border>
+
+                <Panel Grid.Row="3">
+
+                    <!--Message for no sources found-->
+                    <controls:DefaultMessage
+                        HeaderIcon="{StaticResource IconThemedSource}"
+                        Header="No sources available"
+                        Message="This repo does not contain any sources.">
+                        <controls:DefaultMessage.IsVisible>
+                            <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                <Binding Path="!AvailableCount" />
+                                <Binding Path="!IsSyncing" />
+                            </MultiBinding>
+                        </controls:DefaultMessage.IsVisible>
+                    </controls:DefaultMessage>
+
+                    <!--Message for no sources syncing status-->
+                    <controls:DefaultMessage
+                        IsVisible="{Binding IsSyncing}"
+                        Header="Syncing repository..."
+                        Message="{Binding Location}">
+
+                        <controls:DefaultMessage.Action>
+                            <PathIcon Theme="{StaticResource IconThemedPending}" Margin="10" Classes="size-lg">
+                                <PathIcon.Styles>
+                                    <Style Selector="PathIcon">
+                                        <Style.Animations>
+                                            <Animation Duration="0:0:1" IterationCount="INFINITE">
+                                                <KeyFrame Cue="0%">
+                                                    <Setter Property="RotateTransform.Angle" Value="0" />
+                                                </KeyFrame>
+                                                <KeyFrame Cue="100%">
+                                                    <Setter Property="RotateTransform.Angle" Value="360" />
+                                                </KeyFrame>
+                                            </Animation>
+                                        </Style.Animations>
+                                    </Style>
+                                </PathIcon.Styles>
+                            </PathIcon>
+                        </controls:DefaultMessage.Action>
+
+                    </controls:DefaultMessage>
+
+                    <ListBox
+                        ItemsSource="{Binding Available}"
+                        ItemContainerTheme="{StaticResource ListBoxItemSimple}"
+                        ItemTemplate="{StaticResource SourceListItem}"
+                        IsVisible="{Binding AvailableCount}"
+                        SelectionMode="Multiple"
+                        ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                        Padding="5" />
+
+                </Panel>
 
             </Grid>
 

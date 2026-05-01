@@ -1,5 +1,4 @@
 ﻿using System.Security.Cryptography;
-using System.Text;
 using L5Sharp.Core;
 
 namespace AutoSpex.Engine;
@@ -20,7 +19,8 @@ public class Source
         Name = Path.GetFileNameWithoutExtension(file.Name);
         Type = SourceType.FromExtension(file.Extension);
         UpdatedOn = file.LastWriteTimeUtc;
-        Size = file.Length;
+        Size = file.Exists ? file.Length : 0;
+        Exists = file.Exists;
     }
 
     /// <summary>
@@ -55,6 +55,11 @@ public class Source
     public long Size { get; }
 
     /// <summary>
+    /// Indicates whether the source file exists in the specified location on disk.
+    /// </summary>
+    public bool Exists { get; }
+
+    /// <summary>
     /// Creates a new instance of the Source class using the specified file location.
     /// </summary>
     /// <param name="location">The file path to the source file for which the Source instance will be created.</param>
@@ -65,9 +70,6 @@ public class Source
     {
         if (string.IsNullOrEmpty(location))
             throw new ArgumentException("Location is required to create source.");
-
-        if (!File.Exists(location))
-            throw new ArgumentException($"No file exists at provided location '{location}'");
 
         if (!SupportedExtensions.Contains(Path.GetExtension(location).ToUpper()))
             throw new NotSupportedException("The specified file extension is not supported.");

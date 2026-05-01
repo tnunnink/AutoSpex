@@ -2,9 +2,9 @@
 
 namespace AutoSpex.Client.Pages;
 
-public partial class SpecsPage : UserControl
+public partial class SpecDetailPage : UserControl
 {
-    public SpecsPage()
+    public SpecDetailPage()
     {
         InitializeComponent();
     }

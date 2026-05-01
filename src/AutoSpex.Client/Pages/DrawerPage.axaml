@@ -30,7 +30,8 @@
                         ItemsSource="{Binding Pages}"
                         SelectedItem="{Binding Selected}"
                         ItemTemplate="{StaticResource DetailTab}"
-                        BorderThickness="0">
+                        BorderThickness="0"
+                        Margin="5 0">
 
                         <TabStrip.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -42,20 +43,19 @@
                             <ControlTheme
                                 x:DataType="shared:DetailPageModel"
                                 TargetType="TabStripItem"
-                                BasedOn="{a:ControlTheme TabStripOutline}">
+                                BasedOn="{StaticResource TabStripItemSoft}">
 
                                 <Setter Property="Padding" Value="10 7 3 7" />
                                 <Setter Property="ContextFlyout">
                                     <MenuFlyout>
                                         <MenuFlyout.ItemContainerTheme>
-                                            <ControlTheme TargetType="MenuItem"
-                                                          BasedOn="{StaticResource ContextMenuItem}" />
+                                            <ControlTheme
+                                                TargetType="MenuItem"
+                                                BasedOn="{StaticResource ContextMenuItem}" />
                                         </MenuFlyout.ItemContainerTheme>
                                         <MenuItem Header="Close Tab"
-                                                  InputGesture="Ctrl+W"
                                                   Command="{Binding CloseCommand}" />
                                         <MenuItem Header="Close All Tabs"
-                                                  InputGesture="Ctrl+Shift+W"
                                                   Command="{Binding $parent[TabStrip].((pages:DetailsPageModel)DataContext).CloseAllTabsCommand, FallbackValue={x:Null}}" />
                                         <MenuItem Header="-" />
                                         <MenuItem Header="Close Other Tabs"
@@ -67,13 +67,6 @@
                                         <MenuItem Header="Close Tabs to Left"
                                                   Command="{Binding $parent[TabStrip].((pages:DetailsPageModel)DataContext).CloseLeftTabsCommand, FallbackValue={x:Null}}"
                                                   CommandParameter="{Binding}" />
-                                        <MenuItem Header="-" />
-                                        <MenuItem Header="Force Close Tab"
-                                                  InputGesture="Alt+W"
-                                                  Command="{Binding ForceCloseCommand}" />
-                                        <MenuItem Header="Force Close Tabs"
-                                                  InputGesture="Alt+Shift+W"
-                                                  Command="{Binding $parent[TabStrip].((pages:DetailsPageModel)DataContext).ForceCloseAllTabsCommand, FallbackValue={x:Null}}" />
                                     </MenuFlyout>
                                 </Setter>
                             </ControlTheme>

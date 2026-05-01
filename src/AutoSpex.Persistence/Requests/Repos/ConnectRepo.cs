@@ -23,14 +23,12 @@ internal class ConnectRepoHandler(IConnectionManager manager) : IRequestHandler<
     {
         using var connection = await manager.Connect(cancellationToken);
 
-        var record = new
+        await connection.ExecuteAsync(ConnectRepo, new
         {
             request.Repo.RepoId,
             request.Repo.Location,
             LastConnected = DateTime.UtcNow
-        };
-
-        await connection.ExecuteAsync(ConnectRepo, record);
+        });
 
         return Result.Ok();
     }

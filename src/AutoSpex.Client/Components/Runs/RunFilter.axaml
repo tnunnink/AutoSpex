@@ -1,0 +1,91 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
+                    xmlns:observers="clr-namespace:AutoSpex.Client.Observers"
+                    xmlns:components="clr-namespace:AutoSpex.Client.Components"
+                    xmlns:behaviors="clr-namespace:AutoSpex.Client.Resources.Behaviors">
+
+    <Design.PreviewWith>
+        <Border Width="600">
+            <ContentControl
+                Content="{x:Static components:TestData.RunTest}"
+                ContentTemplate="{DynamicResource RunFilter}"
+                VerticalAlignment="Center"
+                Margin="20" />
+        </Border>
+    </Design.PreviewWith>
+
+    <DataTemplate x:Key="RunFilter" x:DataType="observers:RunObserver">
+
+        <Border
+            BorderThickness="1"
+            BorderBrush="{a:ThemeResource Container1BorderBrush}"
+            CornerRadius="{a:ThemeResource EditCornerRadius}">
+
+            <DockPanel>
+
+                <Button
+                    DockPanel.Dock="Left"
+                    Theme="{a:ControlTheme ButtonSubtle}"
+                    CornerRadius="3 0 0 3"
+                    ToolTip.Tip="Filter State">
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <PathIcon
+                            Theme="{Binding FilterState, Converter={StaticResource ResultStateIconConverter}}"
+                            FontSize="14" />
+                        <TextBlock Text="12" />
+                        <PathIcon Theme="{StaticResource IconLineExpand}" Classes="size-sm centered" />
+                    </StackPanel>
+
+                    <Button.Flyout>
+                        <Flyout Placement="BottomEdgeAlignedLeft" VerticalOffset="5">
+                            <ListBox
+                                ItemsSource="{Binding States}"
+                                SelectedItem="{Binding FilterState}"
+                                ItemTemplate="{StaticResource ResultStateItem}"
+                                ItemContainerTheme="{StaticResource ListBoxItemSelection}"
+                                Padding="5">
+                                <Interaction.Behaviors>
+                                    <behaviors:HideFlyoutPointerReleasedBehavior />
+                                </Interaction.Behaviors>
+                            </ListBox>
+                        </Flyout>
+                    </Button.Flyout>
+
+                </Button>
+
+                <Border
+                    DockPanel.Dock="Left"
+                    Width="1"
+                    Background="{a:ThemeResource Container1BorderBrush}" />
+
+                <Button
+                    DockPanel.Dock="Right"
+                    Theme="{a:ControlTheme ButtonSubtle}"
+                    CornerRadius="0 3 3 0"
+                    ToolTip.Tip="Search (Enter)">
+                    <PathIcon Theme="{StaticResource IconLineSearch}" Classes="size-sm" />
+                </Button>
+
+                <Border
+                    DockPanel.Dock="Right"
+                    Width="1"
+                    Background="{a:ThemeResource Container1BorderBrush}" />
+
+                <TextBox
+                    Watermark="Filters results"
+                    Text="{Binding FilterText}"
+                    Theme="{StaticResource TextBoxSimple}">
+                    <Interaction.Behaviors>
+                        <behaviors:SelectAllTextOnGotFocusBehavior />
+                    </Interaction.Behaviors>
+                </TextBox>
+
+            </DockPanel>
+
+        </Border>
+
+
+    </DataTemplate>
+
+</ResourceDictionary>

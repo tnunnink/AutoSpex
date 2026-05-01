@@ -1,21 +1,15 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:a="http://schemas.actiprosoftware.com/avaloniaui"
              xmlns:pages="clr-namespace:AutoSpex.Client.Pages"
-             xmlns:shared="clr-namespace:AutoSpex.Client.Shared"
              x:Class="AutoSpex.Client.Pages.NodeDetailPage"
              x:DataType="pages:NodeDetailPageModel">
 
     <Design.Width>800</Design.Width>
     <Design.Height>500</Design.Height>
 
-    <DockPanel>
+    <DockPanel Margin="20">
 
-        <Border
-            DockPanel.Dock="Top"
-            BorderBrush="{a:ThemeResource Container1BorderBrush}"
-            BorderThickness="0 0 0 1"
-            Padding="15 10">
+        <Border DockPanel.Dock="Top">
 
             <DockPanel LastChildFill="False">
 
@@ -38,34 +32,7 @@
 
         </Border>
 
-        <TabStrip
-            DockPanel.Dock="Top"
-            ItemsSource="{Binding Pages}"
-            SelectedItem="{Binding CurrentPage}"
-            ItemContainerTheme="{StaticResource TabStripItemStandard}"
-            BorderThickness="0"
-            Padding="15 0">
-
-            <TabStrip.ItemTemplate>
-                <DataTemplate x:DataType="shared:PageViewModel">
-                    <TextBlock Text="{Binding Title}" />
-                </DataTemplate>
-            </TabStrip.ItemTemplate>
-
-            <!--<TabStrip.ItemContainerTheme>
-                <ControlTheme
-                    TargetType="TabStripItem"
-                    BasedOn="{StaticResource TabStripItemExpandable}"
-                    x:DataType="shared:PageViewModel">
-                    <Setter
-                        Property="properties:Icon.Theme"
-                        Value="{Binding Icon, Converter={StaticResource NamedIconConverter}}" />
-                </ControlTheme>
-            </TabStrip.ItemContainerTheme>-->
-
-        </TabStrip>
-
-        <ContentControl Content="{Binding CurrentPage}" />
+        <ContentControl Content="{Binding CurrentPage}" Margin="0 20 0 0" />
 
     </DockPanel>
 

@@ -7,14 +7,11 @@ using FluentResults;
 
 namespace AutoSpex.Client.Pages;
 
-public partial class SpecPageModel(NodeObserver node) : PageViewModel("Specification")
+public partial class SpecDetailPageModel(NodeObserver node) : PageViewModel
 {
-    public override string Route => $"{node.Type}/{node.Id}/{Title}";
-    public override string Icon => "IconFilledClipboard";
-
+    public override string Route => $"{node.Type}/{node.Id}/Config";
+    
     [ObservableProperty] private SpecObserver? _spec;
-
-    [ObservableProperty] private bool _showDrawer;
 
     /// <inheritdoc />
     public override async Task Load()
