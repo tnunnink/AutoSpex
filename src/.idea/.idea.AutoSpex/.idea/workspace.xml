@@ -6,82 +6,20 @@
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
+  <component name="CMakeProjectFlavorService">
+    <option name="flavorId" value="CMakePlainProjectFlavor" />
+  </component>
+  <component name="CMakeSettings">
+    <configurations />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="a07f1d3f-6f03-47ec-a0a7-cdecae08accf" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/AutoSpex.Client/Components/Nodes/NodeDescription.axaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AutoSpex.Client/Components/Runs/RunFilter.axaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/CollectionDetailPage.axaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/CollectionDetailPage.axaml.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/CollectionDetailPageModel.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/ContainerDetailPage.axaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/ContainerDetailPage.axaml.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/ContainerDetailPageModel.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AutoSpex.Persistence/Migrations/Migration20250506.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AutoSpex.Persistence/Requests/Repos/LoadTargets.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AutoSpex.Persistence/Requests/Repos/UpdateTargets.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../tests/AutoSpex.Persistence.Tests/Repos/UpdateLocationTests.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../tests/AutoSpex.Persistence.Tests/Repos/UpdateTargetsTests.cs" afterDir="false" />
+    <list default="true" id="6c8df8e6-8f59-4ce7-9032-98bd0284e256" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AutoSpex/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AutoSpex/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/App.axaml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/App.axaml.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AutoSpex.Client/AutoSpex.Client.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/AutoSpex.Client.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Components/Nodes/All.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Components/Nodes/All.axaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Components/Nodes/NodeInfoButton.axaml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Components/Prompts/SaveChangesPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Components/Prompts/SaveChangesPageModel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Components/Repos/All.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Components/Repos/All.axaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Components/Repos/RepoAvailable.axaml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Components/Repos/RepoConnection.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Components/Repos/RepoConnection.axaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Components/Repos/RepoTargeted.axaml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Components/Runs/All.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Components/Runs/All.axaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Components/Runs/EvaluationList.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Components/Runs/EvaluationList.axaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Components/Runs/EvaluationListItem.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Components/Runs/EvaluationListItem.axaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Components/Runs/RunResults.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Components/Runs/RunResults.axaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Components/Runs/RunStatus.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Components/Runs/RunStatus.axaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Components/Sources/SourceListItem.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Components/Sources/SourceListItem.axaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Observers/EvaluationObserver.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Observers/EvaluationObserver.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Observers/RepoObserver.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Observers/RepoObserver.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Observers/RunObserver.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Observers/RunObserver.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Observers/SourceObserver.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Observers/SourceObserver.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Observers/SpecObserver.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Observers/SpecObserver.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/AppPage.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/AppPage.axaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/DrawerPage.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/DrawerPage.axaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/NodeDetailPage.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/NodeDetailPage.axaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/NodeDetailPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/NodeDetailPageModel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/SpecPage.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/SpecDetailPage.axaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/SpecPage.axaml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/SpecDetailPage.axaml.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/SpecPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/SpecDetailPageModel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/SpecsPage.axaml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/SpecsPage.axaml.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/SpecsPageModel.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Repos/RepoConfigPage.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Repos/RepoConfigPage.axaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Repos/RepoConfigPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Repos/RepoConfigPageModel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Repos/RepoConnectorPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Repos/RepoConnectorPageModel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Runs/RunnerPage.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Runs/RunnerPage.axaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Runs/RunnerPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Runs/RunnerPageModel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Pages/Settings/SettingsGeneralPageModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Pages/Settings/SettingsGeneralPageModel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Resources/Icons/IconsLine.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Resources/Icons/IconsLine.axaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Resources/Icons/IconsThemed.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Resources/Icons/IconsThemed.axaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Resources/Styles.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Resources/Styles.axaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Resources/Themes/TabStripItem.axaml" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Resources/Themes/TabStripItem.axaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Shared/Observer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Shared/Observer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Client/Resources/AppThemeDefinition.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Client/Resources/AppThemeDefinition.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AutoSpex.Engine/AutoSpex.Engine.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Engine/AutoSpex.Engine.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Engine/Criterion.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Engine/Criterion.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Engine/Extensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Engine/Extensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Engine/Operations/AllOperation.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Engine/Operations/AllOperation.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Engine/Operations/AnyOperation.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Engine/Operations/AnyOperation.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Engine/Repo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Engine/Repo.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Engine/Run.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Engine/Run.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Engine/Source.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Engine/Source.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Engine/Steps/Filter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Engine/Steps/Filter.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Persistence/Migrations/Migration20250402.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Persistence/Migrations/MigrationDraft01.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Persistence/Requests/Nodes/CreateNode.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Persistence/Requests/Nodes/CreateNode.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Persistence/Requests/Repos/ConnectRepo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Persistence/Requests/Repos/ConnectRepo.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Persistence/Requests/Repos/GetLastConnectedRepo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Persistence/Requests/Repos/GetLastConnected.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AutoSpex.Persistence/Requests/Repos/UpdateRepoLocation.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Persistence/Requests/Repos/UpdateLocation.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tests/AutoSpex.Engine.Tests/RepoTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../tests/AutoSpex.Engine.Tests/RepoTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tests/AutoSpex.Engine.Tests/RunTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../tests/AutoSpex.Engine.Tests/RunTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tests/AutoSpex.Engine.Tests/SourceTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../tests/AutoSpex.Engine.Tests/SourceTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tests/AutoSpex.Persistence.Tests/Known.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../tests/AutoSpex.Persistence.Tests/Known.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../tests/AutoSpex.Persistence.Tests/Repos/GetLastConnectedRepoTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../tests/AutoSpex.Persistence.Tests/Repos/GetLastConnectedTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AutoSpex.Engine/SourceType.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AutoSpex.Engine/SourceType.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../tests/AutoSpex.Engine.Tests/AutoSpex.Engine.Tests.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/../tests/AutoSpex.Engine.Tests/AutoSpex.Engine.Tests.csproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,13 +30,13 @@
     <option name="firstShow" value="false" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="7" />
+    <option name="cachedIndexableFilesCount" value="2" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$/.." value="remove-run" />
+        <entry key="$PROJECT_DIR$/.." value="main" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
@@ -112,42 +50,21 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/tnunnink/AutoSpex.git&quot;,
-    &quot;accountId&quot;: &quot;d2f60ef5-5ad0-40c1-a277-9835f109efbf&quot;
+    &quot;accountId&quot;: &quot;44eadc35-9d54-442c-b32c-a90545d57e74&quot;
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/eba546b0f0d448e0176a2222548fd7a2fbf464c0/src/libraries/System.Private.CoreLib/src/System/Collections/Generic/List.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/eba546b0f0d448e0176a2222548fd7a2fbf464c0/src/libraries/System.Private.CoreLib/src/System/IO/FileSystem.Windows.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/eba546b0f0d448e0176a2222548fd7a2fbf464c0/src/libraries/System.Private.CoreLib/src/System/Threading/ExecutionContext.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/eba546b0f0d448e0176a2222548fd7a2fbf464c0/src/libraries/System.Private.CoreLib/src/System/Threading/Tasks/Sources/ManualResetValueTaskSourceCore.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/faff19c785b14884a38db9a1d878290111c2f0/e6/65af5d76/ThemeResourceKind.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/AutoSpex.Client/Components/Criteria/All.axaml" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/AutoSpex.Client/Components/Criteria/ArgumentSelector.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/AutoSpex.Client/Components/Criteria/ReplaceListItem.axaml" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/AutoSpex.Client/Components/General/ObserverLink.axaml" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/AutoSpex.Client/Components/General/ObserverTitle.axaml" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/AutoSpex.Client/Components/Nodes/Breadcrumb.axaml" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/AutoSpex.Client/Pages/NavigationPage.axaml" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/AutoSpex.Client/Pages/Nodes/ImportConflictPage.axaml" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/AutoSpex.Client/Resources/Themes/TabStripItem.axaml" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/AutoSpex.Client/Shared/Observer.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../tests/AutoSpex.Engine.Tests/RunTests.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../tests/AutoSpex.Engine.Tests/obj/project.assets.json" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="McpProjectServerCommands">
     <commands />
     <urls />
   </component>
-  <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
-  <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
-  </component>
   <component name="ProjectColorInfo">{
-  &quot;associatedIndex&quot;: 0
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 3
 }</component>
-  <component name="ProjectId" id="2t5Gzj0BFJFK9pm0waFWI5pp8Hy" />
-  <component name="ProjectLevelVcsManager">
-    <ConfirmationsSetting value="2" id="Add" />
-  </component>
+  <component name="ProjectId" id="3D7qCa7WW5hj5W5vOps1vQCHvYd" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -155,43 +72,28 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;.NET Project.AutoSpex.Client.executor&quot;: &quot;Run&quot;,
-    &quot;14aed80c-e35e-4b5c-99c1-aaa86b7d938c.executor&quot;: &quot;Debug&quot;,
-    &quot;2ba7876e-0068-47bf-99e7-0d6471a9949e.executor&quot;: &quot;Debug&quot;,
-    &quot;2e5449b7-078c-4d03-bd80-c4930c1c840b.executor&quot;: &quot;Debug&quot;,
-    &quot;5c12c6cb-16d5-4932-ad8f-e7cf53b8cabd.executor&quot;: &quot;Debug&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;cb184d9d-96fa-4c02-aa8f-bd985cca87c7.executor&quot;: &quot;Debug&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultAutoModeForALLUsers.v1&quot;: &quot;true&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
     &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;release&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/tnunnink/Documents/Projects/AutoSpex/AutoSpex/src/AutoSpex.sln&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;RiderUnitTestingPageId&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
     &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
-  },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;sqlite&quot;
-    ]
   }
 }</component>
-  <component name="RecapSpentCounter">
-    <option name="endsOfQuotaMs" value="1773082809547" />
-    <option name="spentUsd" value="0.0146141" />
-  </component>
-  <component name="RecapUselessUpdatesCounter">
-    <option name="suspendCountdown" value="7" />
-  </component>
   <component name="RunManager">
     <configuration name="AutoSpex.Client" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="" />
@@ -215,308 +117,41 @@
       </method>
     </configuration>
   </component>
-  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
-  <component name="SvnConfiguration">
-    <configuration>C:\Users\tnunnink\AppData\Roaming\Subversion</configuration>
-  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="a07f1d3f-6f03-47ec-a0a7-cdecae08accf" name="Changes" comment="" />
-      <created>1739634785843</created>
+      <changelist id="6c8df8e6-8f59-4ce7-9032-98bd0284e256" name="Changes" comment="" />
+      <created>1777643328494</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1739634785843</updated>
-      <workItem from="1739634786700" duration="2073000" />
-      <workItem from="1739646261608" duration="1642000" />
-      <workItem from="1739647944865" duration="12000" />
-      <workItem from="1739674356621" duration="4505000" />
-      <workItem from="1740166073828" duration="2043000" />
-      <workItem from="1740251038701" duration="5216000" />
-      <workItem from="1740710686919" duration="1574000" />
-      <workItem from="1740767420874" duration="26166000" />
-      <workItem from="1743174352567" duration="17060000" />
-      <workItem from="1743275033856" duration="23079000" />
-      <workItem from="1743469280299" duration="428000" />
-      <workItem from="1743469734108" duration="249000" />
-      <workItem from="1743470121800" duration="334000" />
-      <workItem from="1743470565895" duration="105000" />
-      <workItem from="1743470680212" duration="99000" />
-      <workItem from="1743470970128" duration="246000" />
-      <workItem from="1743471375547" duration="830000" />
-      <workItem from="1743472319815" duration="2294000" />
-      <workItem from="1743535012465" duration="9620000" />
-      <workItem from="1743559654670" duration="11160000" />
-      <workItem from="1743623449082" duration="45324000" />
-      <workItem from="1743789205609" duration="8897000" />
-      <workItem from="1743798181017" duration="32418000" />
-      <workItem from="1743962872645" duration="88368000" />
-      <workItem from="1744289734536" duration="28231000" />
-      <workItem from="1744569476754" duration="3206000" />
-      <workItem from="1744572824017" duration="39087000" />
-      <workItem from="1744837952058" duration="4554000" />
-      <workItem from="1744982024202" duration="147000" />
-      <workItem from="1744982190906" duration="690000" />
-      <workItem from="1744982903861" duration="63922000" />
-      <workItem from="1745455112953" duration="1834000" />
-      <workItem from="1745505879385" duration="28573000" />
-      <workItem from="1745761691768" duration="4931000" />
-      <workItem from="1745783236870" duration="16310000" />
-      <workItem from="1745872449453" duration="5419000" />
-      <workItem from="1745960681787" duration="2807000" />
-      <workItem from="1746458612162" duration="25266000" />
-      <workItem from="1746640772115" duration="37925000" />
-      <workItem from="1747078914306" duration="15466000" />
-      <workItem from="1747398078543" duration="7914000" />
-      <workItem from="1751053018142" duration="39000" />
-      <workItem from="1758230933456" duration="718000" />
-      <workItem from="1759163280838" duration="633000" />
-      <workItem from="1762186954219" duration="2483000" />
-      <workItem from="1772662827606" duration="3535000" />
+      <updated>1777643328494</updated>
+      <workItem from="1777643330586" duration="11839000" />
+      <workItem from="1780827405757" duration="699000" />
     </task>
-    <task id="LOCAL-00001" summary="Removed Actions. Removed SourceDetailPage. Updated packages in client. Moves all requests in persistence layer.">
-      <option name="closed" value="true" />
-      <created>1740863774567</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1740863774567</updated>
-    </task>
-    <task id="LOCAL-00002" summary="removed register">
-      <option name="closed" value="true" />
-      <created>1740863811604</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1740863811604</updated>
-    </task>
-    <task id="LOCAL-00003" summary="Updated Vacuum Extensions.cs">
-      <option name="closed" value="true" />
-      <created>1740914778536</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1740914778536</updated>
-    </task>
-    <task id="LOCAL-00004" summary="Removed IChangeRequested from PostRun for the time being.">
-      <option name="closed" value="true" />
-      <created>1740914905132</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1740914905132</updated>
-    </task>
-    <task id="LOCAL-00005" summary="updated version">
-      <option name="closed" value="true" />
-      <created>1740915019587</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1740915019587</updated>
-    </task>
-    <task id="LOCAL-00006" summary="Removed history pages. Removed run table and all persistence related code with runs (not interested in storing this data anymore). Removed the changes table and added new log table to eventually be used in its place. Updated related UI components and elements. Finished removing rule/suppression based code. Renamed container to Registrar.cs.">
-      <option name="closed" value="true" />
-      <created>1741182897677</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1741182897677</updated>
-    </task>
-    <task id="LOCAL-00007" summary="Fixed all errors. Update Run/Runner and added tests. Added migrations">
-      <option name="closed" value="true" />
-      <created>1743359196592</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1743359196592</updated>
-    </task>
-    <task id="LOCAL-00008" summary="Continued rework of repo and source and ui">
-      <option name="closed" value="true" />
-      <created>1743619214958</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1743619214958</updated>
-    </task>
-    <task id="LOCAL-00009" summary="Continued rework of repo and source and ui">
-      <option name="closed" value="true" />
-      <created>1743796712869</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1743796712869</updated>
-    </task>
-    <task id="LOCAL-00010" summary="Spec Query Merge. Run rework. Migrations. Fixes to code to allow concurrent runs. Reintroducing variable and reworking Reference. Testing. Saving.">
-      <option name="closed" value="true" />
-      <created>1745089394907</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1745089394907</updated>
-    </task>
-    <task id="LOCAL-00011" summary="removed todo">
-      <option name="closed" value="true" />
-      <created>1745089453494</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1745089453494</updated>
-    </task>
-    <task id="LOCAL-00012" summary="Spec refinement">
-      <option name="closed" value="true" />
-      <created>1745175735353</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1745175735353</updated>
-    </task>
-    <task id="LOCAL-00013" summary="Fixing UI components based on updates to engine structure">
-      <option name="closed" value="true" />
-      <created>1745505915939</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1745505915939</updated>
-    </task>
-    <task id="LOCAL-00014" summary="Fixing UI components based on updates to Engine. Updated Run. Added new RunLogger and RunLog to capture diagnostics for runs.">
-      <option name="closed" value="true" />
-      <created>1745873136969</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
-      <option name="project" value="LOCAL" />
-      <updated>1745873136969</updated>
-    </task>
-    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
-  <component name="UnitTestsCoverage.Settings">
-    <option name="coveragePercentColumnWidth" value="150" />
-    <option name="sortOrder" value="DESCENDING" />
-    <option name="sortedColumn" value="1" />
-    <option name="symbolColumnWidth" value="256" />
-    <coverage-tree-state>
-      <expand>
-        <path>
-          <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 25% 16824/22421" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-        </path>
-        <path>
-          <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 25% 16824/22421" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="AutoSpex.Engine 85% 405/2626" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-        </path>
-        <path>
-          <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 25% 16824/22421" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="AutoSpex.Engine 85% 405/2626" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="AutoSpex.Engine 85% 405/2626" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-        </path>
-      </expand>
-      <select />
-    </coverage-tree-state>
-  </component>
-  <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
-  <component name="UnknownFeatures">
-    <option featureType="dependencySupport" implementationName="dotnet:Microsoft.Identity.Client" />
-    <option featureType="dependencySupport" implementationName="dotnet:Microsoft.ApplicationInsights" />
-  </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State />
-          </value>
-        </entry>
-      </map>
-    </option>
-  </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Removed Actions. Removed SourceDetailPage. Updated packages in client. Moves all requests in persistence layer." />
-    <MESSAGE value="removed register" />
-    <MESSAGE value="Updated Vacuum Extensions.cs" />
-    <MESSAGE value="Removed IChangeRequested from PostRun for the time being." />
-    <MESSAGE value="updated version" />
-    <MESSAGE value="Removed history pages. Removed run table and all persistence related code with runs (not interested in storing this data anymore). Removed the changes table and added new log table to eventually be used in its place. Updated related UI components and elements. Finished removing rule/suppression based code. Renamed container to Registrar.cs." />
-    <MESSAGE value="Fixed all errors. Update Run/Runner and added tests. Added migrations" />
-    <MESSAGE value="Continued rework of repo and source and ui" />
-    <MESSAGE value="Spec Query Merge. Run rework. Migrations. Fixes to code to allow concurrent runs. Reintroducing variable and reworking Reference. Testing. Saving." />
-    <MESSAGE value="removed todo" />
-    <MESSAGE value="Spec refinement" />
-    <MESSAGE value="Fixing UI components based on updates to engine structure" />
-    <MESSAGE value="Fixing UI components based on updates to Engine. Updated Run. Added new RunLogger and RunLog to capture diagnostics for runs." />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixing UI components based on updates to Engine. Updated Run. Added new RunLogger and RunLog to capture diagnostics for runs." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/../tests/AutoSpex.Persistence.Tests/Nodes/LoadNodeTests.cs</url>
-          <line>24</line>
-          <properties documentPath="C:\Users\tnunnink\Documents\Projects\AutoSpex\AutoSpex\tests\AutoSpex.Persistence.Tests\Nodes\LoadNodeTests.cs" containingFunctionPresentation="Method 'LoadSpecs_SeededSpecNoConfig_ShouldBeSuccessAndExpected'">
-            <startOffsets>
-              <option value="689" />
-            </startOffsets>
-            <endOffsets>
-              <option value="749" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="12" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/../tests/AutoSpex.Persistence.Tests/Nodes/LoadNodeTests.cs</url>
-          <line>19</line>
-          <properties documentPath="C:\Users\tnunnink\Documents\Projects\AutoSpex\AutoSpex\tests\AutoSpex.Persistence.Tests\Nodes\LoadNodeTests.cs" containingFunctionPresentation="Method 'LoadSpecs_SeededSpecNoConfig_ShouldBeSuccessAndExpected'">
-            <startOffsets>
-              <option value="502" />
-            </startOffsets>
-            <endOffsets>
-              <option value="540" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="14" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/AutoSpex.Client/Observers/SpecObserver.cs</url>
-          <line>55</line>
-          <properties documentPath="C:\Users\tnunnink\Documents\Projects\AutoSpex\AutoSpex\src\AutoSpex.Client\Observers\SpecObserver.cs" containingFunctionPresentation="Method 'AddFilterStep'">
-            <startOffsets>
-              <option value="1776" />
-            </startOffsets>
-            <endOffsets>
-              <option value="1777" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="15" />
-        </line-breakpoint>
         <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
           <properties exception="System.OperationCanceledException" breakIfHandledByOtherCode="false" displayValue="System.OperationCanceledException" />
-          <option name="timeStamp" value="16" />
+          <option name="timeStamp" value="1" />
         </breakpoint>
         <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
           <properties exception="System.Threading.Tasks.TaskCanceledException" breakIfHandledByOtherCode="false" displayValue="System.Threading.Tasks.TaskCanceledException" />
-          <option name="timeStamp" value="17" />
+          <option name="timeStamp" value="2" />
         </breakpoint>
         <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
           <properties exception="System.Threading.ThreadAbortException" breakIfHandledByOtherCode="false" displayValue="System.Threading.ThreadAbortException" />
-          <option name="timeStamp" value="18" />
+          <option name="timeStamp" value="3" />
         </breakpoint>
       </breakpoints>
     </breakpoint-manager>
-    <watches-manager>
-      <configuration name="RiderUnitTests">
-        <watch expression="file.Name" />
-        <watch expression="new System.Collections.Generic.ICollectionDebugView&lt;object&gt;(values).Items[3]" />
-        <watch expression="$exception" />
-      </configuration>
-    </watches-manager>
-  </component>
-  <component name="XSLT-Support.FileAssociations.UIState">
-    <expand />
-    <select />
   </component>
 </project>

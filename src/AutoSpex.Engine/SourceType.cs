@@ -1,6 +1,5 @@
 using Ardalis.SmartEnum;
 using L5Sharp.Core;
-using L5Sharp.Logix;
 
 namespace AutoSpex.Engine;
 
@@ -80,7 +79,7 @@ public abstract class SourceType : SmartEnum<SourceType, int>
 
         public override Task<L5X> OpenAsync(string fileName, CancellationToken cancellation = default)
         {
-            return ACD.LoadAsync(fileName, L5XOptions.Index, cancellation);
+            throw new NotImplementedException();
         }
     }
 

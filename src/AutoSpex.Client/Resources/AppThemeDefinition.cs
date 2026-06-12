@@ -6,8 +6,8 @@ public class AppThemeDefinition : ThemeDefinition
 {
     public AppThemeDefinition()
     {
-        AccentColorRampName = Hue.Sky.ToString();
-        SuccessColorRampName = Hue.Emerald.ToString();
-        WarningColorRampName = Hue.Amber.ToString();
+        AccentColorRampName = nameof(Hue.Sky);
+        SuccessColorRampName = nameof(Hue.Emerald);
+        WarningColorRampName = nameof(Hue.Amber);
     }
 }
